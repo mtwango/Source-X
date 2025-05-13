@@ -3314,13 +3314,7 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
     {
         if (pItem->OnTrigger(ITRIG_EQUIPTEST, this) == TRIGRET_RET_TRUE)
         {
-            // since this trigger is called also when creating an item via ITEM=, if the created item has a RETURN 1 in @EquipTest
-            // (or if the NPC has a RETURN 1 in @ItemEquipTest), the item will be created but not placed in the world.
-            // so, if this is an NPC, even if there's a RETURN 1 i need to bounce the item inside his pack
-
-            //if (m_pNPC && (pItem->GetTopLevelObj() == this) )		// use this if we want to bounce the item only if i have picked it up previously (so it isn't valid if picking up from the ground)
-            if (m_pNPC && !pItem->IsDeleted())
-                ItemBounce(pItem);
+            ItemBounce(pItem);
             return false;
         }
 

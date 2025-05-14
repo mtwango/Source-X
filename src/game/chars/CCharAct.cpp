@@ -3285,9 +3285,12 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
 	if ( !pCharMsg )
 		pCharMsg = this;
 
+    // Remember original layer, because if we cannot equip it, we need to return that value back.
+    LAYER_TYPE requestedLayer = pItem->GetEquipLayer();
+
 	if ( pItem->GetParent() == this )
 	{
-		if ( pItem->GetEquipLayer() != LAYER_DRAGGING ) // already equipped.
+		if ( requestedLayer != LAYER_DRAGGING ) // already equipped.
 			return true;
 	}
 
@@ -3301,6 +3304,27 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
 		return false;
 	}
 
+    if (IsTrigUsed(TRIGGER_EQUIPTEST) || IsTrigUsed(TRIGGER_ITEMEQUIPTEST))
+    {
+        if (pItem->OnTrigger(ITRIG_EQUIPTEST, this) == TRIGRET_RET_TRUE)
+        {
+
+            // since this trigger is called also when creating an item via ITEM=, if the created item has a RETURN 1 in @EquipTest
+            // (or if the NPC has a RETURN 1 in @ItemEquipTest), the item will be created but not placed in the world.
+            // so, if this is an NPC, even if there's a RETURN 1 i need to bounce the item inside his pack
+
+            //if (m_pNPC && (pItem->GetTopLevelObj() == this) )		// use this if we want to bounce the item only if i have picked it up previously (so it isn't valid if picking up from the ground)
+            if (m_pNPC && !pItem->IsDeleted())
+                ItemBounce(pItem);
+            // Reset layer to original value.
+            pItem->SetEquipLayer(requestedLayer);
+            return false;
+        }
+
+        if (pItem->IsDeleted())
+            return false;
+    }
+
 	// strong enough to equip this . etc ?
 	// Move stuff already equipped.
 	if (pItem->GetAmount() > 1)
@@ -3309,18 +3333,6 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
 	pItem->RemoveSelf();		// Remove it from the container so that nothing will be stacked with it if unequipped
 	pItem->SetDecayTime(-1);	// Kill any DECAY timer.
 	LayerAdd(pItem, layer);
-
-    if (IsTrigUsed(TRIGGER_EQUIPTEST) || IsTrigUsed(TRIGGER_ITEMEQUIPTEST))
-    {
-        if (pItem->OnTrigger(ITRIG_EQUIPTEST, this) == TRIGRET_RET_TRUE)
-        {
-            ItemBounce(pItem);
-            return false;
-        }
-
-        if (pItem->IsDeleted())
-            return false;
-    }
 
     if ( !pItem->IsItemEquipped() )	// Equip failed ? (cursed?) Did it just go into pack ?
 		return false;

@@ -1959,10 +1959,35 @@ PacketSystemInfo::PacketSystemInfo() : Packet(149)
 bool PacketSystemInfo::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketSystemInfo::onReceive");
-	UnreferencedParameter(net);
 
-	skip(148);
-	return true;
+    // Not using web identity.
+    if (!g_Cfg.m_sWebIdentity.IsValid())
+    {
+        UnreferencedParameter(net);
+
+        skip(148);
+        return true;
+    }
+
+    // Web identity check.
+    char clientType[6];
+    readStringASCII(clientType, std::size(clientType));
+    uint8 const version = readByte();
+
+    // Type or version doesn't match.
+    if (strcmp(clientType, "CUOWEB") != 0 || version != 1) {
+        skip(141);
+
+        return false;
+    }
+
+    // Timestamp.
+    skip(4);
+    // @todo read string data here and use them (at least set ip to client).
+    skip(137);
+
+    // We will need this to change IP. Until done unreference.
+    UnreferencedParameter(net);
 }
 
 

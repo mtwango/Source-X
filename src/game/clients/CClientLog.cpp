@@ -862,6 +862,12 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 	ASSERT( pEvent != nullptr );
 	ASSERT( uiLen > 0 );
 
+    // Skip the web identity packet at this point. This should probably be handled elsewhere by dumping this, since it comes to server twice.
+    if (g_Cfg.m_sWebIdentity.IsValid() && pEvent->Default.m_Cmd == XCMD_Spy)
+    {
+        return true;
+    }
+
 	// Try all client versions on the msg.
 	if ( !m_Crypt.Init( m_net->m_seed, pEvent->m_Raw, uiLen, GetNetState()->isClientKR() ) )
 	{

@@ -455,6 +455,11 @@ bool CNetworkInput::processOtherClientData(CNetState* state, Packet* buffer)
     CClient* client = state->getClient();
     ASSERT(client != nullptr);
 
+    // This feels like a workaround. We got the game server login packet 0x91 after receiving a packet 0xA4 (web identity), which we already handled before.
+    if (g_Cfg.m_sWebIdentity.IsValid() && client->GetConnectType() == CONNECT_NONE && buffer->getRemainingLength() == 65) {
+        client->SetConnectType(CONNECT_CRYPT);
+    }
+
     switch (client->GetConnectType())
     {
     case CONNECT_CRYPT:

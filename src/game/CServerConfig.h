@@ -456,6 +456,7 @@ public:
 	CSString m_sStripPath;	// Strip Path for TNG and Axis.
 	bool m_fCUOStatus;      // Enable or disable the response to ConnectUO pings
 	bool m_fUOGStatus;      // Enable or disable the response to UOGateway pings
+	CSString m_sWebIdentity;	// Web identity secret from Classic UO Web Shard management.
 
 	int64 m_iWalkBuffer;	// Walk limiting code: buffer size (in tenths of second).
 	int m_iWalkRegen;		// Walk limiting code: regen speed (%)

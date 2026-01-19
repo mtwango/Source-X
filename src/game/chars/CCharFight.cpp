@@ -1366,7 +1366,6 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
     if ( !pChar || !Attacker_Delete(pChar, fForced, ATTACKER_CLEAR_FORCED) )
 		return false;
 
-    m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
     m_atFight.m_iRecoilDelay = 0;
     m_atFight.m_iSwingAnimationDelay = 0;
     m_atFight.m_iSwingAnimation = 0;
@@ -1377,8 +1376,10 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
 		pMemoryFight->Delete();
 
 	// Go to my next target.
-	if (m_Fight_Targ_UID == pChar->GetUID())
+    if (m_Fight_Targ_UID == pChar->GetUID()) {
+        m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
 		m_Fight_Targ_UID.InitUID();
+    }
 
 	if ( m_pNPC )
 	{

@@ -920,6 +920,9 @@ CChar * CChar::GetOwner() const
 
 bool CChar::CanDress(const CChar* pChar) const
 {
+    // Self dressing always allowed
+    if (pChar == this)
+        return true;
     if (IsPriv(PRIV_GM) && (GetPrivLevel() > pChar->GetPrivLevel() || GetPrivLevel() == PLEVEL_Owner))
         return true;
     else if (g_Cfg.m_fCanUndressPets && pChar->IsOwnedBy(this))
@@ -1842,6 +1845,11 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
             uiMapPointMovementFlags |= CAN_I_BLOCK;
             uiBlockedBy |= CAN_I_CLIMB;
         }
+    }
+
+    // If we can walk, we can climb (CAN_C_FLY is used for this).
+    if (uiMapPointMovementFlags & CAN_C_WALK) {
+        uiBlockedBy |= CAN_C_FLY;
     }
 
     const bool fLandTile = (blockingState->m_Bottom.m_dwTile <= TERRAIN_QTY);

@@ -1217,8 +1217,9 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 	}
 	else
 	{
-		iDmgMin = m_attackBase;
-		iDmgMax = iDmgMin + m_attackRange;
+	    const CCharBase *pChar = Char_GetDef();
+	    iDmgMin =  pChar->m_attackBase;
+	    iDmgMax = iDmgMin + pChar->m_attackRange;
 
 		// Horrific Beast (necro spell) changes char base damage to 5-15
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
@@ -1365,7 +1366,6 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
     if ( !pChar || !Attacker_Delete(pChar, fForced, ATTACKER_CLEAR_FORCED) )
 		return false;
 
-    m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
     m_atFight.m_iRecoilDelay = 0;
     m_atFight.m_iSwingAnimationDelay = 0;
     m_atFight.m_iSwingAnimation = 0;
@@ -1376,8 +1376,10 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
 		pMemoryFight->Delete();
 
 	// Go to my next target.
-	if (m_Fight_Targ_UID == pChar->GetUID())
+    if (m_Fight_Targ_UID == pChar->GetUID()) {
+        m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
 		m_Fight_Targ_UID.InitUID();
+    }
 
 	if ( m_pNPC )
 	{

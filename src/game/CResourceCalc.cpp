@@ -190,7 +190,7 @@ int CServerConfig::Calc_CombatChanceToHit(CChar * pChar, CChar * pCharTarg)
 			else if (iDiff > 100)
 				iDiff = 100;	// just means it's very hard.
 
-			return g_Rand.GetVal(iDiff);	// always need to have some chance. );
+			return iDiff;
 		}
 		case 1:
 		{

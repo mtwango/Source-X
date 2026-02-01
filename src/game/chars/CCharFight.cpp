@@ -649,7 +649,14 @@ effect_bounce:
 		}
 
 		if ( (uiType & DAMAGE_FIRE) && Can(CAN_C_FIRE_IMMUNE) )
-			goto effect_bounce;
+		{
+			if ((uiType & ~DAMAGE_FIRE) == 0)
+			{
+				goto effect_bounce;
+			}
+			iDmg /= 2;
+			iDmgFire = 0;
+		}
 
 		// I can't take damage from my pets, the only exception is for BRAIN_BERSERK pets
 		//if ( pSrc->m_pNPC && (pSrc->NPC_PetGetOwner() == this) && (pSrc->m_pNPC->m_Brain != NPCBRAIN_BERSERK) )

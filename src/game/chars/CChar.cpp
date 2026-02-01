@@ -2526,7 +2526,7 @@ do_default:
 			}
 		case CHC_BREATH:
 			{
-                if (!strnicmp(ptcKey, "BREATH.MAXDIST", 14) || !strnicmp(ptcKey, "BREATH.DAM", 10))
+                if (!strnicmp(ptcKey, "BREATH.MAXDIST", 14) || !strnicmp(ptcKey, "BREATH.DAM", 10) || !strnicmp(ptcKey, "BREATH.COST", 11) || !strnicmp(ptcKey, "BREATH.AOE_SIZE", 15))
 				{
 					CVarDefCont * pVar = GetDefKey(ptcKey, true);
 					sVal.FormatLLVal(pVar ? pVar->GetValNum() : 0);
@@ -3824,7 +3824,7 @@ bool CChar::r_LoadVal( CScript & s )
 			break;
 		case CHC_BREATH:
 			{
-				if ( !strnicmp(ptcKey, "BREATH.MAXDIST", 14) || !strnicmp(ptcKey, "BREATH.DAM", 10) || !strnicmp(ptcKey, "BREATH.HUE", 10) || !strnicmp(ptcKey, "BREATH.ANIM", 11) || !strnicmp(ptcKey, "BREATH.TYPE", 11) || !strnicmp(ptcKey, "BREATH.DAMTYPE", 14))
+				if ( !strnicmp(ptcKey, "BREATH.MAXDIST", 14) || !strnicmp(ptcKey, "BREATH.DAM", 10) || !strnicmp(ptcKey, "BREATH.HUE", 10) || !strnicmp(ptcKey, "BREATH.ANIM", 11) || !strnicmp(ptcKey, "BREATH.TYPE", 11) || !strnicmp(ptcKey, "BREATH.DAMTYPE", 14) || !strnicmp(ptcKey, "BREATH.COST", 11) || !strnicmp(ptcKey, "BREATH.AOE_SIZE", 15))
 				{
 					SetDefNum(s.GetKey(), s.GetArgLLVal());
 					return true;

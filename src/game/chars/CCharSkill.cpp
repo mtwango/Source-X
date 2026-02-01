@@ -3277,7 +3277,8 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
-		UpdateStatVal( STAT_DEX, -10 );
+		int const iBreathCost = static_cast<int>(GetDefNum("BREATH.COST", true, 10));
+		UpdateStatVal( STAT_DEX, -iBreathCost );
 		if ( !g_Cfg.IsSkillFlag( Skill_GetActive(), SKF_NOANIM ) )
 			UpdateAnimate( ANIM_MON_Stomp );
 
@@ -3317,7 +3318,7 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 	ITEMID_TYPE id = (ITEMID_TYPE)(GetDefNum("BREATH.ANIM", true));
 	EFFECT_TYPE effect = static_cast<EFFECT_TYPE>(GetDefNum("BREATH.TYPE",true));
 	DAMAGE_TYPE iDmgType = (DAMAGE_TYPE)(GetDefNum("BREATH.DAMTYPE", true));
-
+	int const iAoeSize = static_cast<int>(GetDefNum("BREATH.AOE_SIZE", true, 1));
 	/* AOS damage types (used by COMBAT_ELEMENTAL_ENGINE)*/
 	int iDmgPhysical = 0, iDmgFire = 0, iDmgCold = 0, iDmgPoison = 0, iDmgEnergy = 0;
 
@@ -3343,7 +3344,28 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 
 	Sound( 0x227 );
 	pChar->Effect( effect, id, this, 20, 30, false, hue );
+	if (iAoeSize > 1)
+	{
+		auto AreaChars = CWorldSearchHolder::GetInstance(m_Act_p, iAoeSize);
+		for (;;)
+		{
+			CChar* pCharInArea = AreaChars->GetChar();
+			if (!pCharInArea)
+				break;
+			if (pCharInArea->Fight_CanHit(this,true) == WAR_SWING_INVALID)    //Check if target can be hit (I am invul, stone etc. Target is Disconnected,safe zone etc)
+				continue;
+			if (pCharInArea->Noto_CalcFlag(this) == NOTO_GOOD)                //Avoid to hit someone we can't legally attack (same guild, same party, Vendor etc)
+				continue;
+			if (!pCharInArea->CanSeeLOS(this))                                //Avoid hit someone in nearby house
+				continue;
+
+			pCharInArea->OnTakeDamage( iDamage, this, iDmgType, iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
+		}
+
+		return 0;
+	}
 	pChar->OnTakeDamage( iDamage, this, iDmgType, iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
+
 	return 0;
 }
 

@@ -81,6 +81,9 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 			}
 			else
 				iSwingSpeed += 2;
+
+		    // Increase attack delay to be more like on .51a.
+		    iSwingSpeed = static_cast<int>(iSwingSpeed * 1.5);
 			break;
 		}
 

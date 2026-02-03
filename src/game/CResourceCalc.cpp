@@ -157,9 +157,6 @@ int CServerConfig::Calc_CombatChanceToHit(CChar * pChar, CChar * pCharTarg)
 		case 0:
 		{
 			// Sphere custom formula
-			if (pCharTarg->IsStatFlag(STATF_SLEEPING | STATF_FREEZE))
-				return(g_Rand.GetVal(10));
-
 			int iSkillVal = pChar->Skill_GetAdjusted(skillAttacker);
 
 			// Offensive value mostly based on your skill and TACTICS.
@@ -192,6 +189,10 @@ int CServerConfig::Calc_CombatChanceToHit(CChar * pChar, CChar * pCharTarg)
 				iDiff = 0;	// just means it's very easy.
 			else if (iDiff > 100)
 				iDiff = 100;	// just means it's very hard.
+
+		    // Paralyzed target should be easier
+		    if (pCharTarg->IsStatFlag(STATF_SLEEPING | STATF_FREEZE) && iDiff < 80)
+		        return 80;
 
 			return iDiff;
 		}

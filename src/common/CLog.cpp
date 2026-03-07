@@ -48,6 +48,15 @@ int CEventLog::EventDebug(lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
+int CEventLog::EventDeprecated(lpctstr pszFormat, ...) noexcept
+{
+    va_list vargs;
+    va_start(vargs, pszFormat);
+    const int iret = VEvent(LOGL_DEPRECATED, pszFormat, CTCOL_YELLOW, vargs);
+    va_end(vargs);
+    return iret;
+}
+
 int CEventLog::EventError(lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;

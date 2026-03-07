@@ -27,6 +27,7 @@ enum LOG_TYPE : uint
 	LOGL_ERROR	= 3, 	// non-fatal errors. can continue.
 	LOGL_WARN	= 4,	// strange.
 	LOGL_EVENT	= 5,	// Misc major events.
+	LOGL_DEPRECATED	= 6,	// Deprecations, code moved to script pack.
 	LOGL_QTY	= 0xF,	// first 4 bits = binary 1111 = dec 15 = hex 0xF
 
 	// --log Flags
@@ -68,6 +69,7 @@ protected:
 public:
     int Event( dword dwMask, lpctstr pszFormat, ... ) noexcept SPHERE_PRINTFARGS(3,4);
     int EventDebug(lpctstr pszFormat, ...) noexcept  SPHERE_PRINTFARGS(2,3);
+    int EventDeprecated(lpctstr pszFormat, ...) noexcept SPHERE_PRINTFARGS(2,3);
     int EventError(lpctstr pszFormat, ...) noexcept SPHERE_PRINTFARGS(2,3);
     int EventWarn(lpctstr pszFormat, ...) noexcept SPHERE_PRINTFARGS(2,3);
     int EventCustom(ConsoleTextColor iColor, dword dwMask, lpctstr pszFormat, ...) noexcept SPHERE_PRINTFARGS(4,5);

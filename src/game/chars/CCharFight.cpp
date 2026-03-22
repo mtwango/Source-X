@@ -1269,10 +1269,16 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			{
 				// Sphere damage bonus (custom)
 				if ( !iStatBonus )
-					iStatBonus = STAT_STR;
-				if ( !iStatBonusPercent )
-					iStatBonusPercent = 10;
-				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				{
+				    iStatBonus = STAT_STR;
+				    if (pWeapon != nullptr && pWeapon->Weapon_GetSkill() == SKILL_ARCHERY)
+				    {
+				        iStatBonus = STAT_DEX;
+				    }
+				}
+			    if ( !iStatBonusPercent )
+			        iStatBonusPercent = 10;
+			    iDmgBonus += CSRand::GetVal(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
 				break;
 			}
 
@@ -1330,8 +1336,8 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			}
 		}
 
-		iDmgMin += iDmgMin * iDmgBonus / 100;
-		iDmgMax += iDmgMax * iDmgBonus / 100;
+	    iDmgMin += iDmgBonus;
+	    iDmgMax += iDmgBonus;
 	}
 
     if ( fNoRandom )

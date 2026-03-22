@@ -621,10 +621,10 @@ int CChar::NPC_WalkToPoint( bool fRun )
                 if (iDex < 75)
                     iDex = 75;
             }
-            iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast((100 - iDex) / 5) * MSECS_PER_SEC / 10;
+            iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast((100 - iDex) / 4) * MSECS_PER_SEC / 10;
         }
         else
-            iTickNext = MSECS_PER_SEC + g_Rand.GetValFast((100 - iDex) / 3) * MSECS_PER_SEC / 10;
+            iTickNext = MSECS_PER_SEC / 2 + g_Rand.GetValFast((150 - iDex) / 2) * MSECS_PER_SEC / 10;
 
         CVarDefCont *pValue = GetKey("OVERRIDE.MOVERATE", true);
         if (pValue)

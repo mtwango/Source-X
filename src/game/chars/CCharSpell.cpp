@@ -2312,7 +2312,7 @@ void CChar::Spell_Field(CPointMap pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE idNS, u
 						pStuck->Delete();
 				}
 
-				if (( idEW == ITEMID_STONE_WALL ) || ( idEW == ITEMID_FX_ENERGY_F_EW ) || ( idEW == ITEMID_FX_ENERGY_F_NS ))	// don't place stone wall over characters
+				if ( idEW == ITEMID_STONE_WALL )	// don't place stone wall over characters
 				{
 				    pChar->OnSpellEffect(m_atMagery.m_iSpell, this, iSkillLevel, nullptr);
 					fGoodLoc = false;

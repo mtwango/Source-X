@@ -1724,7 +1724,7 @@ int CChar::Skill_DetectHidden( SKTRIG_TYPE stage )
 	if (m_Act_Effect >= 0)
 		iRadius = m_Act_Effect;
 	else
-		iRadius = iSkill / 100; //Default Sphere Detecting Hidden Radius.
+		iRadius = (iSkill / 8) + 1; //Default Sphere Detecting Hidden Radius.
 
 	auto Area = CWorldSearchHolder::GetInstance(GetTopPoint(), iRadius);
 	bool fFound = false;
@@ -1737,10 +1737,12 @@ int CChar::Skill_DetectHidden( SKTRIG_TYPE stage )
 			continue;
 
 		// Check chance to reveal the target
+	    /*
 		int iSkillSrc = iSkill + g_Rand.GetVal(210) - 100;
 		int iSkillTarg = pChar->Skill_GetAdjusted(SKILL_HIDING) + g_Rand.GetVal(210) - 100;
 		if ( iSkillSrc < iSkillTarg )
 			continue;
+        */
 
 		pChar->Reveal();
 		SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_DETECTHIDDEN_SUCC), pChar->GetName());

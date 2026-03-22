@@ -2026,23 +2026,16 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, ITEMID_TYPE 
 		m_pChar->m_Act_Prv_UID = m_Targ_Prv_UID; //The bandage item
 		m_pChar->m_Act_UID = m_Targ_UID;  //The target.
 
-		/*An NPC will be healed by the Veterinary skill if the following conditions are satisfied:
-		  It has a Taming value above > 0 AND its ID is not the ID one of the playable races (Human, Elf or Gargoyle)
-		*/
-		if (pCharTarg->m_pNPC && pCharTarg->Skill_GetBase(SKILL_TAMING) > 0 &&
-			!pCharTarg->IsPlayableCharacter() )
-		{
-			switch (pCharTarg->GetNPCBrain())
-			{
-			case NPCBRAIN_ANIMAL:
-			case NPCBRAIN_DRAGON:
-			case NPCBRAIN_MONSTER:
-				return m_pChar->Skill_Start(SKILL_VETERINARY);
-			default:
-				return m_pChar->Skill_Start(SKILL_HEALING);
-			}
-		}
-		return m_pChar->Skill_Start(SKILL_HEALING);
+	    // Dark Paradise custom override healing (.51a style).
+	    {
+	    const CREID_TYPE targetId = pCharTarg->GetDispID();
+	    if (targetId >= CREID_MAN)
+	        return m_pChar->Skill_Start(SKILL_HEALING);
+	    if (targetId >= CREID_HORSE_TAN || targetId == CREID_EAGLE || targetId == CREID_BIRD || targetId == CREID_GORILLA || targetId == CREID_SNAKE || targetId == CREID_DOLPHIN || targetId == CREID_GIANT_TOAD || targetId == CREID_BULL_FROG)
+	        return m_pChar->Skill_Start(SKILL_VETERINARY);
+	    }
+
+	    return m_pChar->Skill_Start(SKILL_HEALING);
 
 	case IT_SEED:
 		return m_pChar->Use_Seed( pItemUse, &pt );

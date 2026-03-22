@@ -3561,7 +3561,7 @@ void CChar::Speak_RevealCheck(TALKMODE_TYPE mode)
             if (g_Cfg.m_iRevealFlags & REVEALF_SPEAK)	// spell's reveal is handled in Spell_CastStart
                 iFlags |= STATF_INVISIBLE;
 
-            Reveal();
+            Reveal(iFlags);
         }
     }
 }

@@ -4710,7 +4710,8 @@ bool CChar::ShoveCharAtPosition(CPointMap const& ptDst, ushort *uiStaminaRequire
                 else
                 {
                     snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_HIDING_STUMBLE), pChar->GetName());
-                    pChar->Reveal(STATF_INVISIBLE | STATF_HIDDEN);
+                    if (!IsNPC())
+                        pChar->Reveal(STATF_HIDDEN);
                 }
             }
             else if (pChar->IsStatFlag(STATF_SLEEPING))

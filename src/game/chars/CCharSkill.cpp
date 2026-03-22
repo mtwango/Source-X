@@ -2822,6 +2822,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
+	    /*
 		if ( pChar != this )
 		{
 			tchar * pszMsg = Str_GetTemp();
@@ -2832,6 +2833,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		{
 			Emote( g_Cfg.GetDefaultMsg( DEFMSG_HEALING_SELF ) );
 		}
+		*/
 		if ( pCorpse || pChar->IsStatFlag(STATF_DEAD))	// resurrect
 			return( 85 + g_Rand.GetVal(25));
 		if ( pChar->IsStatFlag( STATF_POISONED ))	// poison level

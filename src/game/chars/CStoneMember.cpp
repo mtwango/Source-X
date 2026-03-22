@@ -68,7 +68,7 @@ bool CStoneMember::IsPrivMaster() const
 bool CStoneMember::IsPrivMember() const
 {
 	//ADDTOCALLSTACK("CStoneMember::IsPrivMember");
-	return ( (m_iPriv == STONEPRIV_MASTER) || (m_iPriv == STONEPRIV_MEMBER) );
+    return ( (m_iPriv == STONEPRIV_MASTER) || (m_iPriv == STONEPRIV_MEMBER) || (m_iPriv == STONEPRIV_CANDIDATE) );
 }
 
 // If the member is really a alliance flag (STONEPRIV_ALLY)

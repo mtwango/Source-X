@@ -3557,8 +3557,11 @@ void CChar::Speak_RevealCheck(TALKMODE_TYPE mode)
     {
         if (GetKeyNum("OVERRIDE.NOREVEALSPEAK", true) != 1)
         {
+            uint64 iFlags = STATF_HIDDEN|STATF_SLEEPING;
             if (g_Cfg.m_iRevealFlags & REVEALF_SPEAK)	// spell's reveal is handled in Spell_CastStart
-                Reveal();
+                iFlags |= STATF_INVISIBLE;
+
+            Reveal();
         }
     }
 }

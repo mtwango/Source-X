@@ -736,6 +736,7 @@ effect_bounce:
 
 			iDmg = (iPhysicalDamage + iFireDamage + iColdDamage + iPoisonDamage + iEnergyDamage) / 10000;
 		}
+	    /*
 		else
 		{
 			// pre-AOS armor rating (AR)
@@ -752,6 +753,7 @@ effect_bounce:
 			if (iDmg <= 0)
 				iDmg = 0;
 		}
+	    */
 	}
 
     {

@@ -3345,7 +3345,20 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 
 	Sound( 0x227 );
 	pChar->Effect( effect, id, this, 20, 30, false, hue );
-	pChar->OnTakeDamage( iDamage, this, iDmgType, iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
+
+    auto AreaChars = CWorldSearchHolder::GetInstance(m_Act_p, 3);
+    for (;;)
+    {
+        CChar* pCharInArea = AreaChars->GetChar();
+        if (!pCharInArea)
+            break;
+        // Check if target can be hit (I am invul, stone etc. Target is Disconnected,safe zone etc).
+        if (pCharInArea->Fight_CanHit(this,true) == WAR_SWING_INVALID)
+            continue;
+
+        pCharInArea->OnTakeDamage( iDamage, this, iDmgType, iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
+    }
+
 	return 0;
 }
 

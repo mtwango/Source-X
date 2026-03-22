@@ -815,6 +815,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 				iHostility -= 30;
 			}
 		}
+	    /*
 		else
 		{
 			// Not immediately hostile if it looks the same as me.
@@ -823,6 +824,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 				iHostility -= 51;
 			}
 		}
+	    */
 	}
 
 	// I have been attacked/angered by this creature before ?

@@ -649,7 +649,14 @@ effect_bounce:
 		}
 
 		if ( (uiType & DAMAGE_FIRE) && Can(CAN_C_FIRE_IMMUNE) )
-			goto effect_bounce;
+		{
+		    if ((uiType & ~DAMAGE_FIRE) == 0)
+		    {
+		        goto effect_bounce;
+		    }
+		    iDmg /= 2;
+		    iDmgFire = 0;
+		}
 
 		// I can't take damage from my pets, the only exception is for BRAIN_BERSERK pets
 		//if ( pSrc->m_pNPC && (pSrc->NPC_PetGetOwner() == this) && (pSrc->m_pNPC->m_Brain != NPCBRAIN_BERSERK) )
@@ -729,6 +736,7 @@ effect_bounce:
 
 			iDmg = (iPhysicalDamage + iFireDamage + iColdDamage + iPoisonDamage + iEnergyDamage) / 10000;
 		}
+	    /*
 		else
 		{
 			// pre-AOS armor rating (AR)
@@ -745,6 +753,7 @@ effect_bounce:
 			if (iDmg <= 0)
 				iDmg = 0;
 		}
+	    */
 	}
 
     {
@@ -1217,8 +1226,9 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 	}
 	else
 	{
-		iDmgMin = m_attackBase;
-		iDmgMax = iDmgMin + m_attackRange;
+	    const CCharBase *pChar = Char_GetDef();
+	    iDmgMin =  pChar->m_attackBase;
+	    iDmgMax = iDmgMin + pChar->m_attackRange;
 
 		// Horrific Beast (necro spell) changes char base damage to 5-15
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
@@ -1259,10 +1269,16 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			{
 				// Sphere damage bonus (custom)
 				if ( !iStatBonus )
-					iStatBonus = STAT_STR;
-				if ( !iStatBonusPercent )
-					iStatBonusPercent = 10;
-				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				{
+				    iStatBonus = STAT_STR;
+				    if (pWeapon != nullptr && pWeapon->Weapon_GetSkill() == SKILL_ARCHERY)
+				    {
+				        iStatBonus = STAT_DEX;
+				    }
+				}
+			    if ( !iStatBonusPercent )
+			        iStatBonusPercent = 10;
+			    iDmgBonus += CSRand::GetVal(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
 				break;
 			}
 
@@ -1320,8 +1336,8 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			}
 		}
 
-		iDmgMin += iDmgMin * iDmgBonus / 100;
-		iDmgMax += iDmgMax * iDmgBonus / 100;
+	    iDmgMin += iDmgBonus;
+	    iDmgMax += iDmgBonus;
 	}
 
     if ( fNoRandom )

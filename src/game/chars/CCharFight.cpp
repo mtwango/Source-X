@@ -1226,8 +1226,9 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 	}
 	else
 	{
-		iDmgMin = m_attackBase;
-		iDmgMax = iDmgMin + m_attackRange;
+	    const CCharBase *pChar = Char_GetDef();
+	    iDmgMin =  pChar->m_attackBase;
+	    iDmgMax = iDmgMin + pChar->m_attackRange;
 
 		// Horrific Beast (necro spell) changes char base damage to 5-15
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)

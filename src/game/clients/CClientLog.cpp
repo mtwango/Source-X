@@ -848,6 +848,12 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 	ASSERT( pEvent != nullptr );
 	ASSERT( uiLen > 0 );
 
+    // Web identity packet. Validation is handled in packet itself.
+    if (g_Cfg.m_sWebIdentity.IsValid() && pEvent->Default.m_Cmd == XCMD_Spy && uiLen == 149)
+    {
+        return true;
+    }
+
 	// Try all client versions on the msg.
 	if ( !m_Crypt.Init( m_net->m_seed, pEvent->m_Raw, uiLen, GetNetState()->isClientKR() ) )
 	{

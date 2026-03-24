@@ -459,7 +459,7 @@ public:
 	bool m_fUOGStatus;      // Enable or disable the response to UOGateway pings
 
     // Web identity secret from Classic UO Web Shard management.
-    CSString m_sWebIdentity;
+    CSString m_sWebIdentity = {false};
     // Force only clients with web identity.
     bool m_sWebIdentityForce;
 

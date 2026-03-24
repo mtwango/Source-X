@@ -2005,19 +2005,17 @@ bool PacketSystemInfo::onReceive(CNetState* net)
     // Skip timestamp.
     skip(4);
 
-    // Size of the variable data (estimated size).
-    constexpr uint8 size = 30;
+    // Buffer for reading data from packet.
+    char dataBuffer[30];
 
-    // This is remaining length of Web Identity packet.
+    // Remaining length of Web Identity packet (so we don't eat bytes from another packet).
     int length = 137;
 
     // Read the received secret and compare it to our secret.
-    char secret[size];
-    readStringNullASCII(secret, length);
-    length -= static_cast<int>(strlen(secret));
+    length -= readStringNullASCII(dataBuffer, length);
 
     // Secret is not valid.
-    if (strcmp(secret, g_Cfg.m_sWebIdentity) != 0)
+    if (strcmp(dataBuffer, g_Cfg.m_sWebIdentity) != 0)
     {
         skip(length);
         client->addLoginErr(PacketLoginError::BadAuthID);
@@ -2028,36 +2026,31 @@ bool PacketSystemInfo::onReceive(CNetState* net)
     CClient::CWebIdentity &Identity = client->m_webIdentity;
     Identity.m_fReceived = true;
 
-    char user_id[size];
-    readStringNullASCII(user_id, length);
-    length -= static_cast<int>(strlen(user_id));
-    Identity.m_sUserId = user_id;
+    // User ID.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sUserId = dataBuffer;
 
-    char connecting_ip[size];
-    readStringNullASCII(connecting_ip, length);
-    length -= static_cast<int>(strlen(connecting_ip));
-    Identity.m_sConnectingIp = connecting_ip;
+    // Connecting IP.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sConnectingIp = dataBuffer;
 
-    char external_auth_provider[size];
-    readStringNullASCII(external_auth_provider, length);
-    length -= static_cast<int>(strlen(external_auth_provider));
-    Identity.m_sExternalAuthProvider = external_auth_provider;
+    // External Auth Provider.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sExternalAuthProvider = dataBuffer;
 
-    char external_auth_username[size];
-    readStringNullASCII(external_auth_username, length);
-    length -= static_cast<int>(strlen(external_auth_username));
-    Identity.m_sExternalAuthUsername = external_auth_username;
+    // External Auth Username.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sExternalAuthUsername = dataBuffer;
 
-    char external_auth_id[size];
-    readStringNullASCII(external_auth_id, length);
-    length -= static_cast<int>(strlen(external_auth_id));
-    Identity.m_sExternalAuthId = external_auth_id;
+    // External Auth ID.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sExternalAuthId = dataBuffer;
 
-    char role[size];
-    readStringNullASCII(role, length);
-    length -= static_cast<int>(strlen(role));
-    Identity.m_sRole = role;
+    // Role.
+    length -= readStringNullASCII(dataBuffer, length);
+    Identity.m_sRole = dataBuffer;
 
+    // Skip the rest of the packet.
     skip(length);
 
     return true;

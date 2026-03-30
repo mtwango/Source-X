@@ -197,7 +197,7 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 		        iChance = 80;
 
 		    // Always need to have some chance (@todo Remove this horrendous random).
-			return g_Rand.GetVal(iChance);
+			return iChance;
 		}
 		// Pre-AOS formula.
 		case 1:

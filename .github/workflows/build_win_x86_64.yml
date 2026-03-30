@@ -57,7 +57,7 @@ jobs:
   upload_github_release:
     needs: windows-x86_64
     # Upload artifact linked to GitHub RELEASE we are creating - only if the run is for a pull request, or for selected branches
-    if: contains(fromJson('["master", "main"]'), github.ref_name)
+    if: contains(fromJson('["master", "main", "dark-paradise"]'), github.ref_name)
     permissions:
       contents: write
       actions: read

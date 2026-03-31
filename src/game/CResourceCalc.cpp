@@ -61,14 +61,14 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 				iSwingSpeed = (pChar->Stat_GetAdjusted(STAT_DEX) + 100) * iBaseSpeed;
 				iSwingSpeed = maximum(1, iSwingSpeed);
 				iSwingSpeed = (iSpeedScaleFactor * 10) / iSwingSpeed;
-				if ( iSwingSpeed < 10 )
-					iSwingSpeed = 10;
+				if ( iSwingSpeed < 5 )
+					iSwingSpeed = 5;
 				break;
 			}
 
 			iSwingSpeed = IMulDiv(100 - pChar->Stat_GetAdjusted(STAT_DEX), 40, 100);	// base speed is just the char DEX range (0 ~ 40)
-			if ( iSwingSpeed < 10 )
-				iSwingSpeed = 10;
+			if ( iSwingSpeed < 5 )
+				iSwingSpeed = 5;
 			else
 				iSwingSpeed += 5;
 
@@ -82,9 +82,20 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 			else
 				iSwingSpeed += 2;
 
-		    // Increase attack delay to be more like on .51a (because the timeout is on skill and combat).
-		    iSwingSpeed = iSwingSpeed * 2;
-			break;
+		    // Increase attack delay by 1 second for melee skills.
+            switch (pChar->Skill_GetActive())
+		    {
+		        case SKILL_FENCING:
+		        case SKILL_MACEFIGHTING:
+		        case SKILL_SWORDSMANSHIP:
+		        case SKILL_WRESTLING:
+		            iSwingSpeed += 10;
+
+		        default:
+		            break;
+		    }
+
+		    break;
 		}
 
 		case 1:

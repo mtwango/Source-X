@@ -4909,7 +4909,7 @@ int CItem::Armor_GetDefense() const
 		iVal = (int)IMulDivLL( iVal, iRepairPercent, 100 );
 	}
 	if ( IsAttr(ATTR_MAGIC) )
-		iVal += g_Cfg.GetSpellEffect( SPELL_Enchant, m_itArmor.m_spelllevel );
+		iVal += m_itArmor.m_spelllevel;
 	if ( iVal < 0 )
 		iVal = 0;
 	return iVal;
@@ -4933,7 +4933,7 @@ int CItem::Weapon_GetAttack(bool fGetRange) const
 		iVal = (int)IMulDivLL( iVal, iRepairPercent, 100 );
 	}
 	if ( IsAttr(ATTR_MAGIC) && ! IsType(IT_WAND))
-		iVal += g_Cfg.GetSpellEffect( SPELL_Enchant, m_itArmor.m_spelllevel );
+		iVal += m_itArmor.m_spelllevel;
 	if ( iVal < 0 )
 		iVal = 0;
 	return iVal;

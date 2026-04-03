@@ -408,14 +408,14 @@ struct CArmorLayerType
 
 static constexpr CArmorLayerType sm_ArmorLayers[ARMOR_QTY] =
 {
-	{ 15,	sm_ArmorLayerHead },	// ARMOR_HEAD, 15% of the armour value will be applied.
-	{ 7,	sm_ArmorLayerNeck },	// ARMOR_NECK, 7% of the armour value will be applied.
-	{ 0,	sm_ArmorLayerBack },	// ARMOR_BACK, 0% of the armour value will be applied.
-	{ 35,	sm_ArmorLayerChest },	// ARMOR_CHEST, 35% of the armour value will be applied.
-	{ 14,	sm_ArmorLayerArms },	// ARMOR_ARMS, 14% of the armour value will be applied.
-	{ 7,	sm_ArmorLayerHands },	// ARMOR_HANDS, 7% of the armour value will be applied.
-	{ 22,	sm_ArmorLayerLegs },	// ARMOR_LEGS, 22% of the armour value will be applied.
-	{ 0,	sm_ArmorLayerFeet },	// ARMOR_FEET, 0% of the armour value will be applied.
+	{ 10,	sm_ArmorLayerHead },	// ARMOR_HEAD, 10% of the armour value will be applied.
+	{ 5,	sm_ArmorLayerNeck },	// ARMOR_NECK, 5% of the armour value will be applied.
+	{ 10,	sm_ArmorLayerBack },	// ARMOR_BACK, 10% of the armour value will be applied.
+	{ 30,	sm_ArmorLayerChest },	// ARMOR_CHEST, 30% of the armour value will be applied.
+	{ 10,	sm_ArmorLayerArms },	// ARMOR_ARMS, 10% of the armour value will be applied.
+	{ 10,	sm_ArmorLayerHands },	// ARMOR_HANDS, 10% of the armour value will be applied.
+	{ 20,	sm_ArmorLayerLegs },	// ARMOR_LEGS, 20% of the armour value will be applied.
+	{ 5,	sm_ArmorLayerFeet },	// ARMOR_FEET, 5% of the armour value will be applied.
 	{100,	sm_ArmorLayerShield }	// ARMOR_SHIELD, 100% of the armour value will be applied, this only used if CombatParryEra flag PARRYERA_ARSCALING is enabled
 };
 
@@ -541,8 +541,9 @@ int CChar::CalcArmorDefense() const
 					if (g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
 					{
 						shieldZone = ARMOR_SHIELD;
-						int uShieldAC = ((Skill_GetBase(SKILL_PARRYING) * iDefense) / 2000) + 1;
-						iDefense = minimum(iDefense / 2, uShieldAC);
+						int uShieldAC = ((Skill_GetAdjusted(SKILL_PARRYING) * iDefense) / 1000);
+						//iDefense = minimum(iDefense / 2, uShieldAC);
+					    iDefense = uShieldAC;
 					}
 					if (IsSetCombatFlags(COMBAT_STACKARMOR)) //Don't understand, you can't stack shields
 						ArmorRegionMax[shieldZone] += iDefense;

@@ -2786,7 +2786,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		return -SKTRIG_QTY;
 	}
 
-	if ( GetDist(pObj) > 2 )
+	if ( GetDist(pObj) > 5 )
 	{
 		SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_HEALING_TOOFAR ), pObj->GetName());
 		if ( pChar != this )
@@ -2835,11 +2835,11 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		{
 			Emote( g_Cfg.GetDefaultMsg( DEFMSG_HEALING_SELF ) );
 		}
-		*/
 		if ( pCorpse || pChar->IsStatFlag(STATF_DEAD))	// resurrect
 			return( 85 + g_Rand.GetVal(25));
 		if ( pChar->IsStatFlag( STATF_POISONED ))	// poison level
 			return( 50 + g_Rand.GetVal(50));
+		*/
 
 		return g_Rand.GetVal(80);	// Normal healing, How difficult? 1-1000
 	}
@@ -2860,6 +2860,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		return 0;
 	}
 
+    /*
 	int iSkillLevel = Skill_GetAdjusted( Skill_GetActive());
 	if ( pChar->IsStatFlag( STATF_POISONED ))
 	{
@@ -2880,6 +2881,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		}
 		return 0;
 	}
+    */
 
 	// LAYER_FLAG_Bandage
 	ushort uHealValue = 1;

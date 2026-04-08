@@ -936,7 +936,7 @@ effect_bounce:
 			{
 				refAttacker.elapsed = 0;
 				refAttacker.amountDone += maximum( 0, iDmg );
-				refAttacker.threat += maximum( 0, iDmg );
+				refAttacker.threat += 0;
                 fAttackerExists = true;
 				break;
 			}
@@ -947,7 +947,7 @@ effect_bounce:
 			attacker.charUID = uiSrcUID;
 			attacker.elapsed = 0;
 			attacker.amountDone = maximum( 0, iDmg );
-			attacker.threat = maximum( 0, iDmg );
+			attacker.threat = 0;
 			attacker.ignore = false;
 			m_lastAttackers.emplace_back(std::move(attacker));
 		}

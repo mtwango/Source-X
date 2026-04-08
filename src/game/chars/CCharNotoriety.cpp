@@ -613,8 +613,8 @@ void CChar::Noto_Kill(CChar * pKill, int iTotalKillers)
         return;
 
     int iPrvLevel = Noto_GetLevel();	// store title before fame/karma changes to check if it got changed
-    Noto_Fame(g_Cfg.Calc_FameKill(pKill) / iTotalKillers, pKill);
-    Noto_Karma(g_Cfg.Calc_KarmaKill(pKill, NotoThem) / iTotalKillers, INT32_MIN, false, pKill);
+    Noto_Fame(g_Cfg.Calc_FameKill(pKill), pKill);
+    Noto_Karma(g_Cfg.Calc_KarmaKill(pKill, NotoThem), INT32_MIN, false, pKill);
 
     if (g_Cfg.m_fExperienceSystem && (g_Cfg.m_iExperienceMode & EXP_MODE_RAISE_COMBAT))
     {

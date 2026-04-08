@@ -367,7 +367,7 @@ int CServerConfig::Calc_FameKill( CChar * pKill )
 	if ( pKill->m_pPlayer )
 		iFameChange /= 10;
 	else
-		iFameChange /= 200;
+		iFameChange /= 300;
 
 	return iFameChange;
 }
@@ -390,16 +390,16 @@ int CServerConfig::Calc_KarmaKill( CChar * pKill, NOTO_TYPE NotoThem )
 	{
 		// If killing a 'good' PC we should always loose at least
 		// 500 karma
-		if ( iKarmaChange < 0 && iKarmaChange >= -5000 )
-			iKarmaChange = -5000;
+		if ( iKarmaChange < 0 && iKarmaChange >= -500 )
+			iKarmaChange = -500;
 
 		iKarmaChange /= 10;
 	}
 	else	// Or is it was a NPC, less gain/loss.
 	{
 		// Always loose at least 20 karma if you kill a 'good' NPC
-		if ( iKarmaChange < 0 && iKarmaChange >= -1000 )
-			iKarmaChange = -1000;
+		if ( iKarmaChange < 0 && iKarmaChange >= -100 )
+			iKarmaChange = -20;
 
 		iKarmaChange /= 20;	// Not as harsh penalty as with player chars.
 	}

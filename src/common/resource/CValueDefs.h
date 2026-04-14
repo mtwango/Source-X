@@ -149,6 +149,7 @@ public:
     * @return  The linear.
     */
     int GetLinear( int iSkillPercent ) const;
+    int GetSpellLinear( int iSkillPercent ) const;
 
     /**
     * @fn  int GetChancePercent( int iSkillPercent ) const;

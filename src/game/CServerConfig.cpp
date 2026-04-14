@@ -2401,7 +2401,7 @@ int CServerConfig::GetSpellEffect( SPELL_TYPE spell, int iSkillVal ) const
 	const CSpellDef * pSpellDef = GetSpellDef( spell );
 	if ( pSpellDef == nullptr )
 		return 0;
-	return pSpellDef->m_vcEffect.GetLinear( iSkillVal );
+	return pSpellDef->m_vcEffect.GetSpellLinear( iSkillVal );
 }
 
 lpctstr CServerConfig::GetRune( tchar ch ) const

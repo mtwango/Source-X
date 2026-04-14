@@ -3680,7 +3680,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
     if (IsStatFlag(STATF_RIDDEN) && (pSpellDef->IsSpellType(SPELLFLAG_FIELD) || pSpellDef->IsSpellType(SPELLFLAG_AREA)))
         return false;
 
-	iSkillLevel = (iSkillLevel / 2) + g_Rand.GetVal(iSkillLevel / 2);	// randomize the potency
+	//iSkillLevel = (iSkillLevel / 2) + g_Rand.GetVal(iSkillLevel / 2);	// randomize the potency
 	int iEffect = g_Cfg.GetSpellEffect(spell, iSkillLevel);
 
 	if (pSpellDef->m_idLayer && !iDuration) //By using SPELLEFFECT command (and the spell has a layer where to store properties)  we need to calculate the duration.
@@ -3701,6 +3701,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	if ( pSpellDef->IsSpellType(SPELLFLAG_RESIST) && pCharSrc && !fPotion )
 	{
 		uiResist = Skill_GetBase(SKILL_MAGICRESISTANCE) / 10;
+	    /*
 		ushort uiFirst = uiResist / 5;
 		ushort uiSecond = (((pCharSrc->Skill_GetBase(SKILL_MAGERY) - 200) / 50) + (ushort)((1 + (spell / 8)) * 50));
 		if (uiResist >= uiSecond)
@@ -3708,7 +3709,8 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		else
 			uiSecond = 0;
 		uchar uiResistChance = (uchar)(maximum(uiFirst, uiSecond));
-		uiResist = Skill_UseQuick(SKILL_MAGICRESISTANCE, uiResistChance, true, false) ? 25 : 0;	// If we successfully resist then we have a 25% damage reduction, 0 if we don't.
+	    */
+		uiResist = Skill_UseQuick(SKILL_MAGICRESISTANCE, uiResist, true, false) ? 50 : 0;	// If we successfully resist then we have a 25% damage reduction, 0 if we don't.
 
 		if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 		{

@@ -169,7 +169,14 @@ void CChar::NPC_Act_Fight()
     ASSERT(m_pNPC);
 
     // I am in an attack mode.
-    if (!Fight_IsActive())
+    // While casting (SKF_MAGIC), Fight_IsActive() returns false because casting skills are not SKF_FIGHT.
+    // Keep combat state during spellcasting, otherwise NPCs clear fight data right after starting a spell.
+    const SKILL_TYPE iActiveSkill = Skill_GetActive();
+    CChar* pCombatTarget = m_Fight_Targ_UID.CharFind();
+    const bool fHasCombatTarget = (pCombatTarget != nullptr);
+    const bool fCastingInCombat = g_Cfg.IsSkillFlag(iActiveSkill, SKF_MAGIC) && IsStatFlag(STATF_WAR) && fHasCombatTarget;
+    const bool fPendingCombat = IsStatFlag(STATF_WAR) && fHasCombatTarget;
+    if (!Fight_IsActive() && !fCastingInCombat && !fPendingCombat)
     {
         Fight_ClearAll();
         return;
@@ -192,9 +199,17 @@ void CChar::NPC_Act_Fight()
         }
     }
     */
-    CChar * pChar = m_Fight_Targ_UID.CharFind();
+    CChar * pChar = pCombatTarget;
     if (pChar == nullptr || !pChar->IsTopLevel()) // target is not valid anymore ?
-        return;
+    {
+        pChar = NPC_FightFindBestTarget();
+        if (pChar == nullptr || !pChar->IsTopLevel())
+        {
+            Fight_ClearAll();
+            return;
+        }
+        m_Fight_Targ_UID = pChar->GetUID();
+    }
 
     if (Attacker_GetIgnore(pChar))
     {

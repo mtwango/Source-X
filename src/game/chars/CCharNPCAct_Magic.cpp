@@ -200,7 +200,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     }
 
     // We have the total count of spells inside iSpellCount, so we use 'iRandSpell' to store a rand representing the spell that will be cast.
-    uchar iRandSpell = (uchar)(g_Rand.GetVal2(0, iSpellCount - 1)); //Spells are being stored using a vector, so it's assumed to be zero-based.
+    uchar iRandSpell = (uchar)(g_Rand.GetVal2Fast(0, iSpellCount - 1)); //Spells are being stored using a vector, so it's assumed to be zero-based.
     bool bSpellSuccess = false, bWandUse = false, bIgnoreAITargetChoice = false;
     int iHealThreshold = g_Cfg.m_iNPCHealthreshold;
 

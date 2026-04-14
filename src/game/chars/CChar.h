@@ -940,9 +940,9 @@ public:
 
 	void Skill_SetBase( SKILL_TYPE skill, ushort uiValue );
     void Skill_AddBase( SKILL_TYPE skill, int iChange );
-    bool Skill_UseQuick( SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain = true, bool fUseBellCurve = true, bool fForceCheck = false);
+    bool Skill_UseQuick( SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain = true, bool fUseBellCurve = false, bool fForceCheck = false);
 
-    bool Skill_CheckSuccess(SKILL_TYPE skill, int iDifficulty, bool fUseBellCurve = true ) const;
+    bool Skill_CheckSuccess(SKILL_TYPE skill, int iDifficulty, bool fUseBellCurve = false ) const;
 	bool Skill_Wait( SKILL_TYPE skilltry );
 	bool Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease = 0 ); // calc skill progress.
 	void Skill_Fail( bool fCancel = false );

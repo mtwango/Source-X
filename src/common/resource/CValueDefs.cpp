@@ -146,6 +146,45 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
     return iChance;
 }
 
+int CValueCurveDef::GetSpellLinear( int iSkillPercent ) const
+{
+    ADDTOCALLSTACK("CValueCurveDef::GetLinear");
+    //
+    // ARGS:
+    //  iSkillPercent = 0 - 1000 = 0 to 100.0 percent
+    //  m_Rate[3] = the 3 advance rate control numbers, 100,50,0 skill levels
+    //		Acts as line segments.
+    // RETURN:
+    //  raw chance value.
+
+    int iSegSize;
+    int iLoIdx;
+
+    int iQty = (int) m_aiValues.size();
+    switch (iQty)
+    {
+        case 0:
+            return 0;	// no values defined !
+        case 1:
+            return m_aiValues[0];
+        default:
+            iLoIdx = 0;
+            iSegSize = 1000;
+            break;
+    }
+
+    int iLoVal = m_aiValues[iLoIdx];
+    int iHiVal = m_aiValues[iLoIdx + 1];
+    int iHigh = (iHiVal - iLoVal) / 2;
+    iHigh = iHigh + g_Rand.GetVal(iHigh);
+    int iChance = iLoVal + (int)IMulDivLL( iHigh, iSkillPercent, iSegSize );
+
+    if ( iChance <= 0 )
+        return 0; // less than no chance ?
+
+    return iChance;
+}
+
 int CValueCurveDef::GetRandom( ) const
 {
     ADDTOCALLSTACK("CValueCurveDef::GetRandom");

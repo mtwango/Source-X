@@ -1920,6 +1920,10 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
             // It's an item
             if (!fPassTrough && (uiMapPointMovementFlags & CAN_I_BLOCK))
             {
+                // If we can walk, we can climb (CAN_C_FLY is used for this).
+                if (uiMapPointMovementFlags & CAN_C_WALK) {
+                    uiBlockedBy |= CAN_C_FLY;
+                }
                 // It's a blocking item. I should need special capabilities to pass through (or over) it.
                 if (!(uiBlockedBy & CAN_I_CLIMB))
                     return false;
@@ -1932,7 +1936,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
                         {
                             // Roof tiles usually don't have the impassable/block tiledata flag, but i don't want flying chars to pass over the wall (bottom tile)
                             //  and through roof (top tile) and enter a building in this way
-                            return false;
+                            //return false;
                         }
                     }
                     else if (uiMapPointMovementFlags & CAN_I_CLIMB)

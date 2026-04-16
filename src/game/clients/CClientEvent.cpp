@@ -2340,7 +2340,7 @@ bool CClient::Event_DoubleClick( CUID uid, bool fMacro, bool fTestTouch, bool fS
 	}
 
 	// Face the object
-	if ( !IsSetOF(OF_NoDClickTurn) && (pObj->GetTopLevelObj() != m_pChar) )
+	if (!IsSetOF(OF_NoDClickTurn))
 	{
 		SetTargMode();
 		m_Targ_UID = uid;

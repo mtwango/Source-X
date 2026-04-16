@@ -177,7 +177,7 @@ int CValueCurveDef::GetSpellLinear( int iSkillPercent ) const
     int iHiVal = m_aiValues[iLoIdx + 1];
     int iHigh = (iHiVal - iLoVal) / 2;
     iHigh = iHigh + g_Rand.GetVal(iHigh);
-    int iChance = iLoVal + (int)IMulDivLL( iHigh, iSkillPercent, iSegSize );
+    int iChance = iLoVal + IMulDivDown( iHigh, iSkillPercent, iSegSize );
 
     if ( iChance <= 0 )
         return 0; // less than no chance ?

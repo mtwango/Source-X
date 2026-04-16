@@ -154,8 +154,6 @@ CItemCorpse *CChar::FindMyCorpse( bool ignoreLOS, int iRadius ) const
 		CItemCorpse *pCorpse = dynamic_cast<CItemCorpse*>(pItem);
 		if ( !pCorpse || (pCorpse->m_uidLink != GetUID()) )
 			continue;
-		if ( pCorpse->m_itCorpse.m_BaseID != _iPrev_id )	// not morphed type
-			continue;
 		if ( !ignoreLOS && !CanSeeLOS(pCorpse) )
 			continue;
 		return pCorpse;

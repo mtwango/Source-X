@@ -14,7 +14,7 @@
 #define DOOR_NORTHSOUTH		0x00000008
 
 // Sight distance definitions
-#define UO_MAP_VIEW_SIGHT			14	// Max sight distance of creatures is 14.
+#define UO_MAP_VIEW_SIGHT			12	// Max sight distance of creatures is 12.
 #define UO_MAP_VIEW_SIZE_DEFAULT	18  // Visibility for normal items (on old clients it's always 18;
 										//  since 2d client 7.0.55.27 it's dynamic 18-24 based on client screen resolution;
 										//  enhanced client supports values up to 24)

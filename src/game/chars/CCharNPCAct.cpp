@@ -1131,7 +1131,7 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
     const int iRand = g_Rand.Get16ValFast(g_Cfg.m_iMapViewRadar);
     const CPointMap& ptTop(GetTopPoint());
 
-    int iRange = std::min(GetVisualRange(), int(g_Cfg.m_iMapViewRadar));
+    int iRange = UO_MAP_VIEW_SIGHT;
 	int iRangeBlur = UO_MAP_VIEW_SIGHT;
 
 	// If I can't move don't look too far.

@@ -1272,7 +1272,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 				}
 			    if ( !iStatBonusPercent )
 			        iStatBonusPercent = 10;
-			    iDmgBonus += CSRand::GetVal(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
+			    iDmgBonus += CSRand::GetValFast(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
 				break;
 			}
 
@@ -1337,7 +1337,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
     if ( fNoRandom )
         return( fGetMax ? iDmgMax : iDmgMin );
 	else
-		return( g_Rand.GetVal2(iDmgMin, iDmgMax) );
+		return( g_Rand.GetVal2Fast(iDmgMin, iDmgMax) );
 }
 
 bool CChar::Fight_IsAttackableState()

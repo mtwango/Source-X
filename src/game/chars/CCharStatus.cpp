@@ -1372,8 +1372,8 @@ bool CChar::CanTouch( const CObjBase *pObj )
 				return true;
 			if ( IsPriv(PRIV_GM) )
 				return (GetPrivLevel() > pChar->GetPrivLevel() || GetPrivLevel() == PLEVEL_Owner);
-			//The check below is needed otherwise, you cannot resurrect a player ghost by using bandages (unless you are a GM), maybe there is a better way?
-			if (pChar->IsStatFlag(STATF_DEAD) && (Skill_GetActive() == SKILL_HEALING || Skill_GetActive() == SKILL_VETERINARY))
+			// Allow healing to be used at more tiles without can_c flags on chars. Distance is limited in skill itself.
+			if (Skill_GetActive() == SKILL_HEALING || Skill_GetActive() == SKILL_VETERINARY)
 				return true;
 			if ( pChar->IsStatFlag(STATF_DEAD|STATF_STONE) || Can(CAN_C_STATUE) )
 				return false;

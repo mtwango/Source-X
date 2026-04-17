@@ -1468,6 +1468,11 @@ bool CChar::Fight_Attack( CChar *pCharTarg, bool fToldByMaster )
     {
         return true;
     }
+    // Don't fight while healing, since it will abort you skill.
+    if (skillActive == SKILL_HEALING || skillActive == SKILL_VETERINARY)
+    {
+        return true;
+    }
 
     pCharTarg->Memory_AddObjTypes(this, MEMORY_IRRITATEDBY);
     // Looking for MEMORY_AGGREIVED|MEMORY_HARMEDBY because in this case it won't be a crime, but most importantly to avoid infinite recursion

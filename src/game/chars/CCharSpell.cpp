@@ -3812,6 +3812,13 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 	if ( pSpellDef->IsSpellType(SPELLFLAG_HARM) )
 	{
+	    if ( uiResist > 0 )
+	    {
+	        SysMessageDefault( DEFMSG_RESISTMAGIC );
+	        iEffect -= iEffect * uiResist / 100;
+	        if ( iEffect < 0 )
+	            iEffect = 0;	//May not do damage, but aversion should be created from the target.
+	    }
 		if ( pCharSrc == this )
 		{
 			if (fReflecting)
@@ -3881,13 +3888,6 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 	if ( pSpellDef->IsSpellType( SPELLFLAG_DAMAGE ) )
 	{
-		if ( uiResist > 0 )
-		{
-			SysMessageDefault( DEFMSG_RESISTMAGIC );
-			iEffect -= iEffect * uiResist / 100;
-			if ( iEffect < 0 )
-				iEffect = 0;	//May not do damage, but aversion should be created from the target.
-		}
 		if ( !iDmgType )
 		{
 			switch ( spell )

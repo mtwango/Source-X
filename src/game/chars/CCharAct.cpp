@@ -5005,7 +5005,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                 if (IsStatFlag(STATF_FLY))
                     iSkillLevel /= 2;
 
-                int iDmg = OnTakeDamage(g_Cfg.GetSpellEffect(SPELL_Fire_Field, iSkillLevel), nullptr, DAMAGE_FIRE | DAMAGE_GENERAL, 0, 100, 0, 0, 0);
+                int iDmg = OnTakeDamage(1 + g_Rand.GetVal(4), nullptr, DAMAGE_FIRE | DAMAGE_GENERAL, 0, 100, 0, 0, 0);
                 if (iDmg > 0)
                 {
                     Sound(0x15f); // fire noise

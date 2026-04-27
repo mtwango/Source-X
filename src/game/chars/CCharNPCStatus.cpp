@@ -778,18 +778,12 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 		if ( Noto_IsEvil())
 		{
 			// I'm evil.
-			if ( iKarmaTarg > 0 )
-			{
-				iHostility += ( iKarmaTarg ) / 1024;
-			}
+			iHostility += ( - iKarma ) / 1024;
 		}
-		else if ( iKarma > 300 )
+		else if (iKarmaTarg < -100)
 		{
 			// I'm good and my target is evil.
-			if ( iKarmaTarg < -100 )
-			{
-				iHostility += ( -iKarmaTarg ) / 1024;
-			}
+			iHostility += ( iKarma ) / 1024;
 		}
 	}
 
@@ -828,7 +822,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 	}
 
 	// I have been attacked/angered by this creature before ?
-	CItemMemory * pMemory = Memory_FindObjTypes( pCharTarg, MEMORY_FIGHT|MEMORY_HARMEDBY|MEMORY_IRRITATEDBY|MEMORY_SAWCRIME|MEMORY_AGGREIVED );
+	CItemMemory * pMemory = Memory_FindObjTypes( pCharTarg, MEMORY_FIGHT|MEMORY_IRRITATEDBY|MEMORY_SAWCRIME|MEMORY_AGGREIVED );
 	if ( pMemory )
 	{
 		iHostility += 50;
@@ -856,14 +850,21 @@ int CChar::NPC_GetAttackContinueMotivation( CChar * pChar, int iMotivation ) con
 	if ( !pChar )
 		return 0;
 
-	if ( !pChar->Fight_IsAttackableState() )
-		return -100;
-	if ( m_pNPC->m_Brain == NPCBRAIN_GUARD )
-		return 100;
+//	if ( !pChar->Fight_IsAttackableState() )
+//		return -100;
+//	if ( m_pNPC->m_Brain == NPCBRAIN_GUARD )
+//		return 100;
 	if ( m_pNPC->m_Brain == NPCBRAIN_BERSERK )
 		return (iMotivation + 80 - GetDist( pChar ));	// less interested the further away they are
 
-	// Try to stay on one target.
+    // Undead are fearless.
+    auto *group = new CFactionDef();
+    if (group->GetGroup() == CFactionDef::Group::UNDEAD ||
+        m_pNPC->m_Brain == NPCBRAIN_GUARD ||
+        IsStatFlag(STATF_CONJURED))
+        iMotivation += 90;
+
+    // Try to stay on one target.
 	if ( Fight_IsActive() && (m_Fight_Targ_UID == pChar->GetUID()))
 		iMotivation += 8;
 
@@ -876,8 +877,12 @@ int CChar::NPC_GetAttackContinueMotivation( CChar * pChar, int iMotivation ) con
 	// I'm just plain stronger.
 	iMotivation += ( Stat_GetAdjusted(STAT_STR) - pChar->Stat_GetAdjusted(STAT_STR));
 
-	// I'm healthy.
-	iMotivation += GetStatPercent(STAT_STR) - pChar->GetStatPercent(STAT_STR);
+    // I'm healthy.
+    const int iTmp = GetStatPercent(STAT_STR) - pChar->GetStatPercent(STAT_STR);
+    if ( iTmp < -50 )
+        iMotivation -= 50;
+    else if ( iTmp > 50 )
+        iMotivation += 50;
 
 	// I'm smart and therefore more cowardly. (if injured)
 	iMotivation -= Stat_GetAdjusted(STAT_INT) / 16;

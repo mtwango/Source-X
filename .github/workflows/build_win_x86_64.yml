@@ -2,7 +2,8 @@ name: Windows x86_64
 
 on:
   push:
-#    branches:
+      branches:
+          - 'darkparadise/threat'
 #      - 'master'
 #      - 'main'
 #      - 'dev'

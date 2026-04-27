@@ -778,6 +778,8 @@ bool CChar::NPC_LookAtCharMonster( CChar * pChar )
     int iActMotivation = NPC_GetAttackMotivation(pChar);
     if (iActMotivation <= 0)
         return false;
+    if ( IsStatFlag(STATF_WAR) && m_Act_UID == pChar->GetUID())	// same targ.
+        return false;
 	if ( iActMotivation < m_pNPC->m_Act_Motivation )
 		return false;
 

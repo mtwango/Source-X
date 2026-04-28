@@ -1082,14 +1082,17 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
 		case NPCBRAIN_BERSERK:
 			// Blade Spirits or Energy Vortex.
 			// Attack everyone you see!
+	        if (iDist <= 1)
+	        {
+	            Fight_Hit(pChar);
+	        }
 			if ( Fight_IsActive()) // Is this a better target than my last ?
 			{
 				CChar * pCharTarg = m_Act_UID.CharFind();
 				if ( pCharTarg && (GetTopDist3D(pCharTarg) <= iDist) )
-						return true;
+						break;
 			}
-			if ( Fight_Attack( pChar ) )
-				return true;
+			Fight_Attack( pChar );
 			break;
 
 		case NPCBRAIN_HEALER:
@@ -1176,9 +1179,9 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
 			continue;
 
 		iDist = GetTopDist3D(pChar);
-		if ( iDist > iRangeBlur )
+		if ( iDist > iRangeBlur && pChar->IsStatFlag(STATF_FLY))
 		{
-			if (iRand % iDist )
+			if (g_Rand.GetValFast(iDist))
 				continue;	// can't see them.
 		}
 		if ( NPC_LookAtChar(pChar, iDist) )		// expensive function call

@@ -186,6 +186,7 @@ void CChar::NPC_Act_Fight()
     /* The code predates Sphere 56b and is used to find a new target. On the other hand, in combat, it is probably unnecessary anymore based on the details as follows;
     * Switching the target and movement is handled by NPC_FightFindBestTarget() in the combat routines.
     * It also break ups, some time, the NPC_ActFight trigger is all the condition were true.
+    */
     if (!IsStatFlag(STATF_PET) || (m_pNPC->m_Brain == NPCBRAIN_BERSERK))
     {
         int iObservant = (130 - Stat_GetAdjusted(STAT_INT)) / 20;
@@ -198,7 +199,7 @@ void CChar::NPC_Act_Fight()
             }
         }
     }
-    */
+
     CChar * pChar = pCombatTarget;
     if (pChar == nullptr || !pChar->IsTopLevel()) // target is not valid anymore ?
     {

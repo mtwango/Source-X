@@ -185,7 +185,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     int iChance = ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
 
     CObjBase * pSrc = this;
-    if (g_Rand.GetVal(iChance) < uiStatInt / 4)
+    if (g_Rand.GetVal(iChance) < 400)
     {
         // we failed this test, but we could be casting next time
         // back off from the target a bit

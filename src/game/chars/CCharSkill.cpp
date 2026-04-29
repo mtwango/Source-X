@@ -388,7 +388,8 @@ void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
 	{
         if (Skill_GetSum() >= Skill_GetSumMax())
         {
-			iDifficulty = 0;
+            // @todo Temp disabled, since most of the experienced players always hits this wall.
+			//iDifficulty = 0;
         }
 	}
 

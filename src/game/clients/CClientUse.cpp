@@ -1112,10 +1112,13 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 		item[3].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_HUMANS);
 		item[4].m_id = ITEMID_TRACK_WOMAN;
 		item[4].m_color = 0;
-		item[4].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_PLAYERS);
+	    item[4].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_PLAYERS);
+	    item[5].m_id = ITEMID_TRACK_WISP;
+		item[4].m_color = 0;
+	    item[5].m_sText = "Anything that moves";
 
 		m_tmMenu.m_Item[0] = 0;
-		addItemMenu(CLIMODE_MENU_SKILL_TRACK_SETUP, item, 4);
+		addItemMenu(CLIMODE_MENU_SKILL_TRACK_SETUP, item, 5);
 		return true;
 	}
 
@@ -1137,13 +1140,14 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			NPCBRAIN_ANIMAL,
 			NPCBRAIN_MONSTER,
 			NPCBRAIN_HUMAN,
-			NPCBRAIN_NONE	// players
+			NPCBRAIN_NONE,	// players
+			NPCBRAIN_QTY,	// anything.
 		};
 
 		if ( track_sel >= ARRAY_COUNT(sm_Track_Brain) )
 			track_sel = ARRAY_COUNT(sm_Track_Brain) - 1;
 
-		NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
+		//NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
         ASSERT(ARRAY_COUNT(m_tmMenu.m_Item) == MAX_MENU_ITEMS);
         CMenuItem item[MAX_MENU_ITEMS];
 		uint count = 0;
@@ -1163,7 +1167,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			int iSkillLevel = m_pChar->Skill_GetAdjusted(SKILL_TRACKING);
 			if ((g_Cfg.m_iRacialFlags & RACIALF_HUMAN_JACKOFTRADES) && m_pChar->IsHuman())
 				iSkillLevel = maximum(iSkillLevel, 200);			// humans always have a 20.0 minimum skill (racial traits)
-			m_pChar->m_atTracking.m_dwDistMax = (dword)(iSkillLevel / 10 + 10);
+			m_pChar->m_atTracking.m_dwDistMax = (dword)(iSkillLevel / 20 + 10);
 		}
 		auto AreaChars = CWorldSearchHolder::GetInstance(m_pChar->GetTopPoint(), m_pChar->m_atTracking.m_dwDistMax);
 		for (;;)
@@ -1181,7 +1185,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			NPCBRAIN_TYPE basic_type = pChar->GetNPCBrainGroup();
 			if ( basic_type == NPCBRAIN_DRAGON || basic_type == NPCBRAIN_BERSERK )
 				basic_type = NPCBRAIN_MONSTER;
-
+/*
 			if ( track_type != basic_type && track_type != NPCBRAIN_QTY )
 			{
 				if ( track_type != NPCBRAIN_NONE )		// no match.
@@ -1210,6 +1214,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 				if ( g_Rand.GetVal(100) > chance )
 					continue;
 			}
+		    */
 
 			++count;
 			item[count].m_id = (word)(pCharDef->m_trackID);

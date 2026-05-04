@@ -3334,7 +3334,7 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 		effect = EFFECT_BOLT;
 
 	if (!iDmgType)
-		iDmgType = DAMAGE_FIRE;
+		iDmgType = DAMAGE_FIRE | DAMAGE_GENERAL | DAMAGE_HIT_BLUNT;
 
 	if (iDmgType & DAMAGE_FIRE)
 		iDmgFire = 100;

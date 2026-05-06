@@ -1191,6 +1191,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 				if ( !pChar->m_pPlayer )
 					continue;
 
+			    /*
 				// Check action difficulty when trying to track players
 				int tracking = m_pChar->Skill_GetBase(SKILL_TRACKING);
 				int detectHidden = m_pChar->Skill_GetBase(SKILL_DETECTINGHIDDEN);
@@ -1204,7 +1205,6 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 				int chance;
 				if ( g_Cfg.m_iFeatureSE & FEATURE_SE_UPDATE )
 					chance = 50 * (tracking * 2 + detectHidden) / divisor;
-			    /*
 				else
 					chance = 50 * (tracking + detectHidden + 10 * g_Rand.GetVal(20)) / divisor;
 

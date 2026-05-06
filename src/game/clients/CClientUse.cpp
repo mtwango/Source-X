@@ -1113,12 +1113,9 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 		item[4].m_id = ITEMID_TRACK_WOMAN;
 		item[4].m_color = 0;
 	    item[4].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_PLAYERS);
-	    item[5].m_id = ITEMID_TRACK_WISP;
-		item[4].m_color = 0;
-	    item[5].m_sText = "Anything that moves";
 
 		m_tmMenu.m_Item[0] = 0;
-		addItemMenu(CLIMODE_MENU_SKILL_TRACK_SETUP, item, 5);
+		addItemMenu(CLIMODE_MENU_SKILL_TRACK_SETUP, item, 4);
 		return true;
 	}
 
@@ -1140,14 +1137,13 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			NPCBRAIN_ANIMAL,
 			NPCBRAIN_MONSTER,
 			NPCBRAIN_HUMAN,
-			NPCBRAIN_NONE,	// players
-			NPCBRAIN_QTY,	// anything.
+			NPCBRAIN_NONE	// players
 		};
 
 		if ( track_sel >= ARRAY_COUNT(sm_Track_Brain) )
 			track_sel = ARRAY_COUNT(sm_Track_Brain) - 1;
 
-		//NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
+		NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
         ASSERT(ARRAY_COUNT(m_tmMenu.m_Item) == MAX_MENU_ITEMS);
         CMenuItem item[MAX_MENU_ITEMS];
 		uint count = 0;
@@ -1185,7 +1181,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			NPCBRAIN_TYPE basic_type = pChar->GetNPCBrainGroup();
 			if ( basic_type == NPCBRAIN_DRAGON || basic_type == NPCBRAIN_BERSERK )
 				basic_type = NPCBRAIN_MONSTER;
-/*
+
 			if ( track_type != basic_type && track_type != NPCBRAIN_QTY )
 			{
 				if ( track_type != NPCBRAIN_NONE )		// no match.
@@ -1208,13 +1204,14 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 				int chance;
 				if ( g_Cfg.m_iFeatureSE & FEATURE_SE_UPDATE )
 					chance = 50 * (tracking * 2 + detectHidden) / divisor;
+			    /*
 				else
 					chance = 50 * (tracking + detectHidden + 10 * g_Rand.GetVal(20)) / divisor;
 
 				if ( g_Rand.GetVal(100) > chance )
 					continue;
+			    */
 			}
-		    */
 
 			++count;
 			item[count].m_id = (word)(pCharDef->m_trackID);

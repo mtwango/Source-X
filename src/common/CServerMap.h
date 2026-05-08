@@ -91,6 +91,7 @@ struct CServerMapBlockingState
     const height_t m_zHeight;   // our height
 	height_t m_zClimbHeight;	// return item climb height here
 
+    CServerMapBlocker m_Surface; // topmost item actually present, regardless of flags — for BOTTOMITEMID
 	CServerMapBlocker m_Top;
 	CServerMapBlocker m_Bottom;	// What i would be standing on.
 	CServerMapBlocker m_Lowest;	// the lowest item we have found.

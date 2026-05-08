@@ -1132,6 +1132,10 @@ void CClient::Event_Attack( CUID uid )
     if (!fFail)
         fFail = !m_pChar->Fight_Attack(pChar);
 
+    // Rotate player.
+    if (!fFail && m_pChar->CanSeeLOS(pChar))
+		m_pChar->UpdateDir(pChar);
+
 	new PacketAttack(this, (fFail ? CUID() : pChar->GetUID()));
 }
 

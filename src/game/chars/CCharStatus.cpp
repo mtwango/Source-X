@@ -1814,6 +1814,9 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
     // Pass along my results, blockingState got modified.
     uiMapPointMovementFlags = blockingState->m_Bottom.m_uiBlockFlags;
 
+    if (blockingState->m_Surface.m_dwTile != blockingState->m_Bottom.m_dwTile)
+        uiMapPointMovementFlags |= blockingState->m_Surface.m_uiBlockFlags;
+
     uint uiBlockedBy = 0;
     // need to check also for UFLAG1_FLOOR?
     if (blockingState->m_Top.m_uiBlockFlags)
@@ -1847,13 +1850,13 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
         }
     }
 
-    const bool fLandTile = (blockingState->m_Bottom.m_dwTile <= TERRAIN_QTY);
+    const bool fLandTile = (blockingState->m_Surface.m_dwTile <= TERRAIN_QTY);
     bool fPassTrough = false;
     if ((uiMyMovementFlags != UINT64_MAX) && (uiMapPointMovementFlags != 0x0))
     {
         // It IS in my way and HAS a flag set, check further
         if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
-            g_Log.EventWarn("BOTTOMitemID (0%" PRIx32 ") TOPitemID (0%" PRIx32 ").\n", (blockingState->m_Bottom.m_dwTile - TERRAIN_QTY), (blockingState->m_Top.m_dwTile - TERRAIN_QTY));
+            g_Log.EventWarn("BOTTOMitemID (0%" PRIx32 ") TOPitemID (0%" PRIx32 ").\n", (blockingState->m_Surface.m_dwTile - TERRAIN_QTY), (blockingState->m_Top.m_dwTile - TERRAIN_QTY));
 
         if (uiMapPointMovementFlags & CAN_I_WATER)
         {

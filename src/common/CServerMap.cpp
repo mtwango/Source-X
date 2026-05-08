@@ -48,11 +48,6 @@ int64 CCachedMulItem::GetCacheAge() const
 CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, int iHeight, height_t zHeight ) noexcept :
 	m_uiBlockFlags(uiBlockFlags), m_z(z), m_iHeight(iHeight), m_zClimb(0), m_zHeight(zHeight)
 {
-    m_Surface.m_uiBlockFlags = 0;
-    m_Surface.m_dwTile = 0;
-    m_Surface.m_z = UO_SIZE_MIN_Z;
-    m_Surface.m_height = 0;
-
 	// m_z = PLAYER_HEIGHT
 	m_Top.m_uiBlockFlags = 0;
 	m_Top.m_dwTile = 0;
@@ -75,11 +70,6 @@ CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, i
 CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, int iHeight, int8 zClimb, height_t zHeight ) noexcept :
 	m_uiBlockFlags(uiBlockFlags), m_z(z), m_iHeight(iHeight), m_zClimb(zClimb), m_zHeight(zHeight)
 {
-    m_Surface.m_uiBlockFlags = 0;
-    m_Surface.m_dwTile = 0;
-    m_Surface.m_z = UO_SIZE_MIN_Z;
-    m_Surface.m_height = 0;
-
 	m_Top.m_uiBlockFlags = 0;
 	m_Top.m_dwTile = 0;
 	m_Top.m_z = UO_SIZE_Z;	// the z of the item that would be over our head.
@@ -132,10 +122,6 @@ bool CServerMapBlockingState::CheckTile( uint64 uiItemBlockFlags, int8 zBottom, 
 
 	if ( zTop < m_Bottom.m_z )	// below something i can already step on.
 		return true;
-
-    // Track topmost item unconditionally, before any flag filtering
-    if ( zTop >= m_Surface.m_z )
-        m_Surface = {uiItemBlockFlags, dwID, zTop, zHeight};
 
 	// hover flag has no effect for non-hovering entities
 	if ( (uiItemBlockFlags & CAN_I_HOVER) && !(m_uiBlockFlags & CAN_C_HOVER) )
@@ -199,6 +185,9 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBot
 	if ((uiItemBlockFlags & CAN_I_HOVER) && !(m_uiBlockFlags & CAN_C_HOVER))
 		uiItemBlockFlags &= ~CAN_I_HOVER;
 
+	if (!uiItemBlockFlags)	// no effect.
+		return true;
+
 	short zTop = zBottom;
 
 	if ((uiItemBlockFlags & CAN_I_CLIMB) && (uiItemBlockFlags & CAN_I_PLATFORM))
@@ -211,13 +200,6 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBot
 
 	if ( zBottom > m_Top.m_z )	// above my head.
 		return true;
-
-    // Track topmost item unconditionally, before any flag filtering
-    if ( zTop >= m_Surface.m_z )
-        m_Surface = {uiItemBlockFlags, dwID, (int8)zTop, zHeight};
-
-    if (!uiItemBlockFlags)	// no effect.
-        return true;
 
 	if ( zTop < m_Lowest.m_z )
 	{

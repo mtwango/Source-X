@@ -133,10 +133,6 @@ bool CServerMapBlockingState::CheckTile( uint64 uiItemBlockFlags, int8 zBottom, 
 	if ( zTop < m_Bottom.m_z )	// below something i can already step on.
 		return true;
 
-    // Track topmost item unconditionally, before any flag filtering
-    if ( zTop >= m_Surface.m_z )
-        m_Surface = {uiItemBlockFlags, dwID, zTop, zHeight};
-
 	// hover flag has no effect for non-hovering entities
 	if ( (uiItemBlockFlags & CAN_I_HOVER) && !(m_uiBlockFlags & CAN_C_HOVER) )
 		uiItemBlockFlags &= ~CAN_I_HOVER;
@@ -167,6 +163,10 @@ bool CServerMapBlockingState::CheckTile( uint64 uiItemBlockFlags, int8 zBottom, 
 		//       (Water acts as a platform for ships, so this also takes precedence)
 		if ( zTop >= m_Bottom.m_z )
 		{
+		    // Track topmost item unconditionally, before any flag filtering
+		    if ( zTop >= m_Surface.m_z )
+		        m_Surface = {uiItemBlockFlags, dwID, zTop, zHeight};
+
 			if ( zTop == m_Bottom.m_z )
 			{
 				if ( m_Bottom.m_uiBlockFlags & CAN_I_PLATFORM )
@@ -212,10 +212,6 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBot
 	if ( zBottom > m_Top.m_z )	// above my head.
 		return true;
 
-    // Track topmost item unconditionally, before any flag filtering
-    if ( zTop >= m_Surface.m_z )
-        m_Surface = {uiItemBlockFlags, dwID, (int8)zTop, zHeight};
-
     if (!uiItemBlockFlags)	// no effect.
         return true;
 
@@ -240,6 +236,10 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBot
 	{
 		if ( zTop >= m_Bottom.m_z )
 		{
+		    // Track topmost item unconditionally, before any flag filtering
+		    if ( zTop >= m_Surface.m_z )
+		        m_Surface = {uiItemBlockFlags, dwID, (int8)zTop, zHeight};
+
 			if ( zTop == m_Bottom.m_z )
 			{
                 if ((uiItemBlockFlags & CAN_I_PLATFORM) && (m_Bottom.m_height != 0))

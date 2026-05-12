@@ -1163,7 +1163,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			int iSkillLevel = m_pChar->Skill_GetAdjusted(SKILL_TRACKING);
 			if ((g_Cfg.m_iRacialFlags & RACIALF_HUMAN_JACKOFTRADES) && m_pChar->IsHuman())
 				iSkillLevel = maximum(iSkillLevel, 200);			// humans always have a 20.0 minimum skill (racial traits)
-			m_pChar->m_atTracking.m_dwDistMax = (dword)(iSkillLevel / 20 + 10);
+			m_pChar->m_atTracking.m_dwDistMax = (dword)(iSkillLevel / 10 + 10);
 		}
 		auto AreaChars = CWorldSearchHolder::GetInstance(m_pChar->GetTopPoint(), m_pChar->m_atTracking.m_dwDistMax);
 		for (;;)
@@ -1191,7 +1191,6 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 				if ( !pChar->m_pPlayer )
 					continue;
 
-			    /*
 				// Check action difficulty when trying to track players
 				int tracking = m_pChar->Skill_GetBase(SKILL_TRACKING);
 				int detectHidden = m_pChar->Skill_GetBase(SKILL_DETECTINGHIDDEN);
@@ -1210,7 +1209,6 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 
 				if ( g_Rand.GetVal(100) > chance )
 					continue;
-			    */
 			}
 
 			++count;

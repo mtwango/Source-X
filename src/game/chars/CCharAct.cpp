@@ -4815,8 +4815,9 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
         const int iWeight = GetTotalWeight() / WEIGHT_UNITS;
         const int iMaxWeight = g_Cfg.Calc_MaxCarryWeight(this) / WEIGHT_UNITS;
 		EXC_SET_BLOCK("Stamina penalty");
-        if (iWeight < iMaxWeight)
+        /*if (iWeight < iMaxWeight)
 		{
+	    */
             //Normal situation
 
             int iWeightLoadPercent = (iWeight * 100) / iMaxWeight;
@@ -4838,6 +4839,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 
 			}
 			uiStamReq += uiStamPenalty;
+        /*
 		}
 		else
         {
@@ -4851,6 +4853,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 
             uiStamReq += uiWeightPenalty;
         }
+	    */
 
 		if ( uiStamReq > 0 )
 			UpdateStatVal(STAT_DEX, -uiStamReq);

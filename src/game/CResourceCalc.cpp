@@ -21,7 +21,7 @@ int CServerConfig::Calc_MaxCarryWeight( const CChar * pChar ) const
 	//  Weight in tenths of stones i should be able to carry.
 
 	ASSERT(pChar);
-	int iQty = 40 + ( pChar->Stat_GetAdjusted(STAT_STR) * 35 / 10 ) + pChar->m_ModMaxWeight;
+	int iQty = 30 + ( pChar->Stat_GetAdjusted(STAT_STR) * 40 / 10 ) + pChar->m_ModMaxWeight;
 	if ( iQty < 0 )
 		iQty = 0;
 	if ( (m_iRacialFlags & RACIALF_HUMAN_STRONGBACK) && pChar->IsHuman())

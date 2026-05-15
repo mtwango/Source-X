@@ -182,10 +182,11 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     int skill = (int)SKILL_NONE;
     ushort uiStatInt = Stat_GetBase(STAT_INT);
     ushort uiMana = Stat_GetVal(STAT_INT);
-    int iChance = ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
+    int iSkillVal = Skill_GetBase(SKILL_MAGERY);
+    int iChance = iSkillVal + ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
 
     CObjBase * pSrc = this;
-    if (g_Rand.GetVal(iChance) < uiStatInt / 4)
+    if (g_Rand.GetVal(iChance) < 400)
     {
         // we failed this test, but we could be casting next time
         // back off from the target a bit
@@ -200,7 +201,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     }
 
     // We have the total count of spells inside iSpellCount, so we use 'iRandSpell' to store a rand representing the spell that will be cast.
-    uchar iRandSpell = (uchar)(g_Rand.GetVal2Fast(0, iSpellCount - 1)); //Spells are being stored using a vector, so it's assumed to be zero-based.
+    uchar iRandSpell = (uchar)(g_Rand.GetVal2Fast(0, iSpellCount)); //Spells are being stored using a vector, so it's assumed to be zero-based.
     bool bSpellSuccess = false, bWandUse = false, bIgnoreAITargetChoice = false;
     int iHealThreshold = g_Cfg.m_iNPCHealthreshold;
 

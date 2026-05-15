@@ -173,7 +173,7 @@ void CChar::NPC_Act_Fight()
     // Keep combat state during spellcasting, otherwise NPCs clear fight data right after starting a spell.
     const SKILL_TYPE iActiveSkill = Skill_GetActive();
     CChar* pCombatTarget = m_Fight_Targ_UID.CharFind();
-    const bool fHasCombatTarget = (pCombatTarget != nullptr);
+    const bool fHasCombatTarget = (pCombatTarget != nullptr) && pCombatTarget->Fight_IsAttackableState();
     const bool fCastingInCombat = g_Cfg.IsSkillFlag(iActiveSkill, SKF_MAGIC) && IsStatFlag(STATF_WAR) && fHasCombatTarget;
     const bool fPendingCombat = IsStatFlag(STATF_WAR) && fHasCombatTarget;
     if (!Fight_IsActive() && !fCastingInCombat && !fPendingCombat)

@@ -689,7 +689,7 @@ bool CChar::Skill_MakeItem_Success()
 	if ( m_atCreate.m_dwAmount != 1 )
 	{
 		if ( pItem->IsType(IT_SCROLL) )
-			pItem->m_itSpell.m_spelllevel = iSkillLevel;
+			pItem->m_itSpell.m_spelllevel = 1000;
 
 		const CItemBase *ptItemDef = CItemBase::FindItemBase(m_atCreate.m_iItemID);
 		ASSERT(ptItemDef);
@@ -709,7 +709,7 @@ bool CChar::Skill_MakeItem_Success()
 	else if ( pItem->IsType(IT_SCROLL) )
 	{
 		// scrolls have the skill level of the inscriber ?
-		pItem->m_itSpell.m_spelllevel = iSkillLevel;
+		pItem->m_itSpell.m_spelllevel = 1000;
 	}
 	else if ( pItem->IsType(IT_POTION) )
 	{

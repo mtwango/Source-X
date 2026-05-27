@@ -544,22 +544,22 @@ bool CCharBase::IsHumanID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
 {
     if ( bCheckGhost == true)
         return( id == CREID_MAN || id == CREID_WOMAN || id == CREID_EQUIP_GM_ROBE  || id == CREID_GHOSTMAN || id == CREID_GHOSTWOMAN);
-    else
-        return( id == CREID_MAN || id == CREID_WOMAN || id == CREID_EQUIP_GM_ROBE);
+
+    return (id == CREID_MAN || id == CREID_WOMAN || id == CREID_EQUIP_GM_ROBE);
 }
 
 bool CCharBase::IsElfID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
 {
     if ( bCheckGhost == true)
         return( id == CREID_ELFMAN || id == CREID_ELFWOMAN || id == CREID_ELFGHOSTMAN || id == CREID_ELFGHOSTWOMAN);
-    else
-        return( id == CREID_ELFMAN || id == CREID_ELFWOMAN );
+
+    return (id == CREID_ELFMAN || id == CREID_ELFWOMAN);
 }
 
 bool CCharBase::IsGargoyleID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
 {
     if ( bCheckGhost == true)
         return( id == CREID_GARGMAN || id == CREID_GARGWOMAN || id == CREID_GARGGHOSTMAN || id == CREID_GARGGHOSTWOMAN );
-    else
-        return( id == CREID_GARGMAN || id == CREID_GARGWOMAN );
+
+    return (id == CREID_GARGMAN || id == CREID_GARGWOMAN);
 }

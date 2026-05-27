@@ -1075,114 +1075,113 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			m_iRegenRate[index] = (s.GetArgLLVal() * MSECS_PER_SEC);
 			return true;
 		}
-		else if ( s.IsKeyHead("MAP", 3) )		//	MAPx=settings
-		{
-			bool ok = true;
-			TemporaryString ts(s.GetKey() + 3);
-			lptstr ptcStr = ts.buffer();
+        if (s.IsKeyHead("MAP", 3)) //	MAPx=settings
+        {
+            bool ok = true;
+            TemporaryString ts(s.GetKey() + 3);
+            lptstr ptcStr = ts.buffer();
 
-			for ( size_t j = 0; j < ts.size(); ++j )
-			{
-				if ( IsDigit(ptcStr[j]) )
-					continue;
+            for (size_t j = 0; j < ts.size(); ++j)
+            {
+                if (IsDigit(ptcStr[j]))
+                    continue;
 
-				ok = false;
-				break;
-			}
-			if ( ok && ts.size() > 0 )
-				return g_MapList.Load(atoi(ptcStr), s.GetArgRaw());
+                ok = false;
+                break;
+            }
+            if (ok && ts.size() > 0)
+                return g_MapList.Load(atoi(ptcStr), s.GetArgRaw());
 
-			size_t length = ts.size();
+            size_t length = ts.size();
 
-			if ( length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]) )
-			{
-				lpctstr pszStr = &(ptcStr[1]);
-				int nMapNumber = Exp_GetVal(pszStr);
+            if (length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]))
+            {
+                lpctstr pszStr = &(ptcStr[1]);
+                int nMapNumber = Exp_GetVal(pszStr);
 
-				if ( g_MapList.IsMapSupported(nMapNumber) )
-				{
-					if ( !strnicmp(pszStr, "ALLSECTORS", 10) )
-					{
+                if (g_MapList.IsMapSupported(nMapNumber))
+                {
+                    if (!strnicmp(pszStr, "ALLSECTORS", 10))
+                    {
                         const int nSectors = CSectorList::Get().GetMapSectorDataUnchecked(nMapNumber).iSectorQty;
-						pszStr = s.GetArgRaw();
+                        pszStr             = s.GetArgRaw();
 
-						if ( pszStr && *pszStr )
-						{
-							CScript script(pszStr);
-							script.CopyParseState(s);
-							for (int nIndex = 0; nIndex < nSectors; ++nIndex)
-							{
-                                CSector* pSector = CWorldMap::GetSectorByIndex(nMapNumber, nIndex);
-								ASSERT(pSector);
-								pSector->r_Verb(script, &g_Serv);
-							}
+                        if (pszStr && *pszStr)
+                        {
+                            CScript script(pszStr);
+                            script.CopyParseState(s);
+                            for (int nIndex = 0; nIndex < nSectors; ++nIndex)
+                            {
+                                CSector *pSector = CWorldMap::GetSectorByIndex(nMapNumber, nIndex);
+                                ASSERT(pSector);
+                                pSector->r_Verb(script, &g_Serv);
+                            }
 
-							return true;
-						}
+                            return true;
+                        }
 
-						return false;
-					}
-					else if ( !strnicmp( pszStr, "SECTOR.",7 ) )
-					{
+                        return false;
+                    }
+                    if (!strnicmp(pszStr, "SECTOR.", 7))
+                    {
                         pszStr = pszStr + 7;
                         const int iSecNumber = Exp_GetVal(pszStr);
                         pszStr = s.GetArgRaw();
                         if (pszStr && *pszStr)
                         {
-                            CSector* pSector = CWorldMap::GetSectorByIndex(nMapNumber, iSecNumber);
+                            CSector *pSector = CWorldMap::GetSectorByIndex(nMapNumber, iSecNumber);
                             if (pSector)
                             {
                                 CScript script(pszStr);
-								script.CopyParseState(s);
+                                script.CopyParseState(s);
                                 return pSector->r_Verb(script, &g_Serv);
                             }
-
                         }
                         return false;
-					}
-				}
-			}
-			LOG_ERR_NOINIT(("Bad usage of MAPx. Check your sphere.ini or scripts (SERV.MAP is a read only property)\n"));
-			return false;
-		}
-		else if ( s.IsKeyHead("PACKET", 6) )	//	PACKETx=<function name to execute upon packet>
-		{
-			int index = atoi(s.GetKey() + 6);
-			if (( index >= 0 ) && ( index < 255 )) // why XCMD_QTY? let them hook every possible custom packet
-			{
-				char *args = s.GetArgRaw();
-				if ( !args || ( strlen(args) >= 31 ))
-					g_Log.EventError("Invalid function name for packet filtering (limit is 30 chars).\n");
-				else
-				{
-					Str_CopyLimitNull(g_Serv.m_PacketFilter[index], args, sizeof(g_Serv.m_PacketFilter[0]));
-					DEBUG_MSG_NOINIT(("PACKET FILTER: Hooked packet 0x%x with function %s.\n", index, args));
-					return true;
-				}
-			}
-			else
-				g_Log.EventError("Packet filtering index %d out of range [0..254]\n", index);
-		}
-		else if ( s.IsKeyHead("OUTPACKET", 9) )	//	OUTPACKETx=<function name to execute upon packet>
-		{
-			int index = atoi(s.GetKey() + 9);
-			if (( index >= 0 ) && ( index < 255 ))
-			{
-				char *args = s.GetArgRaw();
-				if ( !args || ( strlen(args) >= 31 ))
-					g_Log.EventError("Invalid function name for outgoing packet filtering (limit is 30 chars).\n");
-				else
-				{
-					Str_CopyLimitNull(g_Serv.m_OutPacketFilter[index], args, sizeof(g_Serv.m_OutPacketFilter[0]));
-					DEBUG_MSG_NOINIT(("OUTGOING PACKET FILTER: Hooked packet 0x%x with function %s.\n", index, args));
-					return true;
-				}
-			}
-			else
-				g_Log.EventError("Outgoing packet filtering index %d out of range [0..254]\n", index);
-		}
+                    }
+                }
+            }
+            LOG_ERR_NOINIT(("Bad usage of MAPx. Check your sphere.ini or scripts (SERV.MAP is a read only property)\n"));
+            return false;
+        }
+        else if (s.IsKeyHead("PACKET", 6)) //	PACKETx=<function name to execute upon packet>
+        {
+            int index = atoi(s.GetKey() + 6);
+            if ((index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
+            {
+                char *args = s.GetArgRaw();
+                if (!args || (strlen(args) >= 31))
+                    g_Log.EventError("Invalid function name for packet filtering (limit is 30 chars).\n");
+                else
+                {
+                    Str_CopyLimitNull(g_Serv.m_PacketFilter[index], args, sizeof(g_Serv.m_PacketFilter[0]));
+                    DEBUG_MSG_NOINIT(("PACKET FILTER: Hooked packet 0x%x with function %s.\n", index, args));
+                    return true;
+                }
+            }
+            else
+                g_Log.EventError("Packet filtering index %d out of range [0..254]\n", index);
+        }
+        else if (s.IsKeyHead("OUTPACKET", 9)) //	OUTPACKETx=<function name to execute upon packet>
+        {
+            int index = atoi(s.GetKey() + 9);
+            if ((index >= 0) && (index < 255))
+            {
+                char *args = s.GetArgRaw();
+                if (!args || (strlen(args) >= 31))
+                    g_Log.EventError("Invalid function name for outgoing packet filtering (limit is 30 chars).\n");
+                else
+                {
+                    Str_CopyLimitNull(g_Serv.m_OutPacketFilter[index], args, sizeof(g_Serv.m_OutPacketFilter[0]));
+                    DEBUG_MSG_NOINIT(("OUTGOING PACKET FILTER: Hooked packet 0x%x with function %s.\n", index, args));
+                    return true;
+                }
+            }
+            else
+                g_Log.EventError("Outgoing packet filtering index %d out of range [0..254]\n", index);
+        }
 
-		return false;
+        return false;
 	}
 
 	switch (i)
@@ -1850,13 +1849,13 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				sVal.FormatSTVal(m_Functions.size());
 				return true;
 			}
-			else if ( m_Functions.ContainsKey(pszCmd) )
-			{
-				sVal.FormatVal((int)GetPrivCommandLevel(pszCmd));
-				return true;
-			}
+            if (m_Functions.ContainsKey(pszCmd))
+            {
+                sVal.FormatVal((int)GetPrivCommandLevel(pszCmd));
+                return true;
+            }
 
-			int iNumber = Exp_GetVal(pszCmd);
+            int iNumber = Exp_GetVal(pszCmd);
 			SKIP_SEPARATORS(pszCmd);
 			sVal.SetValFalse();
 
@@ -1871,12 +1870,12 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				sVal = m_Functions[iNumber]->GetName();
 				return true;
 			}
-			else if ( !strnicmp( pszCmd, "PLEVEL", 5 ))
-			{
-				sVal.FormatVal((int)(GetPrivCommandLevel(m_Functions[iNumber]->GetName())));
-				return true;
-			}
-		}
+            if (!strnicmp(pszCmd, "PLEVEL", 5))
+            {
+                sVal.FormatVal((int)(GetPrivCommandLevel(m_Functions[iNumber]->GetName())));
+                return true;
+            }
+        }
 
 		if ( ( !strnicmp( ptcKey, "GUILDSTONES.", 12) ) || ( !strnicmp( ptcKey, "TOWNSTONES.", 11) ) )
 		{
@@ -2421,22 +2420,20 @@ lpctstr CServerConfig::GetNotoTitle( int iLevel, bool bFemale ) const
 	{
 		return "";
 	}
-	else
-	{
-		// check if a female title is present
-		lpctstr pFemaleTitle = strchr(m_NotoTitles[iLevel]->GetBuffer(), ',');
-		if (pFemaleTitle == nullptr)
-			return m_NotoTitles[iLevel]->GetBuffer();
 
-		++pFemaleTitle;
-		if (bFemale)
-			return pFemaleTitle;
+    // Check if a female title is present.
+    lpctstr pFemaleTitle = strchr(m_NotoTitles[iLevel]->GetBuffer(), ',');
+    if (pFemaleTitle == nullptr)
+        return m_NotoTitles[iLevel]->GetBuffer();
 
-		// copy string so that it can be null-terminated without modifying m_NotoTitles
-		tchar* pTitle = Str_GetTemp();
-        Str_CopyLimitNull(pTitle, m_NotoTitles[iLevel]->GetBuffer(), (int)(m_NotoTitles[iLevel]->GetLength() - strlen(pFemaleTitle)));
-		return pTitle;
-	}
+    ++pFemaleTitle;
+    if (bFemale)
+        return pFemaleTitle;
+
+    // copy string so that it can be null-terminated without modifying m_NotoTitles
+    tchar *pTitle = Str_GetTemp();
+    Str_CopyLimitNull(pTitle, m_NotoTitles[iLevel]->GetBuffer(), (int)(m_NotoTitles[iLevel]->GetLength() - strlen(pFemaleTitle)));
+    return pTitle;
 }
 
 bool CServerConfig::IsValidEmailAddressFormat( lpctstr pszEmail ) // static
@@ -2804,32 +2801,30 @@ CRegion * CServerConfig::GetRegion( lpctstr pKey ) const
         }
         return pRet;
     }
-    else
-    {
-        CSString sName(pKey);
-        sName[int(ptcColonPos - pKey)] = '\0';
-        std::vector<CRegion*> regions;
-        for (CRegion* pRegion : m_RegionDefs)
-        {
-            if ( ! sName.CompareNoCase(pRegion->GetNameStr()) || ! sName.CompareNoCase(pRegion->GetResourceName()) )
-            {
-                regions.emplace_back(pRegion);
-            }
-        }
 
-        ptcColonPos += 1; // skip the , (which now is \0)
-		const uchar uiMapIdx = Exp_GetUCVal(ptcColonPos);
-        for (CRegion* pRegion : regions)
+    CSString sName(pKey);
+    sName[int(ptcColonPos - pKey)] = '\0';
+    std::vector<CRegion *> regions;
+    for (CRegion *pRegion : m_RegionDefs)
+    {
+        if (!sName.CompareNoCase(pRegion->GetNameStr()) || !sName.CompareNoCase(pRegion->GetResourceName()))
         {
-			const uchar m = pRegion->GetRegionCorner(DIR_N).m_map;
-            if (uiMapIdx == m)
-            {
-                return pRegion;
-            }
+            regions.emplace_back(pRegion);
         }
     }
 
-	// no match.
+    ptcColonPos += 1; // skip the , (which now is \0)
+    const uchar uiMapIdx = Exp_GetUCVal(ptcColonPos);
+    for (CRegion *pRegion : regions)
+    {
+        const uchar m = pRegion->GetRegionCorner(DIR_N).m_map;
+        if (uiMapIdx == m)
+        {
+            return pRegion;
+        }
+    }
+
+    // no match.
 	return nullptr;
 }
 
@@ -3326,16 +3321,14 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		g_Log.Event( LOGL_WARN|LOGM_INIT, "Unknown section '%s' in '%s'\n", pScript->GetKey(), pScript->GetFileTitle());
 		return false;
 	}
-	else
-	{
-		// Create a new index for the block.
-		// NOTE: rid is not created for all types.
-		// NOTE: GetArgStr() is not always the DEFNAME
-        lpctstr ptcScriptArg = pScript->GetArgStr();
-        rid = ResourceGetNewID( restype, ptcScriptArg, &pVarNum, fNewStyleDef );
-	}
 
-	if ( !rid.IsValidUID() )
+    // Create a new index for the block.
+    // NOTE: rid is not created for all types.
+    // NOTE: GetArgStr() is not always the DEFNAME
+    lpctstr ptcScriptArg = pScript->GetArgStr();
+    rid = ResourceGetNewID(restype, ptcScriptArg, &pVarNum, fNewStyleDef);
+
+    if ( !rid.IsValidUID() )
 	{
 		DEBUG_ERR(( "Invalid %s section, index '%s'\n", pszSection, pScript->GetArgStr()));
 		return false;
@@ -3432,11 +3425,8 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 					g_Log.Event(LOGM_INIT|LOGL_ERROR, "Setting not used message override named '%s'\n", ptcKey);
 				continue;
 			}
-			else
-			{
-                g_ExprGlobals.mtEngineLockedWriter()->m_VarDefs.SetStr(ptcKey, false, pScript->GetArgStr(), false, true);
-			}
-		}
+            g_ExprGlobals.mtEngineLockedWriter()->m_VarDefs.SetStr(ptcKey, false, pScript->GetArgStr(), false, true);
+        }
 
 		return true;
 
@@ -4324,26 +4314,26 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 
 			if ( ! strcmpi( pszName, "MALE_DEFAULT" ))
 				return CResourceID( RES_NEWBIE, RES_NEWBIE_MALE_DEFAULT, wPage );
-			else if ( ! strcmpi( pszName, "FEMALE_DEFAULT" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_FEMALE_DEFAULT, wPage );
+            if (!strcmpi(pszName, "FEMALE_DEFAULT"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_FEMALE_DEFAULT, wPage);
 
-			if ( ! strcmpi( pszName, "PROFESSION_ADVANCED" ))
+            if ( ! strcmpi( pszName, "PROFESSION_ADVANCED" ))
 				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_ADVANCED, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_WARRIOR" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_WARRIOR, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_MAGE" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_MAGE, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_BLACKSMITH" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_BLACKSMITH, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_NECROMANCER" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_NECROMANCER, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_PALADIN" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_PALADIN, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_SAMURAI" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_SAMURAI, wPage );
-			else if ( ! strcmpi( pszName, "PROFESSION_NINJA" ))
-				return CResourceID( RES_NEWBIE, RES_NEWBIE_PROF_NINJA, wPage );
-		}
+            if (!strcmpi(pszName, "PROFESSION_WARRIOR"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_WARRIOR, wPage);
+            if (!strcmpi(pszName, "PROFESSION_MAGE"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_MAGE, wPage);
+            if (!strcmpi(pszName, "PROFESSION_BLACKSMITH"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_BLACKSMITH, wPage);
+            if (!strcmpi(pszName, "PROFESSION_NECROMANCER"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_NECROMANCER, wPage);
+            if (!strcmpi(pszName, "PROFESSION_PALADIN"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_PALADIN, wPage);
+            if (!strcmpi(pszName, "PROFESSION_SAMURAI"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_SAMURAI, wPage);
+            if (!strcmpi(pszName, "PROFESSION_NINJA"))
+                return CResourceID(RES_NEWBIE, RES_NEWBIE_PROF_NINJA, wPage);
+        }
 		break;
 	case RES_AREA:
 	case RES_ROOM:

@@ -147,10 +147,8 @@ bool CSFileObj::r_LoadVal( CScript & s )
 
             return true;
         }
-        else
-        {
-            g_Log.Event(LOGL_ERROR, "FILE (%s): Cannot set mode after file opening\n", _pFile->GetFilePath());
-        }
+
+        g_Log.Event(LOGL_ERROR, "FILE (%s): Cannot set mode after file opening\n", _pFile->GetFilePath());
         return false;
     }
 

@@ -37,11 +37,8 @@ bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
     {
         return _IsFileOpen();
     }
-    else
-    {
-        _Close();	// make sure it's closed first
-    }
 
+    _Close(); // make sure it's closed first
     _strFileName = ptcFilename;
     lpctstr ptcModeStr = _GetModeStr();
     _pStream = fopen(ptcFilename, ptcModeStr);

@@ -418,7 +418,7 @@ bool CClient::CanSee( const CObjBaseTemplate * pObj ) const
             if( !IsPriv(PRIV_ALLSHOW) )
                 return false;
             //dont show pet when is ridden (cause double). Exception in debug mode you see it
-            else if ( pChar->IsStatFlag(STATF_PET) && pChar->IsStatFlag(STATF_RIDDEN) && !IsPriv(PRIV_DEBUG))
+            if (pChar->IsStatFlag(STATF_PET) && pChar->IsStatFlag(STATF_RIDDEN) && !IsPriv(PRIV_DEBUG))
                 return false;
         }
 	}
@@ -935,19 +935,20 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 	switch (index)
 	{
 		case CV_ADD:
-			if ( s.HasArgs())
-			{
-				tchar *ppszArgs[2];
-				size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, ARRAY_COUNT(ppszArgs));
+        {
+            if (s.HasArgs())
+            {
+                tchar *ppszArgs[2];
+                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, ARRAY_COUNT(ppszArgs));
 
-				if ( !IsValidGameObjDef(ppszArgs[0]) )
-				{
-					//g_Log.EventWarn("Invalid ADD argument '%s'\n", pszArgs);
-					SysMessageDefault( DEFMSG_CMD_INVALID );
-					return true;
-				}
+                if (!IsValidGameObjDef(ppszArgs[0]))
+                {
+                    //g_Log.EventWarn("Invalid ADD argument '%s'\n", pszArgs);
+                    SysMessageDefault(DEFMSG_CMD_INVALID);
+                    return true;
+                }
 
-				CResourceID rid = g_Cfg.ResourceGetID(RES_QTY, ppszArgs[0], 0, true);
+                CResourceID rid = g_Cfg.ResourceGetID(RES_QTY, ppszArgs[0], 0, true);
                 /*
                 if (rid.IsEmpty())
                 {
@@ -966,27 +967,23 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                     ASSERT(!rid.IsEmpty());
                 }
 
-				m_tmAdd.m_id = rid.GetResIndex();
+                m_tmAdd.m_id = rid.GetResIndex();
                 m_tmAdd.m_vcAmount = (iQty > 1) ? std::max((word)1, (word)atoi(ppszArgs[1])) : 1;
 
-                if ( (rid.GetResType() == RES_CHARDEF) || (rid.GetResType() == RES_SPAWN) )
-				{
-					m_Targ_Prv_UID.InitUID();
-					return addTargetChars(CLIMODE_TARG_ADDCHAR, (CREID_TYPE)m_tmAdd.m_id, false);
-				}
-				else
-				{
-					return addTargetItems(CLIMODE_TARG_ADDITEM, (ITEMID_TYPE)m_tmAdd.m_id);
-				}
-			}
-			else
-			{
-				if ( IsValidResourceDef( "D_ADD" ) )
-					Dialog_Setup( CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, "D_ADD"), 0, this->GetChar() );
-				else
-					Menu_Setup( g_Cfg.ResourceGetIDType( RES_MENU, "MENU_ADDITEM"));
-			}
-			break;
+                if ((rid.GetResType() == RES_CHARDEF) || (rid.GetResType() == RES_SPAWN))
+                {
+                    m_Targ_Prv_UID.InitUID();
+                    return addTargetChars(CLIMODE_TARG_ADDCHAR, (CREID_TYPE)m_tmAdd.m_id, false);
+                }
+
+                return addTargetItems(CLIMODE_TARG_ADDITEM, (ITEMID_TYPE)m_tmAdd.m_id);
+            }
+            if (IsValidResourceDef("D_ADD"))
+                Dialog_Setup(CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, "D_ADD"), 0, this->GetChar());
+            else
+                Menu_Setup(g_Cfg.ResourceGetIDType(RES_MENU, "MENU_ADDITEM"));
+        }
+        break;
         case CV_ADDITEM:
             if (!s.HasArgs())
             {
@@ -1208,9 +1205,9 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 					m_pChar->Skill_Start((SKILL_TYPE)skill);
 					break;
 				}
-				else
-					Cmd_Skill_Magery(spell, pObjSrc);
-			}
+
+		        Cmd_Skill_Magery(spell, pObjSrc);
+            }
 			break;
 
 		case CV_CHANGEFACE:		// open 'face selection' dialog (enhanced clients only)
@@ -1570,26 +1567,22 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 				addTarget(CLIMODE_TARG_SKILL_MAGERY, pPrompt, pSpellDef->IsSpellType(SPELLFLAG_TARG_XYZ), pSpellDef->IsSpellType(SPELLFLAG_HARM), SpellTimeout);
 				break;
 			}
-			else
-			{
-				m_pChar->m_atMagery.m_iSpell = SPELL_Summon;
-				m_pChar->m_atMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 
-				if ( IsSetMagicFlags(MAGICF_PRECAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOPRECAST) )
-				{
-					m_pChar->Spell_CastDone();
-					break;
-				}
-				else
-				{
-					int skill = SKILL_NONE;
-					if ( !pSpellDef->GetPrimarySkill(&skill, nullptr) )
-						return false;
+		    m_pChar->m_atMagery.m_iSpell = SPELL_Summon;
+            m_pChar->m_atMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 
-					m_pChar->Skill_Start((SKILL_TYPE)skill);
-				}
-			}
-			break;
+            if (IsSetMagicFlags(MAGICF_PRECAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOPRECAST))
+            {
+                m_pChar->Spell_CastDone();
+                break;
+            }
+
+            int skill = SKILL_NONE;
+            if (!pSpellDef->GetPrimarySkill(&skill, nullptr))
+                return false;
+
+            m_pChar->Skill_Start((SKILL_TYPE)skill);
+            break;
 		}
 		case CV_SMSG:
 		case CV_SYSMESSAGE:

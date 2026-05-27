@@ -658,18 +658,19 @@ bool CClient::Skill_Menu(SKILL_TYPE skill, lpctstr skillmenu, ITEMID_TYPE itemus
 
 	lpctstr SkillUsed = g_Cfg.GetSkillKey(skill);
 	CResourceID ridDialog = g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu);
-	if (ridDialog.IsValidUID()) {
+	if (ridDialog.IsValidUID())
+	{
 		return Dialog_Setup(CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu), 0, m_pChar, SkillUsed);
-	} else {
-		CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu);
-		if (ridMenu.IsValidUID()) {
-			return Cmd_Skill_Menu(ridMenu);
-		} else {
-			g_Log.EventError("CClient::Skill_Menu - Not valid dialog or skillmenu %s \n", skillmenu);
-		}
 	}
 
-	return false;
+    CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu);
+    if (ridMenu.IsValidUID())
+    {
+        return Cmd_Skill_Menu(ridMenu);
+    }
+
+    g_Log.EventError("CClient::Skill_Menu - Not valid dialog or skillmenu %s \n", skillmenu);
+    return false;
 }
 
 bool CClient::Cmd_Skill_Menu( const CResourceID& rid, int iSelect )
@@ -834,14 +835,14 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, int iSelect, CMenuIte
 				fSkip = true;
 				continue;
 			}
-			else if ( *s.GetArgStr() == '@' )
+            if (*s.GetArgStr() == '@')
             {
                 ++iShowCount;
                 fSkip = true;
-				continue;
+                continue;
             }
 
-			// a new option to look at.
+            // a new option to look at.
             fSkip = false;
 			++iOnCount;
 
@@ -1077,14 +1078,12 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
 		m_pChar->Spell_CastDone();
 		return true;
 	}
-	else
-	{
-		int skill;
-		if ( !pSpellDef->GetPrimarySkill(&skill, nullptr) )
-			return false;
 
-		return m_pChar->Skill_Start((SKILL_TYPE)(skill));
-	}
+    int skill;
+    if (!pSpellDef->GetPrimarySkill(&skill, nullptr))
+        return false;
+
+    return m_pChar->Skill_Start((SKILL_TYPE)(skill));
 }
 
 bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
@@ -1229,11 +1228,9 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			addItemMenu(CLIMODE_MENU_SKILL_TRACK, item, count);
 			return true;
 		}
-		else
-		{
-			m_pChar->Skill_UseQuick(SKILL_TRACKING, 10 + g_Rand.GetLLVal(30));
-		}
-	}
+
+	    m_pChar->Skill_UseQuick(SKILL_TRACKING, 10 + g_Rand.GetLLVal(30));
+    }
 
 	// Tracking failed or was cancelled.
 	static lpctstr const sm_Track_FailMsg[] =

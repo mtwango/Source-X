@@ -48,8 +48,8 @@ size_t CResourceQty::WriteNameSingle( tchar * pszArgs, size_t uiBufLen, int iQty
     auto pResourceDef = static_cast<const CScriptObj *>(g_Cfg.RegisteredResourceGetDef(m_rid));
     if ( pResourceDef != nullptr )
         return Str_CopyLimitNull(pszArgs, pResourceDef->GetName(), uiBufLen);
-    else
-        return Str_CopyLimitNull(pszArgs, g_Cfg.ResourceGetName(m_rid), uiBufLen);
+
+    return Str_CopyLimitNull(pszArgs, g_Cfg.ResourceGetName(m_rid), uiBufLen);
 }
 
 bool CResourceQty::Load(lpctstr &pszCmds)

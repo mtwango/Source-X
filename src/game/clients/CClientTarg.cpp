@@ -385,10 +385,9 @@ bool CClient::OnTarg_Item_Add( CObjBase * pObj, CPointMap & pt )
 		pItem->Delete();
 		return pMulti ? true : false;
 	}
-	else
-		pItem->SetAmount(m_tmAdd.m_vcAmount);
 
-	pItem->MoveToCheck(pt, m_pChar);
+    pItem->SetAmount(m_tmAdd.m_vcAmount);
+    pItem->MoveToCheck(pt, m_pChar);
 	m_pChar->m_Act_UID = pItem->GetUID();		// for last target stuff (trigger stuff) and to make AxisII able to initialize placed spawn items.
 	return true;
 }
@@ -1377,11 +1376,9 @@ bool CClient::OnTarg_Skill( CObjBase * pObj )
 			m_pChar->m_Act_UID = m_Targ_UID;
 			return m_pChar->Skill_Start( m_tmSkillTarg.m_iSkill );
 		}
-		else
-		{
-			return true;
-		}
-	}
+
+	    return true;
+    }
 
 	// targetting what skill ?
 	switch ( m_tmSkillTarg.m_iSkill )
@@ -1578,13 +1575,11 @@ bool CClient::OnTarg_Pet_Command( CObjBase * pObj, const CPointMap & pt )
 		}
 		return true;
 	}
-	else
-	{
-		CChar * pCharPet = m_Targ_UID.CharFind();
-		if ( pCharPet == nullptr )
-			return false;
-		return pCharPet->NPC_OnHearPetCmdTarg( m_tmPetCmd.m_iCmd, GetChar(), pObj, pt, m_Targ_Text );
-	}
+
+    CChar *pCharPet = m_Targ_UID.CharFind();
+    if (pCharPet == nullptr)
+        return false;
+    return pCharPet->NPC_OnHearPetCmdTarg(m_tmPetCmd.m_iCmd, GetChar(), pObj, pt, m_Targ_Text);
 }
 
 bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
@@ -1855,13 +1850,13 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, ITEMID_TYPE 
 		{
 			return Cmd_Skill_Smith( pItemTarg );
 		}
-		else if ( pItemTarg->Armor_IsRepairable())
-		{
-			// Near an anvil ? repair ?
-			m_pChar->Use_Repair( pItemTarg );
-			return true;
-		}
-		break;
+        if (pItemTarg->Armor_IsRepairable())
+        {
+            // Near an anvil ? repair ?
+            m_pChar->Use_Repair(pItemTarg);
+            return true;
+        }
+        break;
 
 	case IT_CARPENTRY_CHOP:		// Carpentry type tool
 	case IT_WEAPON_MACE_SHARP:// 22 = war axe can be used to cut/chop trees.

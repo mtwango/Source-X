@@ -386,7 +386,7 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
                 }
                 return false;
             }
-            else if (pSpellDef->IsSpellType(SPELLFLAG_TARG_ITEM))
+            if (pSpellDef->IsSpellType(SPELLFLAG_TARG_ITEM))
             {
                 //	spell is good, but must be targeted at an item
                 switch (spell)

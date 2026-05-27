@@ -31,12 +31,12 @@ bool CChat::CreateChannel(lpctstr pszName, lpctstr pszPassword, CChatChanMember*
 			pMember->SendChatMsg(CHATMSG_InvalidConferenceName);
 			return false;
 		}
-		else if (g_Serv.m_Chats.FindChannel(pszName))
-		{
-			pMember->SendChatMsg(CHATMSG_AlreadyAConference);
-			return false;
-		}
-	}
+        if (g_Serv.m_Chats.FindChannel(pszName))
+        {
+            pMember->SendChatMsg(CHATMSG_AlreadyAConference);
+            return false;
+        }
+    }
 
     if (!pszPassword)
         pszPassword = TSTRING_NULL;

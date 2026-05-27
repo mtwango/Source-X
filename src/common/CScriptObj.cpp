@@ -1031,16 +1031,16 @@ badcmd:
 
             if (iValue < 0)
                 return false;
-            else if (iValue > 0)
+            if (iValue > 0)
             {
                 if (iValue > count)
                     return false;
-                else if (iValue == iValueEnd)
+                if (iValue == iValueEnd)
                     sVal.Format(ppCmd[iValue - 1]);
                 else
                 {
                     sVal.Add(ppCmd[iValue - 1]);
-                    for (int64 i = iValue + 1 ; i <= iValueEnd; ++i)
+                    for (int64 i = iValue + 1; i <= iValueEnd; ++i)
                     {
                         sVal.Add(iSep);
                         sVal.Add(ppCmd[i - 1]);
@@ -1233,37 +1233,37 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 			script.CopyParseState(s);
 			return r_Verb(script, pSrc);
 		}
-		else if ( ptcKey[0] )
-		{
-			if (!pRef)
-			{
-				if (s._eParseFlags == CScript::ParseFlags::IgnoreInvalidRef)
-					return true;
-				return ParseError_UndefinedKeyword(s.GetKey());
-			}
+        if (ptcKey[0])
+        {
+            if (!pRef)
+            {
+                if (s._eParseFlags == CScript::ParseFlags::IgnoreInvalidRef)
+                    return true;
+                return ParseError_UndefinedKeyword(s.GetKey());
+            }
 
-			CScript script(ptcKey, s.GetArgStr());
-			script.CopyParseState(s);
+            CScript script(ptcKey, s.GetArgStr());
+            script.CopyParseState(s);
 
-			if ( dynamic_cast<CAccount*>(pRef) != nullptr)
-			{
-				// Dirty fix:
-				// If the REF is an ACCOUNT, it does special checks with the SRC to compare the PrivLevel to allow read/write its values.
-				//	If i'm running in a trigger, so in a script, get the max privileges and change the SRC.
-				CObjBase* pThisObj = dynamic_cast<CObjBase*>(this);
-				if (pThisObj)
-				{
-					if (pThisObj->IsRunningTrigger())
-					{
-						pSrc = &g_Serv;
-						ASSERT(pSrc);
-					}
-				}
-			}
+            if (dynamic_cast<CAccount *>(pRef) != nullptr)
+            {
+                // Dirty fix:
+                // If the REF is an ACCOUNT, it does special checks with the SRC to compare the PrivLevel to allow read/write its values.
+                //	If i'm running in a trigger, so in a script, get the max privileges and change the SRC.
+                CObjBase *pThisObj = dynamic_cast<CObjBase *>(this);
+                if (pThisObj)
+                {
+                    if (pThisObj->IsRunningTrigger())
+                    {
+                        pSrc = &g_Serv;
+                        ASSERT(pSrc);
+                    }
+                }
+            }
 
-			return pRef->r_Verb( script, pSrc );
-		}
-		// else just fall through. as they seem to be setting the pointer !?
+            return pRef->r_Verb(script, pSrc);
+        }
+        // else just fall through. as they seem to be setting the pointer !?
 	}
 
 	if ( s.IsKeyHead("SRC.", 4 ))

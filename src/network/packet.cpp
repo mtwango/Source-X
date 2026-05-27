@@ -538,10 +538,10 @@ void Packet::writeStringFixedUTF16(const wchar* value, uint size, bool terminate
 
 	if (size <= 0)
 		return;
-	else if (terminate)
-		--size;
+    if (terminate)
+        --size;
 
-	bool zero = false;
+    bool zero = false;
 	for (uint i = 0; i < size; ++i)
 	{
 		if (zero == false)
@@ -652,10 +652,10 @@ void Packet::writeStringFixedNETUTF16(const wchar* value, uint size, bool termin
 
 	if (size <= 0)
 		return;
-	else if (terminate)
-		--size;
+    if (terminate)
+        --size;
 
-	bool zero = false;
+    bool zero = false;
 	for (uint i = 0; i < size; ++i)
 	{
 		if (zero == false)

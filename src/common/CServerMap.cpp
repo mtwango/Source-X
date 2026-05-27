@@ -157,9 +157,9 @@ bool CServerMapBlockingState::CheckTile( uint64 uiItemBlockFlags, int8 zBottom, 
 			{
 				if ( m_Bottom.m_uiBlockFlags & CAN_I_PLATFORM )
 					return true;
-				else if ( (m_Bottom.m_uiBlockFlags & CAN_I_WATER) && !(uiItemBlockFlags & CAN_I_PLATFORM))
-					return true;
-			}
+                if ((m_Bottom.m_uiBlockFlags & CAN_I_WATER) && !(uiItemBlockFlags & CAN_I_PLATFORM))
+                    return true;
+            }
             m_Bottom = {uiItemBlockFlags, dwID, zTop, zHeight};
 		}
 	}
@@ -730,14 +730,14 @@ void CServerMapDiffCollection::LoadMapDiffs()
 						delete pTerrain;
 						break;
 					}
-					else if ( (uint)pFileMapdif->Read( pTerrain, sizeof(CUOMapBlock) ) != sizeof(CUOMapBlock) )
-					{
-						g_Log.EventError("Reading mapdif%d.mul FAILED. [index=%" PRIu32 " offset=%" PRIu32 "]\n", map, dwBlockId, dwOffset);
-						delete pTerrain;
-						break;
-					}
+                    if ((uint)pFileMapdif->Read(pTerrain, sizeof(CUOMapBlock)) != sizeof(CUOMapBlock))
+                    {
+                        g_Log.EventError("Reading mapdif%d.mul FAILED. [index=%" PRIu32 " offset=%" PRIu32 "]\n", map, dwBlockId, dwOffset);
+                        delete pTerrain;
+                        break;
+                    }
 
-					pMapDiffBlock->m_pTerrainBlock = pTerrain;
+                    pMapDiffBlock->m_pTerrainBlock = pTerrain;
 				}
 			}
 		} // Mapdif
@@ -787,17 +787,17 @@ void CServerMapDiffCollection::LoadMapDiffs()
 					g_Log.EventError("Reading stadifi%d.mul FAILED. [index=%u offset=%u]\n", map, dwBlockId, dwOffset);
 					break;
 				}
-				else if ( !index.HasData() ) // This happens if the block has been intentionally patched to remove statics
-				{
-					continue;
-				}
-				else if ((index.GetBlockLength() % sizeof(CUOStaticItemRec)) != 0) // Make sure that the statics block length is valid
-				{
-					g_Log.EventError("Reading stadifi%d.mul FAILED. [index=%u offset=%u length=%u]\n", map, dwBlockId, dwOffset, index.GetBlockLength());
-					break;
-				}
+                if (!index.HasData()) // This happens if the block has been intentionally patched to remove statics
+                {
+                    continue;
+                }
+                if ((index.GetBlockLength() % sizeof(CUOStaticItemRec)) != 0) // Make sure that the statics block length is valid
+                {
+                    g_Log.EventError("Reading stadifi%d.mul FAILED. [index=%u offset=%u length=%u]\n", map, dwBlockId, dwOffset, index.GetBlockLength());
+                    break;
+                }
 
-				pMapDiffBlock->m_iStaticsCount = index.GetBlockLength()/sizeof(CUOStaticItemRec);
+                pMapDiffBlock->m_iStaticsCount = index.GetBlockLength()/sizeof(CUOStaticItemRec);
 				pMapDiffBlock->m_pStaticsBlock = new CUOStaticItemRec[pMapDiffBlock->m_iStaticsCount];
 				if ( !g_Install.ReadMulData(*pFileStadif, index, pMapDiffBlock->m_pStaticsBlock) )
 				{

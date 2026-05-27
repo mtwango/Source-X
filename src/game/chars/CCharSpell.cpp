@@ -999,9 +999,9 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			pSpell->Delete(true);
 			return;
 		}
-		else if (iRet == TRIGRET_RET_FALSE)		// return 0: we want the memory to be equipped but we want custom things to happen: don't remove memory but stop here,
-			return;
-	}
+        if (iRet == TRIGRET_RET_FALSE) // return 0: we want the memory to be equipped but we want custom things to happen: don't remove memory but stop here,
+            return;
+    }
 
 	if (IsTrigUsed(TRIGGER_EFFECTADD))
 	{
@@ -1015,9 +1015,9 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			pSpell->Delete(true);
 			return;
 		}
-		else if (iRet == TRIGRET_RET_FALSE)		// return 0: we want the memory to be equipped but we want custom things to happen: don't remove memory but stop here,
-			return;
-	}
+        if (iRet == TRIGRET_RET_FALSE) // return 0: we want the memory to be equipped but we want custom things to happen: don't remove memory but stop here,
+            return;
+    }
 
 	// Buffs related variables
 	static constexpr uint uiBuffElemSize = MAX_NAME_SIZE;
@@ -2388,10 +2388,10 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bo
                 SysMessageDefault( DEFMSG_SPELL_TRY_DEAD );
             return false;
         }
-        else if (IsStatFlag(STATF_FREEZE) && !IsSetMagicFlags(MAGICF_CASTPARALYZED))
+        if (IsStatFlag(STATF_FREEZE) && !IsSetMagicFlags(MAGICF_CASTPARALYZED))
         {
-            if ( fFailMsg )
-                SysMessageDefault( DEFMSG_SPELL_TRY_FROZENHANDS );
+            if (fFailMsg)
+                SysMessageDefault(DEFMSG_SPELL_TRY_FROZENHANDS);
             return false;
         }
     }
@@ -2880,22 +2880,22 @@ bool CChar::Spell_Unequip( LAYER_TYPE layer )
 			return false;
 		}
 		//Allow  to cast a spell when wielding a spellbook or wand (but not an item with the spellchanneling property) when MAGICF_CASTPARALYZED is enabled.
-		else if (IsSetMagicFlags(MAGICF_CASTPARALYZED) && (pItemPrev->IsTypeSpellbook() || pItemPrev->IsType(IT_WAND) || pItemPrev->Can(CAN_I_EQUIPONCAST)))
-			return true;
-		else if (IsSetMagicFlags(MAGICF_CASTPARALYZED) && IsStatFlag(STATF_FREEZE))
-		{
-			//We need to inform player that he couldn't cast spell because of his hands frozen.
-			SysMessageDefault(DEFMSG_SPELL_TRY_FROZENHANDS);
-			return false;
-		}
-		else if ( !CanMoveItem( pItemPrev ) ) //If we are unable to do any action because of certain conditions(dead, paralyzed, stoned and so on) and wielding some item while MAGICF_CASTPARALYZED is disabled interrupt the cast.
-			return false;
-		else if ( !pItemPrev->IsTypeSpellbook() && !pItemPrev->IsType(IT_WAND) && !pItemPrev->Can(CAN_I_EQUIPONCAST) && !pItemPrev->GetPropNum(COMP_PROPS_ITEMEQUIPPABLE, PROPIEQUIP_SPELLCHANNELING, true) && !ItemBounce(pItemPrev))
-		{
-			SysMessageDefault(DEFMSG_SPELL_TRY_BUSYHANDS);
-			return false;
-		}
-	}
+        if (IsSetMagicFlags(MAGICF_CASTPARALYZED) && (pItemPrev->IsTypeSpellbook() || pItemPrev->IsType(IT_WAND) || pItemPrev->Can(CAN_I_EQUIPONCAST)))
+            return true;
+        if (IsSetMagicFlags(MAGICF_CASTPARALYZED) && IsStatFlag(STATF_FREEZE))
+        {
+            //We need to inform player that he couldn't cast spell because of his hands frozen.
+            SysMessageDefault(DEFMSG_SPELL_TRY_FROZENHANDS);
+            return false;
+        }
+        if (!CanMoveItem(pItemPrev)) //If we are unable to do any action because of certain conditions(dead, paralyzed, stoned and so on) and wielding some item while MAGICF_CASTPARALYZED is disabled interrupt the cast.
+            return false;
+        if (!pItemPrev->IsTypeSpellbook() && !pItemPrev->IsType(IT_WAND) && !pItemPrev->Can(CAN_I_EQUIPONCAST) && !pItemPrev->GetPropNum(COMP_PROPS_ITEMEQUIPPABLE, PROPIEQUIP_SPELLCHANNELING, true) && !ItemBounce(pItemPrev))
+        {
+            SysMessageDefault(DEFMSG_SPELL_TRY_BUSYHANDS);
+            return false;
+        }
+    }
 	return true;
 }
 
@@ -3500,12 +3500,12 @@ int CChar::Spell_CastStart()
 			SysMessageDefault(DEFMSG_SPELL_TRY_DEAD);
 			return -1;
 		}
-		else if (IsStatFlag(STATF_FREEZE) && !IsSetMagicFlags(MAGICF_CASTPARALYZED))
-		{
-			SysMessageDefault(DEFMSG_SPELL_TRY_FROZENHANDS);
-			return -1;
-		}
-	}
+        if (IsStatFlag(STATF_FREEZE) && !IsSetMagicFlags(MAGICF_CASTPARALYZED))
+        {
+            SysMessageDefault(DEFMSG_SPELL_TRY_FROZENHANDS);
+            return -1;
+        }
+    }
 
 	if ( IsClientActive() && IsSetMagicFlags(MAGICF_PRECAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOPRECAST) )
 	{
@@ -3827,17 +3827,17 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			Effect(EFFECT_OBJ, ITEMID_FX_GLOW, this, 10, 16);
 			return false;
 		}
-		else if ( GetPrivLevel() == PLEVEL_Guest )
-		{
-			if (pCharSrc)
-			{
-				pCharSrc->SysMessageDefault(DEFMSG_MSG_ACC_GUESTHIT);
-			}
-			Effect(EFFECT_OBJ, ITEMID_FX_GLOW, this, 10, 16);
-			return false;
-		}
+        if (GetPrivLevel() == PLEVEL_Guest)
+        {
+            if (pCharSrc)
+            {
+                pCharSrc->SysMessageDefault(DEFMSG_MSG_ACC_GUESTHIT);
+            }
+            Effect(EFFECT_OBJ, ITEMID_FX_GLOW, this, 10, 16);
+            return false;
+        }
 
-		if ( !OnAttackedBy(pCharSrc, false, !pSpellDef->IsSpellType(SPELLFLAG_FIELD)) && !fReflecting )
+        if ( !OnAttackedBy(pCharSrc, false, !pSpellDef->IsSpellType(SPELLFLAG_FIELD)) && !fReflecting )
 			return false;
 
 		// Check if the spell can be reflected

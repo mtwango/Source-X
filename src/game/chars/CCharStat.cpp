@@ -462,15 +462,13 @@ ushort CChar::Stat_GetLimit( STAT_TYPE i ) const
 		}
 		return uiStatMax;
 	}
-	else
-	{
-		ushort uiStatMax = 100;
-		snprintf(tsStatName.buffer(), tsStatName.capacity(), "OVERRIDE.STATCAP_%d", (int)i);
-		if ( (pTagStorage = GetKey(tsStatName, true)) != nullptr )
-			uiStatMax = (ushort)(pTagStorage->GetValNum());
 
-		return uiStatMax;
-	}
+    ushort uiStatMax = 100;
+    snprintf(tsStatName.buffer(), tsStatName.capacity(), "OVERRIDE.STATCAP_%d", (int)i);
+    if ((pTagStorage = GetKey(tsStatName, true)) != nullptr)
+        uiStatMax = (ushort)(pTagStorage->GetValNum());
+
+    return uiStatMax;
 }
 
 uint CChar::Stat_GetSumLimit() const

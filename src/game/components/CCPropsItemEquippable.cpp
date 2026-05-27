@@ -105,7 +105,7 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(PropertyIndex_t iPropIndex, Proper
         *piOutVal = (int32)enum_alias_cast<uint32>(group);
         return true;
     }
-    else if (iPropIndex == PROPIEQUIP_SLAYER_SPECIES)
+    if (iPropIndex == PROPIEQUIP_SLAYER_SPECIES)
     {
         auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)

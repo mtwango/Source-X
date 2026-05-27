@@ -186,13 +186,13 @@ bool CStoneMember::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 		CScriptObj *pRef = GetLinkUID().CharFind();
 		return pRef->r_Verb( s, pSrc );
 	}
-	else if ( GetLinkUID().IsItem() )
-	{
-		CScriptObj *pRef = GetLinkUID().ItemFind();
-		return pRef->r_Verb( s, pSrc );
-	}
+    if (GetLinkUID().IsItem())
+    {
+        CScriptObj *pRef = GetLinkUID().ItemFind();
+        return pRef->r_Verb(s, pSrc);
+    }
 
-	return true;
+    return true;
 	EXC_CATCH;
 
 	EXC_DEBUG_START;

@@ -218,8 +218,8 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 	llPrice += IMulDivLL(llPrice, maximum(iConvertFactor, -100), 100);
 	if ( llPrice > UINT32_MAX )
 		return UINT32_MAX;
-	else
-		return (dword)llPrice;
+
+    return (dword)llPrice;
 }
 
 bool CItemVendable::IsValidSaleItem( bool fBuyFromVendor ) const

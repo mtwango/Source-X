@@ -692,8 +692,8 @@ NOTO_TYPE CChar::NotoSave_GetValue(int id, bool fGetColor )
 	NotoSaves & refNotoSave = m_notoSaves[id];
     if (fGetColor && refNotoSave.color != 0 )	// retrieving color if requested... only if a color is greater than 0 (to avoid possible crashes).
 		return refNotoSave.color;
-	else
-		return refNotoSave.value;
+
+    return refNotoSave.value;
 }
 
 int64 CChar::NotoSave_GetTime( int id )

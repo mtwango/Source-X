@@ -337,11 +337,9 @@ CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
 	iterator res = m_Container.emplace(static_cast<CVarDefCont*>(pVarNum));
 	if ( res != m_Container.end() )
 		return pVarNum;
-	else
-    {
-        delete pVarNum;
-		return nullptr;
-    }
+
+    delete pVarNum;
+    return nullptr;
 }
 
 CVarDefContNum* CVarDefMap::SetNumOverride( lpctstr ptcKey, int64 iVal )
@@ -447,11 +445,9 @@ CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
     iterator res = m_Container.emplace(static_cast<CVarDefCont*>(pVarStr));
     if ( res != m_Container.end() )
 		return pVarStr;
-	else
-    {
-        delete pVarStr;
-		return nullptr;
-    }
+
+    delete pVarStr;
+    return nullptr;
 }
 
 CVarDefContStr* CVarDefMap::SetStrOverride( lpctstr ptcKey, lpctstr pszVal )

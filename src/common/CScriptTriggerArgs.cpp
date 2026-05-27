@@ -170,24 +170,24 @@ bool CScriptTriggerArgs::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         pRef = m_pO1;
         return true;
     }
-    else if ( !strnicmp(ptcKey, "REF", 3) )		// REF[1-65535].NAME
+    if (!strnicmp(ptcKey, "REF", 3)) // REF[1-65535].NAME
     {
         lpctstr pszTemp = ptcKey;
         pszTemp += 3;
-        if (*pszTemp && IsDigit( *pszTemp ))
+        if (*pszTemp && IsDigit(*pszTemp))
         {
-            char * pEnd;
-            ushort number = (ushort)strtol( pszTemp, &pEnd, 10 );
-            if ( number > 0 ) // Can only use 1 to 65535 as REFs
+            char *pEnd;
+            ushort number = (ushort)strtol(pszTemp, &pEnd, 10);
+            if (number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
                 // Make sure REFx or REFx.KEY is being used
-                if (( !*pszTemp ) || ( *pszTemp == '.' ))
+                if ((!*pszTemp) || (*pszTemp == '.'))
                 {
-                    if ( *pszTemp == '.' )
+                    if (*pszTemp == '.')
                         ++pszTemp;
 
-                    pRef = m_VarObjs.Get( number );
+                    pRef   = m_VarObjs.Get(number);
                     ptcKey = pszTemp;
                     return true;
                 }
@@ -241,36 +241,35 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
         lpctstr ptcArg = s.GetArgStr();
         return m_VarsFloat.Insert( (ptcKey+6), ptcArg, true );
     }
-    else if ( !strnicmp( "LOCAL.", ptcKey, 6 ) )
+    if (!strnicmp("LOCAL.", ptcKey, 6))
     {
-        bool fQuoted = false;
+        bool fQuoted   = false;
         lpctstr ptcArg = s.GetArgStr(&fQuoted);
-        m_VarsLocal.SetStr( s.GetKey() + 6, fQuoted, ptcArg, false); // don't change fZero to true! it would break some scripts!
+        m_VarsLocal.SetStr(s.GetKey() + 6, fQuoted, ptcArg, false); // don't change fZero to true! it would break some scripts!
         return true;
-
     }
-    else if ( !strnicmp( "REF", ptcKey, 3 ) )
+    if (!strnicmp("REF", ptcKey, 3))
     {
         lpctstr pszTemp = ptcKey;
         pszTemp += 3;
-        if (*pszTemp && IsDigit( *pszTemp ))
+        if (*pszTemp && IsDigit(*pszTemp))
         {
-            char * pEnd;
-            ushort number = (ushort)(strtol( pszTemp, &pEnd, 10 ));
-            if ( number > 0 ) // Can only use 1 to 65535 as REFs
+            char *pEnd;
+            ushort number = (ushort)(strtol(pszTemp, &pEnd, 10));
+            if (number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
-                if ( !*pszTemp ) // setting REFx to a new object
+                if (!*pszTemp) // setting REFx to a new object
                 {
-                    CObjBase * pObj = CUID::ObjFindFromUID(s.GetArgVal());
-                    m_VarObjs.Insert( number, pObj, true );
+                    CObjBase *pObj = CUID::ObjFindFromUID(s.GetArgVal());
+                    m_VarObjs.Insert(number, pObj, true);
                     ptcKey = pszTemp;
                     return true;
                 }
-                else if ( *pszTemp == '.' ) // accessing REFx object
+                if (*pszTemp == '.') // accessing REFx object
                 {
                     ptcKey = ++pszTemp;
-                    CObjBase * pObj = m_VarObjs.Get( number );
+                    CObjBase *pObj = m_VarObjs.Get(number);
                     if (!pObj)
                     {
                         if (s._eParseFlags == CScript::ParseFlags::IgnoreInvalidRef)
@@ -278,14 +277,14 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
                         return ParseError_UndefinedKeyword(s.GetKey());
                     }
 
-                    CScript script( ptcKey, s.GetArgStr());
+                    CScript script(ptcKey, s.GetArgStr());
                     script.CopyParseState(s);
-                    return pObj->r_Verb( script, pSrc );
+                    return pObj->r_Verb(script, pSrc);
                 }
             }
         }
     }
-    else if ( !strnicmp(ptcKey, "ARGO", 4) )
+    else if (!strnicmp(ptcKey, "ARGO", 4))
     {
         ptcKey += 4;
         if (*ptcKey == '.')
@@ -295,9 +294,9 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
         else
         {
             ++ptcKey;
-            CObjBase * pObj = CUID::ObjFindFromUID(Exp_GetSingle(ptcKey));
+            CObjBase *pObj = CUID::ObjFindFromUID(Exp_GetSingle(ptcKey));
             if (!pObj)
-                m_pO1 = nullptr;	// no pObj = cleaning argo
+                m_pO1 = nullptr; // no pObj = cleaning argo
             else
                 m_pO1 = pObj;
             return true;
@@ -353,7 +352,7 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
 
             if (r_Verb(script, pSrc))
                 return true;
-            else if (script._eParseFlags != CScript::ParseFlags::IgnoreInvalidRef)
+            if (script._eParseFlags != CScript::ParseFlags::IgnoreInvalidRef)
                 return ParseError_UndefinedKeyword(script.GetKey());
         }
         break;
@@ -406,58 +405,58 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
         sVal = m_VarsFloat.Get( ptcKey );
         return true;
     }
-    else if ( !strnicmp(ptcKey, "ARGV", 4) )
+    if (!strnicmp(ptcKey, "ARGV", 4))
     {
         EXC_SET_BLOCK("argv");
         ptcKey += 4;
         SKIP_SEPARATORS(ptcKey);
 
         size_t uiQty = m_v.size();
-        if ( uiQty == 0 )
+        if (uiQty == 0)
         {
             // We haven't yet parsed the ARGS. Do it now, so we can find the elements of ARGV.
 
             // Warning: here we ignore the read-onlyness of CSString's buffer only because we know we won't write past the end, but only replace some characters with '\0'.
             // It's not worth it to build another string just for that.
             lpctstr ptcArg = m_s1_buf_vec.GetBuffer();
-            tchar * s = const_cast<tchar*>(ptcArg);
+            tchar *s       = const_cast<tchar *>(ptcArg);
 
-            bool fQuotes = false;
+            bool fQuotes     = false;
             bool fInerQuotes = false;
-            while ( *s )
+            while (*s)
             {
                 // ignore leading spaces
-                if ( IsSpace(*s ) )
+                if (IsSpace(*s))
                 {
                     ++s;
                     continue;
                 }
 
                 // add empty arguments if they are provided
-                if ( (*s == ',') && !fQuotes)
+                if ((*s == ',') && !fQuotes)
                 {
-                    m_v.emplace_back( TSTRING_NULL );
+                    m_v.emplace_back(TSTRING_NULL);
                     ++s;
                     continue;
                 }
 
                 // check to see if the argument is quoted (in case it contains commas)
-                if ( *s == '"' )
+                if (*s == '"')
                 {
                     ++s;
-                    fQuotes = true;
+                    fQuotes     = true;
                     fInerQuotes = false;
                 }
 
-                ptcArg = s;	// arg starts here
+                ptcArg = s; // arg starts here
                 ++s;
 
                 while (*s)
                 {
-                    if ( (*s == '"' ) && fQuotes )
+                    if ((*s == '"') && fQuotes)
                     {
-                        fQuotes = false;
-                        lptstr ptcArgEnd = strpbrk(s+1, "\",");
+                        fQuotes          = false;
+                        lptstr ptcArgEnd = strpbrk(s + 1, "\",");
                         if (ptcArgEnd > s)
                         {
                             *(ptcArgEnd - 1) = '\0';
@@ -477,7 +476,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
                             }
                         }
                     }
-                    else if ( *s == '"' )
+                    else if (*s == '"')
                     {
                         fInerQuotes = !fInerQuotes;
                     }
@@ -494,7 +493,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
                     fQuotes	= true;	// maintain
                     break;
                     }*/
-                    if ( !fQuotes && !fInerQuotes && (*s == ',') )
+                    if (!fQuotes && !fInerQuotes && (*s == ','))
                     {
                         *s = '\0';
                         ++s;
@@ -503,12 +502,12 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
 
                     ++s;
                 }
-                m_v.emplace_back( ptcArg );
+                m_v.emplace_back(ptcArg);
             }
             uiQty = m_v.size();
         }
 
-        if ( *ptcKey == '\0' )
+        if (*ptcKey == '\0')
         {
             sVal.FormatUVal((uint)uiQty);
             return true;
@@ -516,7 +515,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
 
         SKIP_SEPARATORS(ptcKey);
         uint uiNum = Exp_GetUSingle(ptcKey);
-        if ( uiNum >= m_v.size() )
+        if (uiNum >= m_v.size())
         {
             sVal.Clear();
             return true;

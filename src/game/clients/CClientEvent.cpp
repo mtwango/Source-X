@@ -233,8 +233,9 @@ void CClient::Event_Item_Pickup(CUID uid, word amount) // Client grabs an item
             new PacketDragCancel(this, PacketDragCancel::CannotLift);
 		return;
 	}
-	else if ( tempamount > 1 )
-		m_tNextPickup += MSECS_PER_TENTH;	// +100 msec if amount should slow down the client
+    if (tempamount > 1)
+        m_tNextPickup += MSECS_PER_TENTH;
+    // +100 msec if amount should slow down the client
 
 	SOUND_TYPE iSnd = (SOUND_TYPE)(pItem->GetDefNum("PICKUPSOUND", true));
 	addSound(iSnd ? iSnd : (SOUND_TYPE)SOUND_USE_CLOTH);
@@ -302,12 +303,12 @@ void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gri
 			pItem->Delete();
 			return;
 		}
-		else if ((pPack != m_pChar->LayerFind(LAYER_PACK)) && !IsPriv(PRIV_GM))
-		{
-			SysMessageDefault(DEFMSG_ITEM_CANTDROPTRADE);
-			return Event_Item_Drop_Fail(pItem);
-		}
-	}
+        if ((pPack != m_pChar->LayerFind(LAYER_PACK)) && !IsPriv(PRIV_GM))
+        {
+            SysMessageDefault(DEFMSG_ITEM_CANTDROPTRADE);
+            return Event_Item_Drop_Fail(pItem);
+        }
+    }
 
 	if ( pObjOn != nullptr )	// Put on or in another object
 	{
@@ -645,11 +646,9 @@ void CClient::Event_Skill_Use( SKILL_TYPE skill ) // Skill is clicked on the ski
 			addTarget( CLIMODE_TARG_SKILL, pSkillDef->m_sTargetPrompt.GetBuffer(), false, fCheckCrime, 0, atoi(pSkillDef->m_sTargetPromptCliloc.GetBuffer()));
 			return;
 		}
-		else
-		{
-			m_pChar->Skill_Start( skill );
-		}
-	}
+
+	    m_pChar->Skill_Start(skill);
+    }
 	else switch ( skill )
 	{
 		case SKILL_ARMSLORE:
@@ -2260,17 +2259,17 @@ bool CDialogResponseArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConso
 			sVal.FormatSTVal(iQty);
 			return true;
 		}
-		else if ( ! strnicmp( ptcKey, "ID", 2) )
-		{
-			ptcKey += 2;
+        if (!strnicmp(ptcKey, "ID", 2))
+        {
+            ptcKey += 2;
 
-			if ( iQty > 0 && m_CheckArray[0] )
-				sVal.FormatVal( m_CheckArray[0] );
-			else
-				sVal.FormatVal( -1 );
+            if (iQty > 0 && m_CheckArray[0])
+                sVal.FormatVal(m_CheckArray[0]);
+            else
+                sVal.FormatVal(-1);
 
-			return true;
-		}
+            return true;
+        }
 
         const dword dwNum = Exp_GetDWSingle( ptcKey );
 		SKIP_SEPARATORS(ptcKey);
@@ -2370,9 +2369,9 @@ bool CClient::Event_DoubleClick( CUID uid, bool fMacro, bool fTestTouch, bool fS
 					addCharPaperdoll(pChar);
 					return true;
 				}
-				else if ( pChar->Horse_UnMount() )
-					return true;
-			}
+                if (pChar->Horse_UnMount())
+                    return true;
+            }
 		}
 
 		if ( pChar->m_pNPC && (pChar->GetNPCBrainGroup() != NPCBRAIN_HUMAN) )

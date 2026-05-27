@@ -1550,8 +1550,8 @@ SOUND_TYPE CItem::GetDropSound( const CObjBase * pObjOn ) const
 	// normal drop sound for what dropped in/on.
 	if ( iSnd == 0 )
 		return( pObjOn ? 0x057 : 0x042 );
-	else
-		return ( iSnd );
+
+    return (iSnd);
 }
 
 bool CItem::MoveTo(const CPointMap& pt, bool fForceFix) // Put item on the ground here.
@@ -1716,11 +1716,9 @@ bool CItem::MoveNearObj( const CObjBaseTemplate* pObj, ushort uiSteps )
 		pPack->ContentAdd(this, pObj->GetContainedPoint());
 		return true;
 	}
-	else
-	{
-		// Equipped or on the ground so put on ground nearby.
-		return CObjBase::MoveNearObj(pObj, uiSteps);
-	}
+
+    // Equipped or on the ground so put on ground nearby.
+    return CObjBase::MoveNearObj(pObj, uiSteps);
 }
 
 lpctstr CItem::GetName() const
@@ -2253,10 +2251,8 @@ word CItem::GetMaxAmount()
 	{
 		return (word)minimum(iMax, UINT16_MAX);
 	}
-	else
-	{
-		return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
-	}
+
+    return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
 }
 
 bool CItem::SetMaxAmount(word amount)
@@ -3229,10 +3225,10 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 
 				if ( amount <= 0 )
 					return false;
-				else if (amount > 1)
-					includeLower = (atoi(ppVal[1]) != 0);
+                if (amount > 1)
+                    includeLower = (atoi(ppVal[1]) != 0);
 
-				for ( addCircle = atoi(ppVal[0]); addCircle; --addCircle )
+                for ( addCircle = atoi(ppVal[0]); addCircle; --addCircle )
 				{
 					for ( short i = 1; i < 9; ++i )
 						AddSpellbookSpell((SPELL_TYPE)(ResGetIndex(((addCircle - 1) * 8) + i)), false);
@@ -3374,16 +3370,15 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 					g_Log.EventError("The template should not return a container-type item!\n");
 					return false;	// not the kind of template we want...
 				}
-				else
-					return SetID(id);
-			}
-			else
-            {
-                const RES_TYPE resType = rid.GetResType();
-                if (resType == RES_ITEMDEF || resType == RES_QTY)
-                    return SetID((ITEMID_TYPE)rid.GetResIndex());
+
+			    return SetID(id);
             }
-            return false;
+
+		    const RES_TYPE resType = rid.GetResType();
+            if (resType == RES_ITEMDEF || resType == RES_QTY)
+                return SetID((ITEMID_TYPE)rid.GetResIndex());
+
+		    return false;
 		}
 		case IC_LAYER:
 			// used only during load (i'm reading the save files and placing again the items in the world in the right place).
@@ -4184,9 +4179,9 @@ const CObjBaseTemplate* CItem::GetTopLevelObj() const
 	const CObjBase* pObj = GetContainer();
 	if ( !pObj )
 		return this;
-	else if ( pObj == this )		// to avoid script errors setting same CONT
-		return this;
-	return pObj->GetTopLevelObj();
+    if (pObj == this) // to avoid script errors setting same CONT
+        return this;
+    return pObj->GetTopLevelObj();
 }
 
 [[nodiscard]] RETURNS_NOTNULL
@@ -4196,9 +4191,9 @@ CObjBaseTemplate* CItem::GetTopLevelObj()
 	CObjBase* pObj = GetContainer();
 	if (!pObj)
 		return this;
-	else if (pObj == this)		// to avoid script errors setting same CONT
-		return this;
-	return pObj->GetTopLevelObj();
+    if (pObj == this) // to avoid script errors setting same CONT
+        return this;
+    return pObj->GetTopLevelObj();
 }
 
 void CItem::Update(const CClient * pClientExclude)
@@ -4404,9 +4399,9 @@ bool CItem::IsSpellInBook( SPELL_TYPE spell ) const
 	const uint i = uint(spell) - (pItemDef->m_ttSpellbook.m_iOffset + 1u);
 	if ( i < 32 ) // Replaced the <= with < because of the formula above, the first 32 spells have an i value from 0 to 31 and are stored in more1.
 		return ((m_itSpellbook.m_spells1 & (1u << i)) != 0);
-	else if ( i < 64 ) // Replaced the <= with < because of the formula above, the remaining 32 spells have an i value from 32 to 63 and are stored in more2.
-		return ((m_itSpellbook.m_spells2 & (1u << (i-32))) != 0);
-	//else if ( i <= 96 )
+    if (i < 64)   // Replaced the <= with < because of the formula above, the remaining 32 spells have an i value from 32 to 63 and are stored in more2.
+        return ((m_itSpellbook.m_spells2 & (1u << (i - 32))) != 0);
+    //else if ( i <= 96 )
 	//	return ((m_itSpellbook.m_spells2 & (1u << (i-64))) != 0);	//not used anymore?
 	return false;
 }
@@ -5078,22 +5073,20 @@ CItem *CItem::Weapon_FindRangedAmmo(const CResourceID& id)
             //If the container exist that means the uid was a valid container uid.
 			return pCont->ContentFind(id);
 		}
-		else
-		{
-            // Search container using ITEMID_TYPE
-            if (!pParent)
-                return nullptr;
 
-			//Reassigned the value from sAmmoCont.GetBuffer() because Exp_GetDWal clears it
-			ptcAmmoCont = sAmmoCont.GetBuffer();
-			const CResourceID ridCont(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcAmmoCont));
-			pCont = dynamic_cast<CContainer *>(pParent->ContentFind(ridCont));
-			if (pCont)
-				return pCont->ContentFind(id);
-			return nullptr;
-		}
+	    // Search container using ITEMID_TYPE
+        if (!pParent)
+            return nullptr;
 
-		//CVarDefCont *pVarCont = GetDefKey("AMMOCONT", true);
+        //Reassigned the value from sAmmoCont.GetBuffer() because Exp_GetDWal clears it
+        ptcAmmoCont = sAmmoCont.GetBuffer();
+        const CResourceID ridCont(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcAmmoCont));
+        pCont = dynamic_cast<CContainer *>(pParent->ContentFind(ridCont));
+        if (pCont)
+            return pCont->ContentFind(id);
+        return nullptr;
+
+        //CVarDefCont *pVarCont = GetDefKey("AMMOCONT", true);
 		/*if ( pVarCont )
 		{
 			// Search container using UID
@@ -5781,16 +5774,16 @@ lpctstr CItem::Armor_GetRepairDesc() const
 	ADDTOCALLSTACK("CItem::Armor_GetRepairDesc");
     if ( m_itArmor.m_wHitsCur > m_itArmor.m_wHitsMax )
 		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_PERFECT );
-    else if ( m_itArmor.m_wHitsCur == m_itArmor.m_wHitsMax )
-		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_FULL );
-    else if ( m_itArmor.m_wHitsCur > m_itArmor.m_wHitsMax / 2 )
-		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_SCRATCHED );
-    else if ( m_itArmor.m_wHitsCur > m_itArmor.m_wHitsMax / 3 )
-		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_WELLWORN );
-    else if ( m_itArmor.m_wHitsCur > 3 )
-		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_BADLY );
-	else
-		return g_Cfg.GetDefaultMsg( DEFMSG_ITEMSTATUS_FALL_APART );
+    if (m_itArmor.m_wHitsCur == m_itArmor.m_wHitsMax)
+        return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_FULL);
+    if (m_itArmor.m_wHitsCur > m_itArmor.m_wHitsMax / 2)
+        return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_SCRATCHED);
+    if (m_itArmor.m_wHitsCur > m_itArmor.m_wHitsMax / 3)
+        return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_WELLWORN);
+    if (m_itArmor.m_wHitsCur > 3)
+        return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_BADLY);
+
+    return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_FALL_APART);
 }
 
 int CItem::OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType )
@@ -6070,36 +6063,36 @@ bool CItem::IsResourceMatch( const CResourceID& rid, dword dwArg ) const
 		}
 		return false;
 	}
-	else if ( restype == RES_TYPEDEF )
-	{
-		IT_TYPE index = (IT_TYPE)(rid.GetResIndex());
-		if ( !IsType(index) )
-			return false;
+    if (restype == RES_TYPEDEF)
+    {
+        IT_TYPE index = (IT_TYPE)(rid.GetResIndex());
+        if (!IsType(index))
+            return false;
 
-		if ( dwArg )
-		{
-			switch ( index )
-			{
-				case IT_MAP:		// different map types are not the same resource
-				{
-                    if ( dword_low_word(dwArg) != m_itMap.m_top || dword_hi_word(dwArg) != m_itMap.m_left )
-						return false;
-					break;
-				}
-				case IT_KEY:		// keys with different links are not the same resource
-				{
-					if ( m_itKey.m_UIDLock != dwArg )
-						return false;
-					break;
-				}
-				default:
-					break;
-			}
-		}
-		return true;
-	}
+        if (dwArg)
+        {
+            switch (index)
+            {
+                case IT_MAP: // different map types are not the same resource
+                {
+                    if (dword_low_word(dwArg) != m_itMap.m_top || dword_hi_word(dwArg) != m_itMap.m_left)
+                        return false;
+                    break;
+                }
+                case IT_KEY: // keys with different links are not the same resource
+                {
+                    if (m_itKey.m_UIDLock != dwArg)
+                        return false;
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        return true;
+    }
 
-	return false;
+    return false;
 }
 
 

@@ -91,13 +91,13 @@ bool CItemShip::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
         pRef = GetShipHold();
         return true;
     }
-    else if (!strnicmp(ptcKey, "TILLER.", 7))
+    if (!strnicmp(ptcKey, "TILLER.", 7))
     {
         ptcKey += 7;
         pRef = Multi_GetSign();
         return true;
     }
-    else if (!strnicmp(ptcKey, "PLANK.", 6))
+    if (!strnicmp(ptcKey, "PLANK.", 6))
     {
         ptcKey += 6;
         size_t i = Exp_GetSTVal(ptcKey);

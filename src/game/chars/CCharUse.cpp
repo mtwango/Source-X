@@ -358,13 +358,13 @@ bool CChar::Use_Train_Dummy( CItem * pItem, bool fSetup )
 		SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_TOOFAR);
 		return false;
 	}
-	else if ( IsStatFlag(STATF_ONHORSE) )
-	{
-		SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_MOUNT);
-		return false;
-	}
+    if (IsStatFlag(STATF_ONHORSE))
+    {
+        SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_MOUNT);
+        return false;
+    }
 
-	SKILL_TYPE skill = Fight_GetWeaponSkill();
+    SKILL_TYPE skill = Fight_GetWeaponSkill();
 	if ( g_Cfg.IsSkillFlag(skill, SKF_RANGED) )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_RANGED);
@@ -418,13 +418,13 @@ bool CChar::Use_Train_PickPocketDip( CItem * pItem, bool fSetup )
 		SysMessageDefault(DEFMSG_ITEMUSE_PICKPOCKET_TOOFAR);
 		return true;
 	}
-	else if ( IsStatFlag(STATF_ONHORSE) )
-	{
-		SysMessageDefault(DEFMSG_ITEMUSE_PICKPOCKET_MOUNT);
-		return false;
-	}
+    if (IsStatFlag(STATF_ONHORSE))
+    {
+        SysMessageDefault(DEFMSG_ITEMUSE_PICKPOCKET_MOUNT);
+        return false;
+    }
 
-	// Start action
+    // Start action
 	if ( fSetup )
 	{
 		if ( Skill_GetActive() == NPCACT_TRAINING )
@@ -497,13 +497,13 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 		SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_TOOCLOSE);
 		return false;
 	}
-	else if ( iDist > 6 )
-	{
-		SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_TOOFAR);
-		return false;
-	}
+    if (iDist > 6)
+    {
+        SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_TOOFAR);
+        return false;
+    }
 
-	// Check position alignment
+    // Check position alignment
 	CPointMap ptChar = GetTopPoint();
 	CPointMap ptButte = pButte->GetTopPoint();
 	if ( pButte->GetDispID() == ITEMID_ARCHERYBUTTE_S )
@@ -513,12 +513,12 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGALIGN);
 			return false;
 		}
-		else if ( ptChar.m_y < ptButte.m_y )
-		{
-			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGPOS);
-			return false;
-		}
-	}
+        if (ptChar.m_y < ptButte.m_y)
+        {
+            SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGPOS);
+            return false;
+        }
+    }
 	else
 	{
 		if ( ptChar.m_y != ptButte.m_y )
@@ -526,12 +526,12 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGALIGN);
 			return false;
 		}
-		else if ( ptChar.m_x < ptButte.m_x )
-		{
-			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGPOS);
-			return false;
-		}
-	}
+        if (ptChar.m_x < ptButte.m_x)
+        {
+            SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_WRONGPOS);
+            return false;
+        }
+    }
 
 	// Start action
 	if ( fSetup )
@@ -1028,7 +1028,7 @@ void CChar::Use_Drink( CItem * pItem )
 
         if (iRet == TRIGRET_RET_TRUE)
             return;
-        else if (iRet == TRIGRET_ELSEIF)
+        if (iRet == TRIGRET_ELSEIF)
             wBottleAmount = 1;
         else if (iRet == TRIGRET_RET_HALFBAKED)
             wBottleAmount = 0;
@@ -1831,14 +1831,14 @@ int CChar::Do_Use_Item(CItem *pItem, bool fLink)
 				}
 				return pItem->Ship_Plank(false);
 			}
-			else if (pItem->IsTopLevel())
-			{
-				// Teleport to plank if I'm outside the ship
-				CPointMap pntTarg = pItem->GetTopPoint();
-				++pntTarg.m_z;
-				Spell_Teleport(pntTarg, true, false, false);
-			}
-			return true;
+            if (pItem->IsTopLevel())
+            {
+                // Teleport to plank if I'm outside the ship
+                CPointMap pntTarg = pItem->GetTopPoint();
+                ++pntTarg.m_z;
+                Spell_Teleport(pntTarg, true, false, false);
+            }
+            return true;
 		}
 
 		case IT_SHIP_SIDE_LOCKED:

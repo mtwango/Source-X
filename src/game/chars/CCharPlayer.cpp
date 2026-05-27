@@ -188,30 +188,30 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		ASSERT(pSkillClass);
 		return pSkillClass->r_WriteVal(ptcKey + 11, sVal, pChar);
 	}
-	else if ( ( !strnicmp(ptcKey, "GUILD", 5) ) || ( !strnicmp(ptcKey, "TOWN", 4) ) )
-	{
-		const bool fIsGuild = !strnicmp(ptcKey, "GUILD", 5);
-		ptcKey += fIsGuild ? 5 : 4;
-		if ( *ptcKey == 0 )
-		{
-			CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-			if ( pMyGuild )
+    if ((!strnicmp(ptcKey, "GUILD", 5)) || (!strnicmp(ptcKey, "TOWN", 4)))
+    {
+        const bool fIsGuild = !strnicmp(ptcKey, "GUILD", 5);
+        ptcKey += fIsGuild ? 5 : 4;
+        if (*ptcKey == 0)
+        {
+            CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
+            if (pMyGuild)
                 sVal.FormatHex((dword)pMyGuild->GetUID());
-			else
+            else
                 sVal.SetValFalse();
-			return true;
-		}
-		else if ( *ptcKey == '.' )
-		{
-			ptcKey += 1;
-			CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-			if ( pMyGuild )
+            return true;
+        }
+        if (*ptcKey == '.')
+        {
+            ptcKey += 1;
+            CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
+            if (pMyGuild)
                 return pMyGuild->r_WriteVal(ptcKey, sVal, pChar);
-		}
-		return false;
-	}
+        }
+        return false;
+    }
 
-	switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, CPC_QTY ))
+    switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, CPC_QTY ))
 	{
 		case CPC_ACCOUNT:
 			sVal = GetAccount()->GetName();

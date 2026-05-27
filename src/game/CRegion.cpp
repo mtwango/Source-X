@@ -440,17 +440,17 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 						sVal.Format("%s=%s", pTagAt->GetKey(), pTagAt->GetValStr());
 						return true;
 					}
-					else if ( !strnicmp( ptcKey, "KEY", 3 )) // key?
-					{
-						sVal = pTagAt->GetKey();
-						return true;
-					}
-					else if ( !strnicmp( ptcKey, "VAL", 3 )) // val?
-					{
-						sVal = pTagAt->GetValStr();
-						return true;
-					}
-				}
+                    if (!strnicmp(ptcKey, "KEY", 3)) // key?
+                    {
+                        sVal = pTagAt->GetKey();
+                        return true;
+                    }
+                    if (!strnicmp(ptcKey, "VAL", 3)) // val?
+                    {
+                        sVal = pTagAt->GetValStr();
+                        return true;
+                    }
+                }
 
 				return false;
 			}

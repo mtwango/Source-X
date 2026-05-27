@@ -276,21 +276,18 @@ ushort CChar::Skill_GetMax( SKILL_TYPE skill, bool ignoreLock ) const
 
 		return uiSkillMax;
 	}
-	else
-	{
-		if ( skill == (SKILL_TYPE)(g_Cfg.m_iMaxSkill) )
-		{
-			pTagStorage = GetKey("OVERRIDE.SKILLSUM", true);
-			return pTagStorage ? (ushort)(pTagStorage->GetValNum()) : (ushort)(500 * g_Cfg.m_iMaxSkill);
-		}
+    if (skill == (SKILL_TYPE)(g_Cfg.m_iMaxSkill))
+    {
+        pTagStorage = GetKey("OVERRIDE.SKILLSUM", true);
+        return pTagStorage ? (ushort)(pTagStorage->GetValNum()) : (ushort)(500 * g_Cfg.m_iMaxSkill);
+    }
 
-		ushort uiSkillMax = 1000;
-		snprintf(tsSkillName.buffer(), tsSkillName.capacity(), "OVERRIDE.SKILLCAP_%d", (int)skill);
-		if ( (pTagStorage = GetKey(tsSkillName, true)) != nullptr )
-			uiSkillMax = (ushort)(pTagStorage->GetValNum());
+    ushort uiSkillMax = 1000;
+    snprintf(tsSkillName.buffer(), tsSkillName.capacity(), "OVERRIDE.SKILLCAP_%d", (int)skill);
+    if ((pTagStorage = GetKey(tsSkillName, true)) != nullptr)
+        uiSkillMax = (ushort)(pTagStorage->GetValNum());
 
-		return uiSkillMax;
-	}
+    return uiSkillMax;
 }
 
 uint CChar::Skill_GetSum() const
@@ -565,9 +562,9 @@ bool CChar::Skill_UseQuick(SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain,
 
 		if ( ret == TRIGRET_RET_TRUE )
 			return true;
-		else if ( ret == TRIGRET_RET_FALSE )
-			return false;
-	}
+        if (ret == TRIGRET_RET_FALSE)
+            return false;
+    }
 	if ( IsTrigUsed(TRIGGER_USEQUICK) )
 	{
         ret = Skill_OnTrigger( skill, SKTRIG_USEQUICK, pScriptArgs );
@@ -575,9 +572,9 @@ bool CChar::Skill_UseQuick(SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain,
 
 		if ( ret == TRIGRET_RET_TRUE )
 			return true;
-		else if ( ret == TRIGRET_RET_FALSE )
-			return false;
-	}
+        if (ret == TRIGRET_RET_FALSE)
+            return false;
+    }
 
 	if ( result )	// success
 	{
@@ -585,12 +582,11 @@ bool CChar::Skill_UseQuick(SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain,
             Skill_Experience( skill, (int)(iDifficulty) );
 		return true;
 	}
-	else			// fail
-	{
-        if ( fAllowGain )
-            Skill_Experience( skill, (int)(-iDifficulty) );
-		return false;
-	}
+
+    // fail
+    if (fAllowGain)
+        Skill_Experience(skill, (int)(-iDifficulty));
+    return false;
 }
 
 void CChar::Skill_Cleanup()
@@ -832,20 +828,20 @@ bool CChar::Skill_MakeItem_Success()
 			pItem->Delete();
 		return false;
 	}
-	else if ( iRet == TRIGRET_RET_DEFAULT )
-	{
-		if ( !g_Cfg.IsSkillFlag(Skill_GetActive(), SKF_NOSFX) )
-		{
-			if ( pItem->IsType(IT_POTION) )
-				Sound(0x240);
-			else if ( pItem->IsType(IT_MAP) )
-				Sound(0x255);
-		}
-		if ( *pszMsg )
-			SysMessage(pszMsg);
-	}
+    if (iRet == TRIGRET_RET_DEFAULT)
+    {
+        if (!g_Cfg.IsSkillFlag(Skill_GetActive(), SKF_NOSFX))
+        {
+            if (pItem->IsType(IT_POTION))
+                Sound(0x240);
+            else if (pItem->IsType(IT_MAP))
+                Sound(0x255);
+        }
+        if (*pszMsg)
+            SysMessage(pszMsg);
+    }
 
-	// Experience gains on crafting.
+    // Experience gains on crafting.
 	if ( g_Cfg.m_fExperienceSystem && (g_Cfg.m_iExperienceMode & EXP_MODE_RAISE_CRAFT) )
 	{
 		int exp = 0;
@@ -1973,11 +1969,11 @@ int CChar::Skill_Enticement( SKTRIG_TYPE stage )
 				SysMessagef("%s", g_Cfg.GetDefaultMsg( DEFMSG_ENTICEMENT_PLAYER ));
 				return -SKTRIG_ABORT;
 			}
-			else if ( pChar->IsStatFlag(STATF_WAR) )
-			{
-				SysMessagef("%s %s.", pChar->GetName(), g_Cfg.GetDefaultMsg(DEFMSG_ENTICEMENT_BATTLE));
-				return -SKTRIG_ABORT;
-			}
+            if (pChar->IsStatFlag(STATF_WAR))
+            {
+                SysMessagef("%s %s.", pChar->GetName(), g_Cfg.GetDefaultMsg(DEFMSG_ENTICEMENT_BATTLE));
+                return -SKTRIG_ABORT;
+            }
             CSkillDef *pSkillDef = g_Cfg.GetSkillDef(SKILL_ENTICEMENT);
             int iMaxRange = pSkillDef->m_Range;
             if (!iMaxRange)
@@ -2995,13 +2991,10 @@ int CChar::Skill_Magery( SKTRIG_TYPE stage )
 			this->GetClientActive()->Cmd_Skill_Magery( this->m_atMagery.m_iSpell, this->GetClientActive()->m_Targ_Prv_UID.ObjFind() );
 			return -SKTRIG_QTY;		// don't increase skill at this point. The client should select a target first.
 		}
-		else
-		{
-			if ( !Spell_CastDone())
-				return -SKTRIG_ABORT;
-			return 0;
-		}
-	}
+        if (!Spell_CastDone())
+            return -SKTRIG_ABORT;
+        return 0;
+    }
 	if ( stage == SKTRIG_START )	// How difficult? 1-1000
 		return Spell_CastStart();	// NOTE: this should call SetTimeout();
 
@@ -3658,122 +3651,123 @@ int CChar::Skill_Stage( SKTRIG_TYPE stage )
     SKILL_TYPE skill = Skill_GetActive();
     if (g_Cfg.IsSkillFlag(skill, SKF_SCRIPTED))
         return Skill_Scripted(stage);
-    else if (g_Cfg.IsSkillFlag(skill, SKF_FIGHT))
+    if (g_Cfg.IsSkillFlag(skill, SKF_FIGHT))
         return Skill_Fighting(stage);
-    else if (g_Cfg.IsSkillFlag(skill, SKF_MAGIC))
+    if (g_Cfg.IsSkillFlag(skill, SKF_MAGIC))
         return Skill_Magery(stage);
-    else if (stage == SKTRIG_STROKE && (g_Cfg.IsSkillFlag(skill, SKF_CRAFT) || g_Cfg.IsSkillFlag(skill, SKF_GATHER)))
+    if (stage == SKTRIG_STROKE && (g_Cfg.IsSkillFlag(skill, SKF_CRAFT) || g_Cfg.IsSkillFlag(skill, SKF_GATHER)))
         return Skill_Stroke();
-	else switch (skill)
-	{
-		case SKILL_NONE:	// idling.
-		case SKILL_PARRYING:
-		case SKILL_CAMPING:
-		case SKILL_MAGICRESISTANCE:
-		case SKILL_TACTICS:
-		case SKILL_STEALTH:
-			return 0;
-		case SKILL_ALCHEMY:
-		case SKILL_BOWCRAFT:
-		case SKILL_TINKERING:
-			return Skill_MakeItem(stage);
-		case SKILL_ANATOMY:
-		case SKILL_ANIMALLORE:
-		case SKILL_ITEMID:
-		case SKILL_ARMSLORE:
-		case SKILL_EVALINT:
-		case SKILL_FORENSICS:
-		case SKILL_TASTEID:
-			return Skill_Information(stage);
-		case SKILL_BEGGING:
-			return Skill_Begging(stage);
-		case SKILL_BLACKSMITHING:
-			return Skill_Blacksmith(stage);
-		case SKILL_PEACEMAKING:
-			return Skill_Peacemaking(stage);
-		case SKILL_CARPENTRY:
-			return Skill_Carpentry(stage);
-		case SKILL_CARTOGRAPHY:
-			return Skill_Cartography(stage);
-		case SKILL_COOKING:
-			return Skill_Cooking(stage);
-		case SKILL_DETECTINGHIDDEN:
-			return Skill_DetectHidden(stage);
-		case SKILL_ENTICEMENT:
-			return Skill_Enticement(stage);
-		case SKILL_HEALING:
-		case SKILL_VETERINARY:
-			return Skill_Healing(stage);
-		case SKILL_FISHING:
-			return Skill_Fishing(stage);
-		case SKILL_HERDING:
-			return Skill_Herding(stage);
-		case SKILL_HIDING:
-			return Skill_Hiding(stage);
-		case SKILL_PROVOCATION:
-			return Skill_Provocation(stage);
-		case SKILL_INSCRIPTION:
-			return Skill_Inscription(stage);
-		case SKILL_LOCKPICKING:
-			return Skill_Lockpicking(stage);
-		case SKILL_MAGERY:
-		case SKILL_NECROMANCY:
-		case SKILL_CHIVALRY:
-		case SKILL_BUSHIDO:
-		case SKILL_NINJITSU:
-		case SKILL_SPELLWEAVING:
-		case SKILL_MYSTICISM:
-			return Skill_Magery(stage);
-		case SKILL_SNOOPING:
-			return Skill_Snooping(stage);
-		case SKILL_MUSICIANSHIP:
-			return Skill_Musicianship(stage);
-		case SKILL_POISONING:
-			return Skill_Poisoning(stage);
-		case SKILL_ARCHERY:
-		case SKILL_SWORDSMANSHIP:
-		case SKILL_MACEFIGHTING:
-		case SKILL_FENCING:
-		case SKILL_WRESTLING:
-		case SKILL_THROWING:
-			return Skill_Fighting(stage);
-		case SKILL_SPIRITSPEAK:
-			return Skill_SpiritSpeak(stage);
-		case SKILL_STEALING:
-			return Skill_Stealing(stage);
-		case SKILL_TAILORING:
-			return Skill_Tailoring(stage);
-		case SKILL_TAMING:
-			return Skill_Taming(stage);
-		case SKILL_TRACKING:
-			return Skill_Tracking(stage);
-		case SKILL_LUMBERJACKING:
-			return Skill_Lumberjack(stage);
-		case SKILL_MINING:
-			return Skill_Mining(stage);
-		case SKILL_MEDITATION:
-			return Skill_Meditation(stage);
-		case SKILL_REMOVETRAP:
-			return Skill_RemoveTrap(stage);
-		case NPCACT_BREATH:
-			return Skill_Act_Breath(stage);
-		case NPCACT_THROWING:
-			return Skill_Act_Throwing(stage);
-		case NPCACT_TRAINING:
-			return Skill_Act_Training(stage);
-		case NPCACT_NAPPING:
-			return Skill_Act_Napping(stage);
 
-		default:
-			if ( !IsSkillBase(Skill_GetActive()) )
-			{
-				if ( stage == SKTRIG_STROKE )
-					return -SKTRIG_STROKE;	// keep these active. (NPC modes)
-				return 0;
-			}
-	}
+    switch (skill)
+    {
+        case SKILL_NONE: // idling.
+        case SKILL_PARRYING:
+        case SKILL_CAMPING:
+        case SKILL_MAGICRESISTANCE:
+        case SKILL_TACTICS:
+        case SKILL_STEALTH:
+            return 0;
+        case SKILL_ALCHEMY:
+        case SKILL_BOWCRAFT:
+        case SKILL_TINKERING:
+            return Skill_MakeItem(stage);
+        case SKILL_ANATOMY:
+        case SKILL_ANIMALLORE:
+        case SKILL_ITEMID:
+        case SKILL_ARMSLORE:
+        case SKILL_EVALINT:
+        case SKILL_FORENSICS:
+        case SKILL_TASTEID:
+            return Skill_Information(stage);
+        case SKILL_BEGGING:
+            return Skill_Begging(stage);
+        case SKILL_BLACKSMITHING:
+            return Skill_Blacksmith(stage);
+        case SKILL_PEACEMAKING:
+            return Skill_Peacemaking(stage);
+        case SKILL_CARPENTRY:
+            return Skill_Carpentry(stage);
+        case SKILL_CARTOGRAPHY:
+            return Skill_Cartography(stage);
+        case SKILL_COOKING:
+            return Skill_Cooking(stage);
+        case SKILL_DETECTINGHIDDEN:
+            return Skill_DetectHidden(stage);
+        case SKILL_ENTICEMENT:
+            return Skill_Enticement(stage);
+        case SKILL_HEALING:
+        case SKILL_VETERINARY:
+            return Skill_Healing(stage);
+        case SKILL_FISHING:
+            return Skill_Fishing(stage);
+        case SKILL_HERDING:
+            return Skill_Herding(stage);
+        case SKILL_HIDING:
+            return Skill_Hiding(stage);
+        case SKILL_PROVOCATION:
+            return Skill_Provocation(stage);
+        case SKILL_INSCRIPTION:
+            return Skill_Inscription(stage);
+        case SKILL_LOCKPICKING:
+            return Skill_Lockpicking(stage);
+        case SKILL_MAGERY:
+        case SKILL_NECROMANCY:
+        case SKILL_CHIVALRY:
+        case SKILL_BUSHIDO:
+        case SKILL_NINJITSU:
+        case SKILL_SPELLWEAVING:
+        case SKILL_MYSTICISM:
+            return Skill_Magery(stage);
+        case SKILL_SNOOPING:
+            return Skill_Snooping(stage);
+        case SKILL_MUSICIANSHIP:
+            return Skill_Musicianship(stage);
+        case SKILL_POISONING:
+            return Skill_Poisoning(stage);
+        case SKILL_ARCHERY:
+        case SKILL_SWORDSMANSHIP:
+        case SKILL_MACEFIGHTING:
+        case SKILL_FENCING:
+        case SKILL_WRESTLING:
+        case SKILL_THROWING:
+            return Skill_Fighting(stage);
+        case SKILL_SPIRITSPEAK:
+            return Skill_SpiritSpeak(stage);
+        case SKILL_STEALING:
+            return Skill_Stealing(stage);
+        case SKILL_TAILORING:
+            return Skill_Tailoring(stage);
+        case SKILL_TAMING:
+            return Skill_Taming(stage);
+        case SKILL_TRACKING:
+            return Skill_Tracking(stage);
+        case SKILL_LUMBERJACKING:
+            return Skill_Lumberjack(stage);
+        case SKILL_MINING:
+            return Skill_Mining(stage);
+        case SKILL_MEDITATION:
+            return Skill_Meditation(stage);
+        case SKILL_REMOVETRAP:
+            return Skill_RemoveTrap(stage);
+        case NPCACT_BREATH:
+            return Skill_Act_Breath(stage);
+        case NPCACT_THROWING:
+            return Skill_Act_Throwing(stage);
+        case NPCACT_TRAINING:
+            return Skill_Act_Training(stage);
+        case NPCACT_NAPPING:
+            return Skill_Act_Napping(stage);
 
-	SysMessageDefault(DEFMSG_SKILL_NOSKILL);
+        default:
+            if (!IsSkillBase(Skill_GetActive()))
+            {
+                if (stage == SKTRIG_STROKE)
+                    return -SKTRIG_STROKE; // keep these active. (NPC modes)
+                return 0;
+            }
+    }
+
+    SysMessageDefault(DEFMSG_SKILL_NOSKILL);
 
     EXC_CATCH;
 
@@ -4024,9 +4018,9 @@ bool CChar::Skill_Wait( SKILL_TYPE skilltry )
             || ((skilltry == SKILL_SNOOPING) && (g_Cfg.m_iRevealFlags & REVEALF_SNOOPING))
             || ((skilltry == SKILL_STEALING) && (g_Cfg.m_iRevealFlags & REVEALF_STEALING)))
 			return false;
-		else
-			Reveal();
-		return false;
+
+	    Reveal();
+        return false;
 	}
 
 	if ( IsStatFlag(STATF_WAR) )

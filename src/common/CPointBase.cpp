@@ -470,18 +470,18 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 			sVal.FormatHex( pStatic->m_wHue );
 			return true;
 		}
-		else if ( !strnicmp( ptcKey, "ID", 2 ) )
-		{
-			sVal.FormatHex( idTile );
-			return true;
-		}
-		else if ( !strnicmp( ptcKey, "Z", 1 ) )
-		{
-			sVal.FormatVal( pStatic->m_z );
-			return true;
-		}
+        if (!strnicmp(ptcKey, "ID", 2))
+        {
+            sVal.FormatHex(idTile);
+            return true;
+        }
+        if (!strnicmp(ptcKey, "Z", 1))
+        {
+            sVal.FormatVal(pStatic->m_z);
+            return true;
+        }
 
-		// Check the script def for the item.
+        // Check the script def for the item.
 		CItemBase * pItemDef = CItemBase::FindItemBase( idTile );
 		if ( pItemDef == nullptr )
 		{
@@ -491,219 +491,214 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 
 		return pItemDef->r_WriteVal( ptcKey, sVal, &g_Serv );
 	}
-	else if ( !strnicmp( ptcKey, "COMPONENTS", 10) )
-	{
-		ptcKey += 10;
+    if (!strnicmp(ptcKey, "COMPONENTS", 10))
+    {
+        ptcKey += 10;
 
-		CRegionLinks rlinks;
-		const CRegion* pRegion = nullptr;
-		CItem* pItem = nullptr;
-		const CUOMulti* pMulti = nullptr;
-		const CUOMultiItemRec_HS* pMultiItem = nullptr;
-		size_t iMultiQty = GetRegions(REGION_TYPE_MULTI, &rlinks);
+        CRegionLinks rlinks;
+        const CRegion *pRegion = nullptr;
+        CItem *pItem = nullptr;
+        const CUOMulti *pMulti = nullptr;
+        const CUOMultiItemRec_HS *pMultiItem = nullptr;
+        size_t iMultiQty = GetRegions(REGION_TYPE_MULTI, &rlinks);
 
-		if ( *ptcKey == '\0' )
-		{
-			int iComponentQty = 0;
-			for (size_t i = 0; i < iMultiQty; ++i)
-			{
-				pRegion = rlinks[i];
-				if (pRegion == nullptr)
-					continue;
+        if (*ptcKey == '\0')
+        {
+            int iComponentQty = 0;
+            for (size_t i = 0; i < iMultiQty; ++i)
+            {
+                pRegion = rlinks[i];
+                if (pRegion == nullptr)
+                    continue;
 
-				pItem = pRegion->GetResourceID().ItemFindFromResource();
-				if (pItem == nullptr)
-					continue;
+                pItem = pRegion->GetResourceID().ItemFindFromResource();
+                if (pItem == nullptr)
+                    continue;
 
-				const CPointMap ptMulti(pItem->GetTopPoint());
-				pMulti = g_Cfg.GetMultiItemDefs(pItem);
-				if (pMulti == nullptr)
-					continue;
+                const CPointMap ptMulti(pItem->GetTopPoint());
+                pMulti = g_Cfg.GetMultiItemDefs(pItem);
+                if (pMulti == nullptr)
+                    continue;
 
-				size_t iQty = pMulti->GetItemCount();
-				for (size_t ii = 0; ii < iQty; ++ii)
-				{
-					pMultiItem = pMulti->GetItem(ii);
-					if (pMultiItem == nullptr)
-						break;
-					if (pMultiItem->m_visible == 0)
-						continue;
-
-                    const CPointMap ptTest(
-                        (word)(ptMulti.m_x + pMultiItem->m_dx),
-                        (word)(ptMulti.m_y + pMultiItem->m_dy),
-                        (char)(ptMulti.m_z + pMultiItem->m_dz),
-                        this->m_map);
-
-					if (GetDist(ptTest) > 0)
-						continue;
-
-					++iComponentQty;
-				}
-			}
-
-			sVal.FormatVal( iComponentQty );
-			return true;
-		}
-
-		SKIP_SEPARATORS( ptcKey );
-
-		int iComponent = 0;
-		int type = 0;
-
-		if ( strnicmp( ptcKey, "FINDID", 6 ) == 0 )
-		{
-			ptcKey += 6;
-			SKIP_SEPARATORS( ptcKey );
-			iComponent = Exp_GetVal( ptcKey );
-			type = ResGetType( iComponent );
-			if ( type == 0 )
-				type = RES_ITEMDEF;
-			SKIP_SEPARATORS( ptcKey );
-		}
-		else
-		{
-			iComponent = Exp_GetVal( ptcKey );
-			type = ResGetType( iComponent );
-		}
-
-		if ( type == RES_ITEMDEF )
-		{
-			const CItemBase * pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(iComponent)));
-			if ( pItemDef == nullptr )
-			{
-				sVal.FormatVal( 0 );
-				return false;
-			}
-
-			for (size_t i = 0; i < iMultiQty; ++i)
-			{
-				pRegion = rlinks[i];
-				if (pRegion == nullptr)
-					continue;
-
-				pItem = pRegion->GetResourceID().ItemFindFromResource();
-				if (pItem == nullptr)
-					continue;
-
-				const CPointMap ptMulti = pItem->GetTopPoint();
-				pMulti = g_Cfg.GetMultiItemDefs(pItem);
-				if (pMulti == nullptr)
-					continue;
-
-				size_t iQty = pMulti->GetItemCount();
-				for (size_t ii = 0; ii < iQty; pMultiItem = nullptr, ii++)
-				{
-					pMultiItem = pMulti->GetItem(ii);
-					if (pMultiItem == nullptr)
-						break;
-					if (pMultiItem->m_visible == 0)
-						continue;
-					CPointMap ptTest((word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
-					if (GetDist(ptTest) > 0)
-						continue;
-
-					const CItemBase* pMultiItemDef = CItemBase::FindItemBase(pMultiItem->GetDispID());
-					if (pMultiItemDef != nullptr && pMultiItemDef->GetDispID() == pItemDef->GetDispID())
-						break;
-				}
-
-				if (pMultiItem != nullptr)
-					break;
-			}
-		}
-		else
-		{
-			for (size_t i = 0; i < iMultiQty; ++i)
-			{
-				pRegion = rlinks[i];
-				if (pRegion == nullptr)
-					continue;
-
-				pItem = pRegion->GetResourceID().ItemFindFromResource();
-				if (pItem == nullptr)
-					continue;
-
-				const CPointMap ptMulti = pItem->GetTopPoint();
-				pMulti = g_Cfg.GetMultiItemDefs(pItem);
-				if (pMulti == nullptr)
-					continue;
-
-				size_t iQty = pMulti->GetItemCount();
-				for (size_t ii = 0; ii < iQty; pMultiItem = nullptr, ++ii)
-				{
-					pMultiItem = pMulti->GetItem(ii);
-					if (pMultiItem == nullptr)
-						break;
-					if (pMultiItem->m_visible == 0)
-						continue;
+                size_t iQty = pMulti->GetItemCount();
+                for (size_t ii = 0; ii < iQty; ++ii)
+                {
+                    pMultiItem = pMulti->GetItem(ii);
+                    if (pMultiItem == nullptr)
+                        break;
+                    if (pMultiItem->m_visible == 0)
+                        continue;
 
                     const CPointMap ptTest(
-                        (word)(ptMulti.m_x + pMultiItem->m_dx),
-                        (word)(ptMulti.m_y + pMultiItem->m_dy),
-                        (char)(ptMulti.m_z + pMultiItem->m_dz),
-                        this->m_map);
-					if (GetDist(ptTest) > 0)
-						continue;
+                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
 
-					if (iComponent == 0)
-						break;
+                    if (GetDist(ptTest) > 0)
+                        continue;
 
-					--iComponent;
-				}
+                    ++iComponentQty;
+                }
+            }
 
-				if (pMultiItem != nullptr)
-					break;
-			}
-		}
+            sVal.FormatVal(iComponentQty);
+            return true;
+        }
 
-		if ( pMultiItem == nullptr )
-		{
-			sVal.FormatHex(0);
-			return true;
-		}
+        SKIP_SEPARATORS(ptcKey);
 
-		SKIP_SEPARATORS( ptcKey );
-		if ( !*ptcKey )
-			ptcKey	= "ID";
+        int iComponent = 0;
+        int type = 0;
 
-		ITEMID_TYPE idTile = pMultiItem->GetDispID();
+        if (strnicmp(ptcKey, "FINDID", 6) == 0)
+        {
+            ptcKey += 6;
+            SKIP_SEPARATORS(ptcKey);
+            iComponent = Exp_GetVal(ptcKey);
+            type = ResGetType(iComponent);
+            if (type == 0)
+                type = RES_ITEMDEF;
+            SKIP_SEPARATORS(ptcKey);
+        }
+        else
+        {
+            iComponent = Exp_GetVal(ptcKey);
+            type = ResGetType(iComponent);
+        }
 
-		if ( strnicmp( ptcKey, "ID", 2 ) == 0 )
-		{
-			sVal.FormatHex( idTile );
-			return true;
-		}
-		else if ( strnicmp( ptcKey, "MULTI", 5 ) == 0 )
-		{
-			ptcKey += 5;
-			if (*ptcKey != '\0')
-			{
-				SKIP_SEPARATORS(ptcKey);
-				return pItem->r_WriteVal( ptcKey, sVal, &g_Serv );
-			}
+        if (type == RES_ITEMDEF)
+        {
+            const CItemBase *pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(iComponent)));
+            if (pItemDef == nullptr)
+            {
+                sVal.FormatVal(0);
+                return false;
+            }
 
-			sVal.FormatHex( pItem->GetUID() );
-			return true;
-		}
-		else if ( strnicmp( ptcKey, "Z", 1 ) == 0 )
-		{
-			sVal.FormatVal( pItem->GetTopZ() + pMultiItem->m_dz );
-			return true;
-		}
+            for (size_t i = 0; i < iMultiQty; ++i)
+            {
+                pRegion = rlinks[i];
+                if (pRegion == nullptr)
+                    continue;
 
-		// Check the script def for the item.
-		CItemBase * pItemDef = CItemBase::FindItemBase( idTile );
-		if ( pItemDef == nullptr )
-		{
-			DEBUG_ERR(("Must have ITEMDEF section for item ID 0%x\n", idTile ));
-			return false;
-		}
+                pItem = pRegion->GetResourceID().ItemFindFromResource();
+                if (pItem == nullptr)
+                    continue;
 
-		return pItemDef->r_WriteVal( ptcKey, sVal, &g_Serv );
-	}
+                const CPointMap ptMulti = pItem->GetTopPoint();
+                pMult = g_Cfg.GetMultiItemDefs(pItem);
+                if (pMulti == nullptr)
+                    continue;
 
-	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 );
+                size_t iQty = pMulti->GetItemCount();
+                for (size_t ii = 0; ii < iQty; pMultiItem = nullptr, ii++)
+                {
+                    pMultiItem = pMulti->GetItem(ii);
+                    if (pMultiItem == nullptr)
+                        break;
+                    if (pMultiItem->m_visible == 0)
+                        continue;
+                    CPointMap ptTest(
+                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
+                    if (GetDist(ptTest) > 0)
+                        continue;
+
+                    const CItemBase *pMultiItemDef = CItemBase::FindItemBase(pMultiItem->GetDispID());
+                    if (pMultiItemDef != nullptr && pMultiItemDef->GetDispID() == pItemDef->GetDispID())
+                        break;
+                }
+
+                if (pMultiItem != nullptr)
+                    break;
+            }
+        }
+        else
+        {
+            for (size_t i = 0; i < iMultiQty; ++i)
+            {
+                pRegion = rlinks[i];
+                if (pRegion == nullptr)
+                    continue;
+
+                pItem = pRegion->GetResourceID().ItemFindFromResource();
+                if (pItem == nullptr)
+                    continue;
+
+                const CPointMap ptMulti = pItem->GetTopPoint();
+                pMulti = g_Cfg.GetMultiItemDefs(pItem);
+                if (pMulti == nullptr)
+                    continue;
+
+                size_t iQty = pMulti->GetItemCount();
+                for (size_t ii = 0; ii < iQty; pMultiItem = nullptr, ++ii)
+                {
+                    pMultiItem = pMulti->GetItem(ii);
+                    if (pMultiItem == nullptr)
+                        break;
+                    if (pMultiItem->m_visible == 0)
+                        continue;
+
+                    const CPointMap ptTest(
+                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
+                    if (GetDist(ptTest) > 0)
+                        continue;
+
+                    if (iComponent == 0)
+                        break;
+
+                    --iComponent;
+                }
+
+                if (pMultiItem != nullptr)
+                    break;
+            }
+        }
+
+        if (pMultiItem == nullptr)
+        {
+            sVal.FormatHex(0);
+            return true;
+        }
+
+        SKIP_SEPARATORS(ptcKey);
+        if (!*ptcKey)
+            ptcKey = "ID";
+
+        ITEMID_TYPE idTile = pMultiItem->GetDispID();
+
+        if (strnicmp(ptcKey, "ID", 2) == 0)
+        {
+            sVal.FormatHex(idTile);
+            return true;
+        }
+        if (strnicmp(ptcKey, "MULTI", 5) == 0)
+        {
+            ptcKey += 5;
+            if (*ptcKey != '\0')
+            {
+                SKIP_SEPARATORS(ptcKey);
+                return pItem->r_WriteVal(ptcKey, sVal, &g_Serv);
+            }
+
+            sVal.FormatHex(pItem->GetUID());
+            return true;
+        }
+        if (strnicmp(ptcKey, "Z", 1) == 0)
+        {
+            sVal.FormatVal(pItem->GetTopZ() + pMultiItem->m_dz);
+            return true;
+        }
+
+        // Check the script def for the item.
+        CItemBase *pItemDef = CItemBase::FindItemBase(idTile);
+        if (pItemDef == nullptr)
+        {
+            DEBUG_ERR(("Must have ITEMDEF section for item ID 0%x\n", idTile));
+            return false;
+        }
+
+        return pItemDef->r_WriteVal(ptcKey, sVal, &g_Serv);
+    }
+
+    int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 );
 	if ( index < 0 )
 		return false;
 
@@ -822,11 +817,10 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 
 							return false;
 						}
-						else
-						{
-							sVal.FormatHex( pMeter->m_wTerrainIndex );
-						}
-					} return true;
+
+					    sVal.FormatHex(pMeter->m_wTerrainIndex);
+                    }
+					return true;
 				}
 			}
 			return false;

@@ -144,7 +144,7 @@ bool CItemMessage::r_Verb(CScript & s, CTextConsole *pSrc)
                 m_sBodyLines.ClearFree();
                 return true;
             }
-            else if ( wPage <= m_sBodyLines.size() )
+            if (wPage <= m_sBodyLines.size())
             {
                 m_sBodyLines.erase_at(wPage - 1);
                 return true;

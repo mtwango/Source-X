@@ -98,12 +98,13 @@ public:
             PooledObject_t* ptr = &m_objects[idx];
             return UniquePtr_t(ptr, PoolDeleter {this, idx});
         }
-        else [[unlikely]] if constexpr (sm_allow_fallback)
+        [[unlikely]]
+        if constexpr (sm_allow_fallback)
         {
             // Return a fallback (dynamically allocated) object.
-            PooledObject_t* ptr = new PooledObject_t();
+            PooledObject_t *ptr = new PooledObject_t();
             m_fallbackObjsCount += 1;
-            return UniquePtr_t(ptr, PoolDeleter {this, std::nullopt});
+            return UniquePtr_t(ptr, PoolDeleter { this, std::nullopt });
         }
         else
         {
@@ -126,12 +127,13 @@ public:
             PooledObject_t* ptr = &m_objects[idx];
             return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter {this, idx});
         }
-        else [[unlikely]] if constexpr (sm_allow_fallback)
+        [[unlikely]]
+        if constexpr (sm_allow_fallback)
         {
             // Return a fallback (dynamically allocated) object.
-            PooledObject_t* ptr = new PooledObject_t();
+            PooledObject_t *ptr = new PooledObject_t();
             m_fallbackObjsCount += 1;
-            return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter {this, std::nullopt});
+            return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter { this, std::nullopt });
         }
         else
         {
@@ -266,12 +268,13 @@ public:
             PooledObject_t* ptr = &m_objects[idx];
             return UniquePtr_t(ptr, PoolDeleter {this, idx});
         }
-        else [[unlikely]] if constexpr (sm_allow_fallback)
+        [[unlikely]]
+        if constexpr (sm_allow_fallback)
         {
             // Return a fallback (dynamically allocated) object.
-            PooledObject_t* ptr = new PooledObject_t();
+            PooledObject_t *ptr = new PooledObject_t();
             m_fallbackObjsCount.fetch_add(1, std::memory_order_relaxed);
-            return UniquePtr_t(ptr, PoolDeleter {this, std::nullopt});
+            return UniquePtr_t(ptr, PoolDeleter { this, std::nullopt });
         }
         else
         {
@@ -295,12 +298,13 @@ public:
             PooledObject_t* ptr = &m_objects[idx];
             return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter {this, idx});
         }
-        else [[unlikely]] if constexpr (sm_allow_fallback)
+        [[unlikely]]
+        if constexpr (sm_allow_fallback)
         {
             // Return a fallback (dynamically allocated) object.
-            PooledObject_t* ptr = new PooledObject_t();
+            PooledObject_t *ptr = new PooledObject_t();
             m_fallbackObjsCount.fetch_add(1, std::memory_order_relaxed);
-            return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter {this, std::nullopt});
+            return std::shared_ptr<PooledObject_t>(ptr, PoolDeleter { this, std::nullopt });
         }
         else
         {

@@ -406,10 +406,8 @@ CSocketAddress CSocket::GetSockName() const
 	{
 		return( CSocketAddress( INADDR_BROADCAST, 0 ));	// invalid.
 	}
-	else
-	{
-		return( CSocketAddress( SockAddrIn ));
-	}
+
+    return (CSocketAddress(SockAddrIn));
 }
 
 int CSocket::GetPeerName( struct sockaddr_in * pSockAddrIn ) const
@@ -428,10 +426,8 @@ CSocketAddress CSocket::GetPeerName( ) const
 	{
 		return( CSocketAddress( INADDR_BROADCAST, 0 ));	// invalid.
 	}
-	else
-	{
-		return( CSocketAddress( SockAddrIn ));
-	}
+
+    return (CSocketAddress(SockAddrIn));
 }
 
 int CSocket::SetSockOpt( int nOptionName, const void * optval, int optlen, int nLevel ) const

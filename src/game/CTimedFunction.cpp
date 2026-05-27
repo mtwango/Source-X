@@ -42,16 +42,14 @@ static bool _ExecTimedFunction(CUID&& uid, CScript&& s)
 		obj->r_Verb(s, src); // Should we retrieve the result and show an error log if false is returned?
 		return true;
 	}
-	else
-	{
-		if (g_Cfg.m_iDebugFlags & DEBUGF_SCRIPTS)
-		{
-			const uint uiUid = uid.GetObjUID();
-			g_Log.EventDebug("[DEBUG_SCRIPTS] Blocked TIMERF(MS) execution on unused UID (0%x, dec %u'): '%s'.\n", uiUid, uiUid, s.GetKey());
-		}
-	}
 
-	return false;
+    if (g_Cfg.m_iDebugFlags & DEBUGF_SCRIPTS)
+    {
+        const uint uiUid = uid.GetObjUID();
+        g_Log.EventDebug("[DEBUG_SCRIPTS] Blocked TIMERF(MS) execution on unused UID (0%x, dec %u'): '%s'.\n", uiUid, uiUid, s.GetKey());
+    }
+
+    return false;
 }
 
 bool CTimedFunction::_OnTick() // virtual

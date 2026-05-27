@@ -63,10 +63,10 @@ bool CPartyDef::SetMaster( CChar *pNewMaster )
 {
 	if ( !pNewMaster )
 		return false;
-	else if ( !IsInParty(pNewMaster) || IsPartyMaster(pNewMaster) )
-		return false;
+    if (!IsInParty(pNewMaster) || IsPartyMaster(pNewMaster))
+        return false;
 
-	size_t i = m_Chars.InsertChar(pNewMaster, 0);
+    size_t i = m_Chars.InsertChar(pNewMaster, 0);
 	SendAddList(nullptr);
 	return (i == 0);
 }
@@ -710,17 +710,17 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 					sVal.Format("%s=%s", pTagAt->GetKey(), pTagAt->GetValStr());
 					return true;
 				}
-				else if ( !strnicmp(ptcKey, "KEY", 3) )
-				{
-					sVal = pTagAt->GetKey();
-					return true;
-				}
-				else if ( !strnicmp(ptcKey, "VAL", 3) )
-				{
-					sVal = pTagAt->GetValStr();
-					return true;
-				}
-			}
+                if (!strnicmp(ptcKey, "KEY", 3))
+                {
+                    sVal = pTagAt->GetKey();
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "VAL", 3))
+                {
+                    sVal = pTagAt->GetValStr();
+                    return true;
+                }
+            }
 			return false;
 		}
 

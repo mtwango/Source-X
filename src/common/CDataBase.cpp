@@ -163,10 +163,7 @@ bool CDataBase::query(const char *query, CVarDefMap & mapQueryResult)
         mysql_free_result(m_res);
         return true;
     }
-    else
-    {
-        g_Log.Event(LOGM_NOCONTEXT|LOGL_ERROR, "MariaDB query \"%s\" failed due to \"%s\"\n", query, ( *myErr ? myErr : "unknown reason"));
-    }
+    g_Log.Event(LOGM_NOCONTEXT | LOGL_ERROR, "MariaDB query \"%s\" failed due to \"%s\"\n", query, (*myErr ? myErr : "unknown reason"));
 
     if (( result == CR_SERVER_GONE_ERROR ) || ( result == CR_SERVER_LOST ))
         Close();
@@ -207,13 +204,10 @@ bool CDataBase::exec(const char *query)
 
 			return true;
 		}
-		else
-		{
-            const char *myErr = mysql_error(_myData->ptr);
-			g_Log.Event(LOGM_NOCONTEXT|LOGL_ERROR, "MariaDB query \"%s\" failed due to \"%s\"\n",
-				query, ( *myErr ? myErr : "unknown reason"));
-		}
-	}
+
+	    const char *myErr = mysql_error(_myData->ptr);
+        g_Log.Event(LOGM_NOCONTEXT | LOGL_ERROR, "MariaDB query \"%s\" failed due to \"%s\"\n", query, (*myErr ? myErr : "unknown reason"));
+    }
 
 	if (( result == CR_SERVER_GONE_ERROR ) || ( result == CR_SERVER_LOST ))
 		Close();
@@ -241,14 +235,11 @@ bool CDataBase::addQuery(bool isQuery, lpctstr theFunction, lpctstr theQuery)
 		DEBUG_ERR(("Invalid callback function (%s) for AEXECUTE/AQUERY.\n", theFunction));
 		return false;
 	}
-	else
-	{
-		if ( !g_asyncHdb.isActive() )
-			g_asyncHdb.start();
+    if (!g_asyncHdb.isActive())
+        g_asyncHdb.start();
 
-		g_asyncHdb.addQuery(isQuery,theFunction,theQuery);
-		return true;
-	}
+    g_asyncHdb.addQuery(isQuery, theFunction, theQuery);
+    return true;
 }
 
 void CDataBase::addQueryResult(CSString & theFunction, CScriptTriggerArgsPtr theResult)

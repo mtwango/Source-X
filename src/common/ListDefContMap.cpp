@@ -343,23 +343,21 @@ static bool compare_insensitive (const CListDefContElem * firstelem, const CList
         const int64 iSecond = pSecond->GetValNum();
 		return ( iFirst < iSecond );
 	}
-	else
-	{
-        const lpctstr first = firstelem->GetValStr();
-        const lpctstr second = secondelem->GetValStr();
-        const size_t uiFirstLen = strlen(first), uiSecondLen = strlen(second);
-		uint i = 0;
-		while ( (i < uiFirstLen) && (i < uiSecondLen))
-		{
-            const int cFirst = tolower(first[i]), cSecond = tolower(second[i]);
-			if (cFirst < cSecond)
-                return true;
-			else if (cFirst > cSecond)
-                return false;
-			++i;
-		}
-		return ( uiFirstLen < uiSecondLen );
-	}
+
+    const lpctstr first     = firstelem->GetValStr();
+    const lpctstr second    = secondelem->GetValStr();
+    const size_t uiFirstLen = strlen(first), uiSecondLen = strlen(second);
+    uint i = 0;
+    while ((i < uiFirstLen) && (i < uiSecondLen))
+    {
+        const int cFirst = tolower(first[i]), cSecond = tolower(second[i]);
+        if (cFirst < cSecond)
+            return true;
+        if (cFirst > cSecond)
+            return false;
+        ++i;
+    }
+    return (uiFirstLen < uiSecondLen);
 }
 
 static bool compare_sensitive (const CListDefContElem * firstelem, const CListDefContElem * secondelem)
@@ -374,22 +372,20 @@ static bool compare_sensitive (const CListDefContElem * firstelem, const CListDe
         const int64 iSecond = pSecond->GetValNum();
         return ( iFirst < iSecond );
     }
-	else
-	{
-        const lpctstr first = firstelem->GetValStr();
-        const lpctstr second = secondelem->GetValStr();
-        const size_t uiFirstLen = strlen(first), uiSecondLen = strlen(second);
-        uint i = 0;
-        while ( (i < uiFirstLen) && (i < uiSecondLen))
-		{
-			if (first[i] < second[i])
-                return true;
-			else if (first[i] > second[i])
-                return false;
-			++i;
-		}
-        return ( uiFirstLen < uiSecondLen );
-	}
+
+    const lpctstr first     = firstelem->GetValStr();
+    const lpctstr second    = secondelem->GetValStr();
+    const size_t uiFirstLen = strlen(first), uiSecondLen = strlen(second);
+    uint i = 0;
+    while ((i < uiFirstLen) && (i < uiSecondLen))
+    {
+        if (first[i] < second[i])
+            return true;
+        if (first[i] > second[i])
+            return false;
+        ++i;
+    }
+    return (uiFirstLen < uiSecondLen);
 }
 
 void CListDefCont::Sort(bool bDesc, bool bCase)
@@ -583,8 +579,8 @@ CListDefCont * CListDefMap::GetAt( size_t at )
 
 	if ( i != m_Container.end() )
 		return (*i);
-	else
-		return nullptr;
+
+    return nullptr;
 }
 
 CListDefCont * CListDefMap::GetAtKey( lpctstr at )
@@ -596,8 +592,8 @@ CListDefCont * CListDefMap::GetAtKey( lpctstr at )
 
 	if ( i != m_Container.end() )
 		return (*i);
-	else
-		return nullptr;
+
+    return nullptr;
 }
 
 void CListDefMap::DeleteAt( size_t at )
@@ -793,84 +789,87 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 
 				return true;
 			}
-			else if ( !strnicmp(ppCmds[1], "add", 3) )
-			{
-				// Adds <args> as a new element in LIST.xxx
-				if ( !ptcArg || !(*ptcArg) )
-					return false;
 
-				if ( !pListBase )
-				{
-					pListBase = new CListDefCont(ppCmds[0]);
-					m_Container.insert(pListBase);
-				}
+            if (!strnicmp(ppCmds[1], "add", 3))
+            {
+                // Adds <args> as a new element in LIST.xxx
+                if (!ptcArg || !(*ptcArg))
+                    return false;
 
-                if ( IsStrNumeric(ptcArg) )
-					return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
-				else
-					return pListBase->AddElementStr(ptcArg);
-			}
-			else if ( (!strnicmp(ppCmds[1], "set", 3)) || (!strnicmp(ppCmds[1], "append", 6)) )
-			{
-				if ( !ptcArg || !(*ptcArg) )
-					return false;
+                if (!pListBase)
+                {
+                    pListBase = new CListDefCont(ppCmds[0]);
+                    m_Container.insert(pListBase);
+                }
 
-				if ( pListBase && ( !strnicmp(ppCmds[1], "set", 3) ))
-				{
-					// Set: Clears the list and sets each <args> as a new element in LIST.xxx
-					DeleteKey(ppCmds[0]);
-					pListBase = nullptr;
-				}
+                if (IsStrNumeric(ptcArg))
+                    return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
 
-				// Append: Sets each <args> as a new element in LIST.xxx
-				if ( !pListBase )
-				{
-					pListBase = new CListDefCont(ppCmds[0]);
-					m_Container.insert(pListBase);
-				}
+                return pListBase->AddElementStr(ptcArg);
+            }
 
-                tchar* ppArgs[2];
-                ppArgs[0] = const_cast<tchar*>(ptcArg);
-                while ( Str_Parse( ppArgs[0], &(ppArgs[1]), "," ))
-				{
-                    if ( IsStrNumeric(ppArgs[0]) )
+            if ((!strnicmp(ppCmds[1], "set", 3)) || (!strnicmp(ppCmds[1], "append", 6)))
+            {
+                if (!ptcArg || !(*ptcArg))
+                    return false;
+
+                if (pListBase && (!strnicmp(ppCmds[1], "set", 3)))
+                {
+                    // Set: Clears the list and sets each <args> as a new element in LIST.xxx
+                    DeleteKey(ppCmds[0]);
+                    pListBase = nullptr;
+                }
+
+                // Append: Sets each <args> as a new element in LIST.xxx
+                if (!pListBase)
+                {
+                    pListBase = new CListDefCont(ppCmds[0]);
+                    m_Container.insert(pListBase);
+                }
+
+                tchar *ppArgs[2];
+                ppArgs[0] = const_cast<tchar *>(ptcArg);
+                while (Str_Parse(ppArgs[0], &(ppArgs[1]), ","))
+                {
+                    if (IsStrNumeric(ppArgs[0]))
                         pListBase->AddElementNum(Exp_Get64Val(ppArgs[0]));
-					else
+                    else
                         pListBase->AddElementStr(ppArgs[0]);
                     ppArgs[0] = ppArgs[1];
-				}
+                }
 
-				//insert last element
-                if ( IsStrNumeric(ppArgs[0]) )
+                //insert last element
+                if (IsStrNumeric(ppArgs[0]))
                     return pListBase->AddElementNum(Exp_Get64Val(ppArgs[0]));
-				else
+                else
                     return pListBase->AddElementStr(ppArgs[0]);
-			}
-			else if ( !strnicmp(ppCmds[1], "sort", 4) )
-			{
-				// Re-orders LIST.xxx according to <args>. (possible values are: no args , i , asc , iasc , desc , idesc)
-				if ( !pListBase )
-					return false;
+            }
 
-				if ( ptcArg && *ptcArg )
-				{
-					if ( !strnicmp(ptcArg, "asc", 3) )
-						pListBase->Sort();
-					else if ( (!strnicmp(ptcArg, "i", 1) ) || (!strnicmp(ptcArg, "iasc", 4)) )
-						pListBase->Sort(false, true);
-					else if ( !strnicmp(ptcArg, "desc", 4) )
-						pListBase->Sort(true);
-					else if ( !strnicmp(ptcArg, "idesc", 5) )
-						pListBase->Sort(true, true);
-					else
-						return false;
-					return true;
-				}
-				//default to asc if not specified.
-				pListBase->Sort();
-				return true;
-			}
-		}
+            if (!strnicmp(ppCmds[1], "sort", 4))
+            {
+                // Re-orders LIST.xxx according to <args>. (possible values are: no args , i , asc , iasc , desc , idesc)
+                if (!pListBase)
+                    return false;
+
+                if (ptcArg && *ptcArg)
+                {
+                    if (!strnicmp(ptcArg, "asc", 3))
+                        pListBase->Sort();
+                    else if ((!strnicmp(ptcArg, "i", 1)) || (!strnicmp(ptcArg, "iasc", 4)))
+                        pListBase->Sort(false, true);
+                    else if (!strnicmp(ptcArg, "desc", 4))
+                        pListBase->Sort(true);
+                    else if (!strnicmp(ptcArg, "idesc", 5))
+                        pListBase->Sort(true, true);
+                    else
+                        return false;
+                    return true;
+                }
+                //default to asc if not specified.
+                pListBase->Sort();
+                return true;
+            }
+        }
 		else if ( pListBase )
 		{
 			// LIST.<list_name>.<element index (zero-based)>...
@@ -885,30 +884,31 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 					// Removes the nth element in LIST.xxx
 					return pListBase->RemoveElement(nIndex);
 				}
-				else if ( !strnicmp(ppCmds[2], "insert", 6) && ptcArg && *ptcArg )
-				{
-					// Inserts <args> at the nth index of LIST.xxx
-                    const bool fIsNum = ( IsStrNumeric(ptcArg) );
 
-					if ( nIndex >= pListBase->GetCount() )
-					{
-						if ( fIsNum )
-							return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
-						else
-							return pListBase->AddElementStr(ptcArg);
-					}
+			    if (!strnicmp(ppCmds[2], "insert", 6) && ptcArg && *ptcArg)
+                {
+                    // Inserts <args> at the nth index of LIST.xxx
+                    const bool fIsNum = (IsStrNumeric(ptcArg));
 
-					CListDefContElem* pListElem = pListBase->GetAt(nIndex);
+                    if (nIndex >= pListBase->GetCount())
+                    {
+                        if (fIsNum)
+                            return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
 
-					if ( !pListElem )
-						return false;
+                        return pListBase->AddElementStr(ptcArg);
+                    }
 
-					if ( fIsNum )
-						return pListBase->InsertElementNum(nIndex, Exp_Get64Val(ptcArg));
-					else
-						return pListBase->InsertElementStr(nIndex, ptcArg);
-				}
-			}
+                    CListDefContElem *pListElem = pListBase->GetAt(nIndex);
+
+                    if (!pListElem)
+                        return false;
+
+                    if (fIsNum)
+                        return pListBase->InsertElementNum(nIndex, Exp_Get64Val(ptcArg));
+
+                    return pListBase->InsertElementStr(nIndex, ptcArg);
+                }
+            }
 			else if ( ptcArg && *ptcArg )
 			{
 				// LIST.<list_name>.<element index> -> set value
@@ -919,9 +919,9 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 
                 if ( IsStrNumeric(ptcArg) )
 					return pListBase->SetNumAt(nIndex, Exp_Get64Val(ptcArg));
-				else
-					return pListBase->SetStrAt(nIndex, ptcArg);
-			}
+
+			    return pListBase->SetStrAt(nIndex, ptcArg);
+            }
 		}
 		else
 		{
@@ -934,9 +934,9 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 
                     if ( IsStrNumeric(ptcArg) )
 						return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
-					else
-						return pListBase->AddElementStr(ptcArg);
-				}
+
+				    return pListBase->AddElementStr(ptcArg);
+                }
 			}
 		}
 	}
@@ -954,9 +954,9 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 
         if ( IsStrNumeric(ptcArg) )
 			return pListBase->AddElementNum(Exp_Get64Val(ptcArg));
-		else
-			return pListBase->AddElementStr(ptcArg);
-	}
+
+	    return pListBase->AddElementStr(ptcArg);
+    }
 	else if ( pListBase )
 	{
 		DeleteKey(ppCmds[0]);

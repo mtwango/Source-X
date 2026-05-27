@@ -1061,27 +1061,26 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 					sVal.FormatVal( pChar->m_defense );
 					break;
 				}
+
+		    ptcKey += strlen(sm_szLoadKeys[index]); // 9;
+                if (*ptcKey == '.')
+                {
+                    SKIP_SEPARATORS(ptcKey);
+
+                    if (!strnicmp(ptcKey, "LO", 2))
+                    {
+                        sVal.Format("%d", m_defenseBase);
+                    }
+                    else if (!strnicmp(ptcKey, "HI", 2))
+                    {
+                        sVal.Format("%d", m_defenseBase + m_defenseRange);
+                    }
+                }
                 else
                 {
-					ptcKey += strlen(sm_szLoadKeys[index]); // 9;
-					if ( *ptcKey == '.' )
-					{
-						SKIP_SEPARATORS( ptcKey );
-
-						if ( !strnicmp( ptcKey, "LO", 2 ) )
-						{
-							sVal.Format( "%d", m_defenseBase );
-						}
-						else if ( !strnicmp( ptcKey, "HI", 2 ) )
-						{
-							sVal.Format( "%d", m_defenseBase+m_defenseRange );
-						}
-					}
-					else
-					{
-						sVal.Format( "%d,%d", m_defenseBase, m_defenseBase+m_defenseRange );
-					}
-				} break;
+                    sVal.Format("%d,%d", m_defenseBase, m_defenseBase + m_defenseRange);
+                }
+                break;
 			}
 		case OC_DAM:
 			{
@@ -1250,9 +1249,8 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 
 					return true;
 				}
-				else
-					return false;
-			}
+                return false;
+            }
 			break;
 		case OC_DISTANCE:
 			{
@@ -1316,9 +1314,9 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 					{
 						if (!pThis->GetTopPoint().IsValidPoint())
 							return false;
-						else
-							sVal.FormatVal(pThis->GetTopPoint().GetDir(pt));
-						return true;
+
+					    sVal.FormatVal(pThis->GetTopPoint().GetDir(pt));
+                        return true;
 					}
 
 					CUID uid(Exp_GetVal(ptcKey));
@@ -2007,13 +2005,10 @@ bool CObjBase::r_LoadVal( CScript & s )
                     _ClearTimeoutRaw();
                     break;
                 }
-                else
-                {
-                    // Raw managing needed...
-                    //  _CanTick is a CObjBase method, not a CTimedObject one, since it needs to assess CObjBase
-                    //  override flags for timers and sleeping (like CAN_O_NOSLEEP). We shouldn't do that in CTimedObject.
-                    _SetAwakeFlagRaw();
-                }
+                // Raw managing needed...
+                //  _CanTick is a CObjBase method, not a CTimedObject one, since it needs to assess CObjBase
+                //  override flags for timers and sleeping (like CAN_O_NOSLEEP). We shouldn't do that in CTimedObject.
+                _SetAwakeFlagRaw();
 
                 const int iPrevBuild = g_World.m_iPrevBuild;
                 if (iPrevBuild < 2866) // commit #e08723c54b0a4a3b1601eba6f34a6118891f1313
@@ -2787,24 +2782,18 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 						g_Log.EventError("Timed function: invalid parameter '%" PRId64 "'.\n", iTimeout);
 						return false;
 					}
-					else
-					{
-						SKIP_ARGSEP(ptcCmd);
-						if ( !(*ptcCmd) || (strlen(ptcCmd) >= CTimedFunction::kuiCommandSize) )
-						{
-							g_Log.EventError("TimerF function name empty or args too long - total length must be less than %u characters.\n", CTimedFunction::kuiCommandSize);
-							return false;
-						}
-						else
-						{
-							if (fSeconds)
-							{
-								iTimeout *= MSECS_PER_SEC;
-							}
-							CWorldTimedFunctions::Add(GetUID(), iTimeout, ptcCmd);
-						}
-					}
-				}
+                    SKIP_ARGSEP(ptcCmd);
+                    if (!(*ptcCmd) || (strlen(ptcCmd) >= CTimedFunction::kuiCommandSize))
+                    {
+                        g_Log.EventError("TimerF function name empty or args too long - total length must be less than %u characters.\n", CTimedFunction::kuiCommandSize);
+                        return false;
+                    }
+                    if (fSeconds)
+                    {
+                        iTimeout *= MSECS_PER_SEC;
+                    }
+                    CWorldTimedFunctions::Add(GetUID(), iTimeout, ptcCmd);
+                }
 			}
 			break;
 		case OV_TRIGGER:
@@ -3017,11 +3006,11 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 				CChar* pChar = static_cast <CChar*> (this);
 				return pChar->Use_Obj(pObj, true, true);
 			}
-			else
-				return pCharSrc->Use_Obj(this, true, true);
 
-		case OV_USEITEM:
-			EXC_SET_BLOCK("USEITEM");
+	        return pCharSrc->Use_Obj(this, true, true);
+
+        case OV_USEITEM:
+            EXC_SET_BLOCK("USEITEM");
 			if (!pCharSrc)
 				return false;
 			if (s.HasArgs())
@@ -3347,10 +3336,12 @@ void CObjBase::ResendTooltip(bool fSendFull, bool fUseCache)
 
     if (g_Serv.IsLoadingGeneric())
         return;
-	else if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) == false )
-		return; // tooltips are disabled.
-	else if ( IsDisconnected())
-		return;	// not in the world.
+    // Tooltips are disabled.
+    if (IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) == false)
+        return;
+    // Not in the world.
+    if (IsDisconnected())
+        return;
 
 	if (fUseCache == false)
 		FreePropertyList();

@@ -67,6 +67,6 @@ uint CWorldGameTime::GetMoonPhase(bool fMoonIndex) // static
 
 	if (!fMoonIndex)	// Trammel
 		return IMulDiv( iCurrentTime % TRAMMEL_SYNODIC_PERIOD, 8, TRAMMEL_SYNODIC_PERIOD );
-	else	// Luna2
-		return IMulDiv( iCurrentTime % FELUCCA_SYNODIC_PERIOD, 8, FELUCCA_SYNODIC_PERIOD );
+    // Luna2
+    return IMulDiv(iCurrentTime % FELUCCA_SYNODIC_PERIOD, 8, FELUCCA_SYNODIC_PERIOD);
 }

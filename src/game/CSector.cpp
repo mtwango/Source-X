@@ -778,8 +778,8 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
 	// Gradual transition to global light level.
 	if ( m_Env.m_Light > uiTargLight )
 		return ((m_Env.m_Light > LIGHT_BRIGHT) ? (m_Env.m_Light - 1) : m_Env.m_Light);
-	else
-		return ((m_Env.m_Light < UINT8_MAX) ? (m_Env.m_Light + 1) : m_Env.m_Light);
+
+    return ((m_Env.m_Light < UINT8_MAX) ? (m_Env.m_Light + 1) : m_Env.m_Light);
 }
 
 void CSector::SetLightNow( bool fFlash )

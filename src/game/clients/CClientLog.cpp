@@ -515,12 +515,12 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 						}
 						return false;
 					}
-					else if ( ! sMsg.IsEmpty())
-					{
-						SysMessagef("\"MSG:%s\"", sMsg.GetBuffer());
-						return false;
-					}
-					m_Targ_Text.Clear();
+                    if (!sMsg.IsEmpty())
+                    {
+                        SysMessagef("\"MSG:%s\"", sMsg.GetBuffer());
+                        return false;
+                    }
+                    m_Targ_Text.Clear();
 				}
 				return true;
 			}
@@ -867,11 +867,11 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 		addLoginErr((uchar)((m_Crypt.GetEncryptionType() == ENC_NONE? PacketLoginError::EncNoCrypt : PacketLoginError::EncCrypt) ));
 		return false;
 	}
-	else if ( m_Crypt.GetConnectType() == CONNECT_LOGIN && !xCanEncLogin(true) )
-	{
-		addLoginErr( PacketLoginError::BadVersion );
-		return false;
-	}
+    if (m_Crypt.GetConnectType() == CONNECT_LOGIN && !xCanEncLogin(true))
+    {
+        addLoginErr(PacketLoginError::BadVersion);
+        return false;
+    }
 
     ASSERT(uiLen <= sizeof(CEvent));
     std::unique_ptr<CEvent> bincopy = std::make_unique<CEvent>();		// in buffer. (from client)
@@ -1009,14 +1009,12 @@ bool CClient::xCanEncLogin(bool bCheckCliver)
 
 		return ( g_Cfg.m_fUsecrypt ); // Server don't want crypt clients
 	}
-	else
-	{
-		if ( !g_Serv.m_ClientVersion.GetClientVerNumber() ) // Any Client allowed
-			return true;
+    if (!g_Serv.m_ClientVersion.GetClientVerNumber()) // Any Client allowed
+        return true;
 
-		if ( m_Crypt.GetEncryptionType() != ENC_NONE )
-			return ( m_Crypt.GetClientVerNumber() == g_Serv.m_ClientVersion.GetClientVerNumber() );
-		else
-			return true;	// if unencrypted we check that later
-	}
+    if (m_Crypt.GetEncryptionType() != ENC_NONE)
+        return (m_Crypt.GetClientVerNumber() == g_Serv.m_ClientVersion.GetClientVerNumber());
+
+    return true;
+    // if unencrypted we check that later
 }

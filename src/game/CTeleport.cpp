@@ -39,6 +39,6 @@ bool CTeleport::RealizeTeleport()
 	CSector* pSector = GetSector();
 	if (pSector)
 		return pSector->AddTeleport(this);
-	else
-		return false;
+
+    return false;
 }

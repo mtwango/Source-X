@@ -42,7 +42,7 @@ int CResourceHashArray::_compare(std::unique_ptr<CResourceDef> const& pObjStored
         const ushort uiPage1 = ridStored.GetResPage();
         if (uiPage1 > uiPage2)
             return 1;
-        else if (uiPage1 == uiPage2)
+        if (uiPage1 == uiPage2)
             return 0;
         return -1;
     }

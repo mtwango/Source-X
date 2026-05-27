@@ -793,13 +793,13 @@ bool PacketVendorBuyReq::onReceive(CNetState* net)
 		{
 			if (serial == items[index].m_serial) //If the serials are the same, that means the items come from the same stack.
 				break;
-			else if (!items[index].m_serial.IsValidUID())
-			{
-				items[index].m_serial = serial;
-				items[index].m_price = item->GetVendorPrice(iConvertFactor, false);
-				break;
-			}
-		}
+            if (!items[index].m_serial.IsValidUID())
+            {
+                items[index].m_serial = serial;
+                items[index].m_price = item->GetVendorPrice(iConvertFactor, false);
+                break;
+            }
+        }
 
 		items[index].m_vcAmount += amount;
 		if (items[index].m_price <= 0)
@@ -1129,10 +1129,10 @@ bool PacketSecureTradeReq::onReceive(CNetState* net)
 	CItemContainer* container = dynamic_cast<CItemContainer*>( containerSerial.ItemFind() );
 	if (container == nullptr)
 		return true;
-	else if (character != container->GetParent())
-		return true;
+    if (character != container->GetParent())
+        return true;
 
-	switch ( action )
+    switch ( action )
 	{
 		case SECURE_TRADE_CLOSE:		// cancel trade. send each person cancel messages, move items
 			container->Delete();
@@ -1781,10 +1781,10 @@ bool PacketAllNamesReq::onReceive(CNetState* net)
 		const CObjBase* object = CUID::ObjFindFromUID(readInt32());
 		if (object == nullptr)
 			continue;
-		else if (character->CanSee(object) == false)
-			continue;
+        if (character->CanSee(object) == false)
+            continue;
 
-		new PacketAllNamesResponse(client, object);
+        new PacketAllNamesResponse(client, object);
 	}
 
 	return true;
@@ -1896,13 +1896,13 @@ bool PacketVendorSellReq::onReceive(CNetState* net)
 		client->addVendorClose(vendor);
 		return true;
 	}
-	else if (itemCount >= g_Cfg.m_iContainerMaxItems)
-	{
-		client->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_SELLMUCH));
-		return true;
-	}
+    if (itemCount >= g_Cfg.m_iContainerMaxItems)
+    {
+        client->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_SELLMUCH));
+        return true;
+    }
 
-	// check selling speed
+    // check selling speed
 	const CVarDefCont* vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME");
 	if (vardef != nullptr)
 	{
@@ -2195,30 +2195,30 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
             client->Event_VirtueSelect(button, viewed);
 			return true;
 		}
-		else if (context == CLIMODE_DIALOG_FACESELECTION)
-		{
-			dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
-			if ((button >= ITEMID_FACE_1) && (button <= maxID))
-			{
-				CItem *pFace = character->LayerFind(LAYER_FACE);
-				if (pFace)
-					pFace->Delete();
+        if (context == CLIMODE_DIALOG_FACESELECTION)
+        {
+            dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
+            if ((button >= ITEMID_FACE_1) && (button <= maxID))
+            {
+                CItem *pFace = character->LayerFind(LAYER_FACE);
+                if (pFace)
+                    pFace->Delete();
 
-				pFace = CItem::CreateBase((ITEMID_TYPE)button);
-				if (pFace)
-				{
+                pFace = CItem::CreateBase((ITEMID_TYPE)button);
+                if (pFace)
+                {
                     if (pFace->GetEquipLayer() != LAYER_FACE)
                     {
                         pFace->Delete();
                         return false;
                     }
-					pFace->SetHue(character->GetHue());
-					character->LayerAdd(pFace, LAYER_FACE);
-				}
-			}
-			return true;
-		}
-	}
+                    pFace->SetHue(character->GetHue());
+                    character->LayerAdd(pFace, LAYER_FACE);
+                }
+            }
+            return true;
+        }
+    }
 
 #ifdef _DEBUG
     if (g_Cfg.m_iDebugFlags & DEBUGF_SCRIPTS)
@@ -2958,10 +2958,10 @@ bool PacketAosTooltipInfo::onReceive(CNetState* net)
 
 	if (net->isClientVersionNumber(MINCLIVER_TOOLTIP) == false)
 		return true;
-	else if (client->GetResDisp() < RDS_AOS || !IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
-		return true;
+    if (client->GetResDisp() < RDS_AOS || !IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
+        return true;
 
-	CObjBase* object = CUID(readInt32()).ObjFind();
+    CObjBase * object = CUID(readInt32()).ObjFind();
 	if (object != nullptr && character->CanSee(object))
 		client->addAOSTooltip(object, true);
 
@@ -3053,10 +3053,10 @@ bool PacketChangeStatLock::onReceive(CNetState* net)
 
 	if (code >= STAT_BASE_QTY)
 		return false;
-	else if (state < SKILLLOCK_UP || state > SKILLLOCK_LOCK)
-		return false;
+    if (state < SKILLLOCK_UP || state > SKILLLOCK_LOCK)
+        return false;
 
-	// translate UO stat to Sphere stat
+    // translate UO stat to Sphere stat
 	STAT_TYPE stat(STAT_NONE);
 	switch (code)
 	{
@@ -3586,8 +3586,8 @@ bool PacketAOSTooltipReq::onReceive(CNetState* net)
 
 	if (net->isClientVersionNumber(MINCLIVER_TOOLTIP) == false)
 		return true;
-	else if (client->GetResDisp() < RDS_AOS || !IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
-		return true;
+    if (client->GetResDisp() < RDS_AOS || !IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
+        return true;
 
     word length = readInt16();
     if (length > 500 * sizeof(dword))

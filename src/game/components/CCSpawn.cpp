@@ -192,23 +192,24 @@ const CResourceDef* CCSpawn::_FixDef()
             }
             return pResDef;
         }
+
+        // it should be a char
+        const CResourceIDBase ridPrev = _idSpawn;
+        pResDef                       = _TryChar(idChar);
+        if (pResDef)
+            g_Log.EventDebug("CCSpawn::FixDef fixed on t_spawn_char with UID=0%x a CHAR type resource from Resource ID 0%" PRIx32 " to 0%" PRIx32 ".\n",
+                uiItemUID, _idSpawn.GetPrivateUID(), ridPrev.GetPrivateUID());
         else
-        {
-            // it should be a char
-            const CResourceIDBase ridPrev = _idSpawn;
-            pResDef = _TryChar(idChar);
-            if (pResDef)
-                g_Log.EventDebug("CCSpawn::FixDef fixed on t_spawn_char with UID=0%x a CHAR type resource from Resource ID 0%" PRIx32 " to 0%" PRIx32 ".\n", uiItemUID, _idSpawn.GetPrivateUID(), ridPrev.GetPrivateUID());
-            else
-                g_Log.EventDebug("CCSpawn::FixDef found on t_spawn_char with UID=0%x Index 0%x being not a CHAR, but < SPAWNTYPE_START. Can't fix this.\n", uiItemUID, iIndex);
-            return pResDef;
-        }
+            g_Log.EventDebug(
+                "CCSpawn::FixDef found on t_spawn_char with UID=0%x Index 0%x being not a CHAR, but < SPAWNTYPE_START. Can't fix this.\n", uiItemUID, iIndex);
+        return pResDef;
     }
-    else if (pItem->IsType(IT_SPAWN_ITEM))
+
+    if (pItem->IsType(IT_SPAWN_ITEM))
     {
-        auto _TryItem = [this](ITEMID_TYPE idItem_) -> const CResourceDef*
+        auto _TryItem = [this](ITEMID_TYPE idItem_) -> const CResourceDef *
         {
-            const CResourceDef* pResDef_ = CItemBase::FindItemBase(idItem_);
+            const CResourceDef *pResDef_ = CItemBase::FindItemBase(idItem_);
             if (pResDef_)
                 _idSpawn = CResourceIDBase(RES_ITEMDEF, idItem_);
             return pResDef_;
@@ -238,23 +239,18 @@ const CResourceDef* CCSpawn::_FixDef()
             }
             return pResDef;
         }
+
+        // it should be an item
+        const CResourceID ridPrev = _idSpawn;
+        pResDef = _TryItem(idItem);
+        if (pResDef)
+            g_Log.EventDebug("CCSpawn::FixDef fixed on t_spawn_item with UID=0%x an ITEM type resource from Resource ID 0%" PRIx32 " to 0%" PRIx32 ".\n", uiItemUID, _idSpawn.GetPrivateUID(), ridPrev.GetPrivateUID());
         else
-        {
-            // it should be an item
-            const CResourceID ridPrev = _idSpawn;
-            pResDef = _TryItem(idItem);
-            if (pResDef)
-                g_Log.EventDebug("CCSpawn::FixDef fixed on t_spawn_item with UID=0%x an ITEM type resource from Resource ID 0%" PRIx32 " to 0%" PRIx32 ".\n", uiItemUID, _idSpawn.GetPrivateUID(), ridPrev.GetPrivateUID());
-            else
-                g_Log.EventDebug("CCSpawn::FixDef found on t_spawn_item with UID=0%x Index 0%x being not an ITEM, but < ITEMID_TEMPLATE. Can't fix this.\n", uiItemUID, iIndex);
-            return pResDef;
-        }
+            g_Log.EventDebug("CCSpawn::FixDef found on t_spawn_item with UID=0%x Index 0%x being not an ITEM, but < ITEMID_TEMPLATE. Can't fix this.\n", uiItemUID, iIndex);
+        return pResDef;
     }
-    else
-    {
-        g_Log.EventDebug("CCSpawn::FixDef called on item of non-spawn type!? UID=0%x.\n", uiItemUID);
-        return nullptr;
-    }
+    g_Log.EventDebug("CCSpawn::FixDef called on item of non-spawn type!? UID=0%x.\n", uiItemUID);
+    return nullptr;
 }
 
 const CResourceDef *CCSpawn::FixDef()

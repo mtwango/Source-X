@@ -60,18 +60,19 @@ bool CFactionDef::IsOppositeGroup(const CFactionDef *target) const noexcept
 
     if ((myGroup == Group::ELEMENTAL) && (targGroup == Group::ABYSS))
         return true;
-    else if ((myGroup == Group::ABYSS) && ((targGroup == Group::FEY) || (targGroup == Group::ELEMENTAL)))
+    if ((myGroup == Group::ABYSS) && ((targGroup == Group::FEY) || (targGroup == Group::ELEMENTAL)))
         return true;
-    else if ((myGroup == Group::FEY) && (targGroup == Group::ABYSS))
+    if ((myGroup == Group::FEY) && (targGroup == Group::ABYSS))
         return true;
-    else if ((myGroup == Group::REPTILIAN) && (targGroup == Group::ARACHNID))
+    if ((myGroup == Group::REPTILIAN) && (targGroup == Group::ARACHNID))
         return true;
-    else if ((myGroup == Group::ARACHNID) && (targGroup == Group::REPTILIAN))
+    if ((myGroup == Group::ARACHNID) && (targGroup == Group::REPTILIAN))
         return true;
-    else if ((myGroup == Group::HUMANOID) && (targGroup == Group::UNDEAD))
+    if ((myGroup == Group::HUMANOID) && (targGroup == Group::UNDEAD))
         return true;
-    else if ((myGroup == Group::UNDEAD) && (targGroup == Group::HUMANOID))
+    if ((myGroup == Group::UNDEAD) && (targGroup == Group::HUMANOID))
         return true;
+
     return false;
 }
 
@@ -83,18 +84,19 @@ bool CFactionDef::IsSuperSlayerVersus(const CFactionDef *target) const noexcept
     const auto targSpecies  = target->GetSpecies();
     if ((myGroup == Group::FEY) && (targGroup == Group::FEY) && (targSpecies == Species::FEY_SSLAYER))
         return true;
-    else if ((myGroup == Group::ELEMENTAL) && (targGroup == Group::ELEMENTAL) && (targSpecies == Species::ELEMENTAL_SSLAYER))
+    if ((myGroup == Group::ELEMENTAL) && (targGroup == Group::ELEMENTAL) && (targSpecies == Species::ELEMENTAL_SSLAYER))
         return true;
-    else if ((myGroup == Group::ABYSS) && (targGroup == Group::ELEMENTAL) && (targSpecies == Species::DEMON_SSLAYER))
+    if ((myGroup == Group::ABYSS) && (targGroup == Group::ELEMENTAL) && (targSpecies == Species::DEMON_SSLAYER))
         return true;
-    else if ((myGroup == Group::HUMANOID) && (targGroup == Group::HUMANOID) && (targSpecies == Species::REPOND_SSLAYER))
+    if ((myGroup == Group::HUMANOID) && (targGroup == Group::HUMANOID) && (targSpecies == Species::REPOND_SSLAYER))
         return true;
-    else if ((myGroup == Group::UNDEAD) && (targGroup == Group::UNDEAD) && (targSpecies == Species::UNDEAD_SSLAYER))
+    if ((myGroup == Group::UNDEAD) && (targGroup == Group::UNDEAD) && (targSpecies == Species::UNDEAD_SSLAYER))
         return true;
-    else if ((myGroup == Group::ARACHNID) && (targGroup == Group::ARACHNID) && (targSpecies == Species::ARACHNID_SSLAYER))
+    if ((myGroup == Group::ARACHNID) && (targGroup == Group::ARACHNID) && (targSpecies == Species::ARACHNID_SSLAYER))
         return true;
-    else if ((myGroup == Group::REPTILIAN) && (targGroup == Group::REPTILIAN) && (targSpecies == Species::REPTILE_SSLAYER))
+    if ((myGroup == Group::REPTILIAN) && (targGroup == Group::REPTILIAN) && (targSpecies == Species::REPTILE_SSLAYER))
         return true;
+
     return false;
 }
 

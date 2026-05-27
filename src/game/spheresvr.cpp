@@ -142,29 +142,27 @@ static bool WritePidFile(int iMode = 0)
 	{
 		return (STDFUNC_UNLINK(fileName) == 0);
 	}
-	else if (iMode == 2)	// check for .pid file
-	{
-		pidFile = fopen(fileName, "r");
-		if (pidFile)
-		{
-			g_Log.Event(LOGM_INIT, SPHERE_FILE ".pid already exists. Secondary launch or unclean shutdown?\n");
-			fclose(pidFile);
-		}
-		return true;
-	}
-	else
-	{
-		pidFile = fopen(fileName, "w");
-		if (pidFile)
-		{
-			pid_t spherepid = STDFUNC_GETPID();
-			fprintf(pidFile, "%d\n", spherepid);
-			fclose(pidFile);
-			return true;
-		}
-		g_Log.Event(LOGM_INIT, "Cannot create pid file!\n");
-		return false;
-	}
+    if (iMode == 2) // check for .pid file
+    {
+        pidFile = fopen(fileName, "r");
+        if (pidFile)
+        {
+            g_Log.Event(LOGM_INIT, SPHERE_FILE ".pid already exists. Secondary launch or unclean shutdown?\n");
+            fclose(pidFile);
+        }
+        return true;
+    }
+
+    pidFile = fopen(fileName, "w");
+    if (pidFile)
+    {
+        pid_t spherepid = STDFUNC_GETPID();
+        fprintf(pidFile, "%d\n", spherepid);
+        fclose(pidFile);
+        return true;
+    }
+    g_Log.Event(LOGM_INIT, "Cannot create pid file!\n");
+    return false;
 }
 
 int Sphere_InitServer( int argc, char *argv[] )

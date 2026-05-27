@@ -683,6 +683,6 @@ bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, word wFlags, bool bCombatCh
 		}
 		return CanSeeLOS_New(pt, nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);
 	}
-	else
-		return CanSeeLOS(pObj->GetTopPoint(), nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);
+
+    return CanSeeLOS(pObj->GetTopPoint(), nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);
 }

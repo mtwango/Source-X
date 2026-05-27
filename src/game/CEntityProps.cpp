@@ -138,16 +138,14 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
             // The prop is set. We found it.
             return true;
         }
-        else
-        {
-            // But the prop isn't set. Let's check the base. We already have iPropIndex and fPropStr.
-            CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
-            if (!pComp)
-                return true;    // The base doesn't have this component, but the obj did -> return true
-            ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
-            pComp->FindLoadPropVal(s, nullptr, iLimitToExpansion, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
-            return true;        // return true regardlessly of the value being set or not (it's still a valid property)
-        }
+
+        // But the prop isn't set. Let's check the base. We already have iPropIndex and fPropStr.
+        CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
+        if (!pComp)
+            return true; // The base doesn't have this component, but the obj did -> return true
+        ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
+        pComp->FindLoadPropVal(s, nullptr, iLimitToExpansion, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
+        return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
     return ((pBaseEntityProps->_lComponentProps.empty() == false) && pBaseEntityProps->CEPLoopLoad(&loopRet, s, nullptr, iLimitToExpansion));
@@ -207,17 +205,15 @@ bool CEntityProps::r_WritePropVal(lpctstr ptcKey, CSString & sVal, const CObjBas
             // The prop is set. We found it.
             return true;
         }
-        else
-        {
-            // But the prop isn't set. Let's check the base. We already have iPropIndex and fPropStr.
-            ASSERT(pBaseEntityProps);
-            const CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
-            if (!pComp)
-                return true;    // The base doesn't have this component, but the obj did -> return true
-            ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
-            pComp->FindWritePropVal(sVal, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
-            return true;        // return true regardlessly of the value being set or not (it's still a valid property)
-        }
+
+        // But the prop isn't set. Let's check the base. We already have iPropIndex and fPropStr.
+        ASSERT(pBaseEntityProps);
+        const CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
+        if (!pComp)
+            return true; // The base doesn't have this component, but the obj did -> return true
+        ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
+        pComp->FindWritePropVal(sVal, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
+        return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
     return (pBaseEntityProps && (pBaseEntityProps->_lComponentProps.empty() == false) && pBaseEntityProps->CEPLoopWrite(&loopRet, ptcKey, sVal));

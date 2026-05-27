@@ -1859,7 +1859,7 @@ bool CItemMultiCustom::r_LoadVal(CScript & s)
                 (short)(atoi(ppArgs[4])));
             return true;
         }
-        else if (s.IsKey("REVISION"))
+        if (s.IsKey("REVISION"))
         {
             m_designWorking.m_iRevision = s.GetArgVal();
             CommitChanges();
@@ -1879,14 +1879,14 @@ uint8 CItemMultiCustom::GetPlane(int8 z)
 {
     if (z >= 67)
         return 4;
-    else if (z >= 47)
+    if (z >= 47)
         return 3;
-    else if (z >= 27)
+    if (z >= 27)
         return 2;
-    else if (z >= 7)
+    if (z >= 7)
         return 1;
-    else
-        return 0;
+
+    return 0;
 }
 
 uint8 CItemMultiCustom::GetPlane(const CMultiComponent * pComponent)

@@ -4868,15 +4868,15 @@ bool PacketHouseDesign::writePlaneData(int plane, int itemCount, byte* data, int
 		g_Log.EventError("Compress failed with error %d when generating house design for floor %d on building 0%x.\n", error, plane, (dword)m_house->GetUID());
 		return false;
 	}
-	else if ( compressLength <= 0 || compressLength >= PLANEDATA_BUFFER )
-	{
-		// too much data, but we should be able to continue to the next floor without problems
-		delete[] compressBuffer;
-		g_Log.EventWarn("Floor %d on building 0%x too large with compressed length of %lu.\n", plane, (dword)m_house->GetUID(), compressLength);
-		return false;
-	}
+    if (compressLength <= 0 || compressLength >= PLANEDATA_BUFFER)
+    {
+        // too much data, but we should be able to continue to the next floor without problems
+        delete[] compressBuffer;
+        g_Log.EventWarn("Floor %d on building 0%x too large with compressed length of %lu.\n", plane, (dword)m_house->GetUID(), compressLength);
+        return false;
+    }
 
-	writeByte((byte)(plane | 0x20));
+    writeByte((byte)(plane | 0x20));
 	writeByte((byte)(dataSize));
 	writeByte((byte)compressLength);
 	writeByte(((dataSize >> 4) & 0xF0) | ((compressLength >> 8) & 0x0F));
@@ -4929,15 +4929,15 @@ void PacketHouseDesign::flushStairData(void)
 		g_Log.EventError("Compress failed with error %d when generating house design on building 0%x.\n", error, (dword)m_house->GetUID());
 		return;
 	}
-	else if (compressLength <= 0 || compressLength >= STAIRDATA_BUFFER)
-	{
-		// too much data, but we should be able to continue to the next block without problems
-		delete[] compressBuffer;
-		g_Log.EventWarn("Building 0%x too large with compressed length of %lu.\n", (dword)m_house->GetUID(), compressLength);
-		return;
-	}
+    if (compressLength <= 0 || compressLength >= STAIRDATA_BUFFER)
+    {
+        // too much data, but we should be able to continue to the next block without problems
+        delete[] compressBuffer;
+        g_Log.EventWarn("Building 0%x too large with compressed length of %lu.\n", (dword)m_house->GetUID(), compressLength);
+        return;
+    }
 
-	writeByte((byte)(9 + m_stairPlaneCount));
+    writeByte((byte)(9 + m_stairPlaneCount));
 	writeByte((byte)(stairSize));
 	writeByte((byte)compressLength);
 	writeByte(((stairSize >> 4) & 0xF0) | ((compressLength >> 8) & 0x0F));

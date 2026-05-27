@@ -1016,9 +1016,10 @@ bool CWorld::SaveTry( bool fForceImmediate ) // Save world state
 		ASSERT( IsSaving() );
 		if ( fForceImmediate )	// finish it now !
 			return SaveForce();
-		else if ( g_Cfg.m_iSaveBackgroundTime )
-			return SaveStage();
-		return false;
+        if (g_Cfg.m_iSaveBackgroundTime)
+            return SaveStage();
+
+	    return false;
 	}
 
 	// Start a new save.
@@ -1528,14 +1529,14 @@ bool CWorld::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 			pRef = m_uidLastNewItem.ItemFind();
 			return true;
 		}
-		else if ( ! strnicmp( ptcKey+7, "CHAR", 4 ) )
-		{
-			ptcKey += 11;
-			SKIP_SEPARATORS(ptcKey);
-			pRef = m_uidLastNewChar.CharFind();
-			return true;
-		}
-	}
+        if (!strnicmp(ptcKey + 7, "CHAR", 4))
+        {
+            ptcKey += 11;
+            SKIP_SEPARATORS(ptcKey);
+            pRef = m_uidLastNewChar.CharFind();
+            return true;
+        }
+    }
 	return false;
 }
 

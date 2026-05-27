@@ -143,11 +143,8 @@ static void defragSphere(char *path)
         g_Log.Event(LOGM_INIT, "Totally having 0 unique objects (UIDs). Aborting defrag.\n");
         return;
     }
-    else
-    {
-        g_Log.Event(LOGM_INIT, "Totally having %" PRIu32 " unique objects (UIDs), latest: 0%x\n", dwTotalUIDs, puids[dwTotalUIDs-1]);
-    }
 
+    g_Log.Event(LOGM_INIT, "Totally having %" PRIu32 " unique objects (UIDs), latest: 0%x\n", dwTotalUIDs, puids[dwTotalUIDs - 1]);
     g_Log.Event(LOGM_INIT, "Quick-Sorting the UIDs array...\n");
     dword_q_sort(puids, 0, dwTotalUIDs -1);
 
@@ -288,13 +285,10 @@ static void defragSphere(char *path)
                             dwIdxUID = d | (puids[d]&0xF0000000);	// do not forget attach item and special flags like 04..
                             break;
                         }
+                        if (puids[d] < dwIdxUID)
+                            d += dStep;
                         else
-                        {
-                            if (puids[d] < dwIdxUID)
-                                d += dStep;
-                            else
-                                d -= dStep;
-                        }
+                            d -= dStep;
 
                         if ( dStep == 1 )
                         {
@@ -1237,10 +1231,10 @@ longcommand:
                 }
 				return true;
 			}
-			else if ( !strnicmp(pszText, "strip axis", 10) || !strnicmp(pszText, "strip", 5) )
-			{
-				Str_CopyLimitNull(z, dirname, Str_TempLength());
-				Str_ConcatLimitNull(z, "sphere_strip_axis" SPHERE_SCRIPT_EXT, Str_TempLength());
+            if (!strnicmp(pszText, "strip axis", 10) || !strnicmp(pszText, "strip", 5))
+            {
+                Str_CopyLimitNull(z, dirname, Str_TempLength());
+                Str_ConcatLimitNull(z, "sphere_strip_axis" SPHERE_SCRIPT_EXT, Str_TempLength());
                 if (pSrc != this)
                 {
                     pSrc->SysMessagef("StripFile is %s.\n", z);
@@ -1250,10 +1244,10 @@ longcommand:
                     g_Log.Event(LOGL_EVENT, "StripFile is %s.\n", z);
                 }
 
-				f1 = fopen(z, "w");
+                f1 = fopen(z, "w");
 
-				if ( !f1 )
-				{
+                if (!f1)
+                {
                     if (pSrc != this)
                     {
                         pSrc->SysMessagef("Cannot open file %s for writing.\n", z);
@@ -1262,15 +1256,15 @@ longcommand:
                     {
                         g_Log.Event(LOGL_EVENT, "Cannot open file %s for writing.\n", z);
                     }
-					return false;
-				}
+                    return false;
+                }
 
-				while ( (script = g_Cfg.GetResourceFile(i++)) != nullptr )
-				{
-					Str_CopyLimitNull(z, script->GetFilePath(), Str_TempLength());
-					f = fopen(z, "r");
-					if ( !f )
-					{
+                while ((script = g_Cfg.GetResourceFile(i++)) != nullptr)
+                {
+                    Str_CopyLimitNull(z, script->GetFilePath(), Str_TempLength());
+                    f = fopen(z, "r");
+                    if (!f)
+                    {
                         if (pSrc != this)
                         {
                             pSrc->SysMessagef("Cannot open file %s for reading.\n", z);
@@ -1279,36 +1273,34 @@ longcommand:
                         {
                             g_Log.Event(LOGL_EVENT, "Cannot open file %s for reading.\n", z);
                         }
-						continue;
-					}
+                        continue;
+                    }
 
-					while ( !feof(f) )
-					{
-						z[0] = 0;
-						y[0] = 0;
-						fgets(y, SCRIPT_MAX_LINE_LEN, f);
+                    while (!feof(f))
+                    {
+                        z[0] = 0;
+                        y[0] = 0;
+                        fgets(y, SCRIPT_MAX_LINE_LEN, f);
 
-						x = y;
-						GETNONWHITESPACE(x);
-						Str_CopyLimitNull(z, x, Str_TempLength());
+                        x = y;
+                        GETNONWHITESPACE(x);
+                        Str_CopyLimitNull(z, x, Str_TempLength());
 
-						_strlwr(z);
+                        _strlwr(z);
 
-						if ( (( z[0] == '[' ) && strnicmp(z, "[eof]", 5) != 0) || !strnicmp(z, "defname", 7) ||
-							!strnicmp(z, "name", 4) || !strnicmp(z, "type", 4) || !strnicmp(z, "id", 2) ||
-							!strnicmp(z, "weight", 6) || !strnicmp(z, "value", 5) || !strnicmp(z, "dam", 3) ||
-							!strnicmp(z, "armor", 5) || !strnicmp(z, "skillmake", 9) || !strnicmp(z, "on=@", 4) ||
-							!strnicmp(z, "dupeitem", 8) || !strnicmp(z, "dupelist", 8) || !strnicmp(z, "can", 3) ||
-							!strnicmp(z, "tevents", 7) || !strnicmp(z, "subsection", 10) || !strnicmp(z, "description", 11) ||
-							!strnicmp(z, "category", 8) || !strnicmp(z, "p=", 2) || !strnicmp(z, "resources", 9) ||
-							!strnicmp(z, "group", 5) || !strnicmp(z, "rect=", 5) )
-						{
-							fputs(y, f1);
-						}
-					}
-					fclose(f);
-				}
-				fclose(f1);
+                        if (((z[0] == '[') && strnicmp(z, "[eof]", 5) != 0) || !strnicmp(z, "defname", 7) || !strnicmp(z, "name", 4) ||
+                            !strnicmp(z, "type", 4) || !strnicmp(z, "id", 2) || !strnicmp(z, "weight", 6) || !strnicmp(z, "value", 5) ||
+                            !strnicmp(z, "dam", 3) || !strnicmp(z, "armor", 5) || !strnicmp(z, "skillmake", 9) || !strnicmp(z, "on=@", 4) ||
+                            !strnicmp(z, "dupeitem", 8) || !strnicmp(z, "dupelist", 8) || !strnicmp(z, "can", 3) || !strnicmp(z, "tevents", 7) ||
+                            !strnicmp(z, "subsection", 10) || !strnicmp(z, "description", 11) || !strnicmp(z, "category", 8) || !strnicmp(z, "p=", 2) ||
+                            !strnicmp(z, "resources", 9) || !strnicmp(z, "group", 5) || !strnicmp(z, "rect=", 5))
+                        {
+                            fputs(y, f1);
+                        }
+                    }
+                    fclose(f);
+                }
+                fclose(f1);
                 if (pSrc != this)
                 {
                     pSrc->SysMessagef("Scripts have just been stripped.\n");
@@ -1317,9 +1309,9 @@ longcommand:
                 {
                     g_Log.Event(LOGL_EVENT, "Scripts have just been stripped.\n");
                 }
-				return true;
-			}
-		}
+                return true;
+            }
+        }
 
 		if ( g_Cfg.IsConsoleCmd(low) )
 			++pszText;
@@ -1664,30 +1656,30 @@ bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 			sVal.FormatVal( (pAccount ? 1 : 0) );
 			return true;
 		}
-		else if ( pAccount ) // we're retrieving a property from the account
-		{
-			SKIP_SEPARATORS(ptcKey);
-			return pAccount->r_WriteVal(ptcKey, sVal, pSrc);
-		}
-		// we're trying to retrieve a property from an invalid account
+        if (pAccount) // we're retrieving a property from the account
+        {
+            SKIP_SEPARATORS(ptcKey);
+            return pAccount->r_WriteVal(ptcKey, sVal, pSrc);
+        }
+        // we're trying to retrieve a property from an invalid account
 		return false;
 	}
-	else if (!strnicmp(ptcKey, "GMPAGE.", 7))
-	{
-		ptcKey += 7;
-		size_t uiNum = Exp_GetSTVal(ptcKey);
-		if (uiNum >= g_World.m_GMPages.size())
-			return false;
+    if (!strnicmp(ptcKey, "GMPAGE.", 7))
+    {
+        ptcKey += 7;
+        size_t uiNum = Exp_GetSTVal(ptcKey);
+        if (uiNum >= g_World.m_GMPages.size())
+            return false;
 
-		CGMPage* pGMPage = g_World.m_GMPages[uiNum].get();
-		if (!pGMPage)
-			return false;
+        CGMPage *pGMPage = g_World.m_GMPages[uiNum].get();
+        if (!pGMPage)
+            return false;
 
-		SKIP_SEPARATORS(ptcKey);
-		return pGMPage->r_WriteVal(ptcKey, sVal, pSrc);
-	}
+        SKIP_SEPARATORS(ptcKey);
+        return pGMPage->r_WriteVal(ptcKey, sVal, pSrc);
+    }
 
-	// Just do stats values for now.
+    // Just do stats values for now.
     if (!fNoCallChildren)
     {
 	    if ( g_Cfg.r_WriteVal(ptcKey, sVal, pSrc) )
@@ -1829,29 +1821,31 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			}
 			return false;
 		}
-		else if (!strnicmp(ptcKey, "GMPAGE.", 7))
-		{
-			ptcKey += 7;
-			size_t iNum = Exp_GetVal(ptcKey);
-			if (iNum >= g_World.m_GMPages.size())
-				return false;
 
-			CGMPage* pGMPage = g_World.m_GMPages[iNum].get();
-			if (!pGMPage)
-				return false;
+        if (!strnicmp(ptcKey, "GMPAGE.", 7))
+        {
+            ptcKey += 7;
+            size_t iNum = Exp_GetVal(ptcKey);
+            if (iNum >= g_World.m_GMPages.size())
+                return false;
 
-			SKIP_SEPARATORS(ptcKey);
-			CScript script(ptcKey, s.GetArgStr());
-			return pGMPage->r_LoadVal(script);
-		}
-		else if (!strnicmp(ptcKey, "CLEARVARS", 9))
-		{
-			ptcKey = s.GetArgStr();
-			SKIP_SEPARATORS(ptcKey);
+            CGMPage *pGMPage = g_World.m_GMPages[iNum].get();
+            if (!pGMPage)
+                return false;
+
+            SKIP_SEPARATORS(ptcKey);
+            CScript script(ptcKey, s.GetArgStr());
+            return pGMPage->r_LoadVal(script);
+        }
+
+	    if (!strnicmp(ptcKey, "CLEARVARS", 9))
+        {
+            ptcKey = s.GetArgStr();
+            SKIP_SEPARATORS(ptcKey);
             g_ExprGlobals.mtEngineLockedWriter()->m_VarGlobals.ClearKeys(ptcKey);
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 
 	switch (index)
 	{

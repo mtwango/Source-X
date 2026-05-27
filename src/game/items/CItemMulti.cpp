@@ -1411,24 +1411,20 @@ void CItemMulti::TransferAllItemsToMovingCrate(TRANSFER_TYPE iType)
             {
                 continue;
             }
-            else if (!fTransferSecuredContainers && pItem->IsAttr(ATTR_SECURE))  // Skip this item if it's secured (container) and we don't want to TRANSFER_SECURED.
+            if (!fTransferSecuredContainers && pItem->IsAttr(ATTR_SECURE)) // Skip this item if it's secured (container) and we don't want to TRANSFER_SECURED.
             {
                 continue;
             }
-            else if (pItem->IsType(IT_MULTI_ADDON) || pItem->IsType(IT_MULTI))  // If the item is a house Addon, redeed it.
+            if (pItem->IsType(IT_MULTI_ADDON) || pItem->IsType(IT_MULTI)) // If the item is a house Addon, redeed it.
             {
-                if (fTransferAddons)    // Shall be transfered, but addons needs an special transfer code by redeeding.
+                if (fTransferAddons)                                      // Shall be transfered, but addons needs an special transfer code by redeeding.
                 {
-                    static_cast<CItemMulti*>(pItem)->Redeed(false, false);
-                    Area->RestartSearch();    // we removed an item and this will mess the search loop, so restart to fix it.
-                    continue;
+                    static_cast<CItemMulti *>(pItem)->Redeed(false, false);
+                    Area->RestartSearch(); // we removed an item and this will mess the search loop, so restart to fix it.
                 }
-                else
-                {
-                    continue;
-                }
+                continue;
             }
-            else if (!Multi_IsPartOf(pItem))  // Items not linked to, or listed on, this multi.
+            if (!Multi_IsPartOf(pItem)) // Items not linked to, or listed on, this multi.
             {
                 continue;
             }
@@ -3116,10 +3112,7 @@ bool CItemMulti::r_LoadVal(CScript & s)
                     SetGuild(uid);
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+                return false;
             }
             break;
         }
@@ -3694,7 +3687,7 @@ HOUSE_PRIV CMultiStorage::GetPriv(const CUID& uidMulti)
     {
         return _lHouses[uidMulti];
     }
-    else if (pMulti->IsType(IT_SHIP))
+    if (pMulti->IsType(IT_SHIP))
     {
         return _lShips[uidMulti];
     }

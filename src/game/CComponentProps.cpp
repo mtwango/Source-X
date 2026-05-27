@@ -42,8 +42,8 @@ bool CComponentProps::BaseProp_LoadPropVal(PropertyIndex_t iPropIndex, bool fPro
     ADDTOCALLSTACK("CComponentProps::BaseProp_LoadPropVal");
     if (fPropStr)
         return SetPropertyStr(iPropIndex, s.GetArgStr(), pLinkedObj, iLimitToExpansion, true);
-    else
-        return SetPropertyNum(iPropIndex, s.GetArgVal(), pLinkedObj, iLimitToExpansion, true);
+
+    return SetPropertyNum(iPropIndex, s.GetArgVal(), pLinkedObj, iLimitToExpansion, true);
 }
 
 bool CComponentProps::BaseProp_WritePropVal(PropertyIndex_t iPropIndex, bool fPropStr, CSString & sVal) const
@@ -53,13 +53,11 @@ bool CComponentProps::BaseProp_WritePropVal(PropertyIndex_t iPropIndex, bool fPr
     {
         return GetPropertyStrPtr(iPropIndex, &sVal);
     }
-    else
-    {
-        PropertyValNum_t iVal = 0;
-        bool fRet = GetPropertyNumPtr(iPropIndex, &iVal);
-        sVal.FormatLLVal(iVal);
-        return fRet;
-    }
+
+    PropertyValNum_t iVal = 0;
+    bool fRet = GetPropertyNumPtr(iPropIndex, &iVal);
+    sVal.FormatLLVal(iVal);
+    return fRet;
 }
 
 void CComponentProps::BaseCont_Write_ContNum(const BaseContNum_t* container, const lpctstr *ptcPropsTable, CScript &s) // static

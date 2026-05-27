@@ -510,20 +510,18 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 		pSrc->SysMessage(z);
 		return true;
 	}
-	else
-	{
-		CSString cmdArgs;
-		if (ppCmd[4] && ppCmd[4][0])
-            cmdArgs.Format("%s %s %s", ppCmd[2], ppCmd[3], ppCmd[4]);
-		else if (ppCmd[3] && ppCmd[3][0])
-            cmdArgs.Format("%s %s", ppCmd[2], ppCmd[3]);
-		else if (ppCmd[2] && ppCmd[2][0])
-            cmdArgs.Format("%s", ppCmd[2]);
 
-        CScript script( ppCmd[1], cmdArgs.GetBuffer() );
+    CSString cmdArgs;
+    if (ppCmd[4] && ppCmd[4][0])
+        cmdArgs.Format("%s %s %s", ppCmd[2], ppCmd[3], ppCmd[4]);
+    else if (ppCmd[3] && ppCmd[3][0])
+        cmdArgs.Format("%s %s", ppCmd[2], ppCmd[3]);
+    else if (ppCmd[2] && ppCmd[2][0])
+        cmdArgs.Format("%s", ppCmd[2]);
 
-		return pAccount->r_Verb( script, pSrc );
-	}
+    CScript script(ppCmd[1], cmdArgs.GetBuffer());
+
+    return pAccount->r_Verb(script, pSrc);
 }
 
 //**********************************************************************
@@ -1110,20 +1108,20 @@ bool CAccount::SetAutoResDisp(CClient *pClient)
 	const CNetState* pNS = pClient->GetNetState();
 	if (pNS->isClientVersionNumber(MINCLIVER_TOL))
 		return SetResDisp(RDS_TOL);
-	else if (pNS->isClientVersionNumber(MINCLIVER_HS))
-		return SetResDisp(RDS_HS);
-	else if (pNS->isClientVersionNumber(MINCLIVER_SA))
-		return SetResDisp(RDS_SA);
-	else if (pNS->isClientVersionNumber(MINCLIVER_ML))
-		return SetResDisp(RDS_ML);
-	else if (pNS->isClientVersionNumber(MINCLIVER_SE))
-		return SetResDisp(RDS_SE);
-	else if (pNS->isClientVersionNumber(MINCLIVER_AOS))
-		return SetResDisp(RDS_AOS);
-	else if (pNS->isClientVersionNumber(MINCLIVER_LBR))
-		return SetResDisp(RDS_LBR);
-	else
-		return SetResDisp(RDS_T2A);
+    if (pNS->isClientVersionNumber(MINCLIVER_HS))
+        return SetResDisp(RDS_HS);
+    if (pNS->isClientVersionNumber(MINCLIVER_SA))
+        return SetResDisp(RDS_SA);
+    if (pNS->isClientVersionNumber(MINCLIVER_ML))
+        return SetResDisp(RDS_ML);
+    if (pNS->isClientVersionNumber(MINCLIVER_SE))
+        return SetResDisp(RDS_SE);
+    if (pNS->isClientVersionNumber(MINCLIVER_AOS))
+        return SetResDisp(RDS_AOS);
+    if (pNS->isClientVersionNumber(MINCLIVER_LBR))
+        return SetResDisp(RDS_LBR);
+
+    return SetResDisp(RDS_T2A);
 }
 
 enum AC_TYPE

@@ -81,7 +81,7 @@ bool CItem::Plant_Use(CChar *pChar)
                     pItemFruit->Delete(true);
                     return true;
                 }
-                else if (iRet == TRIGRET_RET_HALFBAKED)
+                if (iRet == TRIGRET_RET_HALFBAKED)
                 {
                     pItemFruit->SetAmount(iAmount);
                     pItemFruit->MoveToDecay(GetTopPoint(), g_Cfg.m_iDecay_Item);
@@ -148,21 +148,22 @@ bool CItem::Plant_OnTick()
 					pItemFruit->MoveToDecay(GetTopPoint(), g_Cfg.m_iDecay_Item);
 					break;
 				}
-				else if ( pItem->IsType(IT_FRUIT) || pItem->IsType(IT_REAGENT_RAW) )
-					break;
-			}
+                if (pItem->IsType(IT_FRUIT) || pItem->IsType(IT_REAGENT_RAW))
+                    break;
+            }
 		}
 
 		Plant_CropReset();
 		return true;
 	}
-	else if ( iGrowID )
-	{
-		Plant_SetID(iGrowID);
-		Update();
-	}
 
-	return true;
+    if (iGrowID)
+    {
+        Plant_SetID(iGrowID);
+        Update();
+    }
+
+    return true;
 }
 
 bool CItem::Plant_SetID(ITEMID_TYPE id)

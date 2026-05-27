@@ -457,13 +457,10 @@ static constexpr int hex_digits_from_width(uint64_t u, int iWidthNibbles) noexce
         int lz = std::countl_zero(v);
         return 8 - (lz / 4);
     }
-    else
-    {
-        if (u == 0)
-            return 1;
-        int lz = std::countl_zero(u);        // counts in 64-bit domain
-        return 16 - (lz / 4);
-    }
+    if (u == 0)
+        return 1;
+    int lz = std::countl_zero(u); // counts in 64-bit domain
+    return 16 - (lz / 4);
 }
 
 // Base-10 two-digit lookup table (LUT): "00", "01", ..., "99" laid out consecutively.
@@ -525,19 +522,16 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
             ptcOutBuf[2] = '\0';
             return ptcOutBuf;
         }
-        else
+        if (uiBufLength < 2)
         {
-            if (uiBufLength < 2)
-            {
 #ifdef _DEBUG
-                g_Log.EventError("Str_FromInt_Fast[base=%u]: insufficient buffer (need 2 for \"0\\0\").\n", uiBase);
+            g_Log.EventError("Str_FromInt_Fast[base=%u]: insufficient buffer (need 2 for \"0\\0\").\n", uiBase);
 #endif
-                return nullptr;
-            }
-            ptcOutBuf[0] = '0';
-            ptcOutBuf[1] = '\0';
-            return ptcOutBuf;
+            return nullptr;
         }
+        ptcOutBuf[0] = '0';
+        ptcOutBuf[1] = '\0';
+        return ptcOutBuf;
     }
 
     // Specialize only 16 and 10; generic fallback for others.
@@ -1907,8 +1901,8 @@ MATCH_TYPE Str_Match(const tchar * pPattern, const tchar * pText) noexcept
     // if end of text not reached then the pattern fails
     if (*pText)
         return MATCH_END;
-    else
-        return MATCH_VALID;
+
+    return MATCH_VALID;
 }
 
 tchar * Str_UnQuote(tchar * pStr) noexcept

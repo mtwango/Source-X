@@ -537,25 +537,28 @@ int CChar::NPC_WalkToPoint( bool fRun )
 					{
 						CItem *pItem = AreaItems->GetItem();
 						if ( !pItem )	break;
-						else if ( abs(pItem->GetTopZ() - pMe.m_z) > 3 )		continue;		// item is too high
-						else if ( !pItem->Can(CAN_I_BLOCK) )				continue;		// this item not blocking me
-						else if ( !CanMoveItem(pItem) || !CanCarry(pItem) )		fClearedWay = false;
-						else
-						{
-							//	move this item to the position I am currently in
-							pItem->MoveToUpdate(GetTopPoint());
+                        if (abs(pItem->GetTopZ() - pMe.m_z) > 3)
+                            continue; // item is too high
+                        if (!pItem->Can(CAN_I_BLOCK))
+                            continue; // this item not blocking me
+                        if (!CanMoveItem(pItem) || !CanCarry(pItem))
+                            fClearedWay = false;
+                        else
+                        {
+                            //	move this item to the position I am currently in
+                            pItem->MoveToUpdate(GetTopPoint());
                             fClearedWay = true;
-							break;
-						}
-					}
+                            break;
+                        }
+                    }
 
 					if ( fClearedWay )
 						break;
 					//	If not cleared the way still, but I am still clever enough
 					//	I should try to move in the first step I was trying to move to
-					else if ( iInt < iRand*3 )
-						break;
-				}
+                    if (iInt < iRand * 3)
+                        break;
+                }
 
 				//	we have just cleared our way
 				if ( fClearedWay )
@@ -816,27 +819,25 @@ bool CChar::NPC_LookAtCharHuman( CChar * pChar )
         {
 			return NPC_LookAtCharGuard(pChar);
         }
-		else if (NPC_CanSpeak() && !g_Rand.Get16ValFast(3))
-		{
-			// Find a guard.
+        if (NPC_CanSpeak() && !g_Rand.Get16ValFast(3))
+        {
+            // Find a guard.
             if (CallGuards(pChar))
             {
-                Speak(pChar->IsStatFlag(STATF_CRIMINAL) ?
-                    g_Cfg.GetDefaultMsg(DEFMSG_NPC_GENERIC_SEECRIM) :
-                    g_Cfg.GetDefaultMsg(DEFMSG_NPC_GENERIC_SEEMONS));   // only speak if I can really call the guards.
+                Speak(pChar->IsStatFlag(STATF_CRIMINAL) ? g_Cfg.GetDefaultMsg(DEFMSG_NPC_GENERIC_SEECRIM) : g_Cfg.GetDefaultMsg(DEFMSG_NPC_GENERIC_SEEMONS)); // only speak if I can really call the guards.
             }
-			if (IsStatFlag(STATF_WAR))
-				return false;
+            if (IsStatFlag(STATF_WAR))
+                return false;
 
-			// run away like a coward.
-			m_Act_UID = pChar->GetUID();
-			m_atFlee.m_iStepsMax = 20;		// how long should it take to get there.
-			m_atFlee.m_iStepsCurrent = 0;	// how long has it taken ?
-			Skill_Start(NPCACT_FLEE);
-			m_pNPC->m_Act_Motivation = 80;
-			return true;
-		}
-	}
+            // run away like a coward.
+            m_Act_UID = pChar->GetUID();
+            m_atFlee.m_iStepsMax = 20; // how long should it take to get there.
+            m_atFlee.m_iStepsCurrent = 0;  // how long has it taken ?
+            Skill_Start(NPCACT_FLEE);
+            m_pNPC->m_Act_Motivation = 80;
+            return true;
+        }
+    }
 	// Attack an evil creature ?
 	return false;
 }
@@ -1037,28 +1038,24 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
 			Skill_Start( (Skill_GetActive() == NPCACT_FOLLOW_TARG) ? NPCACT_FOLLOW_TARG : NPCACT_GUARD_TARG);
 			return true;
 		}
-		else
-		{
-			// initiate a conversation ?
-			if ( ! IsStatFlag( STATF_WAR ) &&
-				( (Skill_GetActive() == SKILL_NONE) || (Skill_GetActive() == NPCACT_WANDER) ) && // I'm idle
-				pChar->m_pPlayer &&
-				! Memory_FindObjTypes( pChar, MEMORY_SPEAK ))
-			{
-				if ( IsTrigUsed(TRIGGER_NPCSEENEWPLAYER) )
-				{
-                    if ( OnTrigger( CTRIG_NPCSeeNewPlayer, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar ) != TRIGRET_RET_TRUE )
-					{
-						// record that we attempted to speak to them.
-						CItemMemory * pMemory = Memory_AddObjTypes( pChar, MEMORY_SPEAK );
-						if ( pMemory )
-							pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_FIRSTSPEAK;
-						// m_Act_Hear_Unknown = 0;
-					}
-				}
-			}
-		}
-	}
+
+	    // initiate a conversation ?
+        if (!IsStatFlag(STATF_WAR) && ((Skill_GetActive() == SKILL_NONE) || (Skill_GetActive() == NPCACT_WANDER)) && // I'm idle
+            pChar->m_pPlayer && !Memory_FindObjTypes(pChar, MEMORY_SPEAK))
+        {
+            if (IsTrigUsed(TRIGGER_NPCSEENEWPLAYER))
+            {
+                if (OnTrigger(CTRIG_NPCSeeNewPlayer, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar) != TRIGRET_RET_TRUE)
+                {
+                    // record that we attempted to speak to them.
+                    CItemMemory *pMemory = Memory_AddObjTypes(pChar, MEMORY_SPEAK);
+                    if (pMemory)
+                        pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_FIRSTSPEAK;
+                    // m_Act_Hear_Unknown = 0;
+                }
+            }
+        }
+    }
 
 	if (IsStatFlag(STATF_DEAD))
 		return false;
@@ -1325,9 +1322,9 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 		*/
 		if (!Fight_IsActive())
 			return false;
-		else
-			return true;
-	}
+
+	    return true;
+    }
 
 	EXC_TRY("NPC_Act_Follow");
 
@@ -1930,24 +1927,23 @@ bool CChar::NPC_Act_Food()
 				_SetTimeoutS(5);
 				return true;
 			}
-			else									//	search for grass nearby
-			{
-                CPointMap pt = CWorldMap::FindTypeNear_Top(GetTopPoint(), IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
-				if (( pt.m_x >= 1 ) && ( pt.m_y >= 1 ))
-				{
-					if (( pt.m_x != GetTopPoint().m_x ) && ( pt.m_y != GetTopPoint().m_y ) && ( pt.m_map == GetTopPoint().m_map ))
-					{
-						if ( CanMoveWalkTo(pt) )
-						{
-							m_Act_p = pt;
-							//DEBUG_ERR(("NPCACT_GOTO started; pt.x %d pt.y %d\n",pt.m_x,pt.m_y));
-							Skill_Start(NPCACT_GOTO);
-							return true;
-						}
-					}
-				}
-			}
-		}
+
+		    //	search for grass nearby
+            CPointMap pt = CWorldMap::FindTypeNear_Top(GetTopPoint(), IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
+            if ((pt.m_x >= 1) && (pt.m_y >= 1))
+            {
+                if ((pt.m_x != GetTopPoint().m_x) && (pt.m_y != GetTopPoint().m_y) && (pt.m_map == GetTopPoint().m_map))
+                {
+                    if (CanMoveWalkTo(pt))
+                    {
+                        m_Act_p = pt;
+                        //DEBUG_ERR(("NPCACT_GOTO started; pt.x %d pt.y %d\n",pt.m_x,pt.m_y));
+                        Skill_Start(NPCACT_GOTO);
+                        return true;
+                    }
+                }
+            }
+        }
 	}
 	return false;
 }
@@ -2147,8 +2143,9 @@ bool CChar::NPC_OnItemGive( CChar *pCharSrc, CItem *pItem )
             {
                 if (Use_Item(pItem))
                     return true;
-                else
-                    return false; // If I can't use item, return it inside player's backpack.
+
+                return false;
+                // If I can't use item, return it inside player's backpack.
             }
         }
 
@@ -2629,41 +2626,38 @@ void CChar::NPC_Food()
 				pResBit->SetTimeoutS(60*10);
 				return;
 			}
-			else									//	search for grass nearby
-			{
-				switch ( m_Act_SkillCurrent )
-				{
-					case NPCACT_STAY:
-					case NPCACT_GOTO:
-					case NPCACT_WANDER:
-					case NPCACT_LOOKING:
-					case NPCACT_GO_HOME:
-					case NPCACT_NAPPING:
-					case NPCACT_FLEE:
-						{
-							EXC_SET_BLOCK("searching grass nearby");
-							CPointMap pt = CWorldMap::FindTypeNear_Top(ptMe, IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
-							if (( pt.m_x >= 1 ) && ( pt.m_y >= 1 ))
-							{
-								// we found grass nearby, but has it already been consumed?
-								pResBit = CWorldMap::CheckNaturalResource(pt, IT_GRASS, false, this);
-								if ( pResBit != nullptr && pResBit->GetAmount() && CanMoveWalkTo(pt) )
-								{
-									EXC_SET_BLOCK("walking to grass");
-									pResBit->m_TagDefs.SetNum("NOSAVE", 1);
-									pResBit->SetTimeoutS(60*10);
-									m_Act_p = pt;
-									Skill_Start(NPCACT_GOTO);
-									return;
-								}
-							}
-							break;
-						}
-					default:
-						break;
-				}
-			}
-		}
+            //	search for grass nearby
+            switch (m_Act_SkillCurrent)
+            {
+                case NPCACT_STAY:
+                case NPCACT_GOTO:
+                case NPCACT_WANDER:
+                case NPCACT_LOOKING:
+                case NPCACT_GO_HOME:
+                case NPCACT_NAPPING:
+                case NPCACT_FLEE:
+                {
+                    EXC_SET_BLOCK("searching grass nearby");
+                    CPointMap pt = CWorldMap::FindTypeNear_Top(ptMe, IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
+                    if ((pt.m_x >= 1) && (pt.m_y >= 1))
+                    {
+                        // we found grass nearby, but has it already been consumed?
+                        pResBit = CWorldMap::CheckNaturalResource(pt, IT_GRASS, false, this);
+                        if (pResBit != nullptr && pResBit->GetAmount() && CanMoveWalkTo(pt))
+                        {
+                            EXC_SET_BLOCK("walking to grass");
+                            pResBit->m_TagDefs.SetNum("NOSAVE", 1);
+                            pResBit->SetTimeoutS(60 * 10);
+                            m_Act_p = pt;
+                            Skill_Start(NPCACT_GOTO);
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
 	}
 	EXC_CATCH;
 }

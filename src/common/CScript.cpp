@@ -96,10 +96,10 @@ dword CScriptKey::GetArgFlag( dword dwStart, dword dwMask )
 
 	if ( ! HasArgs())
 		return ( dwStart ^ dwMask );
-	else if ( GetArgVal())
-		return ( dwStart | dwMask );
-	else
-		return ( dwStart &~ dwMask );
+    if (GetArgVal())
+        return (dwStart | dwMask);
+
+    return (dwStart & ~dwMask);
 }
 
 int64 CScriptKey::GetArgLLFlag(uint64 iStart, uint64 iMask)
@@ -114,10 +114,10 @@ int64 CScriptKey::GetArgLLFlag(uint64 iStart, uint64 iMask)
 
     if (!HasArgs())
         return (iStart ^ iMask);
-    else if (GetArgLLVal())
+    if (GetArgLLVal())
         return (iStart | iMask);
-    else
-        return (iStart &~iMask);
+
+    return (iStart & ~iMask);
 }
 
 char CScriptKey::GetArgCVal()

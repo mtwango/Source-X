@@ -133,8 +133,8 @@ word CItemBase::GetMaxAmount()
 	int64 iMax = GetDefNum("MaxAmount");
 	if (iMax)
 		return (word)minimum(iMax, UINT16_MAX);
-	else
-		return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
+
+    return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
 }
 
 bool CItemBase::SetMaxAmount(word amount)
@@ -866,12 +866,12 @@ IT_TYPE CItemBase::GetTypeBase( ITEMID_TYPE id, const CUOItemTypeRec_HS &tiledat
 
 	if ( IsID_WaterWash( id ) )
 		return IT_WATER_WASH;
-	else if ( IsID_Track( id ) )
-		return IT_FIGURINE;
-	else if ( IsID_GamePiece( id ) )
-		return IT_GAME_PIECE;
+    if (IsID_Track(id))
+        return IT_FIGURINE;
+    if (IsID_GamePiece(id))
+        return IT_GAME_PIECE;
 
-	// Get rid of the stuff below here !
+    // Get rid of the stuff below here !
 
 	if (( tiledata.m_flags & UFLAG1_DAMAGE ) && ! ( tiledata.m_flags & UFLAG1_BLOCK ))
 		return IT_TRAP_ACTIVE;
@@ -1164,12 +1164,12 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 					sVal.FormatVal(pItemMulti->_shipSpeed.tiles);
 					break;
 				}
-				else if (!strnicmp(ptcKey, "PERIOD", 6))
-				{
-					sVal.FormatVal(pItemMulti->_shipSpeed.period);
-					break;
-				}
-				return false;
+                if (!strnicmp(ptcKey, "PERIOD", 6))
+                {
+                    sVal.FormatVal(pItemMulti->_shipSpeed.period);
+                    break;
+                }
+                return false;
 			}
 
 			sVal.Format("%d,%d", pItemMulti->_shipSpeed.period, pItemMulti->_shipSpeed.tiles);
@@ -1498,13 +1498,13 @@ bool CItemBase::r_LoadVal( CScript &s )
 					pItemMulti->_shipSpeed.tiles = (uchar)(s.GetArgVal());
 					return true;
 				}
-				else if (!strnicmp(ptcKey, "PERIOD", 6))
-				{
-					pItemMulti->_shipSpeed.tiles = (uchar)(s.GetArgVal());
-					return true;
-				}
+                if (!strnicmp(ptcKey, "PERIOD", 6))
+                {
+                    pItemMulti->_shipSpeed.tiles = (uchar)(s.GetArgVal());
+                    return true;
+                }
 
-				int64 piVal[2];
+                int64 piVal[2];
 				size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, ARRAY_COUNT(piVal));
 				if (iQty == 2)
 				{
@@ -1512,9 +1512,8 @@ bool CItemBase::r_LoadVal( CScript &s )
 					pItemMulti->_shipSpeed.tiles = (uchar)(piVal[1]);
 					return true;
 				}
-				else
-					return false;
-			}
+                return false;
+            }
 		} break;
         case IBC_MULTICOUNT:
         {
@@ -2140,14 +2139,43 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
                 SKIP_SEPARATORS(ptcKey);
                 const CUOMultiItemRec_HS* item = pMulti->GetItem(index);
 
-                if (*ptcKey == '\0') { sVal.Format("%u,%i,%i,%i", item->m_wTileID, item->m_dx, item->m_dy, item->m_dz); return true; }
-                else if (!strnicmp(ptcKey, "ID", 2)) { sVal.FormatVal(item->m_wTileID); return true; }
-                else if (!strnicmp(ptcKey, "DX", 2)) { sVal.FormatVal(item->m_dx); return true; }
-                else if (!strnicmp(ptcKey, "DY", 2)) { sVal.FormatVal(item->m_dy); return true; }
-                else if (!strnicmp(ptcKey, "DZ", 2)) { sVal.FormatVal(item->m_dz); return true; }
-                else if (!strnicmp(ptcKey, "D", 1)) { sVal.Format("%i,%i,%i", item->m_dx, item->m_dy, item->m_dz); return true; }
-                else if (!strnicmp(ptcKey, "VISIBLE", 7)) { sVal.FormatVal(item->m_visible); return true; }
-                else return false;
+                if (*ptcKey == '\0')
+                {
+                    sVal.Format("%u,%i,%i,%i", item->m_wTileID, item->m_dx, item->m_dy, item->m_dz);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "ID", 2))
+                {
+                    sVal.FormatVal(item->m_wTileID);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "DX", 2))
+                {
+                    sVal.FormatVal(item->m_dx);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "DY", 2))
+                {
+                    sVal.FormatVal(item->m_dy);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "DZ", 2))
+                {
+                    sVal.FormatVal(item->m_dz);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "D", 1))
+                {
+                    sVal.Format("%i,%i,%i", item->m_dx, item->m_dy, item->m_dz);
+                    return true;
+                }
+                if (!strnicmp(ptcKey, "VISIBLE", 7))
+                {
+                    sVal.FormatVal(item->m_visible);
+                    return true;
+                }
+
+                return false;
             }
             else
                 return false;
@@ -2207,7 +2235,7 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
                     sVal.FormatVal(_shipSpeed.tiles);
                     break;
                 }
-                else if (!strnicmp(ptcKey, "PERIOD", 6))
+                if (!strnicmp(ptcKey, "PERIOD", 6))
                 {
                     sVal.FormatVal(_shipSpeed.period);
                     break;
@@ -2283,21 +2311,21 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 		{
 			return MakeDupeReplacement(pBase, (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
 		}
-		else if ( s.IsKey( "MULTIREGION" ))
-		{
-			// Upgrade the CItemBase::pBase to the CItemBaseMulti.
-			pBase = CItemBaseMulti::MakeMultiRegion( pBase, s );
-			continue;
-		}
-		else if (s.IsKeyHead("ON", 2))	// trigger scripting marks the end
-		{
-			break;
-		}
-		else if (s.IsKey("ID") || s.IsKey("TYPE"))	// These are required for CItemBaseMulti::MakeMultiRegion to function correctly
-		{
-			pBase->r_LoadVal(s);
-		}
-	}
+        if (s.IsKey("MULTIREGION"))
+        {
+            // Upgrade the CItemBase::pBase to the CItemBaseMulti.
+            pBase = CItemBaseMulti::MakeMultiRegion(pBase, s);
+            continue;
+        }
+        if (s.IsKeyHead("ON", 2)) // trigger scripting marks the end
+        {
+            break;
+        }
+        if (s.IsKey("ID") || s.IsKey("TYPE")) // These are required for CItemBaseMulti::MakeMultiRegion to function correctly
+        {
+            pBase->r_LoadVal(s);
+        }
+    }
 
 	// Return to the start of the item script
 	s.SeekContext(scriptStartContext);
@@ -2307,10 +2335,10 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 	{
 		if ( s.IsKey( "DUPEITEM" ) || s.IsKey( "MULTIREGION" ))
 			continue;
-		else if ( s.IsKeyHead( "ON", 2 ))	// trigger scripting marks the end
-			break;
+        if (s.IsKeyHead("ON", 2)) // trigger scripting marks the end
+            break;
 
-		pBase->r_LoadVal( s );
+        pBase->r_LoadVal( s );
 	}
 
 	return pBase;

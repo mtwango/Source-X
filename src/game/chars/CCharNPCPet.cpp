@@ -136,9 +136,9 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
 			{
 				if (NPC_IsOwnedBy(pSrc, true))
 					break;
-				else
-					return false;
-			}
+
+			    return false;
+            }
 			// Pet friends can use only these commands
 			if ( Memory_FindObjTypes(pSrc, MEMORY_FRIEND) )
 				break;
@@ -403,9 +403,9 @@ bool CChar::NPC_OnHearPetCmdTarg( int iCmd, CChar *pSrc, CObjBase *pObj, const C
 			{
 				if (NPC_IsOwnedBy(pSrc, true))
 					break;
-				else
-					return false;
-			}
+
+			    return false;
+            }
 			// Pet friends can use only these commands
 			if ( Memory_FindObjTypes(pSrc, MEMORY_FRIEND) )
 				break;

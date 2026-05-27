@@ -241,23 +241,23 @@ void CCMultiMovable::SetPilot(CChar *pChar)
 			pChar->SysMessageDefault(DEFMSG_SHIP_PILOT_CANTABOARD);
 			return;
 		}
-		else if (pChar->IsStatFlag(STATF_ONHORSE))
-		{
-			pChar->SysMessageDefault(DEFMSG_ITEMUSE_CANTMOUNTED);
-			return;
-		}
-		else if (pChar->IsStatFlag(STATF_HOVERING))
-		{
-			pChar->SysMessageDefault(DEFMSG_SHIP_PILOT_CANTFLYING);
-			return;
-		}
-		else if (pItemThis->m_itShip.m_fAnchored != 0)
-		{
-			pChar->SysMessageDefault(DEFMSG_SHIP_PILOT_CANTANCHOR);
-			return;
-		}
+        if (pChar->IsStatFlag(STATF_ONHORSE))
+        {
+            pChar->SysMessageDefault(DEFMSG_ITEMUSE_CANTMOUNTED);
+            return;
+        }
+        if (pChar->IsStatFlag(STATF_HOVERING))
+        {
+            pChar->SysMessageDefault(DEFMSG_SHIP_PILOT_CANTFLYING);
+            return;
+        }
+        if (pItemThis->m_itShip.m_fAnchored != 0)
+        {
+            pChar->SysMessageDefault(DEFMSG_SHIP_PILOT_CANTANCHOR);
+            return;
+        }
 
-		CItem *pMemory = CItem::CreateScript(ITEMID_SHIP_PILOT);
+        CItem *pMemory = CItem::CreateScript(ITEMID_SHIP_PILOT);
 		if (!pMemory)
 			return;
 
@@ -1360,7 +1360,7 @@ bool CCMultiMovable::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
                     sVal.FormatVal(_shipSpeed.tiles);
                     break;
                 }
-                else if (!strnicmp(ptcKey, "PERIOD", 6))
+                if (!strnicmp(ptcKey, "PERIOD", 6))
                 {
                     sVal.FormatVal(_shipSpeed.period);
                     break;
@@ -1421,7 +1421,7 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
                     _shipSpeed.tiles = s.GetArgUCVal();
                     return true;
                 }
-                else if (!strnicmp(ptcKey, "PERIOD", 6))
+                if (!strnicmp(ptcKey, "PERIOD", 6))
                 {
                     _shipSpeed.period = (s.GetArgUSVal() * (IsSetOF(OF_NoSmoothSailing) ? MSECS_PER_TENTH : 1)); // get tenths from script, convert to msecs.
                     return true;
@@ -1434,10 +1434,8 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
                     _shipSpeed.tiles = (uchar)(piVal[1]);
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
         }
         break;

@@ -727,46 +727,43 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             const int32  s32 = static_cast<int32>(u32);    // two's complement reinterpretation
             return static_cast<int64>(s32);
         }
-        else
+
+        // two's-complement 64-bit reinterpretation without implementation-defined casts
+        if (uiVal & (1ull << 63))
         {
-            // two's-complement 64-bit reinterpretation without implementation-defined casts
-            if (uiVal & (1ull << 63))
-            {
-                const uint64 mag = (~uiVal) + 1;            // absolute magnitude
-                const int64  neg = -static_cast<int64>(mag);// well-defined negate in 64-bit domain
-                return neg;
-            }
-            return (llong)(int64)uiVal;
+            const uint64 mag = (~uiVal) + 1;             // absolute magnitude
+            const int64 neg  = -static_cast<int64>(mag); // well-defined negate in 64-bit domain
+            return neg;
         }
+        return (llong)(int64)uiVal;
     }
-    else if ((refStrExpr[0] >= '0' && refStrExpr[0] <= '9') ||
-             (refStrExpr[0] == '.' && (refStrExpr[1] >= '0' && refStrExpr[1] <= '9')))
+    if ((refStrExpr[0] >= '0' && refStrExpr[0] <= '9') || (refStrExpr[0] == '.' && (refStrExpr[1] >= '0' && refStrExpr[1] <= '9')))
     {
         // DECIMAL PATH: digits, optionally with '.' separators that are ignored
         // Overflow guard for INT64_MAX (9223372036854775807)
         constexpr int64 LIM10 = INT64_MAX / 10;        // 922337203685477580
-        constexpr int   LIMDG = (int)(INT64_MAX % 10); // 7
+        constexpr int LIMDG   = (int)(INT64_MAX % 10); // 7
 
-        int64 val = 0;
-        bool  overflow = false;
+        int64 val     = 0;
+        bool overflow = false;
 
         lpctstr p = refStrExpr;
         for (;; ++p)
         {
             const tchar ch = *p;
             if (ch == '.')
-                continue;               // skip grouping separators
+                continue; // skip grouping separators
             if (ch < '0' || ch > '9')
                 break;
 
             const int d = ch - '0';
             if (!overflow && (val > LIM10 || (val == LIM10 && d > LIMDG)))
             {
-                overflow = true;        // keep consuming the whole token for the caller
+                overflow = true; // keep consuming the whole token for the caller
             }
             else if (!overflow)
             {
-                val = val * 10 + d;     // safe: guarded to avoid signed overflow
+                val = val * 10 + d; // safe: guarded to avoid signed overflow
             }
         }
 
@@ -780,445 +777,460 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
         }
         return (llong)val;
     }
-    else if ( ! _ISCSYMF(refStrExpr[0]) )
-	{
+    if (!_ISCSYMF(refStrExpr[0]))
+    {
         //#pragma region maths  // MSVC specific
-		// some sort of math op ?
+        // some sort of math op ?
 
-        switch ( refStrExpr[0] )
-		{
-		case '{':
+        switch (refStrExpr[0])
+        {
+            case '{':
                 ++refStrExpr;
-            return GetRangeNumber( refStrExpr );
-		case '[':
-		case '(': // Parse out a sub expression.
-            ++refStrExpr;
-            return GetVal( refStrExpr );
-		case '+':
-            ++refStrExpr;
-			break;
-        case '-':
-            ++refStrExpr;
-            return -GetSingle( refStrExpr );
-		case '~':	// Bitwise not.
-            ++refStrExpr;
-            return ~GetSingle( refStrExpr );
-		case '!':	// boolean not.
-            ++refStrExpr;
-            if ( refStrExpr[0] == '=' )  // odd condition such as (!=x) which is always true of course.
-			{
-                ++refStrExpr;		// so just skip it. and compare it to 0
-                return GetSingle( refStrExpr );
-			}
-            return !GetSingle( refStrExpr );
-		case ';':	// seperate field.
-		case ',':	// seperate field.
-		case '\0':
-			return 0;
-		}
-//#pragma endregion maths   // MSVC specific
-	}
-	else
-//#pragma region intrinsics // MSVC specific
-	{
-		// Symbol or intrinsinc function ?
+                return GetRangeNumber(refStrExpr);
+            case '[':
+            case '(': // Parse out a sub expression.
+                ++refStrExpr;
+                return GetVal(refStrExpr);
+            case '+':
+                ++refStrExpr;
+                break;
+            case '-':
+                ++refStrExpr;
+                return -GetSingle(refStrExpr);
+            case '~': // Bitwise not.
+                ++refStrExpr;
+                return ~GetSingle(refStrExpr);
+            case '!':                     // boolean not.
+                ++refStrExpr;
+                if (refStrExpr[0] == '=') // odd condition such as (!=x) which is always true of course.
+                {
+                    ++refStrExpr;         // so just skip it. and compare it to 0
+                    return GetSingle(refStrExpr);
+                }
+                return !GetSingle(refStrExpr);
+            case ';': // seperate field.
+            case ',': // seperate field.
+            case '\0':
+                return 0;
+        }
+        //#pragma endregion maths   // MSVC specific
+    }
+    else
+    //#pragma region intrinsics // MSVC specific
+    {
+        // Symbol or intrinsinc function ?
 
-        INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE) FindTableHeadSorted( refStrExpr, sm_IntrinsicFunctions, ARRAY_COUNT(sm_IntrinsicFunctions)-1 );
-		if ( iIntrinsic >= 0 )
-		{
-			size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);
-            if ( strchr("( ", refStrExpr[iLen]) )
-			{
+        INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, ARRAY_COUNT(sm_IntrinsicFunctions) - 1);
+        if (iIntrinsic >= 0)
+        {
+            size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);
+            if (strchr("( ", refStrExpr[iLen]))
+            {
                 refStrExpr += (iLen + 1);
-				tchar * pszArgsNext;
-                Str_Parse( const_cast<tchar*>(refStrExpr), &(pszArgsNext), ")" );
+                tchar *pszArgsNext;
+                Str_Parse(const_cast<tchar *>(refStrExpr), &(pszArgsNext), ")");
 
-				tchar * ppCmd[5];
-				llong iResult;
-				int iCount = 0;
+                tchar *ppCmd[5];
+                llong iResult;
+                int iCount = 0;
 
-				switch ( iIntrinsic )
-				{
-					case INTRINSIC_ID:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
+                switch (iIntrinsic)
+                {
+                    case INTRINSIC_ID:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
                             iResult = ResGetIndex((dword)GetVal(refStrExpr));
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
-
-					} break;
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
                     case INTRINSIC_MAX:
                     {
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-                        if ( iCount < 2 )
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
                             iResult = 0;
                         else
                         {
                             const int64 iVal1 = GetVal(ppCmd[0]), iVal2 = GetVal(ppCmd[1]);
                             iResult = maximum(iVal1, iVal2);
                         }
-                    } break;
+                    }
+                    break;
 
                     case INTRINSIC_MIN:
                     {
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-                        if ( iCount < 2 )
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
                             iResult = 0;
                         else
                         {
                             const int64 iVal1 = GetVal(ppCmd[0]), iVal2 = GetVal(ppCmd[1]);
                             iResult = minimum(iVal1, iVal2);
                         }
-                    } break;
+                    }
+                    break;
 
-					case INTRINSIC_LOGARITHM:
-					{
-						iCount = 0;
-						iResult = 0;
+                    case INTRINSIC_LOGARITHM:
+                    {
+                        iCount  = 0;
+                        iResult = 0;
 
-                        if ( *refStrExpr )
-						{
+                        if (*refStrExpr)
+                        {
                             llong iArgument = GetVal(refStrExpr);
-							if ( iArgument <= 0 )
-							{
-								DEBUG_ERR(( "Exp_GetVal: (x)Log(%lld) is %s\n", iArgument, (!iArgument ? "infinite" : "undefined") ));
-							}
-							else
-							{
-								iCount = 1;
+                            if (iArgument <= 0)
+                            {
+                                DEBUG_ERR(("Exp_GetVal: (x)Log(%lld) is %s\n", iArgument, (!iArgument ? "infinite" : "undefined")));
+                            }
+                            else
+                            {
+                                iCount = 1;
 
-                                if ( strchr(refStrExpr, ',') )
-								{
-									++iCount;
+                                if (strchr(refStrExpr, ','))
+                                {
+                                    ++iCount;
                                     SKIP_ARGSEP(refStrExpr);
-                                    if ( !strcmpi(refStrExpr, "e") )
-									{
-										iResult = (llong)log( (double)iArgument );
-									}
-                                    else if ( !strcmpi(refStrExpr, "pi") )
-									{
-										iResult = (llong)(log( (double)iArgument ) / log( M_PI ) );
-									}
-									else
-									{
+                                    if (!strcmpi(refStrExpr, "e"))
+                                    {
+                                        iResult = (llong)log((double)iArgument);
+                                    }
+                                    else if (!strcmpi(refStrExpr, "pi"))
+                                    {
+                                        iResult = (llong)(log((double)iArgument) / log(M_PI));
+                                    }
+                                    else
+                                    {
                                         llong iBase = GetVal(refStrExpr);
-										if ( iBase <= 0 )
-										{
-											DEBUG_ERR(( "Exp_GetVal: (%lld)Log(%lld) is %s\n", iBase, iArgument, (!iBase ? "infinite" : "undefined") ));
-											iCount = 0;
-										}
-										else
-											iResult = (llong)(log( (double)iArgument ) / log( (double)iBase ));
-									}
-								}
-								else
-									iResult = (llong)log10( (double)iArgument );
-							}
-						}
+                                        if (iBase <= 0)
+                                        {
+                                            DEBUG_ERR(("Exp_GetVal: (%lld)Log(%lld) is %s\n", iBase, iArgument, (!iBase ? "infinite" : "undefined")));
+                                            iCount = 0;
+                                        }
+                                        else
+                                            iResult = (llong)(log((double)iArgument) / log((double)iBase));
+                                    }
+                                }
+                                else
+                                    iResult = (llong)log10((double)iArgument);
+                            }
+                        }
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_NAPIERPOW:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)exp((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_NAPIERPOW:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)exp( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_SQRT:
+                    {
+                        iCount  = 0;
+                        iResult = 0;
 
-					} break;
-
-					case INTRINSIC_SQRT:
-					{
-						iCount = 0;
-						iResult = 0;
-
-                        if ( *refStrExpr )
-						{
+                        if (*refStrExpr)
+                        {
                             llong iTosquare = GetVal(refStrExpr);
 
-							if (iTosquare >= 0)
-							{
-								++iCount;
-								iResult = (llong)sqrt( (double)iTosquare );
-							}
-							else
-							{
-								++iCount;
-								std::complex<double> number((double)iTosquare, 0);
-								std::complex<double> result = sqrt(number);
-								iResult = (llong)result.real();
-							}
-						}
+                            if (iTosquare >= 0)
+                            {
+                                ++iCount;
+                                iResult = (llong)sqrt((double)iTosquare);
+                            }
+                            else
+                            {
+                                ++iCount;
+                                std::complex<double> number((double)iTosquare, 0);
+                                std::complex<double> result = sqrt(number);
+                                iResult                     = (llong)result.real();
+                            }
+                        }
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_SIN:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)sin((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_SIN:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)sin( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_ARCSIN:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)asin((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_COS:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)cos((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_ARCSIN:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)asin( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_ARCCOS:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)acos((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_TAN:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)tan((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_COS:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)cos( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_ARCTAN:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
+                            iResult = (llong)atan((double)GetVal(refStrExpr));
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_StrIndexOf:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 3, ",");
+                        if (iCount < 2)
+                            iResult = -1;
+                        else
+                            iResult = Str_IndexOf(ppCmd[0], ppCmd[1], (iCount == 3) ? (int)GetVal(ppCmd[2]) : 0);
+                    }
+                    break;
 
-					case INTRINSIC_ARCCOS:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)acos( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_STRMATCH:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
+                            iResult = 0;
+                        else
+                            iResult = (Str_Match(ppCmd[0], ppCmd[1]) == MATCH_VALID) ? 1 : 0;
+                    }
+                    break;
 
-					} break;
+                    case INTRINSIC_STRREGEX:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
+                            iResult = 0;
+                        else
+                        {
+                            tchar *tLastError = Str_GetTemp();
+                            iResult           = Str_RegExMatch(ppCmd[0], ppCmd[1], tLastError);
+                            if (iResult == -1)
+                            {
+                                DEBUG_ERR(("STRREGEX bad function usage. Error: %s\n", tLastError));
+                            }
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_TAN:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)tan( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
+                    case INTRINSIC_RANDBELL:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
+                            iResult = 0;
+                        else
+                            iResult = Calc_GetBellCurve((int)GetVal(ppCmd[0]), (int)GetVal(ppCmd[1]));
+                    }
+                    break;
 
-					} break;
-
-					case INTRINSIC_ARCTAN:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
-                            iResult = (llong)atan( (double)GetVal( refStrExpr ) );
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
-
-					} break;
-
-					case INTRINSIC_StrIndexOf:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 3, "," );
-						if ( iCount < 2 )
-							iResult = -1;
-						else
-							iResult = Str_IndexOf( ppCmd[0] , ppCmd[1] , (iCount==3)?(int)GetVal(ppCmd[2]):0 );
-					} break;
-
-					case INTRINSIC_STRMATCH:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount < 2 )
-							iResult = 0;
-						else
-							iResult = (Str_Match( ppCmd[0], ppCmd[1] ) == MATCH_VALID ) ? 1 : 0;
-					} break;
-
-					case INTRINSIC_STRREGEX:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount < 2 )
-							iResult = 0;
-						else
-						{
-							tchar * tLastError = Str_GetTemp();
-							iResult = Str_RegExMatch( ppCmd[0], ppCmd[1], tLastError );
-							if ( iResult == -1 )
-							{
-								DEBUG_ERR(( "STRREGEX bad function usage. Error: %s\n", tLastError ));
-							}
-						}
-					} break;
-
-					case INTRINSIC_RANDBELL:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount < 2 )
-							iResult = 0;
-						else
-							iResult = Calc_GetBellCurve( (int)GetVal( ppCmd[0] ), (int)GetVal( ppCmd[1] ) );
-					} break;
-
-					case INTRINSIC_STRASCII:
-					{
-                        if ( *refStrExpr )
-						{
-							iCount = 1;
+                    case INTRINSIC_STRASCII:
+                    {
+                        if (*refStrExpr)
+                        {
+                            iCount  = 1;
                             iResult = refStrExpr[0];
-						}
-						else
-						{
-							iCount = 0;
-							iResult = 0;
-						}
-					} break;
+                        }
+                        else
+                        {
+                            iCount  = 0;
+                            iResult = 0;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_RAND:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount <= 0 )
-							iResult = 0;
-						else
-						{
-							int64 val1 = GetVal( ppCmd[0] );
-							if ( iCount == 2 )
-							{
-								int64 val2 = GetVal( ppCmd[1] );
-                                iResult = g_Rand.GetLLVal2( val1, val2 );
-							}
-							else
+                    case INTRINSIC_RAND:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount <= 0)
+                            iResult = 0;
+                        else
+                        {
+                            int64 val1 = GetVal(ppCmd[0]);
+                            if (iCount == 2)
+                            {
+                                int64 val2 = GetVal(ppCmd[1]);
+                                iResult    = g_Rand.GetLLVal2(val1, val2);
+                            }
+                            else
                                 iResult = g_Rand.GetLLVal(val1);
-						}
-					} break;
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_STRCMP:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount < 2 )
-							iResult = 1;
-						else
-							iResult = strcmp(ppCmd[0], ppCmd[1]);
-					} break;
+                    case INTRINSIC_STRCMP:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
+                            iResult = 1;
+                        else
+                            iResult = strcmp(ppCmd[0], ppCmd[1]);
+                    }
+                    break;
 
-					case INTRINSIC_STRCMPI:
-					{
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 2, "," );
-						if ( iCount < 2 )
-							iResult = 1;
-						else
-							iResult = strcmpi(ppCmd[0], ppCmd[1]);
-					} break;
+                    case INTRINSIC_STRCMPI:
+                    {
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
+                        if (iCount < 2)
+                            iResult = 1;
+                        else
+                            iResult = strcmpi(ppCmd[0], ppCmd[1]);
+                    }
+                    break;
 
-					case INTRINSIC_STRLEN:
-					{
-						iCount = 1;
+                    case INTRINSIC_STRLEN:
+                    {
+                        iCount  = 1;
                         iResult = strlen(refStrExpr);
-					} break;
+                    }
+                    break;
 
-					case INTRINSIC_ISOBSCENE:
-					{
-						iCount = 1;
-                        iResult = g_Cfg.IsObscene( refStrExpr );
-					} break;
+                    case INTRINSIC_ISOBSCENE:
+                    {
+                        iCount  = 1;
+                        iResult = g_Cfg.IsObscene(refStrExpr);
+                    }
+                    break;
 
-					case INTRINSIC_ISNUMBER:
-					{
-						iCount = 1;
-                        SKIP_NONNUM( refStrExpr );
-                        iResult = IsStrNumeric( refStrExpr );
-					} break;
+                    case INTRINSIC_ISNUMBER:
+                    {
+                        iCount = 1;
+                        SKIP_NONNUM(refStrExpr);
+                        iResult = IsStrNumeric(refStrExpr);
+                    }
+                    break;
 
-					case INTRINSIC_QVAL:
-					{
-						// Here is handled the intrinsic QVAL form: QVAL(VALUE1,VALUE2,LESSTHAN,EQUAL,GREATERTHAN)
-                        iCount = Str_ParseCmds( const_cast<tchar*>(refStrExpr), ppCmd, 5, "," );
-						if (iCount < 3)
-						{
-							iResult = 0;
-						}
-						else
-						{
-							const llong a1 = GetSingle(ppCmd[0]);
-							const llong a2 = GetSingle(ppCmd[1]);
-							if (a1 < a2)
-							{
-								iResult = GetSingle(ppCmd[2]);
-							}
-							else if (a1 == a2)
-							{
-								iResult = (iCount < 4) ? 0 : GetSingle(ppCmd[3]);
-							}
-							else
-							{
-								iResult = (iCount < 5) ? 0 : GetSingle(ppCmd[4]);
-							}
-						}
-					} break;
+                    case INTRINSIC_QVAL:
+                    {
+                        // Here is handled the intrinsic QVAL form: QVAL(VALUE1,VALUE2,LESSTHAN,EQUAL,GREATERTHAN)
+                        iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 5, ",");
+                        if (iCount < 3)
+                        {
+                            iResult = 0;
+                        }
+                        else
+                        {
+                            const llong a1 = GetSingle(ppCmd[0]);
+                            const llong a2 = GetSingle(ppCmd[1]);
+                            if (a1 < a2)
+                            {
+                                iResult = GetSingle(ppCmd[2]);
+                            }
+                            else if (a1 == a2)
+                            {
+                                iResult = (iCount < 4) ? 0 : GetSingle(ppCmd[3]);
+                            }
+                            else
+                            {
+                                iResult = (iCount < 5) ? 0 : GetSingle(ppCmd[4]);
+                            }
+                        }
+                    }
+                    break;
 
-					case INTRINSIC_ABS:
-					{
-						iCount = 1;
+                    case INTRINSIC_ABS:
+                    {
+                        iCount  = 1;
                         iResult = llabs(GetVal(refStrExpr));
-					} break;
+                    }
+                    break;
 
-					default:
-						iCount = 0;
-						iResult = 0;
-						break;
-				}
+                    default:
+                        iCount  = 0;
+                        iResult = 0;
+                        break;
+                }
 
                 refStrExpr = pszArgsNext;
 
-				if ( !iCount )
-				{
-					DEBUG_ERR(( "Bad intrinsic function usage: Missing arguments\n" ));
-					return 0;
-				}
-				else
-					return iResult;
-			}
-		}
+                if (!iCount)
+                {
+                    DEBUG_ERR(("Bad intrinsic function usage: Missing arguments\n"));
+                    return 0;
+                }
 
-		// Must be a symbol of some sort ?
+                return iResult;
+            }
+        }
+
+        // Must be a symbol of some sort ?
 
         //[[maybe_unused]] auto _ = g_ExprGlobals.mtEngineGetLockShared();
         //auto globals_reader    = g_ExprGlobals.unsafeReader();
@@ -1227,16 +1239,16 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
         lpctstr ptcArgsOriginal = refStrExpr;
         int64 iVal;
         // VAR.
-        if ( reader->m_VarGlobals.GetParseVal_Advance( refStrExpr, &iVal ) )
+        if (reader->m_VarGlobals.GetParseVal_Advance(refStrExpr, &iVal))
             return iVal;
         // RESDEF.
-        if ( reader->m_VarResDefs.GetParseVal( ptcArgsOriginal, &iVal ) )
+        if (reader->m_VarResDefs.GetParseVal(ptcArgsOriginal, &iVal))
             return iVal;
         // DEF.
-        if ( reader->m_VarDefs.GetParseVal( ptcArgsOriginal, &iVal ) )
+        if (reader->m_VarDefs.GetParseVal(ptcArgsOriginal, &iVal))
             return iVal;
-	}
-//#pragma endregion intrinsics  // MSVC specific
+    }
+    //#pragma endregion intrinsics  // MSVC specific
 
 	// hard end ! Error of some sort.
     if (ptcOrigExpr[0] != '\0')
@@ -1412,11 +1424,11 @@ int64 CExpression::GetValMath(int64 iVal, lpctstr & refStrExpr )
                 iVal = cexpression_power(iVal, iValSecond);
 				break;
 			}
-            else if ((iVal == 0) && (iValSecond <= 0)) //The information from https://en.cppreference.com/w/cpp/numeric/math/pow says if both input are 0, it can cause errors too.
-			{
-				g_Log.EventError("Power of zero with zero or negative exponent is undefined.\n");
-				break;
-			}
+            if ((iVal == 0) && (iValSecond <= 0)) //The information from https://en.cppreference.com/w/cpp/numeric/math/pow says if both input are 0, it can cause errors too.
+            {
+                g_Log.EventError("Power of zero with zero or negative exponent is undefined.\n");
+                break;
+            }
             iVal = cexpression_power(iVal, iValSecond);
 			break;
 	}
@@ -1701,8 +1713,8 @@ CExpression::GetConditionalSubexpressions(
 				break; // End of the current subexpr, go back to find another one
 			}
 
-			else if (ch == '(')
-			{
+		    if (ch == '(')
+            {
                 if (ptcCurSubexprStart == refStrExpr)
                 {
                     // Start of a subexpression delimited by brackets (it can be preceded by an operator like '!', handled before).
@@ -1715,20 +1727,20 @@ CExpression::GetConditionalSubexpressions(
                     sCurSubexpr.ptcStart = ptcCurSubexprStart;
                 }
 
-				// The brackets can contain other special characters, like non-associative operators, but we don't care at this stage.
-				// Those will be considered and eventually evaluated when fully parsing this subexpression.
+                // The brackets can contain other special characters, like non-associative operators, but we don't care at this stage.
+                // Those will be considered and eventually evaluated when fully parsing this subexpression.
 
-				if ( ptcTopLevelNegation && // The whole expression is preceded by a '!' character.
-                    (0 == sCurSubexpr.uiNonAssociativeOffset) ) // I've not yet checked if its position is valid.
-				{
-					uint uiTempOffset = uint(sCurSubexpr.ptcStart - ptcTopLevelNegation);
-					if (uiTempOffset > USHRT_MAX)
-					{
-						g_Log.EventError("Too much characters before the the expression negation. Trimming to %d.\n", USHRT_MAX);
-						uiTempOffset = USHRT_MAX;
-					}
-					sCurSubexpr.uiNonAssociativeOffset = uchar(uiTempOffset);
-				}
+                if (ptcTopLevelNegation &&                     // The whole expression is preceded by a '!' character.
+                    (0 == sCurSubexpr.uiNonAssociativeOffset)) // I've not yet checked if its position is valid.
+                {
+                    uint uiTempOffset = uint(sCurSubexpr.ptcStart - ptcTopLevelNegation);
+                    if (uiTempOffset > USHRT_MAX)
+                    {
+                        g_Log.EventError("Too much characters before the the expression negation. Trimming to %d.\n", USHRT_MAX);
+                        uiTempOffset = USHRT_MAX;
+                    }
+                    sCurSubexpr.uiNonAssociativeOffset = uchar(uiTempOffset);
+                }
 
                 // Just skip what's enclosed in the subexpression.
                 ptcLastClosingBracket = skipBracketedSubexpression(refStrExpr);
@@ -1744,84 +1756,81 @@ CExpression::GetConditionalSubexpressions(
                     return pSubexprsArena;
                 }
 
-				// Okay, i've eaten the expression in brackets, now fall through the rest of the loop and continue.
-			}
+                // Okay, i've eaten the expression in brackets, now fall through the rest of the loop and continue.
+            }
 
             else if ((ch == '|') && (refStrExpr[1] == '|'))
-			{
-				// Logical two-way OR operator: ||
-				if (sCurSubexpr.ptcEnd == nullptr)
+            {
+                // Logical two-way OR operator: ||
+                if (sCurSubexpr.ptcEnd == nullptr)
                     sCurSubexpr.ptcEnd = refStrExpr;
-                sCurSubexpr.uiType = SubexprType_t::Or  | (sCurSubexpr.uiType & ~SubexprType_t::None);
+                sCurSubexpr.uiType = SubexprType_t::Or | (sCurSubexpr.uiType & ~SubexprType_t::None);
                 refStrExpr += 2u; // Skip the second char of the operator
-				break; // End of subexpr...
-			}
+                break;            // End of subexpr...
+            }
 
             else if ((ch == '&') && (refStrExpr[1] == '&'))
-			{
-				// Logical two-way AND operator: &&
-				if (sCurSubexpr.ptcEnd == nullptr)
+            {
+                // Logical two-way AND operator: &&
+                if (sCurSubexpr.ptcEnd == nullptr)
                     sCurSubexpr.ptcEnd = refStrExpr;
                 sCurSubexpr.uiType = SubexprType_t::And | (sCurSubexpr.uiType & ~SubexprType_t::None);
                 refStrExpr += 2u; // Skip the second char of the operator
-				break; // End of subexpr...
-			}
+                break;            // End of subexpr...
+            }
 
-			else
-			{
-				// Look for an arithmetic two-way operator.
-				// The subexpression may not be really ended.
-				if (ch == '<')
-				{
-					// This can be: <, <= or the start of a bracketed expression < >
+            else
+            {
+                // Look for an arithmetic two-way operator.
+                // The subexpression may not be really ended.
+                if (ch == '<')
+                {
+                    // This can be: <, <= or the start of a bracketed expression < >
                     if (refStrExpr[1] == '=')
-					{
+                    {
                         sCurSubexpr.uiType = SubexprType_t::BinaryNonLogical | (sCurSubexpr.uiType & ~SubexprType_t::None);
                         refStrExpr += 1u;
-					}
-					else
-					{
-                        const ushort prevSubexprType = ((uiSubexprQty == 1)
-                                    ? (ushort)SubexprType_t::None
-                                    : parsingSubexprsStates[uiSubexprQty - 2].uiType);
+                    }
+                    else
+                    {
+                        const ushort prevSubexprType = ((uiSubexprQty == 1) ? (ushort)SubexprType_t::None : parsingSubexprsStates[uiSubexprQty - 2].uiType);
                         if ((prevSubexprType & SubexprType_t::None))
-						{
-							// This subexpr is not preceded by a two-way operator, so probably i'm an operator: skip me.
+                        {
+                            // This subexpr is not preceded by a two-way operator, so probably i'm an operator: skip me.
                             sCurSubexpr.uiType = SubexprType_t::BinaryNonLogical | (sCurSubexpr.uiType & ~SubexprType_t::None);
 
                             // This is not a whole logical subexpression but a single operand, or piece/fragment of the current arithmetic subexpr.
-						}
-						else
-						{
-							// This subexpr is preceded by a two-way operator, so probably i'm not another operator, rather a < > expression.
+                        }
+                        else
+                        {
+                            // This subexpr is preceded by a two-way operator, so probably i'm not another operator, rather a < > expression.
                             lptstr pExprSkipped = refStrExpr;
-							Str_SkipEnclosedAngularBrackets(pExprSkipped);
+                            Str_SkipEnclosedAngularBrackets(pExprSkipped);
                             if (refStrExpr != pExprSkipped)
-							{
-								// I actually have something enclosed in angular brackets.
+                            {
+                                // I actually have something enclosed in angular brackets.
                                 // The function above moves the pointer after the last closing bracket '>', but we want to point here to it, not the character after.
                                 refStrExpr = pExprSkipped;
-                                ch = *refStrExpr;
-                                continue;   // This allows us to skip the "ch = *(++pExpr);" below, we don't want to advance further the pointer.
-							}
-						}
-					}
-
-				}
-				else if (ch == '>')
-				{
+                                ch         = *refStrExpr;
+                                continue; // This allows us to skip the "ch = *(++pExpr);" below, we don't want to advance further the pointer.
+                            }
+                        }
+                    }
+                }
+                else if (ch == '>')
+                {
                     if (refStrExpr[1] == '=')
-					{
+                    {
                         sCurSubexpr.uiType = SubexprType_t::BinaryNonLogical | (sCurSubexpr.uiType & ~SubexprType_t::None);
                         refStrExpr += 1u;
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         sCurSubexpr.uiType = SubexprType_t::BinaryNonLogical | (sCurSubexpr.uiType & ~SubexprType_t::None);
-					}
-				}
-				// End of arithmetic subexpression parsing.
-			}
+                    }
+                }
+                // End of arithmetic subexpression parsing.
+            }
 
             ch = *(++refStrExpr);
 		} // End of the subexpression while loop
@@ -1903,11 +1912,11 @@ static int GetRangeArgsPos(lpctstr & pExpr, lpctstr (&pArgPos)[kiRangeMaxArgs][2
 				++pExpr;
 				if (pExpr[0] == '\0')
 					goto end_w_error;
-				else if (pExpr[0] == '{')
-					++iSubRanges;
-				else if (pExpr[0] == '}')
-					--iSubRanges;
-			}
+                if (pExpr[0] == '{')
+                    ++iSubRanges;
+                else if (pExpr[0] == '}')
+                    --iSubRanges;
+            }
 			++pExpr;
 			pArgPos[iQty-1][1] = pExpr;		// Position of the char after the last '}' of the sub-range
 		}
@@ -1920,9 +1929,9 @@ static int GetRangeArgsPos(lpctstr & pExpr, lpctstr (&pArgPos)[kiRangeMaxArgs][2
 					pArgPos[iQty - 1][1] = pExpr;	// Position of the char ('\0') after of the last character of the argument
                     if (fIgnoreMissingEndBracket)
                         goto end_of_range;
-                    else
-					    goto end_w_error;
-				}
+
+				    goto end_w_error;
+                }
 
 				if (IsWhitespace(pExpr[0]) || (pExpr[0] == ','))
 				{
@@ -1932,20 +1941,20 @@ static int GetRangeArgsPos(lpctstr & pExpr, lpctstr (&pArgPos)[kiRangeMaxArgs][2
 					GETNONWHITESPACE(pExpr);
 					if (pExpr[0] == '}')			// check if it's really another argument or it's simply the end of the range
 						goto end_of_range;
-					else if (pExpr[0] == '\0')
-						goto end_w_error;
-					break;
+                    if (pExpr[0] == '\0')
+                        goto end_w_error;
+                    break;
 				}
-				else if (pExpr[0] == '}')			// end of the range we are evaluating
-				{
-					pArgPos[iQty-1][1] = pExpr;		// Position of the char ('}') after the last character of the argument
+                if (pExpr[0] == '}')              // end of the range we are evaluating
+                {
+                    pArgPos[iQty - 1][1] = pExpr; // Position of the char ('}') after the last character of the argument
 
-				end_of_range:
-					++pExpr;	// consume this and end.
-					return iQty;
-				}
+                end_of_range:
+                    ++pExpr; // consume this and end.
+                    return iQty;
+                }
 
-				++pExpr;
+                ++pExpr;
 			}
 		}
 	}

@@ -195,10 +195,8 @@ INT_PTR CALLBACK CDialogBase::DialogProc( HWND hWnd, UINT message, WPARAM wParam
     {
         return pDlg->DefDialogProc( message, wParam, lParam );
     }
-    else
-    {
-        return FALSE;
-    }
+
+    return FALSE;
 }
 
 BOOL CDialogBase::DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam)
@@ -208,7 +206,6 @@ BOOL CDialogBase::DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam)
     UnreferencedParameter(lParam);
     return FALSE;
 }
-
 
 /* CSWindowBase */
 

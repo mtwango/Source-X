@@ -543,9 +543,9 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 			const IT_TYPE iType = pItem->GetType();
 			if (iType == IT_WAND)
 				return 0; //Spells from wands cost no mana.
-			else if (iType == IT_SCROLL)
-				fScroll = true;
-		}
+            if (iType == IT_SCROLL)
+                fScroll = true;
+        }
 	}
 
 	const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();

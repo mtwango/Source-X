@@ -1336,107 +1336,107 @@ bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
 			}
 			continue;
 		}
-		else if ( fVendor )
-		{
-			if (iCmd != -1)
-			{
-				switch ( iCmd )
-				{
-					case ITC_BUY:
-					case ITC_SELL:
-					{
-						fBlockItemAttr = false; //Make sure we reset the value, if the last input is not a ITEM(NEWBIE) or CONTAINER.
-						CItemContainer * pCont = GetBank((iCmd == ITC_SELL) ? LAYER_VENDOR_STOCK : LAYER_VENDOR_BUYS);
-						if ( pCont )
-						{
-							pItem = CItem::CreateHeader(s.GetArgRaw(), pCont, false);
-							if ( pItem )
-								pItem->m_TagDefs.SetNum("NOSAVE", 1);
-						}
-						pItem = nullptr;
-						continue;
-					}
-					//case ITC_BREAK:	// I don't find a use case for that...
-					case ITC_ITEM:
-					case ITC_CONTAINER:
-					case ITC_ITEMNEWBIE:
-						fBlockItemAttr = true; //Set the value to block next Color or Attribute inputs for items.
-						pItem = nullptr;
-						continue;
-					default:
-						fBlockItemAttr = false; //Make sure we reset the value, if the last input is not a ITEM(NEWBIE) or CONTAINER.
-						pItem = nullptr;
-						continue;
-				}
-			}
-		}
-		else
-		{
+        if (fVendor)
+        {
+            if (iCmd != -1)
+            {
+                switch (iCmd)
+                {
+                    case ITC_BUY:
+                    case ITC_SELL:
+                    {
+                        fBlockItemAttr = false; //Make sure we reset the value, if the last input is not a ITEM(NEWBIE) or CONTAINER.
+                        CItemContainer *pCont = GetBank((iCmd == ITC_SELL) ? LAYER_VENDOR_STOCK : LAYER_VENDOR_BUYS);
+                        if (pCont)
+                        {
+                            pItem = CItem::CreateHeader(s.GetArgRaw(), pCont, false);
+                            if (pItem)
+                                pItem->m_TagDefs.SetNum("NOSAVE", 1);
+                        }
+                        pItem = nullptr;
+                        continue;
+                    }
+                    //case ITC_BREAK:	// I don't find a use case for that...
+                    case ITC_ITEM:
+                    case ITC_CONTAINER:
+                    case ITC_ITEMNEWBIE:
+                        fBlockItemAttr = true; //Set the value to block next Color or Attribute inputs for items.
+                        pItem = nullptr;
+                        continue;
+                    default:
+                        fBlockItemAttr = false; //Make sure we reset the value, if the last input is not a ITEM(NEWBIE) or CONTAINER.
+                        pItem = nullptr;
+                        continue;
+                }
+            }
+        }
+        else
+        {
             switch (iCmd)
             {
-				case ITC_FULLINTERP:
-				{
-					lpctstr	pszArgs = s.GetArgStr();
-					GETNONWHITESPACE(pszArgs);
-					fFullInterp = (*pszArgs == '\0') ? true : (s.GetArgVal() != 0);
-					continue;
-				}
-				case ITC_NEWBIESWAP:
-				{
-					if (!pItem)
-						continue;
+                case ITC_FULLINTERP:
+                {
+                    lpctstr pszArgs = s.GetArgStr();
+                    GETNONWHITESPACE(pszArgs);
+                    fFullInterp = (*pszArgs == '\0') ? true : (s.GetArgVal() != 0);
+                    continue;
+                }
+                case ITC_NEWBIESWAP:
+                {
+                    if (!pItem)
+                        continue;
 
-					if (pItem->IsAttr(ATTR_NEWBIE))
-					{
-						if (g_Rand.GetVal(s.GetArgVal()) == 0)
-							pItem->ClrAttr(ATTR_NEWBIE);
-					}
-					else
-					{
-						if (g_Rand.GetVal(s.GetArgVal()) == 0)
-							pItem->SetAttr(ATTR_NEWBIE);
-					}
-					continue;
-				}
-				case ITC_ITEM:
-				case ITC_CONTAINER:
-				case ITC_ITEMNEWBIE:
-				{
-					fBlockItemAttr = false;
-					fItemCreated = true;
+                    if (pItem->IsAttr(ATTR_NEWBIE))
+                    {
+                        if (g_Rand.GetVal(s.GetArgVal()) == 0)
+                            pItem->ClrAttr(ATTR_NEWBIE);
+                    }
+                    else
+                    {
+                        if (g_Rand.GetVal(s.GetArgVal()) == 0)
+                            pItem->SetAttr(ATTR_NEWBIE);
+                    }
+                    continue;
+                }
+                case ITC_ITEM:
+                case ITC_CONTAINER:
+                case ITC_ITEMNEWBIE:
+                {
+                    fBlockItemAttr = false;
+                    fItemCreated = true;
 
-					if (IsStatFlag(STATF_CONJURED) && iCmd != ITC_ITEMNEWBIE) // This check is not needed (sure?).
-						break; // conjured creates have no loot.
+                    if (IsStatFlag(STATF_CONJURED) && iCmd != ITC_ITEMNEWBIE) // This check is not needed (sure?).
+                        break;                                                // conjured creates have no loot.
 
-					pItem = CItem::CreateHeader(s.GetArgRaw(), this, iCmd == ITC_ITEMNEWBIE);
-					if (pItem == nullptr)
-					{
-						m_UIDLastNewItem = GetUID();	// Setting m_UIDLastNewItem to CChar's UID to prevent calling any following functions meant to be called on that item
-						continue;
-					}
-					m_UIDLastNewItem.InitUID();	//Clearing the attr for the next cycle
+                    pItem = CItem::CreateHeader(s.GetArgRaw(), this, iCmd == ITC_ITEMNEWBIE);
+                    if (pItem == nullptr)
+                    {
+                        m_UIDLastNewItem =
+                            GetUID(); // Setting m_UIDLastNewItem to CChar's UID to prevent calling any following functions meant to be called on that item
+                        continue;
+                    }
+                    m_UIDLastNewItem.InitUID(); //Clearing the attr for the next cycle
 
-					pItem->_iCreatedResScriptIdx = s.m_iResourceFileIndex;
-					pItem->_iCreatedResScriptLine = s.m_iLineNum;
+                    pItem->_iCreatedResScriptIdx = s.m_iResourceFileIndex;
+                    pItem->_iCreatedResScriptLine = s.m_iLineNum;
 
-					if (iCmd == ITC_ITEMNEWBIE)
-						pItem->SetAttr(ATTR_NEWBIE);
+                    if (iCmd == ITC_ITEMNEWBIE)
+                        pItem->SetAttr(ATTR_NEWBIE);
 
-					if (!pItem->IsItemInContainer() && !pItem->IsItemEquipped())
-						pItem = nullptr;
-					continue;
-				}
+                    if (!pItem->IsItemInContainer() && !pItem->IsItemEquipped())
+                        pItem = nullptr;
+                    continue;
+                }
 
-				case ITC_BREAK:
-				case ITC_BUY:
-				case ITC_SELL:
-					pItem = nullptr;
-					continue;
-				}
+                case ITC_BREAK:
+                case ITC_BUY:
+                case ITC_SELL:
+                    pItem = nullptr;
+                    continue;
+            }
+        }
 
-		}
-
-		if ( m_UIDLastNewItem == GetUID() )
+        if ( m_UIDLastNewItem == GetUID() )
 			continue;
 		if ( fBlockItemAttr ) //Did we force to cancel item attributes?
 			continue;
@@ -1557,12 +1557,10 @@ CREID_TYPE CChar::GetDispID() const
 	{
 		return m_dwDispIndex;
 	}
-	else
-	{
-		const CCharBase * pCharDef = Char_GetDef();
-		ASSERT(pCharDef);
-		return pCharDef->GetDispID();
-	}
+
+    const CCharBase *pCharDef = Char_GetDef();
+    ASSERT(pCharDef);
+    return pCharDef->GetDispID();
 }
 
 // Setting the visual "ID" for this.
@@ -2439,17 +2437,17 @@ do_default:
 						sVal.FormatVal(Attacker_GetID(pChar));
 						return true;
 					}
-					else if ( !strnicmp(ptcKey, "TARGET", 6 ) )
-					{
+                    if (!strnicmp(ptcKey, "TARGET", 6))
+                    {
                         //ptcKey += 6;
-						//Using both m_Act_UID and m_Fight_Targ_UID will take care of both spell and fighting targets.
-						if (m_Act_UID.IsValidUID()  || m_Fight_Targ_UID.IsValidUID())
-							sVal.FormatHex((dword)(m_Fight_Targ_UID));
-						else
-							sVal.FormatVal(-1);
-						return true;
-					}
-					if ( !m_lastAttackers.empty() )
+                        //Using both m_Act_UID and m_Fight_Targ_UID will take care of both spell and fighting targets.
+                        if (m_Act_UID.IsValidUID() || m_Fight_Targ_UID.IsValidUID())
+                            sVal.FormatHex((dword)(m_Fight_Targ_UID));
+                        else
+                            sVal.FormatVal(-1);
+                        return true;
+                    }
+                    if ( !m_lastAttackers.empty() )
 					{
 						int attackerIndex = (int)m_lastAttackers.size();
 						if( !strnicmp(ptcKey, "MAX", 3) )
@@ -2497,28 +2495,28 @@ do_default:
 								sVal.FormatLLVal(refAttacker.amountDone);
 								return true;
 							}
-							else if( !strnicmp(ptcKey, "ELAPSED", 7) )
-							{
-								sVal.FormatLLVal(refAttacker.elapsed);
-								return true;
-							}
-							else if (( !strnicmp(ptcKey, "UID", 3) ) || ( *ptcKey == '\0' ))
-							{
+                            if (!strnicmp(ptcKey, "ELAPSED", 7))
+                            {
+                                sVal.FormatLLVal(refAttacker.elapsed);
+                                return true;
+                            }
+                            if ((!strnicmp(ptcKey, "UID", 3)) || (*ptcKey == '\0'))
+                            {
                                 const CUID uid(refAttacker.charUID);
-								sVal.FormatHex( uid.CharFind() ? refAttacker.charUID : 0 );
-								return true;
-							}
-							else if (!strnicmp(ptcKey, "THREAT", 6))
-							{
-								sVal.FormatVal(refAttacker.threat);
-								return true;
-							}
-							else if (!strnicmp(ptcKey, "IGNORE", 6))
-							{
-								sVal.FormatVal(refAttacker.ignore ? 1:0);
-								return true;
-							}
-						}
+                                sVal.FormatHex(uid.CharFind() ? refAttacker.charUID : 0);
+                                return true;
+                            }
+                            if (!strnicmp(ptcKey, "THREAT", 6))
+                            {
+                                sVal.FormatVal(refAttacker.threat);
+                                return true;
+                            }
+                            if (!strnicmp(ptcKey, "IGNORE", 6))
+                            {
+                                sVal.FormatVal(refAttacker.ignore ? 1 : 0);
+                                return true;
+                            }
+                        }
 					}
 				}
 
@@ -2532,13 +2530,13 @@ do_default:
 					sVal.FormatLLVal(pVar ? pVar->GetValNum() : 0);
 					return true;
 				}
-				else if ( !strnicmp(ptcKey, "BREATH.HUE", 10) || !strnicmp(ptcKey, "BREATH.ANIM", 11) || !strnicmp(ptcKey, "BREATH.TYPE", 11) || !strnicmp(ptcKey, "BREATH.DAMTYPE", 14))
-				{
-					CVarDefCont * pVar = GetDefKey(ptcKey, true);
-					sVal.FormatHex(pVar ? (dword)(pVar->GetValNum()) : 0);
-					return true;
-				}
-				return false;
+                if (!strnicmp(ptcKey, "BREATH.HUE", 10) || !strnicmp(ptcKey, "BREATH.ANIM", 11) || !strnicmp(ptcKey, "BREATH.TYPE", 11) || !strnicmp(ptcKey, "BREATH.DAMTYPE", 14))
+                {
+                    CVarDefCont *pVar = GetDefKey(ptcKey, true);
+                    sVal.FormatHex(pVar ? (dword)(pVar->GetValNum()) : 0);
+                    return true;
+                }
+                return false;
 			}
 		case CHC_NOTOSAVE:
 			{
@@ -2577,23 +2575,23 @@ do_default:
 								sVal.FormatVal(refnoto.value);
 								return true;
 							}
-							else if ( !strnicmp(ptcKey, "ELAPSED", 7) )
-							{
-								sVal.FormatLLVal(refnoto.time);
-								return true;
-							}
-							else if (( !strnicmp(ptcKey, "UID", 3) ) || ( *ptcKey == '\0' ))
-							{
-								const CUID uid(refnoto.charUID);
-								sVal.FormatHex( uid.CharFind() ? refnoto.charUID : 0 );
-								return true;
-							}
-							else if (!strnicmp(ptcKey, "COLOR", 5))
-							{
-								sVal.FormatVal(refnoto.color);
-								return true;
-							}
-							return false;
+                            if (!strnicmp(ptcKey, "ELAPSED", 7))
+                            {
+                                sVal.FormatLLVal(refnoto.time);
+                                return true;
+                            }
+                            if ((!strnicmp(ptcKey, "UID", 3)) || (*ptcKey == '\0'))
+                            {
+                                const CUID uid(refnoto.charUID);
+                                sVal.FormatHex(uid.CharFind() ? refnoto.charUID : 0);
+                                return true;
+                            }
+                            if (!strnicmp(ptcKey, "COLOR", 5))
+                            {
+                                sVal.FormatVal(refnoto.color);
+                                return true;
+                            }
+                            return false;
 						}
 					}
 				}
@@ -3751,39 +3749,39 @@ bool CChar::r_LoadVal( CScript & s )
 							Fight_ClearAll();
 						return true;
 					}
-					else if ( !strnicmp(ptcKey, "DELETE", 6) )
-					{
-						if ( !m_lastAttackers.empty() )
-						{
-							int idx = s.GetArgVal();
-							CChar *pChar = CUID::CharFindFromUID(idx);
-							if (!pChar)
-								return false;
-							Attacker_Delete(idx, false, ATTACKER_CLEAR_SCRIPT);
-						}
-						return true;
-					}
-					else if ( !strnicmp(ptcKey, "ADD", 3) )
-					{
-						CChar *pChar = CUID::CharFindFromUID(s.GetArgVal());
-						if ( !pChar )
-							return false;
-						Fight_Attack(pChar);
-						return true;
-					}
-					else if ( !strnicmp(ptcKey, "TARGET", 6) )
-					{
-						CChar *pChar = CUID::CharFindFromUID(s.GetArgVal());
-						if ( !pChar || (pChar == this) )	// can't set ourself as target
-						{
-							m_Fight_Targ_UID.InitUID();
-							return false;
-						}
-						m_Fight_Targ_UID = pChar->GetUID();
-						return true;
-					}
+                    if (!strnicmp(ptcKey, "DELETE", 6))
+                    {
+                        if (!m_lastAttackers.empty())
+                        {
+                            int idx      = s.GetArgVal();
+                            CChar *pChar = CUID::CharFindFromUID(idx);
+                            if (!pChar)
+                                return false;
+                            Attacker_Delete(idx, false, ATTACKER_CLEAR_SCRIPT);
+                        }
+                        return true;
+                    }
+                    if (!strnicmp(ptcKey, "ADD", 3))
+                    {
+                        CChar *pChar = CUID::CharFindFromUID(s.GetArgVal());
+                        if (!pChar)
+                            return false;
+                        Fight_Attack(pChar);
+                        return true;
+                    }
+                    if (!strnicmp(ptcKey, "TARGET", 6))
+                    {
+                        CChar *pChar = CUID::CharFindFromUID(s.GetArgVal());
+                        if (!pChar || (pChar == this)) // can't set ourself as target
+                        {
+                            m_Fight_Targ_UID.InitUID();
+                            return false;
+                        }
+                        m_Fight_Targ_UID = pChar->GetUID();
+                        return true;
+                    }
 
-					int attackerIndex = Exp_GetVal(ptcKey);
+                    int attackerIndex = Exp_GetVal(ptcKey);
 
 					SKIP_SEPARATORS(ptcKey);
 					if ( attackerIndex < GetAttackersCount() )
@@ -3793,28 +3791,28 @@ bool CChar::r_LoadVal( CScript & s )
 							Attacker_SetDam(attackerIndex, s.GetArgVal());
 							return true;
 						}
-						else if ( !strnicmp(ptcKey, "ELAPSED", 7) )
-						{
-							Attacker_SetElapsed(attackerIndex, s.GetArgVal());
-							return true;
-						}
-						else if ( !strnicmp(ptcKey, "THREAT", 6) )
-						{
-							Attacker_SetThreat(attackerIndex, s.GetArgVal());
-							return true;
-						}
-						else if ( !strnicmp(ptcKey, "DELETE", 6) )
-						{
-							Attacker_Delete(attackerIndex, false, ATTACKER_CLEAR_SCRIPT);
-							return true;
-						}
-						else if ( !strnicmp(ptcKey, "IGNORE", 6) )
-						{
-							bool fIgnore = s.GetArgVal() < 1 ? 0 : 1;
-							Attacker_SetIgnore(attackerIndex, fIgnore);
-							return true;
-						}
-					}
+                        if (!strnicmp(ptcKey, "ELAPSED", 7))
+                        {
+                            Attacker_SetElapsed(attackerIndex, s.GetArgVal());
+                            return true;
+                        }
+                        if (!strnicmp(ptcKey, "THREAT", 6))
+                        {
+                            Attacker_SetThreat(attackerIndex, s.GetArgVal());
+                            return true;
+                        }
+                        if (!strnicmp(ptcKey, "DELETE", 6))
+                        {
+                            Attacker_Delete(attackerIndex, false, ATTACKER_CLEAR_SCRIPT);
+                            return true;
+                        }
+                        if (!strnicmp(ptcKey, "IGNORE", 6))
+                        {
+                            bool fIgnore = s.GetArgVal() < 1 ? 0 : 1;
+                            Attacker_SetIgnore(attackerIndex, fIgnore);
+                            return true;
+                        }
+                    }
 				}
 			}
 			return false;
@@ -4587,26 +4585,26 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				UpdateDir(dynamic_cast<CObjBase*>(pCharSrc));
                 break;
 			}
-			else if (IsStrNumeric(pszVerbArg))
-			{
-				CObjBase* pTowards = CUID::ObjFindFromUID(s.GetArgVal());
-				if (pTowards != nullptr)
-				{
-					UpdateDir(pTowards);
+            if (IsStrNumeric(pszVerbArg))
+            {
+                CObjBase *pTowards = CUID::ObjFindFromUID(s.GetArgVal());
+                if (pTowards != nullptr)
+                {
+                    UpdateDir(pTowards);
                     break;
-				}
-			}
-			else
-			{
+                }
+            }
+            else
+            {
                 CPointMap pt;
-				pt.Read(s.GetArgStr());
-				if (pt.IsValidPoint())
-				{
-					UpdateDir(pt);
+                pt.Read(s.GetArgStr());
+                if (pt.IsValidPoint())
+                {
+                    UpdateDir(pt);
                     break;
-				}
-			}
-			return false;
+                }
+            }
+            return false;
 		}
 		case CHV_FIXWEIGHT:
 			FixWeight();
@@ -4870,9 +4868,8 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			{
 				if ( !s.GetArgVal() )
 					return OnSpellEffect( SPELL_Resurrection, pCharSrc, 1000, nullptr );
-				else
-					return Spell_Resurrection( nullptr, pCharSrc, true );
-			}
+                return Spell_Resurrection(nullptr, pCharSrc, true);
+            }
 		case CHV_REVEAL:
 			Reveal( s.GetArgDWVal());
 			break;
@@ -5021,9 +5018,9 @@ bool CChar::OnTriggerSpeech( bool bIsPet, lpctstr pszText, CChar * pSrc, TALKMOD
 					TRIGRET_TYPE iRet = OnHearTrigger(s, pszText, pSrc, mode, wHue);
 					if ( iRet == TRIGRET_RET_TRUE )
 						return true;
-					else if ( iRet == TRIGRET_RET_HALFBAKED )
-						return false;
-				}
+                    if (iRet == TRIGRET_RET_HALFBAKED)
+                        return false;
+                }
 				else
 					DEBUG_ERR(("TriggerSpeech: couldn't run script for speech %s\n", pszName));
 			}
@@ -5057,9 +5054,9 @@ lbl_cchar_ontriggerspeech:
 			TRIGRET_TYPE iRet = OnHearTrigger( sDSpeech, pszText, pSrc, mode, wHue );
 			if ( iRet == TRIGRET_RET_TRUE )
 				return true;
-			else if ( iRet == TRIGRET_RET_HALFBAKED )
-				break;
-		}
+            if (iRet == TRIGRET_RET_HALFBAKED)
+                break;
+        }
 	}
 
 	return false;
@@ -5074,15 +5071,13 @@ static uint Calc_ExpGet_Exp(uint level)
     {
         return ((level-1) * g_Cfg.m_iLevelNextAt);
     }
-    else // if (g_Cfg.m_iLevelMode == LEVEL_MODE_DOUBLE) // default
+    // if (g_Cfg.m_iLevelMode == LEVEL_MODE_DOUBLE) // default
+    uint exp = 0;
+    for (uint lev = 1; lev < level; ++lev)
     {
-        uint exp = 0;
-        for ( uint lev = 1; lev < level; ++lev )
-        {
-            exp += (g_Cfg.m_iLevelNextAt * (lev + 1));
-        }
-        return exp;
+        exp += (g_Cfg.m_iLevelNextAt * (lev + 1));
     }
+    return exp;
 }
 
 // Increasing level
@@ -5098,21 +5093,19 @@ static uint Calc_ExpGet_Level(uint exp)
     {
         return 1 + (exp / g_Cfg.m_iLevelNextAt);
     }
-    else // if (g_Cfg.m_iLevelMode == LEVEL_MODE_DOUBLE) // default
+    // if (g_Cfg.m_iLevelMode == LEVEL_MODE_DOUBLE) // default
+    uint level         = 0;
+    uint iNextLevelReq = 0;
+    while (exp >= iNextLevelReq)
     {
-        uint level = 0;
-        uint iNextLevelReq = 0;
-        while (exp >= iNextLevelReq)
-        {
-            // reduce xp and raise level
-            exp -= iNextLevelReq;
-            ++level;
+        // reduce xp and raise level
+        exp -= iNextLevelReq;
+        ++level;
 
-            // calculate requirement for next level
-            iNextLevelReq = (g_Cfg.m_iLevelNextAt * (level+1));
-        }
-        return level;
+        // calculate requirement for next level
+        iNextLevelReq = (g_Cfg.m_iLevelNextAt * (level + 1));
     }
+    return level;
 }
 
 void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
@@ -5294,31 +5287,28 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
         pItem->SetAmountUpdate(iQtyMax - iQty);
         return true;
     }
-    else if (iQty == iQtyMax)
+    if (iQty == iQtyMax)
     {
         pItem->Delete();
         return true;
     }
-    else
-    {
-        iQty = iQty - iQtyMax;
-        CItemBase* pItemDef = pItem->Item_GetDef();
-        if (pItemDef)
-        {
-            lpctstr resName = pItemDef->GetResourceName();
-            pItem->Delete();
-            CContainer* pCont = dynamic_cast<CContainer*>(this);
-            if (pCont)
-            {
-                CResourceQtyArray Resources;
-                Resources.Load(resName);
-                if (pCont->ResourceConsume(&Resources, iQty, true))
-                {
-                    pCont->ResourceConsume(&Resources, iQty);
-                    return true;
-                }
-            }
 
+    iQty = iQty - iQtyMax;
+    CItemBase *pItemDef = pItem->Item_GetDef();
+    if (pItemDef)
+    {
+        lpctstr resName = pItemDef->GetResourceName();
+        pItem->Delete();
+        CContainer *pCont = dynamic_cast<CContainer *>(this);
+        if (pCont)
+        {
+            CResourceQtyArray Resources;
+            Resources.Load(resName);
+            if (pCont->ResourceConsume(&Resources, iQty, true))
+            {
+                pCont->ResourceConsume(&Resources, iQty);
+                return true;
+            }
         }
     }
     return false;

@@ -26,11 +26,8 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
         TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatStart, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar);
         if (tRet == TRIGRET_RET_TRUE)
             return false;
-        else
-        {
-            if (pChar->IsNPC())
-                UpdateAnimate(ANIM_ALERT);
-        }
+        if (pChar->IsNPC())
+            UpdateAnimate(ANIM_ALERT);
     }
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();

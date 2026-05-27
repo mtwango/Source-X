@@ -912,11 +912,11 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 				return ANIM_HORSE_STAND;
 			}
 		}
-		else if (!IsPlayableCharacter())
-		{
-			// Animals have certain anims. Monsters have others.
+        if (!IsPlayableCharacter())
+        {
+            // Animals have certain anims. Monsters have others.
 
-            CUOMobTypesEntry mobTypesRow {MOBTE_QTY, 0};
+            CUOMobTypesEntry mobTypesRow { MOBTE_QTY, 0 };
             CREID_TYPE dispID = GetDispID();
             bool fUseMobTypes = g_Cfg.m_fUseMobTypes && g_Install.m_mobtypes.IsLoaded();
 
@@ -973,14 +973,14 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         case ANIM_RUN_UNARM:
                         case ANIM_RUN_ARMED:
                         case ANIM_HORSE_RIDE_FAST:
-                              return ANIM_UOP_RUN_MOUNTED;
+                            return ANIM_UOP_RUN_MOUNTED;
 
                         default:
                             return ANIM_UOP_STAND_MOUNTED;
                     }
                 }
                 //Only 3 actions
-                else if (dispID == CREID_HOMUNCULUS)
+                if (dispID == CREID_HOMUNCULUS)
                 {
                     switch (action)
                     {
@@ -1002,130 +1002,128 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                     case ANIM_WALK_UNARM:
                     case ANIM_WALK_ARM:
                         //Creatures without walk animation
-                        if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS || (dispID >= CREID_PUMPKIN_DEMON && dispID <= CREID_CLOCKWORK_EXODUS) || dispID == CREID_JACK_IN_THE_BOX)
                         {
-                            return ANIM_UOP_WALK_COMBAT;
-                        }
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_LITHOS)
-                        {
-                            return ANIM_UOP_STAND;
-                        }
-                        else if (dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE)
-                        {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
-                        else
-                        {
+                            //Creatures without walk animation
+                            if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS ||
+                                (dispID >= CREID_PUMPKIN_DEMON && dispID <= CREID_CLOCKWORK_EXODUS) || dispID == CREID_JACK_IN_THE_BOX)
+                            {
+                                return ANIM_UOP_WALK_COMBAT;
+                            }
+                            if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_LITHOS)
+                            {
+                                return ANIM_UOP_STAND;
+                            }
+                            if (dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE)
+                            {
+                                return ANIM_UOP_STAND_COMBAT;
+                            }
                             return ANIM_UOP_WALK;
                         }
 
                     case ANIM_WALK_WAR:
                         //Creatures without walk combat animation
-                        if (dispID == CREID_PARROT_BIRD || dispID == CREID_TURKEY_GIANT || dispID == CREID_HELLHOUND_ANCIENT || dispID == CREID_GIANT_GORILLA || dispID == CREID_HORSE_PALOMINO)
                         {
-                            return ANIM_UOP_WALK;
-                        }
-                        else if (dispID == CREID_PHOENIX)
-                        {
-                            return ANIM_UOP_FLY;
-                        }
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_LITHOS)
-                        {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
-                        else
-                        {
+                            //Creatures without walk combat animation
+                            if (dispID == CREID_PARROT_BIRD || dispID == CREID_TURKEY_GIANT || dispID == CREID_HELLHOUND_ANCIENT ||
+                                dispID == CREID_GIANT_GORILLA || dispID == CREID_HORSE_PALOMINO)
+                            {
+                                return ANIM_UOP_WALK;
+                            }
+                            if (dispID == CREID_PHOENIX)
+                            {
+                                return ANIM_UOP_FLY;
+                            }
+                            if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_LITHOS)
+                            {
+                                return ANIM_UOP_STAND_COMBAT;
+                            }
                             return ANIM_UOP_WALK_COMBAT;
                         }
 
                     case ANIM_RUN_UNARM:
                     case ANIM_RUN_ARMED:
                         //If the creature can fly we can use flying action for running
-                        if (mobTypesRow.m_uiFlags & ATFLAG_CanFlying)
                         {
-                            //Phoenix and Parrot Bird don't have run anims
-                            if (IsStatFlag(STATF_FLY | STATF_HOVERING) || (dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX) )
-                                return ANIM_UOP_FLY;
-                            else
+                            //If the creature can fly we can use flying action for running
+                            if (mobTypesRow.m_uiFlags & ATFLAG_CanFlying)
+                            {
+                                //Phoenix and Parrot Bird don't have run anims
+                                if (IsStatFlag(STATF_FLY | STATF_HOVERING) || (dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX))
+                                    return ANIM_UOP_FLY;
                                 return ANIM_UOP_RUN;
-                        }
-                        else
-                        {
+                            }
                             //Creatures without run anim
-                            if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS || (dispID >= CREID_PUMPKIN_DEMON && dispID <= CREID_CLOCKWORK_EXODUS))
+                            if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS ||
+                                (dispID >= CREID_PUMPKIN_DEMON && dispID <= CREID_CLOCKWORK_EXODUS))
                             {
                                 return ANIM_UOP_WALK_COMBAT;
                             }
-                            else if (dispID == CREID_ANIMATED_WEAPON)
+                            if (dispID == CREID_ANIMATED_WEAPON)
                             {
                                 return ANIM_UOP_STAND;
                             }
-                            else if (dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE)
+                            if (dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS_TENTACLE)
                             {
                                 return ANIM_UOP_STAND_COMBAT;
                             }
-                            else
-                            {
-                                return ANIM_UOP_RUN;
-                            }
+                            return ANIM_UOP_RUN;
                         }
 
                     case ANIM_STAND:
                         //Creatures without stand anim
-                        if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS || dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_CLOCKWORK_EXODUS || dispID == CREID_JACK_IN_THE_BOX)
                         {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
-                        else
-                        {
+                            //Creatures without stand anim
+                            if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE || dispID == CREID_CHARYBDIS ||
+                                dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_CLOCKWORK_EXODUS || dispID == CREID_JACK_IN_THE_BOX)
+                            {
+                                return ANIM_UOP_STAND_COMBAT;
+                            }
                             return ANIM_UOP_STAND;
                         }
 
                     case ANIM_STAND_WAR_1H:
                     case ANIM_STAND_WAR_2H:
+                    {
                         if (dispID == CREID_PARROT_BIRD)
                         {
                             return ANIM_UOP_STAND;
                         }
-                        else
-                        {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
+                        return ANIM_UOP_STAND_COMBAT;
+                    }
 
                     case ANIM_FIDGET1:
                     case ANIM_BOW:
                     case ANIM_EAT:
+                    {
                         if (dispID == CREID_PUMPKIN_FRIGHT)
                         {
                             return ANIM_UOP_PEACE_TO_COMBAT;
                         }
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE || (dispID >= CREID_CHARYBDIS && dispID <= CREID_CLOCKWORK_EXODUS) || dispID == CREID_JACK_IN_THE_BOX)
+                        if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE ||
+                            (dispID >= CREID_CHARYBDIS && dispID <= CREID_CLOCKWORK_EXODUS) || dispID == CREID_JACK_IN_THE_BOX)
                         {
                             return ANIM_UOP_SPECIAL;
                         }
-                        else
-                        {
-                            return ANIM_UOP_FIDGET;
-                        }
+                        return ANIM_UOP_FIDGET;
+                    }
 
                     case ANIM_FIDGET_YAWN:
                     case ANIM_SALUTE:
+                    {
                         if (dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX || dispID == CREID_TURKEY_GIANT || dispID == CREID_PUMPKIN_DEMON)
                         {
                             return ANIM_UOP_FIDGET;
                         }
-                        else if(dispID == CREID_PUMPKIN_FRIGHT)
+                        if (dispID == CREID_PUMPKIN_FRIGHT)
                         {
                             return ANIM_UOP_PEACE_TO_COMBAT;
                         }
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || (dispID >= CREID_CHARYBDIS && dispID <= CREID_CLOCKWORK_EXODUS))
+                        if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || (dispID >= CREID_CHARYBDIS && dispID <= CREID_CLOCKWORK_EXODUS))
                         {
                             return ANIM_UOP_SPECIAL;
                         }
-                        else
-                        {
-                            return ANIM_UOP_ROAR;
-                        }
+                        return ANIM_UOP_ROAR;
+                    }
 
                     case ANIM_CAST_DIR:
                     case ANIM_CAST_AREA:
@@ -1138,17 +1136,24 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(2))
                             {
-                                case 0: return ANIM_UOP_CAST_1; break;
-                                case 1: return ANIM_UOP_CAST_2; break;
+                                case 0:
+                                    return ANIM_UOP_CAST_1;
+                                    break;
+                                case 1:
+                                    return ANIM_UOP_CAST_2;
+                                    break;
                             }
                         }
                         //Creatures with cast action
-                        else if (dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_GRUBBER || dispID == CREID_STONE_FORM || dispID == CREID_ABYSSAL_INFERNAL
-                            || (dispID >= CREID_ELEM_LAVA && dispID <= CREID_GARG_UNDEAD) || dispID == CREID_GOBLIN_GREEN_MAGE || dispID == CREID_MEDUSA || dispID == CREID_SLASHER_VEILS
-                            || dispID == CREID_DRAGON_STYGIAN || dispID == CREID_LICH_PRIMEVAL || dispID == CREID_SCALIS || dispID == CREID_HELLHOUND_ANCIENT || dispID == CREID_MINOTAUR_LORD
-                            || dispID == CREID_PUMPKIN_FRIGHT || dispID == CREID_CLOCKWORK_EXODUS || dispID == CREID_MYRMIDEX_DRONE || dispID == CREID_MYRMIDEX_WARRIOR || dispID == CREID_ZIPACTRIOTL
-                            || dispID == CREID_LASHER || dispID == CREID_WINDRUNNER || dispID == CREID_HYDROS || dispID == CREID_JACK_IN_THE_BOX || (dispID >= CREID_LITHOS && dispID <= CREID_PYROS)
-                            || dispID == CREID_KHAL_ANKUR || dispID == CREID_WAR_BOAR_MOUNT)
+                        else if (dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_GRUBBER || dispID == CREID_STONE_FORM ||
+                                 dispID == CREID_ABYSSAL_INFERNAL || (dispID >= CREID_ELEM_LAVA && dispID <= CREID_GARG_UNDEAD) ||
+                                 dispID == CREID_GOBLIN_GREEN_MAGE || dispID == CREID_MEDUSA || dispID == CREID_SLASHER_VEILS ||
+                                 dispID == CREID_DRAGON_STYGIAN || dispID == CREID_LICH_PRIMEVAL || dispID == CREID_SCALIS ||
+                                 dispID == CREID_HELLHOUND_ANCIENT || dispID == CREID_MINOTAUR_LORD || dispID == CREID_PUMPKIN_FRIGHT ||
+                                 dispID == CREID_CLOCKWORK_EXODUS || dispID == CREID_MYRMIDEX_DRONE || dispID == CREID_MYRMIDEX_WARRIOR ||
+                                 dispID == CREID_ZIPACTRIOTL || dispID == CREID_LASHER || dispID == CREID_WINDRUNNER || dispID == CREID_HYDROS ||
+                                 dispID == CREID_JACK_IN_THE_BOX || (dispID >= CREID_LITHOS && dispID <= CREID_PYROS) || dispID == CREID_KHAL_ANKUR ||
+                                 dispID == CREID_WAR_BOAR_MOUNT)
                         {
                             return ANIM_UOP_CAST_1;
                         }
@@ -1180,12 +1185,12 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 
                     case ANIM_GET_HIT:
                         //No GetHit
-                        if (dispID == CREID_TURKEY_GIANT || dispID == CREID_CLOCKWORK_EXODUS)
                         {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
-                        else
-                        {
+                            //No GetHit
+                            if (dispID == CREID_TURKEY_GIANT || dispID == CREID_CLOCKWORK_EXODUS)
+                            {
+                                return ANIM_UOP_STAND_COMBAT;
+                            }
                             return ANIM_UOP_GETHIT;
                         }
                         break;
@@ -1198,25 +1203,32 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                     case ANIM_ATTACK_2H_PIERCE:
                     case ANIM_ATTACK_WRESTLE:
                         //No attack
-                        if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS)
                         {
-                            return ANIM_UOP_BLOCK;
-                        }
-                        else if (dispID == CREID_PARROT_BIRD)
-                        {
-                            return ANIM_UOP_FIDGET;
-                        }
-                        //No attack 2
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_TURKEY_GIANT || dispID == CREID_HORSE_PALOMINO || dispID == CREID_BLOOD_FOX || dispID == CREID_KRUMPUS_IMP || (dispID >= CREID_CHARYBDIS_TENTACLE && dispID <= CREID_PUMPKIN_FRIGHT) || (dispID >= CREID_DOG_NEWFOUNDLAND && dispID <= CREID_DOG_ROTTWEILER))
-                        {
-                            return ANIM_UOP_ATTACK_1;
-                        }
-                        else
-                        {
+                            //No attack
+                            if (dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_CHARYBDIS)
+                            {
+                                return ANIM_UOP_BLOCK;
+                            }
+                            if (dispID == CREID_PARROT_BIRD)
+                            {
+                                return ANIM_UOP_FIDGET;
+                            }
+                            //No attack 2
+                            if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_TURKEY_GIANT ||
+                                dispID == CREID_HORSE_PALOMINO || dispID == CREID_BLOOD_FOX || dispID == CREID_KRUMPUS_IMP ||
+                                (dispID >= CREID_CHARYBDIS_TENTACLE && dispID <= CREID_PUMPKIN_FRIGHT) ||
+                                (dispID >= CREID_DOG_NEWFOUNDLAND && dispID <= CREID_DOG_ROTTWEILER))
+                            {
+                                return ANIM_UOP_ATTACK_1;
+                            }
                             switch (g_Rand.GetVal(2))
                             {
-                                case 0: return ANIM_UOP_ATTACK_1; break;
-                                case 1: return ANIM_UOP_ATTACK_2; break;
+                                case 0:
+                                    return ANIM_UOP_ATTACK_1;
+                                    break;
+                                case 1:
+                                    return ANIM_UOP_ATTACK_2;
+                                    break;
                             }
                             break;
                         }
@@ -1226,43 +1238,52 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 
                     case ANIM_DIE_FORWARD:
                         //No die forward
-                        if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE || dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX || dispID == CREID_TURKEY_GIANT
-                            || dispID == CREID_HELLHOUND_ANCIENT || (dispID >= CREID_CHARYBDIS && dispID <= CREID_PUMPKIN_FRIGHT) || dispID == CREID_GIANT_GORILLA || dispID == CREID_BLOOD_FOX || dispID == CREID_FROST_MITE
-                            || dispID == CREID_STRATOS || dispID == CREID_KRUMPUS_IMP || (dispID >= CREID_WAR_BOAR_MOUNT && dispID <= CREID_WAR_CAPYBARA_BABY) || (dispID >= CREID_RABBIT_DOOM_BABY && dispID <= CREID_DOG_ROTTWEILER))
                         {
-                            return ANIM_UOP_DIE_BACKWARD;
-                        }
-                        else
-                        {
+                            //No die forward
+                            if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TUNNEL_SPIRIT_BODY || dispID == CREID_TS_TENTACLE ||
+                                dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX || dispID == CREID_TURKEY_GIANT || dispID == CREID_HELLHOUND_ANCIENT ||
+                                (dispID >= CREID_CHARYBDIS && dispID <= CREID_PUMPKIN_FRIGHT) || dispID == CREID_GIANT_GORILLA || dispID == CREID_BLOOD_FOX ||
+                                dispID == CREID_FROST_MITE || dispID == CREID_STRATOS || dispID == CREID_KRUMPUS_IMP ||
+                                (dispID >= CREID_WAR_BOAR_MOUNT && dispID <= CREID_WAR_CAPYBARA_BABY) ||
+                                (dispID >= CREID_RABBIT_DOOM_BABY && dispID <= CREID_DOG_ROTTWEILER))
+                            {
+                                return ANIM_UOP_DIE_BACKWARD;
+                            }
                             return ANIM_UOP_DIE_FORWARD;
                         }
 
                     case ANIM_BLOCK:
                         //No Block
-                        if (dispID == CREID_TURKEY_GIANT || dispID == CREID_CLOCKWORK_EXODUS)
                         {
-                            return ANIM_UOP_STAND_COMBAT;
-                        }
-                        else if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX || dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_PUMPKIN_FRIGHT || dispID == CREID_FROST_MITE)
-                        {
-                            return ANIM_UOP_GETHIT;
-                        }
-                        else
-                        {
+                            //No Block
+                            if (dispID == CREID_TURKEY_GIANT || dispID == CREID_CLOCKWORK_EXODUS)
+                            {
+                                return ANIM_UOP_STAND_COMBAT;
+                            }
+                            if (dispID == CREID_ANIMATED_WEAPON || dispID == CREID_TS_TENTACLE || dispID == CREID_PARROT_BIRD || dispID == CREID_PHOENIX ||
+                                dispID == CREID_CHARYBDIS_TENTACLE || dispID == CREID_PUMPKIN_FRIGHT || dispID == CREID_FROST_MITE)
+                            {
+                                return ANIM_UOP_GETHIT;
+                            }
                             return ANIM_UOP_BLOCK;
                         }
 
                     case ANIM_PILLAGE:
                         //Creatures with Pillage
-                        if (dispID == CREID_GARG_FIRE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_TROGLODYTE || dispID == CREID_GRUBBER || dispID == CREID_BLOODWORM || dispID == CREID_VOLLEM || dispID == CREID_GOBLIN_GRAY
-                            || dispID == CREID_STONE_FORM || (dispID >= CREID_MADDENING_HORROR && dispID <= CREID_GOBLIN_GREEN_MAGE) || dispID == CREID_MEDUSA || dispID == CREID_SKREE || dispID == CREID_SPIDER_TRAPDOOR || dispID == CREID_FIRE_ANT || dispID == CREID_DREAM_WRAITH
-                            || dispID == CREID_SLASHER_VEILS || dispID == CREID_GARG_ENSLAVED || dispID == CREID_DRAGON_STYGIAN || dispID == CREID_RISING_COLOSSUS || dispID == CREID_LICH_PRIMEVAL || dispID == CREID_SCALIS || dispID == CREID_MINOTAUR_LORD
-                            || dispID == CREID_DRAGON_TURTLE || dispID == CREID_SAUROSAURUS || dispID == CREID_MYRMIDEX_LARVAE || dispID == CREID_DRAGON_TURTLE_HATCHL || dispID == CREID_MYRMIDEX_DRONE || dispID == CREID_MYRMIDEX_WARRIOR || dispID == CREID_ZIPACTRIOTL || dispID == CREID_KHAL_ANKUR)
                         {
-                            return ANIM_UOP_PILLAGE;
-                        }
-                        else
-                        {
+                            //Creatures with Pillage
+                            if (dispID == CREID_GARG_FIRE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_TROGLODYTE ||
+                                dispID == CREID_GRUBBER || dispID == CREID_BLOODWORM || dispID == CREID_VOLLEM || dispID == CREID_GOBLIN_GRAY ||
+                                dispID == CREID_STONE_FORM || (dispID >= CREID_MADDENING_HORROR && dispID <= CREID_GOBLIN_GREEN_MAGE) ||
+                                dispID == CREID_MEDUSA || dispID == CREID_SKREE || dispID == CREID_SPIDER_TRAPDOOR || dispID == CREID_FIRE_ANT ||
+                                dispID == CREID_DREAM_WRAITH || dispID == CREID_SLASHER_VEILS || dispID == CREID_GARG_ENSLAVED ||
+                                dispID == CREID_DRAGON_STYGIAN || dispID == CREID_RISING_COLOSSUS || dispID == CREID_LICH_PRIMEVAL || dispID == CREID_SCALIS ||
+                                dispID == CREID_MINOTAUR_LORD || dispID == CREID_DRAGON_TURTLE || dispID == CREID_SAUROSAURUS ||
+                                dispID == CREID_MYRMIDEX_LARVAE || dispID == CREID_DRAGON_TURTLE_HATCHL || dispID == CREID_MYRMIDEX_DRONE ||
+                                dispID == CREID_MYRMIDEX_WARRIOR || dispID == CREID_ZIPACTRIOTL || dispID == CREID_KHAL_ANKUR)
+                            {
+                                return ANIM_UOP_PILLAGE;
+                            }
                             return ANIM_UOP_FIDGET;
                         }
 
@@ -1290,24 +1311,27 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         return ANIM_UOP_STAND_MOUNTED;
 
                     case ANIM_SUMMON:
-                        if (dispID == CREID_WILD_TIGER || dispID == CREID_TIGER_ETHEREAL || (dispID >= CREID_GIANT_GORILLA && dispID <= CREID_TYRANNOSAURUS_REX) || dispID == CREID_LASHER || dispID == CREID_HORSE_PALOMINO
-                            || (dispID >= CREID_TRICERATOPS && dispID <= CREID_FROST_MITE) || dispID == CREID_LION || dispID == CREID_HYDROS || (dispID >= CREID_LITHOS && dispID <= CREID_PYROS) || dispID == CREID_TIGER_UNDEAD
-                            || (dispID >= CREID_CRAB_COCONUT_MOUNT && dispID <= CREID_CRAB_COCONUT_LARGE) || (dispID >= CREID_WAR_BOAR_MOUNT && dispID <= CREID_WAR_CAPYBARA_BABY) || (dispID >= CREID_RABBIT_DOOM_BABY && dispID <= CREID_DOG_ROTTWEILER))
+                    {
+                        if (dispID == CREID_WILD_TIGER || dispID == CREID_TIGER_ETHEREAL ||
+                            (dispID >= CREID_GIANT_GORILLA && dispID <= CREID_TYRANNOSAURUS_REX) || dispID == CREID_LASHER || dispID == CREID_HORSE_PALOMINO ||
+                            (dispID >= CREID_TRICERATOPS && dispID <= CREID_FROST_MITE) || dispID == CREID_LION || dispID == CREID_HYDROS ||
+                            (dispID >= CREID_LITHOS && dispID <= CREID_PYROS) || dispID == CREID_TIGER_UNDEAD ||
+                            (dispID >= CREID_CRAB_COCONUT_MOUNT && dispID <= CREID_CRAB_COCONUT_LARGE) ||
+                            (dispID >= CREID_WAR_BOAR_MOUNT && dispID <= CREID_WAR_CAPYBARA_BABY) ||
+                            (dispID >= CREID_RABBIT_DOOM_BABY && dispID <= CREID_DOG_ROTTWEILER))
                         {
                             return ANIM_UOP_ROAR;
                         }
-                        else if (dispID == CREID_PARROT_BIRD)
+                        if (dispID == CREID_PARROT_BIRD)
                         {
                             return ANIM_UOP_GETHIT;
                         }
-                        else if (dispID == CREID_PHOENIX || dispID == CREID_TURKEY_GIANT || dispID == CREID_PUMPKIN_DEMON || dispID == CREID_PUMPKIN_FRIGHT)
+                        if (dispID == CREID_PHOENIX || dispID == CREID_TURKEY_GIANT || dispID == CREID_PUMPKIN_DEMON || dispID == CREID_PUMPKIN_FRIGHT)
                         {
                             return ANIM_UOP_PEACE_TO_COMBAT;
                         }
-                        else
-                        {
-                            return ANIM_UOP_SPECIAL;
-                        }
+                        return ANIM_UOP_SPECIAL;
+                    }
 
                     default:
                         return ANIM_WALK_UNARM;
@@ -1340,16 +1364,18 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         return ANIM_MON_ATTACK1;
 
                     case ANIM_CAST_DIR:
+                    {
                         if (dispID == CREID_DOLPHIN) //Dolphin doesn't have ANIM_MON_ATTACK2 and ANIM_MON_ATTACK3
                             return ANIM_MON_AttackBow;
-                        else
-                            return ANIM_MON_ATTACK2;
+                        return ANIM_MON_ATTACK2;
+                    }
 
                     case ANIM_CAST_AREA:
+                    {
                         if (dispID == CREID_DOLPHIN) //Dolphin doesn't have ANIM_MON_ATTACK2 and ANIM_MON_ATTACK3
                             return ANIM_MON_DIE2;
-                        else
-                            return ANIM_MON_ATTACK3;
+                        return ANIM_MON_ATTACK3;
+                    }
 
                     case ANIM_GET_HIT:
                         return ANIM_MON_AttackBow;
@@ -1367,17 +1393,27 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(2))
                             {
-                                case 0: return ANIM_MON_AttackBow; break;
-                                case 1: return ANIM_MON_DIE2; break;
+                                case 0:
+                                    return ANIM_MON_AttackBow;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_DIE2;
+                                    break;
                             }
                         }
                         else
                         {
                             switch (g_Rand.GetVal(3))
                             {
-                                case 0: return ANIM_MON_ATTACK2; break;
-                                case 1: return ANIM_MON_ATTACK2; break;
-                                case 2: return ANIM_MON_ATTACK3; break;
+                                case 0:
+                                    return ANIM_MON_ATTACK2;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_ATTACK2;
+                                    break;
+                                case 2:
+                                    return ANIM_MON_ATTACK3;
+                                    break;
                             }
                         }
                         break;
@@ -1398,14 +1434,13 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         return ANIM_MON_DIE2;
 
                     case ANIM_THROW:
+                    {
                         if (dispID == CREID_DOLPHIN) //Dolphin doesn't have ANIM_MON_ATTACK2 and ANIM_MON_ATTACK3
                         {
                             return ANIM_MON_AttackBow;
                         }
-                        else
-                        {
-                            return ANIM_MON_ATTACK2;
-                        }
+                        return ANIM_MON_ATTACK2;
+                    }
 
                     case ANIM_SUMMON:
                         return ANIM_MON_ATTACK1;
@@ -1415,9 +1450,9 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                 }
             }
             //Animal
-			else if ((mobTypesRow.m_uiType == MOBTE_ANIMAL && !(mobTypesRow.m_uiFlags & ATFLAG_CalculateOffsetLowGroupExtended))
-                || (mobTypesRow.m_uiType == MOBTE_MONSTER && (mobTypesRow.m_uiFlags & ATFLAG_CalculateOffsetByLowGroup)))
-			{
+            else if ((mobTypesRow.m_uiType == MOBTE_ANIMAL && !(mobTypesRow.m_uiFlags & ATFLAG_CalculateOffsetLowGroupExtended)) ||
+                     (mobTypesRow.m_uiType == MOBTE_MONSTER && (mobTypesRow.m_uiFlags & ATFLAG_CalculateOffsetByLowGroup)))
+            {
                 //Partial actions
                 if (dispID == CREID_PARROT || dispID == CREID_BIRD_CROW)
                 {
@@ -1473,68 +1508,60 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                 // Standard and Custom Anims
                 switch (action)
                 {
-	                case ANIM_WALK_UNARM:
-	                case ANIM_WALK_ARM:
-	                case ANIM_WALK_WAR:
-		                return ANIM_ANI_WALK;
+                    case ANIM_WALK_UNARM:
+                    case ANIM_WALK_ARM:
+                    case ANIM_WALK_WAR:
+                        return ANIM_ANI_WALK;
 
-	                case ANIM_RUN_UNARM:
-	                case ANIM_RUN_ARMED:
-		                return ANIM_ANI_RUN;
+                    case ANIM_RUN_UNARM:
+                    case ANIM_RUN_ARMED:
+                        return ANIM_ANI_RUN;
 
-	                case ANIM_STAND:
-	                case ANIM_STAND_WAR_1H:
-	                case ANIM_STAND_WAR_2H:
+                    case ANIM_STAND:
+                    case ANIM_STAND_WAR_1H:
+                    case ANIM_STAND_WAR_2H:
                         return ANIM_ANI_STAND;
 
-	                case ANIM_FIDGET1:
+                    case ANIM_FIDGET1:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1)
                         {
                             if (!(pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET2))
                             {
                                 return ANIM_ANI_FIDGET2;
                             }
-                            else
-                            {
-                                return ANIM_ANI_STAND;
-                            }
+                            return ANIM_ANI_STAND;
                         }
-                        else
-                        {
-                            return ANIM_ANI_FIDGET1;
-                        }
+                        return ANIM_ANI_FIDGET1;
+                    }
 
-	                case ANIM_FIDGET_YAWN:
+                    case ANIM_FIDGET_YAWN:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET2)
                         {
                             if (!(pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1))
                             {
                                 return ANIM_ANI_FIDGET1;
                             }
-                            else
-                            {
-                                return ANIM_ANI_STAND;
-                            }
+                            return ANIM_ANI_STAND;
                         }
-                        else
-                        {
-                            return ANIM_ANI_FIDGET2;
-                        }
+                        return ANIM_ANI_FIDGET2;
+                    }
 
-	                case ANIM_CAST_DIR:
-		                return ANIM_ANI_ATTACK1;
+                    case ANIM_CAST_DIR:
+                        return ANIM_ANI_ATTACK1;
 
-	                case ANIM_CAST_AREA:
+                    case ANIM_CAST_AREA:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_EAT)
                         {
                             return ANIM_ANI_ATTACK1;
                         }
-                        else
-                        {
-                            return ANIM_ANI_EAT;
-                        }
+                        return ANIM_ANI_EAT;
+                    }
 
-	                case ANIM_GET_HIT:
+                    case ANIM_GET_HIT:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_GETHIT)
                         {
                             if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1)
@@ -1543,30 +1570,22 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                                 {
                                     return ANIM_ANI_FIDGET2;
                                 }
-                                else
-                                {
-                                    return ANIM_ANI_STAND;
-                                }
+                                return ANIM_ANI_STAND;
                             }
-                            else
-                            {
-                                return ANIM_ANI_FIDGET1;
-                            }
+                            return ANIM_ANI_FIDGET1;
                         }
-                        else
-                        {
-                            return ANIM_ANI_GETHIT;
-                        }
+                        return ANIM_ANI_GETHIT;
+                    }
 
-	                case ANIM_ATTACK_1H_SLASH:
-	                case ANIM_ATTACK_1H_PIERCE:
-	                case ANIM_ATTACK_1H_BASH:
-	                case ANIM_ATTACK_2H_BASH:
-	                case ANIM_ATTACK_2H_SLASH:
-	                case ANIM_ATTACK_2H_PIERCE:
-	                case ANIM_ATTACK_BOW:
-	                case ANIM_ATTACK_XBOW:
-	                case ANIM_ATTACK_WRESTLE:
+                    case ANIM_ATTACK_1H_SLASH:
+                    case ANIM_ATTACK_1H_PIERCE:
+                    case ANIM_ATTACK_1H_BASH:
+                    case ANIM_ATTACK_2H_BASH:
+                    case ANIM_ATTACK_2H_SLASH:
+                    case ANIM_ATTACK_2H_PIERCE:
+                    case ANIM_ATTACK_BOW:
+                    case ANIM_ATTACK_XBOW:
+                    case ANIM_ATTACK_WRESTLE:
                     case ANIM_THROW:
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_ATTACK2)
                         {
@@ -1575,29 +1594,33 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 
                         switch (g_Rand.GetVal(attackActions))
                         {
-                            case 0: return ANIM_ANI_ATTACK1; break;
-                            case 1: return ANIM_ANI_ATTACK2; break;
+                            case 0:
+                                return ANIM_ANI_ATTACK1;
+                                break;
+                            case 1:
+                                return ANIM_ANI_ATTACK2;
+                                break;
                         }
                         break;
 
-	                case ANIM_DIE_BACK:
-		                return ANIM_ANI_DIE1;
+                    case ANIM_DIE_BACK:
+                        return ANIM_ANI_DIE1;
 
-	                case ANIM_DIE_FORWARD:
+                    case ANIM_DIE_FORWARD:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_DIE2)
                         {
                             return ANIM_ANI_DIE1;
                         }
-                        else
-                        {
-                            return ANIM_ANI_DIE2;
-                        }
+                        return ANIM_ANI_DIE2;
+                    }
 
-	                case ANIM_BLOCK:
+                    case ANIM_BLOCK:
                         return ANIM_ANI_GETHIT;
 
-	                case ANIM_BOW:
-	                case ANIM_SALUTE:
+                    case ANIM_BOW:
+                    case ANIM_SALUTE:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_LIEDOWN)
                         {
                             if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1)
@@ -1606,32 +1629,26 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                                 {
                                     return ANIM_ANI_FIDGET2;
                                 }
-                                else
-                                {
-                                    return ANIM_ANI_STAND;
-                                }
+                                return ANIM_ANI_STAND;
                             }
-                            else
-                            {
-                                return ANIM_ANI_FIDGET1;
-                            }
+                            return ANIM_ANI_FIDGET1;
                         }
                         //No Lie Down
-                        else if (dispID == CREID_CAT || dispID == CREID_PANTHER || dispID == CREID_COW_BW || dispID == CREID_DOG || dispID == CREID_WOLF_TIMBER || (dispID >= CREID_COW_BROWN && dispID <= CREID_BULL_BROWN_DK))
+                        if (dispID == CREID_CAT || dispID == CREID_PANTHER || dispID == CREID_COW_BW || dispID == CREID_DOG || dispID == CREID_WOLF_TIMBER ||
+                            (dispID >= CREID_COW_BROWN && dispID <= CREID_BULL_BROWN_DK))
                         {
                             return ANIM_ANI_FIDGET1;
                         }
-                        else if (dispID == CREID_SQUIRREL)
+                        if (dispID == CREID_SQUIRREL)
                         {
                             return ANIM_ANI_FIDGET2;
                         }
-                        else
-                        {
-                            return ANIM_ANI_SLEEP;
-                        }
+                        return ANIM_ANI_SLEEP;
+                    }
 
-	                case ANIM_EAT:
+                    case ANIM_EAT:
                     case ANIM_PILLAGE:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_EAT)
                         {
                             if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1)
@@ -1640,22 +1657,15 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                                 {
                                     return ANIM_ANI_FIDGET2;
                                 }
-                                else
-                                {
-                                    return ANIM_ANI_STAND;
-                                }
+                                return ANIM_ANI_STAND;
                             }
-                            else
-                            {
-                                return ANIM_ANI_FIDGET1;
-                            }
+                            return ANIM_ANI_FIDGET1;
                         }
-                        else
-                        {
-                            return ANIM_ANI_EAT;
-                        }
+                        return ANIM_ANI_EAT;
+                    }
 
                     case ANIM_ALERT:
+                    {
                         if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_ALERT)
                         {
                             if (pCharDef->m_Anims & AFLAG_CUST_ANI_NO_FIDGET1)
@@ -1664,38 +1674,31 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                                 {
                                     return ANIM_ANI_FIDGET2;
                                 }
-                                else
-                                {
-                                    return ANIM_ANI_STAND;
-                                }
+                                return ANIM_ANI_STAND;
                             }
-                            else
-                            {
-                                return ANIM_ANI_FIDGET1;
-                            }
+                            return ANIM_ANI_FIDGET1;
                         }
                         //No Alert
-                        else if (dispID == CREID_SQUIRREL)
+                        if (dispID == CREID_SQUIRREL)
                         {
                             return ANIM_ANI_FIDGET2;
                         }
                         //Bugged Alert
-                        else if (dispID == CREID_CAT || dispID == CREID_PANTHER || dispID == CREID_COW_BW || dispID == CREID_DOG || dispID == CREID_WOLF_TIMBER || (dispID >= CREID_COW_BROWN && dispID <= CREID_BULL_BROWN_DK))
+                        if (dispID == CREID_CAT || dispID == CREID_PANTHER || dispID == CREID_COW_BW || dispID == CREID_DOG || dispID == CREID_WOLF_TIMBER ||
+                            (dispID >= CREID_COW_BROWN && dispID <= CREID_BULL_BROWN_DK))
                         {
                             return ANIM_ANI_FIDGET2;
                         }
-                        else
-                        {
-                            return ANIM_ANI_ALERT;
-                        }
+                        return ANIM_ANI_ALERT;
+                    }
 
                     case ANIM_SUMMON:
                         return ANIM_ANI_ATTACK1;
 
-	                default:
+                    default:
                         return ANIM_ANI_STAND;
                 }
-			}
+            }
             else
             {
                 // Monsters don't have all the anims.
@@ -1715,13 +1718,12 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                     case ANIM_RUN_UNARM:
                     case ANIM_RUN_ARMED:
                         //If the creature can fly we can use flying action for running
-                        if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying)
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Custom anims with Fly action
                         {
-                            return ANIM_MON_FLY;
-                        }
-                        else
-                        {
+                            //If the creature can fly we can use flying action for running
+                            if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) || (pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Custom anims with Fly action
+                            {
+                                return ANIM_MON_FLY;
+                            }
                             return ANIM_MON_WALK;
                         }
 
@@ -1729,73 +1731,65 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                     case ANIM_STAND_WAR_1H:
                     case ANIM_STAND_WAR_2H:
                         //Stand action in crossbow
-                        if (mobTypesRow.m_uiFlags & ATFLAG_IdleAt8Frame)
                         {
-                            return ANIM_MON_AttackXBow;
-                        }
-                        else
-                        {
+                            //Stand action in crossbow
+                            if (mobTypesRow.m_uiFlags & ATFLAG_IdleAt8Frame)
+                            {
+                                return ANIM_MON_AttackXBow;
+                            }
                             return ANIM_MON_STAND;
                         }
 
                     case ANIM_FIDGET1:
                     case ANIM_BOW:
-                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET1) //Custom Anims without Fidget1
+                    {
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET1)        //Custom Anims without Fidget1
                         {
                             if (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET2)) //Custom Anims with Fidget2
                             {
                                 return ANIM_MON_FIDGET2;
                             }
-                            else
-                            {
-                                return ANIM_MON_STAND;
-                            }
+                            return ANIM_MON_STAND;
                         }
-                        else
-                        {
-                            return ANIM_MON_FIDGET1;
-                        }
+                        return ANIM_MON_FIDGET1;
+                    }
 
                     case ANIM_FIDGET_YAWN:
                     case ANIM_SALUTE:
                     case ANIM_EAT:
-                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET2) //Custom Anims without Fidget2
+                    {
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET2)        //Custom Anims without Fidget2
                         {
                             if (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET1)) //Custom Anims with Fidget1
                             {
                                 return ANIM_MON_FIDGET1;
                             }
-                            else
-                            {
-                                return ANIM_MON_STAND;
-                            }
+                            return ANIM_MON_STAND;
                         }
-                        else if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM) //No Fidget
+                        if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM) //No Fidget
                         {
                             return ANIM_MON_FIDGET1;
                         }
-                        else
-                        {
-                            return ANIM_MON_FIDGET2;
-                        }
+                        return ANIM_MON_FIDGET2;
+                    }
 
                     case ANIM_CAST_DIR:
                     case ANIM_CAST_AREA:
-                    case ANIM_ATTACK_BOW: //return ANIM_MON_AttackBow; //Always Empty except for standard ID 13, 15 and 16
+                    case ANIM_ATTACK_BOW:  //return ANIM_MON_AttackBow; //Always Empty except for standard ID 13, 15 and 16
                     case ANIM_ATTACK_XBOW: //return ANIM_MON_AttackXBow; //Always Empty except for standard ID 13, 15 and 16
 
                         //Check how many cast actions are present
                         //Stomp action is not a cast for Corpser, Earth Elemental and Gorilla
-                        if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction)
-                            && (dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM && dispID != CREID_GORILLA))
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom Anim with Stomp action
+                        if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction) &&
+                                (dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM && dispID != CREID_GORILLA)) ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom Anim with Stomp action
                         {
                             cast1 = ANIM_MON_Stomp;
                             castActions++;
                         }
                         //Cast 2
-                        if (dispID == CREID_TERA_MATRIARCH || dispID == CREID_OPHID_SHAMAN || dispID == CREID_GARGOYLE || dispID == CREID_DEMON || dispID == CREID_DEMON_SWORD || dispID == CREID_LICH
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_CAST2)) //Custom Anim with Cast2 action
+                        if (dispID == CREID_TERA_MATRIARCH || dispID == CREID_OPHID_SHAMAN || dispID == CREID_GARGOYLE || dispID == CREID_DEMON ||
+                            dispID == CREID_DEMON_SWORD || dispID == CREID_LICH || (pCharDef->m_Anims & AFLAG_CUST_MON_CAST2)) //Custom Anim with Cast2 action
                         {
                             if (castActions == 0)
                             {
@@ -1808,8 +1802,8 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                             castActions++;
                         }
                         //Cast 3
-                        if (dispID == CREID_TERA_MATRIARCH || dispID == CREID_OPHID_SHAMAN
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_CAST3)) //Custom Anim with Cast3 action
+                        if (dispID == CREID_TERA_MATRIARCH || dispID == CREID_OPHID_SHAMAN ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_CAST3)) //Custom Anim with Cast3 action
                         {
                             if (castActions == 0)
                             {
@@ -1830,9 +1824,15 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(castActions))
                             {
-                                case 0: return cast1; break;
-                                case 1: return cast2; break;
-                                case 2: return cast3; break;
+                                case 0:
+                                    return cast1;
+                                    break;
+                                case 1:
+                                    return cast2;
+                                    break;
+                                case 2:
+                                    return cast3;
+                                    break;
                             }
                         }
                         else //No cast Actions
@@ -1847,24 +1847,29 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                             {
                                 switch (g_Rand.GetVal(3))
                                 {
-                                    case 0: return ANIM_MON_AttackThrow; break;
-                                    case 1: return ANIM_MON_GETHIT; break;
-                                    case 2: return ANIM_MON_PILLAGE; break;
+                                    case 0:
+                                        return ANIM_MON_AttackThrow;
+                                        break;
+                                    case 1:
+                                        return ANIM_MON_GETHIT;
+                                        break;
+                                    case 2:
+                                        return ANIM_MON_PILLAGE;
+                                        break;
                                 }
                             }
 
-                            if (dispID == CREID_SHADOW_LORD
-                                || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1)) //Custom Anim without Attack1
+                            if (dispID == CREID_SHADOW_LORD || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1)) //Custom Anim without Attack1
                             {
                                 attackActions--;
                             }
-                            if (dispID == CREID_EAGLE || dispID == CREID_SHADOW_LORD
-                                || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK2)) //Custom Anim without Attack2
+                            if (dispID == CREID_EAGLE || dispID == CREID_SHADOW_LORD ||
+                                (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK2)) //Custom Anim without Attack2
                             {
                                 attackActions--;
                             }
-                            if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_SHADOW_LORD
-                                || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK3)) //Custom Anim without Attack3
+                            if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_SHADOW_LORD ||
+                                (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK3)) //Custom Anim without Attack3
                             {
                                 attackActions--;
                             }
@@ -1873,17 +1878,27 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                             {
                                 switch (g_Rand.GetVal(attackActions))
                                 {
-                                    case 0: return attack1; break;
-                                    case 1: return ANIM_MON_ATTACK2; break;
-                                    case 2: return ANIM_MON_ATTACK3; break;
+                                    case 0:
+                                        return attack1;
+                                        break;
+                                    case 1:
+                                        return ANIM_MON_ATTACK2;
+                                        break;
+                                    case 2:
+                                        return ANIM_MON_ATTACK3;
+                                        break;
                                 }
                             }
                             else if (dispID == CREID_SHADOW_LORD) //No Attacks
                             {
                                 switch (g_Rand.GetVal(2))
                                 {
-                                    case 0: return ANIM_MON_FIDGET1; break;
-                                    case 1: return ANIM_MON_FIDGET2; break;
+                                    case 0:
+                                        return ANIM_MON_FIDGET1;
+                                        break;
+                                    case 1:
+                                        return ANIM_MON_FIDGET2;
+                                        break;
                                 }
                             }
                             else
@@ -1910,11 +1925,11 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             return ANIM_MON_STAND;
                         }
-                        else if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom Anims with GetHit in Land/TakeOff action
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom Anims with GetHit in Land/TakeOff action
                         {
                             return ANIM_MON_LAND;
                         }
-                        else if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_GETHIT) //Cutsom Anims without GetHit
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_GETHIT) //Cutsom Anims without GetHit
                         {
                             if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_BLOCKR)
                             {
@@ -1928,8 +1943,12 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                             {
                                 switch (g_Rand.GetVal(blockActions))
                                 {
-                                    case 0: return ANIM_MON_BlockRight; break;
-                                    case 1: return ANIM_MON_BlockLeft; break;
+                                    case 0:
+                                        return ANIM_MON_BlockRight;
+                                        break;
+                                    case 1:
+                                        return ANIM_MON_BlockLeft;
+                                        break;
                                 }
                             }
                             else
@@ -1965,24 +1984,29 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(3))
                             {
-                                case 0: return ANIM_MON_AttackThrow; break;
-                                case 1: return ANIM_MON_GETHIT; break;
-                                case 2: return ANIM_MON_PILLAGE; break;
+                                case 0:
+                                    return ANIM_MON_AttackThrow;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_GETHIT;
+                                    break;
+                                case 2:
+                                    return ANIM_MON_PILLAGE;
+                                    break;
                             }
                         }
 
-                        if (dispID == CREID_SHADOW_LORD
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1)) //Custom Anim without Attack1
+                        if (dispID == CREID_SHADOW_LORD || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1)) //Custom Anim without Attack1
                         {
                             attackActions--;
                         }
-                        if (dispID == CREID_EAGLE || dispID == CREID_SHADOW_LORD
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK2)) //Custom Anim without Attack2
+                        if (dispID == CREID_EAGLE || dispID == CREID_SHADOW_LORD ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK2)) //Custom Anim without Attack2
                         {
                             attackActions--;
                         }
-                        if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_SHADOW_LORD
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK3)) //Custom Anim without Attack3
+                        if (dispID == CREID_EAGLE || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM || dispID == CREID_SHADOW_LORD ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK3)) //Custom Anim without Attack3
                         {
                             attackActions--;
                         }
@@ -1991,17 +2015,27 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(attackActions))
                             {
-                                case 0: return attack1; break;
-                                case 1: return ANIM_MON_ATTACK2; break;
-                                case 2: return ANIM_MON_ATTACK3; break;
+                                case 0:
+                                    return attack1;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_ATTACK2;
+                                    break;
+                                case 2:
+                                    return ANIM_MON_ATTACK3;
+                                    break;
                             }
                         }
                         else if (dispID == CREID_SHADOW_LORD) //No Attacks
                         {
                             switch (g_Rand.GetVal(2))
                             {
-                                case 0: return ANIM_MON_FIDGET1; break;
-                                case 1: return ANIM_MON_FIDGET2; break;
+                                case 0:
+                                    return ANIM_MON_FIDGET1;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_FIDGET2;
+                                    break;
                             }
                         }
                         else
@@ -2012,33 +2046,33 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 
                     case ANIM_DIE_BACK:
                         //Die while flying animation
-                        if ((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && (mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying)
-                            && IsStatFlag(STATF_FLY | STATF_HOVERING))
                         {
-                            return ANIM_MON_DIE_FLIGHT;
-                        }
-                        else
-                        {
+                            //Die while flying animation
+                            if ((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && (mobTypesRow.m_uiFlags & ATFLAG_CanFlying) &&
+                                (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying) && IsStatFlag(STATF_FLY | STATF_HOVERING))
+                            {
+                                return ANIM_MON_DIE_FLIGHT;
+                            }
                             return ANIM_MON_DIE1;
                         }
 
                     case ANIM_DIE_FORWARD:
                         //Die while flying animation
-                        if ((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && (mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying)
-                            && IsStatFlag(STATF_FLY | STATF_HOVERING))
                         {
-                            return ANIM_MON_DIE_FLIGHT;
-                        }
-                        else if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_DIE2) //Custom Anims without Die2
-                        {
-                            return ANIM_MON_DIE1;
-                        }
-                        else if (dispID == CREID_SHADOW_LORD) //No Die2
-                        {
-                            return ANIM_MON_DIE1;
-                        }
-                        else
-                        {
+                            //Die while flying animation
+                            if ((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && (mobTypesRow.m_uiFlags & ATFLAG_CanFlying) &&
+                                (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying) && IsStatFlag(STATF_FLY | STATF_HOVERING))
+                            {
+                                return ANIM_MON_DIE_FLIGHT;
+                            }
+                            if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_DIE2) //Custom Anims without Die2
+                            {
+                                return ANIM_MON_DIE1;
+                            }
+                            if (dispID == CREID_SHADOW_LORD) //No Die2
+                            {
+                                return ANIM_MON_DIE1;
+                            }
                             return ANIM_MON_DIE2;
                         }
 
@@ -2056,13 +2090,13 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                             return ANIM_MON_FIDGET2;
                         }
 
-                        if (dispID == CREID_EAGLE || dispID == CREID_CORPSER
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_BLOCKR)) //Custom anims without BlockRight
+                        if (dispID == CREID_EAGLE || dispID == CREID_CORPSER ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_NO_BLOCKR)) //Custom anims without BlockRight
                         {
                             blockActions--;
                         }
-                        if (dispID == CREID_EAGLE || dispID == CREID_CORPSER || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_NO_BLOCKL)) //Custom anims without BlockLeft
+                        if (dispID == CREID_EAGLE || dispID == CREID_CORPSER || dispID == CREID_DRAGON_CRIMSON || dispID == CREID_DRAGON_PLATINUM ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_NO_BLOCKL)) //Custom anims without BlockLeft
                         {
                             blockActions--;
                         }
@@ -2070,8 +2104,12 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         {
                             switch (g_Rand.GetVal(blockActions))
                             {
-                                case 0: return ANIM_MON_BlockRight; break;
-                                case 1: return ANIM_MON_BlockLeft; break;
+                                case 0:
+                                    return ANIM_MON_BlockRight;
+                                    break;
+                                case 1:
+                                    return ANIM_MON_BlockLeft;
+                                    break;
                             }
                         }
                         else if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_GETHIT) //Custom anims without GetHit
@@ -2085,148 +2123,139 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                         break;
 
                     case ANIM_THROW:
+                    {
                         if (mobTypesRow.m_uiFlags & ATFLAG_IdleAt8Frame) //Action Throw in Bow action
                         {
                             return ANIM_MON_AttackBow;
                         }
-                        else if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction)
-                            && (dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM && dispID != CREID_GORILLA))
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom anims with Stomp action
+                        if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction) &&
+                                (dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM && dispID != CREID_GORILLA)) ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom anims with Stomp action
                         {
                             return ANIM_MON_Stomp;
                         }
-                        else
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom anims with first attack in AttackThrow
                         {
-                            if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom anims with first attack in AttackThrow
-                            {
-                                return ANIM_MON_AttackThrow;
-                            }
-                            else if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1) //Custom anims without Attack1
-                            {
-                                return ANIM_MON_STAND;
-                            }
-                            else
-                            {
-                                return ANIM_MON_ATTACK1;
-                                //return ANIM_MON_AttackThrow; //Always Empty except for Custom Anims with AFLAG_CUST_MON_ATTACKSFROM9 flag
-                            }
+                            return ANIM_MON_AttackThrow;
                         }
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1) //Custom anims without Attack1
+                        {
+                            return ANIM_MON_STAND;
+                        }
+                        return ANIM_MON_ATTACK1;
+                        //return ANIM_MON_AttackThrow; //Always Empty except for Custom Anims with AFLAG_CUST_MON_ATTACKSFROM9 flag
+                    }
 
                     case ANIM_PILLAGE:
+                    {
                         if (mobTypesRow.m_uiFlags & ATFLAG_ReplaceGetHitBlockPillage)
                         {
                             return ANIM_MON_FIDGET1;
                         }
-                        else if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9)
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9)
                         {
                             return ANIM_MON_FIDGET1;
                         }
-                        else if ((pCharDef->m_Anims & AFLAG_CUST_MON_NO_PILLAGE) && (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET1))) //Custom Anims with No Pillage but Fidget1
+                        if ((pCharDef->m_Anims & AFLAG_CUST_MON_NO_PILLAGE) &&
+                            (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET1))) //Custom Anims with No Pillage but Fidget1
                         {
                             return ANIM_MON_FIDGET1;
                         }
-                        else if ((pCharDef->m_Anims & AFLAG_CUST_MON_NO_PILLAGE) && (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET2))) //Custom Anims with No Pillage but Fidget2
+                        if ((pCharDef->m_Anims & AFLAG_CUST_MON_NO_PILLAGE) &&
+                            (!(pCharDef->m_Anims & AFLAG_CUST_MON_NO_FIDGET2))) //Custom Anims with No Pillage but Fidget2
                         {
                             return ANIM_MON_FIDGET2;
                         }
-                        else if (dispID == CREID_BIRD || dispID == CREID_EAGLE || dispID == CREID_GAZER || dispID == CREID_SHADOW_LORD) //No Pillage
+                        if (dispID == CREID_BIRD || dispID == CREID_EAGLE || dispID == CREID_GAZER || dispID == CREID_SHADOW_LORD) //No Pillage
                         {
                             return ANIM_MON_FIDGET1;
                         }
-                        else if (dispID == CREID_CORPSER) //No Pillage
+                        if (dispID == CREID_CORPSER) //No Pillage
                         {
                             return ANIM_MON_FIDGET2;
                         }
-                        else
-                        {
-                            return ANIM_MON_PILLAGE;
-                        }
+                        return ANIM_MON_PILLAGE;
+                    }
 
                     case ANIM_STOMP:
                     case ANIM_SPECIAL:
                     case ANIM_SUMMON:
+                    {
                         if ((mobTypesRow.m_uiFlags & ATFLAG_StompAction) || (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP))
                         {
                             return ANIM_MON_Stomp;
                         }
-                        else if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && !(pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Standard flying anims with Land/TakeOff action
+                        if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) &&
+                            !(pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Standard flying anims with Land/TakeOff action
                         {
                             return ANIM_MON_LAND;
                         }
-                        else
+                        if (dispID == CREID_SHADOW_LORD) //No Attack
                         {
-                            if (dispID == CREID_SHADOW_LORD) //No Attack
-                            {
-                                return ANIM_MON_FIDGET1;
-                            }
-                            else if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom anims with first attack in AttackThrow
-                            {
-                                return ANIM_MON_AttackThrow;
-                            }
-                            else if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1) //Custom anims without Attack1
-                            {
-                                return ANIM_MON_STAND;
-                            }
-                            else
-                            {
-                                return ANIM_MON_ATTACK1;
-                            }
+                            return ANIM_MON_FIDGET1;
                         }
-
-                    case ANIM_ALERT:
-                        if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM)
-                            || (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom anims with Stomp action
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_ATTACKSFROM9) //Custom anims with first attack in AttackThrow
                         {
-                            return ANIM_MON_Stomp;
+                            return ANIM_MON_AttackThrow;
                         }
-                        else if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && !(pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Standard flying anims with Land/TakeOff action
-                        {
-                            return ANIM_MON_LAND;
-                        }
-                        else
+                        if (pCharDef->m_Anims & AFLAG_CUST_MON_NO_ATTACK1) //Custom anims without Attack1
                         {
                             return ANIM_MON_STAND;
                         }
+                        return ANIM_MON_ATTACK1;
+                    }
+
+                    case ANIM_ALERT:
+                    {
+                        if (((mobTypesRow.m_uiFlags & ATFLAG_StompAction) && dispID != CREID_CORPSER && dispID != CREID_EARTH_ELEM) ||
+                            (pCharDef->m_Anims & AFLAG_CUST_MON_STOMP)) //Custom anims with Stomp action
+                        {
+                            return ANIM_MON_Stomp;
+                        }
+                        if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) &&
+                            !(pCharDef->m_Anims & AFLAG_CUST_MON_FLY)) //Standard flying anims with Land/TakeOff action
+                        {
+                            return ANIM_MON_LAND;
+                        }
+                        return ANIM_MON_STAND;
+                    }
 
                     case ANIM_FLY:
+                    {
                         if (mobTypesRow.m_uiFlags & ATFLAG_ReplaceFlyAction)
                         {
                             return ANIM_MON_WALK;
                         }
-                        else
-                        {
-                            return ANIM_MON_FLY;
-                        }
+                        return ANIM_MON_FLY;
+                    }
 
                     case ANIM_LAND:
+                    {
                         if (mobTypesRow.m_uiFlags & ATFLAG_ReplaceFlyAction)
                         {
                             return ANIM_MON_STAND;
                         }
-                        else
-                        {
-                            return ANIM_MON_LAND;
-                        }
+                        return ANIM_MON_LAND;
+                    }
 
                     case ANIM_GETHIT_AIR:
+                    {
                         if (mobTypesRow.m_uiFlags & ATFLAG_ReplaceFlyAction)
                         {
                             return ANIM_MON_STAND;
                         }
-                        else if (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying)
+                        if (mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying)
                         {
                             return ANIM_MON_GETHIT;
                         }
-                        else
-                        {
-                            return ANIM_MON_DIE_FLIGHT;
-                        }
+                        return ANIM_MON_DIE_FLIGHT;
+                    }
 
                     default:
                         return ANIM_MON_STAND;
                 }
-			}
-		}
+            }
+        }
         else
         {
             //Not mounted human
@@ -2240,11 +2269,11 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                     return ANIM_BOW;
                 case ANIM_THROW:
                     return ANIM_ATTACK_1H_BASH;
-            default:
-                break;
+                default:
+                    break;
             }
         }
-	}
+    }
 
 	return action;
 }
@@ -3995,8 +4024,9 @@ bool CChar::Horse_Mount(CChar *pHorse)
         pScriptArgs->m_iN1 = memoryId;
         if ( OnTrigger(CTRIG_Mount, pScriptArgs, this) == TRIGRET_RET_TRUE )
 		    return false;
-        else
-            memoryId = ITEMID_TYPE(pScriptArgs->m_iN1);//(ITEMID_TYPE) Args.m_iN1;
+
+	    memoryId = ITEMID_TYPE(pScriptArgs->m_iN1);
+        //(ITEMID_TYPE) Args.m_iN1;
 	}
 
 	// Create the figurine for the horse (Memory item equiped on layer 25 of the player)
@@ -4607,8 +4637,7 @@ bool CChar::CanMove(bool fCheckOnly) const
                 SysMessageDefault(DEFMSG_MSG_FROZEN);
                 return false;
             }
-
-            else if ((Stat_GetVal(STAT_DEX) <= 0) && (!IsStatFlag(STATF_DEAD)))
+            if ((Stat_GetVal(STAT_DEX) <= 0) && (!IsStatFlag(STATF_DEAD)))
             {
                 int iWeight = GetTotalWeight() / WEIGHT_UNITS;
                 int iMaxWeight = g_Cfg.Calc_MaxCarryWeight(this) / WEIGHT_UNITS;
@@ -4694,7 +4723,7 @@ bool CChar::ShoveCharAtPosition(CPointMap const& ptDst, ushort *uiStaminaRequire
 
             goto set_and_return_false;
         }
-        else if (!fPathFinding)
+        if (!fPathFinding)
         {
             tchar *pszMsg = Str_GetTemp();
             if (pChar->IsStatFlag(STATF_INVISIBLE | STATF_HIDDEN))
@@ -6104,16 +6133,13 @@ bool CChar::OnTickPeriodic()
                 return false;
             return true;
         }
-        else
-        {
 //#ifdef _DEBUG
-            if (deathRes != DeathRequestResult::AbortedNoLog)
-            {
-                g_Log.EventEvent("Aborted char '%s' (0x%" PRIx32 " ) death.\n", GetName(), GetUID().GetObjUID());
-            }
-//#endif
-            ; // Then, fall through.
+        if (deathRes != DeathRequestResult::AbortedNoLog)
+        {
+            g_Log.EventEvent("Aborted char '%s' (0x%" PRIx32 " ) death.\n", GetName(), GetUID().GetObjUID());
         }
+//#endif
+        ; // Then, fall through.
     }
 
     // Stats regeneration

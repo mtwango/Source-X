@@ -111,11 +111,12 @@ int CSFileText::_Seek( int iOffset, int iOrigin )
     {
         return 0;
     }
-    else if (iPos > INT_MAX)   // be consistent between windows and linux: support on both platforms at maximum an int (long has 4 or 8 bytes width, depending on the os)
+    if (iPos > INT_MAX) // be consistent between windows and linux: support on both platforms at maximum an int (long has 4 or 8 bytes width, depending on the os)
     {
         _NotifyIOError("CSFileText::Seek (length)");
         return INT_MAX;
     }
+
     return (int)iPos;
 }
 int CSFileText::Seek( int iOffset, int iOrigin )
@@ -303,6 +304,7 @@ lpctstr CSFileText::_GetModeStr() const
         return "w";
     if ( _IsWriteMode() )
         return "w";
-    else
-        return "rb";	// don't parse out the \n\r
+
+    return "rb";
+    // don't parse out the \n\r
 }

@@ -2979,11 +2979,8 @@ byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
 		new PacketCharacterListUpdate(this, GetAccount()->m_uidLastChar.CharFind());
 		return PacketDeleteError::Success;
 	}
-	else
-	{
-		return PacketDeleteError::InvalidRequest;
-	}
 
+    return PacketDeleteError::InvalidRequest;
 }
 
 byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, bool fTest )
@@ -3190,10 +3187,10 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 	tchar ptcName[ MAX_ACCOUNT_NAME_SIZE ];
     if ( !CAccount::NameStrip(ptcName, ptcAccName) || Str_Untrusted_InvalidTermination(ptcAccName) )
 		return( PacketLoginError::BadAccount );
-    else if ( Str_Untrusted_InvalidTermination(ptcPassword) )
-		return( PacketLoginError::BadPassword );
+    if (Str_Untrusted_InvalidTermination(ptcPassword))
+        return (PacketLoginError::BadPassword);
 
-	const bool fGuestAccount = ! strnicmp( ptcAccName, "GUEST", 5 );
+    const bool fGuestAccount = ! strnicmp( ptcAccName, "GUEST", 5 );
 	if ( fGuestAccount )
 	{
 		// trying to log in as some sort of guest.

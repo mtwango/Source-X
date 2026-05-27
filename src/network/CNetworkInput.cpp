@@ -563,7 +563,7 @@ bool CNetworkInput::processUnknownClientData(CNetState* state, Packet* buffer)
         }
 
         // check for new seed (sometimes it's received on its own)
-        else if (uiOrigRemainingLength == 1 && pOrigRemainingData[0] == XCMD_NewSeed)
+        if (uiOrigRemainingLength == 1 && pOrigRemainingData[0] == XCMD_NewSeed)
         {
             state->m_newseed = true;
             buffer->skip(1);
@@ -571,7 +571,7 @@ bool CNetworkInput::processUnknownClientData(CNetState* state, Packet* buffer)
         }
 
         // check for ping data
-        else if (uiOrigRemainingLength < 4)
+        if (uiOrigRemainingLength < 4)
         {
             EXC_SET_BLOCK("ping #1");
             if (client->OnRxPing(pOrigRemainingData, uiOrigRemainingLength) == false)

@@ -554,7 +554,7 @@ NPCBRAIN_TYPE CChar::GetNPCBrainGroup() const noexcept
             return GetNPCBrainAuto();
         return m_pNPC->m_Brain;
     }
-    else if (m_pPlayer)
+    if (m_pPlayer)
         return NPCBRAIN_HUMAN;
     //ASSERT(0);
     return NPCBRAIN_NONE;
@@ -778,9 +778,9 @@ CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook fro
 	    {
 		    if (pItem->IsSpellInBook(iSpell) )	//We found a book with this same spell, nothing more to do.
 			    return pItem;
-			else // I did not find the spell, but this book is of the same school ... so i'll return this book if none better is found (NOTE: some book must be returned or the code will think that i don't have any book).
-		    	pReturn = pItem;
-		}
+            // I did not find the spell, but this book is of the same school ... so i'll return this book if none better is found (NOTE: some book must be returned or the code will think that i don't have any book).
+            pReturn = pItem;
+        }
     }
 	// No book found in layer 1 or 2 or found one which doesn't have the spell I am going to cast, then let's search in the top level of the backpack.
 	CItemContainer *pPack = GetPack();
@@ -799,9 +799,9 @@ CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook fro
 			{
 				if ( pItem->IsSpellInBook(iSpell) )	//I found a book with this spell, nothing more to do.
 					return pItem;
-				else // I did not find the spell, but this book is of the same school ... so i'll return this book if none better is found (NOTE: some book must be returned or the code will think that i don't have any book).
-					pReturn = pItem;
-			}
+                // I did not find the spell, but this book is of the same school ... so i'll return this book if none better is found (NOTE: some book must be returned or the code will think that i don't have any book).
+                pReturn = pItem;
+            }
 		}
 	}
 	return pReturn;
@@ -925,7 +925,7 @@ bool CChar::CanDress(const CChar* pChar) const
         return true;
     if (IsPriv(PRIV_GM) && (GetPrivLevel() > pChar->GetPrivLevel() || GetPrivLevel() == PLEVEL_Owner))
         return true;
-    else if (g_Cfg.m_fCanUndressPets && pChar->IsOwnedBy(this))
+    if (g_Cfg.m_fCanUndressPets && pChar->IsOwnedBy(this))
         return true;
     return false;
 }
@@ -1207,36 +1207,33 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 			{
 				return false;
 			}
-			else
-			{
-				switch (g_Cfg.m_iCanSeeSamePLevel) //Evaluate the .ini setting
-				{
-				case 0: //GM see all
-					if (plevelMe < plevelChar)
-					{
-						return false;
-					}
-					break;
-				case 1: //Gm dont see same plevel
-					if (plevelMe <= plevelChar)
-					{
-						return false;
-					}
-					break;
-				case 2: //Plevel x and more see all
-				case 3:
-				case 4:
-				case 5:
-				case 6:
-				case 7:
-					if (plevelMe < g_Cfg.m_iCanSeeSamePLevel)
-					{
-						return false;
-					}
-					break;
-				}
-			}
-		}
+            switch (g_Cfg.m_iCanSeeSamePLevel) //Evaluate the .ini setting
+            {
+                case 0:                        //GM see all
+                    if (plevelMe < plevelChar)
+                    {
+                        return false;
+                    }
+                    break;
+                case 1: //Gm dont see same plevel
+                    if (plevelMe <= plevelChar)
+                    {
+                        return false;
+                    }
+                    break;
+                case 2: //Plevel x and more see all
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                case 7:
+                    if (plevelMe < g_Cfg.m_iCanSeeSamePLevel)
+                    {
+                        return false;
+                    }
+                    break;
+            }
+        }
 
 		if ( IsStatFlag(STATF_DEAD) && !CanSeeAsDead(pChar) )
 			return false;
@@ -1506,16 +1503,18 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, TALKMODE_TYPE mode ) const
     switch ( mode )
     {
         case TALKMODE_YELL:
-            if ( g_Cfg.m_iDistanceYell < 0 )
+        {
+            if (g_Cfg.m_iDistanceYell < 0)
                 return false;
-            else if ( g_Cfg.m_iDistanceYell == 0 )
+            if (g_Cfg.m_iDistanceYell == 0)
             {
                 int dist = GetVisualRange();
-                if ( dist == 0 )
+                if (dist == 0)
                     return true;
                 iHearRange = dist;
                 break;
             }
+        }
             iHearRange = g_Cfg.m_iDistanceYell;
             fThrough = true;
             break;

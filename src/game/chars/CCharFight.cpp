@@ -1326,8 +1326,8 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 
     if ( fNoRandom )
         return( fGetMax ? iDmgMax : iDmgMin );
-	else
-		return( g_Rand.GetVal2(iDmgMin, iDmgMax) );
+
+    return (g_Rand.GetVal2(iDmgMin, iDmgMax));
 }
 
 bool CChar::Fight_IsAttackableState()
@@ -1406,20 +1406,20 @@ bool CChar::Fight_Attack( CChar *pCharTarg, bool fToldByMaster )
 		Fight_Clear(pCharTarg, true);
 		return false;
 	}
-	else if ( GetPrivLevel() <= PLEVEL_Guest && pCharTarg->m_pPlayer && pCharTarg->GetPrivLevel() > PLEVEL_Guest )
-	{
-		SysMessageDefault(DEFMSG_MSG_GUEST);
-		Fight_Clear(pCharTarg);
-		return false;
-	}
-	else if ( m_pNPC && !CanSee(pCharTarg) )
-	{
-		Attacker_Delete(pCharTarg, true, ATTACKER_CLEAR_DISTANCE);
-		Skill_Start(SKILL_NONE);
-		return false;
-	}
+    if (GetPrivLevel() <= PLEVEL_Guest && pCharTarg->m_pPlayer && pCharTarg->GetPrivLevel() > PLEVEL_Guest)
+    {
+        SysMessageDefault(DEFMSG_MSG_GUEST);
+        Fight_Clear(pCharTarg);
+        return false;
+    }
+    if (m_pNPC && !CanSee(pCharTarg))
+    {
+        Attacker_Delete(pCharTarg, true, ATTACKER_CLEAR_DISTANCE);
+        Skill_Start(SKILL_NONE);
+        return false;
+    }
 
-	int threat = 0;
+    int threat = 0;
 	if (fToldByMaster)
 	{
 		threat = ATTACKER_THREAT_TOLDBYMASTER + Attacker_GetHighestThreat();
@@ -1696,11 +1696,11 @@ WAR_SWING_TYPE CChar::Fight_CanHit(CChar * pCharSrc, bool fSwingNoRange)
 	// We can't hit them right now. Because we can't see them or reach them (invis/hidden).
 	// Why the target is freeze we are change the attack type to swinging? Player can still attack paralyzed or sleeping characters.
 	// We make sure that the target is freeze or sleeping must wait ready for attack!
-	else if ( (pCharSrc->IsStatFlag(STATF_HIDDEN | STATF_INVISIBLE | STATF_SLEEPING)) || (IsStatFlag(STATF_FREEZE) && (!IsSetCombatFlags(COMBAT_PARALYZE_CANSWING))) || (IsStatFlag(STATF_SLEEPING)) ) // STATF_FREEZE | STATF_SLEEPING
-	{
-		return WAR_SWING_SWINGING;
-	}
-	if (pCharSrc->m_pArea && pCharSrc->m_pArea->IsFlag(REGION_FLAG_SAFE)) //Is area safe zone?
+    if ((pCharSrc->IsStatFlag(STATF_HIDDEN | STATF_INVISIBLE | STATF_SLEEPING)) || (IsStatFlag(STATF_FREEZE) && (!IsSetCombatFlags(COMBAT_PARALYZE_CANSWING))) || (IsStatFlag(STATF_SLEEPING))) // STATF_FREEZE | STATF_SLEEPING
+    {
+        return WAR_SWING_SWINGING;
+    }
+    if (pCharSrc->m_pArea && pCharSrc->m_pArea->IsFlag(REGION_FLAG_SAFE)) //Is area safe zone?
 		return WAR_SWING_INVALID;
 
     // Ignore the distance and the line of sight if fSwingNoRange is true, but only if i'm starting the swing. To land the hit i need to be in range.
@@ -1851,13 +1851,13 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 			SysMessageDefault(DEFMSG_ITEMUSE_BOW_SHIELD);
 			return WAR_SWING_INVALID;
 		}
-		else if ( !IsSetCombatFlags(COMBAT_ARCHERYCANMOVE) && !IsStatFlag(STATF_ARCHERCANMOVE) )
-		{
-			// Only start the swing this much tenths of second after the char stopped moving.
-			//  (Values changed between expansions. SE:0,25s / AOS:0,5s / pre-AOS:1,0s)
-			if ( m_pClient && ( (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pClient->m_timeLastEventWalk) / MSECS_PER_TENTH) < g_Cfg.m_iCombatArcheryMovementDelay) )
-				return WAR_SWING_EQUIPPING;
-		}
+        if (!IsSetCombatFlags(COMBAT_ARCHERYCANMOVE) && !IsStatFlag(STATF_ARCHERCANMOVE))
+        {
+            // Only start the swing this much tenths of second after the char stopped moving.
+            //  (Values changed between expansions. SE:0,25s / AOS:0,5s / pre-AOS:1,0s)
+            if (m_pClient && ((CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pClient->m_timeLastEventWalk) / MSECS_PER_TENTH) < g_Cfg.m_iCombatArcheryMovementDelay))
+                return WAR_SWING_EQUIPPING;
+        }
 
         if ( pWeapon )
         {
@@ -1893,9 +1893,9 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
                     return swingTypeHold;
                 return WAR_SWING_EQUIPPING;
             }
-            else if ( dist > iMaxDist )
+            if (dist > iMaxDist)
             {
-                if ( !IsSetCombatFlags(COMBAT_STAYINRANGE) || (m_atFight.m_iWarSwingState != WAR_SWING_SWINGING) )
+                if (!IsSetCombatFlags(COMBAT_STAYINRANGE) || (m_atFight.m_iWarSwingState != WAR_SWING_SWINGING))
                     return swingTypeHold;
                 return WAR_SWING_EQUIPPING;
             }

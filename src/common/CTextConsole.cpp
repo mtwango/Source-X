@@ -49,12 +49,12 @@ int CTextConsole::OnConsoleKey( CSString & sText, tchar nChar, bool fEcho )
         }
         return 2;
     }
-    else if ( nChar == 9 )			// TAB (auto-completion)
+    if (nChar == 9) // TAB (auto-completion)
     {
-        lpctstr p = nullptr;
-        lpctstr tmp = nullptr;
+        lpctstr p       = nullptr;
+        lpctstr tmp     = nullptr;
         size_t inputLen = 0;
-        bool matched = false;
+        bool matched    = false;
 
         //	extract up to start of the word
         p = sText.GetBuffer() + sText.GetLength();
@@ -66,36 +66,36 @@ int CTextConsole::OnConsoleKey( CSString & sText, tchar nChar, bool fEcho )
         inputLen = strlen(p);
 
         // search in the auto-complete list for starting on P, and save coords of 1st and Last matched
-        CSStringListRec	*firstmatch = nullptr, *lastmatch = nullptr;
-        CSStringListRec	*curmatch = nullptr, *nextmatch = nullptr;	// the one that should be set
-        for ( curmatch = g_AutoComplete.GetHead(); curmatch != nullptr; curmatch = nextmatch )
+        CSStringListRec *firstmatch = nullptr, *lastmatch = nullptr;
+        CSStringListRec *curmatch = nullptr, *nextmatch = nullptr; // the one that should be set
+        for (curmatch = g_AutoComplete.GetHead(); curmatch != nullptr; curmatch = nextmatch)
         {
             nextmatch = curmatch->GetNext();
-            if ( !strnicmp(curmatch->GetBuffer(), p, inputLen) )	// matched
+            if (!strnicmp(curmatch->GetBuffer(), p, inputLen)) // matched
             {
-                if ( firstmatch == nullptr )
+                if (firstmatch == nullptr)
                     firstmatch = lastmatch = curmatch;
                 else
                     lastmatch = curmatch;
             }
-            else if ( lastmatch )   // if no longer matches - save time by instant quit
+            else if (lastmatch) // if no longer matches - save time by instant quit
                 break;
         }
 
-        if (( firstmatch != nullptr ) && ( firstmatch == lastmatch ))	// there IS a match and the ONLY
+        if ((firstmatch != nullptr) && (firstmatch == lastmatch)) // there IS a match and the ONLY
         {
-            tmp = firstmatch->GetBuffer() + inputLen;
+            tmp     = firstmatch->GetBuffer() + inputLen;
             matched = true;
         }
-        else if ( firstmatch != nullptr )						// also make SE (if SERV/SERVER in dic) to become SERV
+        else if (firstmatch != nullptr) // also make SE (if SERV/SERVER in dic) to become SERV
         {
             p = tmp = firstmatch->GetBuffer();
             tmp += inputLen;
             inputLen = strlen(p);
-            matched = true;
-            for ( curmatch = firstmatch->GetNext(); curmatch != lastmatch->GetNext(); curmatch = curmatch->GetNext() )
+            matched  = true;
+            for (curmatch = firstmatch->GetNext(); curmatch != lastmatch->GetNext(); curmatch = curmatch->GetNext())
             {
-                if (strnicmp(curmatch->GetBuffer(), p, inputLen) != 0)	// mismatched
+                if (strnicmp(curmatch->GetBuffer(), p, inputLen) != 0) // mismatched
                 {
                     matched = false;
                     break;
@@ -103,13 +103,13 @@ int CTextConsole::OnConsoleKey( CSString & sText, tchar nChar, bool fEcho )
             }
         }
 
-        if ( matched )
+        if (matched)
         {
-            if ( fEcho )
+            if (fEcho)
                 SysMessage(tmp);
 
             sText += tmp;
-            if ( sText.GetLength() > SCRIPT_MAX_LINE_LEN )
+            if (sText.GetLength() > SCRIPT_MAX_LINE_LEN)
                 goto commandtoolong;
         }
         return 1;

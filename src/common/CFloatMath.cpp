@@ -666,11 +666,9 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 				DEBUG_ERR(( "Bad intrinsic function usage. missing )\n" ));
 				return 0;
 			}
-			else
-			{
-				return rResult;
-			}
-		}
+
+            return rResult;
+        }
 	}
 
     auto gReader = g_ExprGlobals.mtEngineLockedReader();

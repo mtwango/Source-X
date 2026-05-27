@@ -101,7 +101,7 @@ bool CCPropsChar::GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t
         *piOutVal = (int32)enum_alias_cast<uint32>(group);
         return true;
     }
-    else if (iPropIndex == PROPCH_FACTION_SPECIES)
+    if (iPropIndex == PROPCH_FACTION_SPECIES)
     {
         auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)

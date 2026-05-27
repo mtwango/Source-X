@@ -606,19 +606,19 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 				return 0;
 			continue;
 		}
-		else if ( rid.GetResType() == RES_ITEMDEF )	// TAG.MATOVERRIDE_%s
-		{
+        if (rid.GetResType() == RES_ITEMDEF) // TAG.MATOVERRIDE_%s
+        {
             if (pChar)
             {
-                tchar * resOverride = Str_GetTemp();
-                snprintf(resOverride, Str_TempLength(), "matoverride_%s", g_Cfg.ResourceGetName( CResourceID( RES_ITEMDEF, rid.GetResIndex() ) ));
-                CResourceID ridOverride = CResourceID( RES_ITEMDEF , (dword)pChar->m_TagDefs.GetKeyNum(resOverride) );
-                if ( ridOverride.GetResIndex() > 0 )
+                tchar *resOverride = Str_GetTemp();
+                snprintf(resOverride, Str_TempLength(), "matoverride_%s", g_Cfg.ResourceGetName(CResourceID(RES_ITEMDEF, rid.GetResIndex())));
+                CResourceID ridOverride = CResourceID(RES_ITEMDEF, (dword)pChar->m_TagDefs.GetKeyNum(resOverride));
+                if (ridOverride.GetResIndex() > 0)
                     rid = ridOverride;
             }
-		}
+        }
 
-		int iQtyCur = iQtyTotal - (fTest ? ContentConsumeTest(rid, iQtyTotal) : ContentConsume(rid, iQtyTotal));
+        int iQtyCur = iQtyTotal - (fTest ? ContentConsumeTest(rid, iQtyTotal) : ContentConsume(rid, iQtyTotal));
 		iQtyCur /= iResQty;
 		if ( iQtyCur < iQtyMin )
 			iQtyMin = iQtyCur;
@@ -664,26 +664,26 @@ bool CContainer::r_GetRefContainer( lpctstr &ptcKey, CScriptObj *&pRef )
 			SKIP_SEPARATORS(ptcKey);
 			return true;
 		}
-		else if ( !strnicmp(ptcKey, "CONT", 4) )	// findcont
-		{
-			ptcKey += 4;
-			SKIP_SEPARATORS(ptcKey);
-			const size_t idx = Exp_GetSTSingle(ptcKey);
-			if (idx >= GetContentCount())
-				return false;
-			pRef = dynamic_cast<CItem*>(GetContentIndex(idx));
-			SKIP_SEPARATORS(ptcKey);
-			return true;
-		}
-		else if ( !strnicmp(ptcKey, "TYPE", 4) )	// findtype
-		{
-			ptcKey += 4;
-			SKIP_SEPARATORS(ptcKey);
-			pRef = ContentFind(g_Cfg.ResourceGetID_EatStr(RES_TYPEDEF, ptcKey));
-			SKIP_SEPARATORS(ptcKey);
-			return true;
-		}
-	}
+        if (!strnicmp(ptcKey, "CONT", 4)) // findcont
+        {
+            ptcKey += 4;
+            SKIP_SEPARATORS(ptcKey);
+            const size_t idx = Exp_GetSTSingle(ptcKey);
+            if (idx >= GetContentCount())
+                return false;
+            pRef = dynamic_cast<CItem *>(GetContentIndex(idx));
+            SKIP_SEPARATORS(ptcKey);
+            return true;
+        }
+        if (!strnicmp(ptcKey, "TYPE", 4)) // findtype
+        {
+            ptcKey += 4;
+            SKIP_SEPARATORS(ptcKey);
+            pRef = ContentFind(g_Cfg.ResourceGetID_EatStr(RES_TYPEDEF, ptcKey));
+            SKIP_SEPARATORS(ptcKey);
+            return true;
+        }
+    }
 	return false;
 }
 

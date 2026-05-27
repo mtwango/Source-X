@@ -108,9 +108,9 @@ bool CNetworkOutput::processOutput()
 		{
 			if (toProcess[priority] == false)
 				continue;
-			else if (state->isWriteClosed())
-				break;
-			packetsSent += processPacketQueue(state, priority);
+            if (state->isWriteClosed())
+                break;
+            packetsSent += processPacketQueue(state, priority);
 		}
 
 		// process asynchronous queue

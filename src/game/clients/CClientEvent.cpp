@@ -1490,12 +1490,12 @@ void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, uint uiI
 		if (pItemSell->GetKey("OVERRIDE.VALUE", true))
 		{
 			//Get the price on NPC template
-            dwPrice = pItemSell->GetVendorPrice(iConvertFactor,1) * wAmount; //Check the value of item on NPC template or itemdef
+            dwPrice = pItemSell->GetVendorPrice(iConvertFactor, true) * wAmount; //Check the value of item on NPC template or itemdef
 		}
 		else
         {
 			//Get the price/Value of the real item in the backpack
-            dwPrice = pItem->GetVendorPrice(iConvertFactor,1) * wAmount; //Check the value of the item on the player
+            dwPrice = pItem->GetVendorPrice(iConvertFactor, true) * wAmount; //Check the value of the item on the player
 		}
 
 		if (( IsTrigUsed(TRIGGER_SELL) ) || ( IsTrigUsed(TRIGGER_ITEMSELL) ))

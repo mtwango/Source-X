@@ -2305,11 +2305,11 @@ uint PacketVendorBuyList::fillBuyData(const CItemContainer* container, int iConv
 		if (vendorItem == nullptr || vendorItem->GetAmount() == 0)
 			continue;
 
-		dword price = vendorItem->GetVendorPrice(iConvertFactor,0);
+		dword price = vendorItem->GetVendorPrice(iConvertFactor, false);
 		if (price == 0)
 		{
 			vendorItem->Item_GetDef()->ResetMakeValue();
-			price = vendorItem->GetVendorPrice(iConvertFactor,0);
+			price = vendorItem->GetVendorPrice(iConvertFactor, false);
 
 			if (price == 0 && vendorItem->IsValidNPCSaleItem())
 				price = vendorItem->GetBasePrice();
@@ -3099,12 +3099,12 @@ uint PacketVendorSellList::fillSellList(CClient* target, const CItemContainer* c
 						if (vendSell->GetKey("OVERRIDE.VALUE", true))
 						{
 							//Get the price on NPC template
-							price = vendSell->GetVendorPrice(iConvertFactor,1);
+							price = vendSell->GetVendorPrice(iConvertFactor, true);
 						}
 						else
 						{
 							//Get the price/Value of the real item in the backpack
-							price = vendItem->GetVendorPrice(iConvertFactor,1);
+							price = vendItem->GetVendorPrice(iConvertFactor, true);
 						}
 
 						writeInt16((word)((price > UINT16_MAX) ? UINT16_MAX : price));

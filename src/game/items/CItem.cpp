@@ -3224,7 +3224,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 
 				tchar *ppVal[2];
 				size_t amount = Str_ParseCmds(s.GetArgStr(), ppVal, ARRAY_COUNT(ppVal), " ,\t");
-				bool includeLower = 0;	// should i add also the lower circles?
+				bool includeLower = false;	// should i add also the lower circles?
 				int addCircle = 0;
 
 				if ( amount <= 0 )

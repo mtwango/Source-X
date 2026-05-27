@@ -44,7 +44,7 @@ CCharNPC::CCharNPC( CChar * pChar, NPCBRAIN_TYPE NPCBrain )
 	m_Brain = NPCBrain;
 	m_Home_Dist_Wander = INT16_MAX;	// as far as I want.
 	m_Act_Motivation = 0;
-	m_bonded = 0;
+	m_bonded = false;
 #ifndef _WIN32
 	for (int i_tmpN=0;i_tmpN < MAX_NPC_PATH_STORAGE_SIZE;i_tmpN++)
 	{

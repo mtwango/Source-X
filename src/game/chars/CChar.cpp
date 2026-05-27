@@ -299,7 +299,7 @@ CChar::CChar( CREID_TYPE baseID ) :
     _iRegenTickCount = 0;
 	_iTimeLastCallGuards = 0;
 
-    m_fIgnoreNextPetCmd = 0;
+    m_fIgnoreNextPetCmd = false;
 
     m_zClimbHeight = 0;
 	m_fClimbUpdated = false;
@@ -1842,12 +1842,12 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 				0x3DE, 0x3E5, 0x3E6, 0x3E8, 0x3E9, 0x430, 0x4A7, 0x4DE, 0x51D, 0x53F, 0x579, 0x76B, 0x76C, 0x76D, 0x835, 0x903
 			};
 			constexpr uint iMax = ARRAY_COUNT(sm_ElfSkinHues);
-			bool isValid = 0;
+			bool isValid = false;
 			for ( uint i = 0; i < iMax; ++i )
 			{
 				if ( sm_ElfSkinHues[i] == wSkinHue )
 				{
-					isValid = 1;
+					isValid = true;
 					break;
 				}
 			}
@@ -1926,12 +1926,12 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						0x6B8, 0x725, 0x853
 					};
                     constexpr uint uiMax = ARRAY_COUNT(sm_ElfHairHues);
-					bool isValid = 0;
+					bool isValid = false;
                     for ( uint i = 0; i < uiMax; ++i )
 					{
 						if ( sm_ElfHairHues[i] == wHairHue )
 						{
-							isValid = 1;
+							isValid = true;
 							break;
 						}
 					}
@@ -1948,12 +1948,12 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						0x6F3, 0x6F1, 0x6EF, 0x6E4, 0x6E2, 0x6E0, 0x709, 0x70B, 0x70D
 					};
                     constexpr uint uiMax = ARRAY_COUNT(sm_GargoyleHornHues);
-					bool isValid = 0;
+					bool isValid = false;
                     for ( uint i = 0; i < uiMax; ++i )
 					{
 						if ( sm_GargoyleHornHues[i] == wHairHue )
 						{
-							isValid = 1;
+							isValid = true;
 							break;
 						}
 					}
@@ -2016,12 +2016,12 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						0x6F3, 0x6F1, 0x6EF, 0x6E4, 0x6E2, 0x6E0, 0x709, 0x70B, 0x70D
 					};
                     const uint uiMax = ARRAY_COUNT(sm_GargoyleBeardHues);
-					bool isValid = 0;
+					bool isValid = false;
                     for ( uint i = 0; i < uiMax; ++i )
 					{
                         if ( sm_GargoyleBeardHues[i] == wBeardHue )
 						{
-							isValid = 1;
+							isValid = true;
 							break;
 						}
 					}

@@ -122,7 +122,7 @@ HistoryIP& IPHistoryManager::getHistoryForIP(const CSocketAddressIP& ip) noexcep
     // create a new entry
     HistoryIP hist = {
         .m_ip = ip,
-        .m_fBlocked                     = 0,
+        .m_fBlocked                     = false,
         .m_iPingDecay                   = 30,
         .m_iPings                       = 0,
         .m_iConnectionRequests          = 0,

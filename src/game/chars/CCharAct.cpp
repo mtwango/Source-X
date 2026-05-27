@@ -542,7 +542,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 
         if (pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_NIGHTSIGHT, pItemBaseCCPItemEquippable))
         {
-            StatFlag_Mod(STATF_NIGHTSIGHT, 0);
+            StatFlag_Mod(STATF_NIGHTSIGHT, false);
             if (IsClientActive())
                 m_pClient->addLight();
         }
@@ -3410,7 +3410,7 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
 
         if ( pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_NIGHTSIGHT, pItemBaseCCPItemEquippable) )
         {
-            StatFlag_Mod( STATF_NIGHTSIGHT, 1 );
+            StatFlag_Mod( STATF_NIGHTSIGHT, true );
             if ( IsClientActive() )
                 m_pClient->addLight();
         }

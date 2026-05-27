@@ -2261,7 +2261,7 @@ bool CExpression::EvaluateConditionalWhole(lptstr ptcExpr, CScriptExprContext& r
     CScriptSubExprState* parsingSubexprsStates = pSubexprArena->m_subexprs;
 
     if (uiQty == 0)
-        return 0;
+        return false;
 
     using SType = CScriptSubExprState::Type;
 

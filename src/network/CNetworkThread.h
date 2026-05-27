@@ -35,20 +35,17 @@ public:
     size_t id(void) const { return m_id; }							// network thread #
     size_t getClientCount(void) const { return m_states.size(); }	// current number of clients controlled by thread
 
-public:
     static const char* m_sClassName;
     CNetworkThread(CNetworkManager* manager, size_t id);
-    virtual ~CNetworkThread(void);
+    ~CNetworkThread(void) override;
 
     CNetworkThread(const CNetworkThread& copy) = delete;
     CNetworkThread& operator=(const CNetworkThread& other) = delete;
 
-public:
     void assignNetworkState(CNetState* state);	// assign a network state to this thread
     void queuePacket(PacketSend* packet, bool appendTransaction);
     void queuePacketTransaction(PacketTransaction* transaction);
 
-public:
     void onAsyncSendComplete(CNetState* state, bool success)
     {
         // notify that async operation completed
@@ -73,7 +70,6 @@ public:
         return m_output.flush(state);
     }
 
-public:
     virtual void onStart(void);
     virtual void tick(void);
 

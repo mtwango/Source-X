@@ -21,7 +21,7 @@ public:
 	static const char *m_sClassName;
 	//	construction
 	CDataBase();
-	~CDataBase();
+	~CDataBase() override;
 
     CDataBase(const CDataBase& copy) = delete;
     CDataBase& operator=(const CDataBase& other) = delete;

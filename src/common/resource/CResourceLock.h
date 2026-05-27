@@ -23,7 +23,7 @@ private:
 
     CScriptFileContext m_PrvScriptContext;		// where was i before (context wise) opening this. (for error tracking)
     CScriptObjectContext m_PrvObjectContext;	// object context (for error tracking)
-private:
+
     void _Init()
     {
         m_pLock = nullptr;
@@ -31,12 +31,12 @@ private:
     }
 
 protected:
-    virtual bool _Open(lpctstr = nullptr, uint = 0) override;
-    virtual bool Open(lpctstr = nullptr, uint = 0) override;
-    virtual void _Close() override;
-    virtual void Close() override;
-    virtual bool _ReadTextLine( bool fRemoveBlanks ) override;
-    virtual bool ReadTextLine( bool fRemoveBlanks ) override;
+    bool _Open(lpctstr = nullptr, uint = 0) override;
+    bool Open(lpctstr = nullptr, uint = 0) override;
+    void _Close() override;
+    void Close() override;
+    bool _ReadTextLine( bool fRemoveBlanks ) override;
+    bool ReadTextLine( bool fRemoveBlanks ) override;
 
 public:
     static const char *m_sClassName;
@@ -44,7 +44,7 @@ public:
     {
         _Init();
     }
-    ~CResourceLock()
+    ~CResourceLock() override
     {
         Close();
     }

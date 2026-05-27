@@ -60,7 +60,7 @@ public:
 	static lpctstr const sm_szLoadKeys[];
 
 	explicit CCharBase( CREID_TYPE id );
-    virtual ~CCharBase() = default;
+    ~CCharBase() override = default;
 
 	CCharBase(const CCharBase& copy) = delete;
 	CCharBase& operator=(const CCharBase& other) = delete;

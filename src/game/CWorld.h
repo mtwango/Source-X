@@ -181,9 +181,8 @@ public:
 	sl::raw_ptr_view_vector<CItemMulti>		m_Multis;		// World multis?
 	sl::smart_ptr_view_vector<CResourceDef> m_TileTypes;	// Links to CItemTypeDef items owned by g_Cfg.m_ResHash
 
-public:
 	CWorld();
-	virtual ~CWorld();
+	~CWorld() override;
 
 private:
 	bool LoadFile( lpctstr pszName, bool fError = true );
@@ -210,13 +209,11 @@ public:
 	void Init();
 
 	void r_Write(CScript& s);
-	virtual bool r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-	virtual bool r_LoadVal(CScript& s) override;
-	virtual bool r_GetRef(lpctstr& ptcKey, CScriptObj*& pRef) override;
-
+	bool r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+	bool r_LoadVal(CScript& s) override;
+	bool r_GetRef(lpctstr& ptcKey, CScriptObj*& pRef) override;
 
 	// World stuff
-
 	void _OnTick();
 
 	void GarbageCollection();
@@ -235,7 +232,7 @@ public:
 	bool Import(lpctstr pszFilename, const CChar* pSrc, word iModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0,
                 tchar* pszAgs1 = nullptr, tchar* pszAgs2 = nullptr);
 
-	virtual lpctstr GetName() const override {
+	lpctstr GetName() const override {
 	    return "World";
     }
 

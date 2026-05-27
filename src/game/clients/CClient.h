@@ -73,10 +73,9 @@ public:
 	CSTypedArray<dword>				m_CheckArray;
 	CSObjArray<TResponseString *>	m_TextArray;
 
-public:
 	void AddText( word id, lpctstr pszText );
-	lpctstr GetName() const;
-	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false );
+	lpctstr GetName() const override;
+	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
 	CDialogResponseArgs() = default;
     CDialogResponseArgs(const CDialogResponseArgs& copy) = delete;
@@ -371,7 +370,6 @@ public:
 	byte Setup_Play( uint iSlot ); // After hitting "Play Character" button
 	byte Setup_Start( CChar * pChar ); // Send character startup stuff to player
 
-
     // translated commands.
 private:
 	int Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest );
@@ -386,27 +384,24 @@ public:
 	bool Cmd_SecureTrade( CChar * pChar, CItem * pItem );
 	bool Cmd_Control( CChar * pChar );
 
-public:
 	CSocketAddress &GetPeer();								// get peer address
 	lpctstr GetPeerStr() const;								// get string representation of the peer address
 	int GetSocketID() const;								// get socket id
 
-public:
 	explicit CClient(CNetState* state);
-	~CClient() noexcept;
+	~CClient() noexcept override;
 
 	CClient(const CClient& copy) = delete;
 	CClient& operator=(const CClient& other) = delete;
 
-public:
 	void CharDisconnect();
 
     CClient* GetNext() const;
 
-	virtual bool r_GetRef(lpctstr& ptcKey, CScriptObj*& pRef) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute script type command on me
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
+	bool r_GetRef(lpctstr& ptcKey, CScriptObj*& pRef) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute script type command on me
+	bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
 
 	// Low level message traffic.
 	static uint xCompress( byte * pOutput, const byte * pInput, uint outLen, uint inLen );
@@ -803,18 +798,18 @@ public:
 
     void SetScreenSize(ushort x, ushort y);
 
-    virtual PLEVEL_TYPE GetPrivLevel() const override;
-    virtual lpctstr GetName() const override;
-    virtual CChar * GetChar() override
+    PLEVEL_TYPE GetPrivLevel() const override;
+    lpctstr GetName() const override;
+    CChar * GetChar() override
 	{
 		return m_pChar;
 	}
-    virtual const CChar * GetChar() const override
+    const CChar * GetChar() const override
     {
         return m_pChar;
     }
 
-	virtual void SysMessage( lpctstr pMsg ) const override; // System message (In lower left corner)
+	void SysMessage( lpctstr pMsg ) const override; // System message (In lower left corner)
 	bool CanSee( const CObjBaseTemplate * pObj ) const;
 	bool CanHear( const CObjBaseTemplate * pSrc, TALKMODE_TYPE mode ) const;
 

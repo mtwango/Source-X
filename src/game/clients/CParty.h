@@ -99,14 +99,14 @@ public:
 
 	// -------------------------------
 
-	virtual lpctstr GetName() const override {
+	lpctstr GetName() const override {
 	    return static_cast<lpctstr>(m_sName);
 	    }
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-    virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_Load( CScript & s ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+    bool r_LoadVal( CScript & s ) override;
+    bool r_Load( CScript & s ) override;
 };
 
 

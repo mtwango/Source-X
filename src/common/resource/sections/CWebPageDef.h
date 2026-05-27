@@ -17,7 +17,7 @@ enum WTRIG_TYPE
 {
     // XTRIG_UNKNOWN	= some named trigger not on this list.
     WTRIG_Load = 1,
-    WTRIG_QTY
+    WTRIG_QTY,
 };
 
 enum WEBPAGE_TYPE
@@ -34,7 +34,7 @@ enum WEBPAGE_TYPE
     WEBPAGE_XML,
     WEBPAGE_CSV,
     WEBPAGE_JSON,
-    WEBPAGE_QTY
+    WEBPAGE_QTY,
 };
 
 
@@ -52,7 +52,6 @@ class CWebPageDef : public CResourceLink
 private:
     WEBPAGE_TYPE m_type;        // What basic format of file is this ? 0=text
     CSString m_sSrcFilePath;    // source template for the generated web page.
-private:
     PLEVEL_TYPE m_privlevel;    // What priv level to see this page ?
 
                                 // For files that are being translated and updated.
@@ -84,7 +83,7 @@ public:
     *
     * @return  m_sSrcFilePath.
     */
-    virtual lpctstr GetName() const override
+    lpctstr GetName() const override
     {
         return m_sSrcFilePath;
     }
@@ -130,9 +129,9 @@ public:
     */
     bool ServPagePost(CClient * pClient, lpctstr pszURLArgs, tchar * pPostData, size_t uiContentLength);
 
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override;	// some command on this object as a target
+    bool r_LoadVal(CScript & s) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override;	// some command on this object as a target
 
     /**
     * @brief   Web page log.
@@ -159,9 +158,8 @@ public:
     */
     static void ServPage(CClient * pClient, tchar * pszPage, CSTime * pDateLastMod);
 
-public:
     explicit CWebPageDef(CResourceID id);
-    virtual ~CWebPageDef() = default;
+    ~CWebPageDef() override = default;
 
     CWebPageDef(const CWebPageDef& copy) = delete;
     CWebPageDef& operator=(const CWebPageDef& other) = delete;

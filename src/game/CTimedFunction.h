@@ -26,7 +26,7 @@ private:
 
 public:
     CTimedFunction(const CUID& uidAttached, const char * pcCommand);
-    ~CTimedFunction() = default; // Removal from ticking list is already managed by CTimedObject destructor
+    ~CTimedFunction() override = default; // Removal from ticking list is already managed by CTimedObject destructor
 
     const CUID& GetUID() const {
         return _uidAttached;

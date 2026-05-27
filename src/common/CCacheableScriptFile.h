@@ -15,36 +15,48 @@ class CCacheableScriptFile : public CSFileText
 {
 public:
 	CCacheableScriptFile();
-	~CCacheableScriptFile();
+	~CCacheableScriptFile() override;
 
     CCacheableScriptFile(const CCacheableScriptFile& copy) = delete;
     CCacheableScriptFile& operator=(const CCacheableScriptFile& other) = delete;
 
-protected:  virtual bool _Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
-public:     virtual bool Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
-protected:  virtual void _Close() override;
-public:     virtual void Close() override;
-            virtual bool _IsFileOpen() const override;
-            virtual bool IsFileOpen() const override;
-protected:  virtual int _Seek(int iOffset = 0, int iOrigin = SEEK_SET) override;
-public:     virtual int Seek(int iOffset = 0, int iOrigin = SEEK_SET) override;
+protected:
+    bool _Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
+public:
+    bool Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
+protected:
+    void _Close() override;
+public:
+    void Close() override;
+    bool _IsFileOpen() const override;
+    bool IsFileOpen() const override;
+protected:
+            int _Seek(int iOffset = 0, int iOrigin = SEEK_SET) override;
+public:
+    int Seek(int iOffset = 0, int iOrigin = SEEK_SET) override;
 
-protected:  virtual bool _IsEOF() const override;
-public:     virtual bool IsEOF() const override;
-protected:  virtual int _GetPosition() const override;
-public:     virtual int GetPosition() const override;
+protected:
+    bool _IsEOF() const override;
+public:
+    bool IsEOF() const override;
+protected:
+    int _GetPosition() const override;
+public:
+    int GetPosition() const override;
 
-protected:  virtual tchar * _ReadString(tchar *pBuffer, int sizemax) override;
-public:     virtual tchar * ReadString(tchar *pBuffer, int sizemax) override;
+protected:
+    tchar * _ReadString(tchar *pBuffer, int sizemax) override;
+public:
+    tchar * ReadString(tchar *pBuffer, int sizemax) override;
 
 protected:
     void _dupeFrom(CCacheableScriptFile *other);
     void dupeFrom(CCacheableScriptFile *other);
 
-protected:  bool _HasCache() const;
-public:     bool HasCache() const;
-
+    bool _HasCache() const;
 public:
+    bool HasCache() const;
+
 	bool _fClosed;
 	bool _fRealFile;
 	int _iCurrentLine;

@@ -28,7 +28,7 @@ public:
     static const char *m_sClassName;
     CResourceDef(const CResourceID& rid, lpctstr pszDefName);
     CResourceDef(const CResourceID& rid, const CVarDefContNum * pDefName = nullptr);
-    virtual ~CResourceDef();
+    ~CResourceDef() override;
 
     CResourceDef(const CResourceDef& copy) = delete;
     CResourceDef& operator=(const CResourceDef& other) = delete;
@@ -53,7 +53,7 @@ public:
 
     // Get the name of the resource item. (Used for saving) may be number or name
     lpctstr GetResourceName() const;
-    virtual lpctstr GetName() const	// default to same as the DEFNAME name.
+    lpctstr GetName() const	override // default to same as the DEFNAME name.
     {
         return GetResourceName();
     }

@@ -67,7 +67,7 @@ struct CDialogBase : CSWindow
 	static INT_PTR CALLBACK DialogProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
 
     CDialogBase() = default;
-	virtual ~CDialogBase() = default;
+	~CDialogBase() override = default;
 
 	virtual BOOL DefDialogProc( UINT message, WPARAM wParam, LPARAM lParam );
 };
@@ -107,7 +107,7 @@ struct CScrollBar : CSWindow
     // Constructors
 	static const char *m_sClassName;
 	CScrollBar() = default;
-    virtual ~CScrollBar() = default;
+    ~CScrollBar() override = default;
 
     // Attributes
 	void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const;
@@ -119,7 +119,7 @@ struct CEdit : CSWindow
     // Constructors
 	static const char *m_sClassName;
 	CEdit() = default;
-    virtual ~CEdit() = default;
+    ~CEdit() override = default;
 
     // Operations
 	void SetSel( DWORD dwSelection, BOOL bNoScroll = FALSE );
@@ -158,7 +158,7 @@ struct CListbox : CSWindow
     // Constructors
 	static const char *m_sClassName;
 	CListbox() = default;
-    virtual ~CListbox() = default;
+    ~CListbox() override = default;
 
     // Operations
 	void ResetContent();

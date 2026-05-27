@@ -25,7 +25,7 @@ class CContainer : public CSObjCont	// This class contains a list of items but m
 public:
 	static const char *m_sClassName;
 	CContainer() noexcept;
-	virtual ~CContainer() = default;
+	~CContainer() override = default;
 
 	CContainer(const CContainer& copy) = delete;
 	CContainer& operator=(const CContainer& other) = delete;

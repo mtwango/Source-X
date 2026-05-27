@@ -654,14 +654,14 @@ class PacketAction : public PacketSend
 {
 public:
 	PacketAction(const CChar* character, ANIM_TYPE action, word repeat, bool backward, byte delay, byte len);
-    virtual ~PacketAction();
+    ~PacketAction() override;
 };
 
 class PacketActionBasic : public PacketSend
 {
 public:
 	PacketActionBasic(const CChar* character, ANIM_TYPE_NEW action, ANIM_TYPE_NEW subaction, byte variation);
-    virtual ~PacketActionBasic();
+    ~PacketActionBasic() override;
 };
 
 /***************************************************************************
@@ -675,7 +675,7 @@ class PacketTradeAction : public PacketSend
 {
 public:
 	PacketTradeAction(SECURE_TRADE_TYPE action);
-    ~PacketTradeAction();
+    ~PacketTradeAction() override;
 	void prepareContainerOpen(const CChar *character, const CItem *container1, const CItem *container2);
 	void prepareReadyChange(const CItemContainer *container1, const CItemContainer *container2);
 	void prepareClose(const CItemContainer *container);
@@ -1014,7 +1014,7 @@ private:
 
 public:
 	PacketServerRelay(const CClient* target, dword ip, word port, dword customerId);
-	virtual void onSent(CClient* client);
+	void onSent(CClient* client) override;
 };
 
 /***************************************************************************
@@ -1896,7 +1896,7 @@ class PacketWaypointAdd : public PacketSend
 public:
     PacketWaypointAdd(const CClient *target, CObjBase *object, MAPWAYPOINT_TYPE type);
 
-    virtual bool canSendTo(const CNetState *state) const { return CanSendTo(state); }
+    bool canSendTo(const CNetState *state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState *state);
 };
 
@@ -1912,7 +1912,7 @@ class PacketWaypointRemove : public PacketSend
 public:
     PacketWaypointRemove(const CClient *target, CObjBase *object);
 
-    virtual bool canSendTo(const CNetState *state) const { return CanSendTo(state); }
+    bool canSendTo(const CNetState *state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState *state);
 };
 
@@ -2049,7 +2049,7 @@ public:
 
 	PacketGlobalChat(const CClient* target, byte unknown, byte action, byte stanza, lpctstr xml);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 

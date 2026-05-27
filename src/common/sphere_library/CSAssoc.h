@@ -114,7 +114,7 @@ public:
 	static const char *m_sClassName;
 
 	CSStringList();
-	virtual ~CSStringList();
+	~CSStringList() override;
 
 	CSStringList(const CSStringList& copy) = delete;
 	CSStringList& operator=(const CSStringList& other) = delete;

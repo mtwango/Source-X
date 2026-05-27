@@ -175,7 +175,7 @@ public:
 
 public:
     AbstractSphereThread(const char *name, ThreadPriority priority = ThreadPriority::Normal);
-    virtual ~AbstractSphereThread();
+    ~AbstractSphereThread() override;
 
     AbstractSphereThread(const AbstractSphereThread&) = delete;
     AbstractSphereThread& operator=(const AbstractSphereThread&) = delete;
@@ -208,7 +208,7 @@ public:
     ProfileData m_profile;
 
 protected:
-    virtual bool shouldExit() noexcept;
+    bool shouldExit() noexcept override;
 };
 
 /*
@@ -228,7 +228,7 @@ public:
 
 protected:
     DummySphereThread();
-    virtual void tick();
+    void tick() override;
 };
 
 /*

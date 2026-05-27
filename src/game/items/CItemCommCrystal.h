@@ -20,20 +20,19 @@ protected:
 public:
     static const char *m_sClassName;
     CItemCommCrystal( ITEMID_TYPE id, CItemBase * pItemDef );
-    virtual ~CItemCommCrystal() override = default;
+    ~CItemCommCrystal() override = default;
 
     CItemCommCrystal(const CItemCommCrystal& copy) = delete;
     CItemCommCrystal& operator=(const CItemCommCrystal& other) = delete;
 
-public:
-    virtual void OnMoveFrom() override;
-    virtual bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
+    void OnMoveFrom() override;
+    bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
 
-    virtual void OnHear( lpctstr pszCmd, CChar * pSrc ) override;
-    virtual void r_Write( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
+    void OnHear( lpctstr pszCmd, CChar * pSrc ) override;
+    void r_Write( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
 };
 
 

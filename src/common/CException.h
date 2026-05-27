@@ -62,14 +62,13 @@ public:
 	const LOG_TYPE m_eSeverity;	// const
 	const dword m_hError;	    // HRESULT S_OK, "winerror.h" code. 0x20000000 = start of custom codes.
 	const lpctstr m_pszDescription;
-public:
+
 	CSError( LOG_TYPE eSev, dword hErr, lpctstr pszDescription );
 	CSError( const CSError& e );	// copy contstructor needed.
     virtual ~CSError() = default;
 
     CSError& operator=(const CSError& other) = delete;
 
-public:
 #ifdef _WIN32
 	static int GetSystemErrorMessage( dword dwError, lptstr lpszError, dword dwErrorBufLength);
 #endif
@@ -88,12 +87,11 @@ public:
 		CSError(eSeverity, 0, "Assert"), m_pExp(pExp), m_pFile(pFile), m_llLine(llLine)
 	{
 	}
-    virtual ~CAssert() = default;
+    ~CAssert() override = default;
 
 	CAssert& operator=(const CAssert& other) = delete;
 
-public:
-	virtual bool GetErrorMessage(lptstr lpszError, uint uiMaxError ) const override;
+	bool GetErrorMessage(lptstr lpszError, uint uiMaxError ) const override;
 };
 
 #ifdef WINDOWS_SPHERE_SHOULD_HANDLE_STRUCTURED_EXCEPTIONS

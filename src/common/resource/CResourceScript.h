@@ -32,7 +32,7 @@ public:
     static const char *m_sClassName;
     explicit CResourceScript(lpctstr pszFileName);
     CResourceScript();
-    virtual ~CResourceScript() = default;
+    ~CResourceScript() override = default;
 
 private:
     bool _CheckForChange();

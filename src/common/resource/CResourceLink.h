@@ -57,7 +57,7 @@ public:
     bool ResourceLock( CResourceLock & s );
 
     CResourceLink(const CResourceID& rid, const CVarDefContNum * pDef = nullptr);
-    virtual ~CResourceLink();
+    ~CResourceLink() override;
 
     CResourceLink(const CResourceLink& copy) = delete;
     CResourceLink& operator=(const CResourceLink& other) = delete;

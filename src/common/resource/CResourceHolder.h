@@ -48,9 +48,9 @@ public:
 		return ResourceLock(s, ResourceGetIDType(restype, pszName));
 	}
 
-    lpctstr GetName() const;
+    lpctstr GetName() const override;
     CResourceHolder();
-	virtual ~CResourceHolder() = default;
+	~CResourceHolder() override = default;
 
 	CResourceHolder(const CResourceHolder& copy) = delete;
 	CResourceHolder& operator=(const CResourceHolder& other) = delete;

@@ -21,8 +21,7 @@ public:
     CItemTypeDef(const CItemTypeDef& copy) = delete;
     CItemTypeDef& operator=(const CItemTypeDef& other) = delete;
 
-public:
-    virtual bool r_LoadVal( CScript & s ) override;
+    bool r_LoadVal( CScript & s ) override;
     int GetItemType() const;
 };
 

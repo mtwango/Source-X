@@ -115,7 +115,7 @@ struct CRectMap : CRect
 		return CRectMap::operator=(static_cast<const CRectMap&>(rect));
 	}
 
-    virtual ~CRectMap() noexcept = default;
+    ~CRectMap() noexcept override = default;
 
     bool IsValid() const noexcept;
 

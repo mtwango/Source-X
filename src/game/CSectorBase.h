@@ -25,7 +25,7 @@ class CCharsDisconnectList : public CSObjCont, public CSectorObjCont
 {
 public:
 	CCharsDisconnectList();
-    virtual ~CCharsDisconnectList();
+    ~CCharsDisconnectList() override;
 	CCharsDisconnectList(const CCharsDisconnectList& copy) = delete;
 	CCharsDisconnectList& operator=(const CCharsDisconnectList& other) = delete;
 
@@ -39,11 +39,11 @@ private:
 	int64 m_iTimeLastClient;	// age the sector based on last client here.
 
 protected:
-	void OnRemoveObj(CSObjContRec* pObjRec);	// Override this = called when removed from list.
+	void OnRemoveObj(CSObjContRec* pObjRec) override;	// Override this = called when removed from list.
 
 public:
 	CCharsActiveList();
-    ~CCharsActiveList();
+    ~CCharsActiveList() override;
 	CCharsActiveList(const CCharsActiveList& copy) = delete;
 	CCharsActiveList& operator=(const CCharsActiveList& other) = delete;
 
@@ -69,7 +69,7 @@ public:
 	void AddItemToSector( CItem * pItem );
 
 protected:
-	void OnRemoveObj(CSObjContRec* pObRec);	// Override this = called when removed from list.
+	void OnRemoveObj(CSObjContRec* pObRec) override;	// Override this = called when removed from list.
 };
 
 
@@ -84,13 +84,13 @@ class CSectorBase		// world sector
         static const char *m_sClassName;
 
 		CObjPointSortArray() = default;
-		virtual ~CObjPointSortArray() override = default;
+		~CObjPointSortArray() override = default;
 
 		CObjPointSortArray(const CObjPointSortArray& copy) = delete;
 		CObjPointSortArray& operator=(const CObjPointSortArray& other) = delete;
 
         // Find a point fast.
-		virtual int CompareKey(int id, T* pBase, bool fNoSpaces) const override {
+		int CompareKey(int id, T* pBase, bool fNoSpaces) const override {
 			UnreferencedParameter(fNoSpaces);
 			return (id - pBase->GetPointSortIndex());
 		}

@@ -18,12 +18,11 @@ class CItemMemory : public CItem
 public:
 	static const char *m_sClassName;
     CItemMemory(ITEMID_TYPE id, CItemBase * pItemDef);
-	virtual ~CItemMemory() override = default;
+	~CItemMemory() override = default;
 
 	CItemMemory(const CItemMemory& copy) = delete;
 	CItemMemory& operator=(const CItemMemory& other) = delete;
 
-public:
 	word SetMemoryTypes( word wType );
 
 	word GetMemoryTypes() const;
@@ -38,7 +37,7 @@ public:
 	lpctstr Guild_GetTitle() const;
 	CItemStone * Guild_GetLink();
 
-	virtual int FixWeirdness() override;
+	int FixWeirdness() override;
 };
 
 

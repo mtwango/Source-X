@@ -27,7 +27,7 @@ enum STONEDISP_TYPE	// Hard coded Menus
 	STONEDISP_DECLAREPEACE,
 	STONEDISP_GRANTTITLE,
 	STONEDISP_VIEWBANISHED,
-	STONEDISP_BANISHMEMBER
+	STONEDISP_BANISHMEMBER,
 };
 
 class CMultiStorage;
@@ -53,8 +53,8 @@ class CItemStone : public CItem, public CSObjList
 
 private:
 	void SetTownName();
-	virtual bool SetName( lpctstr pszName ) override;
-	virtual bool MoveTo(const CPointMap& pt, bool bForceFix = false) override;
+	bool SetName( lpctstr pszName ) override;
+	bool MoveTo(const CPointMap& pt, bool bForceFix = false) override;
 
 	MEMORY_TYPE GetMemoryType() const;
 
@@ -67,7 +67,7 @@ private:
 public:
 	static const char *m_sClassName;
     CItemStone( ITEMID_TYPE id, CItemBase * pItemDef );
-    virtual ~CItemStone() override;
+    ~CItemStone() override;
 
     CItemStone(const CItemStone& copy) = delete;
     CItemStone& operator=(const CItemStone& other) = delete;
@@ -85,14 +85,13 @@ public:
 	bool IsAlliedWith( const CItemStone * pStone ) const;
 
 	bool CheckValidMember(CStoneMember * pMember);
-	virtual int FixWeirdness() override;
+	int FixWeirdness() override;
 
-public:
-	virtual void r_Write( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+	void r_Write( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 
 	lpctstr GetTypeName() const;
 	static bool IsUniqueName( lpctstr pName );

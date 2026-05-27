@@ -82,9 +82,8 @@ public:
     dword			m_dwFlags;      // Skill Flags.
     dword			m_dwGroup;      // Skill Group.
 
-public:
     explicit CSkillDef( SKILL_TYPE iSkill );
-    virtual ~CSkillDef() = default;
+    ~CSkillDef() override = default;
 
 private:
     CSkillDef(const CSkillDef& copy);
@@ -104,12 +103,12 @@ public:
         return m_sKey;
     }
 
-    virtual lpctstr GetName() const override
+    lpctstr GetName() const override
     {
         return GetKey();
     }
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 };
 
 #endif // _INC_CSKILLDEF_H

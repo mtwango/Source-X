@@ -27,11 +27,10 @@ public:
 	CListDefContElem(const CListDefContElem& copy) = delete;
 	CListDefContElem& operator=(const CListDefContElem& other) = delete;
 
-public:
-    inline lpctstr GetKey() const {
+    lpctstr GetKey() const {
         return m_Key.GetBuffer();
     }
-    inline void SetKey(lpctstr ptcKey) {
+    void SetKey(lpctstr ptcKey) {
         m_Key = ptcKey;
     }
 
@@ -51,25 +50,25 @@ public:
 
 	explicit CListDefContNum(lpctstr ptcKey);
 	CListDefContNum(lpctstr ptcKey, int64 iVal);
-	~CListDefContNum() = default;
+	~CListDefContNum() override = default;
 
 private:
 	CListDefContNum(const CListDefContNum& copy);
 	CListDefContNum& operator=(const CListDefContNum& other);
 
 public:
-    inline int64 GetValNum() const {
+    int64 GetValNum() const override {
         return m_iVal;
     }
-    inline void SetValNum(int64 iVal) {
+    void SetValNum(int64 iVal) {
         m_iVal = iVal;
     }
-	lpctstr GetValStr() const;
+	lpctstr GetValStr() const override;
 
 	bool r_LoadVal( CScript & s );
 	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr);
 
-	virtual CListDefContElem * CopySelf() const;
+	CListDefContElem * CopySelf() const override;
 };
 
 
@@ -83,23 +82,23 @@ public:
 
 	CListDefContStr(lpctstr ptcKey, lpctstr pszVal);
 	explicit CListDefContStr(lpctstr ptcKey);
-	~CListDefContStr() = default;
+	~CListDefContStr() override = default;
 
 private:
 	CListDefContStr(const CListDefContStr& copy);
 	CListDefContStr& operator=(const CListDefContStr& other);
 
 public:
-    inline lpctstr GetValStr() const {
+    lpctstr GetValStr() const override {
         return m_sVal.GetBuffer();
     }
 	void SetValStr( lpctstr pszVal );
-	int64 GetValNum() const;
+	int64 GetValNum() const override;
 
 	bool r_LoadVal( CScript & s );
 	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr );
 
-	virtual CListDefContElem * CopySelf() const;
+	CListDefContElem * CopySelf() const override;
 };
 
 
@@ -126,7 +125,7 @@ private:
 	CListDefCont& operator=(const CListDefCont& other);
 
 public:
-    inline lpctstr GetKey() const {
+    lpctstr GetKey() const {
         return m_Key.GetBuffer();
     }
 	void SetKey( lpctstr ptcKey );
@@ -134,7 +133,7 @@ public:
 	CListDefContElem* GetAt(size_t nIndex) const;
 	bool SetNumAt(size_t nIndex, int64 iVal);
 	bool SetStrAt(size_t nIndex, lpctstr pszVal);
-    inline size_t GetCount() const {
+    size_t GetCount() const {
         return m_listElements.size();
     }
 
@@ -168,7 +167,7 @@ class CListDefMap
 private:
 	struct ltstr
 	{
-        inline bool operator()(const CListDefCont * s1, const CListDefCont * s2) const
+        bool operator()(const CListDefCont * s1, const CListDefCont * s2) const
         {
             return( strcmpi(s1->GetKey(), s2->GetKey()) < 0 );
         }
@@ -177,7 +176,6 @@ private:
 	typedef std::set<CListDefCont *, ltstr> DefSet;
 	typedef std::pair<DefSet::iterator, bool> DefPairResult;
 
-private:
 	DefSet m_Container;
 
 public:
@@ -189,7 +187,6 @@ public:
 private:
 	CListDefMap(const CListDefMap& copy);
 
-private:
 	CListDefCont * GetAtKey( lpctstr at );
 	void DeleteAt( size_t at );
 	void DeleteAtKey( lpctstr at );
@@ -198,7 +195,7 @@ private:
 public:
 	void Copy( const CListDefMap * pArray );
 	void Empty();
-    inline size_t GetCount() const {
+    size_t GetCount() const {
         return m_Container.size();
     }
 

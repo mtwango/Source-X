@@ -20,12 +20,11 @@ private:
 public:
 	static const char *m_sClassName;
 	CItemVendable( ITEMID_TYPE id, CItemBase * pItemDef );
-    virtual ~CItemVendable() override;
+    ~CItemVendable() override;
 
 	CItemVendable(const CItemVendable& copy) = delete;
 	CItemVendable& operator=(const CItemVendable& other) = delete;
 
-public:
 	word GetQuality() const;
 	void SetQuality( word quality = 0 );
 
@@ -36,12 +35,12 @@ public:
 	bool IsValidSaleItem( bool fBuyFromVendor ) const;
 	bool IsValidNPCSaleItem() const;
 
-	virtual void DupeCopy( const CObjBase * pItem ) override;  // overriding CItem::DupeCopy
+	void DupeCopy( const CObjBase * pItem ) override;  // overriding CItem::DupeCopy
 
 	void Restock( bool fSellToPlayers );
-	virtual void r_Write( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
+	void r_Write( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
 };
 
 

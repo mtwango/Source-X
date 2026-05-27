@@ -157,7 +157,7 @@ protected:
 public:
 	explicit PacketSend(byte id, uint len = 0, Priority priority = PRI_NORMAL);
 	PacketSend(const PacketSend* other);
-    virtual ~PacketSend() override;
+    ~PacketSend() override;
 
     PacketSend& operator=(const PacketSend& other) = delete;
 
@@ -226,18 +226,18 @@ private:
 
 public:
 	explicit SimplePacketTransaction(PacketSend* packet) : m_packet(packet) { };
-	virtual ~SimplePacketTransaction(void);
+	~SimplePacketTransaction(void) override;
 
 	SimplePacketTransaction(const SimplePacketTransaction& copy) = delete;
 	SimplePacketTransaction& operator=(const SimplePacketTransaction& other) = delete;
 
-	CNetState* getTarget(void) const { return m_packet->getTarget(); }
-	int getPriority(void) const { return m_packet->getPriority(); }
-	void setPriority(int priority) { m_packet->m_priority = priority; }
+	CNetState* getTarget(void) const override { return m_packet->getTarget(); }
+	int getPriority(void) const override { return m_packet->getPriority(); }
+	void setPriority(int priority) override { m_packet->m_priority = priority; }
 
-	PacketSend* front(void) { return m_packet; };
-	void pop(void) { m_packet = nullptr; }
-	bool empty(void) { return m_packet == nullptr; }
+	PacketSend* front(void) override { return m_packet; };
+	void pop(void) override { m_packet = nullptr; }
+	bool empty(void) override { return m_packet == nullptr; }
 };
 
 
@@ -257,22 +257,22 @@ private:
 
 public:
 	ExtendedPacketTransaction(CNetState* target, int priority) : m_target(target), m_priority(priority) { };
-	~ExtendedPacketTransaction(void);
+	~ExtendedPacketTransaction(void) override;
 
 private:
 	ExtendedPacketTransaction(const ExtendedPacketTransaction& copy);
 	ExtendedPacketTransaction& operator=(const ExtendedPacketTransaction& other);
 
 public:
-	CNetState* getTarget(void) const	{ return m_target; }
-	int getPriority(void) const { return m_priority; }
-	void setPriority(int priority) { m_priority = priority; }
+	CNetState* getTarget(void) const override { return m_target; }
+	int getPriority(void) const override { return m_priority; }
+	void setPriority(int priority) override { m_priority = priority; }
 
     void push_back(PacketSend* packet) { m_packets.push_back(packet); }
     void emplace_back(PacketSend* packet) { m_packets.emplace_back(packet); }
-    PacketSend* front(void) { return m_packets.front(); };
-    void pop(void) { m_packets.pop_front(); }
-    bool empty(void) { return m_packets.empty(); }
+    PacketSend* front(void) override { return m_packets.front(); };
+    void pop(void) override { m_packets.pop_front(); }
+    bool empty(void) override { return m_packets.empty(); }
 };
 
 

@@ -43,7 +43,6 @@ private:
         CSphereMultiCustom& operator=(const CSphereMultiCustom& other) = delete;
     };
 
-private:
     static lpctstr const sm_szLoadKeys[];
     static lpctstr const sm_szVerbKeys[];
 
@@ -57,11 +56,11 @@ private:
     CSphereMultiCustom * m_pSphereMulti;
     int _iMaxPlane;
 
-    virtual bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
-    virtual void r_Write(CScript & s) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
+    bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
+    void r_Write(CScript & s) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_LoadVal(CScript & s) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
 
     CPointMap GetComponentPoint(const CMultiComponent * pComponent) const;
     CPointMap GetComponentPoint(int16 dx, int16 dy, int8 dz) const;
@@ -71,7 +70,7 @@ private:
     * @param uidComponent the component.
     * @param fRemoveFromList Whether component should be deleted from list.
     */
-    virtual void DeleteComponent(const CUID& uidComponent, bool fRemoveFromList) override final;
+    void DeleteComponent(const CUID& uidComponent, bool fRemoveFromList) override final;
 
     void CopyDesign(CDesignDetails * designFrom, CDesignDetails * designTo);
     void GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<CUID> &vList);
@@ -79,7 +78,6 @@ private:
     int8 CalculateLevel(int8 z);
     void ClearFloor(int8 iFloor);
 
-private:
     using ValidItemsContainer = std::map<ITEMID_TYPE, uint>;	// ItemID, FeatureMask
     static ValidItemsContainer sm_mapValidItems;
 
@@ -88,12 +86,11 @@ private:
 public:
     static const char *m_sClassName;
     CItemMultiCustom(ITEMID_TYPE id, CItemBase * pItemDef);
-    virtual ~CItemMultiCustom();
+    ~CItemMultiCustom() override;
 
     CItemMultiCustom(const CItemMultiCustom& copy) = delete;
     CItemMultiCustom& operator=(const CItemMultiCustom& other) = delete;
 
-public:
     void BeginCustomize(CClient* pClientSrc, bool continueCustomize = false);
     void EndCustomize(bool fForce = false);
     void SwitchToLevel(CClient * pClientSrc, uchar iLevel);

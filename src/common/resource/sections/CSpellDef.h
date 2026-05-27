@@ -86,7 +86,7 @@ public:
     }
 
     explicit CSpellDef( SPELL_TYPE id );
-    virtual ~CSpellDef() = default;
+    ~CSpellDef() override = default;
 
 private:
     CSpellDef(const CSpellDef& copy);

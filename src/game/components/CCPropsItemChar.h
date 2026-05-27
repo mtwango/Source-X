@@ -25,7 +25,7 @@ public:
     static constexpr COMPPROPS_TYPE _kiType = COMP_PROPS_ITEMCHAR;
 
     CCPropsItemChar();
-    virtual ~CCPropsItemChar() = default;
+    ~CCPropsItemChar() override = default;
 
     //static bool CanSubscribe(const CObjBase* pObj) noexcept;
 

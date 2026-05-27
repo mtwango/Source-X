@@ -82,7 +82,7 @@ public:
 	 */
 	///@{
 	CSMemLenBlock();
-    virtual ~CSMemLenBlock();
+    ~CSMemLenBlock() override;
 
     /**
 	* @brief No copy on construction allowed.

@@ -26,7 +26,7 @@ public:
 	}
 
 	CImportSer( dword dwSer ) noexcept;
-	~CImportSer() noexcept;
+	~CImportSer() noexcept override;
 
 	CImportSer(const CImportSer& copy) = delete;
 	CImportSer& operator=(const CImportSer& other) = delete;

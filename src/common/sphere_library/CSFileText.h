@@ -15,12 +15,8 @@ class CSFileText : public CSFile
 public:
     static const char *m_sClassName;
 
-    /** @name Constructors, Destructor, Assign operator:
-    */
-    ///@{
-public:
     CSFileText();
-    virtual ~CSFileText();
+    ~CSFileText() override;
 
     /**
     * @brief No copy on construction allowed.
@@ -30,43 +26,43 @@ public:
     * @brief No copy allowed.
     */
     CSFileText& operator=(const CSFileText& other) = delete;
-    ///@}
-    /** @name File management:
-    */
-    ///@{
-public:
+
     /**
     * @brief Check if file is open.
     * @return true if is open, false otherwise.
     */
-protected:  virtual bool _IsFileOpen() const override;
-public:     virtual bool IsFileOpen() const override;
+protected:
+    bool _IsFileOpen() const override;
+public:
+    bool IsFileOpen() const override;
     /**
     * @brief Open a file in a specified mode.
     * @param ptcFilename file to open.
     * @param uiModeFlags open mode.
     * @return true if file is open, false otherwise.
     */
-protected:  virtual bool _Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
-public:     virtual bool Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
+protected:
+    bool _Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
+public:
+    bool Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
     /**
     * @brief Closes the file if is open.
     */
-protected:  virtual void _Close() override;
-public:     virtual void Close() override;
-    ///@}
-    /** @name Content management:
-    */
-    ///@{
+protected:
+    void _Close() override;
 public:
+    void Close() override;
+
     /**
     * @brief Set the position indicator.
     * @param iOffset position to set.
     * @param iOrigin origin (current position or init of the file).
     * @return position where the position indicator is set on success, -1 on error.
     */
-protected:  virtual int _Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
-public:     virtual int Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
+protected:
+    int _Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
+public:
+    int Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
     /**
     * @brief Write changes to disk.
     */
@@ -92,7 +88,7 @@ public:     int Printf(lpctstr pFormat, ...) SPHERE_PRINTFARGS(2, 3);
     * @param sizemax count of bytes to read.
     * @return count of bytes readed.
     */
-    virtual int Read( void * pBuffer, int sizemax ) const override;
+    int Read( void * pBuffer, int sizemax ) const override;
     /**
     * @brief Reads from a file a line (up to sizemax - 1 characters).
     * @param pBuffer buffer where store the readed data.
@@ -115,8 +111,10 @@ public:     int VPrintf(lpctstr pFormat, va_list args);
     * @param iLen lenght of the data to write.
     * @return true is success, false otherwise.
     */
-protected:  virtual bool _Write( const void * pData, int iLen ) override;
-public:     virtual bool Write(const void* pData, int iLen) override;
+protected:
+    bool _Write( const void * pData, int iLen ) override;
+public:
+    bool Write(const void* pData, int iLen) override;
     /**
     * @brief write string into file.
     * @return true is success, false otherwise.

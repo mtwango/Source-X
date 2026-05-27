@@ -586,32 +586,32 @@ protected:
 	CItem( ITEMID_TYPE id, CItemBase * pItemDef );	// only created via CreateBase()
 	bool SetBase(CItemBase* pItemDef);
 public:
-	virtual ~CItem() override;
+	~CItem() override;
 
 	CItem(const CItem& copy) = delete;
 	CItem& operator=(const CItem& other) = delete;
 
 protected:
-	virtual int FixWeirdness() override;
-    virtual void DeletePrepare() override;
+	int FixWeirdness() override;
+    void DeletePrepare() override;
     void DeleteCleanup(bool fForce) NONVIRTUAL;
 public:
 	virtual bool NotifyDelete(); // overridden CItemContainer:: method
-	virtual bool Delete(bool fForce = false) override;
+	bool Delete(bool fForce = false) override;
 
 protected:
-	virtual void _GoAwake() override;
-	virtual void _GoSleep() override;
+	void _GoAwake() override;
+	void _GoSleep() override;
 
 	// On CItem, _OnTick is virtual also because we need to call the topmost superclass:
 	//	a CItem can be the base class for CItemShip, CItemMessage...
 public:
-	virtual bool _OnTick() override;
+	bool _OnTick() override;
 
-    virtual bool _CanTick(bool fParentGoingToSleep) const override final;
+    bool _CanTick(bool fParentGoingToSleep) const override final;
 	bool _CanHoldTimer() const;
 
-    virtual void DupeCopy( const CObjBase * pItem ) override;
+    void DupeCopy( const CObjBase * pItem ) override;
 
 	static CItem * CreateBase( ITEMID_TYPE id, IT_TYPE type = IT_INVALID ); // If type == IT_INVALID, read the type from the def (default behaviour)
 	static CItem * CreateHeader( tchar * pArg, CObjBase * pCont = nullptr, bool fDupeCheck = false, CChar * pSrc = nullptr );
@@ -633,14 +633,14 @@ public:
 	CItemBase * Item_GetDef() const noexcept;
 
 	ITEMID_TYPE GetID() const;
-    virtual dword GetIDCommon() const override final; // The unique index id (will NOT be the same as artwork if outside artwork range).
+    dword GetIDCommon() const final; // The unique index id (will NOT be the same as artwork if outside artwork range).
 
 	bool SetBaseID( ITEMID_TYPE id );
 	bool SetID( ITEMID_TYPE id );
 
 	bool IsSameDispID( ITEMID_TYPE id ) const;	// account for flipped types ?
 	bool SetDispID( ITEMID_TYPE id );
-    inline ITEMID_TYPE GetDispID() const noexcept {
+    ITEMID_TYPE GetDispID() const noexcept {
         // This is what the item looks like.
         // May not be the same as the item that defines it's type.
         return m_dwDispIndex;
@@ -648,7 +648,7 @@ public:
 
 	void SetAnim( ITEMID_TYPE id, int64 iTicksTimeout); // time in ticks
 
-	virtual int IsWeird() const override;
+	int IsWeird() const override;
 	char GetFixZ(CPointMap pt, uint64 uiBlockFlags = 0);
 
 	byte GetSpeed() const;
@@ -729,7 +729,7 @@ public:
 	bool IsMovable() const;
 
     [[nodiscard]]
-    virtual int GetVisualRange() const override;
+    int GetVisualRange() const override;
 
 	bool IsStackableException() const;
 	bool IsStackable( const CItem * pItem ) const;
@@ -755,28 +755,29 @@ public:
     CREID_TYPE GetCorpseType() const;
     void  SetCorpseType( CREID_TYPE id );
 
-	virtual lpctstr GetName() const override;	// allowed to be default name.
+	lpctstr GetName() const override;	// allowed to be default name.
 	lpctstr GetNameFull( bool fIdentified ) const;
-	virtual bool SetName( lpctstr pszName ) override;
+	bool SetName( lpctstr pszName ) override;
 
-	virtual int GetWeight(word amount = 0) const override;
+	int GetWeight(word amount = 0) const override;
 
-protected:	virtual void _SetTimeout(int64 iMsecs) override final;
+protected:
+    void _SetTimeout(int64 iMsecs) final;
 
 public:
 	virtual void OnMoveFrom()   // Moving from current location.
     {
     }
-	virtual bool MoveTo(const CPointMap& pt, bool fForceFix = false) override; // Put item on the ground here.
+	bool MoveTo(const CPointMap& pt, bool fForceFix = false) override; // Put item on the ground here.
 	bool MoveToUpdate(const CPointMap& pt, bool fForceFix = false);
 	bool MoveToDecay(const CPointMap & pt, int64 iMsecsTimeout, bool fForceFix = false);
 	bool MoveToCheck(const CPointMap & pt, CChar * pCharMover = nullptr );
-	virtual bool MoveNearObj( const CObjBaseTemplate *pItem, ushort uiSteps = 0 ) override;
+	bool MoveNearObj( const CObjBaseTemplate *pItem, ushort uiSteps = 0 ) override;
 
     [[nodiscard]] RETURNS_NOTNULL
-        virtual CObjBaseTemplate* GetTopLevelObj() override;
+        CObjBaseTemplate* GetTopLevelObj() override;
     [[nodiscard]] RETURNS_NOTNULL
-        virtual const CObjBaseTemplate* GetTopLevelObj() const override;
+        const CObjBaseTemplate* GetTopLevelObj() const override;
 
     CObjBase * GetContainer() const noexcept;
 	CItem * GetTopContainer();
@@ -789,8 +790,8 @@ public:
 		m_containedGridIndex = index;
 	}
 
-	virtual void Update( const CClient * pClientExclude = nullptr ) override;	// send this new item to everyone.
-	virtual void Flip() override;
+	void Update( const CClient * pClientExclude = nullptr ) override;	// send this new item to everyone.
+	void Flip() override;
 	bool LoadSetContainer( const CUID& uid, LAYER_TYPE layer );
 
 	void WriteUOX( CScript & s, int index, int dx, int dy );
@@ -803,14 +804,13 @@ public:
     lpctstr ResourceGetName(const CResourceID& rid);
     lpctstr ResourceTypedGetName(const CResourceIDBase& rid, RES_TYPE iExpectedType, lptstr* ptcOutError);
 
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual void r_Write( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_Load( CScript & s ) override; // Load an item from script
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	void r_Write( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_Load( CScript & s ) override; // Load an item from script
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 
-public:
 	/**
     * @brief   Queries if a trigger is active ( m_RunningTrigger ) .
     * @param   trig    The trig.
@@ -824,14 +824,14 @@ public:
     */
     void SetTriggerActive(lpctstr trig = nullptr);
 
-    virtual TRIGRET_TYPE OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
+    TRIGRET_TYPE OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
     TRIGRET_TYPE OnTrigger( ITRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc );
 
 	// Item type specific stuff.
-    inline bool IsType(IT_TYPE type) const noexcept {
+    bool IsType(IT_TYPE type) const noexcept {
         return ( m_type == type );
     }
-    inline IT_TYPE GetType() const noexcept {
+    IT_TYPE GetType() const noexcept {
         return m_type;
     }
 	bool SetType( IT_TYPE type, bool fPreCheck = true );
@@ -847,7 +847,7 @@ public:
 	bool IsTypeSpellable() const;
     bool IsTypeEquippable() const;
 
-	virtual bool IsResourceMatch( const CResourceID& rid, dword dwArg ) const override;
+	bool IsResourceMatch( const CResourceID& rid, dword dwArg ) const override;
 
 	bool IsValidLockLink( CItem * pItemLock ) const;
 	bool IsValidLockUID() const;
@@ -886,7 +886,7 @@ public:
 	bool IsBookSystem() const;
 
 	void OnExplosion();
-    virtual bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
+    bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
 	int OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType = DAMAGE_HIT_BLUNT );
 
 	int Armor_GetRepairPercent() const;

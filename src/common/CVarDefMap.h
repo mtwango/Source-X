@@ -45,7 +45,7 @@ public:
 
 	CVarDefContNum( lpctstr ptcKey, int64 iVal );
 	CVarDefContNum( lpctstr ptcKey );
-	virtual ~CVarDefContNum() = default;
+	~CVarDefContNum() override = default;
 
 private:
 	CVarDefContNum(const CVarDefContNum& copy);
@@ -83,7 +83,7 @@ public:
 
 	CVarDefContStr( lpctstr ptcKey, lpctstr pszVal );
 	explicit CVarDefContStr( lpctstr ptcKey );
-	virtual ~CVarDefContStr() = default;
+	~CVarDefContStr() override = default ;
 
 private:
 	CVarDefContStr(const CVarDefContStr& copy);

@@ -25,7 +25,7 @@ public:
 	static lpctstr const sm_szLoadKeys[];
 
 private:
-	bool   m_fSaveParity;		// has the sector been saved relative to the char entering it ?
+	bool m_fSaveParity;		// has the sector been saved relative to the char entering it ?
 
 	byte m_RainChance;		// 0 to 100%
 	byte m_ColdChance;		// Will be snow if rain chance success.
@@ -33,7 +33,6 @@ private:
 
     CSectorEnviron m_Env;		// Current Environment
 
-private:
 	WEATHER_TYPE GetWeatherCalc() const;
 	byte GetLightCalc( bool fQuickSet ) const;
 	void SetLightNow( bool fFlash = false );
@@ -43,20 +42,22 @@ private:
 
 public:
 	CSector();
-	~CSector();
+	~CSector() override;
 
 	CSector(const CSector& copy) = delete;
 	CSector& operator=(const CSector& other) = delete;
 
-public:
-	virtual void Init(int index, uchar map, short x, short y) override;
+    void Init(int index, uchar map, short x, short y) override;
 
 
-protected:	virtual bool _OnTick() override;
+protected:
+    bool _OnTick() override;
 //public:	virtual bool  OnTick() override;    // The right virtual is called by CTimedObject::OnTick
 
-protected:	virtual bool _IsDeleted() const override;
-public:		virtual bool IsDeleted() const override;
+protected:
+    bool _IsDeleted() const override;
+public:
+    bool IsDeleted() const override;
 
 	// Time
 	int GetLocalTime() const;
@@ -109,18 +110,18 @@ public:		virtual bool IsDeleted() const override;
 
 	// CTimedObject
 private:
-    virtual void _GoSleep() override;
-	virtual void  GoSleep() override;
+    void _GoSleep() override;
+	void  GoSleep() override;
 
-    virtual void _GoAwake() override;
-	virtual void  GoAwake() override;
+    void _GoAwake() override;
+	void  GoAwake() override;
 
     // General.
 public:
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 	virtual void r_Write();
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
 
 	// AllThings Verbs
 	bool v_AllChars( CScript & s, CTextConsole * pSrc );
@@ -133,7 +134,7 @@ public:
 	void RespawnDeadNPCs();
 
 	void Close(bool fClosingWorld);
-	virtual lpctstr GetName() const override { return "Sector"; }
+	lpctstr GetName() const override { return "Sector"; }
 };
 
 

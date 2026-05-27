@@ -16,7 +16,7 @@ enum CIC_TYPE
 	CIC_BODY,
 	CIC_PAGES,
 	CIC_TITLE,
-	CIC_QTY
+	CIC_QTY,
 };
 
 class CItemMessage : public CItemVendable
@@ -34,25 +34,23 @@ public:
     CSString m_sAuthor;					// Should just have author name !
     static lpctstr const sm_szLoadKeys[CIC_QTY+1];
 
-public:
     CItemMessage( ITEMID_TYPE id, CItemBase * pItemDef );
-    virtual ~CItemMessage();
+    ~CItemMessage() override;
 
     CItemMessage(const CItemMessage& copy) = delete;
     CItemMessage& operator=(const CItemMessage& other) = delete;
 
-public:
-    virtual void r_Write( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+    void r_Write( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 
     word GetPageCount() const;
     lpctstr GetPageText( word wPage ) const;
     void SetPageText( word wPage, lpctstr pszText );
     void AddPageText( lpctstr pszText );
 
-    virtual void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
+    void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
     void UnLoadSystemPages();
 };
 

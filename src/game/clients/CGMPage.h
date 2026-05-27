@@ -11,7 +11,6 @@
 #include "../CServerTime.h"
 #include "CAccount.h"
 
-
 class CClient;
 class CGMPage : public CScriptObj
 {
@@ -20,11 +19,10 @@ public:
 	static const char* m_sClassName;
 	static lpctstr const sm_szLoadKeys[];
 	CGMPage(lpctstr pszAccount);
-	~CGMPage();
+	~CGMPage() override;
     CGMPage(const CGMPage& copy) = delete;
     CGMPage& operator=(const CGMPage& other) = delete;
 
-public:
 	CClient* m_pClientHandling;
 	CSString m_sAccount;
 	CUID m_uidChar;
@@ -32,17 +30,16 @@ public:
 	CSString m_sReason;
 	CServerTime m_time;
 
-public:
 	void SetHandler(CClient* pClient);
 	void ClearHandler();
 
-	virtual lpctstr GetName() const override {
+	lpctstr GetName() const override {
         return m_sAccount;
     }
 
 	void r_Write(CScript& s) const;
-	virtual bool r_WriteVal(lpctstr pszKey, CSString& sVal, CTextConsole* pSrc, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-	virtual bool r_LoadVal(CScript& s) override;
+	bool r_WriteVal(lpctstr pszKey, CSString& sVal, CTextConsole* pSrc, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+	bool r_LoadVal(CScript& s) override;
 };
 
 #endif	// _INC_CGMPAGE_H

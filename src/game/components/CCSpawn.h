@@ -49,18 +49,18 @@ public:
     static CCSpawn * GetBadSpawn(int index = -1);
 
     CCSpawn(CItem *pLink, bool fIsChampion = false);
-    virtual ~CCSpawn();
+    ~CCSpawn() override;
     CItem *GetLink() const;
-    virtual void Delete(bool fForce = false) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc) override;
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual void r_Write(CScript & s) override;
-    virtual bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override;
-    virtual void Copy(const CComponent *target) override;
-    /*virtual bool IsDeleted() const override;
-    virtual void GoAwake() override;
-    virtual void GoSleep() override;*/
+    void Delete(bool fForce = false) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc) override;
+    bool r_LoadVal(CScript & s) override;
+    void r_Write(CScript & s) override;
+    bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override;
+    void Copy(const CComponent *target) override;
+    /*bool IsDeleted() const override;
+    void GoAwake() override;
+    void GoSleep() override;*/
 
     /*  I don't want to inherit SetAmount, GetAmount and _iAmount from the parent CItem class. I need to redefine them for CCSpawn class
     *   so that when i set AMOUNT to the spawn item, i don't really set the "item amount/quantity" property, but the "spawn item AMOUNT" property.

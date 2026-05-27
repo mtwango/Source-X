@@ -34,7 +34,7 @@ public:
 	int ReadDir( lpctstr pszFilePath, bool bShowError = true );
 
 	CSFileList();
-    virtual ~CSFileList();
+    ~CSFileList() override;
 
     /**
     * @brief No copy on construction allowed.

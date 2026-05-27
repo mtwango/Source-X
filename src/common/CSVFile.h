@@ -26,7 +26,7 @@ public:
     bool Open(lpctstr ptcFilename = nullptr, uint uiModeFlags = OF_READ|OF_SHARE_DENY_NONE) override;
 
 	CSVFile();
-	~CSVFile();
+	~CSVFile() override;
 
 	CSVFile(const CSVFile& copy) = delete;
 	CSVFile& operator=(const CSVFile& other) = delete;

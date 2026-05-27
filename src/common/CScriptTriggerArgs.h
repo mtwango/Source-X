@@ -39,7 +39,7 @@ public:
     explicit CScriptTriggerArgs(CScriptObj* pObj) noexcept;
     CScriptTriggerArgs(int64 iVal1, int64 iVal2, int64 iVal3, CScriptObj* pObj) noexcept;
 
-    virtual ~CScriptTriggerArgs() = default;
+    ~CScriptTriggerArgs() override = default;
 
     CScriptTriggerArgs(const CScriptTriggerArgs& copy) = delete;
     CScriptTriggerArgs& operator=(const CScriptTriggerArgs& other) = delete;

@@ -29,7 +29,7 @@ protected:
 public:
 	static const char *m_sClassName;
 	CObjBaseTemplate();
-	virtual ~CObjBaseTemplate() = default;
+	~CObjBaseTemplate() override = default;
 
 	CObjBaseTemplate(const CObjBaseTemplate& copy) = delete;
 	CObjBaseTemplate& operator=(const CObjBaseTemplate& other) = delete;

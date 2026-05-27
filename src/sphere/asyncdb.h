@@ -19,23 +19,20 @@ private:
 	typedef std::pair<bool, FunctionQueryPair_t> QueryBlob_t;
 	typedef std::deque<QueryBlob_t> QueueQuery_t;
 
-private:
 	SimpleMutex m_queryMutex;
 	QueueQuery_t m_queriesTodo;
 
 public:
 	CDataBaseAsyncHelper(void);
-    virtual ~CDataBaseAsyncHelper(void) override;
+    ~CDataBaseAsyncHelper(void) override;
 
     CDataBaseAsyncHelper(const CDataBaseAsyncHelper& copy) = delete;
     CDataBaseAsyncHelper& operator=(const CDataBaseAsyncHelper& other) = delete;
 
-public:
-    virtual void onStart() override;
-    virtual void tick() override;
-    virtual void waitForClose() override;
+    void onStart() override;
+    void tick() override;
+    void waitForClose() override;
 
-public:
 	void addQuery(bool isQuery, lpctstr sFunction, lpctstr sQuery);
 };
 

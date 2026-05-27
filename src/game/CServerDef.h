@@ -70,7 +70,7 @@ public:
 	ACCAPP_TYPE m_eAccApp;  // types of new account applications.
 
 	CServerDef( lpctstr pszName, CSocketAddressIP dwIP );
-    virtual ~CServerDef() = default;
+    ~CServerDef() override = default;
 
 	CServerDef(const CServerDef& copy) = delete;
 	CServerDef& operator=(const CServerDef& other) = delete;

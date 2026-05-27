@@ -69,7 +69,7 @@ class CStoneMember : public CSObjListRec, public CScriptObj	// Members for vario
 public:
 	static const char *m_sClassName;
 	CStoneMember(CItemStone* pStone, CUID uid, STONEPRIV_TYPE iType, lpctstr pTitle = "", CUID loyaluidLink = CUID(UID_PLAIN_CLEAR), bool fArg1 = false, bool fArg2 = false, int nAccountGold = 0);
-	virtual ~CStoneMember();
+	~CStoneMember() override;
 
     CStoneMember(const CStoneMember& copy) = delete;
     CStoneMember& operator=(const CStoneMember& other) = delete;

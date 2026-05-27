@@ -47,18 +47,17 @@ public:
     CValueCurveDef m_vcSkill;         // Skill levels required to mine this.
     CValueCurveDef m_vcRegenerateTime;// tenth of seconds once found how long to regen this type.
 
-public:
     explicit CRegionResourceDef( CResourceID rid );
-    virtual ~CRegionResourceDef();
+    ~CRegionResourceDef() override;
 
 private:
     CRegionResourceDef(const CRegionResourceDef& copy);
     CRegionResourceDef& operator=(const CRegionResourceDef& other);
 
 public:
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-    virtual TRIGRET_TYPE OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    TRIGRET_TYPE OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
 };
 
 #endif // _INC_CREGIONRESOURCEDEF_H

@@ -30,34 +30,33 @@ public:
     static constexpr COMPPROPS_TYPE _kiType = COMP_PROPS_ITEMWEAPON;
 
     CCPropsItemWeapon();
-    virtual ~CCPropsItemWeapon() = default;
+    ~CCPropsItemWeapon() override = default;
 
     static bool CanSubscribe(const CItemBase* pItemBase) noexcept;
     static bool CanSubscribe(const CItem* pItem) noexcept;
 
-
-    virtual lpctstr GetName() const override {
+    lpctstr GetName() const override {
         return "ItemWeapon";
     }
-    virtual PropertyIndex_t GetPropsQty() const override {
+    PropertyIndex_t GetPropsQty() const override {
         return PROPIWEAP_QTY;
     }
-    virtual KeyTableDesc_s GetPropertyKeysData() const override;
-    virtual lpctstr GetPropertyName(PropertyIndex_t iPropIndex) const override;
-    virtual bool IsPropertyStr(PropertyIndex_t iPropIndex) const override;
-    virtual bool GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const override;
-    virtual bool GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString *psOutVal, bool fZero = false) const override;
-    virtual bool SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion = RDS_QTY, bool fDeleteZero = true) override;
-    virtual bool SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion = RDS_QTY, bool fDeleteZero = true) override;
-    virtual void DeletePropertyNum(PropertyIndex_t iPropIndex) override;
-    virtual void DeletePropertyStr(PropertyIndex_t iPropIndex) override;
+    KeyTableDesc_s GetPropertyKeysData() const override;
+    lpctstr GetPropertyName(PropertyIndex_t iPropIndex) const override;
+    bool IsPropertyStr(PropertyIndex_t iPropIndex) const override;
+    bool GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const override;
+    bool GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString *psOutVal, bool fZero = false) const override;
+    bool SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion = RDS_QTY, bool fDeleteZero = true) override;
+    bool SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion = RDS_QTY, bool fDeleteZero = true) override;
+    void DeletePropertyNum(PropertyIndex_t iPropIndex) override;
+    void DeletePropertyStr(PropertyIndex_t iPropIndex) override;
 
-    virtual bool FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, PropertyIndex_t iPropIndex, bool fPropStr) override; // Use pLinkedObj = nullptr if calling this from CItemBase or CCharBase
-    virtual bool FindWritePropVal(CSString & sVal, PropertyIndex_t iPropIndex, bool fPropStr) const override;
-    virtual void r_Write(CScript & s) override;
-    virtual void Copy(const CComponentProps *target) override;
+    bool FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, PropertyIndex_t iPropIndex, bool fPropStr) override; // Use pLinkedObj = nullptr if calling this from CItemBase or CCharBase
+    bool FindWritePropVal(CSString & sVal, PropertyIndex_t iPropIndex, bool fPropStr) const override;
+    void r_Write(CScript & s) override;
+    void Copy(const CComponentProps *target) override;
 
-    virtual void AddPropsTooltipData(CObjBase* pLinkedObj) override;
+    void AddPropsTooltipData(CObjBase* pLinkedObj) override;
 
 private:
     BaseContNum_t _mPropsNum;

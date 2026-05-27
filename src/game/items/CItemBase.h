@@ -228,7 +228,7 @@ public:
 	explicit CItemBase( ITEMID_TYPE id );
 
 	// These don't really get destroyed til the server is shut down but keep this around anyhow.
-	virtual ~CItemBase() = default;
+	~CItemBase() override = default;
 
 	CItemBase(const CItemBase& copy) = delete;
 	CItemBase& operator=(const CItemBase& other) = delete;
@@ -371,7 +371,7 @@ public:
 
 	static const char *m_sClassName;
 	CItemBaseDupe(ITEMID_TYPE id, CItemBase* pMasterItem);
-	virtual	~CItemBaseDupe() = default;
+	~CItemBaseDupe() override = default;
 
 	CItemBaseDupe(const CItemBaseDupe& copy) = delete;
 	CItemBaseDupe& operator=(const CItemBaseDupe& other) = delete;
@@ -440,7 +440,7 @@ public:
     uint8 _iMultiCount;     // Count towards char House's count, 0 = no count, 3 = count like 3 houses.
 
 	explicit CItemBaseMulti( CItemBase* pBase );
-	virtual ~CItemBaseMulti() = default;
+	~CItemBaseMulti() override = default;
 
 	CItemBaseMulti(const CItemBaseMulti& copy) = delete;
 	CItemBaseMulti& operator=(const CItemBaseMulti& other) = delete;

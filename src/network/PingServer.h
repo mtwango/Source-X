@@ -21,16 +21,15 @@ private:
 
 public:
 	PingServer(void);
-	virtual ~PingServer(void);
+	~PingServer(void) override;
 
     PingServer(const PingServer& copy) = delete;
     PingServer& operator=(const PingServer& other) = delete;
 
-public:
-	virtual void onStart() override;
-	virtual void tick() override;
-	virtual bool shouldExit() noexcept override;
-	virtual void waitForClose() override;
+	void onStart() override;
+	void tick() override;
+	bool shouldExit() noexcept override;
+	void waitForClose() override;
 };
 
 

@@ -70,8 +70,8 @@ public:
         return m_output.flush(state);
     }
 
-    virtual void onStart(void);
-    virtual void tick(void);
+    void onStart(void) override;
+    void tick(void) override;
 
     void init();
     void flushAllClients(void);			// flush all output

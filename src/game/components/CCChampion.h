@@ -35,7 +35,7 @@ enum CHAMPION_ID
     // TOL Champion.
     CHAMPION_DRAGON_TURTLE,
 
-    CHAMPION_QTY // End of OSI defined Champion spawns.
+    CHAMPION_QTY, // End of OSI defined Champion spawns.
 };
 
 enum ICHMPL_TYPE
@@ -60,7 +60,7 @@ enum ICHMPL_TYPE
     ICHMPL_SPAWNSCUR,
     ICHMPL_SPAWNSMAX,
     ICHMPL_WHITECANDLES,
-    ICHMPL_QTY
+    ICHMPL_QTY,
 };
 
 enum ICHMPV_TYPE
@@ -74,7 +74,7 @@ enum ICHMPV_TYPE
     ICHMPV_MULTICREATE,
     ICHMPV_START,
     ICHMPV_STOP,
-    ICHMPV_QTY
+    ICHMPV_QTY,
 };
 
 enum CHAMPIONDEF_TYPE
@@ -85,7 +85,7 @@ enum CHAMPIONDEF_TYPE
     CHAMPIONDEF_NAME,		///< Champion name: m_sName.
     CHAMPIONDEF_NPCGROUP,	///< Monster level / group: _iSpawn[n][n].
     CHAMPIONDEF_SPAWNSMAX,		///< Total amount of monsters: _iSpawnsMax.
-    CHAMPIONDEF_QTY
+    CHAMPIONDEF_QTY,
 };
 
 enum CANDLEDELREASON_TYPE
@@ -93,7 +93,7 @@ enum CANDLEDELREASON_TYPE
     CANDLEDELREASON_TIMEOUT,
     CANDLEDELREASON_COMMAND,
     CANDLEDELREASON_CLEAR,
-    CANDLEDELREASON_QTY
+    CANDLEDELREASON_QTY,
 };
 
 class CObjBase;
@@ -295,13 +295,13 @@ public:
     /************************************************************************
     * SCP related section.
     ************************************************************************/
-    virtual void Delete(bool fForce = false) override;
-    virtual bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
-    virtual void r_Write(CScript & s) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc) override;
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
-    virtual void Copy(const CComponent *target) override;
+    void Delete(bool fForce = false) override;
+    bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
+    void r_Write(CScript & s) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc) override;
+    bool r_LoadVal(CScript & s) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
+    void Copy(const CComponent *target) override;
     TRIGRET_TYPE OnTrigger(ITRIG_TYPE trig, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc);
 
     /************************************************************************
@@ -311,7 +311,7 @@ public:
     /**
     @brief Champion is being removed, spawns and candles must be removed too!
     */
-    virtual ~CCChampion();
+    ~CCChampion() override;
 
     CItem *GetLink() const;
 
@@ -321,7 +321,7 @@ public:
     * timeout is set to 10 minutes when a new Level is gained or when Champion starts.
     * if players don't gain the needed candles for a new Level before timer expires, a red candle is removed.
     */
-    virtual CCRET_TYPE OnTickComponent() override;
+    CCRET_TYPE OnTickComponent() override;
 
 };
 
@@ -331,7 +331,6 @@ public:
 */
 class CCChampionDef : public CResourceLink
 {
-
     //static lpctstr const sm_szTrigName[CHAMPIONTRIG_QTY+1];
     static lpctstr const sm_szLoadKeys[];
     static const char *m_sClassName;
@@ -347,11 +346,11 @@ public:
     CREID_TYPE _idChampion;             ///< Boss id
 
     explicit CCChampionDef(CResourceID rid);
-    virtual ~CCChampionDef();
-    virtual lpctstr GetName() const override { return(m_sName); }
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-    virtual bool r_LoadVal(CScript& s) override;
-    virtual bool r_Load(CScript& s) override;
+    ~CCChampionDef() override;
+    lpctstr GetName() const override { return(m_sName); }
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_LoadVal(CScript& s) override;
+    bool r_Load(CScript& s) override;
 
 };
 

@@ -162,7 +162,7 @@ public:
 	bool MakeRegionDefname();
 
 	explicit CRegion( CResourceID rid, lpctstr pszName = nullptr );
-	virtual ~CRegion();
+	~CRegion() override;
 
 	CRegion(const CRegion& copy) = delete;
 	CRegion& operator=(const CRegion& other) = delete;
@@ -190,7 +190,7 @@ public:
     bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 
 	explicit CRegionWorld( CResourceID rid, lpctstr pszName = nullptr );
-	virtual ~CRegionWorld();
+	~CRegionWorld() override;
 
 	CRegionWorld(const CRegionWorld& copy) = delete;
 	CRegionWorld& operator=(const CRegionWorld& other) = delete;

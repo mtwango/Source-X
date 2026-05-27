@@ -57,7 +57,7 @@ enum class ThreadPriority : int
     High,
     Highest,
     RealTime,
-    Disabled = 0xFF
+    Disabled = 0xFF,
 };
 
 class AbstractThread
@@ -105,7 +105,6 @@ public:
     AbstractThread(const AbstractThread&) = delete;
     AbstractThread& operator=(const AbstractThread&) = delete;
 
-public:
     threadid_t     getId() const noexcept { return m_threadSystemId; }
     virtual const char *getName() const noexcept { return m_name; }
 
@@ -173,7 +172,6 @@ class AbstractSphereThread : public AbstractThread
 public:
     std::unique_ptr<CExpression> m_pExpr;
 
-public:
     AbstractSphereThread(const char *name, ThreadPriority priority = ThreadPriority::Normal);
     ~AbstractSphereThread() override;
 
@@ -189,15 +187,14 @@ public:
         static void getBufferForStringObject(TemporaryString &string) CANTHROW;
     };
 
-public:
 #ifdef THREAD_TRACK_CALLSTACK
     void signalExceptionCaught() noexcept;
     void signalExceptionStackUnwinding() noexcept;
 
-    inline bool isExceptionCaught() const noexcept { return (m_iCaughtExceptionStackPos >= 0); }
-    inline bool isExceptionStackUnwinding() const noexcept { return (m_iStackUnwindingStackPos >= 0); }
+    bool isExceptionCaught() const noexcept { return (m_iCaughtExceptionStackPos >= 0); }
+    bool isExceptionStackUnwinding() const noexcept { return (m_iStackUnwindingStackPos >= 0); }
 
-    inline void freezeCallStack(bool freeze) noexcept { m_fFreezeCallStack = freeze; }
+    void freezeCallStack(bool freeze) noexcept { m_fFreezeCallStack = freeze; }
 
     void pushStackCall(const char *name) noexcept;
     void popStackCall() NOEXCEPT_NODEBUG;
@@ -286,7 +283,7 @@ public:
     void remove(AbstractThread *thread) CANTHROW;
 
     AbstractThread * getThreadAt(size_t at) noexcept;
-    inline size_t getActiveThreads() noexcept { return static_cast<size_t>(m_threadCount); }
+    size_t getActiveThreads() noexcept { return static_cast<size_t>(m_threadCount); }
 
     void markThreadStarted(AbstractThread* pThr) CANTHROW;
 
@@ -311,7 +308,6 @@ public:
     StackDebugInformation(const StackDebugInformation&) = delete;
     StackDebugInformation& operator=(const StackDebugInformation&) = delete;
 
-public:
     static void printStackTrace() noexcept;
     static void freezeCallStack(bool freeze) noexcept;
 };

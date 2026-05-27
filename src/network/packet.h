@@ -54,7 +54,6 @@ public:
 
     Packet& operator=(const Packet& other) = delete;
 
-public:
 	bool isValid(void) const;
 	uint getLength(void) const; // get total packet length
 	uint getPosition(void) const; // get current position
@@ -162,7 +161,6 @@ public:
 
     PacketSend& operator=(const PacketSend& other) = delete;
 
-public:
 	void initLength(void); // write empty length and ensure that it is remembered
 
 	void target(const CClient* client); // sets person to send packet to
@@ -233,7 +231,6 @@ public:
 	SimplePacketTransaction(const SimplePacketTransaction& copy) = delete;
 	SimplePacketTransaction& operator=(const SimplePacketTransaction& other) = delete;
 
-public:
 	CNetState* getTarget(void) const { return m_packet->getTarget(); }
 	int getPriority(void) const { return m_packet->getPriority(); }
 	void setPriority(int priority) { m_packet->m_priority = priority; }
@@ -271,11 +268,11 @@ public:
 	int getPriority(void) const { return m_priority; }
 	void setPriority(int priority) { m_priority = priority; }
 
-	inline void push_back(PacketSend* packet) { m_packets.push_back(packet); }
-    inline void emplace_back(PacketSend* packet) { m_packets.emplace_back(packet); }
-    inline PacketSend* front(void) { return m_packets.front(); };
-    inline void pop(void) { m_packets.pop_front(); }
-    inline bool empty(void) { return m_packets.empty(); }
+    void push_back(PacketSend* packet) { m_packets.push_back(packet); }
+    void emplace_back(PacketSend* packet) { m_packets.emplace_back(packet); }
+    PacketSend* front(void) { return m_packets.front(); };
+    void pop(void) { m_packets.pop_front(); }
+    bool empty(void) { return m_packets.empty(); }
 };
 
 

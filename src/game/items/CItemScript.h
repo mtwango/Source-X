@@ -8,7 +8,6 @@
 
 #include "CItemVendable.h"
 
-
 class CItemScript : public CItemVendable
 {
     // IT_SCRIPT, IT_EQ_SCRIPT
@@ -18,17 +17,16 @@ public:
     static lpctstr const sm_szVerbKeys[];
 
     CItemScript( ITEMID_TYPE id, CItemBase * pItemDef );
-    virtual ~CItemScript() override = default;
+    ~CItemScript() override = default;
 
     CItemScript(const CItemScript& copy) = delete;
     CItemScript& operator=(const CItemScript& other) = delete;
 
-    virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;	// some command on this object as a target
-    virtual void r_Write( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
+    bool r_Verb( CScript & s, CTextConsole * pSrc ) override;	// some command on this object as a target
+    void r_Write( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
 };
-
 
 #endif // _INC_CITEMSCRIPT_H

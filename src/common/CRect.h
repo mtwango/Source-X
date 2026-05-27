@@ -21,7 +21,6 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
 	int m_bottom;	// South ( NON INCLUSIVE !)
 	int m_map;
 
-
     struct SectIndexingHints_s
     {
         int iBaseSectorIndex;       // Sector index at origin, top-left x,y coords of the rect
@@ -30,7 +29,6 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
         int iRectSectorCount;       // How much sectors are inside this rect
         int iRectMapSectorCols;  // Number of sectors columns (X) per each row in the map (so, map max X)
     };
-
 
     void SetRectEmpty() noexcept;
 
@@ -68,7 +66,7 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
 	{	// non-inclusive
 		return( y >= m_top && y < m_bottom );
 	}
-    inline bool IsInside2d( const CPointBase & pt ) const noexcept
+    bool IsInside2d( const CPointBase & pt ) const noexcept
 	{
 		// NON inclusive rect! Is the point in the rectangle ?
 		return( IsInside( pt.m_x, pt.m_y, pt.m_map ) );
@@ -100,7 +98,7 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
 	lpctstr Write() const;
 };
 
-struct CRectMap : public CRect
+struct CRectMap : CRect
 {
     CRectMap() noexcept = default;
     CRectMap(int left, int top, int right, int bottom, int map) noexcept;
@@ -121,7 +119,7 @@ struct CRectMap : public CRect
 
     bool IsValid() const noexcept;
 
-	virtual void NormalizeRect() noexcept override;
+	void NormalizeRect() noexcept override;
 	void NormalizeRectMax() noexcept;
 };
 

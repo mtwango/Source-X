@@ -81,7 +81,6 @@ protected:
     static constexpr size_t sm_TextBufMaxSize = sizeof(CScriptKeyArgBuf);
     CScriptKeyArgBufPtr m_TextBuf;	// the buffer to hold data read.
 
-protected:
     tchar * _GetKeyBufferRaw();
     //tchar * GetKeyBufferRaw();
     void _FreeKeyBuffer();
@@ -94,7 +93,6 @@ public:
 	bool ParseKey(lpctstr ptcKey);
 	void ParseKeyLate();
 
-public:
 	CScriptKeyAlloc() = default;
 	~CScriptKeyAlloc() = default;
 
@@ -127,27 +125,35 @@ private:
 protected:
     bool _fCacheToBeUpdated;
 
-protected:
 	void _InitBase();
 
 	// text only functions:
     friend class CResourceLock;
-protected:  virtual bool _ReadTextLine( bool fRemoveBlanks );	// looking for a section or reading strangly formated section.
-public:     virtual bool ReadTextLine( bool fRemoveBlanks );
-public:     bool FindTextHeader( lpctstr pszName ); // Find a section in the current script
 
-private:    virtual bool _Open( lpctstr ptcFilename = nullptr, uint uiFlags = OF_READ|OF_TEXT ) override;
-public:     virtual bool Open( lpctstr ptcFilename = nullptr, uint uiFlags = OF_READ|OF_TEXT ) override;
-private:	virtual void _Close() override;
-public:     virtual void Close() override;
-private:    virtual int _Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
-public:     virtual int Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
+    virtual bool _ReadTextLine( bool fRemoveBlanks );	// looking for a section or reading strangly formated section.
+public:
+    virtual bool ReadTextLine( bool fRemoveBlanks );
+    bool FindTextHeader( lpctstr pszName ); // Find a section in the current script
+
+private:
+    bool _Open( lpctstr ptcFilename = nullptr, uint uiFlags = OF_READ|OF_TEXT ) override;
+public:
+    bool Open( lpctstr ptcFilename = nullptr, uint uiFlags = OF_READ|OF_TEXT ) override;
+private:
+    void _Close() override;
+public:
+    void Close() override;
+private:
+    int _Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
+public:
+    int Seek( int iOffset = 0, int iOrigin = SEEK_SET ) override;
 private:    bool _SeekContext( CScriptLineContext const& LineContext );
 public:     bool SeekContext( CScriptLineContext const& LineContext );
-private:	CScriptLineContext _GetContext() const;
-public:     CScriptLineContext GetContext() const;
-
+private:
+    CScriptLineContext _GetContext() const;
 public:
+    CScriptLineContext GetContext() const;
+
     virtual void CloseForce();
 	// Find sections.
 	bool FindNextSection();

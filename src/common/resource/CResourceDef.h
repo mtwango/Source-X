@@ -33,21 +33,20 @@ public:
     CResourceDef(const CResourceDef& copy) = delete;
     CResourceDef& operator=(const CResourceDef& other) = delete;
 
-public:
-    inline const CResourceID& GetResourceID() const noexcept
+    const CResourceID& GetResourceID() const noexcept
     {
         return m_rid;
     }
-    inline RES_TYPE GetResType() const noexcept
+    RES_TYPE GetResType() const noexcept
     {
         return m_rid.GetResType();
     }
-    inline int GetResPage() const noexcept
+    int GetResPage() const noexcept
     {
         return m_rid.GetResPage();
     }
 
-    inline void CopyDef(const CResourceDef * pLink) noexcept
+    void CopyDef(const CResourceDef * pLink) noexcept
     {
         m_pDefName = pLink->m_pDefName;
     }

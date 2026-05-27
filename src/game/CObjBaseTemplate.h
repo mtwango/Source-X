@@ -34,7 +34,6 @@ public:
 	CObjBaseTemplate(const CObjBaseTemplate& copy) = delete;
 	CObjBaseTemplate& operator=(const CObjBaseTemplate& other) = delete;
 
-public:
     [[nodiscard]]
     const CUID& GetUID() const noexcept {
 		return m_UID;
@@ -88,9 +87,7 @@ public:
 		return this;
 	}
 
-
 	// Location
-
     [[nodiscard]]
     LAYER_TYPE GetEquipLayer() const noexcept {
         return (LAYER_TYPE)(m_pt.m_z);
@@ -98,13 +95,13 @@ public:
 	void SetEquipLayer( LAYER_TYPE layer );
 
     [[nodiscard]]
-    inline byte GetContainedLayer() const noexcept {
+    byte GetContainedLayer() const noexcept {
         // used for corpse or Restock count as well in Vendor container.
         return m_pt.m_z;
     }
 	void SetContainedLayer( byte layer ) noexcept;
     [[nodiscard]]
-    inline const CPointMap & GetContainedPoint() const noexcept {
+    const CPointMap & GetContainedPoint() const noexcept {
         return m_pt;
     }
 	void SetContainedPoint( const CPointMap & pt ) noexcept;
@@ -113,7 +110,7 @@ public:
 	void SetTopPoint(const CPointMap& pt);
 	virtual void SetTopZ(char z);
     [[nodiscard]]
-    inline const CPointMap & GetTopPoint() const noexcept {
+    const CPointMap & GetTopPoint() const noexcept {
         return m_pt;
     }
     [[nodiscard]]
@@ -129,18 +126,16 @@ public:
 		m_pt = pt;
 	}
     [[nodiscard]]
-    inline const CPointMap & GetUnkPoint() const noexcept {
+    const CPointMap & GetUnkPoint() const noexcept {
         // don't care where this
         return m_pt;
     }
     [[nodiscard]]
-    inline char GetUnkZ() const noexcept {
+    char GetUnkZ() const noexcept {
 		return m_pt.m_z;
 	}
 
-
 	// Distance and direction
-
     [[nodiscard]]
 	int GetTopDist( const CPointMap & pt ) const;
 

@@ -30,7 +30,6 @@ public:
 protected:
 	CSObjArray< CResourceScript* > m_ResourceFiles;	// All resource files we need to get blocks from later.
 
-protected:
     sl::smart_ptr_view<CResourceDef> ResourceGetDefRef(const CResourceID& rid) const;
     CResourceDef * ResourceGetDef( const CResourceID& rid ) const;
     sl::smart_ptr_view<CResourceDef> ResourceGetDefRefByName(RES_TYPE restype, lpctstr pszName, word wPage = 0);
@@ -49,7 +48,6 @@ public:
 		return ResourceLock(s, ResourceGetIDType(restype, pszName));
 	}
 
-public:
     lpctstr GetName() const;
     CResourceHolder();
 	virtual ~CResourceHolder() = default;

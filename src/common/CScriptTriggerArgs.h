@@ -34,7 +34,6 @@ public:
     CLocalFloatVars			m_VarsFloat;    // "FLOAT.x" = float local variable x
     CLocalObjMap			m_VarObjs;      // "REFx" = local object x
 
-public:
     CScriptTriggerArgs() noexcept;
     explicit CScriptTriggerArgs(lpctstr pszStr);
     explicit CScriptTriggerArgs(CScriptObj* pObj) noexcept;
@@ -46,7 +45,6 @@ public:
     CScriptTriggerArgs& operator=(const CScriptTriggerArgs& other) = delete;
     CScriptTriggerArgs(CScriptTriggerArgs&& move) = delete;
 
-public:
     //Puts the ARGN's into the specified variables
     void GetArgNs(int64* iVar1 = nullptr, int64* iVar2 = nullptr, int64* iVar3 = nullptr);
 
@@ -61,7 +59,7 @@ public:
     bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
     //bool r_Copy( CTextConsole * pSrc );
 
-    virtual lpctstr GetName() const override
+    lpctstr GetName() const override
     {
         return "ARG";
     }

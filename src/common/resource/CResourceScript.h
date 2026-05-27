@@ -22,7 +22,6 @@ private:
     dword m_dwSize;			// Compare to see if this has changed.
     CSTime m_dateChange;	// real world time/date of last change.
 
-private:
     void _Init()
     {
         m_iOpenCount = 0;
@@ -35,18 +34,19 @@ public:
     CResourceScript();
     virtual ~CResourceScript() = default;
 
-private:    bool _CheckForChange();
-public:     bool CheckForChange();
-
+private:
+    bool _CheckForChange();
 public:
+    bool CheckForChange();
+
     CResourceScript(const CResourceScript& copy) = delete;
     CResourceScript& operator=(const CResourceScript& other) = delete;
 
     bool IsFirstCheck() const noexcept;
     void ReSync();
-    virtual bool Open( lpctstr pszFilename = nullptr, uint wFlags = OF_READ ) override;
-    virtual void Close() override;
-    virtual void CloseForce() override;
+    bool Open( lpctstr pszFilename = nullptr, uint wFlags = OF_READ ) override;
+    void Close() override;
+    void CloseForce() override;
 };
 
 

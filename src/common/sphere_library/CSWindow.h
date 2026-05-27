@@ -61,7 +61,7 @@ struct CSWindow    // similar to Std MFC class CWnd
 	int SetDlgItemText( int ID, lpctstr lpszText ) const;
 };
 
-struct CDialogBase : public CSWindow
+struct CDialogBase : CSWindow
 {
 	static const char *m_sClassName;
 	static INT_PTR CALLBACK DialogProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
@@ -72,7 +72,7 @@ struct CDialogBase : public CSWindow
 	virtual BOOL DefDialogProc( UINT message, WPARAM wParam, LPARAM lParam );
 };
 
-struct CSWindowBase : public CSWindow
+struct CSWindowBase : CSWindow
 {
 	static const char *m_sClassName;
 	static LRESULT WINAPI WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam );
@@ -102,7 +102,7 @@ struct CWinApp	// Similar to MFC type
 };
 
 
-struct CScrollBar : public CSWindow
+struct CScrollBar : CSWindow
 {
     // Constructors
 	static const char *m_sClassName;
@@ -114,7 +114,7 @@ struct CScrollBar : public CSWindow
 	BOOL GetScrollInfo(LPSCROLLINFO lpScrollInfo, UINT nMask);
 };
 
-struct CEdit : public CSWindow
+struct CEdit : CSWindow
 {
     // Constructors
 	static const char *m_sClassName;
@@ -129,7 +129,7 @@ struct CEdit : public CSWindow
 	void ReplaceSel( lpctstr lpszNewText, BOOL bCanUndo = FALSE );
 };
 
-struct CRichEditCtrl : public CEdit
+struct CRichEditCtrl : CEdit
 {
 	static const char *m_sClassName;
 	COLORREF SetBackgroundColor( BOOL bSysColor, COLORREF cr );
@@ -153,7 +153,7 @@ struct CRichEditCtrl : public CEdit
 	DWORD SetEventMask(DWORD dwEventMask = ENM_NONE );
 };
 
-struct CListbox : public CSWindow
+struct CListbox : CSWindow
 {
     // Constructors
 	static const char *m_sClassName;

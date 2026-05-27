@@ -13,7 +13,6 @@
 #include "uo_files/uofiles_types.h"
 #include "CEntityProps.h"
 
-
 #define RANGE_MAKE(iHi, iLo)    (((iHi & 0xFF) << 8) | (iLo & 0xFF))   // Highest byte contains highest value, lowest contains the lowest value
 #define RANGE_GET_HI(iRange)    ((iRange >> 8) & 0xFF)
 #define RANGE_GET_LO(iRange)    (iRange & 0xFF)
@@ -142,7 +141,6 @@ public:
 
 	uint64   m_Can;          // Base attribute flags. CAN_C_GHOST, etc
 
-public:
     /**
      * @brief   Gets definition pointer.
      * @param   ptcKey  The key.
@@ -208,24 +206,22 @@ public:
 		m_BaseDefs.DeleteKey(ptcKey);
 	}
 
-public:
 	CBaseBaseDef( CResourceID const& id );
 	virtual ~CBaseBaseDef() = default;
 
 	CBaseBaseDef(const CBaseBaseDef& copy) = delete;
 	CBaseBaseDef& operator=(const CBaseBaseDef& other) = delete;
 
-public:
     /**
      * @brief   Gets the instances number.
      * @return  Count.
      */
-    inline dword GetInstances() const noexcept
+    dword GetInstances() const noexcept
     {
         return _dwInstances;
     }
 
-    inline void AddInstance() noexcept
+    void AddInstance() noexcept
     {
         ++_dwInstances;
     }
@@ -242,7 +238,7 @@ public:
      * @brief   Gets the name.
      * @return  The name.
      */
-	virtual lpctstr GetName() const override;
+    lpctstr GetName() const override;
 
     /**
      * @brief   Query if this object has type name.
@@ -266,11 +262,11 @@ public:
     /**
      * @brief   Un link.
      */
-	virtual void UnLink() override;
+    void UnLink() override;
 
     //virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
 
     /**
      * @brief   Query if this object is valid.

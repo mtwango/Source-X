@@ -33,7 +33,6 @@ public:
 	*/
 	int ReadDir( lpctstr pszFilePath, bool bShowError = true );
 
-public:
 	CSFileList();
     virtual ~CSFileList();
 

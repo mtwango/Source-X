@@ -33,13 +33,12 @@ public:
 
 #define XTRIG_UNKNOWN 0	// bit 0 is reserved to say there are triggers here that do not conform.
 
-public:
-    inline dword GetRefInstances() const noexcept
+    dword GetRefInstances() const noexcept
     {
         return _dwRefInstances;
     }
 
-    inline void AddRefInstance() noexcept
+    void AddRefInstance() noexcept
     {
         ++_dwRefInstances;
     }
@@ -57,7 +56,6 @@ public:
     bool HasTrigger( int i ) const;
     bool ResourceLock( CResourceLock & s );
 
-public:
     CResourceLink(const CResourceID& rid, const CVarDefContNum * pDef = nullptr);
     virtual ~CResourceLink();
 

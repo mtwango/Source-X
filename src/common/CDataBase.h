@@ -26,7 +26,6 @@ public:
     CDataBase(const CDataBase& copy) = delete;
     CDataBase& operator=(const CDataBase& other) = delete;
 
-public:
 	bool Connect(const char *user, const char *password, const char *base = "", const char *host = "localhost");
 	bool Connect();
 	void Close();							//	close link with db
@@ -42,17 +41,16 @@ public:
 	bool isConnected();
 	bool _OnTick();
 
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
 
-	virtual lpctstr GetName() const override
+	lpctstr GetName() const override
 	{
 		return "SQL_OBJ";
 	}
 
-public:
 	CVarDefMap	m_QueryResult;
 	static lpctstr const sm_szLoadKeys[];
 	static lpctstr const sm_szVerbKeys[];
@@ -63,8 +61,8 @@ private:
 
 protected:
     std::unique_ptr<MySQLDataWrapper> _myData;	//	mySQL link
-    bool              m_fConnected;             //	are we online?
-    QueueFunction_t   m_QueryArgs;
+    bool m_fConnected;             //	are we online?
+    QueueFunction_t m_QueryArgs;
 
 private:
 	SimpleMutex m_connectionMutex;

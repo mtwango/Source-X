@@ -21,7 +21,7 @@ enum RTRIG_TYPE
 	RTRIG_EXIT,
 	RTRIG_REGPERIODIC,	// regional periodic. Happens if just 1 or many clients)
 	RTRIG_STEP,
-	RTRIG_QTY
+	RTRIG_QTY,
 };
 
 
@@ -76,7 +76,6 @@ public:
 
 	TRIGRET_TYPE OnRegionTrigger( CTextConsole * pChar, RTRIG_TYPE trig );
 
-public:
 	lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
 	{
 		return m_BaseDefs.GetKeyStr( ptcKey, fZero );
@@ -114,7 +113,7 @@ public:
 
 	void SetModified( dword dwModFlag ) noexcept;
 	void SetName( lpctstr pszName );
-	virtual lpctstr GetName() const override
+	lpctstr GetName() const override
 	{
 		return m_sName.GetBuffer();
 	}
@@ -125,11 +124,11 @@ public:
 
 	void r_WriteBase( CScript & s );
 
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 	virtual void r_WriteBody( CScript & s, lpctstr pszPrefix );
 	virtual void r_WriteModified( CScript & s );
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 	virtual void r_Write( CScript & s );
 
     virtual bool IsValid() const noexcept
@@ -140,18 +139,18 @@ public:
     virtual bool RealizeRegion();
     void UnRealizeRegion();
 
-	virtual bool AddRegionRect( const CRectMap & rect ) override;
+	bool AddRegionRect( const CRectMap & rect ) override;
     bool SetRegionRect( const CRectMap & rect );
 
-    inline dword GetRegionFlags() const noexcept
+    dword GetRegionFlags() const noexcept
 	{
 		return m_dwFlags;
 	}
-    inline bool IsFlag( dword dwFlags ) const noexcept
+    bool IsFlag( dword dwFlags ) const noexcept
 	{
         return (bool( m_dwFlags & dwFlags ));
 	}
-    inline void SetRegionFlags( dword dwFlags ) noexcept
+    void SetRegionFlags( dword dwFlags ) noexcept
 	{
 		m_dwFlags |= dwFlags;
 	}
@@ -162,7 +161,6 @@ public:
 
 	bool MakeRegionDefname();
 
-public:
 	explicit CRegion( CResourceID rid, lpctstr pszName = nullptr );
 	virtual ~CRegion();
 
@@ -181,19 +179,16 @@ public:
 	static lpctstr const sm_szLoadKeys[];
 	static lpctstr const sm_szVerbKeys[];
 
-public:
 	const CRandGroupDef * FindNaturalResource( int /* IT_TYPE */ type ) const;
 
-public:
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-	virtual void r_WriteBody( CScript &s, lpctstr pszPrefix ) override;
-	virtual void r_WriteModified( CScript &s ) override;
-	virtual void r_Write( CScript & s ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    void r_WriteBody( CScript &s, lpctstr pszPrefix ) override;
+    void r_WriteModified( CScript &s ) override;
+    void r_Write( CScript & s ) override;
+    bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
 
-public:
 	explicit CRegionWorld( CResourceID rid, lpctstr pszName = nullptr );
 	virtual ~CRegionWorld();
 

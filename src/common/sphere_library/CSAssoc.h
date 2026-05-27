@@ -21,7 +21,6 @@ struct CValStr
 	lpctstr m_pszName;
 	int m_iVal;
 
-public:
 	lpctstr FindName(int iVal) const;
 	void SetValues( int iVal, lpctstr pszName )
 	{
@@ -50,7 +49,7 @@ enum ELEM_TYPE	// define types of structure/record elements.
 	ELEM_DWORD,		// 4 bytes.
 	ELEM_MASK_DWORD,	// bits in a dword
 
-	ELEM_QTY
+	ELEM_QTY,
 };
 
 

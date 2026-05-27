@@ -22,7 +22,7 @@ enum SERV_STAT_TYPE
 	SERV_STAT_ITEMS,
 	SERV_STAT_ACCOUNTS,
 	SERV_STAT_MEM,		// virtual
-	SERV_STAT_QTY
+	SERV_STAT_QTY,
 };
 
 enum ACCAPP_TYPE	// types of new account applications.
@@ -36,7 +36,7 @@ enum ACCAPP_TYPE	// types of new account applications.
 	ACCAPP_Unspecified,	// Not specified.
 	ACCAPP_Unused7,
 	ACCAPP_Unused8,
-	ACCAPP_QTY
+	ACCAPP_QTY,
 };
 
 class CServerDef : public CScriptObj
@@ -69,14 +69,12 @@ public:
 	CSString m_sLang;
 	ACCAPP_TYPE m_eAccApp;  // types of new account applications.
 
-public:
 	CServerDef( lpctstr pszName, CSocketAddressIP dwIP );
     virtual ~CServerDef() = default;
 
 	CServerDef(const CServerDef& copy) = delete;
 	CServerDef& operator=(const CServerDef& other) = delete;
 
-public:
 	lpctstr GetStatus() const noexcept;
 
 	size_t StatGet( SERV_STAT_TYPE i ) const;
@@ -84,7 +82,7 @@ public:
 	void StatDec( SERV_STAT_TYPE i );
 	void SetStat( SERV_STAT_TYPE i, size_t uiVal );
 
-	virtual lpctstr GetName() const override;
+    lpctstr GetName() const override;
 	void SetName( lpctstr pszName );
 
 	virtual int64 GetAgeHours() const;
@@ -92,8 +90,8 @@ public:
 	void SetValidTime();
 	int64 GetTimeSinceLastValid() const;
 
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr pKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr pKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
 	bool IsConnected() const noexcept;
 

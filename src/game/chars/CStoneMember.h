@@ -22,14 +22,14 @@ enum STONEPRIV_TYPE // Priv level for this char
 	STONEPRIV_UNUSED,
 	STONEPRIV_ACCEPTED,		// The candidate has been accepted. But they have not dclicked on the stone yet.
 	STONEPRIV_ENEMY = 100,	// This is an enemy town/guild.
-	STONEPRIV_ALLY			// This is an ally town/guild.
+	STONEPRIV_ALLY,			// This is an ally town/guild.
 };
 
 class CStoneMember : public CSObjListRec, public CScriptObj	// Members for various stones, and links to stones at war with
 {
 	// NOTE: Chars are linked to the CItemStone via a memory object.
 	friend class CItemStone;
-private:
+
 	STONEPRIV_TYPE m_iPriv;	// What is my status level in the guild ?
 	CUID m_uidLinkTo;			// My char uid or enemy stone UID
 
@@ -74,7 +74,6 @@ public:
     CStoneMember(const CStoneMember& copy) = delete;
     CStoneMember& operator=(const CStoneMember& other) = delete;
 
-public:
 	CStoneMember* GetNext() const;
 	CItemStone * GetParentStone() const;
 
@@ -115,11 +114,11 @@ public:
 	static lpctstr const sm_szLoadKeys[];
 	static lpctstr const sm_szVerbKeys[];
 
-	virtual lpctstr GetName() const override { return m_sClassName; }
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
-	virtual bool r_LoadVal( CScript & s ) override;
+    lpctstr GetName() const override { return m_sClassName; }
+    bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+    bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
+    bool r_LoadVal( CScript & s ) override;
 };
 
 

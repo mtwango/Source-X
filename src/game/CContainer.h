@@ -9,7 +9,6 @@
 #include "../common/sphere_library/CSObjCont.h"
 #include "../common/CScriptObj.h"
 
-
 class CSString;
 class CItem;
 class CItemContainer;
@@ -31,7 +30,6 @@ public:
 	CContainer(const CContainer& copy) = delete;
 	CContainer& operator=(const CContainer& other) = delete;
 
-public:
     int	m_totalweight;      // weight of all the items it has. (1/WEIGHT_UNITS pound)
 
 protected:
@@ -44,11 +42,11 @@ public:
     void ContentDelete(bool fForce);
 
     /**
-     * @fn  virtual void CContainer::OnRemoveObj( CSObjListRec* pObjRec );
+     * @fn  void CContainer::OnRemoveObj( CSObjListRec* pObjRec );
      * @brief   Override this = called when removed from list.
      * @param [in,out]  pObjRec  If non-null, the ob record.
      */
-    virtual void OnRemoveObj(CSObjContRec* pObjRec) override;
+    void OnRemoveObj(CSObjContRec* pObjRec) override;
 
     /**
      * @fn  void CContainer::ContentAddPrivate( CItem * pItem );
@@ -61,7 +59,6 @@ public:
 
     bool r_WriteValContainer(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc);
     bool r_GetRefContainer(lpctstr& ptcKey, CScriptObj*& pRef);
-
 
     /**
      * @fn  int CContainer::GetTotalWeight() const;
@@ -244,6 +241,5 @@ public:
      */
     virtual void ContentAdd( CItem * pItem, bool fForceNoStack = false ) = 0;
 };
-
 
 #endif // _INC_CCONTAINER_H

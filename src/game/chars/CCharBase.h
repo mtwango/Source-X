@@ -59,23 +59,22 @@ public:
 
 	static lpctstr const sm_szLoadKeys[];
 
-public:
 	explicit CCharBase( CREID_TYPE id );
     virtual ~CCharBase() = default;
 
 	CCharBase(const CCharBase& copy) = delete;
 	CCharBase& operator=(const CCharBase& other) = delete;
 
-    	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_Load( CScript & s ) override;
+    bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_Load( CScript & s ) override;
 
 private:
 	void SetFoodType( lpctstr pszFood );
 	void CopyBasic( const CCharBase * pCharDef );
 
 public:
-	virtual void UnLink() override;
+	void UnLink() override;
 
 	CREID_TYPE GetID() const noexcept
 	{
@@ -101,7 +100,6 @@ public:
     */
     byte GetRangeH() const noexcept;
 
-
 	static CCharBase * FindCharBase( CREID_TYPE id );
 	static bool IsValidDispID( CREID_TYPE id ) noexcept;
 	static bool IsPlayableID( CREID_TYPE id, bool fCheckGhost = false) noexcept;
@@ -117,6 +115,5 @@ public:
 	lpctstr GetTradeName() const;
 
 };
-
 
 #endif // _INC_CCHARBASE_H

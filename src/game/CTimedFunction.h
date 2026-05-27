@@ -35,11 +35,15 @@ public:
         return _ptcCommand;
     }
 
-protected:	virtual bool _OnTick() override;
-public:		virtual bool  OnTick() override;
+protected:
+    bool _OnTick() override;
+public:
+    bool  OnTick() override;
 
-protected:  virtual bool _IsDeleted() const override;
-public:     virtual bool IsDeleted() const override; // abstract
+protected:
+    bool _IsDeleted() const override;
+public:
+    bool IsDeleted() const override; // abstract
 };
 
 #endif // _INC_CTIMEDFUNCTION_H

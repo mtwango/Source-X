@@ -33,7 +33,6 @@
 #define PRIV_UNUSED4		0x8000
 #define PRIV_UNUSED (PRIV_UNUSED0|PRIV_UNUSED1|PRIV_UNUSED2|PRIV_UNUSED3|PRIV_UNUSED4)
 
-
 class CClient;
 enum PLEVEL_TYPE : int;
 
@@ -84,7 +83,6 @@ public:
     uint8 _iMaxHouses;          // g_Cfg._iMaxHousesAccount
     uint8 _iMaxShips;           // g_Cfg._iMaxShipsAccount
 
-public:
 	/**
 	* @brief Creates a new CAccount.
 	* Also sanitizes name and register de CAccount.
@@ -96,29 +94,26 @@ public:
 	CAccount(const CAccount& copy) = delete;
 	CAccount& operator=(const CAccount& other) = delete;
 
-public:
 	lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const;
 	int64 GetDefNum( lpctstr ptcKey ) const;
 	void SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero = true);
 	void SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted = false, bool fZero = true);
 	void DeleteDef(lpctstr ptcKey);
 
-
 	/**
 	* @brief Remove a CAccount.
 	* We should go track down and delete all the chars and clients that use this account !
 	*/
-	// virtual not required at the moment but might be if subclassed
-	virtual ~CAccount() override;
+	~CAccount() override;
 
 	/************************************************************************
 	* SCP related section.
 	************************************************************************/
 
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_Verb( CScript &s, CTextConsole * pSrc ) override;
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_Verb( CScript &s, CTextConsole * pSrc ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
 	void r_Write(CScript & s);
 
 	/************************************************************************
@@ -137,7 +132,7 @@ public:
 	* @brief Get the CAccount name.
 	* @return the CAccount name.
 	*/
-	virtual lpctstr GetName() const override {
+	lpctstr GetName() const override {
 	    return m_sName;
     }
 	/**

@@ -45,19 +45,23 @@ public:
 
 public:
 	// information
-    inline size_t size() const noexcept {
+    size_t size() const noexcept {
         return m_length;
     }
-    inline size_t capacity() const noexcept {
+
+    size_t capacity() const noexcept {
         return m_realLength;
     }
-    inline bool empty() const noexcept {
+
+    bool empty() const noexcept {
         return m_length != 0;
     }
-    inline char *buffer() noexcept {
+
+    char *buffer() noexcept {
         return m_buf;
     }
-	inline const char* buffer() const noexcept {
+
+    const char* buffer() const noexcept {
 		return m_buf;
 	}
 
@@ -83,7 +87,7 @@ public:
 	size_t lastIndexOf(char c) const noexcept;
 
 	// operator
-	inline operator lpctstr() const noexcept {      // as a C string
+    operator lpctstr() const noexcept {      // as a C string
         return m_buf;
     }
 	/* // Those dangerous casts need to be explicit!
@@ -133,7 +137,7 @@ class TemporaryString : public AbstractString
 
 public:
 	TemporaryString();
-	virtual ~TemporaryString() override;
+    ~TemporaryString() override;
 
 	TemporaryString(const TemporaryString& copy) = delete;
 	TemporaryString& operator=(const TemporaryString& other) = delete;
@@ -154,7 +158,7 @@ public:
 	TemporaryString(lpctstr pStr, size_t uiLen);
 
 protected:
-	virtual void resize(size_t newLength) override;
+    void resize(size_t newLength) override;
 
 	// should not really be used, made for use of AbstractSphereThread *only*
 	friend class AbstractSphereThread;

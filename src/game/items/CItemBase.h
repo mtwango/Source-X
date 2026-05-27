@@ -225,7 +225,6 @@ public:
 
 	static lpctstr const sm_szLoadKeys[];
 
-public:
 	explicit CItemBase( ITEMID_TYPE id );
 
 	// These don't really get destroyed til the server is shut down but keep this around anyhow.
@@ -237,8 +236,8 @@ public:
     	void CopyBasic( const CItemBase * pBase );
 	void CopyTransfer( CItemBase * pBase );
 
-    	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
 private:
 	static CItemBase * MakeDupeReplacement( CItemBase * pBase, ITEMID_TYPE iddupe );
@@ -295,7 +294,7 @@ public:
 	}
     void SetType(IT_TYPE type);
 
-	virtual void SetTypeName( lpctstr pszName ) override;
+	void SetTypeName( lpctstr pszName ) override;
 
 	LAYER_TYPE GetEquipLayer() const noexcept
 	{
@@ -303,7 +302,7 @@ public:
 		return (LAYER_TYPE)m_layer;
 	}
 
-	virtual lpctstr GetName() const override;
+	lpctstr GetName() const override;
 	lpctstr GetArticleAndSpace() const;
 
 	ITEMID_TYPE GetID() const noexcept
@@ -356,7 +355,7 @@ public:
 	void ResetMakeValue();
 	void Restock();
 
-	virtual void UnLink() override;
+	void UnLink() override;
 
 };
 
@@ -377,17 +376,16 @@ public:
 	CItemBaseDupe(const CItemBaseDupe& copy) = delete;
 	CItemBaseDupe& operator=(const CItemBaseDupe& other) = delete;
 
-public:
 	static CItemBaseDupe* GetDupeRef(ITEMID_TYPE id);
 
-	virtual void UnLink() override;
+	void UnLink() override;
 	CItemBase* GetItemDef() const;
 
-	inline uint64 GetTFlags() const noexcept
+	uint64 GetTFlags() const noexcept
 	{
 		return( m_qwFlags );
 	}
-	inline height_t GetHeight() const noexcept
+	height_t GetHeight() const noexcept
 	{
 		return( m_Height );
 	}
@@ -441,17 +439,15 @@ public:
     uint8 _iLockdownsPercent;
     uint8 _iMultiCount;     // Count towards char House's count, 0 = no count, 3 = count like 3 houses.
 
-public:
 	explicit CItemBaseMulti( CItemBase* pBase );
 	virtual ~CItemBaseMulti() = default;
 
 	CItemBaseMulti(const CItemBaseMulti& copy) = delete;
 	CItemBaseMulti& operator=(const CItemBaseMulti& other) = delete;
 
-    	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pChar = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pChar = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
-public:
 	int GetDistanceMax() const;
 	int GetDistanceDir(DIR_TYPE dir) const;
 
@@ -461,6 +457,5 @@ public:
 
 	static CItemBase * MakeMultiRegion( CItemBase * pBase, CScript & s );
 };
-
 
 #endif // _INC_CITEMBASE_H

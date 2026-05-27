@@ -24,7 +24,6 @@ public:
 	CVarDefCont(const CVarDefCont& copy) = delete;
 	CVarDefCont& operator=(const CVarDefCont& other) = delete;
 
-public:
     virtual lpctstr GetKey() const noexcept = 0;
     virtual void SetKey( lpctstr ptcKey )   = 0;
 
@@ -53,21 +52,21 @@ private:
 	CVarDefContNum& operator=(const CVarDefContNum& other);
 
 public:
-    inline virtual lpctstr GetKey() const noexcept override {
+    lpctstr GetKey() const noexcept override {
         return m_sKey.GetBuffer();
     }
-    inline virtual void SetKey(lpctstr ptcKey) override {
+    void SetKey(lpctstr ptcKey) override {
         m_sKey = ptcKey;
     }
 
-    inline void SetValNum(int64 iVal) {
+    void SetValNum(int64 iVal) {
         m_iVal = iVal;
     }
-    inline virtual int64 GetValNum() const override {
+    int64 GetValNum() const override {
         return m_iVal;
     }
-    virtual lpctstr GetValStr() const override;
-    virtual CVarDefCont * CopySelf() const override;
+    lpctstr GetValStr() const override;
+    CVarDefCont * CopySelf() const override;
 
 	bool r_LoadVal( CScript & s );
 	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc );
@@ -91,19 +90,20 @@ private:
 	CVarDefContStr& operator=(const CVarDefContStr& other);
 
 public:
-    inline virtual lpctstr GetKey() const noexcept override {
+    lpctstr GetKey() const noexcept override {
         return m_sKey.GetBuffer();
     }
-    inline virtual void SetKey(lpctstr ptcKey) override {
+    void SetKey(lpctstr ptcKey) override {
         m_sKey = ptcKey;
     }
 
     void SetValStr( lpctstr pszVal );
-    inline virtual lpctstr GetValStr() const override {
+
+    lpctstr GetValStr() const override {
         return m_sVal.GetBuffer();
     }
-    virtual int64 GetValNum() const override;
-    virtual CVarDefCont * CopySelf() const override;
+    int64 GetValNum() const override;
+    CVarDefCont * CopySelf() const override;
 
 	bool r_LoadVal( CScript & s );
 	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc );
@@ -114,7 +114,7 @@ class CVarDefMap
 {
 	struct ltstr
 	{
-		inline bool operator()(const CVarDefCont * s1, const CVarDefCont * s2) const noexcept
+        bool operator()(const CVarDefCont * s1, const CVarDefCont * s2) const noexcept
         {
             return ( strcmpi(s1->GetKey(), s2->GetKey()) < 0 );
         }
@@ -144,13 +144,11 @@ public:
 	size_t GetCount() const noexcept;
     void Reserve(size_t uiSize);
 
-public:
 	CVarDefMap() = default;
 	~CVarDefMap();
 	CVarDefMap & operator = ( const CVarDefMap & array );
     CVarDefMap(const CVarDefMap& copy) = delete;
 
-public:
 	lpctstr FindValNum( int64 iVal ) const;
 	lpctstr FindValStr( lpctstr pVal ) const;
 

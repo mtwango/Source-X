@@ -6,13 +6,11 @@
 #ifndef _INC_SEND_H
 #define _INC_SEND_H
 
-
 #include "../common/CUID.h"
 #include "../common/CLanguageID.h"
 #include "../common/sphereproto.h"
 #include "../game/game_enums.h"
 #include "packet.h"
-
 
 struct CMenuItem;
 struct CRectMap;
@@ -27,7 +25,6 @@ class CCharRefArray;
 class CItemMultiCustom;
 class CItemShip;
 class CClientTooltip;
-
 
 // TODO: define the virtual destructor of each class with virtual methods in the .cpp file.
 //  Not doing that makes the compiler emit the virtual table (vtable) in every translation unit, instead
@@ -91,7 +88,7 @@ class PacketCombatDamage : public PacketSend
 public:
 	PacketCombatDamage(const CClient* target, word damage, CUID defender);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -126,15 +123,15 @@ private:
 public:
     enum Color
     {
-        GreenBar	= 0x1,
-        YellowBar	= 0x2
+        GreenBar = 0x1,
+        YellowBar = 0x2,
     };
 
     PacketHealthBarUpdateNew(const CClient* target, const CChar* character);
 
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -159,9 +156,9 @@ public:
 
 	PacketHealthBarUpdate(const CClient* target, const CChar* character);
 
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -185,7 +182,7 @@ public:
 
 	static void adjustItemData(const CClient* target, const CItem* item, ITEMID_TYPE &id, HUE_TYPE &hue, word &amount, DIR_TYPE &dir, byte &flags, byte &light);
 
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -278,7 +275,7 @@ class PacketDragAnimation : public PacketSend
 public:
 	PacketDragAnimation(const CChar* source, const CItem* item, const CObjBase* container, const CPointMap* pt);
 
-    virtual bool canSendTo(const CNetState* state) const override;
+    bool canSendTo(const CNetState* state) const override;
 };
 
 /***************************************************************************
@@ -296,7 +293,7 @@ private:
 public:
 	PacketContainerOpen(const CClient* target, const CObjBase* container, GUMP_TYPE gump);
 
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -316,7 +313,7 @@ public:
 	PacketItemContainer(const CItem* spellbook, const CSpellDef* spell);
 
 	void completeForTarget(const CClient* target, const CItem* spellbook);
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -349,7 +346,7 @@ public:
 		OutOfSight = 0x02,
 		TryToSteal = 0x03,
 		AreHolding = 0x04,
-		Other = 0x05
+		Other = 0x05,
 	};
 
 	PacketDragCancel(const CClient* target, Reason code);
@@ -367,7 +364,7 @@ class PacketDropAccepted : public PacketSend
 public:
 	PacketDropAccepted(const CClient* target);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -460,7 +457,7 @@ public:
 	PacketItemContents(CClient* target, const CItemContainer* container, bool fIsShop, bool fFilterLayers); // standard content
 	PacketItemContents(const CClient* target, const CItem* spellbook);			// spellbook spells
 	PacketItemContents(const CClient* target, const CItemContainer* spellbook); // custom spellbook spells
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -512,7 +509,7 @@ public:
 		Idle = 0x07,
 		CouldntAttachServer = 0x08,
 		CharacterTransfer = 0x09,
-		InvalidName = 0x0A
+		InvalidName = 0x0A,
 	};
 
 	PacketWarningMessage(const CClient* target, Message code);
@@ -625,7 +622,7 @@ public:
 		None = 0x00,
 		Harmful = 0x01,
 		Beneficial = 0x02,
-		Cancel = 0x03
+		Cancel = 0x03,
 	};
 
 	PacketAddTarget(const CClient* target, TargetType type, dword context, Flags flags);
@@ -846,7 +843,7 @@ private:
 public:
 	PacketCharacter(CClient* target, const CChar* character);
 
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -874,7 +871,7 @@ class PacketChangeCharacter : public PacketSend
 public:
 	PacketChangeCharacter(CClient* target);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -916,7 +913,7 @@ public:
 		MaxPassTries,   // max password tries reached
 
 
-		Success = 0xFF  // no error
+		Success = 0xFF,  // no error
 	};
 
 	PacketLoginError(const CClient* target, Reason reason);
@@ -941,7 +938,7 @@ public:
 		BackupQueue    = 0x04, // character is currently queued for backup
 		InvalidRequest = 0x05, // couldn't carry out the request
 
-		Success        = 0xFF  // no error
+		Success        = 0xFF,  // no error
 	};
 
 	PacketDeleteError(const CClient* target, Reason reason);
@@ -987,7 +984,7 @@ private:
 
 public:
 	PacketCorpseEquipment(CClient* target, const CItemContainer* corpse);
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 };
 
 /***************************************************************************
@@ -1472,9 +1469,9 @@ protected:
 
 public:
 	PacketPropertyListVersionOld(const CClient* target, const CObjBase* object, dword version);
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1588,7 +1585,7 @@ class PacketStatLocks : public PacketExtended
 public:
     PacketStatLocks(const CClient* target, const CChar* character);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1617,7 +1614,7 @@ class PacketSpellbookContent : public PacketExtended
 public:
 	PacketSpellbookContent(const CClient* target, const CItem* spellbook, word offset);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1646,7 +1643,7 @@ class PacketHouseBeginCustomise : public PacketExtended
 public:
 	PacketHouseBeginCustomise(const CClient* target, const CItemMultiCustom* house);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1675,7 +1672,7 @@ class PacketCombatDamageOld : public PacketExtended
 public:
 	PacketCombatDamageOld(const CClient* target, byte damage, CUID defender);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1756,7 +1753,7 @@ class PacketDisplayBookNew : public PacketSend
 public:
 	PacketDisplayBookNew(const CClient* target, CItem* book);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1778,16 +1775,16 @@ protected:
 public:
 	PacketPropertyList(const CObjBase* object, dword version, const std::vector<std::unique_ptr<CClientTooltip>> &data);
 	PacketPropertyList(const CClient* target, const PacketPropertyList* other);
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 
-	inline CUID getObject(void) const       { return m_object; }
-	inline dword getVersion(void) const     { return m_version; }
-	inline int getEntryCount(void) const    { return m_entryCount; }
-	inline bool isEmpty(void) const         { return m_entryCount == 0; }
+    CUID getObject(void) const       { return m_object; }
+    dword getVersion(void) const     { return m_version; }
+    int getEntryCount(void) const    { return m_entryCount; }
+	bool isEmpty(void) const         { return m_entryCount == 0; }
 
 	bool hasExpired(int64 iTimeout) const;
 
-    virtual inline bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1826,14 +1823,14 @@ protected:
 public:
 	PacketHouseDesign(const CItemMultiCustom* house, int revision);
 	PacketHouseDesign(const PacketHouseDesign* other);
-	virtual ~PacketHouseDesign(void) override;
+    ~PacketHouseDesign(void) override;
 
 	bool writePlaneData(int plane, int itemCount, byte* data, int dataSize);
 	bool writeStairData(ITEMID_TYPE id, int x, int y, int z);
 	void flushStairData(void);
 	void finalise(void);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendToClient(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendToClient(state); }
     static bool CanSendToClient(const CNetState* state);
 };
 
@@ -1851,9 +1848,9 @@ protected:
 
 public:
 	PacketPropertyListVersion(const CClient* target, const CObjBase* object, dword version);
-    virtual bool onSend(const CClient* client) override;
+    bool onSend(const CClient* client) override;
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1870,7 +1867,7 @@ public:
 	PacketBuff(const CClient* target, const BUFF_ICONS iconId, const dword clilocOne, const dword clilocTwo, const word durationSeconds, lpctstr* args, uint argCount); // add buff
 	PacketBuff(const CClient* target, const BUFF_ICONS iconId); // remove buff
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1931,7 +1928,7 @@ class PacketToggleHotbar : public PacketSend
 public:
 	PacketToggleHotbar(const CClient* target, bool enable);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1947,7 +1944,7 @@ class PacketTimeSyncResponse : public PacketSend
 public:
 	PacketTimeSyncResponse(const CClient* target);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1975,7 +1972,7 @@ public:
 	PacketItemWorldNew(const CClient* target, const CItem* item);
 	PacketItemWorldNew(const CClient* target, const CChar* mobile);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -1991,7 +1988,7 @@ class PacketDisplayMapNew : public PacketSend
 public:
 	PacketDisplayMapNew(const CClient* target, const CItemMap* map, const CRectMap& rect);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 
@@ -2020,7 +2017,7 @@ class PacketContainer : public PacketSend
 public:
 	PacketContainer(const CClient* target, CObjBase** objects, uint objectCount);
 
-    virtual bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
+    bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
 };
 

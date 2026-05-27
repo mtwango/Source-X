@@ -47,7 +47,7 @@ enum LOG_TYPE : uint
 	LOGM_HTTP			= 0x020000,
 	LOGM_NOCONTEXT		= 0x040000,	// do not include context information
 	LOGM_DEBUG			= 0x080000,	// debug kind of message with "DEBUG:" prefix
-    LOGM_QTY            = 0x0FFF00  // All masks.
+    LOGM_QTY            = 0x0FFF00,  // All masks.
 };
 
 class CSError;
@@ -80,8 +80,7 @@ public:
 	CEventLog& operator=(const CEventLog& other) = delete;
 };
 
-
-extern struct CLog : public CSFileText, public CEventLog
+extern struct CLog : CSFileText, CEventLog
 {
 private:
 	// MT_CMUTEX_DEF; // There's already the CSFileText::MT_CMUTEX
@@ -103,11 +102,12 @@ public:     const CScript * SetScriptContext( const CScript * pScriptContext );
 protected:  const CScriptObj * _SetObjectContext( const CScriptObj * pObjectContext );
 public:	    const CScriptObj * SetObjectContext( const CScriptObj * pObjectContext );
 
+protected:
+    bool _OpenLog(lpctstr pszName = nullptr);	// name set previously.
+public:
+    bool OpenLog(lpctstr pszName = nullptr);
 
-protected:	bool _OpenLog(lpctstr pszName = nullptr);	// name set previously.
-public:		bool OpenLog(lpctstr pszName = nullptr);
-
-	virtual bool SetFilePath(lpctstr pszName) override;
+	bool SetFilePath(lpctstr pszName) override;
 
 	lpctstr GetLogDir() const;
 	dword GetLogMask() const;
@@ -118,13 +118,12 @@ public:		bool OpenLog(lpctstr pszName = nullptr);
 	bool IsLoggedLevel( LOG_TYPE level ) const;
 	bool IsLogged( dword dwMask ) const;
 
-	virtual int EventStr( dword dwMask, lpctstr pszMsg, ConsoleTextColor iLogColor = CTCOL_DEFAULT ) noexcept final;	// final: for now, it doesn't have any other virtual methods
+	int EventStr( dword dwMask, lpctstr pszMsg, ConsoleTextColor iLogColor = CTCOL_DEFAULT ) noexcept final;	// final: for now, it doesn't have any other virtual methods
     void CatchEvent( const CSError * pErr, lpctstr pszCatchContext, ...  ) SPHERE_PRINTFARGS(3,4);
     void CatchStdException( const std::exception * pExc, lpctstr pszCatchContext, ...  ) SPHERE_PRINTFARGS(3,4);
 
-public:
 	CLog();
-    virtual ~CLog() override;
+    ~CLog() override;
 
 	CLog(const CLog& copy) = delete;
 	CLog& operator=(const CLog& other) = delete;

@@ -31,7 +31,7 @@ enum SPTRIG_TYPE
     SPTRIG_START,
     SPTRIG_SUCCESS,
     SPTRIG_TARGETCANCEL,
-    SPTRIG_QTY
+    SPTRIG_QTY,
 };
 
 /**
@@ -71,8 +71,6 @@ public:
     CValueCurveDef m_Duration;      // length of effect. in tenth of second
     CValueCurveDef m_Interrupt;     // chance to interrupt a spell
 
-public:
-
     /**
     * @fn  bool CSpellDef::IsSpellType( uint64 uiFlags ) const
     *
@@ -87,7 +85,6 @@ public:
         return (( m_uiFlags & uiFlags ) ? true : false );
     }
 
-public:
     explicit CSpellDef( SPELL_TYPE id );
     virtual ~CSpellDef() = default;
 
@@ -96,11 +93,11 @@ private:
     CSpellDef& operator=(const CSpellDef& other);
 
 public:
-    virtual lpctstr GetName() const override {
+    lpctstr GetName() const override {
         return m_sName;
     }
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
     bool GetPrimarySkill( int * piSkill = nullptr, int * piQty = nullptr ) const;
 };

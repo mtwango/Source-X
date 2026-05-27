@@ -19,7 +19,7 @@ enum HOUSE_TYPE
 {
     HOUSE_PRIVATE,
     HOUSE_PUBLIC,
-    HOUSE_GUILD
+    HOUSE_GUILD,
 };
 
 enum TRANSFER_TYPE
@@ -28,7 +28,7 @@ enum TRANSFER_TYPE
     TRANSFER_ALL = 0x1,  // Transfer Locked Down, Addons and normal items placed on ground (Not Components).
     TRANSFER_LOCKDOWNS = 0x2,  // Transfer Locked Down items
     TRANSFER_ADDONS = 0x4,  // Transfer Addons
-    TRANSFER_SECURED = 0x8   // Transfer Secured Containers
+    TRANSFER_SECURED = 0x8,   // Transfer Secured Containers
 };
 
 class CChar;
@@ -586,11 +586,10 @@ protected:
     */
     void OnComponentCreate(CItem * pComponent, bool fIsAddon);
 
-
 public:
     static const char *m_sClassName;
     CItemMulti(ITEMID_TYPE id, CItemBase * pItemDef, bool fTurnable = false);
-    virtual ~CItemMulti() override;
+    ~CItemMulti() override;
 
 private:
     CItemMulti(const CItemMulti& copy);
@@ -601,18 +600,18 @@ public:
     * @brief Tick override.
     * @return true
     */
-    virtual bool _OnTick() override;
+    bool _OnTick() override;
     /**
     * @brief Place the multi.
     * @param pt Position.
     * @param fForceFix force a fix.
     * @return bool if can be moved.
     */
-    virtual bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
+    bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
     /**
     * @brief Moving from current location.
     */
-    virtual void OnMoveFrom() override;
+    void OnMoveFrom() override;
     /**
     * @brief Speech commands on the multi.
     * @param pszCmd the speech.
@@ -639,15 +638,14 @@ public:
     static const CItemBaseMulti * Multi_GetDefByID(ITEMID_TYPE id);
 
     // Scripts virtuals.
+    bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override;
 
-    virtual bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override;
-
-    virtual void r_Write(CScript & s) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual void DupeCopy(const CObjBase * pItemObj) override;  // overriding CItem::DupeCopy
-    virtual bool Delete(bool fForce = false) override;
+    void r_Write(CScript & s) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_LoadVal(CScript & s) override;
+    void DupeCopy(const CObjBase * pItemObj) override;  // overriding CItem::DupeCopy
+    bool Delete(bool fForce = false) override;
 };
 
 /*
@@ -663,7 +661,7 @@ enum HOUSE_PRIV : uchar
     HP_BAN,
     HP_VENDOR,
     HP_GUILD,
-    HP_QTY
+    HP_QTY,
 };
 
 /*
@@ -749,7 +747,6 @@ public:
     * @brief Clears the list of houses.
     */
     void ClearHouses();
-
 
     /**
     * @brief Adds a ship.

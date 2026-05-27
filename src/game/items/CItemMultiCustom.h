@@ -70,7 +70,7 @@ private:
     * @param uidComponent the component.
     * @param fRemoveFromList Whether component should be deleted from list.
     */
-    void DeleteComponent(const CUID& uidComponent, bool fRemoveFromList) override final;
+    void DeleteComponent(const CUID& uidComponent, bool fRemoveFromList) final;
 
     void CopyDesign(CDesignDetails * designFrom, CDesignDetails * designTo);
     void GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<CUID> &vList);

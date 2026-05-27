@@ -39,14 +39,14 @@ public:
         // If there was none defined in scripts.
         Init();
     }
-    virtual ~CSkillClassDef() = default;
+    ~CSkillClassDef() override = default;
 
 private:
     CSkillClassDef(const CSkillClassDef& copy);
     CSkillClassDef& operator=(const CSkillClassDef& other);
 
 public:
-    virtual lpctstr GetName() const override { return( m_sName ); }
+    lpctstr GetName() const override { return( m_sName ); }
 
     bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
     bool r_LoadVal( CScript & s ) override;

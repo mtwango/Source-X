@@ -27,7 +27,7 @@ public:
     CSObjArray() noexcept :
         _fBaseDestructorShouldDeleteElements(true)
     {}
-    virtual ~CSObjArray() noexcept {
+    ~CSObjArray() noexcept override {
         ClearFree();
     }
 

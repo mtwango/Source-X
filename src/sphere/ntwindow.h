@@ -23,10 +23,10 @@ extern struct CNTWindow : public AbstractSphereThread, public CSWindow, public C
         int nCmdShow;
     } _NTWInitParams;
 
-    virtual void onStart() override;
-    virtual void terminate(bool ended) override;
-    virtual bool shouldExit() noexcept override;
-    virtual void tick() override;
+    void onStart() override;
+    void terminate(bool ended) override;
+    bool shouldExit() noexcept override;
+    void tick() override;
 
     bool NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLinel, int nCmdShow);
     void NTWindow_ExitServer();
@@ -49,7 +49,7 @@ public:
         bool OnInitDialog();
         bool OnCommand(WORD wNotifyCode, INT_PTR wID, HWND hwndCtl);
     public:
-        virtual BOOL DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam);
+        BOOL DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam) override;
     };
 
     class CListTextConsole : public CTextConsole		//	CNTWindow::CListTextConsole
@@ -60,19 +60,19 @@ public:
         {
             m_wndList.m_hWnd = hWndList;
         }
-        ~CListTextConsole()
+        ~CListTextConsole() override
         {
             m_wndList.OnDestroy();
         }
-        virtual PLEVEL_TYPE GetPrivLevel() const
+        PLEVEL_TYPE GetPrivLevel() const override
         {
             return PLEVEL_Admin;
         }
-        virtual LPCTSTR GetName() const
+        LPCTSTR GetName() const override
         {
             return "Stats";
         }
-        virtual void SysMessage(LPCTSTR pszMessage) const
+        void SysMessage(LPCTSTR pszMessage) const override
         {
             if (pszMessage == nullptr)
                 return;
@@ -98,7 +98,7 @@ public:
     public:
         void FillClients();
         void FillStats();
-        virtual BOOL DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam);
+        BOOL DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam) override;
     };
 
     COLORREF		m_dwColorNew;	// set the color for the next block written.

@@ -33,7 +33,7 @@ public:
     {
         m_iTotalWeight = 0;
     }
-    virtual ~CRandGroupDef() = default;
+    ~CRandGroupDef() override = default;
 
     CSString	m_sCategory;        // Axis Category
     CSString	m_sSubsection;      // Axis SubSection
@@ -42,9 +42,8 @@ public:
     CRandGroupDef(const CRandGroupDef& copy) = delete;
     CRandGroupDef& operator=(const CRandGroupDef& other) = delete;
 
-public:
-    virtual bool r_LoadVal( CScript & s ) override;
-    virtual bool r_WriteVal( lpctstr pKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_LoadVal( CScript & s ) override;
+    bool r_WriteVal( lpctstr pKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
     size_t GetRandMemberIndex( CChar * pCharSrc = nullptr, bool fTrigger = true ) const;
     CResourceQty GetMember( size_t i ) const
     {

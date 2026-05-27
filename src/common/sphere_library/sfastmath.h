@@ -29,21 +29,18 @@ constexpr bool is_twos_complement_signed()
 }
 static_assert(is_twos_complement_signed<int>());
 
-
-namespace sl
-{
-namespace fmath
+namespace sl::fmath
 {
     // Adapted from: https://github.com/ermig1979/Simd/blob/master/src/Simd/SimdMath.h
 
     template<std::integral T>
-    inline T Average(T a, T b) noexcept
+    T Average(T a, T b) noexcept
     {
         return (a + b + 1) >> 1;
     }
 
     template<std::integral T>
-    inline T Average(T a, T b, T c, T d) noexcept
+    T Average(T a, T b, T c, T d) noexcept
     {
         return (a + b + c + d + 2) >> 2;
     }
@@ -70,7 +67,7 @@ namespace fmath
     */
 
     template<std::signed_integral T>
-    inline void sSortPair(T &iMin, T &iMax) noexcept
+    void sSortPair(T &iMin, T &iMax) noexcept
     {
         // 1) Compute difference
         T d = iMin - iMax;
@@ -90,7 +87,7 @@ namespace fmath
 
     // Sort two unsigned integers so that a ≤ b, branchlessly
     template<std::unsigned_integral T>
-    inline void uSortPair(T &uiMin, T &uiMax) noexcept
+    void uSortPair(T &uiMin, T &uiMax) noexcept
     {
         // Compute a mask of all-1’s if a < b, else 0
         // (a < b) → 1, negate → T(-1) ; (a < b) → 0, negate → T(0)
@@ -113,10 +110,10 @@ namespace fmath
     }
     */
     template<std::unsigned_integral T>
-    inline T uAbsDiff(T a, T b) noexcept
+    T uAbsDiff(T a, T b) noexcept
     {
         // Use the corresponding signed type.
-        using SignedT = typename std::make_signed<T>::type;
+        using SignedT = std::make_signed<T>::type;
 
         // Compute the difference in signed space.
         const SignedT diff = static_cast<SignedT>(a) - static_cast<SignedT>(b);
@@ -130,7 +127,7 @@ namespace fmath
     }
 
     template<std::signed_integral T>
-    inline T sAbsDiff(T a, T b) noexcept
+    T sAbsDiff(T a, T b) noexcept
     {
         const T d    = a - b;
         const T mask = -(d < 0);    // 0 if d>=0, -1 if d<0
@@ -146,7 +143,7 @@ namespace fmath
     }
     */
     template<std::signed_integral T>
-    inline T sMax(T a, T b) noexcept
+    T sMax(T a, T b) noexcept
     {
         const T d    = a - b;
         const T mask = -(d >= 0);   // -1 if a>=b, 0 otherwise
@@ -162,7 +159,7 @@ namespace fmath
     }
     */
     template<std::signed_integral T>
-    inline T sMin(T a, T b) noexcept
+    T sMin(T a, T b) noexcept
     {
         const T d    = a - b;
         const T mask = -(d >= 0);   // -1 if a>=b, 0 otherwise
@@ -178,7 +175,7 @@ namespace fmath
     }
     */
     template<std::signed_integral T>
-    inline T sZeroSatSub(T a, T b) noexcept // clamps negative value to 0
+    T sZeroSatSub(T a, T b) noexcept // clamps negative value to 0
     {
         const T d    = a - b;
         const T mask = -(d >= 0);   // -1 if a>=b, 0 otherwise
@@ -216,7 +213,7 @@ namespace fmath
     // Example: int8_t has range –128…127, abs of –128 returns –128	for our signed Abs* (and it's undefined behavior for abs()) and 128 for our Abs*u.
 
     template<std::signed_integral T>
-    inline T sAbs(T x) noexcept
+    T sAbs(T x) noexcept
     {
         // Signed: branchless two’s‐complement abs
         //
@@ -277,7 +274,6 @@ namespace fmath
     }
     */
 
-} // namespace
 } // namespace
 
 #endif // _INC_SFASTMATH_H

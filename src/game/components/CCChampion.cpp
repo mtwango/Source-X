@@ -123,7 +123,7 @@ CCRET_TYPE CCChampion::OnTickComponent()
 
 CCSpawn* CCChampion::GetSpawnItem()
 {
-    return static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+    return dynamic_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
 }
 
 void CCChampion::Init()
@@ -281,7 +281,7 @@ void CCChampion::SpawnNPC()
         else
         {
             CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-            CCChampionDef* pChampDef = static_cast<CCChampionDef*>(pRes);
+            CCChampionDef* pChampDef = dynamic_cast<CCChampionDef*>(pRes);
             if (pChampDef)
             {
                 uiSize = pChampDef->_idSpawn[_iLevel].size();
@@ -736,7 +736,7 @@ void CCChampion::DelObj(const CUID& uid)
     {
         return;
     }
-    CCSpawn* pSpawn = static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+    CCSpawn* pSpawn = dynamic_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
     ASSERT(pSpawn);
     pSpawn->DelObj(uid);
 
@@ -774,7 +774,7 @@ void CCChampion::r_Write(CScript& s)
     ADDTOCALLSTACK("CCChampion::r_Write");
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-    CCChampionDef* pChampDef = static_cast<CCChampionDef*>(pRes);
+    CCChampionDef* pChampDef = dynamic_cast<CCChampionDef*>(pRes);
 
     if (!pChampDef)
     {
@@ -898,7 +898,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
             else // If it doesnt have, then try to retrieve the group from [CHAMPION ]
             {
                 CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-                CCChampionDef* pChampDef = static_cast<CCChampionDef*>(pRes);
+                CCChampionDef* pChampDef = dynamic_cast<CCChampionDef*>(pRes);
                 if (pChampDef != nullptr)
                 {
                     iSize = (int)pChampDef->_idSpawn[uiGroup].size();
@@ -1115,7 +1115,7 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
         ptcKey += 5;
         lpctstr i = ptcKey;
         SKIP_SEPARATORS(ptcKey);
-        CCSpawn * pSpawn = static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+        CCSpawn * pSpawn = dynamic_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
         if (pSpawn)
         {
             return pSpawn->r_GetRef(i, pRef);
@@ -1184,7 +1184,7 @@ TRIGRET_TYPE CCChampion::OnTrigger(ITRIG_TYPE trig, CScriptTriggerArgsPtr const&
     lpctstr pszTrigName = CItem::sm_szTrigName[trig];
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-    CCChampionDef* pChampDef = static_cast<CCChampionDef*>(pRes);
+    CCChampionDef* pChampDef = dynamic_cast<CCChampionDef*>(pRes);
     CResourceLink* pResourceLink = static_cast <CResourceLink*>(pChampDef);
     ASSERT(pResourceLink);
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;

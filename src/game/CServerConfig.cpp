@@ -3755,7 +3755,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		}
 		else
 		{
-            lpctstr ptcScriptArg = pScript->GetArgStr();
+            ptcScriptArg = pScript->GetArgStr();
             CRegionWorld * pRegion = new CRegionWorld(rid, ptcScriptArg);
 			pRegion->r_Load( *pScript );
 			if (!pRegion->RealizeRegion())
@@ -3788,7 +3788,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		}
 		else
 		{
-            lpctstr ptcScriptArg = pScript->GetArgStr();
+            ptcScriptArg = pScript->GetArgStr();
             CRegion * pRegion = new CRegion( rid, ptcScriptArg );
 			pNewDef = pRegion;
 			ASSERT(pNewDef);
@@ -4094,7 +4094,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		return true;
 	case RES_WORLDLISTS:
 		{
-            lpctstr ptcScriptArg = pScript->GetArgStr();
+            ptcScriptArg = pScript->GetArgStr();
             auto gWriter = g_ExprGlobals.mtEngineLockedWriter();
             CListDefCont* pListBase = gWriter->m_ListGlobals.AddList(ptcScriptArg);
 

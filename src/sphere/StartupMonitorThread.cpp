@@ -1,5 +1,5 @@
 /**
- * @file startup_monitor_thread.cpp
+ * @file StartupMonitorThread.cpp
  *
  * Implementation of StartupMonitorThread: a Sphere thread context bound to the
  * bootstrap OS thread for startup work, then re-used as the monitor thread.

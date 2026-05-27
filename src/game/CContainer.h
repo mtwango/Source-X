@@ -136,14 +136,14 @@ public:
      * @fn  TRIGRET_TYPE CContainer::OnContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgsPtr const& pScriptArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, RESOURCE_ID_BASE rid, dword dwArg = 0, int iDescendLevels = 255 );
      * @brief   Executes the container trigger for loop action.
      * @param [in,out]  s               The CScript to process.
+     * @param [in,out]  pScriptArgs     If non-null, the arguments.
      * @param [in,out]  pSrc            If non-null, source for the.
-     * @param [in,out]  pArgs           If non-null, the arguments.
      * @param [out] pResult             If non-null, the result.
      * @param [in,out]  StartContext    Context for the start.
      * @param [in,out]  EndContext      Context for the end.
      * @param   rid                     The rid.
      * @param   dwArg                   The argument.
-     * @param   iDescendLevels           Zero-based index of the decend levels.
+     * @param   iDescendLevels          Zero-based index of the decend levels.
      *
      * @return  A TRIGRET_TYPE.
      */
@@ -153,8 +153,8 @@ public:
      * @fn  TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgsPtr const& pScriptArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, int iDecendLevels = 255 );
      * @brief   Executes the generic container trigger for loop action.
      * @param [in,out]  s               The CScript to process.
+     * @param [in,out]  pScriptArgs     If non-null, the arguments.
      * @param [in,out]  pSrc            If non-null, source for the.
-     * @param [in,out]  pArgs           If non-null, the arguments.
      * @param [out] pResult             If non-null, the result.
      * @param [in,out]  StartContext    Context for the start.
      * @param [in,out]  EndContext      Context for the end.

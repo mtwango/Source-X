@@ -584,7 +584,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
                     continue;
 
                 const CPointMap ptMulti = pItem->GetTopPoint();
-                pMult = g_Cfg.GetMultiItemDefs(pItem);
+                pMulti = g_Cfg.GetMultiItemDefs(pItem);
                 if (pMulti == nullptr)
                     continue;
 

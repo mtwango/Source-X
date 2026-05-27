@@ -134,7 +134,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
     // If too much stuff. then some will fall overboard. hehe.
     CItem *pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
-    CItemMulti *pMulti = static_cast<CItemMulti*>(pItemThis);
+    CItemMulti *pMulti = dynamic_cast<CItemMulti*>(pItemThis);
     if (!pItemThis->IsTopLevel())
         return 0;
 
@@ -278,7 +278,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
 
     CItem *pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
-    CItemMulti *pMultiThis = static_cast<CItemMulti*>(pItemThis);
+    CItemMulti *pMultiThis = dynamic_cast<CItemMulti*>(pItemThis);
     ASSERT(pMultiThis->GetRegion()->m_iLinkedSectors);
 
     const int zNew = pItemThis->GetTopZ() + ptDelta.m_z;
@@ -357,13 +357,13 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
                     if ((ptMe.GetDistSight(pt) < iViewDist)
                         && ( (ptMe.GetDistSight(ptOld) >= iViewDist) || !(pNetState->isClientVersionNumber(MINCLIVER_HS) || pNetState->isClientEnhanced()) || IsSetOF(OF_NoSmoothSailing) ))
                     {
-                        CItem *pItem = static_cast<CItem *>(pObj);
+                        CItem *pItem = dynamic_cast<CItem *>(pObj);
                         pClient->addItem(pItem);
                     }
                 }
                 else
                 {
-                    CChar *pChar = static_cast<CChar *>(pObj);
+                    CChar *pChar = dynamic_cast<CChar *>(pObj);
                     if (pClient == pChar->GetClientActive())
                     {
                         if (!fClientUsesSmoothSailing)
@@ -422,7 +422,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
 
 bool CCMultiMovable::MoveToRegion(CRegionWorld * pRegionOld, CRegionWorld *pRegionNew)
 {
-    CItemMulti *pMulti = static_cast<CItemMulti*>(this);
+    CItemMulti *pMulti = dynamic_cast<CItemMulti*>(this);
     if (pRegionOld == pRegionNew)
     {
         return true;
@@ -593,7 +593,7 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
         pt.m_y = (short)(ptThis.m_y + yd);
         if (pObj->IsItem())
         {
-            CItem * pItem = static_cast<CItem*>(pObj);
+            CItem * pItem = dynamic_cast<CItem*>(pObj);
             if (pItem == pMultiThis)
             {
                 pMultiThis->GetRegion()->UnRealizeRegion();
@@ -634,7 +634,7 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
         }
         else if (pObj->IsChar())
         {
-            CChar *pChar = static_cast<CChar*>(pObj);
+            CChar *pChar = dynamic_cast<CChar*>(pObj);
             pChar->m_dirFace = GetDirTurn(pChar->m_dirFace, iTurn);
             pChar->RemoveFromView();
         }
@@ -657,7 +657,7 @@ bool CCMultiMovable::Move(DIR_TYPE dir, int distance)
     if ((dir >= DIR_QTY) || (dir <= DIR_INVALID))
         return false;
 
-    CItemMulti *pMulti = static_cast<CItemMulti*>(this);
+    CItemMulti *pMulti = dynamic_cast<CItemMulti*>(this);
     const CRegion* pMultiRegion = pMulti->GetRegion();
     if (pMultiRegion == nullptr)
     {
@@ -988,7 +988,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
 
     CItem *pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
-    CItemMulti *pMultiThis = static_cast<CItemMulti*>(pItemThis);
+    CItemMulti *pMultiThis = dynamic_cast<CItemMulti*>(pItemThis);
     if (!pSrc || !pItemThis->IsTopLevel())
         return false;
 

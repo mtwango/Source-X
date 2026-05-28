@@ -54,7 +54,7 @@ CCharBase::CCharBase( CREID_TYPE id ) :
 lpctstr CCharBase::GetTradeName() const
 {
 	ADDTOCALLSTACK("CCharBase::GetTradeName");
-	lpctstr pName = CBaseBaseDef::GetTypeName();
+	lpctstr pName = GetTypeName();
 	if ( pName[0] != '#' )
 		return pName;
 
@@ -167,7 +167,7 @@ bool CCharBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 
     // Checking Props CComponents first
     EXC_SET_BLOCK("EntityProps");
-    if (!fNoCallChildren && CEntityProps::r_WritePropVal(ptcKey, sVal, nullptr, this))
+    if (!fNoCallChildren && r_WritePropVal(ptcKey, sVal, nullptr, this))
     {
         return true;
     }
@@ -323,7 +323,7 @@ bool CCharBase::r_LoadVal( CScript & s )
 
     // Checking Props CComponents first
     EXC_SET_BLOCK("EntityProps");
-    if (CEntityProps::r_LoadPropVal(s, nullptr, this))
+    if (r_LoadPropVal(s, nullptr, this))
     {
         return true;
     }
@@ -537,7 +537,7 @@ bool CCharBase::IsValidDispID( CREID_TYPE id ) noexcept //  static
 
 bool CCharBase::IsPlayableID( CREID_TYPE id, bool bCheckGhost) noexcept
 {
-    return ( CCharBase::IsHumanID( id, bCheckGhost) || CCharBase::IsElfID( id, bCheckGhost) || CCharBase::IsGargoyleID( id, bCheckGhost));
+    return ( IsHumanID( id, bCheckGhost) || IsElfID( id, bCheckGhost) || IsGargoyleID( id, bCheckGhost));
 }
 
 bool CCharBase::IsHumanID( CREID_TYPE id, bool bCheckGhost ) noexcept // static

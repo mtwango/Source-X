@@ -46,7 +46,7 @@ TRIGRET_TYPE CRegionResourceDef::OnTrigger(lpctstr pszTrigName, CScriptTriggerAr
     CResourceLock s;
     if ( ResourceLock( s ))
     {
-        TRIGRET_TYPE iRet = CScriptObj::OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc);
+        TRIGRET_TYPE iRet = OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc);
         return iRet;
     }
     return TRIGRET_RET_DEFAULT;

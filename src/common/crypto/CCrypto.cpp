@@ -55,7 +55,7 @@ void CCryptoKeysHolder::LoadKeyTable(CScript& s)
 	}
 }
 
-void CCryptoKeysHolder::addNoCryptKey(void)
+void CCryptoKeysHolder::addNoCryptKey()
 {
 	ADDTOCALLSTACK("CCrypto::addNoCryptKey");
 	CCryptoClientKey c{};

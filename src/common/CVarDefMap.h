@@ -36,7 +36,6 @@ public:
 
 class CVarDefContNum : public CVarDefCont
 {
-private:
     CSString m_sKey;    // reference to map key
 	int64 m_iVal;       // the assigned value
 
@@ -74,7 +73,6 @@ public:
 
 class CVarDefContStr : public CVarDefCont
 {
-private:
     CSString m_sKey;    // map key
 	CSString m_sVal;    // the assigned value
 

@@ -43,7 +43,7 @@ public:
     /** @name Iterators:
     */
     ///@{
-public:
+
     /**
     * @brief get the CSObjList propietary of this record.
     * @return CSObjList propietary of this record.

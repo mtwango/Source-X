@@ -49,7 +49,7 @@ class CWebPageDef : public CResourceLink
     static lpctstr const sm_szVerbKeys[];
     static lpctstr const sm_szPageType[];
     static lpctstr const sm_szPageExt[];
-private:
+
     WEBPAGE_TYPE m_type;        // What basic format of file is this ? 0=text
     CSString m_sSrcFilePath;    // source template for the generated web page.
     PLEVEL_TYPE m_privlevel;    // What priv level to see this page ?

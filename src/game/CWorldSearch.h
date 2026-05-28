@@ -69,7 +69,6 @@ public:
     CWorldSearch(size_t uiPreallocateSize);
     ~CWorldSearch() noexcept;
 
-public:
     void Reset(const CPointMap& pt, int iDist = 0);
     void SetAllShow(bool fView);
     void SetSearchSquare(bool fSquareSearch);

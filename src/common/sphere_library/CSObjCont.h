@@ -11,7 +11,6 @@
 #include <vector>
 #include <utility> // for std::move
 
-
 /* Reverse container wrapper */
 
 template <typename T>
@@ -22,8 +21,8 @@ class cont_reversed
 public:
     explicit cont_reversed(T&& iterable) noexcept : _iterable{ std::move(iterable) } {}
 
-    inline auto begin() const noexcept  { return std::rbegin(_iterable); }
-    inline auto end() const noexcept    { return std::rend(_iterable);   }
+    auto begin() const noexcept  { return std::rbegin(_iterable); }
+    auto end() const noexcept    { return std::rend(_iterable);   }
 };
 
 
@@ -35,8 +34,8 @@ class cont_reverse_iterate
 public:
     explicit cont_reverse_iterate(T &iterable) noexcept : _iterable{ iterable } {}
 
-    inline auto begin() const noexcept  { return std::rbegin(_iterable); }
-    inline auto end() const noexcept    { return std::rend(_iterable); }
+    auto begin() const noexcept  { return std::rbegin(_iterable); }
+    auto end() const noexcept    { return std::rend(_iterable); }
 };
 
 
@@ -76,28 +75,27 @@ public:
     */
     ///@{
 
-public:
     using iterator               = BASECONT::iterator;
     using const_iterator         = BASECONT::const_iterator;
     using reverse_iterator       = BASECONT::reverse_iterator;
     using const_reverse_iterator = BASECONT::const_reverse_iterator;
 
-    inline iterator begin() noexcept                        { return _Contents.begin();  }
-    inline iterator end()   noexcept                        { return _Contents.end();    }
-    inline const_iterator begin()  const noexcept           { return _Contents.begin();  }
-    inline const_iterator end()    const noexcept           { return _Contents.end();    }
-    inline const_iterator cbegin() const noexcept           { return _Contents.cbegin(); }
-    inline const_iterator cend()   const noexcept           { return _Contents.cend();   }
+    iterator begin() noexcept                        { return _Contents.begin();  }
+    iterator end()   noexcept                        { return _Contents.end();    }
+    const_iterator begin()  const noexcept           { return _Contents.begin();  }
+    const_iterator end()    const noexcept           { return _Contents.end();    }
+    const_iterator cbegin() const noexcept           { return _Contents.cbegin(); }
+    const_iterator cend()   const noexcept           { return _Contents.cend();   }
 
-    inline reverse_iterator rbegin() noexcept               { return _Contents.rbegin(); }
-    inline reverse_iterator rend()   noexcept               { return _Contents.rend();   }
-    inline const_reverse_iterator rbegin()  const noexcept  { return _Contents.rbegin(); }
-    inline const_reverse_iterator rend()    const noexcept  { return _Contents.rend();   }
+    reverse_iterator rbegin() noexcept               { return _Contents.rbegin(); }
+    reverse_iterator rend()   noexcept               { return _Contents.rend();   }
+    const_reverse_iterator rbegin()  const noexcept  { return _Contents.rbegin(); }
+    const_reverse_iterator rend()    const noexcept  { return _Contents.rend();   }
 
-    inline size_t size() const noexcept                     { return _Contents.size();   }
-    inline const CSObjContRec *const * data() const noexcept{ return _Contents.data();   }
+    size_t size() const noexcept                     { return _Contents.size();   }
+    const CSObjContRec *const * data() const noexcept{ return _Contents.data();   }
 
-    inline BASECONT::iterator erase(BASECONT::iterator it)  { return _Contents.erase(it); }
+    BASECONT::iterator erase(BASECONT::iterator it)  { return _Contents.erase(it); }
 
     /**
     * @brief Returns a copy of the CSObjCont base container, which is safe to iterate on even if one of its elements is ::Delete'd.
@@ -209,7 +207,7 @@ BASECONT CSObjCont::GetIterationSafeCont() const noexcept
 
 cont_reversed<BASECONT> CSObjCont::GetIterationSafeContReverse() const noexcept
 {
-    return cont_reversed<BASECONT>(BASECONT(_Contents)); // Return a reverse-iterable copy of the base container
+    return cont_reversed(BASECONT(_Contents)); // Return a reverse-iterable copy of the base container
 }
 
 bool CSObjCont::IsContainerEmpty() const noexcept

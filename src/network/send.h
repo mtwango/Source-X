@@ -117,7 +117,6 @@ private:
 ***************************************************************************/
 class PacketHealthBarUpdateNew : public PacketSend
 {
-private:
     CUID m_character;
 
 public:
@@ -144,7 +143,6 @@ public:
  ***************************************************************************/
 class PacketHealthBarUpdate : public PacketSend
 {
-private:
 	CUID m_character;
 
 public:
@@ -171,7 +169,6 @@ public:
  ***************************************************************************/
 class PacketItemWorld : public PacketSend
 {
-private:
 	CUID m_item;
 
 protected:
@@ -287,7 +284,6 @@ public:
  ***************************************************************************/
 class PacketContainerOpen : public PacketSend
 {
-private:
 	CUID m_container;
 
 public:
@@ -305,7 +301,6 @@ public:
  ***************************************************************************/
 class PacketItemContainer : public PacketSend
 {
-private:
 	CUID m_item;
 
 public:
@@ -449,7 +444,6 @@ public:
  ***************************************************************************/
 class PacketItemContents : public PacketSend
 {
-private:
 	CUID m_container;
 	word m_count;
 
@@ -797,7 +791,7 @@ public:
 class PacketVendorBuyList : public PacketSend
 {
 public:
-	PacketVendorBuyList(void);
+	PacketVendorBuyList();
 	uint fillBuyData(const CItemContainer* container, int iConvertFactor);
 };
 
@@ -836,7 +830,6 @@ public:
  ***************************************************************************/
 class PacketCharacter : public PacketSend
 {
-private:
 	CUID m_character;
 
 public:
@@ -978,7 +971,6 @@ public:
  ***************************************************************************/
 class PacketCorpseEquipment : public PacketSend
 {
-private:
 	CUID m_corpse;
 
 public:
@@ -1008,7 +1000,6 @@ public:
  ***************************************************************************/
 class PacketServerRelay : public PacketSend
 {
-private:
 	dword m_customerId;
 
 public:
@@ -1483,7 +1474,6 @@ public:
  ***************************************************************************/
 class PacketDisplayPopup : public PacketExtended
 {
-private:
 	bool m_newPacketFormat;
 	int m_popupCount;
 
@@ -1491,9 +1481,9 @@ public:
 	PacketDisplayPopup(const CClient* target, CUID uid);
 
 	void addOption(word entryTag, dword textId, word flags, word color);
-	void finalise(void);
+	void finalise();
 
-	int getOptionCount(void) const
+	int getOptionCount() const
 	{
 		return m_popupCount;
 	}
@@ -1776,10 +1766,10 @@ public:
 	PacketPropertyList(const CClient* target, const PacketPropertyList* other);
     bool onSend(const CClient* client) override;
 
-    CUID getObject(void) const       { return m_object; }
-    dword getVersion(void) const     { return m_version; }
-    int getEntryCount(void) const    { return m_entryCount; }
-	bool isEmpty(void) const         { return m_entryCount == 0; }
+    CUID getObject() const       { return m_object; }
+    dword getVersion() const     { return m_version; }
+    int getEntryCount() const    { return m_entryCount; }
+	bool isEmpty() const         { return m_entryCount == 0; }
 
 	bool hasExpired(int64 iTimeout) const;
 
@@ -1800,7 +1790,6 @@ class PacketHouseDesign : public PacketSend
 #define STAIRSPERBLOCK		750		// number of stair items per block
 #define STAIRDATA_BUFFER    (sizeof(StairData) * STAIRSPERBLOCK) // bytes reserved for stair data
 
-private:
 	struct StairData
 	{
 		nword m_id;
@@ -1822,12 +1811,12 @@ protected:
 public:
 	PacketHouseDesign(const CItemMultiCustom* house, int revision);
 	PacketHouseDesign(const PacketHouseDesign* other);
-    ~PacketHouseDesign(void) override;
+    ~PacketHouseDesign() override;
 
 	bool writePlaneData(int plane, int itemCount, byte* data, int dataSize);
 	bool writeStairData(ITEMID_TYPE id, int x, int y, int z);
-	void flushStairData(void);
-	void finalise(void);
+	void flushStairData();
+	void finalise();
 
     bool canSendTo(const CNetState* state) const override { return CanSendToClient(state); }
     static bool CanSendToClient(const CNetState* state);
@@ -1863,8 +1852,8 @@ public:
 class PacketBuff : public PacketSend
 {
 public:
-	PacketBuff(const CClient* target, const BUFF_ICONS iconId, const dword clilocOne, const dword clilocTwo, const word durationSeconds, lpctstr* args, uint argCount); // add buff
-	PacketBuff(const CClient* target, const BUFF_ICONS iconId); // remove buff
+	PacketBuff(const CClient* target, BUFF_ICONS iconId, dword clilocOne, dword clilocTwo, word durationSeconds, lpctstr* args, uint argCount); // add buff
+	PacketBuff(const CClient* target, BUFF_ICONS iconId); // remove buff
 
     bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);

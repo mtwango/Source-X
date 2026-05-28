@@ -13,7 +13,6 @@ extern struct CSRand
 {
     friend struct CFloatMath;
 
-public:
     // Interfaces.
     static int64 GetLLVal(int64 iQty);					// Get a random value between 0 and iQty - 1 (slower than the 32bit number variant)
     static int64 GetLLVal2(int64 iMin, int64 iMax);

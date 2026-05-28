@@ -94,7 +94,7 @@
 #define CAN_I_MOVEMASK      (CAN_I_DOOR|CAN_I_WATER|CAN_I_PLATFORM|CAN_I_BLOCK|CAN_I_CLIMB|CAN_I_FIRE|CAN_I_ROOF|CAN_I_HOVER)
 
 
-struct CBaseBaseDef : public CResourceLink, public CEntityProps
+struct CBaseBaseDef : CResourceLink, CEntityProps
 {
 	// Minimal amount of common info to define RES_ITEMDEF or RES_CHARDEF, (it might just be a DUPE)
 	// The unique index id.	(WILL not be the same as artwork if outside artwork range)

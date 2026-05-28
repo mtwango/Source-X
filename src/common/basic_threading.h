@@ -142,7 +142,7 @@ public:
     template<typename... Args>
     [[nodiscard]]
     explicit GuardedAccess(Args&&... args)
-        : mutex_(), data_(std::forward<Args>(args)...)
+        : data_(std::forward<Args>(args)...)
     {}
 
     // ----- Reader proxies -----

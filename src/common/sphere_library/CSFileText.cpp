@@ -141,7 +141,7 @@ void CSFileText::Flush() const
 {
     ADDTOCALLSTACK("CSFileText::Flush");
     MT_UNIQUE_LOCK_SET(this);
-    CSFileText::_Flush();
+    _Flush();
 }
 
 bool CSFileText::_IsEOF() const

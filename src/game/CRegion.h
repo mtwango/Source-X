@@ -30,7 +30,6 @@ class CRegion : public CResourceDef, public CRegionBase
 	// region of the world of arbitrary size and location.
 	// made of (possibly multiple) rectangles.
 	// RES_ROOM or base for RES_AREA
-private:
 	CSString	m_sName;	// Name of the region.
 	CSString	m_sGroup;
 

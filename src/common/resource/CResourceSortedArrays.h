@@ -15,7 +15,7 @@ class CUOMulti;
 struct CValStr;
 
 
-struct CSStringSortArray final : public CSObjSortArray< tchar*, tchar* >
+struct CSStringSortArray final : CSObjSortArray< tchar*, tchar* >
 {
     CSStringSortArray() noexcept {
         _fBaseDestructorShouldDeleteElements = false;
@@ -59,7 +59,7 @@ class CSkillKeySortArray final : public CSObjSortArray< CValStr*, lpctstr >
     int CompareKey( lpctstr ptcKey, CValStr * pVal, bool fNoSpaces ) const override;
 };
 
-struct CMultiDefArray final : public CSObjSortArray< CUOMulti*, MULTI_TYPE >
+struct CMultiDefArray final : CSObjSortArray< CUOMulti*, MULTI_TYPE >
 {
     // store the static components of a IT_MULTI
     // Sorted array

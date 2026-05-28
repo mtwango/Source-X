@@ -43,7 +43,7 @@ void StartupMonitorThread::renameAsMonitor()
 
     // Rename the current OS thread (bootstrap thread) to “T_Monitor”
     // for better visibility in debuggers and logs.
-    AbstractThread::setThreadName("T_Monitor");
+    setThreadName("T_Monitor");
     // Keep our internal name in sync for logs using getName().
     overwriteInternalThreadName("T_Monitor");
 }

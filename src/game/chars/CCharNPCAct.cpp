@@ -1565,7 +1565,6 @@ void CChar::NPC_Act_GoHome()
    	if ( !NPC_WalkToPoint() ) // get there
    	{
    		Skill_Start(SKILL_NONE);
-		return;
 	}
 }
 
@@ -1850,7 +1849,7 @@ bool CChar::NPC_Act_Food()
 		if ( iClosestFood <= 1 )
 		{
 			//	can take and eat just in place
-			ushort uiEaten = (ushort)(pClosestFood->ConsumeAmount(uiEatAmount));
+			ushort uiEaten = pClosestFood->ConsumeAmount(uiEatAmount);
 			EatAnim(pClosestFood, uiEaten);
 			if ( !pClosestFood->GetAmount() )
 			{

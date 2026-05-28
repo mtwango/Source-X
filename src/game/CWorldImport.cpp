@@ -8,18 +8,16 @@
 #include "CWorldSearch.h"
 
 
-struct CImportSer : public CSObjListRec
+struct CImportSer : CSObjListRec
 {
 	// Temporary holding structure for new objects being impoted.
 
-public:
 	// Translate the import UID's into my UID's
 	const dword m_dwSer;		// My Imported serial number
 	CObjBase * m_pObj;	// new world object corresponding.
 	dword m_dwContSer;	// My containers' serial number
 	LAYER_TYPE m_layer;	// UOX does this diff than us. so store this here.
 
-public:
 	bool IsTopLevel() const noexcept
 	{
 		return( m_dwContSer == UID_UNUSED );
@@ -55,7 +53,6 @@ struct CImportFile
 	tchar * m_pszArg1;	// account
 	tchar * m_pszArg2;	// name
 
-public:
 	CImportFile( word wModeFlags, CPointMap ptCenter, int iDist ) :
 		m_wModeFlags(wModeFlags),
 		m_ptCenter(ptCenter),
@@ -70,7 +67,6 @@ public:
 	CImportFile(const CImportFile& copy) = delete;
 	CImportFile& operator=(const CImportFile& other) = delete;
 
-public:
 	void CheckLast();
 	void ImportFix();
 	bool ImportSCP( CScript & s, word wModeFlags );

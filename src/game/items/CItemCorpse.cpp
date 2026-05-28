@@ -107,7 +107,7 @@ int CItemCorpse::GetWeight(word amount) const
 	UnreferencedParameter(amount);
 	// GetAmount is messed up.
 	// true weight == container item + contents.
-	return( 1 + CContainer::GetTotalWeight());
+	return( 1 + GetTotalWeight());
 }
 
 

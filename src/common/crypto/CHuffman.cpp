@@ -88,7 +88,7 @@ uint CHuffman::Compress( byte * pOutput, const byte * pInput, uint outLen, uint 
             return 0;
 
         // pOutput[iLen++] = xOutVal << (8u - bitidx);
-		pOutput[iLen++] = (byte)((uint)xOutVal << (uint)(8u - bitidx));
+		pOutput[iLen++] = (byte)((uint)xOutVal << (8u - bitidx));
 	}
 
 	return iLen;

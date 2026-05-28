@@ -330,7 +330,7 @@ tchar * CScriptKeyAlloc::GetKeyBuffer()
 {
 	// Get the buffer the key is in.
     ASSERT(m_TextBuf);
-    return reinterpret_cast<tchar *>(m_TextBuf.get()->data());
+    return m_TextBuf.get()->data();
 }
 
 bool CScriptKeyAlloc::ParseKey( lpctstr ptcKey )
@@ -933,7 +933,7 @@ bool CScript::WriteKeyStr(lpctstr ptcKey, lpctstr ptcVal)
 	}
 
 	// Write: "KEY=VAL\n"
-	static thread_local tchar ptcBuf[SCRIPT_MAX_LINE_LEN];
+    thread_local tchar ptcBuf[SCRIPT_MAX_LINE_LEN];
 	size_t uiStrLen = Str_CopyLimitNull(ptcBuf, ptcKey, SCRIPT_MAX_LINE_LEN);
 	ptcBuf[uiStrLen++] = '=';
 	ptcBuf[uiStrLen]   = '\0'; // Needed by Str_ConcatLimitNull

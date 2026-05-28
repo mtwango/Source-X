@@ -11,10 +11,10 @@
 
 void CUOMapList::MapGeoDataHolder::clear() noexcept
 {
-    const CUOMapList::MapGeoData invalid_data = MapGeoData::invalid();
+    const MapGeoData invalid_data = MapGeoData::invalid();
     for (auto& map : maps)
     {
-        memcpy(&map, reinterpret_cast<const void*>(&invalid_data), sizeof(CUOMapList::MapGeoData));
+        memcpy(&map, &invalid_data, sizeof(MapGeoData));
     }
 }
 

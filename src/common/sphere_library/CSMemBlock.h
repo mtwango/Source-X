@@ -31,7 +31,7 @@ public:
 	/** @name Modifiers:
 	 */
 	///@{
-public:
+
 	/**
 	* @brief Clear internal data pointer and, if size is valid, alloc mem, updating internal data pointer.
 	* @param uiSize size to alloc.

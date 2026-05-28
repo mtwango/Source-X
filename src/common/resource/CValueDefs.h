@@ -16,10 +16,8 @@
 */
 struct CValueRangeDef
 {
-public:
     int64 m_iLo; // Lower Value
     int64 m_iHi; // Higher Value
-public:
 
     /**
     * @fn  void Init()
@@ -95,7 +93,6 @@ public:
     */
     const tchar * Write() const;
 
-public:
     CValueRangeDef()
     {
         Init();
@@ -110,10 +107,8 @@ public:
 */
 struct CValueCurveDef
 {
-public:
     CSTypedArray<int> m_aiValues;		// 0 to 100.0 skill levels
 
-public:
     void Init()
     {
         m_aiValues.clear();
@@ -181,7 +176,6 @@ public:
     */
     int GetRandomLinear( int iPercent ) const;
 
-public:
     CValueCurveDef() noexcept = default;
     ~CValueCurveDef() noexcept = default;
 

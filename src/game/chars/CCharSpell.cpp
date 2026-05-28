@@ -1761,7 +1761,6 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
         {
             _CheckLimitEffectSkill(wStatEffectRef, this, SKILL_MEDITATION);
             Skill_AddBase( SKILL_MEDITATION, + wStatEffectRef );
-			return;
         }
 
 
@@ -1865,7 +1864,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
                         iSecondsDelay = 4;
 						break;
 					case 1:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(5, 10), 100);;
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(5, 10), 100);
                         iSecondsDelay = 3;
 						break;
 					default:
@@ -2681,7 +2680,7 @@ CChar * CChar::Spell_Summon_Try(SPELL_TYPE spell, CPointMap ptTarg, CREID_TYPE u
 		}
 	}
 
-	CChar* pChar = CChar::CreateBasic(m_atMagery.m_uiSummonID);
+	CChar* pChar = CreateBasic(m_atMagery.m_uiSummonID);
 	if (pChar == nullptr)
 		return nullptr;
 
@@ -3624,7 +3623,7 @@ int CChar::Spell_CastStart()
 	if ( !pSpellDef->IsSpellType(SPELLFLAG_NO_CASTANIM) && !IsSetMagicFlags(MAGICF_NOANIM) )
 		UpdateAnimate(pSpellDef->IsSpellType(SPELLFLAG_DIR_ANIM) ? ANIM_CAST_DIR : ANIM_CAST_AREA);
 
-    fWOP = pScriptArgs->m_VarsLocal.GetKeyNum("WOP") > 0 ? true : false;
+    fWOP = pScriptArgs->m_VarsLocal.GetKeyNum("WOP") > 0;
 	if ( fWOP )
 	{
         WOPColor = pScriptArgs->m_VarsLocal.GetKeyNum("WOPColor");
@@ -3795,12 +3794,12 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
     iSkillLevel = (int)(pScriptArgs->m_iN2);		// remember that effect/duration is calculated before triggers
     DAMAGE_TYPE iDmgType = (DAMAGE_TYPE)(ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("DamageType")));
     ITEMID_TYPE iEffectID = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("CreateObject1")));
-    fExplode = pScriptArgs->m_VarsLocal.GetKeyNum("EffectExplode") > 0 ? true : false;
+    fExplode = pScriptArgs->m_VarsLocal.GetKeyNum("EffectExplode") > 0;
     iSound = (SOUND_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("Sound"));
     iEffect = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("Effect"));
     uiResist = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Resist"));
     iDuration = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("Duration"));
-    fBypassMagicReflection = pScriptArgs->m_VarsLocal.GetKeyNum("BypassMagicReflection") > 0 ? true : false;
+    fBypassMagicReflection = pScriptArgs->m_VarsLocal.GetKeyNum("BypassMagicReflection") > 0;
 
     HUE_TYPE iColor = (HUE_TYPE)pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor");
     dword dwRender = (dword)pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender");
@@ -3981,7 +3980,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			{
 				if (g_Cfg.Calc_CurePoisonChance(LayerFind(LAYER_FLAG_Poison), iSkillLevel, pCharSrc && pCharSrc->IsPriv(PRIV_GM)))
 				{
-					SetPoisonCure((spell == SPELL_Arch_Cure || iSkillLevel > 900) ? true : false);
+					SetPoisonCure((spell == SPELL_Arch_Cure || iSkillLevel > 900));
 				    if (pCharSrc)
 				    {
 				        pCharSrc->SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_HEALING_CURE_1), (pCharSrc == this) ? g_Cfg.GetDefaultMsg(DEFMSG_HEALING_YOURSELF) : (GetName()));

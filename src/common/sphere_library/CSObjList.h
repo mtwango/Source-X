@@ -38,7 +38,6 @@ public:
     /** @name Capacity:
     */
     ///@{
-public:
 
     /**
     * @brief Get the record count of the list.

@@ -5,14 +5,14 @@
 #include <cstring>
 
 
-PacketManager::PacketManager(void)
+PacketManager::PacketManager()
 {
     memset(m_handlers, 0, sizeof(m_handlers));
     memset(m_extended, 0, sizeof(m_extended));
     memset(m_encoded, 0, sizeof(m_encoded));
 }
 
-PacketManager::~PacketManager(void)
+PacketManager::~PacketManager()
 {
     // delete standard packet handlers
     for (size_t i = 0; i < ARRAY_COUNT(m_handlers); ++i)
@@ -27,7 +27,7 @@ PacketManager::~PacketManager(void)
         unregisterEncoded((uint)i);
 }
 
-void PacketManager::registerStandardPackets(void)
+void PacketManager::registerStandardPackets()
 {
     ADDTOCALLSTACK("PacketManager::registerStandardPackets");
 

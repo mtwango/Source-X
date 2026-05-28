@@ -62,7 +62,7 @@ void CUOTiledata::Load()
 
     // Cache the Tiledata Terrain entries
 
-    uint idMax = (uint)TERRAIN_QTY;
+    uint idMax = TERRAIN_QTY;
     _tiledataTerrainEntries.clear();
     _tiledataTerrainEntries.resize(idMax);
     for (uint id = 0; id < idMax; ++id)
@@ -100,7 +100,7 @@ void CUOTiledata::Load()
         switch (format)
         {
             case VERFORMAT_HIGHSEAS: // high seas format (CUOTerrainTypeRec_HS)
-                if ( g_Install.m_File[filedata].Read(static_cast <CUOTerrainTypeRec_HS *>(&(_tiledataTerrainEntries[id])), sizeof(CUOTerrainTypeRec_HS)) <= 0 )
+                if ( g_Install.m_File[filedata].Read(&_tiledataTerrainEntries[id], sizeof(CUOTerrainTypeRec_HS)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.ReadInfo: TileData Read");
                 break;
 
@@ -108,7 +108,7 @@ void CUOTiledata::Load()
             default:
             {
                 CUOTerrainTypeRec record;
-                if ( g_Install.m_File[filedata].Read(static_cast <CUOTerrainTypeRec *>(&record), sizeof(CUOTerrainTypeRec)) <= 0 )
+                if ( g_Install.m_File[filedata].Read(&record, sizeof(CUOTerrainTypeRec)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.ReadInfo: TileData Read");
 
                 CUOTerrainTypeRec_HS* cachedEntry = &_tiledataTerrainEntries[id];
@@ -161,7 +161,7 @@ void CUOTiledata::Load()
         switch (format)
         {
             case VERFORMAT_HIGHSEAS: // high seas format (CUOItemTypeRec_HS)
-                if ( g_Install.m_File[filedata].Read( static_cast<CUOItemTypeRec_HS*>(&(_tiledataItemEntries[id])), sizeof(CUOItemTypeRec_HS)) <= 0 )
+                if ( g_Install.m_File[filedata].Read( &_tiledataItemEntries[id], sizeof(CUOItemTypeRec_HS)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.Load: TileData Read");
                 break;
 
@@ -169,7 +169,7 @@ void CUOTiledata::Load()
             default:
             {
                 CUOItemTypeRec record;
-                if ( g_Install.m_File[filedata].Read( static_cast <CUOItemTypeRec *>(&record), sizeof(CUOItemTypeRec)) <= 0 )
+                if ( g_Install.m_File[filedata].Read( &record, sizeof(CUOItemTypeRec)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.Load: TileData Read");
 
                 CUOItemTypeRec_HS* cachedEntry = &_tiledataItemEntries[id];

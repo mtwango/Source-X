@@ -19,14 +19,14 @@ class CUOTiledata
 
 public:
     void Load();
-    inline uint GetItemMaxIndex() const {
+    uint GetItemMaxIndex() const {
         ASSERT(!_tiledataItemEntries.empty());
         return uint(_tiledataItemEntries.size() - 1);
     }
-    inline const CUOItemTypeRec_HS* GetItemEntry(ITEMID_TYPE id) const {
+    const CUOItemTypeRec_HS* GetItemEntry(ITEMID_TYPE id) const {
         return &(_tiledataItemEntries[id]);
     }
-    inline const CUOTerrainTypeRec_HS* GetTerrainEntry(TERRAIN_TYPE id) const {
+    const CUOTerrainTypeRec_HS* GetTerrainEntry(TERRAIN_TYPE id) const {
         return &(_tiledataTerrainEntries[id]);
     }
 };

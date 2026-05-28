@@ -39,14 +39,13 @@ private:
 protected:  inline  void _ClearTimeoutRaw() noexcept;
 public:             void  ClearTimeoutRaw() noexcept;
 
-public:
     CTimedObject(PROFILE_TYPE profile) noexcept;
     virtual ~CTimedObject();
 
 protected:
     inline bool _IsTimeoutTickingActive() noexcept;
 
-protected:  inline  bool _IsSleeping() const noexcept;
+    inline  bool _IsSleeping() const noexcept;
 public:             bool IsSleeping() const noexcept;
 
 protected:  inline  virtual void _GoSleep();
@@ -62,7 +61,7 @@ protected:
     * @brief returns the type of ticking object.
     * @return the type.
     */
-protected:  inline PROFILE_TYPE _GetProfileType() const noexcept;
+    inline PROFILE_TYPE _GetProfileType() const noexcept;
 public:     PROFILE_TYPE GetProfileType() const noexcept;
 
     /**

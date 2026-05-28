@@ -1171,7 +1171,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 
 			tchar* pszTmp = Str_GetTemp();
 			snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", (int)i);
-            pScriptArgs->m_VarsLocal.SetNum(pszTmp,(int64)id);
+            pScriptArgs->m_VarsLocal.SetNum(pszTmp,id);
 
 			iResourceQty = (word)(pOreDef->m_BaseResources[i].GetResQty());
 			snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", (int)i);
@@ -1221,7 +1221,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 			CItem* pGem = CItem::CreateScript(pBaseDef->GetID(), this);
 			if (pGem)
 			{
-				pGem->SetAmount((word)(iResourceQty));
+				pGem->SetAmount(iResourceQty);
 				ItemBounce(pGem);
 			}
 			continue;
@@ -2048,7 +2048,7 @@ int CChar::Skill_Provocation(SKTRIG_TYPE stage)
 			}
 
 			// Basic skill check.
-			CChar* pAct = dynamic_cast<CChar*>(m_Act_UID.CharFind());
+			CChar* pAct = m_Act_UID.CharFind();
 			if (!pAct)
 			{
 				g_Log.EventError("Act empty in skill Provocation, trigger @Start.\n");
@@ -3434,7 +3434,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
     if ( pRock )
 	{
 		lpctstr t_Str = pRock->GetValStr();
-		CResourceID rid = static_cast<CResourceID>(g_Cfg.ResourceGetID( RES_ITEMDEF, t_Str ));
+		CResourceID rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
 		id = (ITEMID_TYPE)(rid.GetResIndex());
 		if (!iDamage)
 			iDamage = Stat_GetVal(STAT_DEX)/4 + g_Rand.GetVal( Stat_GetVal(STAT_DEX)/4 );
@@ -3568,7 +3568,7 @@ int CChar::Skill_Stroke()
 	int64 delay = Skill_GetTimeout();
 	ANIM_TYPE anim = ANIM_WALK_UNARM;
     // fResource means decreasing m_atResource.m_dwStrokeCount instead of m_atCreate.m_dwStrokeCount
-    bool fResource = g_Cfg.IsSkillFlag(skill, SKF_GATHER) ? true : false;
+    bool fResource = g_Cfg.IsSkillFlag(skill, SKF_GATHER);
     uint uiStroke = (fResource ? m_atResource.m_dwStrokeCount : m_atCreate.m_dwStrokeCount);
 	if (uiStroke >= 1)
 	{
@@ -3865,7 +3865,7 @@ TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScrip
 		// RES_SKILL
 		CResourceLock s;
 		if ( pSkillDef->ResourceLock(s) )
-            iRet = CScriptObj::OnTriggerScript(s, CSkillDef::sm_szTrigName[stage], pScriptArgs, this);
+            iRet = OnTriggerScript(s, CSkillDef::sm_szTrigName[stage], pScriptArgs, this);
 	}
 
 	return iRet;

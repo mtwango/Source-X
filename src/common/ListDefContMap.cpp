@@ -841,8 +841,8 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
                 //insert last element
                 if (IsStrNumeric(ppArgs[0]))
                     return pListBase->AddElementNum(Exp_Get64Val(ppArgs[0]));
-                else
-                    return pListBase->AddElementStr(ppArgs[0]);
+
+                return pListBase->AddElementStr(ppArgs[0]);
             }
 
             if (!strnicmp(ppCmds[1], "sort", 4))

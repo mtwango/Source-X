@@ -32,7 +32,7 @@ private:
 public:
     word m_wVal3;  // Varied uses. ex. GumpSizey
     word m_wVal4;  // Varied uses. ex. GumpSizex
-public:
+
     /** @name Modifiers:
      */
     ///@{

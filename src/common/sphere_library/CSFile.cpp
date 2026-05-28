@@ -211,7 +211,7 @@ int CSFile::_GetLength()
     }
 	// Get the size of the file.
     int iPos = CSFile::_GetPosition();   // save current pos.
-    int iSize = CSFile::_SeekToEnd();
+    int iSize = _SeekToEnd();
 	CSFile::_Seek( iPos, SEEK_SET );     // restore previous pos.
     if (fOpenClose)
     {
@@ -265,7 +265,7 @@ int CSFile::Read( void * pData, int iLength ) const
 
 #ifdef _WIN32
 	DWORD ret;
-	if ( !::ReadFile( _fileDescriptor, pData, (DWORD)iLength, &ret, nullptr ) )
+	if ( !ReadFile( _fileDescriptor, pData, (DWORD)iLength, &ret, nullptr ) )
 	{
 		_NotifyIOError("CFile::Read");
 		return 0;
@@ -296,7 +296,7 @@ int CSFile::_Seek( int iOffset, int iOrigin )
     }
 
 #ifdef _WIN32
-	DWORD ret = SetFilePointer( _fileDescriptor, (LONG)iOffset, nullptr, (DWORD)iOrigin );
+	DWORD ret = SetFilePointer( _fileDescriptor, iOffset, nullptr, (DWORD)iOrigin );
 #else
 	off_t ret = lseek( _fileDescriptor, iOffset, iOrigin );
 #endif
@@ -351,7 +351,7 @@ bool CSFile::_Write( const void * pData, int iLength )
 
 #ifdef _WIN32
 	DWORD dwWritten;
-	BOOL ret = ::WriteFile( _fileDescriptor, pData, (DWORD)iLength, &dwWritten, nullptr );
+	BOOL ret = WriteFile( _fileDescriptor, pData, (DWORD)iLength, &dwWritten, nullptr );
 	if ( ret == FALSE )
 	{
 		_NotifyIOError("CFile::Write");
@@ -397,12 +397,12 @@ lpctstr CSFile::GetFilesTitle( lpctstr pszPath )  // static
 lpctstr CSFile::_GetFileTitle() const
 {
     //ADDTOCALLSTACK("CFile::_GetFileTitle");
-    return CSFile::GetFilesTitle(_strFileName.GetBuffer());
+    return GetFilesTitle(_strFileName.GetBuffer());
 }
 lpctstr CSFile::GetFileTitle() const
 {
     //ADDTOCALLSTACK("CFile::GetFileTitle");
-    return CSFile::GetFilesTitle( GetFilePath() );
+    return GetFilesTitle( GetFilePath() );
 }
 
 lpctstr CSFile::GetFilesExt( lpctstr pszName )	// static
@@ -489,7 +489,7 @@ bool CSFile::FileExists(lpctstr ptcFilePath) // static
 {
 #ifdef _WIN32
     // WINDOWS
-    struct _finddata_t fileinfo;
+    _finddata_t fileinfo;
     fileinfo.attrib = _A_NORMAL;
     intptr_t lFind = _findfirst( ptcFilePath, &fileinfo );
 

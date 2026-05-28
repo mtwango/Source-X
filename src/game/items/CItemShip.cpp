@@ -357,6 +357,5 @@ void CItemShip::OnComponentCreate(CItem * pComponent)
     }
 
     CItemMulti::OnComponentCreate(pComponent, false);
-    return;
 }
 

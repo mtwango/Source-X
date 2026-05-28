@@ -392,7 +392,7 @@ CPointMap CWorldMap::FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int 
 		Height = pItemDef->GetHeight();
 		if ( pItemDef->GetID() != pItem->GetDispID() ) //not a parent item
 		{
-            pDupeDef = CItemBaseDupe::GetDupeRef((ITEMID_TYPE)(pItem->GetDispID()));
+            pDupeDef = CItemBaseDupe::GetDupeRef(pItem->GetDispID());
 			if ( ! pDupeDef )
 			{
                 g_Log.EventDebug("Failed to get non-parent reference (dynamic) (DispID 0%x) (X: %d Y: %d Z: %d)\n",
@@ -469,7 +469,7 @@ CPointMap CWorldMap::FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int 
 				Height = pItemDef->GetHeight();
 				if ( pItemDef->GetID() != pMultiItem->GetDispID() ) //not a parent item
 				{
-					pDupeDef = CItemBaseDupe::GetDupeRef((ITEMID_TYPE)(pMultiItem->GetDispID()));
+					pDupeDef = CItemBaseDupe::GetDupeRef(pMultiItem->GetDispID());
 					if ( ! pDupeDef )
 					{
 						g_Log.EventDebug("Failed to get non-parent reference (multi) (DispID 0%x) (X: %d Y: %d Z: %d)\n",pMultiItem->GetDispID(),ptTest.m_x,ptTest.m_y,ptTest.m_z);
@@ -532,7 +532,7 @@ CPointMap CWorldMap::FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int 
 			Height = pItemDef->GetHeight();
 			if ( pItemDef->GetID() != pStatic->GetDispID() ) //not a parent item
 			{
-				pDupeDef = CItemBaseDupe::GetDupeRef((ITEMID_TYPE)(pStatic->GetDispID()));
+				pDupeDef = CItemBaseDupe::GetDupeRef(pStatic->GetDispID());
 				if ( ! pDupeDef )
 				{
 					g_Log.EventDebug("Failed to get non-parent reference (static) (DispID 0%x) (X: %d Y: %d Z: %d)\n",pStatic->GetDispID(),ptTest.m_x,ptTest.m_y,ptTest.m_z);
@@ -1653,7 +1653,7 @@ void CWorldMap::GetHeightPoint2( const CPointMap & pt, CServerMapBlockingState &
 	// Any multi items here ?
 	if ( fHouseCheck )
 	{
-		static thread_local CRegionLinks rlinks;
+        thread_local CRegionLinks rlinks;
 		size_t iRegionQty = pt.GetRegions( REGION_TYPE_MULTI, &rlinks );
 		if ( iRegionQty > 0 )
 		{

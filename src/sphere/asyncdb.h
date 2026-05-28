@@ -14,7 +14,6 @@
 
 class CDataBaseAsyncHelper : public AbstractSphereThread
 {
-private:
 	typedef std::pair<CSString, CSString> FunctionQueryPair_t;
 	typedef std::pair<bool, FunctionQueryPair_t> QueryBlob_t;
 	typedef std::deque<QueryBlob_t> QueueQuery_t;
@@ -23,8 +22,8 @@ private:
 	QueueQuery_t m_queriesTodo;
 
 public:
-	CDataBaseAsyncHelper(void);
-    ~CDataBaseAsyncHelper(void) override;
+	CDataBaseAsyncHelper();
+    ~CDataBaseAsyncHelper() override;
 
     CDataBaseAsyncHelper(const CDataBaseAsyncHelper& copy) = delete;
     CDataBaseAsyncHelper& operator=(const CDataBaseAsyncHelper& other) = delete;

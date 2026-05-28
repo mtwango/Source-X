@@ -28,7 +28,7 @@ struct underlying_or_self<T, std::enable_if_t<std::is_enum_v<T>>>
 
 // Helper alias
 template<typename T>
-using underlying_or_self_t = typename underlying_or_self<T>::type;
+using underlying_or_self_t = underlying_or_self<T>::type;
 
 }
 
@@ -512,7 +512,7 @@ constexpr uint32 usize_narrow_u32(const size_t source_val) noexcept
 
 // If size_t is bigger than a 32 bits number, narrow it to a 32 bits number and ASSERT (because you're reasonably sure but not absolutely certain) that it won't overflow. If size_t has 32 bits size, plain return the same value.
 [[nodiscard]]
-uint32 usize_narrow_u32_checked(const size_t source_val, bool should_assert = false);
+uint32 usize_narrow_u32_checked(size_t source_val, bool should_assert = false);
 
 
 /* Unsigned (and size_t) to signed, clamping. */
@@ -566,37 +566,37 @@ uint32 usize_narrow_u32_checked(const size_t source_val, bool should_assert = fa
 /* Unsigned (and size_t) to signed, checked for overflows. */
 
 [[nodiscard]]
-    int8 i8_from_u8_checked(const uint8 source_val, bool should_assert = false); // not clamping/capping
+    int8 i8_from_u8_checked(uint8 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int8 i8_from_u8_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 [[nodiscard]]
-    int16 i8_from_u16_checked(const uint16 source_val, bool should_assert = false); // not clamping/capping
+    int16 i8_from_u16_checked(uint16 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int16 i8_from_u16_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 [[nodiscard]]
-    int16 i16_from_u16_checked(const uint16 source_val, bool should_assert = false); // not clamping/capping
+    int16 i16_from_u16_checked(uint16 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int16 i16_from_u16_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 [[nodiscard]]
-    int16 i16_from_u32_checked(const uint32 source_val, bool should_assert = false); // not clamping/capping
+    int16 i16_from_u32_checked(uint32 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int16 i16_from_u32_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 [[nodiscard]]
-    int16 i16_from_u64_checked(const uint64 source_val, bool should_assert = false); // not clamping/capping
+    int16 i16_from_u64_checked(uint64 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int16 i16_from_u64_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 // Convert a 32 bits unsigned value to signed and ASSERT (because you're reasonably sure but not absolutely certain) that it will fit into its signed datatype counterpart (unsigned variables can store greater values than signed ones).
 [[nodiscard]]
-    int32 i32_from_u32_checked(const uint32 source_val, bool should_assert = false); // not clamping/capping
+    int32 i32_from_u32_checked(uint32 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int32 i32_from_u32_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 [[nodiscard]]
-    int32 i32_from_u64_checked(const uint64 source_val, bool should_assert = false); // not clamping/capping
+    int32 i32_from_u64_checked(uint64 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int32 i32_from_u64_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 // Convert a 64 bits unsigned value to signed and ASSERT (because you're reasonably sure but not absolutely certain) that it will fit into its signed datatype counterpart (unsigned variables can store greater values than signed ones).
 [[nodiscard]]
-    int64 i64_from_u64_checked(const uint64 source_val, bool should_assert = false); // not clamping/capping
+    int64 i64_from_u64_checked(uint64 source_val, bool should_assert = false); // not clamping/capping
 template <typename T> int64 i64_from_u64_checked(T, bool) = delete; // disable implicit type conversion for the inpuT source_valrgument
 
 // size_t conversions

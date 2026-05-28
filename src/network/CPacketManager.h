@@ -17,22 +17,21 @@ class Packet;
 
 class PacketManager
 {
-private:
     Packet* m_handlers[NETWORK_PACKETCOUNT];	// standard packet handlers
     Packet* m_extended[NETWORK_PACKETCOUNT];	// extended packeet handlers (0xbf)
     Packet* m_encoded[NETWORK_PACKETCOUNT];		// encoded packet handlers (0xd7)
 
 public:
     static const char* m_sClassName;
-    PacketManager(void);
-    virtual ~PacketManager(void);
+    PacketManager();
+    virtual ~PacketManager();
 
 private:
     PacketManager(const PacketManager& copy);
     PacketManager& operator=(const PacketManager& other);
 
 public:
-    void registerStandardPackets(void);	// register standard packet handlers
+    void registerStandardPackets();	// register standard packet handlers
 
     void registerPacket(uint id, Packet* handler);		// register packet handler
     void registerExtended(uint id, Packet* handler);	// register extended packet handler

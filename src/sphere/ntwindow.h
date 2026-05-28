@@ -13,7 +13,7 @@
 #include "../common/sphere_library/CSWindow.h"
 #include "../common/CTextConsole.h"
 
-extern struct CNTWindow : public AbstractSphereThread, public CSWindow, public ConsoleInterface
+extern struct CNTWindow : AbstractSphereThread, CSWindow, ConsoleInterface
 {
     static const char *m_sClassName;
     struct
@@ -45,7 +45,6 @@ private:
 public:
     class CAboutDlg : public CDialogBase				//	CNTWindow::CAboutDlg
     {
-    private:
         bool OnInitDialog();
         bool OnCommand(WORD wNotifyCode, INT_PTR wID, HWND hwndCtl);
     public:

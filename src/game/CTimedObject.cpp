@@ -181,7 +181,7 @@ PROFILE_TYPE CTimedObject::GetProfileType() const noexcept
 void CTimedObject::ClearTimeoutRaw() noexcept
 {
     MT_ENGINE_UNIQUE_LOCK_SET(this);
-    CTimedObject::_ClearTimeoutRaw();
+    _ClearTimeoutRaw();
 }
 
 bool CTimedObject::IsSleeping() const noexcept

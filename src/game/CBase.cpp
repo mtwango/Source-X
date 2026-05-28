@@ -194,7 +194,7 @@ bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
             GETNONWHITESPACE(ptcKey);
 
             COMPPROPS_TYPE id = (COMPPROPS_TYPE)Exp_GetVal(ptcKey);
-            bool fRes = (id < COMP_PROPS_QTY) && (nullptr != CEntityProps::GetComponentProps(id));
+            bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
             sVal.FormatVal(int(fRes));
             break;
         }
@@ -423,7 +423,7 @@ void CBaseBaseDef::CopyBasic( const CBaseBaseDef * pBase )
 	m_defenseBase = pBase->m_defenseBase;
 	m_defenseRange = pBase->m_defenseRange;
 	m_Can = pBase->m_Can;
-    CEntityProps::Copy(pBase);
+    Copy(pBase);
 }
 
 void CBaseBaseDef::CopyTransfer( CBaseBaseDef * pBase )

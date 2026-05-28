@@ -33,7 +33,7 @@ AutoResetEvent::AutoResetEvent() noexcept
 AutoResetEvent::~AutoResetEvent() noexcept
 {
 #ifdef _WIN32
-    ::CloseHandle(m_handle);
+    CloseHandle(m_handle);
 #else
     pthread_cond_destroy (&m_condition);
     pthread_mutex_destroy(&m_criticalSection);
@@ -48,24 +48,24 @@ void AutoResetEvent::wait(uint32 timeout) noexcept
         // If timeout is 0 then the thread's timeslice may not be given up as with normal
         // sleep methods - so we will check for this condition ourselves and use SleepEx
         // instead
-        ::SleepEx(0, TRUE);
+        SleepEx(0, TRUE);
 
         // or, if we want a non-blocking probe
         //::WaitForSingleObjectEx(m_handle, 0, FALSE);
         return;
     }
 
-    const DWORD start = ::GetTickCount();
+    const DWORD start = GetTickCount();
     DWORD remaining  = timeout;
 
     while (true)
     {
-        DWORD rc = ::WaitForSingleObjectEx(m_handle, remaining, TRUE);
+        DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE);
         if (rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
             return;                // signalled or timed out
 
         // WAIT_IO_COMPLETION – recalc remaining time
-        DWORD now = ::GetTickCount();
+        DWORD now = GetTickCount();
         if (now - start >= timeout)
             return;
         remaining = timeout - (now - start);
@@ -103,7 +103,7 @@ void AutoResetEvent::wait(uint32 timeout) noexcept
 void AutoResetEvent::signal() noexcept
 {
 #ifdef _WIN32
-    ::SetEvent(m_handle);                   // kernel handles auto-reset
+    SetEvent(m_handle);                   // kernel handles auto-reset
 #else
     pthread_mutex_lock(&m_criticalSection);
     m_signaled = true;
@@ -128,7 +128,7 @@ ManualResetEvent::ManualResetEvent() noexcept
 ManualResetEvent::~ManualResetEvent() noexcept
 {
 #ifdef _WIN32
-    ::CloseHandle(m_handle);
+    CloseHandle(m_handle);
 #else
     pthread_cond_destroy(&m_condition);
     pthread_mutex_destroy(&m_criticalSection);
@@ -140,20 +140,20 @@ void ManualResetEvent::wait(uint32 timeout) noexcept
 #ifdef _WIN32
     if (timeout == 0)
     {
-        ::WaitForSingleObjectEx(m_handle, 0, FALSE);
+        WaitForSingleObjectEx(m_handle, 0, FALSE);
         return;
     }
 
-    const DWORD start = ::GetTickCount();
-    DWORD remaining  = timeout;
+    const DWORD start = GetTickCount();
+    DWORD remaining = timeout;
 
     while (true)
     {
-        DWORD rc = ::WaitForSingleObjectEx(m_handle, remaining, TRUE);
+        DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE);
         if (rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
             return;
 
-        DWORD now = ::GetTickCount();
+        DWORD now = GetTickCount();
         if (now - start >= timeout)
             return;
         remaining = timeout - (now - start);
@@ -188,7 +188,7 @@ void ManualResetEvent::wait(uint32 timeout) noexcept
 void ManualResetEvent::set() noexcept
 {
 #ifdef _WIN32
-    ::SetEvent(m_handle);
+    SetEvent(m_handle);
 #else
     pthread_mutex_lock(&m_criticalSection);
     m_signaled = true;
@@ -200,7 +200,7 @@ void ManualResetEvent::set() noexcept
 void ManualResetEvent::reset() noexcept
 {
 #ifdef _WIN32
-    ::ResetEvent(m_handle);
+    ResetEvent(m_handle);
 #else
     pthread_mutex_lock(&m_criticalSection);
     m_signaled = false;

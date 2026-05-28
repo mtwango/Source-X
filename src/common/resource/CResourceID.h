@@ -111,12 +111,12 @@ enum RES_TYPE	// all the script resource sections we know how to deal with !
 #define RES_INDEX_SHIFT	0		// use first 20 bits = 0xFFFFF = 1048575 possible unique indexes.
 #define RES_INDEX_MASK	0xFFFFF	//  0xFFFFF = 20 bits.
 
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
 dword ResGetType(dword dwObjUid) noexcept {
     return ( (dwObjUid >> RES_TYPE_SHIFT) & RES_TYPE_MASK );
 }
 
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
 dword ResGetIndex(dword dwObjUid) noexcept {
     return (dwObjUid & (dword)RES_INDEX_MASK);
 }
@@ -130,16 +130,16 @@ public:
 
     void InitUID() = delete;
     void ClearUID() = delete;
-    inline void Init() noexcept
+    void Init() noexcept
     {
         m_dwInternalVal = UID_UNUSED;
     }
-    inline void Clear() noexcept
+    void Clear() noexcept
     {
         m_dwInternalVal = UID_PLAIN_CLEAR;
     }
 
-    inline CResourceIDBase() noexcept
+    CResourceIDBase() noexcept
     {
         Init();
     }
@@ -157,15 +157,15 @@ public:
 
     void FixRes();
 
-    inline constexpr RES_TYPE GetResType() const noexcept
+    constexpr RES_TYPE GetResType() const noexcept
     {
         return (RES_TYPE)(ResGetType(m_dwInternalVal));
     }
-    inline constexpr uint GetResIndex() const noexcept
+    constexpr uint GetResIndex() const noexcept
     {
         return ResGetIndex(m_dwInternalVal);
     }
-    inline constexpr bool operator == (const CResourceIDBase & rid) const noexcept
+    constexpr bool operator == (const CResourceIDBase & rid) const noexcept
     {
         return (rid.m_dwInternalVal == m_dwInternalVal);
     }
@@ -182,7 +182,7 @@ public:
     CItem* ItemFindFromResource(bool fInvalidateBeingDeleted = false) const;   //  replacement for CUID::ItemFind()
 };
 
-struct CResourceID : public CResourceIDBase     // It has the "page" part. Use it to handle every other resource section.
+struct CResourceID : CResourceIDBase     // It has the "page" part. Use it to handle every other resource section.
 {
     // RES_PAGE: Resource Page (used for dialog or book pages, but also to store an additional parameter
     //		when using other Resource Types, like REGIONTYPE).
@@ -195,7 +195,7 @@ struct CResourceID : public CResourceIDBase     // It has the "page" part. Use i
 
     // TODO: set iIndex to unsigned.
 
-    CResourceID() : CResourceIDBase(), m_wPage(0)
+    CResourceID() : m_wPage(0)
     {}
     // Create an empty, valid CResourceID of a given type
     explicit CResourceID(RES_TYPE restype) : CResourceIDBase(restype), m_wPage(0)
@@ -220,7 +220,7 @@ struct CResourceID : public CResourceIDBase     // It has the "page" part. Use i
     CResourceID& operator = (const CResourceIDBase& rid);
     bool operator == (const CResourceID & rid) const noexcept;
 
-    inline word GetResPage() const noexcept
+    word GetResPage() const noexcept
     {
         return m_wPage;
     }

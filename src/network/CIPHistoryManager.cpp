@@ -14,13 +14,13 @@
  *
  ***************************************************************************/
 
-void HistoryIP::update(void)
+void HistoryIP::update()
 {
     // reset ttl
     m_iTTLSeconds = g_Cfg.m_iNetHistoryTTLSeconds;
 }
 
-bool HistoryIP::checkPing(void)
+bool HistoryIP::checkPing()
 {
     // ip is pinging, check if blocked
     update();
@@ -56,17 +56,17 @@ void HistoryIP::setBlocked(bool isBlocked, int64 timeoutSeconds)
  *
  *
  ***************************************************************************/
-IPHistoryManager::IPHistoryManager(void)
+IPHistoryManager::IPHistoryManager()
 {
     m_lastDecayTime = 0;
 }
 
-IPHistoryManager::~IPHistoryManager(void)
+IPHistoryManager::~IPHistoryManager()
 {
     m_ips.clear();
 }
 
-void IPHistoryManager::tick(void)
+void IPHistoryManager::tick()
 {
     // periodic events
     ADDTOCALLSTACK("IPHistoryManager::tick");

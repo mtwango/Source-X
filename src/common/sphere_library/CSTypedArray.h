@@ -33,12 +33,12 @@ public:
     * @brief Copy constructor.
     */
 
-    CSTypedArray(const CSTypedArray<TYPE> & copy);
+    CSTypedArray(const CSTypedArray & copy);
     /**
     * @brief Assign operator
     */
-    CSTypedArray<TYPE> & operator=(const CSTypedArray<TYPE> &array);
-public:
+    CSTypedArray & operator=(const CSTypedArray &array);
+
     ///@}
 
     /** @name Modifiers:
@@ -76,7 +76,7 @@ public:
     * @param i index to check.
     * @return true if index is valid, false otherwise.
     */
-    inline bool IsValidIndex( size_t i ) const;
+    bool IsValidIndex( size_t i ) const;
     ///@}
 };
 
@@ -86,10 +86,10 @@ public:
 // CSTypedArray:: Constructors, Destructor, Assign operator.
 
 template<class TYPE>
-CSTypedArray<TYPE>::CSTypedArray(const CSTypedArray<TYPE> & copy) : std::vector<TYPE>(static_cast<const std::vector<TYPE>&>(copy)) {}
+CSTypedArray<TYPE>::CSTypedArray(const CSTypedArray & copy) : std::vector<TYPE>(static_cast<const std::vector<TYPE>&>(copy)) {}
 
 template<class TYPE>
-CSTypedArray<TYPE> & CSTypedArray<TYPE>::operator=( const CSTypedArray<TYPE> & array )
+CSTypedArray<TYPE> & CSTypedArray<TYPE>::operator=( const CSTypedArray & array )
 {
     static_cast<std::vector<TYPE> >(*this) = static_cast<const std::vector<TYPE> &>(array);
     return *this;

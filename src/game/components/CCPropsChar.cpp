@@ -154,7 +154,7 @@ bool CCPropsChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iV
         case PROPCH_NIGHTSIGHT:
         {
             CChar * pChar = dynamic_cast <CChar*>(pLinkedObj);
-            pChar->StatFlag_Mod( STATF_NIGHTSIGHT, (iVal > 0) ? true : false );
+            pChar->StatFlag_Mod( STATF_NIGHTSIGHT, (iVal > 0));
             if ( pChar->IsClientActive() )
                 pChar->GetClientActive()->addLight();
             break;
@@ -285,9 +285,9 @@ void CCPropsChar::r_Write(CScript & s)
     BaseCont_Write_ContStr(&_mPropsStr, _ptcPropertyKeys, s);
 
     if (_faction.GetGroup() != CFactionDef::Group::NONE)
-        s.WriteKeyVal(_ptcPropertyKeys[PROPCH_FACTION_GROUP],   (int64)enum_alias_cast<uint32>(_faction.GetGroup()));
+        s.WriteKeyVal(_ptcPropertyKeys[PROPCH_FACTION_GROUP],   enum_alias_cast<uint32>(_faction.GetGroup()));
     if (_faction.GetSpecies() != CFactionDef::Species::NONE)
-        s.WriteKeyVal(_ptcPropertyKeys[PROPCH_FACTION_SPECIES], (int64)enum_alias_cast<uint32>(_faction.GetSpecies()));
+        s.WriteKeyVal(_ptcPropertyKeys[PROPCH_FACTION_SPECIES], enum_alias_cast<uint32>(_faction.GetSpecies()));
 }
 
 void CCPropsChar::Copy(const CComponentProps * target)

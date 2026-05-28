@@ -339,7 +339,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 				if (pShip)
 				{
 					if (m_pChar->ContentFindKeyFor(pItem) || pShip->GetOwner() == m_pChar->GetUID())
-						pShip->CCMultiMovable::SetPilot(m_pChar);
+						pShip->SetPilot(m_pChar);
 					else
 						pItem->Speak(g_Cfg.GetDefaultMsg(DEFMSG_TILLER_NOTYOURSHIP));
 					return true;
@@ -714,7 +714,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, int iSelect )
 	{
 		if ( iShowCount <= 0 )
 			SysMessageDefault(DEFMSG_CANT_MAKE);
-		return iShowCount > 0 ? true : false;
+		return iShowCount > 0;
 	}
 
 	if ( iShowCount <= 0 )
@@ -960,7 +960,6 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, int iSelect, CMenuIte
 				{
                     fSkipNeedCleanup = true;
 				}
-				continue;
 			}
 		}
 	}

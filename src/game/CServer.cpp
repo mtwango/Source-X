@@ -2529,7 +2529,7 @@ bool CServer::SocketsInit( CSocket & socket )
 	linger lval;
 	lval.l_onoff = 0;
 	lval.l_linger = 10;
-	if ((0 != socket.SetSockOpt(SO_LINGER, reinterpret_cast<const char*>(&lval), sizeof(lval))) ||
+	if ((0 != socket.SetSockOpt(SO_LINGER, &lval, sizeof(lval))) ||
 		(0 != socket.SetNonBlocking()))
 	{
 		g_Log.Event(LOGL_FATAL | LOGM_INIT, "Unable to initialize socket!\n");
@@ -2622,7 +2622,7 @@ bool CServer::SocketsInit() // Initialize sockets
             for (size_t i = 0; i < res.second.addrs_v4.size(); ++i)
             {
                 CSocketAddressIP ip;
-                ip.SetAddrIP(static_cast<dword>(res.second.addrs_v4[i])); // network byte order, same as h_addr_list
+                ip.SetAddrIP(res.second.addrs_v4[i]); // network byte order, same as h_addr_list
                 if (!m_ip.IsLocalAddr() && !m_ip.IsSameIP(ip))
                     continue;
 

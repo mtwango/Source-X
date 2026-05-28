@@ -148,17 +148,17 @@ bool CChar::NPC_StablePetSelect( CChar * pCharPlayer )
 
 		if (uiSkillTaming >= 100'0)
 		{
-			iPetMax += (int)((uiSkillTaming - 90'0) / 10);
+			iPetMax += (uiSkillTaming - 90'0) / 10;
 		}
 
 		if (uiSkillAnimalLore >= 100'0)
 		{
-			iPetMax += (int)((uiSkillAnimalLore - 90'0) / 10);
+			iPetMax += (uiSkillAnimalLore - 90'0) / 10;
 		}
 
 		if (uiSkillVeterinary >= 100'0)
 		{
-			iPetMax += (int)((uiSkillVeterinary - 90'0) / 10);
+			iPetMax += (uiSkillVeterinary - 90'0) / 10;
 		}
 	}
 
@@ -239,7 +239,7 @@ ushort CChar::NPC_OnTrainCheck( CChar * pCharSrc, SKILL_TYPE Skill )
         {
             for (uint i = 0; i < g_Cfg.m_iMaxSkill; ++i)
             {
-                if (!g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)i))
+                if (!g_Cfg.m_SkillIndexDefs.valid_index(i))
                     continue;
 
                 if (pCharSrc->Skill_GetLock((SKILL_TYPE)i) == SKILLLOCK_DOWN)
@@ -336,7 +336,7 @@ bool CChar::NPC_TrainSkill( CChar * pCharSrc, SKILL_TYPE skill, ushort uiAmountT
 	{
 		for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 		{
-			if ( !g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)i) )
+			if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 				continue;
 
 			if ( uiAmountToTrain < 1 )
@@ -389,7 +389,7 @@ bool CChar::NPC_OnTrainHear( CChar * pCharSrc, lpctstr pszCmd )
 	TemporaryString tsMsg;
 	for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		if ( !g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)i) )
+		if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 			continue;
 
 		lpctstr pSkillKey = g_Cfg.GetSkillKey((SKILL_TYPE)i);
@@ -420,7 +420,7 @@ bool CChar::NPC_OnTrainHear( CChar * pCharSrc, lpctstr pszCmd )
 	uint iCount = 0;
 	for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		if ( !g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)i) )
+		if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 			continue;
 
 		const int iDiff = NPC_GetTrainMax(pCharSrc, (SKILL_TYPE)i) - pCharSrc->Skill_GetBase((SKILL_TYPE)i);

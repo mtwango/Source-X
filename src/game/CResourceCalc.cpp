@@ -45,7 +45,7 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 		return 1;
 
     const int iSpeedScaleFactor = g_Cfg.m_iSpeedScaleFactor;
-	const int iSwingSpeedIncrease = (int)(pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESWINGSPEED, true));
+	const int iSwingSpeedIncrease = pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESWINGSPEED, true);
 	int iBaseSpeed = 50;	// Base Wrestling speed (on ML formula it's 2.50)
 	if ( pWeapon )			// If we have a weapon, base speed should match weapon's value.
 		iBaseSpeed = pWeapon->GetSpeed();
@@ -177,8 +177,8 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 			iChance = (iSkillVal - iChance) / 10;
 
 		    // Modify chance with IncreaseHit and IncreaseDef properties.
-		    const int hitChangeIncrease = static_cast<int>(pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEHITCHANCE, true));
-		    const int hitChanceDecrease = static_cast<int>(pCharTarg->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDEFCHANCE, true));
+		    const int hitChangeIncrease = pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEHITCHANCE, true);
+		    const int hitChanceDecrease = pCharTarg->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDEFCHANCE, true);
 		    iChance = iChance * (100 + hitChangeIncrease) / 100;
 		    iChance = iChance * (100 - hitChanceDecrease) / 100;
 
@@ -214,7 +214,7 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 		case 2:
 		{
 			int iAttackerSkill = pChar->Skill_GetBase(skillAttacker);
-			int iAttackerHitChance = (int)(pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEHITCHANCE, true));
+			int iAttackerHitChance = pChar->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEHITCHANCE, true);
 			if ((g_Cfg.m_iRacialFlags & RACIALF_GARG_DEADLYAIM) && pChar->IsGargoyle())
 			{
 				// Racial traits: Deadly Aim. Gargoyles always have +5 Hit Chance Increase and a minimum of 20.0 Throwing skill (not shown in skills gump).
@@ -224,7 +224,7 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 			}
 			iAttackerSkill = ((iAttackerSkill / 10) + 20) * (100 + std::min(iAttackerHitChance, 45));
 
-			const int iTargetIncreaseDefChance = (int)(pCharTarg->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDEFCHANCE, true));
+			const int iTargetIncreaseDefChance = pCharTarg->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDEFCHANCE, true);
 			const int iTargetSkill = ((pCharTarg->Skill_GetBase(skillTarget) / 10) + 20) * (100 + std::min(iTargetIncreaseDefChance, 45));
 
 			int iChance = iAttackerSkill * 100 / (iTargetSkill * 2);
@@ -550,8 +550,8 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 
 	const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 	const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-	const int iLowerManaCost = (int)pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERMANACOST, pBaseCCPChar);
-	ushort iCost = (ushort)pSpell->m_wManaUse;
+	const int iLowerManaCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERMANACOST, pBaseCCPChar);
+	ushort iCost = pSpell->m_wManaUse;
 	if (iLowerManaCost != 0) //LowerManaCost can be negative, and thus increasing the mana cost!
 		iCost = (ushort)(iCost - ((iCost * iLowerManaCost) / 100));
 
@@ -574,10 +574,10 @@ size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpell
 		const CResourceQtyArray* pReagents = &(pSpell->m_Reags);
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-		const int iLowerReagentCost = (int)pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
+		const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
 		if ( g_Rand.GetVal(100) >= iLowerReagentCost)
 		{
-			CContainer* pCont = static_cast<CContainer*>(pCharCaster);
+			CContainer* pCont = pCharCaster;
 			const size_t iMissing = pCont->ResourceConsumePart(pReagents, 1, 100, fTest);
 			if (iMissing != sl::scont_bad_index())
 				return iMissing;
@@ -599,9 +599,9 @@ ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef*
 
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-		const int iLowerReagentCost = (int)pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
+		const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
 		if (g_Rand.GetVal(100) >= iLowerReagentCost)
-			return (ushort)pSpell->m_wTithingUse; //Default amount of Tithing points consumed.
+			return pSpell->m_wTithingUse; //Default amount of Tithing points consumed.
 	}
 	return 0; //No tithing points consumed.
 }

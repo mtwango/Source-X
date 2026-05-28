@@ -23,7 +23,6 @@
 //  Get time stamp in the real world. based on struct tm
 class CSTime
 {
-private:
 #ifdef _WIN32
     #undef GetCurrentTime
 

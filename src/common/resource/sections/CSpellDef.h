@@ -44,7 +44,6 @@ enum SPTRIG_TYPE
 */
 class CSpellDef : public CResourceLink
 {
-private:
     uint64	m_uiFlags;  // Spell Flags.
     dword	m_dwGroup;  // Spell group.
 

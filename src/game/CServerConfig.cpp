@@ -1144,7 +1144,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
             LOG_ERR_NOINIT(("Bad usage of MAPx. Check your sphere.ini or scripts (SERV.MAP is a read only property)\n"));
             return false;
         }
-        else if (s.IsKeyHead("PACKET", 6)) //	PACKETx=<function name to execute upon packet>
+        if (s.IsKeyHead("PACKET", 6)) //	PACKETx=<function name to execute upon packet>
         {
             int index = atoi(s.GetKey() + 6);
             if ((index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
@@ -1421,7 +1421,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			break;
 
 		case RC_PACKETDEATHANIMATION:
-			m_iPacketDeathAnimation = s.GetArgVal() > 0 ? true : false;
+			m_iPacketDeathAnimation = s.GetArgVal() > 0;
 			break;
 
 		case RC_SKILLPRACTICEMAX:
@@ -1518,7 +1518,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			m_iWalkBuffer = s.GetArgVal() * MSECS_PER_TENTH;
 			break;
         case RC_MEDITATIONMOVEMENTABORT:
-            _fMeditationMovementAbort = s.GetArgVal() > 0 ? true : false;
+            _fMeditationMovementAbort = s.GetArgVal() > 0;
             break;
 		default:
 			return( sm_szLoadKeys[i].m_elem.SetValStr( this, s.GetArgRaw()));
@@ -1851,7 +1851,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			}
             if (m_Functions.ContainsKey(pszCmd))
             {
-                sVal.FormatVal((int)GetPrivCommandLevel(pszCmd));
+                sVal.FormatVal(GetPrivCommandLevel(pszCmd));
                 return true;
             }
 
@@ -1872,7 +1872,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			}
             if (!strnicmp(pszCmd, "PLEVEL", 5))
             {
-                sVal.FormatVal((int)(GetPrivCommandLevel(m_Functions[iNumber]->GetName())));
+                sVal.FormatVal(GetPrivCommandLevel(m_Functions[iNumber]->GetName()));
                 return true;
             }
         }
@@ -2196,7 +2196,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		case RC_RTICKS:
 			{
 				if ( ptcKey[6] != '.' )
-					sVal.FormatLLVal((llong)(CSTime::GetCurrentTime().GetTime()));
+					sVal.FormatLLVal(CSTime::GetCurrentTime().GetTime());
 				else
 				{
 					ptcKey += 6;
@@ -2216,7 +2216,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						if ( datetime.GetTime() == -1 )
 							sVal.FormatVal(-1);
 						else
-							sVal.FormatLLVal((llong)(datetime.GetTime()));
+							sVal.FormatLLVal(datetime.GetTime());
 					}
 					else if ( !strnicmp("FORMAT", ptcKey, 6) )
 					{
@@ -3121,7 +3121,7 @@ CResourceScript * CServerConfig::AddResourceFile( lpctstr pszName )
 
 
     pNewRes = new CResourceScript();
-    if (! OpenResourceFind(static_cast<CScript&>(*pNewRes), szName))
+    if (! OpenResourceFind(*pNewRes, szName))
     {
         delete pNewRes;
         return nullptr;
@@ -3304,7 +3304,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		CResourceDef *	pRes = nullptr;
 		size_t index = m_ResHash.FindKey( rid );
 		if ( index != sl::scont_bad_index() )
-			pRes = dynamic_cast <CResourceDef*> (m_ResHash.GetBarePtrAt( rid, index ) );
+			pRes = m_ResHash.GetBarePtrAt(rid, index);
 
 		if ( pRes == nullptr )
 		{
@@ -3604,7 +3604,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			else
 			{
                 const uint uiResIdx = rid.GetResIndex();
-                if ( uiResIdx >= (uint)(m_iMaxSkill) )
+                if ( uiResIdx >= m_iMaxSkill )
                     m_iMaxSkill = uiResIdx + 1;
 
 				// Just replace any previous CSkillDef
@@ -4678,7 +4678,7 @@ sl::smart_ptr_view<CResourceDef> CServerConfig::RegisteredResourceGetDefRef(cons
 		return {};
 	}
 
-	return CResourceHolder::ResourceGetDefRef(rid);
+	return ResourceGetDefRef(rid);
 }
 
 CResourceDef * CServerConfig::RegisteredResourceGetDef( const CResourceID& rid ) const
@@ -4905,7 +4905,7 @@ bool CServerConfig::LoadIni(bool fTest)
 	return true;
 }
 
-bool CServerConfig::LoadCryptIni( void )
+bool CServerConfig::LoadCryptIni()
 {
 	ADDTOCALLSTACK("CServerConfig::LoadCryptIni");
 
@@ -5102,7 +5102,7 @@ bool CServerConfig::Load( bool fResync )
         else
 			pResFile->ReSync();
 
-		g_Serv.PrintPercent( (size_t)(j + 1), count);
+		g_Serv.PrintPercent( j + 1, count);
 	}
 
     //if (!fResync)
@@ -5185,7 +5185,7 @@ bool CServerConfig::Load( bool fResync )
     size_t iRegionMax = m_RegionDefs.size();
     for (size_t k = 0; k < iRegionMax; ++k)
     {
-        CRegion * pRegion = dynamic_cast <CRegion*> (m_RegionDefs[k]);
+        CRegion * pRegion = m_RegionDefs[k];
         if (!pRegion)
             continue;
         pRegion->MakeRegionDefname();
@@ -5303,7 +5303,7 @@ bool CServerConfig::GenerateDefname(tchar *pObjectName, size_t iInputLength, lpc
 	if ( !pOutput )
 		return false;
 
-	tchar* buf = const_cast<tchar*>(pOutput->buffer());
+	tchar* buf = pOutput->buffer();
 	if ( !pObjectName || !pObjectName[0] )
 	{
 		buf[0] = '\0';

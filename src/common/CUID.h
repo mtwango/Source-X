@@ -7,7 +7,6 @@
 
 #include "common.h"		// for the datatypes
 
-
 class CObjBase;
 class CItem;
 class CChar;
@@ -33,25 +32,25 @@ protected:
 	dword m_dwInternalVal;
 
 public:
-    inline constexpr void InitUID() noexcept {
+    constexpr void InitUID() noexcept {
 		m_dwInternalVal = UID_UNUSED;
 	}
 
     // Use ClearUID only if the CUID is not used as a pure UID, but it can assume other kind of values.
     //  Example: m_itFigurine.m_UID, m_itKey.m_UIDLock -> a MORE1/MORE2 == 0 is considered legit, also for many many item types MORE* isn't a UID.
-    inline constexpr void ClearUID() noexcept {
+    constexpr void ClearUID() noexcept {
 		m_dwInternalVal = UID_PLAIN_CLEAR;
 	}
 
-    inline constexpr CUID() noexcept
+    constexpr CUID() noexcept
 	{
 		InitUID();
 	}
-    inline constexpr CUID(const CUID& uid) noexcept
+    constexpr CUID(const CUID& uid) noexcept
 	{
 		SetPrivateUID(uid.GetPrivateUID());
 	}
-    inline constexpr explicit CUID(dword dwPrivateUID) noexcept
+    constexpr explicit CUID(dword dwPrivateUID) noexcept
 	{
 		// TODO: directly setting the private UID can led to unexpected results...
 		//	it's better to use SetObjUID in order to "filter" the raw value passed.
@@ -65,19 +64,19 @@ public:
     static bool IsItem(dword dwPrivateUID) noexcept;
     static bool IsChar(dword dwPrivateUID) noexcept;
 
-    inline bool IsValidUID() const noexcept {
+    bool IsValidUID() const noexcept {
         return IsValidUID(m_dwInternalVal);
     }
-    inline bool IsResource() const noexcept {
+    bool IsResource() const noexcept {
         return IsResource(m_dwInternalVal);
     }
-    inline bool IsValidResource() const noexcept {
+    bool IsValidResource() const noexcept {
         return IsResource(m_dwInternalVal);
     }
-    inline bool IsItem() const noexcept {
+    bool IsItem() const noexcept {
         return IsItem(m_dwInternalVal);
     }
-    inline bool IsChar() const noexcept {
+    bool IsChar() const noexcept {
         return IsChar(m_dwInternalVal);
     }
 
@@ -101,10 +100,10 @@ public:
     void RemoveObjFlags(dword dwFlags) noexcept;
 
     // Internal UID with flags used only by the core, not scripts nor understood by the client.
-    inline constexpr void SetPrivateUID(dword dwVal) noexcept {
+    constexpr void SetPrivateUID(dword dwVal) noexcept {
         m_dwInternalVal = dwVal;
     }
-    inline constexpr dword GetPrivateUID() const noexcept {
+    constexpr dword GetPrivateUID() const noexcept {
         return m_dwInternalVal;
     }
 
@@ -112,20 +111,19 @@ public:
 	dword GetObjUID() const noexcept;
 	void SetObjUID(dword dwVal) noexcept;
 
-public:
     operator bool() const = delete;
-	inline operator dword () const noexcept {
+    operator dword () const noexcept {
 		return GetObjUID();
 	}
 
-	inline bool operator < (CUID const& rhs) const noexcept {	// for std::less
+    bool operator < (CUID const& rhs) const noexcept {	// for std::less
 		return m_dwInternalVal < rhs.m_dwInternalVal;
 	}
 
-	inline bool operator != (dword index) const noexcept {
+    bool operator != (dword index) const noexcept {
 		return (GetObjUID() != index);
 	}
-	inline bool operator == (dword index) const noexcept {
+    bool operator == (dword index) const noexcept {
 		return (GetObjUID() == index);
 	}
 	CUID& operator = (const CUID&) noexcept = default;
@@ -143,13 +141,13 @@ public:
     static CObjBase * ObjFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
     static CItem * ItemFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
     static CChar * CharFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
-	inline CObjBase* ObjFind(bool fInvalidateBeingDeleted = false) const noexcept {
+    CObjBase * ObjFind(bool fInvalidateBeingDeleted = false) const noexcept {
 		return ObjFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
-	inline CItem* ItemFind(bool fInvalidateBeingDeleted = false) const noexcept {
+    CItem * ItemFind(bool fInvalidateBeingDeleted = false) const noexcept {
 		return ItemFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
-	inline CChar* CharFind(bool fInvalidateBeingDeleted = false) const noexcept{
+    CChar * CharFind(bool fInvalidateBeingDeleted = false) const noexcept{
 		return CharFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
 

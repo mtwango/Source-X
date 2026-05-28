@@ -578,7 +578,7 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 		{
             // Taking the script args by this way is allowed only because the web page is parsed by the main thread.
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-            if (CScriptObj::OnTriggerScript( s, sm_szTrigName[WTRIG_Load], pScriptArgs, pClient ) == TRIGRET_RET_TRUE)
+            if (OnTriggerScript( s, sm_szTrigName[WTRIG_Load], pScriptArgs, pClient ) == TRIGRET_RET_TRUE)
 				return 0;	// Block further action.
 		}
 	}

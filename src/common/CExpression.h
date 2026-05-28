@@ -20,7 +20,7 @@
 
 #undef ISWHITESPACE
 template <typename T>
-inline bool IsWhitespace(const T ch) noexcept {
+bool IsWhitespace(const T ch) noexcept {
     if constexpr (std::is_same_v<T, char>) {
         if (static_cast<unsigned char>(ch) == 0xA0)
             return true;
@@ -212,7 +212,7 @@ class CExpression
         // A pool of arenas.
         static constexpr uint sm_subexpr_pool_size = 1'000;
         static constexpr bool sm_allow_fallback_objects = false;
-        using CSubExprStatesArenaPool_t = sl::ObjectPool<CSubExprStatesArena, sm_subexpr_pool_size, sm_allow_fallback_objects>;
+        using CSubExprStatesArenaPool_t = sl::ObjectPool<CSubExprStatesArena, sm_subexpr_pool_size>;
         CSubExprStatesArenaPool_t m_poolCScriptExprSubStatesPool;
     };
 
@@ -234,16 +234,16 @@ public:
 
 	// Strict G++ Prototyping produces an error when not casting char*& to const char*&
 	// So this is a rather lazy and const-UNsafe workaround
-    inline int64 GetSingle(lptstr &refArgs) {
+    int64 GetSingle(lptstr &refArgs) {
         return GetSingle(const_cast<lpctstr &>(refArgs));
 	}
-    inline int64 GetVal(lptstr& refArgs) {
+    int64 GetVal(lptstr& refArgs) {
         return GetVal(const_cast<lpctstr&>(refArgs));
 	}
-    inline int GetRangeVals(lptstr &refStrExpr, int64 * piVals, int iMaxQty, bool fNoWarn = false) {
+    int GetRangeVals(lptstr &refStrExpr, int64 * piVals, int iMaxQty, bool fNoWarn = false) {
         return GetRangeVals(const_cast<lpctstr &>(refStrExpr), piVals, iMaxQty, fNoWarn);
 	}
-    inline int64 GetRangeNumber(lptstr &refStrArgs) {
+    int64 GetRangeNumber(lptstr &refStrArgs) {
         return GetRangeNumber(const_cast<lpctstr &>(refStrArgs));
 	}
 
@@ -333,7 +333,7 @@ int Str_ParseCmds(tchar * pCmdLine, int64 * piCmd, int iMax, const tchar * pSep 
 
 
 // Numeric formulas
-template<typename T> inline T SphereAbs(const T x) noexcept
+template<typename T> T SphereAbs(const T x) noexcept
 {
     static_assert(std::is_arithmetic_v<T>, "Invalid data type.");
     static_assert(std::is_signed_v<T>, "Trying to get the absolute value of an unsigned number?");

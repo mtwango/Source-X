@@ -162,10 +162,10 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 			sVal.FormatSTVal(GetItemComplexity());
 			return true;
 		case SC_SEASON:
-			sVal.FormatVal((int)GetSeason());
+			sVal.FormatVal(GetSeason());
 			return true;
 		case SC_WEATHER:
-			sVal.FormatVal((int)GetWeather());
+			sVal.FormatVal(GetWeather());
 			return true;
         default:
             break;
@@ -704,7 +704,7 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
 		//	0...	x	...12*60
 		int iTargLight = ((localtime * ( g_Cfg.m_iLightNight - g_Cfg.m_iLightDay ))/(12*60) + g_Cfg.m_iLightDay);
 
-		return (uchar)std::clamp(iTargLight, LIGHT_BRIGHT, LIGHT_DARK);;
+		return (uchar)std::clamp(iTargLight, LIGHT_BRIGHT, LIGHT_DARK);
 	}
 
 	const int hour = ( localtime / ( 60)) % 24;
@@ -825,7 +825,7 @@ void CSector::SetLight( int light )
 	if ( light < LIGHT_BRIGHT || light > LIGHT_DARK )
 	{
 		m_Env.m_Light &= ~LIGHT_OVERRIDE;
-		m_Env.m_Light = (byte) GetLightCalc( true );
+		m_Env.m_Light = GetLightCalc(true);
 	}
 	else
 		m_Env.m_Light = (byte) ( light | LIGHT_OVERRIDE );

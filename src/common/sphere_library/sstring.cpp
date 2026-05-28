@@ -822,7 +822,7 @@ int Str_CmpHeadI(lpctstr_restrict ptcFind, lpctstr_restrict ptcHere) noexcept
     }
 }
 
-static inline int Str_CmpHeadI_Table(const tchar * ptcFind, const tchar * ptcTable) noexcept
+static int Str_CmpHeadI_Table(const tchar * ptcFind, const tchar * ptcTable) noexcept
 {
     for (uint i = 0; ; ++i)
     {
@@ -2092,7 +2092,7 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, int delimiter, FILE *fp) noexcep
         int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                ssize_t diff = (ssize_t)(ptr - *buf);
+                ssize_t diff = ptr - *buf;
                 if (diff != 0) {
                     *ptr = '\0';
                     return diff;
@@ -2129,7 +2129,7 @@ ssize_t fReadUntilDelimiter_StaticBuf(char *buf, const size_t bufsiz, const int 
         const int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                ssize_t diff = (ssize_t)(ptr - buf);
+                ssize_t diff = ptr - buf;
                 if (diff != 0) {
                     *ptr = '\0';
                     return diff;

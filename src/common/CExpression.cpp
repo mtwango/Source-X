@@ -725,7 +725,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
         {
             const uint32 u32 = static_cast<uint32>(uiVal);
             const int32  s32 = static_cast<int32>(u32);    // two's complement reinterpretation
-            return static_cast<int64>(s32);
+            return s32;
         }
 
         // two's-complement 64-bit reinterpretation without implementation-defined casts
@@ -735,14 +735,14 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             const int64 neg  = -static_cast<int64>(mag); // well-defined negate in 64-bit domain
             return neg;
         }
-        return (llong)(int64)uiVal;
+        return (int64)uiVal;
     }
     if ((refStrExpr[0] >= '0' && refStrExpr[0] <= '9') || (refStrExpr[0] == '.' && (refStrExpr[1] >= '0' && refStrExpr[1] <= '9')))
     {
         // DECIMAL PATH: digits, optionally with '.' separators that are ignored
         // Overflow guard for INT64_MAX (9223372036854775807)
         constexpr int64 LIM10 = INT64_MAX / 10;        // 922337203685477580
-        constexpr int LIMDG   = (int)(INT64_MAX % 10); // 7
+        constexpr int LIMDG   = INT64_MAX % 10; // 7
 
         int64 val     = 0;
         bool overflow = false;
@@ -775,7 +775,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             DEBUG_WARN(("Decimal value parsing will overflow 64 bits: %s.\n", ptcOrigExpr));
             return -1;
         }
-        return (llong)val;
+        return val;
     }
     if (!_ISCSYMF(refStrExpr[0]))
     {
@@ -1539,7 +1539,7 @@ int CExpression::GetRangeVals(lpctstr & refStrExpr, int64 * piVals, int iMaxQty,
 CExpression::PrvBuffersPool::CSubExprStatesArenaPool_t::UniquePtr_t
 CExpression::GetConditionalSubexpressions(
     lptstr& refStrExpr,
-    CExpression::PrvBuffersPool::CSubExprStatesArenaPool_t& bufs_arena)
+    PrvBuffersPool::CSubExprStatesArenaPool_t& bufs_arena)
 {
 	ADDTOCALLSTACK("CExpression::GetConditionalSubexpressions");
 	// Get the start and end pointers for each logical subexpression (delimited by brackets or by logical operators || and &&) inside a conditional statement (IF/ELIF/ELSEIF and QVAL).
@@ -1557,7 +1557,7 @@ CExpression::GetConditionalSubexpressions(
     }
 
     static constexpr auto s_kuiMaxSubexpressionsPerExpr = CSubExprStatesArena::sm_kuiMaxConditionalSubexprsPerExpr;
-    using SubexprState_t = CExpression::CScriptSubExprState;
+    using SubexprState_t = CScriptSubExprState;
     using SubexprType_t = SubexprState_t::Type;
 
     SubexprState_t* parsingSubexprsStates = pSubexprsArena.get()->m_subexprs;
@@ -1693,7 +1693,6 @@ CExpression::GetConditionalSubexpressions(
                             if (nullptr == ptcLineLastClosingBracket)
                             {
                                 // There are other valid characters after the closing curly bracket, so leave ptcEnd unchanged, to the end of the string.
-                                ;
                             }
                             else if (ptcLastClosingBracket == ptcLineLastClosingBracket)
 							{
@@ -1998,10 +1997,10 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
         const size_t uiToParseLen = std::min(
             size_t(THREAD_STRING_LENGTH-1),
             size_t(pElementsStart[0][1] - pElementsStart[0][0]));
-        memcpy((void*)ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
+        memcpy(ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
-        lptstr pToParseCasted = static_cast<lptstr>(ptcToParse);
+        lptstr pToParseCasted = ptcToParse;
 		return GetSingle(pToParseCasted);
 	}
 
@@ -2014,17 +2013,17 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
         size_t uiToParseLen = std::min(
             size_t(THREAD_STRING_LENGTH-1),
             size_t(pElementsStart[0][1] - pElementsStart[0][0]));
-        memcpy((void*)ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
+        memcpy(ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
-        lptstr pToParseCasted = static_cast<lptstr>(ptcToParse);
+        lptstr pToParseCasted = ptcToParse;
         int64 iValFirst = GetSingle(pToParseCasted);
 
 		// Copy the second element in a new string
         uiToParseLen = std::min(
             size_t(THREAD_STRING_LENGTH-1),
             size_t(pElementsStart[1][1] - pElementsStart[1][0]));
-        memcpy((void*)ptcToParse, pElementsStart[1][0], uiToParseLen * sizeof(tchar));
+        memcpy(ptcToParse, pElementsStart[1][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
         pToParseCasted = static_cast<lptstr>(ptcToParse);
@@ -2051,10 +2050,10 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
         const size_t uiToParseLen = std::min(
             size_t(THREAD_STRING_LENGTH-1),
             size_t(pElementsStart[i][1] - pElementsStart[i][0]));
-        memcpy((void*)ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
+        memcpy(ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
-        lptstr pToParseCasted = static_cast<lptstr>(ptcToParse);
+        lptstr pToParseCasted = ptcToParse;
 		llWeights[i] = GetSingle(pToParseCasted);	// GetSingle changes the pointer value, so i need to work with a copy
 
 		if ( ! llWeights[i] )	// having a weight of 0 is very strange !
@@ -2081,10 +2080,10 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
     const size_t uiToParseLen = std::min(
         size_t(THREAD_STRING_LENGTH-1),
         size_t(pElementsStart[i][1] - pElementsStart[i][0]));
-    memcpy((void*)ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
+    memcpy(ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
     ptcToParse[uiToParseLen] = '\0';
 
-    lptstr ptcToParseCasted = static_cast<lptstr>(ptcToParse);
+    lptstr ptcToParseCasted = ptcToParse;
     return GetSingle(ptcToParseCasted);
 }
 
@@ -2128,9 +2127,9 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
 
         // Copy the weight element in a new string
         const size_t iToParseLen = size_t(pElementsStart[i][1] - pElementsStart[i][0]);
-        memcpy((void*)pToParse, pElementsStart[i][0], iToParseLen * sizeof(tchar));
+        memcpy(pToParse, pElementsStart[i][0], iToParseLen * sizeof(tchar));
         pToParse[iToParseLen] = '\0';
-        lptstr pToParseCasted = reinterpret_cast<lptstr>(pToParse);
+        lptstr pToParseCasted = pToParse;
         if (!IsSimpleNumberString(pToParseCasted))
         {
             g_Log.EventError( "Non-numeric weight in random string range: invalid. Value-weight couple number %d\n", i );

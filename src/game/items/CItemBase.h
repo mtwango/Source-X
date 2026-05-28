@@ -25,7 +25,6 @@ class CItemBase : public CBaseBaseDef
 	// RES_ITEMDEF
 	// Describe basic stuff about all items.
 	// Partly based on CUOItemTypeRec/CUOItemTypeRec_HS
-private:
 	CSTypedArray<ITEMID_TYPE> m_flip_id;	//  can be flipped to make these display ids.
 	CValueRangeDef m_values;	// range of values given a quality skill
 	uint64  m_qwFlags;			//  UFLAG4_DOOR from CUOItemTypeRec/CUOItemTypeRec_HS

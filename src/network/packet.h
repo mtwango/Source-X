@@ -50,16 +50,16 @@ public:
 	explicit Packet(uint size = 0);
 	Packet(const Packet& other);
 	Packet(const byte* data, uint size);
-	virtual ~Packet(void);
+	virtual ~Packet();
 
     Packet& operator=(const Packet& other) = delete;
 
-	bool isValid(void) const;
-	uint getLength(void) const; // get total packet length
-	uint getPosition(void) const; // get current position
-	byte* getData(void) const; // get packet data
-	byte* getRemainingData(void) const; // get packet data from current position
-	uint getRemainingLength(void) const; // get length of data from current position
+	bool isValid() const;
+	uint getLength() const; // get total packet length
+	uint getPosition() const; // get current position
+	byte* getData() const; // get packet data
+	byte* getRemainingData() const; // get packet data from current position
+	uint getRemainingLength() const; // get length of data from current position
 	void dump(AbstractString& output) const; // write packet data to string
 
 	void expand(uint size = 0); // expand packet (resize whilst maintaining position)
@@ -71,15 +71,15 @@ public:
 	const byte &operator[](uint index) const;
 
 	// write
-	void writeBool(const bool value); // write boolean (1 byte)
-	void writeCharASCII(const char value); // write ASCII character (1 byte)
-	void writeCharUTF16(const wchar value); // write UNICODE character (2 bytes)
-	void writeCharNETUTF16(const wchar value); // write UNICODE character, network order (2 bytes)
-	void writeByte(const byte value); // write 8-bit integer (1 byte)
-	void writeInt16(const word value); // write 16-bit integer (2 bytes)
-	void writeInt32(const dword value); // write 32-bit integer (4 bytes)
-	void writeInt64(const dword hi, const dword lo); // write 64-bit integer (8 bytes)
-	void writeInt64(const int64 value); // write 64-bit integer (8 bytes)
+	void writeBool(bool value); // write boolean (1 byte)
+	void writeCharASCII(char value); // write ASCII character (1 byte)
+	void writeCharUTF16(wchar value); // write UNICODE character (2 bytes)
+	void writeCharNETUTF16(wchar value); // write UNICODE character, network order (2 bytes)
+	void writeByte(byte value); // write 8-bit integer (1 byte)
+	void writeInt16(word value); // write 16-bit integer (2 bytes)
+	void writeInt32(dword value); // write 32-bit integer (4 bytes)
+	void writeInt64(dword hi, dword lo); // write 64-bit integer (8 bytes)
+	void writeInt64(int64 value); // write 64-bit integer (8 bytes)
 	void writeStringASCII(const char* value, bool terminate = true); // write ascii string until null terminator found
 	void writeStringASCII(const wchar* value, bool terminate = true); // write ascii string until null terminator found
 	void writeStringFixedASCII(const char* value, uint size, bool terminate = false); // write fixed-length ascii string
@@ -93,19 +93,19 @@ public:
 	void writeStringFixedNETUTF16(const char* value, uint size, bool terminate = false); // write fixed-length unicode string, network order
 	void writeStringFixedNETUTF16(const wchar* value, uint size, bool terminate = false); // write fixed-length unicode string, network order
 	void writeData(const byte* buffer, uint size); // write block of data
-	void fill(void); // zeroes remaining buffer
-	uint sync(void);
-	void trim(void); // trim packet length down to current position
+	void fill(); // zeroes remaining buffer
+	uint sync();
+	void trim(); // trim packet length down to current position
 
 	// read
-	bool readBool(void); // read boolean (1 byte)
-	char readCharASCII(void); // read ASCII character (1 byte)
-	wchar readCharUTF16(void); // read UNICODE character (2 bytes)
-	wchar readCharNETUTF16(void); // read UNICODE character, network order (2 bytes)
-	byte readByte(void); // read 8-bit integer (1 byte)
-	word readInt16(void); // read 16-bit integer (2 bytes)
-	dword readInt32(void); // read 32-bit integer (4 bytes)
-	int64 readInt64(void); // read 64-bit integer (8 bytes)
+	bool readBool(); // read boolean (1 byte)
+	char readCharASCII(); // read ASCII character (1 byte)
+	wchar readCharUTF16(); // read UNICODE character (2 bytes)
+	wchar readCharNETUTF16(); // read UNICODE character, network order (2 bytes)
+	byte readByte(); // read 8-bit integer (1 byte)
+	word readInt16(); // read 16-bit integer (2 bytes)
+	dword readInt32(); // read 32-bit integer (4 bytes)
+	int64 readInt64(); // read 64-bit integer (8 bytes)
 	void readStringASCII(char* buffer, uint length, bool includeNull = true); // read fixed-length ascii string
 	void readStringASCII(wchar* buffer, uint length, bool includeNull = true); // read fixed-length ascii string
 	void readStringUTF16(char* buffer, uint bufferSize, uint length, bool includeNull = true); // read fixed length unicode string
@@ -124,7 +124,7 @@ public:
 	virtual bool onReceive(CNetState* client);
 
 protected:
-	void clear(void);
+	void clear();
 	void copy(const Packet& other);
 };
 
@@ -146,7 +146,7 @@ public:
 		PRI_NORMAL,
 		PRI_HIGH,
 		PRI_HIGHEST,
-		PRI_QTY
+		PRI_QTY,
 	};
 
 protected:
@@ -161,15 +161,15 @@ public:
 
     PacketSend& operator=(const PacketSend& other) = delete;
 
-	void initLength(void); // write empty length and ensure that it is remembered
+	void initLength(); // write empty length and ensure that it is remembered
 
 	void target(const CClient* client); // sets person to send packet to
 
 	void send(const CClient* client = nullptr, bool appendTransaction = true); // adds the packet to the send queue
 	void push(const CClient* client = nullptr, bool appendTransaction = true); // moves the packet to the send queue (will not be used anywhere else)
 
-	int getPriority() const { return m_priority; }; // get packet priority
-	CNetState* getTarget() const { return m_target; }; // get target state
+	int getPriority() const { return m_priority; } // get packet priority
+	CNetState* getTarget() const { return m_target; } // get target state
 
 	virtual bool onSend(const CClient* client);
 	virtual void onSent(CClient* client);
@@ -180,7 +180,7 @@ public:
 
 protected:
 	void fixLength(); // write correct packet length to it's slot
-	virtual PacketSend* clone(void) const;
+	virtual PacketSend* clone() const;
 };
 
 
@@ -194,20 +194,20 @@ protected:
 class PacketTransaction
 {
 protected:
-	PacketTransaction(void) = default;
+	PacketTransaction() = default;
 
 	PacketTransaction(const PacketTransaction& copy) = delete;
 	PacketTransaction& operator=(const PacketTransaction& other) = delete;
 
 public:
-	virtual ~PacketTransaction(void);
+	virtual ~PacketTransaction();
 
-	virtual PacketSend* front(void) = 0; // get first packet in the transaction
-	virtual void pop(void) = 0; // remove first packet from the transaction
-	virtual bool empty(void) = 0; // check if any packets are available
+	virtual PacketSend* front() = 0; // get first packet in the transaction
+	virtual void pop() = 0; // remove first packet from the transaction
+	virtual bool empty() = 0; // check if any packets are available
 
-	virtual CNetState* getTarget(void) const = 0; // get target of the transaction
-	virtual int getPriority(void) const = 0; // get priority of the transaction
+	virtual CNetState* getTarget() const = 0; // get target of the transaction
+	virtual int getPriority() const = 0; // get priority of the transaction
 	virtual void setPriority(int priority) = 0; // set priority of the transaction
 };
 
@@ -221,23 +221,22 @@ public:
  ***************************************************************************/
 class SimplePacketTransaction : public PacketTransaction
 {
-private:
 	PacketSend* m_packet;
 
 public:
-	explicit SimplePacketTransaction(PacketSend* packet) : m_packet(packet) { };
-	~SimplePacketTransaction(void) override;
+	explicit SimplePacketTransaction(PacketSend* packet) : m_packet(packet) { }
+	~SimplePacketTransaction() override;
 
 	SimplePacketTransaction(const SimplePacketTransaction& copy) = delete;
 	SimplePacketTransaction& operator=(const SimplePacketTransaction& other) = delete;
 
-	CNetState* getTarget(void) const override { return m_packet->getTarget(); }
-	int getPriority(void) const override { return m_packet->getPriority(); }
+	CNetState* getTarget() const override { return m_packet->getTarget(); }
+	int getPriority() const override { return m_packet->getPriority(); }
 	void setPriority(int priority) override { m_packet->m_priority = priority; }
 
-	PacketSend* front(void) override { return m_packet; };
-	void pop(void) override { m_packet = nullptr; }
-	bool empty(void) override { return m_packet == nullptr; }
+	PacketSend* front() override { return m_packet; }
+	void pop() override { m_packet = nullptr; }
+	bool empty() override { return m_packet == nullptr; }
 };
 
 
@@ -250,29 +249,28 @@ public:
  ***************************************************************************/
 class ExtendedPacketTransaction : public PacketTransaction
 {
-private:
 	std::list<PacketSend*> m_packets;
 	CNetState* m_target;
 	int m_priority;
 
 public:
-	ExtendedPacketTransaction(CNetState* target, int priority) : m_target(target), m_priority(priority) { };
-	~ExtendedPacketTransaction(void) override;
+	ExtendedPacketTransaction(CNetState* target, int priority) : m_target(target), m_priority(priority) { }
+	~ExtendedPacketTransaction() override;
 
 private:
 	ExtendedPacketTransaction(const ExtendedPacketTransaction& copy);
 	ExtendedPacketTransaction& operator=(const ExtendedPacketTransaction& other);
 
 public:
-	CNetState* getTarget(void) const override { return m_target; }
-	int getPriority(void) const override { return m_priority; }
+	CNetState* getTarget() const override { return m_target; }
+	int getPriority() const override { return m_priority; }
 	void setPriority(int priority) override { m_priority = priority; }
 
     void push_back(PacketSend* packet) { m_packets.push_back(packet); }
     void emplace_back(PacketSend* packet) { m_packets.emplace_back(packet); }
-    PacketSend* front(void) override { return m_packets.front(); };
-    void pop(void) override { m_packets.pop_front(); }
-    bool empty(void) override { return m_packets.empty(); }
+    PacketSend* front() override { return m_packets.front(); }
+    void pop() override { m_packets.pop_front(); }
+    bool empty() override { return m_packets.empty(); }
 };
 
 
@@ -285,12 +283,11 @@ public:
  ***************************************************************************/
 class OpenPacketTransaction
 {
-private:
 	CNetState* m_client;
 
 public:
 	OpenPacketTransaction(const CClient* client, int priority);
-	~OpenPacketTransaction(void);
+	~OpenPacketTransaction();
 
 private:
 	OpenPacketTransaction(const OpenPacketTransaction& copy);

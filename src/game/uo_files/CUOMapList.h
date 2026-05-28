@@ -66,7 +66,6 @@ public:
     CUOMapList& operator=(const CUOMapList& other) = delete;
     ///@}
 
-public:
     /** @name Modifiers:
      */
     ///@{

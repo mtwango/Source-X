@@ -132,7 +132,7 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
             if ( iLoIdx >= iQty )
                 iLoIdx = iQty - 1;
             iSegSize = 1000 / iQty;
-            iSkillPercent -= (int)( iLoIdx * iSegSize );
+            iSkillPercent -= iLoIdx * iSegSize;
             break;
     }
 

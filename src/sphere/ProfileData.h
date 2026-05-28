@@ -69,9 +69,8 @@ public:
 	ProfileData(const ProfileData& copy) = delete;
 	ProfileData& operator=(const ProfileData& other) = delete;
 
-public:
 	bool IsActive() const noexcept {
-		return ( m_iActiveWindowSeconds > 0 ? true : false );
+		return ( m_iActiveWindowSeconds > 0);
 	}
     int GetActiveWindow() const noexcept;
 

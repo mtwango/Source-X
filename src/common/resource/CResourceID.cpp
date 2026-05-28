@@ -1,7 +1,6 @@
 #include "CResourceID.h"
 #include "../CLog.h"
 
-
 static constexpr lpctstr _ptcWarnInvalidResource = "Expected a valid ResourceID, found invalid with index: 0%x (internal val: 0%x, warning code: %d).\n";
 #define LOG_WARN_RES_INVALID(code)    g_Log.EventWarn(_ptcWarnInvalidResource, rid.GetResIndex(), rid.GetPrivateUID(), code);
 
@@ -31,7 +30,7 @@ CResourceIDBase::CResourceIDBase(RES_TYPE restype, int iIndex) // explicit
 
 CResourceIDBase::CResourceIDBase(dword dwPrivateID) // explicit
 {
-    if (!CUID::IsValidUID(dwPrivateID))
+    if (!IsValidUID(dwPrivateID))
     {
         DEBUG_MSG(("Trying to set invalid dwPrivateID (0x%x) to CResourceIDBase. Resetting it.\n", dwPrivateID));
         Init();
@@ -84,7 +83,7 @@ CItem* CResourceIDBase::ItemFindFromResource(bool fInvalidateBeingDeleted) const
     // Used by multis: when they are realized, a new CRegionWorld is created from a CResourceID with an internal value = to the m_dwInternalVal (private UID) of the multi, plus a | UID_F_RESOURCE.
     //  Remove the reserved UID_* flags (so also UID_F_RESOURCE), and find the item (in our case actually the multi) with that uid.
     ASSERT(IsResource());
-    return CUID::ItemFindFromUID(m_dwInternalVal & UID_O_INDEX_MASK, fInvalidateBeingDeleted);
+    return ItemFindFromUID(m_dwInternalVal & UID_O_INDEX_MASK, fInvalidateBeingDeleted);
 }
 
 

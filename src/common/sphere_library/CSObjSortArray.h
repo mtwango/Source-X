@@ -22,11 +22,11 @@ public:
 	/**
     * @brief No copy on construction allowed.
     */
-	CSObjSortArray(const CSObjSortArray<TYPE, KEY_TYPE> & copy) = delete;
+	CSObjSortArray(const CSObjSortArray & copy) = delete;
 	/**
     * @brief No copy allowed.
     */
-	CSObjSortArray<TYPE, KEY_TYPE> & operator=(const CSObjSortArray<TYPE, KEY_TYPE> & other) = delete;
+	CSObjSortArray & operator=(const CSObjSortArray & other) = delete;
 
 	/**
     * @brief Adds a value into a position.
@@ -116,7 +116,7 @@ size_t CSObjSortArray<TYPE, KEY_TYPE>::AddSortKey( TYPE pNew, KEY_TYPE key )
 }
 
 template<class TYPE,class KEY_TYPE>
-inline void CSObjSortArray<TYPE,KEY_TYPE>::DeleteKey( KEY_TYPE key )
+void CSObjSortArray<TYPE,KEY_TYPE>::DeleteKey( KEY_TYPE key )
 {
 	erase(FindKey(key));
 }
@@ -124,7 +124,7 @@ inline void CSObjSortArray<TYPE,KEY_TYPE>::DeleteKey( KEY_TYPE key )
 // CSObjSortArray:: Operations.
 
 template<class TYPE,class KEY_TYPE>
-inline bool CSObjSortArray<TYPE,KEY_TYPE>::ContainsKey( KEY_TYPE key ) const
+bool CSObjSortArray<TYPE,KEY_TYPE>::ContainsKey( KEY_TYPE key ) const
 {
 	return FindKey(key) != sl::scont_bad_index();
 }

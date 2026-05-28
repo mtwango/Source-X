@@ -324,7 +324,7 @@ CServerMapDiffBlock::CServerMapDiffBlock(dword dwBlockId, int map)
 	m_iStaticsCount = -1;
 	m_pStaticsBlock = nullptr;
 	m_pTerrainBlock = nullptr;
-};
+}
 
 CServerMapDiffBlock::~CServerMapDiffBlock()
 {
@@ -334,7 +334,7 @@ CServerMapDiffBlock::~CServerMapDiffBlock()
 		delete m_pTerrainBlock;
 	m_pStaticsBlock = nullptr;
 	m_pTerrainBlock = nullptr;
-};
+}
 
 //////////////////////////////////////////////////////////////////
 // -CServerMapDiffblockArray
@@ -590,7 +590,7 @@ CUOMulti::~CUOMulti()
 void CUOMulti::HitCacheTime() noexcept
 {
     // When was this last referenced.
-    CCachedMulItem::m_timeRef = CWorldGameTime::GetCurrentTime().GetTimeRaw();
+    m_timeRef = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 }
 
 const CUOMultiItemRec_HS * CUOMulti::GetItem( size_t i ) const
@@ -623,7 +623,7 @@ size_t CUOMulti::Load(MULTI_TYPE id)
 		ASSERT(m_pItems);
 
 		ASSERT((sizeof(m_pItems[0]) * m_iItemQty) >= Index.GetBlockLength());
-		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, static_cast <CUOMultiItemRec_HS *>(m_pItems)))
+		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, m_pItems))
 			return 0;
 		break;
 
@@ -635,7 +635,7 @@ size_t CUOMulti::Load(MULTI_TYPE id)
 
 		CUOMultiItemRec* pItems = new CUOMultiItemRec[m_iItemQty];
 		ASSERT((sizeof(pItems[0]) * m_iItemQty) >= Index.GetBlockLength());
-		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, static_cast <CUOMultiItemRec *>(pItems)))
+		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, pItems))
 		{
 			delete[] pItems;
 			return 0;

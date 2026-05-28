@@ -44,9 +44,8 @@ public:
 	void VSysMessage( lpctstr pszFormat, va_list args ) const;
     void SysMessagef( lpctstr pszFormat, ... ) const SPHERE_PRINTFARGS(2,3);
 
-public:
-	CTextConsole() { };
-	virtual ~CTextConsole() { };
+	CTextConsole() { }
+	virtual ~CTextConsole() { }
 
 private:
 	CTextConsole(const CTextConsole& copy);

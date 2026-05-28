@@ -25,7 +25,6 @@ class CRandGroupDef : public CResourceLink
     int m_iTotalWeight;
     CResourceQtyArray m_Members;
 
-private:
     int CalcTotalWeight();
 public:
     static const char *m_sClassName;

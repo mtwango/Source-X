@@ -1115,7 +1115,7 @@ CItem *CItemMulti::GenerateKey(const CUID& uidTarget, bool fDupeOnBank)
     if (fDupeOnBank)
     {
         // Put in your bankbox
-        CItem* pKeyDupe = CItem::CreateDupeItem(pKey);
+        CItem* pKeyDupe = CreateDupeItem(pKey);
         CItemContainer* pContBank = pTarget->GetBank();
         pContBank->ContentAdd(pKeyDupe);
         pTarget->SysMessageDefault(DEFMSG_MSG_KEY_DUPEBANK);
@@ -1204,7 +1204,7 @@ void CItemMulti::Redeed(bool fDisplayMsg, bool fMoveToBank, CUID uidRedeedingCha
     bool fTransferAll = false;
 
     ITEMID_TYPE itDeed = IsType(IT_SHIP) ? ITEMID_SHIP_PLANS1 : ITEMID_DEED1;
-    CItem *pDeed = CItem::CreateBase(itDeed);
+    CItem *pDeed = CreateBase(itDeed);
     ASSERT(pDeed);
 
     tchar *pszName = Str_GetTemp();
@@ -1337,7 +1337,7 @@ CUID CItemMulti::GetMovingCrate(bool fCreate)
     {
         return CUID();
     }
-    CItemContainer *pCrate = static_cast<CItemContainer*>(CItem::CreateBase(ITEMID_CRATE1));
+    CItemContainer *pCrate = static_cast<CItemContainer*>(CreateBase(ITEMID_CRATE1));
     ASSERT(pCrate);
     const CUID& uidCrate = pCrate->GetUID();
     CPointMap pt = GetTopPoint();
@@ -1670,7 +1670,7 @@ void CItemMulti::RemoveAllComponents()
     {
         return;
     }
-    const std::vector<CUID> lCopy(_lComps);
+    const std::vector lCopy(_lComps);
     for (size_t i = 0; i < lCopy.size(); ++i)
     {
         CItem *pComp = lCopy[i].ItemFind();
@@ -2718,7 +2718,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
                 {
                     CMultiStorage* pMultiStorage = pSrcChar->m_pPlayer->GetMultiStorage();
                     ASSERT(pMultiStorage);
-                    sVal.FormatU8Val((uint8)pMultiStorage->GetPriv(GetUID()));
+                    sVal.FormatU8Val(pMultiStorage->GetPriv(GetUID()));
                     break;
                 }
             }
@@ -3423,7 +3423,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
         }
     }
 
-    CItem * pItemNew = CItem::CreateTemplate(pItemDef->GetID(), nullptr, pChar);
+    CItem * pItemNew = CreateTemplate(pItemDef->GetID(), nullptr, pChar);
     if (pItemNew == nullptr)
     {
         pChar->SysMessageDefault(DEFMSG_ITEMUSE_MULTI_COLLAPSE);
@@ -3623,7 +3623,7 @@ void CMultiStorage::AddHouse(const CUID& uidHouse, HOUSE_PRIV ePriv)
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_iN1 = pMulti->GetMultiCount();
     pScriptArgs->m_iN2 = ePriv;
-    pScriptArgs->m_iN3 = (ePriv == HOUSE_PRIV::HP_OWNER) ? 1 : 0;
+    pScriptArgs->m_iN3 = (ePriv == HP_OWNER) ? 1 : 0;
 
     if (IsTrigUsed(TRIGGER_ADDMULTI))
     {
@@ -3660,7 +3660,7 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
         pScriptArgs->m_iN1 = pMulti->GetMultiCount();
         pScriptArgs->m_iN2 = ePriv;
         pScriptArgs->m_pO1 = pMulti;
-        pScriptArgs->m_iN3 = (ePriv == HOUSE_PRIV::HP_OWNER) ? 1 : 0;
+        pScriptArgs->m_iN3 = (ePriv == HP_OWNER) ? 1 : 0;
 
         if (IsTrigUsed(TRIGGER_DELMULTI))
         {
@@ -3675,7 +3675,6 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
             _iHousesTotal -= static_cast<int16>(pScriptArgs->m_iN1);
         }
         _lHouses.erase(uidHouse);
-        return;
     }
 }
 
@@ -3797,7 +3796,7 @@ void CMultiStorage::AddShip(const CUID& uidShip, HOUSE_PRIV ePriv)
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_iN1 = pShip->GetMultiCount();
     pScriptArgs->m_iN2 = ePriv;
-    pScriptArgs->m_iN3 = (ePriv == HOUSE_PRIV::HP_OWNER) ? 1 : 0;
+    pScriptArgs->m_iN3 = (ePriv == HP_OWNER) ? 1 : 0;
 
     if (IsTrigUsed(TRIGGER_ADDMULTI))
     {
@@ -3834,7 +3833,7 @@ void CMultiStorage::DelShip(const CUID& uidShip)
         pScriptArgs->m_iN1 = pMulti->GetMultiCount();
         pScriptArgs->m_iN2 = ePriv;
         pScriptArgs->m_pO1 = pMulti;
-        if (ePriv == HOUSE_PRIV::HP_OWNER)
+        if (ePriv == HP_OWNER)
         {
             pScriptArgs->m_iN3 = 1;
         }
@@ -3852,7 +3851,6 @@ void CMultiStorage::DelShip(const CUID& uidShip)
             _iShipsTotal -= static_cast<int16>(pScriptArgs->m_iN1);
         }
         _lShips.erase(uidShip);
-        return;
     }
 }
 

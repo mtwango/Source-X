@@ -483,7 +483,7 @@ uint CChar::Stat_GetSumLimit() const
     {
         const CSkillClassDef * pSkillClass = m_pPlayer->GetSkillClass();
         ASSERT(pSkillClass);
-        return (uint)(pSkillClass->m_StatSumMax);
+        return pSkillClass->m_StatSumMax;
     }
     return 300;
 }
@@ -510,7 +510,7 @@ bool CChar::Stats_Regen()
         m_Stat[i].m_regenLast = iCurTime; // in msecs
 
 		const ushort uiStatVal = Stat_GetVal(i);
-		int iMod = (int)Stats_GetRegenVal(i);
+		int iMod = Stats_GetRegenVal(i);
         ushort uiStatLimit = Stat_GetMaxAdjusted(i);
 		int iFocusGain = 0;
         if (uiStatVal <= uiStatLimit)

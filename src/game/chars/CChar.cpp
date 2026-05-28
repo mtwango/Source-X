@@ -344,7 +344,7 @@ CChar::~CChar()
     EXC_TRY("Cleanup in destructor");
 
 	CChar::DeletePrepare();
-	CChar::DeleteCleanup(true);
+	DeleteCleanup(true);
 
     if (IsClientActive())    // this should never happen.
     {
@@ -418,7 +418,7 @@ bool CChar::NotifyDelete(bool fForce)
 		//We can forbid the deletion in here with no pain
 		//If Delete is forced, we must avoid the possibility to block deletion (will create infinite loop)
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-        if (CChar::OnTrigger(CTRIG_Destroy, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE && !fForce)
+        if (OnTrigger(CTRIG_Destroy, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE && !fForce)
 			return false;
 	}
 
@@ -446,7 +446,7 @@ bool CChar::NotifyDelete(bool fForce)
 void CChar::DeletePrepare()
 {
 	ADDTOCALLSTACK("CChar::DeletePrepare");
-    CContainer::ContentDelete(true);	// This object and its contents need to be deleted on the same tick
+    ContentDelete(true);	// This object and its contents need to be deleted on the same tick
     CObjBase::DeletePrepare();
 }
 
@@ -881,7 +881,7 @@ CRegion * CChar::GetRoom() const
 
 int CChar::GetVisualRange() const
 {
-	return (int)m_iVisualRange;
+	return m_iVisualRange;
 }
 
 void CChar::SetVisualRange(byte newSight)
@@ -1476,7 +1476,7 @@ void CChar::OnWeightChange( int iChange )
 int CChar::GetWeight(word amount) const
 {
 	UnreferencedParameter(amount);
-	return CContainer::GetTotalWeight();
+	return GetTotalWeight();
 }
 
 bool CChar::SetName( lpctstr pszName )
@@ -1524,7 +1524,7 @@ height_t CChar::GetHeight() const
 
     // This is SLOW (since this method is called very frequently)! Move those defs value to CharDef!
     auto gReader = g_ExprGlobals.mtEngineLockedReader();
-    const uint uiDispID = (uint)pCharDef->GetDispID();
+    const uint uiDispID = pCharDef->GetDispID();
     char heightDef[20]{"height_"};
     Str_FromUI(uint(uiDispID), heightDef + 7, sizeof(heightDef) - 7, 16);
     tmpHeight = (height_t)(gReader->m_VarDefs.GetKeyNum(heightDef));
@@ -1584,7 +1584,7 @@ bool CChar::SetDispID(CREID_TYPE id)
         ASSERT(pCharDef);
 
         m_dwDispIndex = pCharDef->GetDispID();
-        if (!CCharBase::IsValidDispID((CREID_TYPE)(m_dwDispIndex)))
+        if (!CCharBase::IsValidDispID(m_dwDispIndex))
         {
             g_Log.EventError("DispID of base Char (0%" PRIx32 ") not valid\n", m_dwDispIndex);
             return false;
@@ -2304,7 +2304,7 @@ bool CChar::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bo
     {
         // Checking Props CComponents first (first check CChar props, if not found then check CCharBase)
         EXC_SET_BLOCK("EntityProp");
-        if (CEntityProps::r_WritePropVal(ptcKey, sVal, this, Base_GetDef()))
+        if (r_WritePropVal(ptcKey, sVal, this, Base_GetDef()))
         {
             return true;
         }
@@ -2338,7 +2338,7 @@ do_default:
 			return true;
 
 		// special write values
-		const SKILL_TYPE iSkill = (SKILL_TYPE)g_Cfg.FindSkillKey( ptcKey );
+		const SKILL_TYPE iSkill = g_Cfg.FindSkillKey(ptcKey);
 		if ( IsSkillBase(iSkill) )
 		{
 			// Check some skill name.
@@ -2442,7 +2442,7 @@ do_default:
                         //ptcKey += 6;
                         //Using both m_Act_UID and m_Fight_Targ_UID will take care of both spell and fighting targets.
                         if (m_Act_UID.IsValidUID() || m_Fight_Targ_UID.IsValidUID())
-                            sVal.FormatHex((dword)(m_Fight_Targ_UID));
+                            sVal.FormatHex(m_Fight_Targ_UID);
                         else
                             sVal.FormatVal(-1);
                         return true;
@@ -2482,7 +2482,7 @@ do_default:
 						}
 						else
 						{
-							attackerIndex = std::max((int)0, Exp_GetVal(ptcKey));
+							attackerIndex = std::max(0, Exp_GetVal(ptcKey));
 						}
 
 						SKIP_SEPARATORS(ptcKey);
@@ -2555,7 +2555,7 @@ do_default:
 					if ( !strnicmp(ptcKey, "ID", 2 ) )
 					{
 						ptcKey += 2;	// ID + whitspace
-						CChar * pChar = static_cast<CChar*>( CUID(Exp_GetSingle(ptcKey)).CharFind() );
+						CChar * pChar = CUID(Exp_GetSingle(ptcKey)).CharFind();
 						if ( !NotoSave_GetID(pChar) )
 							sVal.FormatVal( -1 );
 						else
@@ -3366,7 +3366,7 @@ bool CChar::r_LoadVal( CScript & s )
 
     // Checking Props CComponents first (first check CChar props, if not found then check CCharBase)
     EXC_SET_BLOCK("EntityProps");
-    if (CEntityProps::r_LoadPropVal(s, this, Base_GetDef()))
+    if (r_LoadPropVal(s, this, Base_GetDef()))
     {
         return true;
     }
@@ -3890,10 +3890,10 @@ bool CChar::r_LoadVal( CScript & s )
 			break;
 		}
 		case CHC_SPEECHCOLOROVERRIDE:
-			m_SpeechHueOverride = (HUE_TYPE)s.GetArgWVal();
+			m_SpeechHueOverride = s.GetArgWVal();
 			break;
 		case CHC_EMOTECOLOROVERRIDE:
-			m_EmoteHueOverride = (HUE_TYPE)s.GetArgWVal();
+			m_EmoteHueOverride = s.GetArgWVal();
 			break;
         case CHC_OFOOD: // used in the save file
             Stat_SetBase(STAT_FOOD, s.GetArgUSVal());
@@ -3997,7 +3997,7 @@ bool CChar::r_LoadVal( CScript & s )
 			}
 			break;
 		case CHC_OSKIN:
-			_wPrev_Hue = (HUE_TYPE)(s.GetArgWVal());
+			_wPrev_Hue = s.GetArgWVal();
 			break;
 		case CHC_P:
 			{
@@ -4310,7 +4310,7 @@ void CChar::r_Write( CScript & s )
 
 	for ( uint j = 0; j < g_Cfg.m_iMaxSkill; ++j )
 	{
-		if ( !g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)j) )
+		if ( !g_Cfg.m_SkillIndexDefs.valid_index(j) )
 			continue;
         const ushort uiSkillVal = Skill_GetBase((SKILL_TYPE)j);
         if (uiSkillVal == 0)
@@ -4425,8 +4425,8 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
                     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                     pScriptArgs->Init(fAFK, fMode, 0, nullptr);
                     TRIGRET_TYPE iRet = OnTrigger(CTRIG_AfkMode, pScriptArgs, this);
-                    fAFK = pScriptArgs->m_iN1 > 0 ? true : false;
-                    fMode = pScriptArgs->m_iN2 > 0 ? true : false;
+                    fAFK = pScriptArgs->m_iN1 > 0;
+                    fMode = pScriptArgs->m_iN2 > 0;
 
                     if (iRet == TRIGRET_RET_TRUE) //Block AFK mode switching if RETURN 1 in Trigger.
                         break;
@@ -4454,7 +4454,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				ushort uiVal = s.GetArgUSVal();
 				for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 				{
-					if ( !g_Cfg.m_SkillIndexDefs.valid_index((SKILL_TYPE)i) )
+					if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 						continue;
 
 					Skill_SetBase((SKILL_TYPE)i, uiVal );
@@ -4547,7 +4547,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			{
 				CChar * pChar = CreateNPC( GetID() );
 				pChar->MoveTo( GetTopPoint() );
-				pChar->DupeFrom(this, s.GetArgVal() < 1 ? true : false);
+				pChar->DupeFrom(this, s.GetArgVal() < 1);
 				pChar->_iCreatedResScriptIdx = s.m_iResourceFileIndex;
 				pChar->_iCreatedResScriptLine = s.m_iLineNum;
 			}
@@ -4582,7 +4582,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			GETNONWHITESPACE(pszVerbArg);
 			if (*pszVerbArg == '\0')
 			{
-				UpdateDir(dynamic_cast<CObjBase*>(pCharSrc));
+				UpdateDir(pCharSrc);
                 break;
 			}
             if (IsStrNumeric(pszVerbArg))
@@ -5263,7 +5263,7 @@ bool CChar::CanConsume(CItem* pItem, word iQty)
     if (IsContainer())
     {
         CItemBase* pItemDef = pItem->Item_GetDef();
-        CContainer* pCont = dynamic_cast<CContainer*>(this);
+        CContainer* pCont = this;
         if (pCont)
         {
             CResourceQtyArray Resources;
@@ -5299,7 +5299,7 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
     {
         lpctstr resName = pItemDef->GetResourceName();
         pItem->Delete();
-        CContainer *pCont = dynamic_cast<CContainer *>(this);
+        CContainer *pCont = this;
         if (pCont)
         {
             CResourceQtyArray Resources;

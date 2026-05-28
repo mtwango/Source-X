@@ -34,7 +34,7 @@ class CEntityProps
         bool fPropStr;
         COMPPROPS_TYPE iCCPType;
     };
-    bool CEPLoopLoad (CEPLoopRet_t* pRet, CScript& s, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion);
+    bool CEPLoopLoad (CEPLoopRet_t* pRet, CScript& s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion);
     bool CEPLoopWrite(CEPLoopRet_t* pRet, lpctstr ptcKey, CSString& sVal) const;
 
 public:

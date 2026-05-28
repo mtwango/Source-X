@@ -13,7 +13,6 @@ class CSFileText;
 
 class CSFileObj : public CScriptObj
 {
-private:
     CSFileText * _pFile;
     bool _fAppend;
     bool _fCreate;

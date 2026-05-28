@@ -64,7 +64,6 @@ class CChar : public CObjBase, public CContainer, public CTextConsole
 
     // MT_CMUTEX_DEF; // It inherits from CObjBase which inherits CTimedObject, which already has a class mutex.
 
-private:
 	// Spell type effects.
 #define STATF_INVUL			0x00000001	// Invulnerability
 #define STATF_DEAD			0x00000002
@@ -365,17 +364,14 @@ public:
 
 //protected:
 //  void _StatFlag_Set(uint64 uiStatFlag) noexcept;
-public:
     void  StatFlag_Set(uint64 uiStatFlag) noexcept;
 
 //protected:
 //  void _StatFlag_Clear(uint64 uiStatFlag) noexcept;
-public:
     void  StatFlag_Clear(uint64 uiStatFlag) noexcept;
 
 //protected:
 //  void _StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
-public:
     void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 
 	char GetFixZ(const CPointMap& pt, uint64 uiBlockFlags = 0);
@@ -1186,7 +1182,7 @@ public:
 	bool IsOwnedBy( const CChar * pChar, bool fAllowGM = true ) const;
 	CChar * GetOwner() const;
 	CChar * Use_Figurine( CItem * pItem, bool fCheckFollowerSlots = true );
-    CItem * Make_Figurine( const CUID uidOwner, ITEMID_TYPE id = ITEMID_NOTHING );
+    CItem * Make_Figurine(CUID uidOwner, ITEMID_TYPE id = ITEMID_NOTHING);
 	CItem * NPC_Shrink();
     bool FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots = 0, bool fCheckOnly = false );
     short GetFollowerSlots() const;

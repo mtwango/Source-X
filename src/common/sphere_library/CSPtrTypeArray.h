@@ -23,17 +23,17 @@ public:
     /**
     * @brief Copy constructor.
     */
-    CSPtrTypeArray(const CSPtrTypeArray<TYPE> & copy);
+    CSPtrTypeArray(const CSPtrTypeArray & copy);
     /**
     * @brief Assign operator
     */
-    CSPtrTypeArray<TYPE>& operator=(const CSPtrTypeArray<TYPE> & other);
+    CSPtrTypeArray& operator=(const CSPtrTypeArray & other);
 
     ///@}
     /** @name Modifiers:
     */
     ///@{
-public:
+
     /**
     * @brief if data is in array, rmove it.
     * @param pData data to remove from the array.
@@ -69,12 +69,12 @@ public:
 };
 
 template<class TYPE>
-CSPtrTypeArray<TYPE>::CSPtrTypeArray(const CSPtrTypeArray<TYPE> & copy) : CSTypedArray<TYPE>(static_cast<CSTypedArray<TYPE> >(copy))
+CSPtrTypeArray<TYPE>::CSPtrTypeArray(const CSPtrTypeArray & copy) : CSTypedArray<TYPE>(static_cast<CSTypedArray<TYPE> >(copy))
 {
 }
 
 template<class TYPE>
-CSPtrTypeArray<TYPE>& CSPtrTypeArray<TYPE>::operator=(const CSPtrTypeArray<TYPE> & other) {
+CSPtrTypeArray<TYPE>& CSPtrTypeArray<TYPE>::operator=(const CSPtrTypeArray & other) {
     static_cast<CSTypedArray<TYPE> >(*this) = static_cast<CSTypedArray<TYPE> >(other);
     return *this;
 }

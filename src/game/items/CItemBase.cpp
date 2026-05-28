@@ -63,7 +63,7 @@ CItemBase::CItemBase( ITEMID_TYPE id ) :
     CUOItemTypeRec_HS tiledata = {};
 	if ( id < ITEMID_MULTI )
 	{
-		if ( ! CItemBase::GetItemData( id, &tiledata ) )	// some valid items don't show up here !
+		if ( ! GetItemData( id, &tiledata ) )	// some valid items don't show up here !
 		{
 			// TODO: warn? ignore? // return nullptr;
 		}
@@ -260,7 +260,7 @@ CREID_TYPE CItemBase::FindCharTrack( ITEMID_TYPE trackID )	// static
 	// IT_EQ_HORSE
 	// IT_FIGURINE
 
-	CItemBase * pItemDef = CItemBase::FindItemBase( trackID );
+	CItemBase * pItemDef = FindItemBase( trackID );
 	if ( pItemDef == nullptr )
 		return CREID_INVALID;
 	if ( ! pItemDef->IsType(IT_EQ_HORSE) && ! pItemDef->IsType(IT_FIGURINE) )
@@ -739,7 +739,7 @@ void CItemBase::GetItemTiledataFlags( uint64 *uiCanFlags, ITEMID_TYPE id ) // st
 	ADDTOCALLSTACK("CItemBase::GetItemTiledataFlags");
 
     CUOItemTypeRec_HS tiledata{};
-	if ( ! CItemBase::GetItemData( id, &tiledata, true ))
+	if ( ! GetItemData( id, &tiledata, true ))
 	{
         *uiCanFlags = 0;
 		return;
@@ -965,7 +965,7 @@ int CItemBase::CalculateMakeValue( int iQualityLevel ) const
 		if ( rid.GetResType() != RES_ITEMDEF )
 			continue;
 
-		CItemBase * pItemDef = CItemBase::FindItemBase( (ITEMID_TYPE)rid.GetResIndex() );
+		CItemBase * pItemDef = FindItemBase( (ITEMID_TYPE)rid.GetResIndex() );
 		if ( pItemDef == nullptr )
 			continue;
 
@@ -1079,7 +1079,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 
     // Checking Props CComponents first
     EXC_SET_BLOCK("EntityProps");
-    if (!fNoCallChildren && CEntityProps::r_WritePropVal(ptcKey, sVal, nullptr, this))
+    if (!fNoCallChildren && r_WritePropVal(ptcKey, sVal, nullptr, this))
     {
         return true;
     }
@@ -1409,7 +1409,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 
     // Checking Props CComponents first
     EXC_SET_BLOCK("EntityProps");
-    if (CEntityProps::r_LoadPropVal(s, nullptr, this))
+    if (r_LoadPropVal(s, nullptr, this))
     {
         return true;
     }
@@ -1490,7 +1490,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			if (*ptcKey == '.')
 			{
 				++ptcKey;
-				CItemBaseMulti *pItemMulti = dynamic_cast<CItemBaseMulti*>(dynamic_cast<CItemBase*>(this));
+				CItemBaseMulti *pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 				ASSERT(pItemMulti);
 
 				if (!strnicmp(ptcKey, "TILES", 5))
@@ -1824,12 +1824,12 @@ CItemBase * CItemBase::MakeDupeReplacement( CItemBase * pBase, ITEMID_TYPE idmas
 		pBaseNew->m_flip_id.emplace_back(id);
 
 	// create the dupe stub.
-	CItemBaseDupe * pBaseDupe = new CItemBaseDupe( id, pBaseNew );;
+	CItemBaseDupe * pBaseDupe = new CItemBaseDupe( id, pBaseNew );
     CUOItemTypeRec_HS tiledata = {};
-	if ( CItemBase::GetItemData( id, &tiledata ) )
+	if ( GetItemData( id, &tiledata ) )
 	{
 		pBaseDupe->SetTFlags( tiledata.m_flags );
-		height_t Height = CItemBase::GetItemHeightFlags( tiledata, &pBaseDupe->m_Can );
+		height_t Height = GetItemHeightFlags( tiledata, &pBaseDupe->m_Can );
 		//Height = ( pBaseDupe->GetTFlags() & 0x400 ) ? ( Height / 2 ) : ( Height ); //should not be done here
 		Height = IsID_Chair( id ) ? 0 : Height;
 		pBaseDupe->SetHeight( Height );
@@ -1920,7 +1920,7 @@ bool CItemBaseMulti::AddComponent( ITEMID_TYPE id, short dx, short dy, char dz )
 			return false;
 		}
 
-		CItemBaseMulti::CMultiComponentItem comp;
+		CMultiComponentItem comp;
 		comp.m_id = id;
 		comp.m_dx = dx;
 		comp.m_dy = dy;

@@ -33,7 +33,6 @@ struct CScriptParserBufs
     using CScriptTriggerArgsPtr = PoolScriptTriggerArgs_t::SharedPtr_t;
     using CScriptKeyArgBufPtr   = PoolScriptKeyArgBuf_t::UniquePtr_t;
 
-public:
     [[nodiscard]] static CScriptTriggerArgsPtr GetCScriptTriggerArgsPtr();
     [[nodiscard]] static CScriptKeyArgBufPtr   GetScriptKeyArgBufPtr();
 };

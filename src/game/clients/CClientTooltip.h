@@ -19,7 +19,6 @@ public:
     dword m_clilocid;
     tchar m_args[MAX_TOOLTIP_LEN];
 
-public:
     CClientTooltip(dword dwClilocID);
     CClientTooltip(dword dwClilocID, lpctstr ptcArgs);
     CClientTooltip(dword dwClilocID, int64 iArgs);
@@ -27,7 +26,6 @@ public:
     CClientTooltip(const CClientTooltip& copy) = delete;
     CClientTooltip& operator=(const CClientTooltip& other) = delete;
 
-public:
     void FormatArgs(lpctstr format, ...) SPHERE_PRINTFARGS(2,3);
 };
 

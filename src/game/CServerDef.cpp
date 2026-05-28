@@ -86,7 +86,7 @@ size_t CServerDef::StatGet(SERV_STAT_TYPE i) const
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif
-                    m_GetProcessMemoryInfo = reinterpret_cast<pfnGetProcessMemoryInfo>(::GetProcAddress(m_hmPsapiDll,"GetProcessMemoryInfo"));
+                    m_GetProcessMemoryInfo = reinterpret_cast<pfnGetProcessMemoryInfo>(GetProcAddress(m_hmPsapiDll,"GetProcessMemoryInfo"));
 #if NON_MSVC_COMPILER
 #pragma GCC diagnostic pop
 #endif

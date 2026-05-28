@@ -41,7 +41,7 @@ size_t CResourceQty::WriteNameSingle( tchar * pszArgs, size_t uiBufLen, int iQty
         //DEBUG_ERR(("pItemBase 0x%x  m_rid 0%x  m_rid.GetResIndex() 0%x\n",pItemBase,m_rid,m_rid.GetResIndex()));
         if ( pItemBase )
         {
-            lpctstr ptcSrc = pItemBase->GetNamePluralize(pItemBase->GetTypeName(),(( iQty > 1 ) ? true : false));
+            lpctstr ptcSrc = pItemBase->GetNamePluralize(pItemBase->GetTypeName(),(( iQty > 1 )));
             return Str_CopyLimitNull(pszArgs, ptcSrc, uiBufLen);
         }
     }

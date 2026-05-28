@@ -585,7 +585,7 @@ bool CChar::NPC_CheckWalkHere( const CPointMap & pt, const CRegion * pArea ) con
 		switch ( pItem->GetType() )
 		{
 			case IT_WEB:
-				return (GetDispID() == CREID_GIANT_SPIDER) ? true : false;
+				return (GetDispID() == CREID_GIANT_SPIDER);
 			case IT_FIRE:
 				return Can(CAN_C_FIRE_IMMUNE);
 			case IT_TRAP:

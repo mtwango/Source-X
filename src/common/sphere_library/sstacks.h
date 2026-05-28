@@ -42,10 +42,10 @@ template<typename T>
 class fixed_runtime_stack {
 public:
     fixed_runtime_stack(size_t size=_SPHERE_STACK_DEFAULT_SIZE);
-    fixed_runtime_stack(const fixed_runtime_stack<T> & o);
+    fixed_runtime_stack(const fixed_runtime_stack & o);
     ~fixed_runtime_stack();
 
-    fixed_runtime_stack & operator=(const fixed_runtime_stack<T> & o);
+    fixed_runtime_stack & operator=(const fixed_runtime_stack & o);
 
     void push(T t);
     void pop();
@@ -64,10 +64,10 @@ template <typename T>
 class fixed_growing_stack {
 public:
     fixed_growing_stack(size_t size=_SPHERE_STACK_DEFAULT_SIZE);
-    fixed_growing_stack(const fixed_growing_stack<T> & o);
+    fixed_growing_stack(const fixed_growing_stack & o);
     ~fixed_growing_stack();
 
-    fixed_growing_stack & operator=(const fixed_growing_stack<T> & o);
+    fixed_growing_stack & operator=(const fixed_growing_stack & o);
 
     void push(T t);
     void pop();
@@ -87,10 +87,10 @@ public:
     dynamic_list_stack();
     // To allow thread secure wrapper constructor.
     dynamic_list_stack(size_t _);
-    dynamic_list_stack(const dynamic_list_stack<T> & o);
+    dynamic_list_stack(const dynamic_list_stack & o);
     ~dynamic_list_stack();
 
-    dynamic_list_stack & operator=(const dynamic_list_stack<T> & o);
+    dynamic_list_stack & operator=(const dynamic_list_stack & o);
 
     void push(T t);
     void pop();
@@ -102,7 +102,6 @@ public:
 
 private:
     struct _dynamicliststackitem {
-    public:
         _dynamicliststackitem(T item, _dynamicliststackitem * next);
         T _item;
         _dynamicliststackitem * _next;
@@ -115,9 +114,9 @@ template <typename T, class S>
 class tsstack {
 public:
     tsstack(size_t size=_SPHERE_STACK_DEFAULT_SIZE);
-    tsstack(const tsstack<T, S> & o);
+    tsstack(const tsstack & o);
 
-    tsstack & operator=(const tsstack<T, S> & o);
+    tsstack & operator=(const tsstack & o);
 
     void push(T t);
     void pop();
@@ -209,7 +208,7 @@ fixed_runtime_stack<T>::fixed_runtime_stack(size_t size) {
 }
 
 template <typename T>
-fixed_runtime_stack<T>::fixed_runtime_stack(const fixed_runtime_stack<T> & o) {
+fixed_runtime_stack<T>::fixed_runtime_stack(const fixed_runtime_stack & o) {
     _stack = new T[o._size];
     _top = o._top;
     _size = o._size;
@@ -222,7 +221,7 @@ fixed_runtime_stack<T>::~fixed_runtime_stack() {
 }
 
 template <typename T>
-fixed_runtime_stack<T> & fixed_runtime_stack<T>::operator=(const fixed_runtime_stack<T> & o) {
+fixed_runtime_stack<T> & fixed_runtime_stack<T>::operator=(const fixed_runtime_stack & o) {
     delete[] _stack;
     _stack = new T[o._size];
     _top = o._top;
@@ -280,7 +279,7 @@ fixed_growing_stack<T>::fixed_growing_stack(size_t size) {
 }
 
 template <typename T>
-fixed_growing_stack<T>::fixed_growing_stack(const fixed_growing_stack<T> & o) {
+fixed_growing_stack<T>::fixed_growing_stack(const fixed_growing_stack & o) {
     _stack = new T[o._size];
     _top = o._top;
     _size = o._size;
@@ -293,7 +292,7 @@ fixed_growing_stack<T>::~fixed_growing_stack() {
 }
 
 template <typename T>
-fixed_growing_stack<T> & fixed_growing_stack<T>::operator=(const fixed_growing_stack<T> & o) {
+fixed_growing_stack<T> & fixed_growing_stack<T>::operator=(const fixed_growing_stack & o) {
     _stack = new T[o._size];
     _top = o._top;
     _size = o._size;
@@ -353,10 +352,10 @@ dynamic_list_stack<T>::dynamic_list_stack() {
 }
 
 template <typename T>
-dynamic_list_stack<T>::dynamic_list_stack(size_t _) : dynamic_list_stack<T>() { UnreferencedParameter(_); }
+dynamic_list_stack<T>::dynamic_list_stack(size_t _) : dynamic_list_stack() { UnreferencedParameter(_); }
 
 template <typename T>
-dynamic_list_stack<T>::dynamic_list_stack(const dynamic_list_stack<T> & o) {
+dynamic_list_stack<T>::dynamic_list_stack(const dynamic_list_stack & o) {
     _size = o._size;
     _top = nullptr;
     _dynamicliststackitem * next = o._top, * prev;
@@ -375,10 +374,10 @@ dynamic_list_stack<T>::dynamic_list_stack(const dynamic_list_stack<T> & o) {
 template <typename T>
 dynamic_list_stack<T>::~dynamic_list_stack() {
     clear();
-};
+}
 
 template <typename T>
-dynamic_list_stack<T> & dynamic_list_stack<T>::operator=(const dynamic_list_stack<T> & o) {
+dynamic_list_stack<T> & dynamic_list_stack<T>::operator=(const dynamic_list_stack & o) {
     _size = o._size;
     _top = nullptr;
     _dynamicliststackitem * next = o._top, * prev;
@@ -448,14 +447,14 @@ template<typename T, class S>
 tsstack<T, S>::tsstack(size_t size) : _s(size) {}
 
 template<typename T, class S>
-tsstack<T, S>::tsstack(const tsstack<T, S> & o) {
+tsstack<T, S>::tsstack(const tsstack & o) {
     o._mutex.lock_shared();
     _s = o._s;
     o._mutex.unlock_shared();
 }
 
 template<typename T, class S>
-tsstack<T, S> & tsstack<T, S>::operator=(const tsstack<T, S> & o) {
+tsstack<T, S> & tsstack<T, S>::operator=(const tsstack & o) {
     _mutex.lock();
     o._mutex.lock_shared();
     _s = o._s;

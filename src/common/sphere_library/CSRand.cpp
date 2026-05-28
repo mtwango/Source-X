@@ -7,7 +7,6 @@
 #include <random>
 #include "CSRand.h"
 
-
 struct RandEngines
 {
     // Standard generator (Mersenne Twister).
@@ -32,16 +31,15 @@ struct RandEngines
 };
 
 static RandEngines& getRandEngines() {
-    static thread_local RandEngines engines;
+    thread_local RandEngines engines;
     return engines;
-};
-
+}
 
 int32 CSRand::GetVal(int32 iQty)
 {
     if (iQty < 2)
         return 0;
-    return CSRand::genRandInt32(0, iQty - 1);
+    return genRandInt32(0, iQty - 1);
 }
 
 int32 CSRand::GetVal2(int32 iMin, int32 iMax)
@@ -135,13 +133,13 @@ int64 CSRand::GetLLVal2Fast(int64 iMin, int64 iMax) noexcept
 
 int32 CSRand::genRandInt32(int32 min, int32 max)
 {
-	std::uniform_int_distribution<int32> distr(min, max);
+	std::uniform_int_distribution distr(min, max);
     return distr(getRandEngines().mt);
 }
 
 int64 CSRand::genRandInt64(int64 min, int64 max)
 {
-	std::uniform_int_distribution<int64> distr(min, max);
+	std::uniform_int_distribution distr(min, max);
 #ifdef ARCH_64
     return distr(getRandEngines().mt64);
 #else
@@ -157,7 +155,7 @@ int64 CSRand::genRandInt64(int64 min, int64 max)
 
 realtype CSRand::genRandReal64(realtype min, realtype max)
 {
-	std::uniform_real_distribution<realtype> distr(min, max);
+	std::uniform_real_distribution distr(min, max);
 #ifdef ARCH_64
     return distr(getRandEngines().mt64);
 #else

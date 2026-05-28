@@ -34,7 +34,6 @@ public:
     AutoResetEvent& operator=(const AutoResetEvent& other) = delete;
 	///@}
 
-public:
 	/** @name Interaction:
 	*/
 	///@{
@@ -82,7 +81,6 @@ public:
     ManualResetEvent& operator=(const ManualResetEvent& other) = delete;
 	///@}
 
-public:
     /** @name Interaction:
 	*/
 	///@{

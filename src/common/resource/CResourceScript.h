@@ -15,7 +15,6 @@ class CResourceScript : public CScript
     // A script file containing resource, speech, motives or events handlers.
     // NOTE: we should check periodically if this file has been altered externally ?
 
-private:
     int		m_iOpenCount;		    // How many CResourceLock(s) have this open ?
 
     // Last time it was closed. What did the file params look like ?

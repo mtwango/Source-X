@@ -67,7 +67,7 @@ void CChar::Guild_Resign( MEMORY_TYPE MemType )
 		{
 			CItemStone * pMyStone = pMember->GetParentStone();
 			ASSERT(pMyStone);
-			SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_MSG_GUILDRESIGN ), static_cast<lpctstr>(pMyStone->GetTypeName()) );
+			SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_MSG_GUILDRESIGN ), pMyStone->GetTypeName() );
 		}
 	}
 
@@ -174,7 +174,7 @@ void CChar::Memory_AddTypes( CItemMemory * pMemory, word MemTypes )
 	if ( pMemory )
 	{
 		pMemory->SetMemoryTypes( pMemory->GetMemoryTypes() | MemTypes );
-		pMemory->m_itEqMemory.m_pt = static_cast<CPointBase const&>(GetTopPoint());	// Where did the fight start ?
+		pMemory->m_itEqMemory.m_pt = GetTopPoint();	// Where did the fight start ?
 		pMemory->SetTimeStampS(CWorldGameTime::GetCurrentTime().GetTimeRaw());
 		Memory_UpdateFlags( pMemory );
 	}
@@ -504,10 +504,5 @@ void CChar::Memory_Fight_Start( const CChar * pTarg )
 		// This may be a useless command. How do i say the fight is over ?
 		// This causes the funny turn to the target during combat !
 		new PacketSwing(GetClientActive(), pTarg);
-	}
-	else
-	{
-		if ( m_pNPC && (m_pNPC->m_Brain == NPCBRAIN_BERSERK) ) // it will attack everything.
-			return;
 	}
 }

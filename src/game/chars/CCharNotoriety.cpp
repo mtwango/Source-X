@@ -286,13 +286,13 @@ HUE_TYPE CChar::Noto_GetHue(const CChar * pCharViewer, bool fIncog) const
 		pChar = this;
 	switch (color)
 	{
-	case NOTO_GOOD:			return pChar->IsNPC() ? (HUE_TYPE)(g_Cfg.m_iColorNotoGoodNPC) : (HUE_TYPE)(g_Cfg.m_iColorNotoGood);		// Blue
-	case NOTO_GUILD_SAME:	return (HUE_TYPE)(g_Cfg.m_iColorNotoGuildSame);	// Green (same guild)
-	case NOTO_NEUTRAL:		return (HUE_TYPE)(g_Cfg.m_iColorNotoNeutral);	// Grey (someone that can be attacked)
-	case NOTO_CRIMINAL:		return (HUE_TYPE)(g_Cfg.m_iColorNotoCriminal);	// Grey (criminal)
-	case NOTO_GUILD_WAR:	return (HUE_TYPE)(g_Cfg.m_iColorNotoGuildWar);	// Orange (enemy guild)
-	case NOTO_EVIL:			return (HUE_TYPE)(g_Cfg.m_iColorNotoEvil);		// Red
-	case NOTO_INVUL:		return pChar->IsPriv(PRIV_GM) ? (HUE_TYPE)g_Cfg.m_iColorNotoInvulGameMaster : (HUE_TYPE)g_Cfg.m_iColorNotoInvul;		// Purple / Yellow
+	case NOTO_GOOD:			return pChar->IsNPC() ? g_Cfg.m_iColorNotoGoodNPC : g_Cfg.m_iColorNotoGood;		// Blue
+	case NOTO_GUILD_SAME:	return g_Cfg.m_iColorNotoGuildSame;	// Green (same guild)
+	case NOTO_NEUTRAL:		return g_Cfg.m_iColorNotoNeutral;	// Grey (someone that can be attacked)
+	case NOTO_CRIMINAL:		return g_Cfg.m_iColorNotoCriminal;	// Grey (criminal)
+	case NOTO_GUILD_WAR:	return g_Cfg.m_iColorNotoGuildWar;	// Orange (enemy guild)
+	case NOTO_EVIL:			return g_Cfg.m_iColorNotoEvil;		// Red
+	case NOTO_INVUL:		return pChar->IsPriv(PRIV_GM) ? g_Cfg.m_iColorNotoInvulGameMaster : g_Cfg.m_iColorNotoInvul;		// Purple / Yellow
 	default:				return ((HUE_TYPE)color > NOTO_INVUL ? (HUE_TYPE)color : g_Cfg.m_iColorNotoDefault);	// Grey
 	}
 }

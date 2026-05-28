@@ -28,11 +28,11 @@ void CCrypto::InitTwoFish()
     auto key_casted_ptr = static_cast<keyInstance*>(tf_key);
     auto cipher_casted_ptr = static_cast<cipherInstance*>(tf_cipher);
 
-    ::makeKey(key_casted_ptr, 1 /*DIR_DECRYPT*/, 0x80); //, nullptr );
-    ::cipherInit( cipher_casted_ptr, 1/*MODE_ECB*/, nullptr );
+    makeKey(key_casted_ptr, 1 /*DIR_DECRYPT*/, 0x80); //, nullptr );
+    cipherInit( cipher_casted_ptr, 1/*MODE_ECB*/, nullptr );
 
     key_casted_ptr->key32[0] = key_casted_ptr->key32[1] = key_casted_ptr->key32[2] = key_casted_ptr->key32[3] = dwIP; //0x7f000001;
-    ::reKey( key_casted_ptr );
+    reKey( key_casted_ptr );
 
 	for ( ushort i = 0; i < TFISH_RESET; i++ )
 		tf_cipherTable[i] = (byte)(i);
@@ -40,7 +40,7 @@ void CCrypto::InitTwoFish()
 	tf_position = 0;
 
 	byte tmpBuff[TFISH_RESET];
-    ::blockEncrypt( cipher_casted_ptr, key_casted_ptr, &tf_cipherTable[0], 0x800, &tmpBuff[0] ); // function09
+    blockEncrypt( cipher_casted_ptr, key_casted_ptr, &tf_cipherTable[0], 0x800, &tmpBuff[0] ); // function09
 	memcpy( tf_cipherTable, &tmpBuff, TFISH_RESET );
 
 	if ( GetEncryptionType() == ENC_TFISH )
@@ -63,7 +63,7 @@ bool CCrypto::DecryptTwoFish( byte * pOutput, const byte * pInput, size_t outLen
 
 		if ( tf_position >= TFISH_RESET )
 		{
-            ::blockEncrypt( cipher_casted_ptr, key_casted_ptr, &tf_cipherTable[0], 0x800, &tmpBuff[0] ); // function09
+            blockEncrypt( cipher_casted_ptr, key_casted_ptr, &tf_cipherTable[0], 0x800, &tmpBuff[0] ); // function09
 			memcpy( &tf_cipherTable, &tmpBuff, TFISH_RESET );
 			tf_position = 0;
 		}

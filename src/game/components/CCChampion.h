@@ -107,7 +107,6 @@ class CCChampion : public CComponent
 {
     // IT_CHAMPION
     // Champion Spawn
-private:
     CItem *_pLink;
     // Scripts communication.
     static lpctstr const sm_szLoadKeys[];   ///< Script fields.
@@ -334,7 +333,7 @@ class CCChampionDef : public CResourceLink
     //static lpctstr const sm_szTrigName[CHAMPIONTRIG_QTY+1];
     static lpctstr const sm_szLoadKeys[];
     static const char *m_sClassName;
-private:
+
     CSString m_sKey;                    ///< script keyword for champion.
     typedef std::vector<CREID_TYPE> idNPC;
     typedef std::map<uchar, idNPC> idSpawn;    ///< Defining how many uchar (or levels) this Champion has and the group of monsters for each level.

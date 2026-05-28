@@ -113,7 +113,7 @@ ThreadHolder& ThreadHolder::get() noexcept
 
 bool ThreadHolder::isSystemIdRegistered(threadid_t sysId, AbstractSphereThread** outExisting) const noexcept
 {
-    std::shared_lock<std::shared_mutex> lock(m_mutex);
+    std::shared_lock lock(m_mutex);
     auto it = std::find_if(
         m_spherethreadpairs_systemid_ptr.begin(),
         m_spherethreadpairs_systemid_ptr.end(),
@@ -151,7 +151,7 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
 
     try
     {
-        std::unique_lock<std::shared_mutex> lock(m_mutex);
+        std::unique_lock lock(m_mutex);
 
         // 1) Idempotency: same pointer already registered.
         auto itExistingPtr = std::find_if(
@@ -267,7 +267,7 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
     }
 
     // Mark as no longer registered to aid destructor diagnostics.
-    pAbstractThread->m_threadHolderId = ThreadHolder::m_kiInvalidThreadID;
+    pAbstractThread->m_threadHolderId = m_kiInvalidThreadID;
 
     lock.unlock();
 
@@ -293,9 +293,9 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
 void ThreadHolder::markThreadsClosing() CANTHROW
 {
     // Flip fast-path flag first so concurrent readers immediately see “server is Closing”.
-    ThreadHolder::markServClosing();
+    markServClosing();
 
-    std::unique_lock<std::shared_mutex> lock(m_mutex);
+    std::unique_lock lock(m_mutex);
 
     for (auto& thread_data : m_threads)
     {
@@ -313,7 +313,7 @@ void ThreadHolder::markThreadsClosing() CANTHROW
 
 AbstractThread * ThreadHolder::getThreadAt(size_t at) noexcept
 {
-    std::shared_lock<std::shared_mutex> lock(m_mutex);
+    std::shared_lock lock(m_mutex);
     if (at >= getActiveThreads())
         return nullptr;
     return m_threads[at].m_ptr;
@@ -374,7 +374,7 @@ bool ThreadHolder::isServClosing() noexcept { // static
 
 int AbstractThread::m_threadsAvailable = 0;
 
-static inline bool is_same_thread_id(threadid_t firstId, threadid_t secondId) noexcept
+static bool is_same_thread_id(threadid_t firstId, threadid_t secondId) noexcept
 {
 #if defined(_WIN32) || defined(__APPLE__)
     return (firstId == secondId);
@@ -386,7 +386,7 @@ static inline bool is_same_thread_id(threadid_t firstId, threadid_t secondId) no
 static uint64_t os_current_tid() noexcept    // Equivalent to old getCurrentThreadSystemId()
 {
 #if defined(_WIN32)
-    return static_cast<uint64_t>(::GetCurrentThreadId()); // Ret type: DWORD.
+    return GetCurrentThreadId(); // Ret type: DWORD.
 #elif defined(__APPLE__)
     uint64_t tid = 0;
     (void)pthread_threadid_np(nullptr, &tid);
@@ -413,7 +413,7 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
     if (pSetThreadDescription)
     {
         wchar_t wname[64];
-        ::MultiByteToWideChar(CP_UTF8, 0, name_trimmed, -1, wname, static_cast<int>(std::size(wname)));
+        MultiByteToWideChar(CP_UTF8, 0, name_trimmed, -1, wname, std::size(wname));
         pSetThreadDescription(GetCurrentThread(), wname);
     }
     else
@@ -467,14 +467,14 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
 
 AbstractThread::AbstractThread(const char *name, ThreadPriority priority)
 {
-    if (AbstractThread::m_threadsAvailable == 0)
+    if (m_threadsAvailable == 0)
     {
 #ifdef _WIN32
         if (CoInitializeEx(nullptr, COINIT_MULTITHREADED) != S_OK)
             throw CSError(LOGL_FATAL, 0, "OLE init failed, threading unavailable");
 #endif
     }
-    ++AbstractThread::m_threadsAvailable;
+    ++m_threadsAvailable;
 
     Str_CopyLimitNull(m_name, name, sizeof(m_name));
     m_fThreadSelfTerminateAfterThisTick = true;
@@ -513,9 +513,9 @@ AbstractThread::~AbstractThread()
 #endif
 
     terminate(true);
-    --AbstractThread::m_threadsAvailable;
+    --m_threadsAvailable;
 #ifdef _WIN32
-    if (AbstractThread::m_threadsAvailable == 0)
+    if (m_threadsAvailable == 0)
         CoUninitialize();
 #endif
 }
@@ -814,7 +814,7 @@ bool AbstractThread::shouldExit() noexcept
 
 void AbstractThread::setThreadName(const char* name)
 {
-    char name_trimmed[m_nameMaxLength] = {'\0'};
+    char name_trimmed[m_nameMaxLength] = {};
     Str_CopyLimitNull(name_trimmed, name, m_nameMaxLength);
 
     os_set_thread_name_portable(name_trimmed);
@@ -1025,7 +1025,7 @@ getThreadRawStringBuffer() CANTHROW
     for (;;)
     {
         index = static_cast<int>(++tsholder.g_tmpTemporaryStringIndex);
-        if (index >= (int)THREAD_TEMPSTRING_OBJ_STORAGE)
+        if (index >= THREAD_TEMPSTRING_OBJ_STORAGE)
         {
             index %= THREAD_TEMPSTRING_OBJ_STORAGE;
             tsholder.g_tmpTemporaryStringIndex.store(index, std::memory_order_relaxed);

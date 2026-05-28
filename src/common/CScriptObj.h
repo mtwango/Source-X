@@ -60,9 +60,7 @@ public:
 	static const char* m_sClassName;
 	virtual lpctstr GetName() const = 0;	// ( every object must have at least a type name )
 
-
 // Script object derefenciation and validation (a keyword might be used on a different CScriptObj than the current one)
-public:
 	static bool IsValidRef(const CScriptObj* pRef) noexcept;
 	static bool IsValidRef(const CUID& uidRef) noexcept;
 

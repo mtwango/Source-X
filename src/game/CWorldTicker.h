@@ -25,7 +25,7 @@ private:
 
     // Generic Timers. Calls to OnTick.
     using TickingTimedObjEntry = std::pair<int64, CTimedObject*>;
-    struct WorldTickList : public std::vector<TickingTimedObjEntry>
+    struct WorldTickList : std::vector<TickingTimedObjEntry>
     {
         MT_CMUTEX_DEF;
     };
@@ -37,7 +37,7 @@ private:
 
     // Calls to OnTickPeriodic. CChar regens and periodic checks.
     using TickingPeriodicCharEntry = std::pair<int64, CChar*>;
-    struct CharTickList : public std::vector<TickingPeriodicCharEntry>
+    struct CharTickList : std::vector<TickingPeriodicCharEntry>
     {
         MT_CMUTEX_DEF;
     };
@@ -48,7 +48,7 @@ private:
     std::vector<CChar*> _vPeriodicCharsTicksBuffer;
 
     // Calls to OnTickStatusUpdate. Periodically send updated infos to the clients.
-    struct StatusUpdatesList : public std::vector<CObjBase*>
+    struct StatusUpdatesList : std::vector<CObjBase*>
     {
         MT_CMUTEX_DEF;
     };

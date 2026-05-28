@@ -98,8 +98,8 @@ bool CSocketAddressIP::IsMatchIP( const CSocketAddressIP & ip ) const
 	byte		ip1	[4];
 	byte		ip2	[4];
 
-	memcpy( ip1, (void*) &ip.s_addr,	4 );
-	memcpy( ip2, (void*) &s_addr,		4 );
+	memcpy( ip1, &ip.s_addr,	4 );
+	memcpy( ip2, &s_addr,		4 );
 
 	for ( int i = 0; i < 4; ++i )
 	{
@@ -115,7 +115,7 @@ bool CSocketAddressIP::IsSameIP( const CSocketAddressIP & ip ) const
 	return (ip.s_addr == s_addr);
 }
 
-bool CSocketAddressIP::SetHostStruct( const struct hostent * pHost )
+bool CSocketAddressIP::SetHostStruct( const hostent * pHost )
 {
 	// Set the ip from the address name we looked up.
 	if ( pHost == nullptr ||
@@ -182,13 +182,13 @@ bool CSocketAddress::operator==( const CSocketAddress & SockAddr ) const
 	return( GetAddrIP() == SockAddr.GetAddrIP() && GetPort() == SockAddr.GetPort() );
 }
 
-CSocketAddress & CSocketAddress::operator = ( const struct sockaddr_in & SockAddrIn )
+CSocketAddress & CSocketAddress::operator = ( const sockaddr_in & SockAddrIn )
 {
 	SetAddrPort(SockAddrIn);
 	return( *this );
 }
 
-bool CSocketAddress::operator==( const struct sockaddr_in & SockAddrIn ) const
+bool CSocketAddress::operator==( const sockaddr_in & SockAddrIn ) const
 {
 	return( GetAddrIP() == SockAddrIn.sin_addr.s_addr && GetPort() == ntohs( SockAddrIn.sin_port ) );
 }
@@ -236,15 +236,15 @@ bool CSocketAddress::SetHostPortStr( lpctstr pszIP )
 
 // compare to sockaddr_in
 
-struct sockaddr_in CSocketAddress::GetAddrPort() const
+sockaddr_in CSocketAddress::GetAddrPort() const
 {
-	struct sockaddr_in SockAddrIn {};
+    sockaddr_in SockAddrIn {};
 	SockAddrIn.sin_family = AF_INET;
 	SockAddrIn.sin_addr.s_addr = s_addr;
 	SockAddrIn.sin_port = htons(m_port);
 	return( SockAddrIn );
 }
-void CSocketAddress::SetAddrPort( const struct sockaddr_in & SockAddrIn )
+void CSocketAddress::SetAddrPort( const sockaddr_in & SockAddrIn )
 {
 	s_addr = SockAddrIn.sin_addr.s_addr;
 	m_port = ntohs( SockAddrIn.sin_port );
@@ -316,14 +316,14 @@ bool CSocket::Create( int iAf, int iType, int iProtocol )
 	return( IsOpen());
 }
 
-int CSocket::Bind( struct sockaddr_in * pSockAddrIn )
+int CSocket::Bind(sockaddr_in * pSockAddrIn )
 {
-	return bind( m_hSocket, reinterpret_cast<struct sockaddr *>(pSockAddrIn), sizeof(*pSockAddrIn));
+	return bind( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), sizeof(*pSockAddrIn));
 }
 
 int CSocket::Bind( const CSocketAddress & SockAddr )
 {
-	struct sockaddr_in SockAddrIn = SockAddr.GetAddrPort();
+    sockaddr_in SockAddrIn = SockAddr.GetAddrPort();
 	if ( SockAddr.IsLocalAddr())
 	{
 		SockAddrIn.sin_addr.s_addr = INADDR_ANY;	// use all addresses.
@@ -336,19 +336,19 @@ int CSocket::Listen( int iMaxBacklogConnections )
 	return( listen( m_hSocket, iMaxBacklogConnections ));
 }
 
-int CSocket::Connect( struct sockaddr_in * pSockAddrIn )
+int CSocket::Connect(sockaddr_in * pSockAddrIn )
 {
 	// RETURN: 0 = success, else SOCKET_ERROR
-	return connect( m_hSocket, reinterpret_cast<struct sockaddr *>(pSockAddrIn), sizeof(*pSockAddrIn));
+	return connect( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), sizeof(*pSockAddrIn));
 }
 
 int CSocket::Connect( const CSocketAddress & SockAddr )
 {
-	struct sockaddr_in SockAddrIn = SockAddr.GetAddrPort();
+    sockaddr_in SockAddrIn = SockAddr.GetAddrPort();
 	return( Connect( &SockAddrIn ));
 }
 
-int CSocket::Connect( const struct in_addr & ip, word wPort )
+int CSocket::Connect( const in_addr & ip, word wPort )
 {
 	CSocketAddress SockAddr( ip.s_addr, wPort );
 	return( Connect( SockAddr ));
@@ -362,16 +362,16 @@ int CSocket::Connect( lpctstr pszHostName, word wPort )
 	return( Connect( SockAddr ));
 }
 
-SOCKET CSocket::Accept( struct sockaddr_in * pSockAddrIn ) const
+SOCKET CSocket::Accept(sockaddr_in * pSockAddrIn ) const
 {
 	int len = sizeof(struct sockaddr_in);
-	return accept( m_hSocket, reinterpret_cast<struct sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len));
+	return accept( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len);
 }
 
 SOCKET CSocket::Accept( CSocketAddress & SockAddr ) const
 {
 	// RETURN: Error = hSocketClient < 0 || hSocketClient == INVALID_SOCKET
-	struct sockaddr_in SockAddrIn;
+    sockaddr_in SockAddrIn;
 	SOCKET hSocket = Accept( &SockAddrIn );
 	SockAddr.SetAddrPort( SockAddrIn );
 	return( hSocket );
@@ -390,17 +390,17 @@ int CSocket::Receive( void * pData, int len, int flags )
 	return( recv( m_hSocket, static_cast<char *>(pData), len, flags ));
 }
 
-int CSocket::GetSockName( struct sockaddr_in * pSockAddrIn ) const
+int CSocket::GetSockName(sockaddr_in * pSockAddrIn ) const
 {
 	// Get the address of the near end. (us)
 	// RETURN: 0 = success
 	int len = sizeof( *pSockAddrIn );
-	return( getsockname( m_hSocket, reinterpret_cast<struct sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len) ));
+	return( getsockname( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len ));
 }
 
 CSocketAddress CSocket::GetSockName() const
 {
-	struct sockaddr_in SockAddrIn;
+	sockaddr_in SockAddrIn;
 	int iRet = GetSockName( &SockAddrIn );
 	if ( iRet )
 	{
@@ -410,17 +410,17 @@ CSocketAddress CSocket::GetSockName() const
     return (CSocketAddress(SockAddrIn));
 }
 
-int CSocket::GetPeerName( struct sockaddr_in * pSockAddrIn ) const
+int CSocket::GetPeerName(sockaddr_in * pSockAddrIn ) const
 {
 	// Get the address of the far end.
 	// RETURN: 0 = success
 	int len = sizeof( *pSockAddrIn );
-	return( getpeername( m_hSocket, reinterpret_cast<struct sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len) ));
+	return( getpeername( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len ));
 }
 
 CSocketAddress CSocket::GetPeerName( ) const
 {
-	struct sockaddr_in SockAddrIn;
+	sockaddr_in SockAddrIn;
 	int iRet = GetPeerName( &SockAddrIn );
 	if ( iRet )
 	{
@@ -433,18 +433,18 @@ CSocketAddress CSocket::GetPeerName( ) const
 int CSocket::SetSockOpt( int nOptionName, const void * optval, int optlen, int nLevel ) const
 {
 	// level = SOL_SOCKET and IPPROTO_TCP.
-    return( setsockopt( m_hSocket, nLevel, nOptionName, reinterpret_cast<const char *>(optval), optlen ));
+    return( setsockopt( m_hSocket, nLevel, nOptionName, static_cast<const char *>(optval), optlen ));
 }
 
 int CSocket::GetSockOpt( int nOptionName, void * optval, int * poptlen, int nLevel ) const
 {
-    return( getsockopt( m_hSocket, nLevel, nOptionName, reinterpret_cast<char *>(optval), reinterpret_cast<socklen_t *>(poptlen)));
+    return( getsockopt( m_hSocket, nLevel, nOptionName, static_cast<char *>(optval), poptlen));
 }
 
 #ifdef _WIN32
 	int CSocket::IOCtlSocket(int icmd, DWORD * pdwArgs )
 	{
-		return ioctlsocket( m_hSocket, icmd, (DWORD*)pdwArgs );
+		return ioctlsocket( m_hSocket, icmd, pdwArgs );
 	}
 
 	int CSocket::SendAsync( LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine ) const
@@ -490,7 +490,7 @@ void CSocket::Close()
 	if ( ! IsOpen())
 		return;
 
-	CSocket::CloseSocket( m_hSocket );
+	CloseSocket( m_hSocket );
 	Clear();
 }
 

@@ -28,7 +28,7 @@ static void byteReverse( uchar *buffer, uint longs ) noexcept
 {
     do
 	{
-		const uint temp = (uint)((uint)(buffer[3]) << 8 | buffer[2]) << 16 | ((uint)(buffer[1]) << 8 | buffer[0]);
+		const uint temp = ((uint)buffer[3] << 8 | buffer[2]) << 16 | ((uint)(buffer[1]) << 8 | buffer[0]);
 		reinterpret_cast<uint *>(buffer)[0] = temp;
 		buffer += 4;
     }

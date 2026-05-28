@@ -54,7 +54,6 @@ protected:
     bool _OnTick() override;
 //public:	virtual bool  OnTick() override;    // The right virtual is called by CTimedObject::OnTick
 
-protected:
     bool _IsDeleted() const override;
 public:
     bool IsDeleted() const override;

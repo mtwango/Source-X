@@ -18,7 +18,6 @@ class PacketTransaction;
 
 class CNetworkThread : public AbstractSphereThread
 {
-private:
     CNetworkManager* m_manager;					// parent network manager
     size_t m_id;								// network thread #
     int64 _iTimeLastStateDataCheck;
@@ -32,12 +31,12 @@ private:
     CNetworkOutput m_output;	// handles data output
 
 public:
-    size_t id(void) const { return m_id; }							// network thread #
-    size_t getClientCount(void) const { return m_states.size(); }	// current number of clients controlled by thread
+    size_t id() const { return m_id; }							// network thread #
+    size_t getClientCount() const { return m_states.size(); }	// current number of clients controlled by thread
 
     static const char* m_sClassName;
     CNetworkThread(CNetworkManager* manager, size_t id);
-    ~CNetworkThread(void) override;
+    ~CNetworkThread() override;
 
     CNetworkThread(const CNetworkThread& copy) = delete;
     CNetworkThread& operator=(const CNetworkThread& other) = delete;
@@ -52,13 +51,13 @@ public:
         m_output.onAsyncSendComplete(state, success);
     }
 
-    void processInput(void)
+    void processInput()
     {
         // process network input
         m_input.processInput();
     }
 
-    void processOutput(void)
+    void processOutput()
     {
         // process network output
         m_output.processOutput();
@@ -70,15 +69,15 @@ public:
         return m_output.flush(state);
     }
 
-    void onStart(void) override;
-    void tick(void) override;
+    void onStart() override;
+    void tick() override;
 
     void init();
-    void flushAllClients(void);			// flush all output
+    void flushAllClients();			// flush all output
 
 private:
-    void checkNewStates(void);			// check for states that have been assigned but not moved to our list
-    void dropInvalidStates(void);		// check for states that don't belong to use anymore
+    void checkNewStates();			// check for states that have been assigned but not moved to our list
+    void dropInvalidStates();		// check for states that don't belong to use anymore
 
 public:
     friend class CNetworkManager;
@@ -103,14 +102,14 @@ protected:
 
 public:
     explicit NetworkThreadStateIterator(const CNetworkThread* thread);
-    ~NetworkThreadStateIterator(void);
+    ~NetworkThreadStateIterator();
 
 private:
     NetworkThreadStateIterator(const NetworkThreadStateIterator& copy);
     NetworkThreadStateIterator& operator=(const NetworkThreadStateIterator& other);
 
 public:
-    CNetState* next(void); // find next state
+    CNetState* next(); // find next state
 };
 
 

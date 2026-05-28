@@ -16,12 +16,11 @@
 
 class PingServer : public AbstractSphereThread
 {
-private:
 	CSocket m_socket;
 
 public:
-	PingServer(void);
-	~PingServer(void) override;
+	PingServer();
+	~PingServer() override;
 
     PingServer(const PingServer& copy) = delete;
     PingServer& operator=(const PingServer& other) = delete;

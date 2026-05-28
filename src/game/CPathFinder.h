@@ -27,7 +27,6 @@ public:
 	int _GValue;
 	int _HValue;
 
-public:
 	CPathFinderPoint();
 
     // We shouldn't be using these
@@ -39,7 +38,7 @@ private:
 	CPathFinderPoint& operator=(const CPathFinderPoint& other);
 
 public:
-    inline bool operator < (const CPathFinderPoint& pt) const noexcept
+    bool operator < (const CPathFinderPoint& pt) const noexcept
     {
         return (_FValue < pt._FValue);
     }
@@ -68,7 +67,7 @@ public:
     {
         m_LastPath.clear();
     }
-    inline const CPointMap& ReadStep(size_t Step = 0) const
+    const CPointMap& ReadStep(size_t Step = 0) const
     {
         return m_LastPath[Step];
     }
@@ -86,7 +85,6 @@ protected:
 	CChar *m_pChar;
 	CPointMap m_Target;
 
-protected:
     static int Heuristic(const CPathFinderPoint* Pt1, const CPathFinderPoint* Pt2) noexcept;
 
 	void Clear();

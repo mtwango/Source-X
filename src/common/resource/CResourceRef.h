@@ -17,7 +17,6 @@ class CScript;
 
 class CResourceRef
 {
-private:
     CResourceLink* m_pLink;
 
 public:
@@ -31,13 +30,12 @@ public:
 
     CResourceRef& operator=(const CResourceRef& other);
 
-public:
     void SetRef(CResourceLink* pLink);
-    inline CResourceLink* GetRef() const noexcept
+    CResourceLink* GetRef() const noexcept
     {
         return m_pLink;
     }
-    inline bool operator==(const CResourceRef& comp) const noexcept
+    bool operator==(const CResourceRef& comp) const noexcept
     {
         return (GetRef() == comp.GetRef());
     }
@@ -48,7 +46,6 @@ class CResourceRefArray : public std::vector<CResourceRef>
     // Define a list of pointer references to resource. (Not owned by the list)
     // An indexed list of CResourceLink s.
 
-private:
     lpctstr GetResourceName( size_t iIndex ) const;
 
 public:

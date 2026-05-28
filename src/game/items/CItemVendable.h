@@ -12,7 +12,6 @@
 class CItemVendable : public CItem
 {
 	// Any item that can be sold and has value.
-private:
 	static lpctstr const sm_szLoadKeys[];
 	word m_quality;		// 0-100 quality.
 	dword m_price;		// The price of this item if on a vendor. (allow random (but remembered) pluctuations)

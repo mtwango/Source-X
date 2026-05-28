@@ -306,13 +306,13 @@ void CEdit::SetSel(DWORD dwSelection, BOOL bNoScroll)
 {
     UnreferencedParameter(bNoScroll);
     ASSERT(IsWindow());
-    SendMessage(EM_SETSEL, (WPARAM)dwSelection, (LPARAM)dwSelection);
+    SendMessage(EM_SETSEL, dwSelection, dwSelection);
 }
 void CEdit::SetSel(size_t nStartChar, size_t nEndChar, BOOL bNoScroll)
 {
     UnreferencedParameter(bNoScroll);
     ASSERT(IsWindow());
-    SendMessage(EM_SETSEL, (WPARAM)nStartChar, (LPARAM)nEndChar);
+    SendMessage(EM_SETSEL, nStartChar, (LPARAM)nEndChar);
 }
 size_t CEdit::GetSel() const
 {
@@ -338,7 +338,7 @@ void CEdit::ReplaceSel(lpctstr lpszNewText, BOOL bCanUndo)
 
 COLORREF CRichEditCtrl::SetBackgroundColor(BOOL bSysColor, COLORREF cr)
 {
-    return ((COLORREF)(DWORD)SendMessage(EM_SETBKGNDCOLOR, (WPARAM)bSysColor, (LPARAM)cr));
+    return ((DWORD)SendMessage(EM_SETBKGNDCOLOR, (WPARAM)bSysColor, cr));
 }
 
 void CRichEditCtrl::SetSel(int nStartChar, int nEndChar)
@@ -375,28 +375,28 @@ void CRichEditCtrl::SetCaretHide(BOOL val)
 
 DWORD CRichEditCtrl::ScrollLine()
 {
-    return (DWORD)PostMessage(EM_SCROLL, (WPARAM)SB_LINEDOWN);
+    return (DWORD)PostMessage(EM_SCROLL, SB_LINEDOWN);
 }
 
 DWORD CRichEditCtrl::ScrollPageDown()
 {
-    return (DWORD)PostMessage(EM_SCROLL, (WPARAM)SB_PAGEDOWN);
+    return (DWORD)PostMessage(EM_SCROLL, SB_PAGEDOWN);
 }
 
 DWORD CRichEditCtrl::ScrollBottomRight()
 {
-    return (DWORD)PostMessage(WM_VSCROLL, (WPARAM)SB_BOTTOM);
+    return (DWORD)PostMessage(WM_VSCROLL, SB_BOTTOM);
 }
 
 // Formatting.
 BOOL CRichEditCtrl::SetDefaultCharFormat(CHARFORMAT& cf)
 {
-    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, (WPARAM)SCF_DEFAULT, (LPARAM)&cf);
+    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
 }
 
 BOOL CRichEditCtrl::SetSelectionCharFormat(CHARFORMAT& cf)
 {
-    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, (WPARAM)SCF_SELECTION, (LPARAM)&cf);
+    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
 }
 
 // Events.
@@ -408,7 +408,7 @@ int CRichEditCtrl::GetEventMask() const
 DWORD CRichEditCtrl::SetEventMask(DWORD dwEventMask)
 {
     // ENM_NONE = default.
-    return (DWORD)SendMessage(EM_SETEVENTMASK, 0, (LPARAM)dwEventMask);
+    return (DWORD)SendMessage(EM_SETEVENTMASK, 0, dwEventMask);
 }
 
 

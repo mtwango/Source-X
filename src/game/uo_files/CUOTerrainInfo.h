@@ -10,7 +10,7 @@
 #include "uofiles_types.h"
 
 
-struct CUOTerrainInfo : public CUOTerrainTypeRec_HS
+struct CUOTerrainInfo : CUOTerrainTypeRec_HS
 {
     CUOTerrainInfo( TERRAIN_TYPE id, bool fNameNeeded = true );
 };

@@ -64,7 +64,7 @@ bool CItem::Plant_Use(CChar *pChar)
 		pChar->SysMessageDefault(DEFMSG_CROPS_NO_FRUIT);
 	else
 	{
-		CItem *pItemFruit = CItem::CreateScript(iFruitID, pChar);
+		CItem *pItemFruit = CreateScript(iFruitID, pChar);
         iAmount = (pItemFruit->IsStackableType() ? iAmount : 1);
         if (pItemFruit)
         {
@@ -143,7 +143,7 @@ bool CItem::Plant_OnTick()
 				CItem *pItem = AreaItems->GetItem();
 				if ( !pItem )
 				{
-					CItem *pItemFruit = CItem::CreateScript(iFruitID);
+					CItem *pItemFruit = CreateScript(iFruitID);
 					ASSERT(pItemFruit);
 					pItemFruit->MoveToDecay(GetTopPoint(), g_Cfg.m_iDecay_Item);
 					break;

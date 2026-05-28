@@ -40,7 +40,6 @@ void PingServer::onStart()
 	if ( m_socket.Bind(saToBind) < 0 )
 	{
 		m_socket.Close();
-		return;
 	}
 }
 

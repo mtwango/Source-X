@@ -36,14 +36,12 @@ public:
 	MapSectorsData _SectorData[MAP_SUPPORTED_QTY];
 	bool _fInitialized;
 
-public:
 	CSectorList();
 	~CSectorList();
 
 	CSectorList(const CSectorList& copy) = delete;
 	CSectorList& operator=(const CSectorList& other) = delete;
 
-public:
     static const CSectorList& Get() noexcept;
 
 	void Init();

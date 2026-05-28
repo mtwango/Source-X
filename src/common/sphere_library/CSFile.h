@@ -241,9 +241,7 @@ protected:
 public:
     file_descriptor_t _fileDescriptor;  // File descriptor (POSIX, int) or HANDLE (Windows, size of a pointer).
 
-
 // static methods
-public:
     static bool FileExists(lpctstr ptcFilePath);
 
 };

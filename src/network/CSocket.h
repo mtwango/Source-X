@@ -46,12 +46,10 @@ struct CSocketAddressIP : protected in_addr
 	// INADDR_BROADCAST        (u_long)0xffffffff
 	// INADDR_NONE             0xffffffff
 
-public:
 	CSocketAddressIP();
 	explicit CSocketAddressIP( dword dwIP );
 	explicit CSocketAddressIP( const char *ip );
 
-public:
 	dword GetAddrIP() const;
 	void SetAddrIP( dword dwIP );
 	lpctstr GetAddrStr() const;
@@ -62,13 +60,13 @@ public:
 	bool IsSameIP( const CSocketAddressIP & ip ) const;
 	bool IsMatchIP( const CSocketAddressIP & ip ) const;
 
-	bool SetHostStruct( const struct hostent * pHost );
+	bool SetHostStruct( const hostent * pHost );
 	bool SetHostStr( lpctstr pszHostName );
 
 	bool operator==( const CSocketAddressIP & ip ) const;
 };
 
-struct CSocketAddress : public CSocketAddressIP
+struct CSocketAddress : CSocketAddressIP
 {
 	// IP plus port.
 	// similar to sockaddr_in but without the waste.
@@ -85,13 +83,13 @@ public:
 	explicit CSocketAddress(CSocketAddressIP&) = delete;
 
 	bool operator==( const CSocketAddress & SockAddr ) const;
-	bool operator==( const struct sockaddr_in & SockAddrIn ) const;
-	CSocketAddress& operator = (const struct sockaddr_in& SockAddrIn);
+	bool operator==( const sockaddr_in & SockAddrIn ) const;
+	CSocketAddress& operator = (const sockaddr_in & SockAddrIn);
 	CSocketAddress& operator = (const CSocketAddressIP&) = delete;
 
 	// compare to sockaddr_in
-	struct sockaddr_in GetAddrPort() const;
-	void SetAddrPort( const struct sockaddr_in & SockAddrIn );
+    sockaddr_in GetAddrPort() const;
+	void SetAddrPort( const sockaddr_in & SockAddrIn );
 	// Just the port.
 	word GetPort() const;
 	void SetPort( word wPort );
@@ -103,7 +101,6 @@ public:
 
 class CSocket
 {
-private:
 	SOCKET  m_hSocket;	// socket connect handle
 
 	void Clear();
@@ -128,22 +125,22 @@ public:
 
 	bool Create();
 	bool Create( int iAf, int iType, int iProtocol );
-	int Bind( struct sockaddr_in * pSockAddrIn );
+	int Bind(sockaddr_in * pSockAddrIn );
 	int Bind( const CSocketAddress & SockAddr );
 	int Listen( int iMaxBacklogConnections = SOMAXCONN );
-	int Connect( struct sockaddr_in * pSockAddrIn );
+	int Connect(sockaddr_in * pSockAddrIn );
 	int Connect( const CSocketAddress & SockAddr );
-	int Connect( const struct in_addr & ip, word wPort );
+	int Connect( const in_addr & ip, word wPort );
 	int Connect( lpctstr pszHostName, word wPort );
-	SOCKET Accept( struct sockaddr_in * pSockAddrIn ) const;
+	SOCKET Accept(sockaddr_in * pSockAddrIn ) const;
 	SOCKET Accept( CSocketAddress & SockAddr ) const;
 	int Send( const void * pData, int len ) const;
 	int Receive( void * pData, int len, int flags = 0 );
 
-	int GetSockName( struct sockaddr_in * pSockAddrIn ) const;
+	int GetSockName(sockaddr_in * pSockAddrIn ) const;
 	CSocketAddress GetSockName() const;
 
-	int GetPeerName( struct sockaddr_in * pSockAddrIn ) const;
+	int GetPeerName(sockaddr_in * pSockAddrIn ) const;
 	CSocketAddress GetPeerName( ) const;
 
 	int SetSockOpt( int nOptionName, const void* optval, int optlen, int nLevel = SOL_SOCKET ) const;

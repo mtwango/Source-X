@@ -19,17 +19,15 @@ class PacketTransaction;
 
 class CNetworkOutput
 {
-private:
-	static constexpr inline size_t _failed_result(void) { return INTPTR_MAX; }
+	static constexpr size_t _failed_result() { return INTPTR_MAX; }
 
-private:
 	CNetworkThread* m_thread;	// owning network thread
 	byte* m_encryptBuffer;		// buffer for encrpyted data
 
 public:
 	static const char* m_sClassName;
-	CNetworkOutput(void);
-	~CNetworkOutput(void);
+	CNetworkOutput();
+	~CNetworkOutput();
 
 private:
 	CNetworkOutput(const CNetworkOutput& copy);
@@ -37,7 +35,7 @@ private:
 
 public:
 	void setOwner(CNetworkThread* thread) { m_thread = thread; }			// set owner thread
-	bool processOutput(void);											// process output to clients, returns true if data was sent
+	bool processOutput();											// process output to clients, returns true if data was sent
 	size_t flush(CNetState* state);										// process all queues for a client
 	void onAsyncSendComplete(CNetState* state, bool success);			// notify that async operation completed
 
@@ -45,7 +43,7 @@ public:
 	static void QueuePacketTransaction(PacketTransaction* transaction);	// queue a packet transaction for sending
 
 private:
-	void checkFlushRequests(void);										// check for clients who need data flushing
+	void checkFlushRequests();										// check for clients who need data flushing
 	size_t processPacketQueue(CNetState* state, uint priority);	// process a client's packet queue
 	size_t processAsyncQueue(CNetState* state);							// process a client's async queue
 	bool processByteQueue(CNetState* state);								// process a client's byte queue

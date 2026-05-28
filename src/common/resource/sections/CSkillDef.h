@@ -53,7 +53,7 @@ enum SKF_TYPE
 *          RES_SKILL
 *          [SKILL n]
 */
-struct CSkillDef : public CResourceLink // For skill def table
+struct CSkillDef : CResourceLink // For skill def table
 {
     static lpctstr const sm_szTrigName[SKTRIG_QTY+1];
     static lpctstr const sm_szLoadKeys[];

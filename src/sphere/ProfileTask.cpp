@@ -52,7 +52,7 @@ ProfileTask::ProfileTask(PROFILE_TYPE id) :
 	}
 }
 
-ProfileTask::~ProfileTask(void) noexcept
+ProfileTask::~ProfileTask() noexcept
 {
     EXC_TRY("destroy profiletask");
 

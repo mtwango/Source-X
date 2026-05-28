@@ -106,8 +106,6 @@ void CItemVendable::r_Write(CScript &s)
 	// am i on a vendor right now ?
 	if ( m_price > 0 )
 		s.WriteKeyVal( "PRICE", m_price );
-
-	return;
 }
 
 void CItemVendable::Restock( bool fSellToPlayers )
@@ -190,7 +188,7 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 	//Check if there is an override value first
 	const CVarDefCont* pVarDef = GetKey("OVERRIDE.VALUE", true);
 	if (pVarDef)
-		llPrice = (llong)pVarDef->GetValNum();
+		llPrice = pVarDef->GetValNum();
 	else
 	{
 		if (!forselling) //When selling an item, you never check the price to avoid exploit

@@ -155,7 +155,7 @@ void CChar::Jail( CTextConsole * pSrc, bool fSet, int iCell )
 	ADDTOCALLSTACK("CChar::Jail");
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-    pScriptArgs->Init(fSet, (int64)iCell, 0, nullptr);
+    pScriptArgs->Init(fSet, iCell, 0, nullptr);
 
     if ( IsTrigUsed(TRIGGER_JAILED) )
     {
@@ -298,7 +298,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 			layer = LAYER_NONE;
 	}
 
-	CContainer::ContentAddPrivate( pItem );
+	ContentAddPrivate( pItem );
 	pItem->SetEquipLayer( layer );
 
 	// update flags etc for having equipped this.
@@ -511,12 +511,12 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
     if (pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
     {
         // Leave the stat bonuses signed, since they can be used also as a malus (negative sign)
-        Stat_AddMod(STAT_STR,       - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
-        Stat_AddMod(STAT_DEX,       - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSDEX, pItemBaseCCPItemEquippable));
-        Stat_AddMod(STAT_INT,       - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSINT, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_STR,    - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSHITSMAX, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_DEX,    - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTAMMAX, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_INT,    - (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSMANAMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_STR,       - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_DEX,       - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSDEX, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_INT,       - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSINT, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_STR,    - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSHITSMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_DEX,    - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTAMMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_INT,    - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSMANAMAX, pItemBaseCCPItemEquippable));
 
         ModPropNum(pCCPChar, PROPCH_RESPHYSICAL,  - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_RESPHYSICAL, pItemBaseCCPItemEquippable));
         ModPropNum(pCCPChar, PROPCH_RESFIRE,      - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_RESFIRE, pItemBaseCCPItemEquippable));
@@ -630,7 +630,7 @@ void CChar::UnEquipAllItems( CItemContainer * pDest, bool fLeaveHands )
 					CItem *pDupe = CItem::CreateDupeItem(pItem);
 					pDest->ContentAdd(pDupe);
 					// Equip layer only matters on a corpse.
-					pDupe->SetContainedLayer((byte)layer);
+					pDupe->SetContainedLayer(layer);
 				}
 				continue;
 			case LAYER_DRAGGING:
@@ -655,7 +655,7 @@ void CChar::UnEquipAllItems( CItemContainer * pDest, bool fLeaveHands )
 			if ( pDest->IsType(IT_CORPSE) )
 			{
 				// Equip layer only matters on a corpse.
-				pItem->SetContainedLayer((byte)layer);
+				pItem->SetContainedLayer(layer);
 			}
 		}
 		else if ( pPack )
@@ -1916,7 +1916,7 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
                                 return ANIM_MON_DIE1;
                             }
                             //GetHit while flying
-                            else if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && !(mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying))
+                            if ((mobTypesRow.m_uiFlags & ATFLAG_CanFlying) && !(mobTypesRow.m_uiFlags & ATFLAG_Use10IfHittedWhileFlying))
                             {
                                 return ANIM_MON_DIE_FLIGHT;
                             }
@@ -3408,12 +3408,12 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
     if (pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
     {
         // Leave the stat bonuses signed, since they can be used also as a malus (negative sign)
-        Stat_AddMod(STAT_STR,       + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
-        Stat_AddMod(STAT_DEX,       + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSDEX, pItemBaseCCPItemEquippable));
-        Stat_AddMod(STAT_INT,       + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSINT, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_STR,    + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSHITSMAX, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_DEX,    + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTAMMAX, pItemBaseCCPItemEquippable));
-        Stat_AddMaxMod(STAT_INT,    + (int)pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSMANAMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_STR,       + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_DEX,       + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSDEX, pItemBaseCCPItemEquippable));
+        Stat_AddMod(STAT_INT,       + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSINT, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_STR,    + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSHITSMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_DEX,    + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTAMMAX, pItemBaseCCPItemEquippable));
+        Stat_AddMaxMod(STAT_INT,    + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSMANAMAX, pItemBaseCCPItemEquippable));
 
         ModPropNum(pCCPChar, PROPCH_RESPHYSICAL,  + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_RESPHYSICAL, pItemBaseCCPItemEquippable));
         ModPropNum(pCCPChar, PROPCH_RESFIRE,      + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_RESFIRE, pItemBaseCCPItemEquippable));
@@ -4919,8 +4919,8 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 	ADDTOCALLSTACK("CChar::CheckLocationEffects");
     // This can also be called from char periodic ticks (not classic timer).
 
-    static thread_local uint _uiRecursingStep = 0;
-    static thread_local uint _uiRecursingItemStep = 0;
+    thread_local uint _uiRecursingStep = 0;
+    thread_local uint _uiRecursingItemStep = 0;
     static constexpr uint _kuiRecursingStepLimit = 20;
     static constexpr uint _kuiRecursingItemStepLimit = 20;
 
@@ -5099,7 +5099,6 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                         return TRIGRET_RET_TRUE;
                     }
                 }
-                continue;
 
             default:
                 continue;
@@ -5546,7 +5545,7 @@ bool CChar::IsTriggerActive(lpctstr trig) const
     if (_iRunningTriggerId != -1)
     {
         ASSERT(_iRunningTriggerId < CTRIG_QTY);
-        const int iAction = FindTableSorted( trig, CChar::sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
+        const int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
         return (_iRunningTriggerId == iAction);
     }
     ASSERT(!_sRunningTrigger.IsEmpty());
@@ -5561,11 +5560,11 @@ void CChar::SetTriggerActive(lpctstr trig)
         _sRunningTrigger.Clear();
         return;
     }
-	const int iAction = FindTableSorted( trig, CChar::sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
+	const int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
     if (iAction != -1)
     {
         _iRunningTriggerId = (short)iAction;
-        _sRunningTrigger = CChar::sm_szTrigName[iAction];
+        _sRunningTrigger = sm_szTrigName[iAction];
         return;
     }
     _sRunningTrigger = trig;
@@ -5651,7 +5650,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
                     continue;
 
                 executedEvents.emplace_back(pLink);
-                iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
                 if (iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT)
                     goto stopandret;
 
@@ -5679,7 +5678,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 					continue;
 
                 executedEvents.emplace_back(pLink);
-                iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 				if ( iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT )
 					goto stopandret;
 			}
@@ -5694,7 +5693,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 				CResourceLock s;
 				if ( pCharDef->ResourceLock(s) )
 				{
-                    iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                    iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 					if (( iRet != TRIGRET_RET_FALSE ) && ( iRet != TRIGRET_RET_DEFAULT ))
 						goto stopandret;
 				}
@@ -5716,7 +5715,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 					continue;
 
                 executedEvents.emplace_back(pLink);
-                iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 				if (iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT)
 					goto stopandret;
 			}
@@ -5738,7 +5737,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 					continue;
 
                 executedEvents.emplace_back(pLink);
-                iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 				if ( iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT )
 					goto stopandret;
 			}
@@ -5759,7 +5758,7 @@ stopandret:
 TRIGRET_TYPE CChar::OnTrigger( CTRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
 {
 	ASSERT( (trigger > CTRIG_AAAUNUSED) && (trigger < CTRIG_QTY) );
-    return OnTrigger( CChar::sm_szTrigName[trigger], pScriptArgs, pSrc);
+    return OnTrigger( sm_szTrigName[trigger], pScriptArgs, pSrc);
 }
 
 // process m_fStatusUpdate flags
@@ -5882,9 +5881,13 @@ bool CChar::IsTickableEvenIfDisconnected() const
     // Validation step.
 
     if (fSkillRidden)
+    {
         ASSERT(fStatfRidden);
-    else if (fStatfRidden)
+    }
+    if (fStatfRidden)
+    {
         ASSERT(fSkillRidden);
+    }
 
     // Skip the following checks at startup stage, because the mount item or rider might have not been created yet.
     const bool fShouldCheck = !g_Serv.IsStartupLoadingScripts();
@@ -6139,7 +6142,7 @@ bool CChar::OnTickPeriodic()
             g_Log.EventEvent("Aborted char '%s' (0x%" PRIx32 " ) death.\n", GetName(), GetUID().GetObjUID());
         }
 //#endif
-        ; // Then, fall through.
+        // Then, fall through.
     }
 
     // Stats regeneration

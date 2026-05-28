@@ -19,14 +19,12 @@
 
 extern class CNTService
 {
-private:
 	bool m_fIsNTService;	// Are we running an NT service ?
 
 	HANDLE m_hServerStopEvent;
 	SERVICE_STATUS_HANDLE m_hStatusHandle;
 	SERVICE_STATUS m_sStatus;
 
-private:
 	int  ServiceStart(DWORD, LPTSTR *);
 	void ServiceStop();
 	void ServiceStartMain(DWORD dwArgc, LPTSTR *lpszArgv);

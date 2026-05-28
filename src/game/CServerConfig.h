@@ -642,7 +642,6 @@ public:
 
 	CSStringSortArray m_PrivCommands[PLEVEL_QTY];		// what command are allowed for a priv level?
 
-public:
 	CObjNameSortArray m_Servers;	// Servers list. we act like the login server with this.
     CObjUniquePtrNameSortVector<CResourceNamedDef> m_Functions;	// Subroutines that can be used in scripts.
 	CRegionLinks m_RegionDefs;		// All [REGION ] stored inside.
@@ -693,7 +692,7 @@ public:
      *
      * @return  true if it succeeds, false if it fails.
      */
-	bool LoadCryptIni( void );
+	bool LoadCryptIni();
 
     /**
      * @brief   Loads or resync client files and scripts.
@@ -780,7 +779,7 @@ public:
      *
      * @return  null if it fails, else a pointer to a CResourceDef.
      */
-    lpctstr ResourceTypedGetName(const CResourceIDBase& rid, const RES_TYPE iExpectedType, lptstr *ptcOutError );
+    lpctstr ResourceTypedGetName(const CResourceIDBase& rid, RES_TYPE iExpectedType, lptstr *ptcOutError );
 
 	// Print EF/OF Flags
 	void PrintEFOFFlags( bool bEF = true, bool bOF = true, CTextConsole *pSrc = nullptr );

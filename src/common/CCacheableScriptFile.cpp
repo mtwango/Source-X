@@ -64,11 +64,7 @@ bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
         _fileContent = nullptr;
     }
 
-    if ((uiModeFlags & OF_WRITE) || (uiModeFlags & OF_READWRITE))
-    {
-        ;
-    }
-    else
+    if (!(uiModeFlags & OF_WRITE) && !(uiModeFlags & OF_READWRITE))
     {
         static constexpr int iMaxFileLength = 5 * 1'000'000;
         const int iFileLength = _GetLength();

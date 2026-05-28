@@ -718,7 +718,6 @@ void CClient::Event_Skill_Use( SKILL_TYPE skill ) // Skill is clicked on the ski
 
 		m_tmSkillTarg.m_iSkill = skill;	// targetting what skill ?
 		addTarget( CLIMODE_TARG_SKILL, pSkillDef->m_sTargetPrompt.GetBuffer(), false, fCheckCrime, 0 , atoi(pSkillDef->m_sTargetPromptCliloc.GetBuffer()));
-		return;
 	}
 }
 
@@ -733,7 +732,7 @@ bool CClient::Event_CheckWalkBuffer(byte rawdir)
 
 
 	const int64 iCurTime = CSTime::GetMonotonicSysTimeMilli();
-    int64 iTimeDiff = (int64)llabs(iCurTime - m_timeWalkStep);	// use absolute value to prevent overflows
+    int64 iTimeDiff = llabs(iCurTime - m_timeWalkStep);	// use absolute value to prevent overflows
 	int64 iTimeMin = 0;  // minimum time to move 1 step in milliseconds
 	m_timeWalkStep = iCurTime; //Take the time of step for the next time we enter here
 
@@ -1077,7 +1076,7 @@ bool CClient::Event_Command(lpctstr pszCommand, TALKMODE_TYPE mode)
         pScriptArgs->Init(pszCommand);
         pScriptArgs->m_iN1 = fAllowCommand;
         pScriptArgs->m_iN2 = fAllowSay;
-		enum TRIGRET_TYPE tr;
+        TRIGRET_TYPE tr;
 
 		//	Call the filtering function
         if ( m_pChar->r_Call(g_Cfg.m_sCommandTrigger, pScriptArgs, m_pChar, nullptr, &tr) )
@@ -2106,8 +2105,8 @@ void CClient::Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, bo
 		if ( !fCancelSpeech && ( len <= 128 ) ) // From this point max 128 chars
 		{
 			// For both client ASCII and Unicode speech requests, Sphere sends a Unicode speech.
-			m_pChar->SpeakUTF8(z, wHue, (TALKMODE_TYPE)mode, m_pChar->m_fonttype, GetAccount()->m_lang);
-			Event_Talk_Common(static_cast<tchar*>(z));
+			m_pChar->SpeakUTF8(z, wHue, mode, m_pChar->m_fonttype, GetAccount()->m_lang);
+			Event_Talk_Common(z);
 		}
 	}
 }
@@ -2184,7 +2183,7 @@ void CClient::Event_TalkUNICODE(nachar* wszText, int iTextLen, HUE_TYPE wHue, TA
 					if (( szText[i] >= 'A' ) && ( szText[i] <= 'Z' ))
 						szText[i] += 0x20;
 
-				iLen = CvtSystemToNETUTF16(wszText, iTextLen, szText, (int)chars);
+				iLen = CvtSystemToNETUTF16(wszText, iTextLen, szText, chars);
 			}
 		}
 
@@ -2969,7 +2968,6 @@ void CClient::Event_UseToolbar(byte bType, dword dwArg)
 
         case 0x5:	// virtue
             Event_VirtueSelect(dwArg, m_pChar);
-            return;
 	}
 }
 
@@ -3256,7 +3254,6 @@ void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
             pScriptArgs->m_pO1 = m_pChar;
             pScriptArgs->m_iN1 = iVirtueID;
             m_pChar->OnTrigger(CTRIG_UserVirtueInvoke, pScriptArgs, m_pChar);
-			return;
 		}
 
         /*
@@ -3279,7 +3276,7 @@ bool CClient::xPacketFilter( const byte * pData, uint iLen )
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = pData[0];
-		enum TRIGRET_TYPE trigReturn;
+        TRIGRET_TYPE trigReturn;
 		tchar idx[12];
 
         pScriptArgs->m_s1 = GetPeerStr();
@@ -3307,7 +3304,7 @@ bool CClient::xPacketFilter( const byte * pData, uint iLen )
 		for ( uint i = 0; i < bytes; ++i )
 		{
 			snprintf(idx, sizeof(idx), "%u", i);
-            pScriptArgs->m_VarsLocal.SetNum(idx, (int)(pData[i]));
+            pScriptArgs->m_VarsLocal.SetNum(idx, pData[i]);
 		}
 
 		//	Call the filtering function
@@ -3329,7 +3326,7 @@ bool CClient::xOutPacketFilter( const byte * pData, uint iLen )
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = pData[0];
-		enum TRIGRET_TYPE trigReturn;
+        TRIGRET_TYPE trigReturn;
 		tchar idx[12];
 
         pScriptArgs->m_s1 = GetPeerStr();
@@ -3357,7 +3354,7 @@ bool CClient::xOutPacketFilter( const byte * pData, uint iLen )
 		for ( size_t i = 0; i < bytes; ++i )
 		{
 			snprintf(idx, sizeof(idx), "%" PRIuSIZE_T, i);
-            pScriptArgs->m_VarsLocal.SetNum(idx, (int)(pData[i]));
+            pScriptArgs->m_VarsLocal.SetNum(idx, pData[i]);
 		}
 
 		//	Call the filtering function

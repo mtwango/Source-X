@@ -17,7 +17,6 @@ class CUID;
 
 class CTimedFunctionHandler
 {
-private:
     CSObjCont _timedFunctions;
 
     std::string _strLoadBufferCommand;

@@ -14,12 +14,12 @@ namespace sl
     class _ptr_vector_base : public std::vector<_PtrWrapperType>
     {
     public:
-        using base_type = typename std::vector<_PtrWrapperType>;
-        using iterator = typename base_type::iterator;
-        using const_iterator = typename base_type::const_iterator;
-        using size_type = typename base_type::size_type;
+        using base_type = std::vector<_PtrWrapperType>;
+        using iterator = base_type::iterator;
+        using const_iterator = base_type::const_iterator;
+        using size_type = base_type::size_type;
 
-        inline void erase_index(const size_t index) {
+        void erase_index(const size_t index) {
             this->erase(this->begin() + index);
         }
 
@@ -41,17 +41,17 @@ namespace sl
                 });
         }
 
-        inline bool has_ptr(_Type const* const elem) const {
+        bool has_ptr(_Type const* const elem) const {
             return (base_type::cend() != this->find_ptr(elem));
         }
 
         void remove_ptr(_Type* elem) {
             const size_t uiFoundIndex = this->find_ptr(elem);
-            if (uiFoundIndex != sl::scont_bad_index())
+            if (uiFoundIndex != scont_bad_index())
                 this->remove_index(uiFoundIndex);
         }
 
-        inline bool valid_index(size_t index) const noexcept {
+        bool valid_index(size_t index) const noexcept {
             if constexpr (std::is_same_v<_PtrWrapperType, std::weak_ptr<_Type>>) {
                 return (index < this->size()) && !(this->operator[](index).expired());
             }
@@ -65,10 +65,10 @@ namespace sl
     class _ptr_sorted_vector_base : public sorted_vector<_PtrWrapperType, _Comp>
     {
     public:
-        using base_type = typename std::vector<_PtrWrapperType>;
-        using iterator = typename base_type::iterator;
-        using const_iterator = typename base_type::const_iterator;
-        using size_type = typename base_type::size_type;
+        using base_type = std::vector<_PtrWrapperType>;
+        using iterator = base_type::iterator;
+        using const_iterator = base_type::const_iterator;
+        using size_type = base_type::size_type;
 
         const_iterator find_ptr(_Type const* const elem) const {
             return this->cbegin() + this->find_predicate(elem,
@@ -79,15 +79,15 @@ namespace sl
 
         void remove_ptr(_Type* elem) {
             const size_t uiFoundIndex = this->find(elem);
-            if (uiFoundIndex != sl::scont_bad_index())
+            if (uiFoundIndex != scont_bad_index())
                 this->remove_index(uiFoundIndex);
         }
 
-        inline bool has_ptr(_Type const* const elem) const {
-            return (sl::scont_bad_index() != this->find_ptr(elem));
+        bool has_ptr(_Type const* const elem) const {
+            return (scont_bad_index() != this->find_ptr(elem));
         }
 
-        inline bool valid_index(size_t index) const noexcept {
+        bool valid_index(size_t index) const noexcept {
             if constexpr (std::is_same_v<_PtrWrapperType, std::weak_ptr<_Type>>) {
                 return (index < this->size()) && !(this->operator[](index).expired());
             }
@@ -115,12 +115,12 @@ namespace sl
                 this->operator[](index) = std::move(value);
         }
 
-        inline void emplace_index_grow(size_t index, std::nullptr_t) {
+        void emplace_index_grow(size_t index, std::nullptr_t) {
             this->emplace_index_grow(index, std::unique_ptr<_Type>());
         }
 
         template <typename... _ArgPackType>
-        inline void emplace_front(_ArgPackType&&... args) {
+        void emplace_front(_ArgPackType&&... args) {
             this->emplace(this->cbegin(), std::forward<_ArgPackType>(args)...);
         }
 
@@ -179,12 +179,12 @@ namespace sl
                 this->operator[](index) = value;
         }
 
-        inline void emplace_index_grow(size_t index, std::nullptr_t) {
+        void emplace_index_grow(size_t index, std::nullptr_t) {
             this->emplace_index_grow(index, std::shared_ptr<_Type>());
         }
 
         template <typename... _ArgPackType>
-        inline void emplace_front(_ArgPackType&&... args) {
+        void emplace_front(_ArgPackType&&... args) {
             this->emplace(this->cbegin(), std::forward<_ArgPackType>(args)...);
         }
 
@@ -230,7 +230,7 @@ namespace sl
         }
 
         template <typename... _ArgPackType>
-        inline void emplace_front(_ArgPackType&&... args) {
+        void emplace_front(_ArgPackType&&... args) {
             this->emplace(this->cbegin(), std::forward<_ArgPackType>(args)...);
         }
     };
@@ -241,10 +241,10 @@ namespace sl
 
     // -- Vectors of pointers, wrapped in shared pointers
     template <typename _Type>
-    class smart_ptr_view_vector : public _ptr_vector_base<_Type, sl::smart_ptr_view<_Type>>
+    class smart_ptr_view_vector : public _ptr_vector_base<_Type, smart_ptr_view<_Type>>
     {
     public:
-        template <typename _PtrType = sl::smart_ptr_view<_Type>>  // Gets both unique and shared_ptr
+        template <typename _PtrType = smart_ptr_view<_Type>>  // Gets both unique and shared_ptr
         void emplace_index_grow(size_t index, _PtrType const& value) {
             if (index >= this->size()) {
                 this->resize(index + 1); // The capacity will be even greater, since it calls vector::resize
@@ -255,26 +255,26 @@ namespace sl
                 this->operator[](index) = value;
         }
 
-        inline void emplace_index_grow(size_t index, std::nullptr_t) {
+        void emplace_index_grow(size_t index, std::nullptr_t) {
             this->emplace_index_grow(index, sl::smart_ptr_view<_Type>());
         }
 
         template <typename... _ArgPackType>
-        inline void emplace_front(_ArgPackType&&... args) {
+        void emplace_front(_ArgPackType&&... args) {
             this->emplace(this->cbegin(), std::forward<_ArgPackType>(args)...);
         }
     };
     template <typename _Type, typename _Comp = std::less<_Type>>
-    class smart_ptr_view_sorted_vector : public _ptr_sorted_vector_base<_Type, sl::smart_ptr_view<_Type>, _Comp>
+    class smart_ptr_view_sorted_vector : public _ptr_sorted_vector_base<_Type, smart_ptr_view<_Type>, _Comp>
     {};
 
 
     // -- Vectors of pointers, wrapped in shared pointers
     template <typename _Type>
-    class raw_ptr_view_vector : public _ptr_vector_base<_Type, sl::raw_ptr_view<_Type>>
+    class raw_ptr_view_vector : public _ptr_vector_base<_Type, raw_ptr_view<_Type>>
     {
     public:
-        template <typename _PtrType = sl::raw_ptr_view<_Type>>  // Gets both bare pointer and shared_ptr
+        template <typename _PtrType = raw_ptr_view<_Type>>  // Gets both bare pointer and shared_ptr
         void emplace_index_grow(size_t index, _PtrType value) {
             if (index >= this->size()) {
                 this->resize(index + 1); // The capacity will be even greater, since it calls vector::resize
@@ -285,17 +285,17 @@ namespace sl
                 this->operator[](index) = value;
         }
 
-        inline void emplace_index_grow(size_t index, std::nullptr_t) {
+        void emplace_index_grow(size_t index, std::nullptr_t) {
             this->emplace_index_grow(index, sl::raw_ptr_view<_Type>());
         }
 
         template <typename... _ArgPackType>
-        inline void emplace_front(_ArgPackType&&... args) {
+        void emplace_front(_ArgPackType&&... args) {
             this->emplace(this->cbegin(), std::forward<_ArgPackType>(args)...);
         }
     };
     template <typename _Type, typename _Comp = std::less<_Type>>
-    class raw_ptr_view_sorted_vector : public _ptr_sorted_vector_base<_Type, sl::raw_ptr_view<_Type>, _Comp>
+    class raw_ptr_view_sorted_vector : public _ptr_sorted_vector_base<_Type, raw_ptr_view<_Type>, _Comp>
     {};
 }
 

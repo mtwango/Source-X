@@ -51,7 +51,6 @@ class CItemStone : public CItem, public CSObjList
     int16 _iMaxShips;
     int16 _iMaxHouses;
 
-private:
 	void SetTownName();
 	bool SetName( lpctstr pszName ) override;
 	bool MoveTo(const CPointMap& pt, bool bForceFix = false) override;

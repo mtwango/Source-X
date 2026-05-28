@@ -138,7 +138,7 @@ protected:
     static void BaseCont_Write_ContStr(const BaseContStr_t* container, const lpctstr *ptcPropsTable, CScript &s);
 
 public:
-    inline COMPPROPS_TYPE GetType() const noexcept {
+    COMPPROPS_TYPE GetType() const noexcept {
         return _iType;
     }
 

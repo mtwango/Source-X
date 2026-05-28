@@ -208,7 +208,6 @@ void CChar::CallGuards()
 
 		CallGuards(pCriminal);
 	}
-	return;
 }
 
 // I just yelled for guards.
@@ -272,7 +271,7 @@ bool CChar::CallGuards( CChar * pCriminal )
 	{
 		if (!rid.IsValidUID())
 			return false;
-		pGuard = CChar::CreateNPC((CREID_TYPE)rid.GetResIndex());
+		pGuard = CreateNPC((CREID_TYPE)rid.GetResIndex());
 		if (!pGuard)
 			return false;
 
@@ -1505,7 +1504,7 @@ void CChar::Fight_HitTry()
 		// I can't hit this target, try switch to another one
 		if (m_pNPC)
 		{
-			std::vector<CChar*> vExcludeTargets { pCharTarg };	// Ignore the current target, i want other npcs
+			std::vector vExcludeTargets { pCharTarg };	// Ignore the current target, i want other npcs
 			if (!Fight_Attack(NPC_FightFindBestTarget(&vExcludeTargets)))
 			{
 				Skill_Start(SKILL_NONE);

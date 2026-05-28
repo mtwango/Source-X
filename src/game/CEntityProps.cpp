@@ -144,7 +144,7 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
         if (!pComp)
             return true; // The base doesn't have this component, but the obj did -> return true
         ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
-        pComp->FindLoadPropVal(s, nullptr, iLimitToExpansion, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
+        pComp->FindLoadPropVal(s, nullptr, iLimitToExpansion, loopRet.iPropIndex, loopRet.fPropStr);
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
@@ -212,7 +212,7 @@ bool CEntityProps::r_WritePropVal(lpctstr ptcKey, CSString & sVal, const CObjBas
         if (!pComp)
             return true; // The base doesn't have this component, but the obj did -> return true
         ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
-        pComp->FindWritePropVal(sVal, (CComponentProps::PropertyIndex_t)loopRet.iPropIndex, loopRet.fPropStr);
+        pComp->FindWritePropVal(sVal, loopRet.iPropIndex, loopRet.fPropStr);
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
@@ -230,7 +230,6 @@ void CEntityProps::AddPropsTooltipData(CObjBase* pObj)
         ASSERT(pComponent);
         pComponent->AddPropsTooltipData(pObj);
     }
-    return;
 }
 
 void CEntityProps::Copy(const CEntityProps *target)

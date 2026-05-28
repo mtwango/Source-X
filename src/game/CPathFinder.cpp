@@ -87,7 +87,7 @@ CPathFinder::CPathFinder(CChar *pChar, const CPointMap& ptTarget) :
 	EXC_CATCH;
 }
 
-inline static bool CPathFinderPointPtrCompLess(const CPathFinderPoint* Pt1, const CPathFinderPoint* Pt2) noexcept
+static bool CPathFinderPointPtrCompLess(const CPathFinderPoint* Pt1, const CPathFinderPoint* Pt2) noexcept
 {
     return *Pt1 < *Pt2;
 }

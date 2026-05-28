@@ -49,7 +49,7 @@ void ConsoleInterface::AddConsoleOutput(std::unique_ptr<ConsoleOutput>&& output)
 {
     DEBUG_ASSERT(output);
     DEBUG_ASSERT(output->GetTextString().GetBuffer() != nullptr);
-    std::unique_lock<std::mutex> lock(_ciQueueMutex);
+    std::unique_lock lock(_ciQueueMutex);
     _qOutput.emplace_back(std::move(output));
 #ifndef _WIN32
     _ciQueueCV.notify_one();

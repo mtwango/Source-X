@@ -421,7 +421,6 @@ static void StringFunction( int iFunc, lpctstr ptcKey, CSString &sVal )
 		case SSC_StrToUpper:	// strupper(str) = upper case the string
 			sVal = ppCmd[0];
 			sVal.MakeUpper();
-			return;
 	}
 }
 
@@ -508,7 +507,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 
             const CObjBase * pRefObj = dynamic_cast<const CObjBase*>(pRef);
 			if (pRefObj)
-				sVal.FormatHex( (dword)pRefObj->GetUID() );
+				sVal.FormatHex( pRefObj->GetUID() );
 			else
 				sVal.FormatVal( 1 );
 			return true;
@@ -618,12 +617,12 @@ badcmd:
 		case SSC_OBJ:
 			if ( !g_World.m_uidObj.ObjFind() )
 				g_World.m_uidObj.ClearUID();
-			sVal.FormatHex((dword)g_World.m_uidObj);
+			sVal.FormatHex(g_World.m_uidObj);
 			return true;
 		case SSC_NEW:
 			if ( !g_World.m_uidNew.ObjFind() )
 				g_World.m_uidNew.ClearUID();
-			sVal.FormatHex((dword)g_World.m_uidNew);
+			sVal.FormatHex(g_World.m_uidNew);
 			return true;
 		case SSC_SRC:
 			if ( pSrc == nullptr )
@@ -729,7 +728,7 @@ badcmd:
 		case SSC_FVAL:
 			{
 				llong iVal = Exp_GetLLVal(ptcKey);
-                int64 iValAbs = SphereAbs((int64)iVal);
+                int64 iValAbs = SphereAbs(iVal);
 				sVal.Format( "%s%lld.%lld" , ((iVal >= 0) ? "" : "-"), (iValAbs / 10LL), (iValAbs % 10LL) );
 				return true;
 			}
@@ -1124,7 +1123,7 @@ badcmd:
                 return false;
 
             bool fValidated = CBCrypt::ValidateBCrypt(ppCmd[0], ppCmd[1]);
-            sVal.FormatVal((int)fValidated);
+            sVal.FormatVal(fValidated);
         } return true;
 
 		case SSC_MULDIV:
@@ -2213,7 +2212,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 	if (s.HasArgs())
 	{
 		tchar* ppArgs[2];
-		int iArgQty = Str_ParseCmds(const_cast<tchar*>(s.GetArgRaw()), ppArgs, ARRAY_COUNT(ppArgs), " \t,");
+		int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), " \t,");
 
 		if (iArgQty > 1)
 		{
@@ -2357,7 +2356,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerRun( CScript &s, TRIGRUN_TYPE trigrun, CScript
     ASSERT(pScriptArgs);
 
     static constexpr uint g_reentrant_OnTriggerRun_limit = 75;
-    static thread_local size_t g_reentrant_OnTriggerRun = 0;
+    thread_local size_t g_reentrant_OnTriggerRun = 0;
     auto clean_return = [](const TRIGRET_TYPE ret) noexcept -> TRIGRET_TYPE {
         g_reentrant_OnTriggerRun -= 1;
         return ret;

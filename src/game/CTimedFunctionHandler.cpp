@@ -174,7 +174,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 		const uint uid = (uint)uidTest;
 
         errno = 0;
-		int64 elapsed = (int64)std::strtoll(ppVal[2], nullptr, 10);
+		int64 elapsed = std::strtoll(ppVal[2], nullptr, 10);
         if (errno == ERANGE)
         {
             g_Log.Event(LOGM_INIT|LOGL_ERROR, "Invalid TimerFNumbers in %sdata.scp. Invalid elapsed time (third value=%s).\n", SPHERE_FILE, ppVal[2]);

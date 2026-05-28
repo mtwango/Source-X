@@ -15,7 +15,6 @@
 class CObjBaseTemplate : public CSObjContRec
 {
 	// A dynamic object of some sort.
-private:
 	CUID		m_UID;		// How the server will refer to this. 0 = static item
 	CSString	m_sName;	// unique name for the individual object.
 	CPointMap	m_pt;		// List is sorted by m_z_sort.

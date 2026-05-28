@@ -580,7 +580,7 @@ bool CClient::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 						ptcKey += 7;
 
 						// Do i want to send the "joined" message to the party members?
-						bool fSendMsgs = (Exp_GetSingle(ptcKey) != 0) ? true : false;
+						bool fSendMsgs = (Exp_GetSingle(ptcKey) != 0);
 
 						// Add all the UIDs to the party
 						for (int ip = 0; ip < 10; ++ip)
@@ -1261,7 +1261,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 					pChar = uid.CharFind();
 				}
 				if ( pChar )
-                    closeUIWindow(pChar, PacketCloseUIWindowType::Paperdoll);
+                    closeUIWindow(pChar, Paperdoll);
 			}
 			break;
 
@@ -1274,7 +1274,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 					pChar = uid.CharFind();
 				}
 				if ( pChar )
-                    closeUIWindow(pChar, PacketCloseUIWindowType::Profile);
+                    closeUIWindow(pChar, Profile);
 			}
 			break;
 
@@ -1287,7 +1287,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 					pChar = uid.CharFind();
 				}
 				if ( pChar )
-                    closeUIWindow(pChar, PacketCloseUIWindowType::Status);
+                    closeUIWindow(pChar, Status);
 			}
 			break;
 

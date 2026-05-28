@@ -643,7 +643,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 		{
 			CObjBase *pObj = dynamic_cast<CObjBase*>(pRef);
 			if ( pObj )
-				sVal.FormatHex((dword)pObj->GetUID());
+				sVal.FormatHex(pObj->GetUID());
 			else
                 sVal.SetValTrue();
 			return true;
@@ -777,7 +777,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 			if ( pCharMaster && !fForced )
 				pCharMaster->SetKeyNum("PARTY_LASTINVITE", toAdd.GetObjUID());
 
-			return CPartyDef::AcceptEvent(pCharAdd, GetMaster(), fForced);
+			return AcceptEvent(pCharAdd, GetMaster(), fForced);
 		} break;
 
 		case PDV_CLEARTAGS:

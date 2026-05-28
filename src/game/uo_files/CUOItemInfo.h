@@ -10,7 +10,7 @@
 #include "CUOItemTypeRec.h"
 #include "uofiles_enums_itemid.h"
 
-struct CUOItemInfo : public CUOItemTypeRec_HS
+struct CUOItemInfo : CUOItemTypeRec_HS
 {
     explicit CUOItemInfo( ITEMID_TYPE id, bool fNameNotNeeded = false);
 };

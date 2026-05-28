@@ -30,8 +30,8 @@ struct HistoryIP
     int64 m_iTimeLastConnectedMs;
     int64 m_iBlockExpireMs;
 
-    void update(void);
-    bool checkPing(void); // IP is blocked -or- too many pings to it?
+    void update();
+    bool checkPing(); // IP is blocked -or- too many pings to it?
     void setBlocked(bool isBlocked, int64 timeoutSeconds = -1);
 };
 
@@ -47,19 +47,17 @@ typedef std::deque<HistoryIP> IPHistoryList;
  ***************************************************************************/
 class IPHistoryManager
 {
-private:
     IPHistoryList m_ips;		// list of known ips
     int64 m_lastDecayTime;	// last decay time
 
 public:
-    IPHistoryManager(void);
-    ~IPHistoryManager(void);
+    IPHistoryManager();
+    ~IPHistoryManager();
 
     IPHistoryManager(const IPHistoryManager& copy) = delete;
     IPHistoryManager& operator=(const IPHistoryManager& other) = delete;
 
-public:
-    void tick(void);	// periodic events
+    void tick();	// periodic events
 
     HistoryIP& getHistoryForIP(const CSocketAddressIP& ip) noexcept;	// get history for an ip
     HistoryIP& getHistoryForIP(const char* ip);				// get history for an ip

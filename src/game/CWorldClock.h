@@ -10,7 +10,6 @@
 
 class CWorldClock
 {
-private:
 	int64 _iTickCur;            // Current TICK count of the server from its first start.
 	CServerTime _timeClock;     // SERVER TIME on the current game loop cycle (CWorld::_OnTick method), used to advance the ticks.
 	int64 _iSysClock_Prev;	    // REAL WORLD TIME (in milliseconds) of the last game loop cycle.
@@ -32,18 +31,18 @@ public:
 	void InitTime(int64 iTimeBase);
 	bool Advance();
 
-	inline void AdvanceTick() noexcept
+    void AdvanceTick() noexcept
 	{
 		++_iTickCur;
 	}
 
 #undef GetCurrentTime
-	inline const CServerTime& GetCurrentTime() const noexcept // in milliseconds
+    const CServerTime& GetCurrentTime() const noexcept // in milliseconds
 	{
 		return _timeClock;
 	}
 
-	inline int64 GetCurrentTick() const noexcept
+    int64 GetCurrentTick() const noexcept
 	{
 		return _iTickCur;
 	}

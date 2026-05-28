@@ -34,7 +34,6 @@ public:
 
 class CCharsActiveList : public CSObjCont, public CSectorObjCont
 {
-private:
 	int m_iClients;				// How many clients in this sector now?
 	int64 m_iTimeLastClient;	// age the sector based on last client here.
 
@@ -116,7 +115,6 @@ public:
 	CCharsDisconnectList	m_Chars_Disconnect;	// dead NPCs, etc
     CItemsList m_Items;                         // CItem(s) in this CSector (not relevant if they have a timer set or not).
 
-public:
     /*
     * @brief Assign its adjacent sectors
     */
@@ -132,7 +130,6 @@ public:
 	CSectorBase(const CSectorBase& copy) = delete;
 	CSectorBase& operator=(const CSectorBase& other) = delete;
 
-public:
 	virtual void Init(int index, uchar map, short x, short y);
 
 	// Location map units.

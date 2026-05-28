@@ -91,52 +91,50 @@ public:
     dword m_reportedVersionNumber;		// client version (reported)
     byte m_sequence;				// movement sequence
 
-public:
     explicit CNetState(int id);
-    ~CNetState(void);
+    ~CNetState();
 
     CNetState(const CNetState& copy) = delete;
     CNetState& operator=(const CNetState& other) = delete;
 
-public:
-    int id(void) const { return m_id; };	// returns ID of the client
-    void setId(int id) { m_id = id; };		// changes ID of the client
-    void clear(void);						// clears state
-    void clearQueues(void);					// clears outgoing data queues
+    int id() const { return m_id; }	// returns ID of the client
+    void setId(int id) { m_id = id; }		// changes ID of the client
+    void clear();						// clears state
+    void clearQueues();					// clears outgoing data queues
 
     void init(SOCKET socket, CSocketAddress addr);		// initialized socket
     bool isInUse(const CClient* client = nullptr) const volatile noexcept; // does this socket still belong to this/a client?
-    bool hasPendingData(void) const;			// is there any data waiting to be sent?
+    bool hasPendingData() const;			// is there any data waiting to be sent?
     bool canReceive(PacketSend* packet) const;	// can the state receive the given packet?
 
-    void detectAsyncMode(void);
+    void detectAsyncMode();
     void setAsyncMode(bool isAsync) volatile noexcept;   // set asynchronous mode
-    bool isAsyncMode(void) const volatile noexcept;      // get asyncronous mode
+    bool isAsyncMode() const volatile noexcept;      // get asyncronous mode
 #ifdef _LIBEV
     struct ev_io* iocb(void) { return &m_eventWatcher; };		// get io callback
 #endif
-    bool isSendingAsync(void) const volatile noexcept;				// get if async packeet is being sent
+    bool isSendingAsync() const volatile noexcept;				// get if async packeet is being sent
     void setSendingAsync(bool isSending) volatile noexcept;	// set if async packet is being sent
 
-    GAMECLIENT_TYPE getClientType(void) const { return m_clientType; };	// determined client type
-    dword getCryptVersion(void) const { return m_clientVersionNumber; };		// version as determined by encryption
-    dword getReportedVersion(void) const { return m_reportedVersionNumber; }; // version as reported by client
+    GAMECLIENT_TYPE getClientType() const { return m_clientType; }	// determined client type
+    dword getCryptVersion() const { return m_clientVersionNumber; }		// version as determined by encryption
+    dword getReportedVersion() const { return m_reportedVersionNumber; } // version as reported by client
 
-    void markReadClosed(void) volatile;		// mark socket as closed by read thread
-    void markWriteClosed(void) volatile;	// mark socket as closed by write thread
-    bool isClosing(void) const volatile { return m_isReadClosed || m_isWriteClosed; }	// is the socket closing?
-    bool isClosed(void) const volatile { return m_isReadClosed && m_isWriteClosed; }	// is the socket closed?
-    bool isReadClosed(void) const volatile { return m_isReadClosed; }	// is the socket closed by read-thread?
-    bool isWriteClosed(void) const volatile { return m_isWriteClosed; }	// is the socket closed by write-thread?
+    void markReadClosed() volatile;		// mark socket as closed by read thread
+    void markWriteClosed() volatile;	// mark socket as closed by write thread
+    bool isClosing() const volatile { return m_isReadClosed || m_isWriteClosed; }	// is the socket closing?
+    bool isClosed() const volatile { return m_isReadClosed && m_isWriteClosed; }	// is the socket closed?
+    bool isReadClosed() const volatile { return m_isReadClosed; }	// is the socket closed by read-thread?
+    bool isWriteClosed() const volatile { return m_isWriteClosed; }	// is the socket closed by write-thread?
 
     void markFlush(bool needsFlush) volatile noexcept; // mark socket as needing a flush
-    bool needsFlush(void) const volatile noexcept{ return m_needsFlush; } // does the socket need to be flushed?
+    bool needsFlush() const volatile noexcept{ return m_needsFlush; } // does the socket need to be flushed?
 
-    CClient* getClient(void) const { return m_client; } // get linked client
+    CClient* getClient() const { return m_client; } // get linked client
 
-    bool isClient3D(void) const { return m_clientType == CLIENTTYPE_3D; }; // is this a 3D client?
-    bool isClientKR(void) const { return m_clientType == CLIENTTYPE_KR; }; // is this a KR client?
-    bool isClientEnhanced(void) const { return m_clientType == CLIENTTYPE_EC; }; // is this an Enhanced client?
+    bool isClient3D() const { return m_clientType == CLIENTTYPE_3D; } // is this a 3D client?
+    bool isClientKR() const { return m_clientType == CLIENTTYPE_KR; } // is this a KR client?
+    bool isClientEnhanced() const { return m_clientType == CLIENTTYPE_EC; } // is this an Enhanced client?
 
     bool isClientCryptVersionNumber(dword version) const;		// check the minimum crypt version (client uses the crypt key assigned to a specific client version in spherecrypt.ini)
     bool isClientReportedVersionNumber(dword version) const;	// check the minimum reported verson
@@ -147,7 +145,7 @@ public:
     bool isClientLessVersionNumber(dword version) const; // check the maximum client version
 
     void beginTransaction(int priority);	// begin a transaction for grouping packets
-    void endTransaction(void);				// end transaction
+    void endTransaction();				// end transaction
 
     friend class CNetworkManager;
     friend class CNetworkThread;
@@ -158,7 +156,7 @@ public:
 #endif
 
     void setParentThread(CNetworkThread* parent) { m_parent = parent; }
-    CNetworkThread* getParentThread(void) const { return m_parent; }
+    CNetworkThread* getParentThread() const { return m_parent; }
 
     friend class CClient;
     friend class ClientIterator;

@@ -1295,7 +1295,7 @@ int CClient::OnSkill_TasteID( CUID uid, int iSkillLevel, bool fTest )
 		default:
 			if ( ! fTest )
 			{
-				SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TASTEID_RESULT ), static_cast<lpctstr>(pItem->GetNameFull(false)));
+				SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TASTEID_RESULT ), pItem->GetNameFull(false));
 			}
 			return 1;
 	}
@@ -1326,7 +1326,7 @@ int CClient::OnSkill_TasteID( CUID uid, int iSkillLevel, bool fTest )
 		SysMessage(sm_szPoisonMessages[iLevel] );
 	}
 	else
-		SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TASTEID_RESULT ), static_cast<lpctstr>(pItem->GetNameFull(false)));
+		SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TASTEID_RESULT ), pItem->GetNameFull(false));
 
 	return iSkillLevel;
 }
@@ -2512,7 +2512,7 @@ bool CClient::OnTarg_GlobalChat_Add(CChar* pChar)
 	// CLIMODE_TARG_GLOBALCHAT_ADD
 	// Invite this person to join our global chat friend list
 
-	if (!CGlobalChatChanMember::IsVisible())
+	if (!IsVisible())
 	{
 		SysMessage("You must enable Global Chat to request a friend.");
 		return false;

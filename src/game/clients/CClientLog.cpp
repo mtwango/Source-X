@@ -765,7 +765,7 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 	linger llinger{};
 	llinger.l_onoff = 1;
 	llinger.l_linger = 500;	// in mSec
-	iSocketRet = m_net->m_socket.SetSockOpt(SO_LINGER, reinterpret_cast<char *>(&llinger), sizeof(linger));
+	iSocketRet = m_net->m_socket.SetSockOpt(SO_LINGER, &llinger, sizeof(linger));
 	CheckReportNetAPIErr(iSocketRet, "CClient::Webpage.SO_LINGER");
 	if (iSocketRet)
 		return false;

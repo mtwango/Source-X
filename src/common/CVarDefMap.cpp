@@ -10,7 +10,7 @@
 
 CVarDefCont::~CVarDefCont() = default;
 
-inline static int VarDefCompare(const CVarDefCont* pVar, lpctstr ptcKey) noexcept
+static int VarDefCompare(const CVarDefCont* pVar, lpctstr ptcKey) noexcept
 {
     return strcmpi(pVar->GetKey(), ptcKey);
 }

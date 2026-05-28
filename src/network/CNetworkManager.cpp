@@ -8,7 +8,7 @@
 #include "CNetworkManager.h"
 
 
-CNetworkManager::CNetworkManager(void)
+CNetworkManager::CNetworkManager()
 {
     m_states = nullptr;
     m_stateCount = 0;
@@ -16,7 +16,7 @@ CNetworkManager::CNetworkManager(void)
     m_isThreaded = false;
 }
 
-CNetworkManager::~CNetworkManager(void)
+CNetworkManager::~CNetworkManager()
 {
     stop();
     for (NetworkThreadList::iterator it = m_threads.begin(); it != m_threads.end(); )
@@ -49,7 +49,7 @@ void CNetworkManager::createNetworkThreads(size_t count)
         m_threads.emplace_back(new CNetworkThread(this, i));
 }
 
-CNetworkThread* CNetworkManager::selectBestThread(void)
+CNetworkThread* CNetworkManager::selectBestThread()
 {
     // select the most suitable thread for handling a
     // new client
@@ -84,7 +84,7 @@ void CNetworkManager::assignNetworkState(CNetState* state)
     thread->assignNetworkState(state);
 }
 
-bool CNetworkManager::checkNewConnection(void)
+bool CNetworkManager::checkNewConnection()
 {
     // check for any new connections
     ADDTOCALLSTACK("CNetworkManager::checkNewConnection");
@@ -108,7 +108,7 @@ bool CNetworkManager::checkNewConnection(void)
     return FD_ISSET(mainSocket, &fds) != 0;
 }
 
-void CNetworkManager::acceptNewConnection(void)
+void CNetworkManager::acceptNewConnection()
 {
     // accept new connection
     ADDTOCALLSTACK("CNetworkManager::acceptNewConnection");
@@ -149,7 +149,7 @@ void CNetworkManager::acceptNewConnection(void)
     DEBUGNETWORK(("Incoming connection from '%s' [IP history: blocked=%d, ttl=%d, pings=%d, connecting=%d, connected=%d].\n",
         ip.m_ip.GetAddrStr(), ip.m_fBlocked, ip.m_iTTLSeconds, ip.m_iPings, ip.m_iPendingConnectionRequests, ip.m_iAliveSuccessfulConnections));
 
-    const auto _printIPBlocked = [&ip](void) noexcept -> void {
+    const auto _printIPBlocked = [&ip]() noexcept -> void {
         g_Log.Event(LOGM_CLIENTS_LOG | LOGL_ERROR, "Blocked connection from '%s' [IP history: blocked=%d, ttl=%d, pings=%d, connecting=%d, connected=%d].\n",
             ip.m_ip.GetAddrStr(), ip.m_fBlocked, ip.m_iTTLSeconds, ip.m_iPings, ip.m_iPendingConnectionRequests, ip.m_iAliveSuccessfulConnections);
     };
@@ -342,7 +342,7 @@ CNetState* CNetworkManager::findFreeSlot(int start)
     return findFreeSlot(0);
 }
 
-void CNetworkManager::start(void)
+void CNetworkManager::start()
 {
     DEBUGNETWORK(("Registering packets...\n"));
     m_packets.registerStandardPackets();
@@ -409,14 +409,14 @@ void CNetworkManager::start(void)
     }
 }
 
-void CNetworkManager::stop(void)
+void CNetworkManager::stop()
 {
     // terminate child threads
     for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         (*it)->waitForClose();
 }
 
-void CNetworkManager::tick(void)
+void CNetworkManager::tick()
 {
     ADDTOCALLSTACK("CNetworkManager::tick");
 
@@ -517,7 +517,7 @@ void CNetworkManager::tick(void)
     //EXC_DEBUG_END;
 }
 
-void CNetworkManager::processAllInput(void)
+void CNetworkManager::processAllInput()
 {
     // process network input
     ADDTOCALLSTACK("CNetworkManager::processAllInput");
@@ -536,7 +536,7 @@ void CNetworkManager::processAllInput(void)
     }
 }
 
-void CNetworkManager::processAllOutput(void)
+void CNetworkManager::processAllOutput()
 {
     // process network output
     ADDTOCALLSTACK("CNetworkManager::processAllOutput");
@@ -549,7 +549,7 @@ void CNetworkManager::processAllOutput(void)
     }
 }
 
-void CNetworkManager::flushAllClients(void)
+void CNetworkManager::flushAllClients()
 {
     // flush data for every client
     ADDTOCALLSTACK("CNetworkManager::flushAllClients");

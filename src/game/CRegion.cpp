@@ -184,7 +184,7 @@ bool CRegion::MakeRegionDefname()
 
     for ( size_t i = 0; i < iMax; ++i )
     {
-        CRegion * pRegion = dynamic_cast <CRegion*> (g_Cfg.m_RegionDefs[i]);
+        CRegion * pRegion = g_Cfg.m_RegionDefs[i];
         if ( !pRegion )
             continue;
         ptcKey = pRegion->GetResourceName();
@@ -895,7 +895,7 @@ TRIGRET_TYPE CRegion::OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction )
 		CResourceLock s;
 		if ( pLink->ResourceLock(s) )
 		{
-            iRet = CScriptObj::OnTriggerScript(s, sm_szTrigName[iAction], CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc);
+            iRet = OnTriggerScript(s, sm_szTrigName[iAction], CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc);
 			if ( iRet == TRIGRET_RET_TRUE )
 				return iRet;
 		}
@@ -912,7 +912,7 @@ TRIGRET_TYPE CRegion::OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction )
 		if ( !pLink->ResourceLock(s) )
 			continue;
 
-        iRet = CScriptObj::OnTriggerScript(s, sm_szTrigName[iAction], CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc);
+        iRet = OnTriggerScript(s, sm_szTrigName[iAction], CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc);
 		if ( iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT )
 			return iRet;
 	}

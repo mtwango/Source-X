@@ -238,7 +238,7 @@ NODISCARD tchar * Str_TrimWhitespace(tchar * pStr) noexcept;
 * @param pStrBegin pointer to the start of the string (won't be modified).
 * @param pStrEnd (reference to) pointer to the end of the string (it might be modified).
 */
-void Str_EatEndWhitespace(const tchar* const pStrBegin, tchar*& pStrEnd) noexcept;
+void Str_EatEndWhitespace(const tchar* pStrBegin, tchar*& pStrEnd) noexcept;
 
 
 // TODO: move to cexpression
@@ -393,12 +393,12 @@ private:
 //---
 
 ssize_t fReadUntilDelimiter(char **buf, size_t *bufsiz, int delimiter, FILE *fp) noexcept; // equivalent to POSIX getline
-ssize_t fReadUntilDelimiter_StaticBuf(char *buf, const size_t bufsiz, const int delimiter, FILE *fp) noexcept;
+ssize_t fReadUntilDelimiter_StaticBuf(char *buf, size_t bufsiz, int delimiter, FILE *fp) noexcept;
 inline ssize_t fReadLine_StaticBuf(char *buf, const size_t bufsiz, FILE *fp) noexcept
 {
     return fReadUntilDelimiter_StaticBuf(buf, bufsiz, '\n', fp);
 }
-ssize_t sGetDelimiter_StaticBuf(const int delimiter, const char* ptr_string, const size_t datasize) noexcept;
+ssize_t sGetDelimiter_StaticBuf(int delimiter, const char* ptr_string, size_t datasize) noexcept;
 inline ssize_t sGetLine_StaticBuf(const char *data, const size_t datasize) noexcept
 {
     return sGetDelimiter_StaticBuf('\n', data, datasize);

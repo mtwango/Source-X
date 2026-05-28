@@ -13,7 +13,6 @@ class CSFileObj;
 
 class CSFileObjContainer : public CScriptObj
 {
-private:
     std::vector<CSFileObj *> sFileList;
     int iFilenumber;
     int64 iGlobalTimeout;   // in ticks
@@ -34,7 +33,7 @@ private:
     CSFileObjContainer& operator=(const CSFileObjContainer& other);
 
 public:
-    int GetFilenumber(void);
+    int GetFilenumber();
     void SetFilenumber(int);
 
     bool _OnTick();

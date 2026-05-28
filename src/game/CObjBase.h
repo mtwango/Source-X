@@ -41,7 +41,6 @@ class CObjBase : public CObjBaseTemplate, public CScriptObj, public CEntity, pub
     friend class CSector;
     friend class CWorldTicker;
 
-private:
 	int64 m_iTimeStampS;          // TimeStamp
 
 protected:
@@ -923,7 +922,7 @@ public:
      *
      * @return  null if it fails, else the property list.
      */
-	PacketPropertyList* GetPropertyList(void) const { return m_PropertyList; }
+	PacketPropertyList* GetPropertyList() const { return m_PropertyList; }
 
     /**
      * @fn  void CObjBase::SetPropertyList(PacketPropertyList* propertyList);
@@ -939,7 +938,7 @@ public:
      *
      * @brief   Free property list.
      */
-	void FreePropertyList(void);
+	void FreePropertyList();
 
     /**
      * @fn  dword CObjBase::UpdatePropertyRevision(dword hash);

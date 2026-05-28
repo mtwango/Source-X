@@ -196,7 +196,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
         {
             CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
             if (pMyGuild)
-                sVal.FormatHex((dword)pMyGuild->GetUID());
+                sVal.FormatHex(pMyGuild->GetUID());
             else
                 sVal.SetValFalse();
             return true;
@@ -445,10 +445,10 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 			return true;
 
         case CPC_SPEECHCOLOR:
-            m_SpeechHue = (HUE_TYPE)s.GetArgWVal();
+            m_SpeechHue = s.GetArgWVal();
             return true;
         case CPC_EMOTECOLOR:
-        	m_EmoteHue = (HUE_TYPE)s.GetArgWVal();
+        	m_EmoteHue = s.GetArgWVal();
         	return true;
 		case CPC_DEATHS:
 			m_wDeaths = (word)(s.GetArgVal());

@@ -41,7 +41,6 @@ class CItemMulti : public CItem, public CCMultiMovable
     friend class CCMultiMovable;
 // IT_MULTI IT_SHIP
 // A ship or house etc.
-private:
     static lpctstr const sm_szLoadKeys[];
     static lpctstr const sm_szVerbKeys[];
     static lpctstr const sm_szRefKeys[];
@@ -671,7 +670,6 @@ enum HOUSE_PRIV : uchar
 */
 class CMultiStorage
 {
-private:
     using MultiOwnedCont = std::map<CUID, HOUSE_PRIV>;
     MultiOwnedCont _lHouses;  // List of stored houses.
     MultiOwnedCont _lShips;   // List of stored ships.

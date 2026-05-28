@@ -6,11 +6,11 @@
 #include "asyncdb.h"
 
 
-CDataBaseAsyncHelper::CDataBaseAsyncHelper(void) : AbstractSphereThread("T_AsyncDBHelper", ThreadPriority::Low)
+CDataBaseAsyncHelper::CDataBaseAsyncHelper() : AbstractSphereThread("T_AsyncDBHelper", ThreadPriority::Low)
 {
 }
 
-CDataBaseAsyncHelper::~CDataBaseAsyncHelper(void)
+CDataBaseAsyncHelper::~CDataBaseAsyncHelper()
 {
 }
 

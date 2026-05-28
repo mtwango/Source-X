@@ -97,7 +97,6 @@ struct CMenuItem 	    // describe a menu item.
 class CClient : public CSObjListRec, public CScriptObj, public CChatChanMember, public CGlobalChatChanMember, public CTextConsole
 {
 	// TCP/IP connection to the player or console.
-private:
 	static lpctstr const sm_szCmd_Redirect[];		// default to redirect these.
 
 public:
@@ -449,8 +448,8 @@ public:
 	void addItem_InContainer( const CItem * pItem );
 	void addItem( CItem * pItem );
 
-    void addBuff(const BUFF_ICONS IconId, const dword ClilocOne, const dword ClilocTwo, const word durationSeconds = 0, lpctstr* pptcArgs = nullptr, uint uiArgCount = 0) const;
-	void removeBuff(const BUFF_ICONS IconId) const;
+    void addBuff(BUFF_ICONS IconId, dword ClilocOne, dword ClilocTwo, word durationSeconds = 0, lpctstr* pptcArgs = nullptr, uint uiArgCount = 0) const;
+	void removeBuff(BUFF_ICONS IconId) const;
 	void resendBuffs() const;
 
 	void addOpenGump( const CObjBase * pCont, GUMP_TYPE gump ) const;
@@ -558,7 +557,6 @@ private:
 	void AOSTooltip_addDefaultCharData(CChar * pChar);
 	void AOSTooltip_addDefaultItemData(CItem * pItem);
 
-private:
 #define MAX_POPUPS 15
 #define POPUPFLAG_LOCKED 0x01
 #define POPUPFLAG_ARROW 0x02
@@ -861,7 +859,6 @@ public:
         return m_net;
     }
 
-public:
 	char		m_zLastMessage[SCRIPT_MAX_LINE_LEN];	// last sysmessage
 	char		m_zLastObjMessage[SCRIPT_MAX_LINE_LEN];	// last message
 	char		m_zLogin[64];
@@ -873,7 +870,6 @@ public:
 
 	CItemMultiCustom * m_pHouseDesign; // The building this client is designing
 
-public:
     lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
 	{
 		return m_BaseDefs.GetKeyStr( ptcKey, fZero );

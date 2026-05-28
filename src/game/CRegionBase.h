@@ -1,6 +1,6 @@
 /**
 * @file CRegionBase.h
-* @brief 
+* @brief
 */
 
 #ifndef _INC_CREGIONBASE_H
@@ -40,15 +40,14 @@ public:
 	bool IsEqualRegion( const CRegionBase * pRegionTest ) const;
 
     [[nodiscard]]
-    inline CSector * GetSectorAtIndex( int i ) const noexcept {
+    CSector * GetSectorAtIndex( int i ) const noexcept {
         return m_rectUnion.GetSectorAtIndex(i);
 	}
     [[nodiscard]]
-    inline CSector * GetSectorAtIndexWithHints( int i, CRect::SectIndexingHints_s hints ) const noexcept {
+    CSector * GetSectorAtIndexWithHints( int i, CRect::SectIndexingHints_s hints ) const noexcept {
         return m_rectUnion.GetSectorAtIndexWithHints(i, std::move(hints));
     }
 
-public:
 	CRegionBase();
 	virtual ~CRegionBase() = default;
 

@@ -1891,7 +1891,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
         {
             if (Can(CAN_C_HOVER, uiMyMovementFlags) || IsStatFlag(STATF_HOVERING))
             {
-                ; //fPassTrough = true;
+                //fPassTrough = true;
             }
             else
             {

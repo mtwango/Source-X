@@ -152,36 +152,36 @@ template <typename T>
 //-- Bitwise magic: combine numbers.
 
 //#define LOWORD(l)		((word)((dword)(l) & 0xffff))
-inline constexpr word dword_low_word(dword in) noexcept {
+constexpr word dword_low_word(dword in) noexcept {
     return (in & 0xFFFF);
 }
 
 //#define HIWORD(l)		((word)((dword)(l) >> 16))
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
     word dword_hi_word(dword in) noexcept {
     return (in >> 16);
 }
 
 //#define LOBYTE(w)		((byte)((dword)(w) &  0xff))
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
     byte word_low_byte(word in) noexcept {
     return (in & 0xFF);
 }
 
 //#define HIBYTE(w)		((byte)((dword)(w) >> 8))
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
     byte word_hi_byte(word in) noexcept {
     return (in >> 8);
 }
 
 //#define MAKEWORD(low,high)		((word)(((byte)(low))|(((word)((byte)(high)))<<8)))
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
     word make_word(byte low, byte high) noexcept {
     return (word)low | ((word)high << 8);
 }
 
 //#define make_dword(low, high)	((dword)(((word)low) | (((dword)((word)high)) << 16)))
-[[nodiscard]] inline constexpr
+[[nodiscard]] constexpr
     dword make_dword(word low, word high) noexcept {
     return (dword)low | ((dword)high << 16);
 }
@@ -237,15 +237,15 @@ constexpr T sign(const T n) noexcept
 	return ( (n < 0) ? -1 : ((n > 0) ? 1 : 0) );
 }
 
-[[nodiscard]] inline constexpr bool IsPowerOfTwo(unsigned int n) noexcept
+[[nodiscard]] constexpr bool IsPowerOfTwo(unsigned int n) noexcept
 {
     // n & (n - 1): This expression removes the lowest set bit in n.
     //  For powers of two, which have exactly one bit set (e.g., 2 is 10 in binary, 4 is 100, etc.),
     //  subtracting one yields a number where all lower bits are set to 1 (e.g., 2 - 1 = 1, 4 - 1 = 3), and the bitwise AND of these two numbers results in 0.
     return n != 0 && (n & (n - 1)) == 0;
 }
-[[nodiscard]] inline constexpr bool IsPowerOfTwo(unsigned short n) noexcept { return n != 0 && (n & (n - 1)) == 0; }
-[[nodiscard]] inline constexpr bool IsPowerOfTwo(unsigned char  n) noexcept { return n != 0 && (n & (n - 1)) == 0; }
+[[nodiscard]] constexpr bool IsPowerOfTwo(unsigned short n) noexcept { return n != 0 && (n & (n - 1)) == 0; }
+[[nodiscard]] constexpr bool IsPowerOfTwo(unsigned char  n) noexcept { return n != 0 && (n & (n - 1)) == 0; }
 
 #define minimum(x,y)		((x)<(y)?(x):(y))		// NOT to be used with functions! Store the result of the function in a variable first, otherwise the function will be executed twice!
 #define maximum(x,y)		((x)>(y)?(x):(y))		// NOT to be used with functions! Store the result of the function in a variable first, otherwise the function will be executed twice!
@@ -293,9 +293,7 @@ consteval T as_consteval(T&& val_) noexcept {
 */
 #undef UNREFERENCED_PARAMETER
 template <typename T>
-constexpr void UnreferencedParameter([[maybe_unused]] T const& ) noexcept {
-    ;
-}
+constexpr void UnreferencedParameter([[maybe_unused]] T const& ) noexcept {}
 
 //#include <type_traits> // already included by stypecast.h
 #include "sphere_library/stypecast.h"

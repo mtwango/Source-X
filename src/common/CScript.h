@@ -105,7 +105,6 @@ class CResourceLock;
 
 class CScript : public CCacheableScriptFile, public CScriptKeyAlloc
 {
-private:
 	int  m_iSectionData;	// File Offset to current section data, under section header.
 
 public:

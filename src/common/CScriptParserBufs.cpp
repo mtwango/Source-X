@@ -10,7 +10,7 @@ auto CScriptParserBufs::GetCScriptTriggerArgsPtr() -> CScriptTriggerArgsPtr
     auto ptr = pool.acquireShared();
     if (!pool.isFromPool(ptr))
     {
-        static_assert(CScriptParserBufs::sm_allow_fallback_objects);
+        static_assert(sm_allow_fallback_objects);
 #ifdef _DEBUG
         g_Log.EventDebug(
             "Requesting CScriptTriggerArgs from an exhausted pool (max size: %" PRIu32 "). Alive new heap-allocated fallback objects: %" PRIu32 ".\n",
@@ -28,7 +28,7 @@ auto CScriptParserBufs::GetScriptKeyArgBufPtr() -> CScriptKeyArgBufPtr
     auto ptr = pool.acquireUnique();
     if (!pool.isFromPool(ptr))
     {
-        static_assert(CScriptParserBufs::sm_allow_fallback_objects);
+        static_assert(sm_allow_fallback_objects);
 #ifdef _DEBUG
         g_Log.EventDebug(
             "Requesting CScriptKeyArgBuf from an exhausted pool (max size: %" PRIu32 "). Alive new heap-allocated fallback objects: %" PRIu32 ".\n",

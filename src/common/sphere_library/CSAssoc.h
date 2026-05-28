@@ -121,7 +121,7 @@ public:
 
 	CSStringListRec * GetHead() const
 	{
-		return static_cast<CSStringListRec *>( CSObjList::GetContainerHead() );
+		return static_cast<CSStringListRec *>( GetContainerHead() );
 	}
 	void AddHead( lpctstr pszVal )
 	{

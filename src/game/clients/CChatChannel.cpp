@@ -213,7 +213,7 @@ void CChatChannel::RemoveMember(CChatChanMember * pMember)
 
         if (pMember && m_Members[i] == pMember)	// disjoin
         {
-            pClient->addChatSystemMessage(pClient->m_fUseNewChatSystem ? CHATCMD_LeftChannel : CHATCMD_ClearMembers, static_cast<lpctstr>(m_sName));
+            pClient->addChatSystemMessage(pClient->m_fUseNewChatSystem ? CHATCMD_LeftChannel : CHATCMD_ClearMembers, m_sName);
             m_Members.erase_index(i);
             break;
         }
@@ -366,7 +366,6 @@ void CChatChannel::SetVoice(lpctstr pszName, bool fFlag)
     if (fFlag == false)
     {
         m_NoVoices.emplace_back(std::make_unique<CSString>(pszName));
-        return;
     }
 }
 

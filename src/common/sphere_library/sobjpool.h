@@ -183,7 +183,7 @@ private:
     std::array<PooledObject_t, sm_pool_size> m_objects{};
 
     // Stack tracked indices of available objects.
-    sl::fixed_comptime_stack<index_t, sm_pool_size> m_freeIndices;
+    fixed_comptime_stack<index_t, sm_pool_size> m_freeIndices;
 
     // Track outstanding fallback objects.
     index_t m_fallbackObjsCount;
@@ -354,7 +354,7 @@ private:
     std::array<PooledObject_t, sm_pool_size> m_objects{};
 
     // Stack tracked indices of available objects.
-    sl::fixed_comptime_stack<index_t, sm_pool_size> m_freeIndices;
+    fixed_comptime_stack<index_t, sm_pool_size> m_freeIndices;
 
     // Mutex to ensure thread safety.
     mutable std::mutex m_mtx;

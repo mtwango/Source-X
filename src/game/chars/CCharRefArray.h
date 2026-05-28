@@ -15,7 +15,6 @@ class CScript;
 
 class CCharRefArray
 {
-private:
 	// List of Players and NPC's involved in the quest/party/account etc..
 	CSTypedArray<CUID> m_uidCharArray;
 
@@ -28,21 +27,20 @@ public:
 	void DetachChar( size_t i );
 	size_t DetachChar( const CChar * pChar );
 	void DeleteChars();
-	inline size_t GetCharCount() const
+	size_t GetCharCount() const
 	{
 		return m_uidCharArray.size();
 	}
-	inline const CUID& GetChar( size_t i ) const
+	const CUID& GetChar( size_t i ) const
 	{
 		return m_uidCharArray[i];
 	}
-	inline bool IsValidIndex( size_t i ) const
+	bool IsValidIndex( size_t i ) const
 	{
 		return m_uidCharArray.IsValidIndex(i);
 	}
 	void WritePartyChars( CScript & s );
 
-public:
 	CCharRefArray() = default;
 
 private:

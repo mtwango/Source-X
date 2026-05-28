@@ -15,15 +15,14 @@ class Packet;
 
 class CNetworkInput
 {
-private:
     CNetworkThread* m_thread;	// owning network thread
     byte* m_receiveBuffer;		// buffer for received data
     byte* m_decryptBuffer;		// buffer for decrypted data
 
 public:
     static const char* m_sClassName;
-    CNetworkInput(void);
-    ~CNetworkInput(void);
+    CNetworkInput();
+    ~CNetworkInput();
 
 private:
     CNetworkInput(const CNetworkInput& copy);
@@ -31,7 +30,7 @@ private:
 
 public:
     void setOwner(CNetworkThread* thread);   // set owner thread
-    bool processInput(void);			    // process input from clients, returns true if work was done
+    bool processInput();			    // process input from clients, returns true if work was done
 
 private:
     bool checkForData(fd_set& fds); // check for states which have pending data to read

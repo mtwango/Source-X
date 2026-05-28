@@ -138,7 +138,7 @@ bool CDataBase::query(const char *query, CVarDefMap & mapQueryResult)
         char **trow = nullptr;
         int rownum = 0;
         char *zStore = Str_GetTemp();
-        char empty = (char)0;
+        char empty = 0;
         while ( (trow = mysql_fetch_row(m_res)) != nullptr )
         {
             for ( int i = 0; i < num_fields; ++i )

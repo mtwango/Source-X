@@ -55,11 +55,9 @@ public:
 
     CUOMobTypes m_mobtypes;
 
-public:
 	CSString GetFullExePath( lpctstr pszName = nullptr ) const;
 	CSString GetFullCDPath( lpctstr pszName = nullptr ) const;
 
-public:
 	bool FindInstall();
 	void DetectMulVersions();
 	VERFILE_TYPE OpenFiles( ullong ullMask );
@@ -80,7 +78,6 @@ public:
 	bool ReadMulIndex(CSFile &file, dword id, CUOIndexRec &Index);
 	bool ReadMulData(CSFile &file, const CUOIndexRec &Index, void * pData);
 
-public:
 	CUOInstall();
 
     CUOInstall(const CUOInstall& copy) = delete;
@@ -106,7 +103,6 @@ public:
 	void Load( CSFile & file );
 	bool FindVerDataBlock( VERFILE_TYPE type, dword id, CUOIndexRec & Index ) const;
 
-public:
 	CVerDataMul();
 	~CVerDataMul();
 

@@ -28,7 +28,7 @@ struct CCryptoKeysHolder
 	std::vector<CCryptoClientKey> client_keys;
 
 	void LoadKeyTable(CScript& s);
-	void addNoCryptKey(void);
+	void addNoCryptKey();
 };
 
 // Each CClient has its instance (+1 instance for CServerDef, for SetCryptVersion() ??).
@@ -52,7 +52,6 @@ private:
 
 
 	// --------------- Two Fish ------------------------------
-private:
 	#define TFISH_RESET 0x100
 	void* tf_key;      // keyInstance*
 	void* tf_cipher;   // cipherInstance*
@@ -65,7 +64,6 @@ private:
 
 
 	// -------------- Blow Fish ------------------------------
-private:
 	static bool  sm_fBFishTablesReady;
 
 	int	m_gameTable;
@@ -82,7 +80,6 @@ private:
 	// -------------- EOF BlowFish -----------------------
 
 	// -------------------- MD5 ------------------------------
-private:
     #define MD5_RESET 0x0F
 	CMD5 * m_md5_engine;
 	uint m_md5_position;
@@ -93,11 +90,9 @@ private:
 	// ------------------ EOF MD5 ----------------------------
 
 	// ------------- Login Encryption ----------------------
-private:
     bool DecryptLogin( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen );
 	// ------------- EOF Login Encryption ------------------
 
-private:
 	void SetClientVerNumber( dword iVer );
 	void SetMasterKeys( dword hi, dword low );
 	void SetCryptMask( dword hi, dword low );
@@ -118,7 +113,6 @@ public:
 	ENCRYPTION_TYPE GetEncryptionType() const;
 
 // --------- Basic
-public:
 	CCrypto();
 	~CCrypto();
 

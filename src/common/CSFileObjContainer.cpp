@@ -201,7 +201,7 @@ bool CSFileObjContainer::r_LoadVal( CScript & s )
             break;
 
         case CFO_GLOBALTIMEOUT:
-            iGlobalTimeout = (int64)llabs(s.GetArgLLVal()*MSECS_PER_SEC);
+            iGlobalTimeout = llabs(s.GetArgLLVal() * MSECS_PER_SEC);
             break;
 
         default:
@@ -260,7 +260,7 @@ bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
             CSFileObj * pFile = sFileList[nNumber];
             if ( pFile != nullptr )
             {
-                CScriptObj * pObj = dynamic_cast<CScriptObj*>( pFile );
+                CScriptObj * pObj = pFile;
                 if (pObj != nullptr)
                     return pObj->r_WriteVal(ptcKey, sVal, pSrc);
             }
@@ -332,7 +332,7 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
                 CSFileObj * pFile = sFileList.at(nNumber);
                 if ( pFile != nullptr )
                 {
-                    CScriptObj* pObj = dynamic_cast<CScriptObj*>(pFile);
+                    CScriptObj* pObj = pFile;
                     if (pObj != nullptr)
                     {
                         SKIP_SEPARATORS(ptcKey);

@@ -18,7 +18,6 @@ class CResourceDef : public CScriptObj
     // Now the scripts can be modular. resources can be defined any place.
     // NOTE: This may be loaded fully into memory or just an Index to a file.
 
-private:
     CResourceID m_rid;		// the true resource id. (must be unique for the RES_TYPE)
 
 protected:

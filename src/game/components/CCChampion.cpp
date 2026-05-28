@@ -355,7 +355,7 @@ void CCChampion::AddWhiteCandle(const CUID& uid)
     _iSpawnsNextWhite = _iSpawnsNextRed / (CANDLESNEXTRED + 1);
 
     CItem* pCandle = nullptr;
-    CItem* pLink = static_cast<CItem*>(GetLink());
+    CItem* pLink = GetLink();
     if (uid.IsValidUID())
     {
         _pWhiteCandles.emplace_back(uid);
@@ -420,7 +420,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
     ADDTOCALLSTACK("CCChampion::AddRedCandle");
 
     CItem* pCandle = nullptr;
-    CItem* pLink = static_cast<CItem*>(GetLink());
+    CItem* pLink = GetLink();
     if (uid.IsValidUID())
     {
         _pRedCandles.emplace_back(uid);
@@ -527,7 +527,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
         pCandle->SetAttr(ATTR_MOVE_NEVER);
         pCandle->MoveTo(pt);
         pCandle->SetTopZ(pCandle->GetTopZ() + 4);
-        pCandle->SetHue((HUE_TYPE)33);
+        pCandle->SetHue(33);
         pCandle->Update();
         pCandle->GenerateScript(nullptr);
         ClearWhiteCandles();
@@ -641,7 +641,7 @@ ushort CCChampion::GetMonstersCount()
 
     if (_iLevel <= _MonstersList.size())
     {
-        ushort ucPerc = (ushort)_MonstersList[_iLevel - 1];
+        ushort ucPerc = _MonstersList[_iLevel - 1];
         return (ucPerc * _iSpawnsMax) / 100;
     }
     return 1;
@@ -837,7 +837,6 @@ void CCChampion::r_Write(CScript& s)
             s.WriteKeyStr(finalStream.str().c_str(), groupString.c_str());
         }
     }
-    return;
 }
 
 bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
@@ -1016,7 +1015,7 @@ bool CCChampion::r_LoadVal(CScript& s)
         {
             uchar iGroup = Exp_GetUCVal(ptcKey);
             tchar* piCmd[UCHAR_MAX];
-            size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, (int)ARRAY_COUNT(piCmd), ",");
+            size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, ARRAY_COUNT(piCmd), ",");
             _spawnGroupsId[iGroup].clear();
             for (uint i = 0; i < iArgQty; ++i)
             {
@@ -1185,7 +1184,7 @@ TRIGRET_TYPE CCChampion::OnTrigger(ITRIG_TYPE trig, CScriptTriggerArgsPtr const&
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
     CCChampionDef* pChampDef = dynamic_cast<CCChampionDef*>(pRes);
-    CResourceLink* pResourceLink = static_cast <CResourceLink*>(pChampDef);
+    CResourceLink* pResourceLink = pChampDef;
     ASSERT(pResourceLink);
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
     if (pResourceLink->HasTrigger(trig))
@@ -1233,7 +1232,7 @@ bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * p
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CCChampionDef::r_WriteVal");
-    CHAMPIONDEF_TYPE iCmd = (CHAMPIONDEF_TYPE)(int)FindTableSorted(ptcKey, sm_szLoadKeys, CHAMPIONDEF_QTY);
+    CHAMPIONDEF_TYPE iCmd = (CHAMPIONDEF_TYPE)FindTableSorted(ptcKey, sm_szLoadKeys, CHAMPIONDEF_QTY);
 
     if (iCmd < 0)
     {
@@ -1326,7 +1325,7 @@ bool CCChampionDef::r_LoadVal(CScript& s)
     {
         uchar iGroup = Exp_GetUCVal(ptcKey);
         tchar* piCmd[UCHAR_MAX];
-        size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, (int)ARRAY_COUNT(piCmd), ",");
+        size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, ARRAY_COUNT(piCmd), ",");
         _idSpawn[iGroup].clear();
         for (uint i = 0; i < iArgQty; ++i)
         {

@@ -36,12 +36,11 @@ CNetState::CNetState(int id) :
     clear();
 }
 
-
-CNetState::~CNetState(void)
+CNetState::~CNetState()
 {
 }
 
-void CNetState::clear(void)
+void CNetState::clear()
 {
     ADDTOCALLSTACK("CNetState::clear");
     DEBUGNETWORK(("%x:Clearing client state.\n", id()));
@@ -148,7 +147,7 @@ void CNetState::clear(void)
     m_isInUse = false;
 }
 
-void CNetState::clearQueues(void)
+void CNetState::clearQueues()
 {
     ADDTOCALLSTACK("CNetState::clearQueues");
 
@@ -236,7 +235,7 @@ bool CNetState::isInUse(const CClient* client) const volatile noexcept
     return client == nullptr || m_client == client;
 }
 
-void CNetState::markReadClosed(void) volatile
+void CNetState::markReadClosed() volatile
 {
     ADDTOCALLSTACK("CNetState::markReadClosed");
 
@@ -246,7 +245,7 @@ void CNetState::markReadClosed(void) volatile
         m_parent->awaken();
 }
 
-void CNetState::markWriteClosed(void) volatile
+void CNetState::markWriteClosed() volatile
 {
     DEBUGNETWORK(("%x:Client being closed by write-thread\n", m_id));
     m_isWriteClosed = true;
@@ -262,12 +261,12 @@ void CNetState::setAsyncMode(bool isAsync) volatile noexcept
     m_useAsync = isAsync;
 }
 
-bool CNetState::isAsyncMode(void) const volatile noexcept
+bool CNetState::isAsyncMode() const volatile noexcept
 {
     return m_useAsync;
 }
 
-bool CNetState::isSendingAsync(void) const volatile noexcept
+bool CNetState::isSendingAsync() const volatile noexcept
 {
     return m_isSendingAsync;
 }
@@ -277,7 +276,7 @@ void CNetState::setSendingAsync(bool isSending) volatile noexcept
     m_isSendingAsync = isSending;
 }
 
-void CNetState::detectAsyncMode(void)
+void CNetState::detectAsyncMode()
 {
     ADDTOCALLSTACK("CNetState::detectAsyncMode");
     bool wasAsync = isAsyncMode();
@@ -308,7 +307,7 @@ void CNetState::detectAsyncMode(void)
         DEBUGNETWORK(("%x:Switching async mode from %s to %s.\n", id(), wasAsync ? "1" : "0", isAsyncMode() ? "1" : "0"));
 }
 
-bool CNetState::hasPendingData(void) const
+bool CNetState::hasPendingData() const
 {
     ADDTOCALLSTACK("CNetState::hasPendingData");
     // check if state is even valid
@@ -371,7 +370,7 @@ void CNetState::beginTransaction(int priority)
     m_outgoing.pendingTransaction = new ExtendedPacketTransaction(this, g_Cfg.m_fUsePacketPriorities ? priority : (int)(PacketSend::PRI_NORMAL));
 }
 
-void CNetState::endTransaction(void)
+void CNetState::endTransaction()
 {
     ADDTOCALLSTACK("CNetState::endTransaction");
     if (m_outgoing.pendingTransaction == nullptr)
@@ -387,12 +386,12 @@ void CNetState::endTransaction(void)
 bool CNetState::isClientCryptVersionNumber(dword version) const
 {
     return m_clientVersionNumber && CUOClientVersion(m_clientVersionNumber) >= CUOClientVersion(version);
-};
+}
 
 bool CNetState::isClientReportedVersionNumber(dword version) const
 {
     return m_reportedVersionNumber && CUOClientVersion(m_reportedVersionNumber) >= CUOClientVersion(version);
-};
+}
 
 bool CNetState::isClientVersionNumber(dword version) const
 {
@@ -402,12 +401,12 @@ bool CNetState::isClientVersionNumber(dword version) const
 bool CNetState::isCryptLessVersionNumber(dword version) const
 {
     return m_clientVersionNumber && CUOClientVersion(m_clientVersionNumber) < CUOClientVersion(version);
-};
+}
 
 bool CNetState::isClientReportedLessVersionNumber(dword version) const
 {
     return m_reportedVersionNumber && CUOClientVersion(m_reportedVersionNumber) < CUOClientVersion(version);
-};
+}
 
 bool CNetState::isClientLessVersionNumber(dword version) const
 {

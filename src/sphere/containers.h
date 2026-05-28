@@ -17,8 +17,8 @@ class ThreadSafeQueue
 {
 public:
 	typedef std::list<T> list;
-	typedef typename std::list<T>::iterator iterator;
-	typedef typename std::list<T>::const_iterator const_iterator;
+	typedef std::list<T>::iterator iterator;
+	typedef std::list<T>::const_iterator const_iterator;
 
 private:
 	list m_list;
@@ -36,7 +36,6 @@ public:
 	ThreadSafeQueue( const ThreadSafeQueue& copy ) = delete;
 	ThreadSafeQueue& operator=( const ThreadSafeQueue& other ) = delete;
 
-public:
 	// Append an element to the end of the queue (writer)
 	void push( const T& value ) noexcept
 	{
@@ -46,13 +45,13 @@ public:
 	}
 
 	// Erase elements from before reader head (writer)
-	void clean( void )
+	void clean()
 	{
         m_head = m_list.erase( m_list.begin(), m_head );
 	}
 
 	// Retrieve the number of elements in the queue (reader/writer)
-	size_t size( void ) const
+	size_t size() const
 	{
 		if ( empty() )
 			return 0;
@@ -65,7 +64,7 @@ public:
 	}
 
 	// Determine if the queue is empty (reader/writer)
-	bool empty( void ) const
+	bool empty() const
 	{
 		iterator next = m_head;
 		++next;
@@ -74,7 +73,7 @@ public:
 	}
 
 	// Remove the first element from the queue (reader)
-	void pop( void )
+	void pop()
 	{
 		if ( empty() )
 			throw CSError( LOGL_ERROR, 0, "No elements to read from queue." );
@@ -87,7 +86,7 @@ public:
 	}
 
 	// Retrieve the first element in the queue (reader)
-	T front( void ) const
+	T front() const
 	{
 		if ( empty() == false )
 		{

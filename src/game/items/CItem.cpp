@@ -244,7 +244,7 @@ bool CItem::NotifyDelete()
 	ADDTOCALLSTACK("CItem::NotifyDelete");
 	if ((IsTrigUsed(TRIGGER_DESTROY)) || (IsTrigUsed(TRIGGER_ITEMDESTROY)))
 	{
-        if (CItem::OnTrigger(ITRIG_DESTROY, CScriptParserBufs::GetCScriptTriggerArgsPtr(), &g_Serv) == TRIGRET_RET_TRUE)
+        if (OnTrigger(ITRIG_DESTROY, CScriptParserBufs::GetCScriptTriggerArgsPtr(), &g_Serv) == TRIGRET_RET_TRUE)
 			return false;
 	}
 
@@ -275,7 +275,7 @@ CItem::~CItem()
 	EXC_TRY("Cleanup in destructor");
 
 	DeletePrepare();	// Using this in the destructor will fail to call virtuals, but it's better than nothing.
-	CItem::DeleteCleanup(true);
+	DeleteCleanup(true);
 
 	g_Serv.StatDec(SERV_STAT_ITEMS);
 
@@ -512,7 +512,7 @@ CItem * CItem::CreateHeader( tchar * pArg, CObjBase * pCont, bool fDupeCheck, CC
 		}
 	}
 
-	CItem * pItem = CItem::CreateTemplate( id, ((iResType == RES_ITEMDEF) ? nullptr : pCont), pSrc );
+	CItem * pItem = CreateTemplate( id, ((iResType == RES_ITEMDEF) ? nullptr : pCont), pSrc );
 	if ( pItem != nullptr )
 	{
 		// Is the item movable ?
@@ -613,7 +613,7 @@ CItem * CItem::ReadTemplate( CResourceLock & s, CObjBase * pCont ) // static
 			case ITC_SELL: // "SELL"
 				if (pVendorBuy != nullptr)
 				{
-					pItem = CItem::CreateHeader(s.GetArgRaw(), (iCmd == ITC_SELL) ? pVendorSell : pVendorBuy, false);
+					pItem = CreateHeader(s.GetArgRaw(), (iCmd == ITC_SELL) ? pVendorSell : pVendorBuy, false);
 					if ( pItem == nullptr )
 						continue;
 					if ( pItem->IsItemInContainer())
@@ -625,7 +625,7 @@ CItem * CItem::ReadTemplate( CResourceLock & s, CObjBase * pCont ) // static
 
 			case ITC_CONTAINER:
 				{
-					pItem = CItem::CreateHeader( s.GetArgRaw(), pCont, false, pVendor );
+					pItem = CreateHeader( s.GetArgRaw(), pCont, false, pVendor );
 					if ( pItem == nullptr )
 						continue;
 					pCont = dynamic_cast <CItemContainer *> ( pItem );
@@ -643,7 +643,7 @@ CItem * CItem::ReadTemplate( CResourceLock & s, CObjBase * pCont ) // static
 			case ITC_ITEMNEWBIE:
 				if ( pCont == nullptr && pItem != nullptr )
 					continue;	// Don't create anymore items until we have some place to put them !
-				pItem = CItem::CreateHeader( s.GetArgRaw(), pCont, false, pVendor );
+				pItem = CreateHeader( s.GetArgRaw(), pCont, false, pVendor );
 				continue;
 
 			case ITC_FUNC:
@@ -2017,7 +2017,7 @@ HUE_TYPE CItem::GetHueVisible() const
 		}
 	}
 
-	return CObjBase::GetHue();
+	return GetHue();
 }
 
 int CItem::GetWeight(word amount) const
@@ -2201,7 +2201,7 @@ bool CItem::SetDispID( ITEMID_TYPE id )
 		const CItemBase * pItemDef = Item_GetDef();
 		ASSERT(pItemDef);
 		m_dwDispIndex = pItemDef->GetDispID();
-		ASSERT( CItemBase::IsValidDispID((ITEMID_TYPE)(m_dwDispIndex)));
+		ASSERT( CItemBase::IsValidDispID(m_dwDispIndex));
 	}
 	return true;
 }
@@ -2649,7 +2649,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bo
     {
         // Checking Props CComponents first (first check CItem props, if not found then check CItemBase)
         EXC_SET_BLOCK("EntityProp");
-        if (CEntityProps::r_WritePropVal(ptcKey, sVal, this, Base_GetDef()))
+        if (r_WritePropVal(ptcKey, sVal, this, Base_GetDef()))
         {
             return true;
         }
@@ -2664,7 +2664,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bo
 
     EXC_SET_BLOCK("Keyword");
 	int index;
-	if ( !strnicmp( CItem::sm_szLoadKeys[IC_ADDSPELL], ptcKey, 8 ) )
+	if ( !strnicmp( sm_szLoadKeys[IC_ADDSPELL], ptcKey, 8 ) )
 		index = IC_ADDSPELL;
 	else
 		index = FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
@@ -3018,7 +3018,6 @@ void CItem::r_LoadMore1(dword dwVal)
 
     default:
         m_itNormal.m_more1 = dwVal;
-        return;
     }
 }
 
@@ -3062,7 +3061,6 @@ void CItem::r_LoadMore2(dword dwVal)
 
     default:
         m_itNormal.m_more2 = dwVal;
-        return;
     }
 }
 
@@ -3101,7 +3099,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 
     // Checking Props CComponents first (first check CChar props, if not found then check CCharBase)
     EXC_SET_BLOCK("EntityProp");
-    if (CEntityProps::r_LoadPropVal(s, this, Base_GetDef()))
+    if (r_LoadPropVal(s, this, Base_GetDef()))
     {
         return true;
     }
@@ -3357,7 +3355,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 				// here we don't have to check if we are setting the ID in the script's header, because that is handled
 				//	by IBC_ID in CItemBase; here we are under @Create trigger or loading from saves (?)
 
-				CItem * pItemTemp = CItem::CreateTemplate((ITEMID_TYPE)rid.GetResIndex(), nullptr, nullptr);
+				CItem * pItemTemp = CreateTemplate((ITEMID_TYPE)rid.GetResIndex(), nullptr, nullptr);
 				if (!pItemTemp)
 					return false;
 
@@ -3479,19 +3477,20 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 			break;
 		case IC_P:
             // Loading or import ONLY ! others use CObjBase::r_Verb
-			if ( ! IsDisconnected() && ! IsItemInContainer() )
-				return false;
-			else
-			{
-                // Will be placed in the world later (in CItem::r_Load):
+            {
+                // Loading or import ONLY ! others use CObjBase::r_Verb
+                if (!IsDisconnected() && !IsItemInContainer())
+                    return false;
+
+		        // Will be placed in the world later (in CItem::r_Load):
                 //  since we are loading the world, the parent region might not be created/"realized" yet.
-				CPointMap pt;
-				pt.Read( s.GetArgStr());
+                CPointMap pt;
+                pt.Read(s.GetArgStr());
                 if (pt.IsValidPoint())
-				    SetUnkPoint(pt);
+                    SetUnkPoint(pt);
                 else
                     return false;
-			}
+            }
             break;
 		case IC_TYPE:
 			if (! SetType( (IT_TYPE)(g_Cfg.ResourceGetIndexType( RES_TYPEDEF, s.GetArgStr() )) ))
@@ -3637,7 +3636,7 @@ bool CItem::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from s
                 bool fNoCont = IsTopLevel();
 				while ( iCount-- )
 				{
-					CItem* pDupe = CItem::CreateDupeItem(this, dynamic_cast<CChar *>(pSrc), true);
+					CItem* pDupe = CreateDupeItem(this, dynamic_cast<CChar *>(pSrc), true);
 					pDupe->_iCreatedResScriptIdx = s.m_iResourceFileIndex;
 					pDupe->_iCreatedResScriptLine = s.m_iLineNum;
 					pDupe->MoveNearObj(this, 1);
@@ -3699,7 +3698,7 @@ bool CItem::IsTriggerActive(lpctstr trig) const
     if (_iRunningTriggerId != -1)
     {
         ASSERT(_iRunningTriggerId < ITRIG_QTY);
-        int iAction = FindTableSorted( trig, CItem::sm_szTrigName, ARRAY_COUNT(CItem::sm_szTrigName)-1 );
+        int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CItem::sm_szTrigName)-1 );
         return (_iRunningTriggerId == iAction);
     }
     ASSERT(!_sRunningTrigger.IsEmpty());
@@ -3714,11 +3713,11 @@ void CItem::SetTriggerActive(lpctstr trig)
         _sRunningTrigger.Clear();
         return;
     }
-    int iAction = FindTableSorted( trig, CItem::sm_szTrigName, ARRAY_COUNT(CItem::sm_szTrigName)-1 );
+    int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CItem::sm_szTrigName)-1 );
     if (iAction != -1)
     {
         _iRunningTriggerId = (short)iAction;
-		_sRunningTrigger = CItem::sm_szTrigName[iAction];
+		_sRunningTrigger = sm_szTrigName[iAction];
         return;
     }
     _sRunningTrigger = trig;
@@ -3792,7 +3791,7 @@ standard_order:
                 if (!pLink->ResourceLock(s))
                     continue;
 
-                iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
                 if (iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT)
                     goto stopandret;
 
@@ -3816,7 +3815,7 @@ standard_order:
 			CResourceLock s;
 			if ( !pLink->ResourceLock(s) )
 				continue;
-            iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+            iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 			if ( iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT )
 				goto stopandret;
 		}
@@ -3831,7 +3830,7 @@ standard_order:
 			CResourceLock s;
 			if ( !pLink->ResourceLock(s) )
 				continue;
-            iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+            iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
 			if ( iRet != TRIGRET_RET_FALSE && iRet != TRIGRET_RET_DEFAULT )
 				goto stopandret;
 		}
@@ -3858,7 +3857,7 @@ standard_order:
 				CResourceLock s;
 				if ( pResourceLink->ResourceLock(s))
 				{
-                    iRet = CScriptObj::OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc );
+                    iRet = OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc );
 					if ( iRet == TRIGRET_RET_TRUE )
 						goto stopandret;
 				}
@@ -3876,7 +3875,7 @@ from_itemdef_first:
             {
                 CResourceLock s;
                 if (pResourceLink->ResourceLock(s))
-                    iRet = CScriptObj::OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
+                    iRet = OnTriggerScript(s, pszTrigName, pScriptArgs, pSrc);
             }
 
             // If i'm running the @Create trigger, i jumped here first, but i need to go back and try to run the trigger from the other sources
@@ -3899,7 +3898,7 @@ stopandret:
 TRIGRET_TYPE CItem::OnTrigger( ITRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
 {
 	ASSERT((trigger >= 0) && (trigger < ITRIG_QTY));
-    return OnTrigger( CItem::sm_szTrigName[trigger], pScriptArgs, pSrc );
+    return OnTrigger( sm_szTrigName[trigger], pScriptArgs, pSrc );
 }
 
 // Item type specific stuff.
@@ -4121,7 +4120,7 @@ void CItem::DupeCopy( const CObjBase* pItemObj )
 	m_TagDefs.Copy(&(pItem->m_TagDefs));
 	m_BaseDefs.Copy(&(pItem->m_BaseDefs));
 	m_OEvents = pItem->m_OEvents;
-    CEntity::Copy(static_cast<const CEntity*>(pItem));
+    CEntity::Copy(pItem);
 }
 
 void CItem::SetAnim( ITEMID_TYPE id, int64 iTicksTimeout)
@@ -4286,7 +4285,7 @@ void CItem::ConvertBolttoCloth()
 
 	// We need to check all cloth_bolt items
 	bool correctID = false;
-	for (int i = (int)(ITEMID_CLOTH_BOLT1); i <= (int)(ITEMID_CLOTH_BOLT8); i++)
+	for (int i = ITEMID_CLOTH_BOLT1; i <= (int)(ITEMID_CLOTH_BOLT8); i++)
 		if ( IsSameDispID((ITEMID_TYPE)i) )
 			correctID = true;
 
@@ -4318,7 +4317,7 @@ void CItem::ConvertBolttoCloth()
         CItem* pItemNew = nullptr;
         while (iTotalAmount > 0)
         {
-            pItemNew = CItem::CreateTemplate(pBaseDef->GetID());
+            pItemNew = CreateTemplate(pBaseDef->GetID());
             ASSERT(pItemNew);
             word iStack = (word)minimum(iTotalAmount, pItemNew->GetMaxAmount());
             pItemNew->SetAmount(iStack);
@@ -5730,7 +5729,7 @@ bool CItem::OnSpellEffect(SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, C
 				}
 			}
 
-			m_itRune.m_ptMark = static_cast<CPointBase const&>(pCharSrc->GetTopPoint());
+			m_itRune.m_ptMark = pCharSrc->GetTopPoint();
 			if ( IsType(IT_RUNE) )
 			{
 				m_itRune.m_Strength = pSpellDef->m_vcEffect.GetLinear( iSkillLevel );
@@ -5862,7 +5861,7 @@ int CItem::OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType )
 			if (!pSpell)
 				return 0;
 
-			CItem *pItem = CItem::CreateBase(ITEMID_FX_EXPLODE_3);
+			CItem *pItem = CreateBase(ITEMID_FX_EXPLODE_3);
 			if ( !pItem )
 				return 0;
 
@@ -6263,7 +6262,7 @@ bool CItem::_OnTick()
                         pClient->addMapWaypoint(this, MAPWAYPOINT_Remove);	// remove corpse map waypoint on enhanced clients
                     }
 					SetID((ITEMID_TYPE)(g_Rand.GetVal2(ITEMID_SKELETON_1, ITEMID_SKELETON_9)));
-					SetHue((HUE_TYPE)(HUE_DEFAULT));
+					SetHue(HUE_DEFAULT);
 					_SetTimeout(g_Cfg.m_iDecay_CorpsePlayer);
 					m_itCorpse.m_carved = 1;	// the corpse can't be carved anymore
 					m_uidLink.InitUID();		// and also it's not linked to the char anymore (others players can loot it without get flagged criminal)

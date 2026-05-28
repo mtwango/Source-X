@@ -112,7 +112,7 @@ struct CRectMap : CRect
     CRectMap& operator=(const CRectMap&) noexcept = default;
     CRectMap& operator=(const CRect& rect) noexcept
 	{
-		return CRectMap::operator=(static_cast<const CRectMap&>(rect));
+		return operator=(static_cast<const CRectMap&>(rect));
 	}
 
     ~CRectMap() noexcept override = default;

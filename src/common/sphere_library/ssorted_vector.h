@@ -18,19 +18,18 @@ namespace sl
         class sorted_vector : public std::vector<_Type>
         {
         public:
-            using base_type = typename std::vector<_Type>;
-            using iterator = typename base_type::iterator;
-            using const_iterator = typename base_type::const_iterator;
-            using size_type = typename base_type::size_type;
+            using base_type = std::vector<_Type>;
+            using iterator = base_type::iterator;
+            using const_iterator = base_type::const_iterator;
+            using size_type = base_type::size_type;
 
         private:
             const _Comp _comparatorObj;
 
-
-            inline size_t lower_element(size_t mySize, const _Type* const dataptr, _Type const& value) const noexcept;
+            size_t lower_element(size_t mySize, const _Type *dataptr, _Type const& value) const noexcept;
 
             template <class _ValType, class _Pred>
-            inline size_t binary_search_predicate(size_t mySize, _ValType const& value, _Pred&& predicate) const noexcept;
+            size_t binary_search_predicate(size_t mySize, _ValType const& value, _Pred&& predicate) const noexcept;
 
         public:
             sorted_vector() : _comparatorObj() {}
@@ -54,7 +53,7 @@ namespace sl
 
             constexpr iterator insert(const_iterator itWhere, _Type const& value) = delete;
             constexpr iterator insert(const_iterator itWhere, _Type&& value) = delete;
-            constexpr iterator insert(const_iterator itWhere, const size_t _Count, _Type const& value) = delete;
+            constexpr iterator insert(const_iterator itWhere, size_t _Count, _Type const& value) = delete;
 
             template<class... _ValType>
             constexpr iterator emplace(_ValType&&... value)
@@ -74,22 +73,22 @@ namespace sl
                 return base_type::emplace_back(std::move(_obj));
             }
 
-            constexpr inline iterator insert(_Type const& value) {
+            constexpr iterator insert(_Type const& value) {
                 return this->emplace(value);
             }
-            constexpr inline iterator insert(_Type&& value) {
+            constexpr iterator insert(_Type&& value) {
                 return this->emplace(std::move(value));
             }
             //constexpr iterator insert(const size_Typepe _Count, const _Typepe& value) = delete;
 
-            constexpr inline _Type& insert_unsorted(_Type const& value) {
+            constexpr _Type & insert_unsorted(_Type const& value) {
                 return this->emplace_unsorted(value);
             }
-            constexpr inline _Type& insert_unsorted(_Type&& value) {
+            constexpr _Type & insert_unsorted(_Type&& value) {
                 return this->emplace_unsorted(std::move(value));
             }
 
-            constexpr inline void remove_index(const size_t index) {
+            constexpr void remove_index(const size_t index) {
                 base_type::erase(base_type::cbegin() + index);
             }
 
@@ -174,7 +173,7 @@ namespace sl
                     return _mid;
                 }
             }
-            return sl::scont_bad_index();
+            return scont_bad_index();
         }
 
         template <class _Type, class _Comp>
@@ -183,11 +182,11 @@ namespace sl
             const size_t _mySize = base_type::size();
             const _Type* const _dataptr = base_type::data();
             if ((_mySize == 0) || !_dataptr)
-                return sl::scont_bad_index();
+                return scont_bad_index();
             const size_t _idx = this->lower_element(_mySize, _dataptr, value);
             if (_idx == _mySize)
-                return sl::scont_bad_index();
-            return (!this->_comparatorObj(value, _dataptr[_idx])) ? _idx : sl::scont_bad_index();
+                return scont_bad_index();
+            return (!this->_comparatorObj(value, _dataptr[_idx])) ? _idx : scont_bad_index();
         }
 
         template <class _Type, class _Comp>
@@ -196,7 +195,7 @@ namespace sl
         {
             const size_t _mySize = base_type::size();
             if ((_mySize == 0) || !base_type::data())
-                return sl::scont_bad_index();
+                return scont_bad_index();
             return this->binary_search_predicate(_mySize, value, predicate);
         }
 

@@ -21,7 +21,6 @@ class CResourceLink : public CResourceDef
     // A pre-indexed link into a script file.
     // This is a CResourceDef not fully read into memory at index time.
     // We are able to lock it and read it as needed
-private:
     CResourceScript * m_pScript;	// we already found the script.
     CScriptLineContext m_Context;
 

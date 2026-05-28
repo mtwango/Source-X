@@ -31,7 +31,6 @@ public:
 	CSQueueBytes& operator=(const CSQueueBytes& other) = delete;
 	///@}
 
-public:
 	/** @name Capacity:
 	 */
 	///@{

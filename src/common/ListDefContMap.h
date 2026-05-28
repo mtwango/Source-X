@@ -42,7 +42,6 @@ public:
 
 class CListDefContNum: public CListDefContElem
 {
-private:
 	int64 m_iVal;
 
 public:
@@ -74,7 +73,6 @@ public:
 
 class CListDefContStr: public CListDefContElem
 {
-private:
 	CSString m_sVal;	// the assigned value. (What if numeric?)
 
 public:
@@ -104,7 +102,6 @@ public:
 
 class CListDefCont
 {
-private:
 	CSString m_Key;	// reference to map key
 
 	typedef std::deque<CListDefContElem *> DefList;
@@ -164,7 +161,6 @@ public:
 
 class CListDefMap
 {
-private:
 	struct ltstr
 	{
         bool operator()(const CListDefCont * s1, const CListDefCont * s2) const
@@ -181,7 +177,7 @@ private:
 public:
 	static const char *m_sClassName;
 	CListDefMap & operator = ( const CListDefMap & array );
-	CListDefMap() { };
+	CListDefMap() { }
 	~CListDefMap();
 
 private:

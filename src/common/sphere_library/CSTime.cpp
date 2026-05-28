@@ -30,7 +30,7 @@
 #           pragma warning(disable: 28159)
 #       endif
         // Precision should be in the order of 10-16 ms.
-	    static inline llong GetSupportedTickCount() noexcept { return (llong)GetTickCount(); }
+	    static llong GetSupportedTickCount() noexcept { return GetTickCount(); }
 #   else
 	    static inline llong GetSupportedTickCount() noexcept { return (llong)GetTickCount64(); }
 #   endif
@@ -139,7 +139,7 @@ llong CSTime::GetMonotonicSysTimeMilli() noexcept // static
 CSTime CSTime::GetCurrentTime()	noexcept // static
 {
 	// return the current system time
-	return CSTime(::time(nullptr));
+	return CSTime(time(nullptr));
 }
 
 /*
@@ -152,7 +152,7 @@ CSTime::CSTime( struct tm atm ) noexcept
 CSTime::CSTime(int nYear, int nMonth, int nDay, int nHour, int nMin, int nSec,
 			   int nDST) noexcept
 {
-	struct tm atm;
+    tm atm;
 	atm.tm_sec = nSec;
 	atm.tm_min = nMin;
 	atm.tm_hour = nHour;
@@ -268,7 +268,7 @@ static void SPHERE_CDECL invalidParameterHandler(const wchar_t* expression, cons
 }
 #endif
 
-static void FormatDateTime(tchar * pszTemp, lpctstr pszFormat, const struct tm * ptmTemp)
+static void FormatDateTime(tchar * pszTemp, lpctstr pszFormat, const tm * ptmTemp)
 {
 	ASSERT(pszTemp != nullptr);
 	ASSERT(pszFormat != nullptr);
@@ -341,7 +341,7 @@ bool CSTime::Read(tchar *pszVal)
 	if ( iQty < 6 )
 		return false;
 
-	struct tm atm;
+    tm atm;
 	atm.tm_wday = 0;    // days since Sunday - [0,6]
 	atm.tm_yday = 0;    // days since January 1 - [0,365]
 	atm.tm_isdst = 0;   // daylight savings time flag
@@ -441,7 +441,7 @@ void CSTime::Init() noexcept
 
 bool CSTime::IsTimeValid() const noexcept
 {
-	return (( m_time && m_time != -1 ) ? true : false );
+	return (( m_time && m_time != -1 ));
 }
 
 int CSTime::GetDaysTotal() const noexcept

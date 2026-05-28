@@ -176,7 +176,7 @@ bailout2:
 	}
 
 	// Create a security descriptor that allows anyone to write to the pipe
-	PSECURITY_DESCRIPTOR pSD = (PSECURITY_DESCRIPTOR) malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
+	PSECURITY_DESCRIPTOR pSD = malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
 	if ( !pSD )
 		goto bailout2;
 

@@ -16,8 +16,7 @@
 #define NETWORK_SEEDLEN_OLD		(sizeof( dword ))
 #define NETWORK_SEEDLEN_NEW		(1 + (sizeof( dword ) * 5))
 
-
-CNetworkInput::CNetworkInput(void) : m_thread(nullptr)
+CNetworkInput::CNetworkInput() : m_thread(nullptr)
 {
     m_receiveBuffer = new byte[NETWORK_BUFFERSIZE];
     m_decryptBuffer = new byte[NETWORK_BUFFERSIZE];

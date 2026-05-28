@@ -54,7 +54,6 @@ protected:
 	dword*		_pdwFreeUIDs;		// list of free uids available
 	dword		_dwFreeUIDOffset;		// offset of the first free element
 
-protected:
 	static const char *m_sClassName;
 	//int m_iThreadNum;	// Thread number to id what range of UID's i own.
 	//CRectMap m_ThreadRect;	// the World area that this thread owns.
@@ -74,7 +73,6 @@ public:
 	CScript m_FileMultis;		// Save of the custom multis.
 	bool	m_fSaveParity;		// has the sector been saved relative to the char entering it ?
 
-public:
 	// Backgound Save
 	bool IsSaving() const;
 
@@ -92,8 +90,7 @@ public:
 	NODISCARD bool IsScheduledObjDeletion(const CSObjContRec* obj) const noexcept;
 	NODISCARD bool IsScheduledSpecialObjDeletion(const CSObjListRec* obj) const noexcept;
 
-
-    NODISCARD inline const CSObjCont* GetObjectsNew() noexcept {
+    NODISCARD const CSObjCont* GetObjectsNew() noexcept {
         return &m_ObjNew;
     }
     /*
@@ -115,7 +112,6 @@ public:
 	void InitUIDs();
 	void CloseAllUIDs();
 
-public:
 	CWorldThread();
 	virtual ~CWorldThread();
 
@@ -153,7 +149,6 @@ private:
 	CSectorList _Sectors;
 
 // World data.
-private:
 	// Special purpose timers.
 	bool	_fSaveNotificationSent;		// has notification been sent?
 	int64	_iTimeLastWorldSave;		// when to auto do the worldsave ?
@@ -199,7 +194,6 @@ private:
 	friend class CServer;
 	void SyncGameTime() noexcept;
 
-private:
 	CWorld(const CWorld& copy);
 	CWorld& operator=(const CWorld& other);
 

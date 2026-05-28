@@ -150,7 +150,7 @@ void CResourceLink::CopyTransfer(CResourceLink *pLink)
 {
     ADDTOCALLSTACK("CResourceLink::CopyTransfer");
     ASSERT(pLink);
-    CResourceDef::CopyDef( pLink );
+    CopyDef( pLink );
     m_pScript = pLink->m_pScript;
     m_Context = pLink->m_Context;
     memcpy(m_dwOnTriggers, pLink->m_dwOnTriggers, sizeof(m_dwOnTriggers));

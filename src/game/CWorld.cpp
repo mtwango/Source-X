@@ -372,7 +372,7 @@ setcount:
 		// zero initialize the expanded part of the memory, leave untouched the original one
 		memset(pNewBlock + uiOldArraySize, 0, (_uiUIDObjArraySize - uiOldArraySize) * sizeof(CObjBase*));
 
-		_ppUIDObjArray = (CObjBase**)pNewBlock;
+		_ppUIDObjArray = pNewBlock;
 	}
 
 successalloc:
@@ -744,14 +744,14 @@ bool CWorld::OpenScriptBackup( CScript & s, lpctstr pszBaseDir, lpctstr pszBaseN
 	GetBackupName( sArchive, pszBaseDir, pszBaseName[0], iSaveCount );
 
 	// remove possible previous archive of same name
-	::remove( sArchive );
+	remove( sArchive );
 
 	// rename previous save to archive name.
 	CSString sSaveName;
 	sSaveName.Format( "%s" SPHERE_FILE "%s%s", pszBaseDir, pszBaseName, SPHERE_SCRIPT_EXT );
     if ( iSaveCount > 0 )
     {
-        if ( ::rename(sSaveName, sArchive) )
+        if ( rename(sSaveName, sArchive) )
         {
             g_Log.Event(LOGM_SAVE|LOGL_WARN, "Rename %s to '%s' FAILED code %d?\n", static_cast<lpctstr>(sSaveName), static_cast<lpctstr>(sArchive), CSFile::GetLastError() );
         }
@@ -852,7 +852,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 		const size_t iQty = g_Cfg.m_RegionDefs.size();
 		for ( size_t i = 0; i < iQty; ++i )
 		{
-			CRegion *pRegion = dynamic_cast <CRegion*> (g_Cfg.m_RegionDefs[i]);
+			CRegion *pRegion = g_Cfg.m_RegionDefs[i];
 			if ( !pRegion || !pRegion->HasResourceName() || !pRegion->m_dwModifiedFlags )
 				continue;
 
@@ -1098,7 +1098,7 @@ bool CWorld::CheckAvailableSpaceForSave(bool fStatics)
     {
         throw CSError(LOGL_CRIT, 0, "GetDiskFreeSpaceEx failed for the \"save\" folder! Save aborted!");
     }
-    uiFreeSpace = (ullong)liTotalNumberOfFreeBytes.QuadPart;
+    uiFreeSpace = liTotalNumberOfFreeBytes.QuadPart;
 #endif
     uiFreeSpace /= 1024;    // from bytes to kilobytes (or to be more precise, kibibytes)
 
@@ -1135,7 +1135,7 @@ bool CWorld::CheckAvailableSpaceForSave(bool fStatics)
 
     uiPreviousSaveSize /= 1024;
     uiPreviousSaveSize += (uiPreviousSaveSize*20)/100;  // Just to be sure increase the space requirement by 20%
-    ullong uiServMem = (ullong)g_Serv.StatGet(SERV_STAT_MEM);   // In KB
+    ullong uiServMem = g_Serv.StatGet(SERV_STAT_MEM);   // In KB
 #ifdef _DEBUG
     constexpr ullong mem_adjust_build = 2;
 #else
@@ -1179,7 +1179,7 @@ bool CWorld::Save( bool fForceImmediate ) // Save world state
 		//-- Ok we can start the save process, in which we eventually remove the previous saves and create the other.
 
         pScriptArgs->Init(fForceImmediate, _iSaveStage, 0, nullptr);
-        enum TRIGRET_TYPE tr{};
+        TRIGRET_TYPE tr{};
 
         if ( g_Serv.r_Call("f_onserver_save", pScriptArgs, &g_Serv, nullptr, &tr) )
 			if ( tr == TRIGRET_RET_TRUE )

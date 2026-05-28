@@ -161,7 +161,7 @@ CObjBase::~CObjBase()
 	// As a safety net. If we are calling those methods via the class destructor, we know that calling virtual methods won't work,
 	//  since the superclasses were already destructed. At least, do minimal cleanup here with CObjBase methods.
 	DeletePrepare();	// virtual
-	CObjBase::DeleteCleanup(true);	// it isn't virtual
+	DeleteCleanup(true);	// it isn't virtual
 
 	FreePropertyList();
 
@@ -878,7 +878,7 @@ TRIGRET_TYPE CObjBase::OnHearTrigger( CResourceLock & s, lpctstr pszCmd, CChar *
     pScriptArgs->Init(pszCmd);
     pScriptArgs->m_iN1 = iModeRef;
     pScriptArgs->m_iN2 = wHue;
-    TRIGRET_TYPE iRet = CObjBase::OnTriggerRunVal( s, TRIGRUN_SECTION_EXEC, pScriptArgs, pSrc );
+    TRIGRET_TYPE iRet = OnTriggerRunVal( s, TRIGRUN_SECTION_EXEC, pScriptArgs, pSrc );
 
 		if ( iRet != TRIGRET_RET_FALSE )
 			return iRet;
@@ -1151,7 +1151,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 				else if ( !pChar )		// no char -> no see
 					sVal.SetValFalse();
 				else					// standart way src TO current object
-					sVal.FormatVal(bCanSee ? pChar->CanSee(this) : pChar->CanSeeLOS(this, (word)(flags)));
+					sVal.FormatVal(bCanSee ? pChar->CanSee(this) : pChar->CanSeeLOS(this, flags));
 			}
 			break;
 		case OC_COLOR:
@@ -1340,7 +1340,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
             GETNONWHITESPACE(ptcKey);
 
             COMPPROPS_TYPE id = (COMPPROPS_TYPE)Exp_GetVal(ptcKey);
-            bool fRes = (id < COMP_PROPS_QTY) && (nullptr != CEntityProps::GetComponentProps(id));
+            bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
             sVal.FormatVal(int(fRes));
             break;
         }
@@ -2832,7 +2832,7 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 					}
 
 					CClient::OpenedGumpsMap_t::const_iterator itGumpFound = pClientSrc->m_mapOpenedGumps.find( context );
-					if ( pCharSrc && (( itGumpFound != pClientSrc->m_mapOpenedGumps.end() ) && ( (*itGumpFound).second > 0 )) )
+					if ( pCharSrc && (( itGumpFound != pClientSrc->m_mapOpenedGumps.end() ) && ( itGumpFound->second > 0 )) )
 						break;
 				}
                 pClientSrc->Dialog_Setup(
@@ -3675,7 +3675,7 @@ TRIGRET_TYPE CObjBase::Spell_OnTrigger( SPELL_TYPE spell, SPTRIG_TYPE stage, CSc
 		CResourceLock s;
 		if ( pSpellDef->ResourceLock( s ))
 		{
-            return CScriptObj::OnTriggerScript( s, CSpellDef::sm_szTrigName[stage], pScriptArgs, pSrc );
+            return OnTriggerScript( s, CSpellDef::sm_szTrigName[stage], pScriptArgs, pSrc );
 		}
 	}
 	return TRIGRET_RET_DEFAULT;
@@ -3695,7 +3695,7 @@ bool CObjBase::CallPersonalTrigger(tchar * pArgs, CTextConsole * pSrc, TRIGRET_T
 	if ( iResultArgs > 0 )
 	{
 		lpctstr callTrigger = ppCmdTrigger[0];
-        CScriptTriggerArgsPtr pTriggerArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();;
+        CScriptTriggerArgsPtr pTriggerArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
 		if ( iResultArgs == 3 )
 		{

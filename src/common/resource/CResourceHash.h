@@ -30,7 +30,7 @@ public:
 
     void ManualSort();
 
-    inline size_t find_sorted(CResourceID const& rid) const { return this->find_predicate(rid, _compare);        }
+    size_t find_sorted(CResourceID const& rid) const { return this->find_predicate(rid, _compare);        }
     //inline bool   Contains(CResourceID const& rid) const  { return (sl::scont_bad_index() != this->find_sorted(rid)); }
 };
 
@@ -44,21 +44,21 @@ struct CResourceHash
     CResourceHash& operator=(const CResourceHash&) = delete;
 
 private:
-    constexpr inline uint GetHashArray(const CResourceID& rid) const
+    constexpr uint GetHashArray(const CResourceID& rid) const
     {
         return (rid.GetResIndex() & 0x0F);
     }
 
 public:
-    inline size_t FindKey(const CResourceID& rid) const
+    size_t FindKey(const CResourceID& rid) const
     {
         return m_Array[GetHashArray(rid)].find_sorted(rid);
     }
-    constexpr inline sl::smart_ptr_view<CResourceDef> GetSmartPtrViewAt(const CResourceID& rid, size_t index) const
+    constexpr sl::smart_ptr_view<CResourceDef> GetSmartPtrViewAt(const CResourceID& rid, size_t index) const
     {
         return sl::smart_ptr_view<CResourceDef>(m_Array[GetHashArray(rid)][index]);
     }
-    inline CResourceDef* GetBarePtrAt(const CResourceID& rid, size_t index) const
+    CResourceDef* GetBarePtrAt(const CResourceID& rid, size_t index) const
     {
         return m_Array[GetHashArray(rid)][index].get();
     }

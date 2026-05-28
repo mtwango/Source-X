@@ -54,7 +54,6 @@ public:
 	bool Spells_Add(SPELL_TYPE spell);
 	int Spells_FindSpell(SPELL_TYPE spell);
 
-public:
 	void r_WriteChar( CChar * pChar, CScript & s );
 	bool r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & s );
 	bool r_LoadVal( CChar * pChar, CScript & s );
@@ -63,7 +62,6 @@ public:
 
 	int GetNpcAiFlags( const CChar *pChar ) const;
 
-public:
 	CCharNPC( CChar * pChar, NPCBRAIN_TYPE NPCBrain );
 	~CCharNPC();
 

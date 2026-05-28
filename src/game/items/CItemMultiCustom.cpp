@@ -368,7 +368,7 @@ void CItemMultiCustom::CommitChanges(CClient * pClientSrc)
             continue;
 
         // replace the doors and teleporters with real items
-        pItem = CItem::CreateScript(pComp->m_item.GetDispID());
+        pItem = CreateScript(pComp->m_item.GetDispID());
         if (pItem == nullptr)
             continue;
 
@@ -562,7 +562,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         {
             for (const CUID& uid : vListLocks)
             {
-                CItem *pItem = static_cast<CItem*>(uid.ItemFind());
+                CItem *pItem = uid.ItemFind();
                 if (pItem)
                 {
                     UnlockItem(uid, true);
@@ -1320,7 +1320,7 @@ void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<C
     const int8 iFloor = CalculateLevel(GetTopPoint().m_z + dz);  // get the Diff Z from the Multi's Z
     for (std::vector<CUID>::iterator it = _lLockDowns.begin(); it != _lLockDowns.end(); ++it)
     {
-        CItem *pItem = (*it).ItemFind();
+        CItem *pItem = it->ItemFind();
         if ((pItem->GetTopPoint().m_x == iFixedX)
             && pItem->GetTopPoint().m_y == iFixedY
             && (CalculateLevel(pItem->GetTopPoint().m_z) == iFloor))
@@ -1328,7 +1328,6 @@ void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<C
             vList.push_back((*it));
         }
     }
-    return;
 }
 
 void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUID> &vList)
@@ -1342,7 +1341,7 @@ void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUI
     char iFloor = CalculateLevel(GetTopPoint().m_z + dz);  // get the Diff Z from the Multi's Z
     for (std::vector<CUID>::iterator it = _lSecureContainers.begin(); it != _lSecureContainers.end(); ++it)
     {
-        CItemContainer *pCont = static_cast<CItemContainer*>((*it).ItemFind());
+        CItemContainer *pCont = static_cast<CItemContainer*>(it->ItemFind());
         if ((pCont->GetTopPoint().m_x == iFixedX)
             && pCont->GetTopPoint().m_y == iFixedY
             && (CalculateLevel(pCont->GetTopPoint().m_z) == iFloor))
@@ -1350,7 +1349,6 @@ void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUI
             vList.push_back(*it);
         }
     }
-    return;
 }
 
 int8 CItemMultiCustom::CalculateLevel(int8 z)
@@ -1466,7 +1464,6 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         {
             m_designMain.m_vectorComponents.erase(m_designMain.m_vectorComponents.begin()+i);
             ++ m_designMain.m_iRevision;
-            continue;
         }
     }
     if (m_pSphereMulti != nullptr)
@@ -2063,7 +2060,7 @@ bool CItemMultiCustom::LoadValidItems()
     return false;
 }
 
-void CItemMultiCustom::CSphereMultiCustom::LoadFrom(CItemMultiCustom::CDesignDetails * pDesign)
+void CItemMultiCustom::CSphereMultiCustom::LoadFrom(CDesignDetails * pDesign)
 {
     m_iItemQty = (uint)pDesign->m_vectorComponents.size();
 

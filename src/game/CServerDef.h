@@ -43,7 +43,6 @@ class CServerDef : public CScriptObj
 {
 	static lpctstr const sm_szLoadKeys[];
 
-private:
 	CSString m_sName;	// What the name should be. Fill in from ping.
 	int64  m_timeLastValid;	// Last valid poll time
 	CSTime m_dateLastValid;

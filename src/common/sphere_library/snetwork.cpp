@@ -29,7 +29,7 @@ auto hostname_resolve_with_timeout_v4(std::string_view name, int timeout_millise
 
     // Worker returns its own ResolveResultV4; no references to caller state.
     // To add IPv6 later, switch to AF_UNSPEC and also handle AF_INET6 entries
-    std::packaged_task<ResolveResultV4()> task(
+    std::packaged_task task(
         [name]() -> ResolveResultV4
         {
             ResolveResultV4 rr;

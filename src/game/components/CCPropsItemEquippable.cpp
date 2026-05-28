@@ -228,9 +228,9 @@ void CCPropsItemEquippable::r_Write(CScript & s)
     BaseCont_Write_ContStr(&_mPropsStr, _ptcPropertyKeys, s);
 
     if (_faction.GetGroup() != CFactionDef::Group::NONE)
-        s.WriteKeyVal(_ptcPropertyKeys[PROPIEQUIP_SLAYER_GROUP],   (int64)enum_alias_cast<uint32>(_faction.GetGroup()));
+        s.WriteKeyVal(_ptcPropertyKeys[PROPIEQUIP_SLAYER_GROUP],   enum_alias_cast<uint32>(_faction.GetGroup()));
     if (_faction.GetSpecies() != CFactionDef::Species::NONE)
-        s.WriteKeyVal(_ptcPropertyKeys[PROPIEQUIP_SLAYER_SPECIES], (int64)enum_alias_cast<uint32>(_faction.GetSpecies()));
+        s.WriteKeyVal(_ptcPropertyKeys[PROPIEQUIP_SLAYER_SPECIES], enum_alias_cast<uint32>(_faction.GetSpecies()));
 }
 
 void CCPropsItemEquippable::Copy(const CComponentProps * target)

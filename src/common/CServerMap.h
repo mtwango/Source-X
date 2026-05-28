@@ -122,7 +122,7 @@ struct CServerMapDiffBlock
 	CServerMapDiffBlock& operator=(const CServerMapDiffBlock& other) = delete;
 };
 
-struct CServerMapDiffBlockArray : public CSObjSortArray< CServerMapDiffBlock*, dword >
+struct CServerMapDiffBlockArray : CSObjSortArray< CServerMapDiffBlock*, dword >
 {
     CServerMapDiffBlockArray() = default;
 	int CompareKey( dword id, CServerMapDiffBlock* pBase, bool fNoSpaces ) const override;
@@ -134,7 +134,6 @@ struct CServerMapDiffBlockArray : public CSObjSortArray< CServerMapDiffBlock*, d
 class CServerMapDiffCollection
 {
 	// This class will be used to access mapdiff data
-private:
 	bool m_fLoaded;
 
 	CServerMapDiffBlockArray m_pMapDiffBlocks[MAP_SUPPORTED_QTY];
@@ -156,7 +155,6 @@ public:
 class CServerMapBlock :	// Cache this from the MUL files. 8x8 block of the world.
 	public CPointSort	// The upper left corner. (ignore z) sort by this
 {
-private:
 	static size_t sm_iCount;	// count number of loaded blocks.
 
 	CUOMapBlock m_Terrain;
@@ -177,24 +175,23 @@ public:
 	CServerMapBlock(const CServerMapBlock& copy) = delete;
 	CServerMapBlock& operator=(const CServerMapBlock& other) = delete;
 
-public:
-	inline int GetOffsetX(int x) const noexcept
+	int GetOffsetX(int x) const noexcept
 	{
 		return (x - m_x);
 	}
-	inline int GetOffsetY( int y ) const noexcept
+	int GetOffsetY( int y ) const noexcept
 	{
 		return (y - m_y);
 	}
 
-	inline const CUOMapBlock * GetTerrainBlock() const noexcept
+	const CUOMapBlock * GetTerrainBlock() const noexcept
 	{
 		return &m_Terrain;
 	}
 	const CUOMapMeter* GetTerrain(int xo, int yo) const;
 };
 
-class CUOMulti : private CCachedMulItem
+class CUOMulti : CCachedMulItem
 {
 	// Load all the relivant info for the
 
@@ -224,10 +221,10 @@ private:
 public:
 	size_t Load( MULTI_TYPE id );
 
-    inline MULTI_TYPE GetMultiID() const {
+    MULTI_TYPE GetMultiID() const {
         return m_id;
     }
-    inline uint GetItemCount() const {
+    uint GetItemCount() const {
         return m_iItemQty;
     }
 	const CUOMultiItemRec_HS * GetItem( size_t i ) const;

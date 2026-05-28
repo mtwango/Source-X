@@ -64,7 +64,6 @@ public:
 
 	CResourceRefArray m_Speech;	// Speech fragment list (other stuff we know)
 
-public:
 	CAccount* GetAccount() const;
 
 	SKILL_TYPE Skill_GetLockType( lpctstr ptcKey ) const;
@@ -85,8 +84,6 @@ public:
 	bool r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & s );
 	bool r_LoadVal( CChar * pChar, CScript & s );
 
-
-public:
 	CCharPlayer( CChar * pChar, CAccount * pAccount );
 	~CCharPlayer();
 

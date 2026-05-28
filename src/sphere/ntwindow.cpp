@@ -82,7 +82,7 @@ void CNTWindow::CStatusDlg::FillClients()
 	if ( m_wndListClients.m_hWnd == nullptr )
 		return;
 	m_wndListClients.ResetContent();
-	CNTWindow::CListTextConsole capture( m_wndListClients.m_hWnd );
+	CListTextConsole capture( m_wndListClients.m_hWnd );
 	g_Serv.ListClients( &capture );
 	//int iCount = m_wndListClients.GetCount();
 	//++iCount;
@@ -95,7 +95,7 @@ void CNTWindow::CStatusDlg::FillStats()
 
 	m_wndListStats.ResetContent();
 
-	CNTWindow::CListTextConsole capture( m_wndListStats.m_hWnd );
+	CListTextConsole capture( m_wndListStats.m_hWnd );
 
 	size_t iThreadCount = ThreadHolder::get().getActiveThreads();
 	for ( size_t iThreads = 0; iThreads < iThreadCount; ++iThreads)
@@ -215,7 +215,7 @@ void CNTWindow::tick()
 		{
 			// No idea of the reason, but it seems that if we have some mutex locked while doing List_Add, sometimes we'll have a deadlock.
 			//  In any case, it's best to keep the mutex locked for the least time possible.
-			std::unique_lock<std::mutex> lock(this->ConsoleInterface::_ciQueueMutex);
+			std::unique_lock lock(this->_ciQueueMutex);
 			#define msg_queue	this->ConsoleInterface::_qOutput
 
 			// Limit the maximum lines to be displayed per tick, to prevent the console from freezing
@@ -311,7 +311,7 @@ void CNTWindow::List_AddSingle(COLORREF color, LPCTSTR ptcText)
 
 void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 {
-    std::deque<std::unique_ptr<ConsoleOutput>> moved_msgs(std::move(msgs));
+    std::deque moved_msgs(std::move(msgs));
 	const int iMaxTextLen = (64 * 1024);
 
 	// Erase the old text to make space for all the message queue at once
@@ -335,7 +335,7 @@ void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 	// Append all the messages at once
 	for (std::unique_ptr<ConsoleOutput> const& co : moved_msgs)
 	{
-		const COLORREF color = (COLORREF)CTColToRGB(co->GetTextColor());
+		const COLORREF color = CTColToRGB(co->GetTextColor());
 		const lpctstr ptcText = co->GetTextString().GetBuffer();
 		const int iTextLen = co->GetTextString().GetLength();
 
@@ -366,7 +366,7 @@ void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 
 void CNTWindow::SetWindowTitle(LPCTSTR pText)
 {
-    std::unique_lock<std::shared_mutex> lock(_mutexWindowTitle);
+    std::unique_lock lock(_mutexWindowTitle);
     if (pText)
         _strWindowTitle = pText;
     else

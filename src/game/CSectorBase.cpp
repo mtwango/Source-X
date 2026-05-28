@@ -21,7 +21,7 @@ void CCharsDisconnectList::AddCharDisconnected( CChar * pChar )
     ADDTOCALLSTACK("CCharsDisconnectList::AddCharDisconnected");
 
     pChar->SetUIDContainerFlags(UID_O_DISCONNECT);
-    CSObjCont::InsertContentTail(pChar);
+    InsertContentTail(pChar);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ void CCharsActiveList::AddCharActive( CChar * pChar )
 	CSObjCont* pParent = pChar->GetParent();
 	if (pParent != this)
 	{
-		CSObjCont::InsertContentTail(pChar); // this also removes the Char from the old sector
+		InsertContentTail(pChar); // this also removes the Char from the old sector
 		if (pChar->IsClientActive())
 		{
 			++m_iClients;
@@ -138,7 +138,7 @@ void CItemsList::AddItemToSector( CItem * pItem )
 
 #endif
 
-        CSObjCont::InsertContentTail(pItem); // this also removes the Char from the old sector
+        InsertContentTail(pItem); // this also removes the Char from the old sector
         DEBUG_ASSERT(pItem->GetParent() == this);
 	}
 
@@ -263,7 +263,7 @@ void CSectorBase::Init(int index, uchar map, short x, short y)
             x,          // x
             y,          // y
             0,          // z
-            (uint8)map  // m
+            map // m
         };
 
     m_MapRectWorldUnits =
@@ -448,7 +448,7 @@ CTeleport * CSectorBase::GetTeleport( const CPointMap & pt ) const
 	if ( i == sl::scont_bad_index() )
 		return nullptr;
 
-	CTeleport *pTeleport = static_cast<CTeleport *>(m_Teleports[i]);
+	CTeleport *pTeleport = m_Teleports[i];
 	if ( pTeleport->m_map != pt.m_map )
 		return nullptr;
 	if ( abs(pTeleport->m_z - pt.m_z) > 5 )

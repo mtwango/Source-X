@@ -35,7 +35,7 @@ lpctstr CPointBase::sm_szDirs[] {"\0"};
 void CPointBase::InitRuntimeDefaultValues()
 {
     sl::AssignInitlistToCSizedArray(
-		CPointBase::sm_szDirs, ARRAY_COUNT(CPointBase::sm_szDirs),
+		sm_szDirs, ARRAY_COUNT(CPointBase::sm_szDirs),
 		{
 			g_Cfg.GetDefaultMsg(DEFMSG_MAP_DIR_0),
 			g_Cfg.GetDefaultMsg(DEFMSG_MAP_DIR_1),
@@ -289,8 +289,8 @@ bool CPointBase::IsValidPoint() const noexcept
     constexpr uint32_t sz = 2 * UO_SIZE_Z;                   // exclude -128, -127, 127
 
     // Cast to unsigned - negative values wrap to large numbers
-    const uint32_t ux = static_cast<uint32_t>(static_cast<uint16_t>(m_x));
-    const uint32_t uy = static_cast<uint32_t>(static_cast<uint16_t>(m_y));
+    const uint32_t ux = static_cast<uint16_t>(m_x);
+    const uint32_t uy = static_cast<uint16_t>(m_y);
     const uint32_t uz = static_cast<uint32_t>(static_cast<int32_t>(m_z) + UO_SIZE_Z);
 
     return (ux < sx) && (uy < sy) && (uz > 0) && (uz < sz);
@@ -377,7 +377,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 	if ( !strnicmp( ptcKey, "STATICS", 7 ) )
 	{
 		ptcKey	+= 7;
-		const CServerMapBlock * pBlock = CWorldMap::GetMapBlock( static_cast<CPointMap>(*this) );
+		const CServerMapBlock * pBlock = CWorldMap::GetMapBlock( *this );
 		if ( !pBlock )
 			return false;
 

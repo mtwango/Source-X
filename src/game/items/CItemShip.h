@@ -13,7 +13,6 @@ class CItemShip : public CItemMulti
 {
 // IT_SHIP
 // A ship
-private:
     static lpctstr const sm_szLoadKeys[];
     static lpctstr const sm_szVerbKeys[];
 

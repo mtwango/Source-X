@@ -44,7 +44,7 @@ class CAccount : public CScriptObj
 	// RES_ACCOUNT
 	static lpctstr const sm_szVerbKeys[]; // Action list.
 	static lpctstr const sm_szLoadKeys[]; // Script fields.
-private:
+
 	PLEVEL_TYPE m_PrivLevel; // Privileges level of the CAccount.
 	CSString m_sName; // Name = no spaces. case independant.
 	CSString m_sCurPassword; // Accounts auto-generated but never used should not last long !

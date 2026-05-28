@@ -17,7 +17,7 @@
 consteval
 size_t Str_TempLength() noexcept
 {
-	return (size_t)(THREAD_STRING_LENGTH);
+	return THREAD_STRING_LENGTH;
 }
 
 [[nodiscard]]
@@ -43,7 +43,6 @@ public:
 	AbstractString(const AbstractString& copy) = delete;
 	AbstractString& operator=(const AbstractString& other) = delete;
 
-public:
 	// information
     size_t size() const noexcept {
         return m_length;
@@ -102,7 +101,6 @@ protected:
 	void ensureLengthHeap(size_t newLength);
 	void destroyHeap() noexcept;
 
-protected:
 	char	*m_buf;
 	size_t	m_length;       // length of the string (which is the part of the buffer we're actually using)
 	size_t	m_realLength;   // length of the buffer

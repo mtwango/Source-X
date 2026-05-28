@@ -17,7 +17,6 @@ class CResourceLock : public CScript
     // Open a copy of a script that is already open
     // NOTE: This should ONLY be stack based !
     // preserve the previous openers offset in the script.
-private:
     CResourceScript * m_pLock;
     CScriptLineContext m_PrvLockContext;		// i must return the locked file back here.
 
@@ -52,7 +51,6 @@ public:
     CResourceLock(const CResourceLock& copy) = delete;
     CResourceLock& operator=(const CResourceLock& other) = delete;
 
-public:
     int OpenLock( CResourceScript * pLock, CScriptLineContext context );
     void AttachObj( const CScriptObj * pObj );
 };

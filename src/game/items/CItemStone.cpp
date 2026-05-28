@@ -754,9 +754,9 @@ bool CItemStone::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSr
 			{
 				CChar * pMaster = GetMaster();
 				if ( pMaster )
-					sVal.FormatHex( (dword) pMaster->GetUID() );
+					sVal.FormatHex(pMaster->GetUID());
 				else
-					sVal.FormatHex( (dword) 0 );
+					sVal.FormatHex(0);
 			}
 			return true;
 
@@ -1339,7 +1339,7 @@ bool CItemStone::IsAlliedWith( const CItemStone * pStone) const
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_pO1 = const_cast<CItemStone *>(pStone);
-	enum TRIGRET_TYPE tr = TRIGRET_RET_DEFAULT;
+    TRIGRET_TYPE tr = TRIGRET_RET_DEFAULT;
 
     // TODO: no const_cast please... we'll have to remove const from this method
     if ( const_cast<CItemStone *>(this)->r_Call("f_stonesys_internal_isalliedwith", pScriptArgs, &g_Serv, nullptr, &tr) )
@@ -1377,7 +1377,7 @@ bool CItemStone::IsAtWarWith( const CItemStone * pEnemyStone ) const
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_pO1 = const_cast<CItemStone *>(pEnemyStone);
-	enum TRIGRET_TYPE tr = TRIGRET_RET_DEFAULT;
+    TRIGRET_TYPE tr = TRIGRET_RET_DEFAULT;
 
     if ( const_cast<CItemStone *>(this)->r_Call("f_stonesys_internal_isatwarwith", pScriptArgs, &g_Serv, nullptr, &tr) )
 	{

@@ -141,7 +141,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
     float dist2d, dist3d;
 	dist2d = sqrt((float)(dx*dx + dy*dy));
 	if ( dz )
-		dist3d = sqrt((float)(dist2d*dist2d + dz*dz));
+		dist3d = sqrt(dist2d * dist2d + dz * dz);
 	else
 		dist3d = dist2d;
 
@@ -476,7 +476,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 						if ( pItemDef->GetID() != pItem->GetDispID() )	//not a parent item
 						{
 							WARNLOS(("Not a parent item (DYNAMIC)\n"));
-							pDupeDef = CItemBaseDupe::GetDupeRef((ITEMID_TYPE)(pItem->GetDispID()));
+							pDupeDef = CItemBaseDupe::GetDupeRef(pItem->GetDispID());
 							if ( !pDupeDef )
 							{
                                 // Not an error: i have changed the DISPID of the item.
@@ -595,7 +595,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 								if ( pItemDef->GetID() != pMultiItem->GetDispID() ) //not a parent item
 								{
 									WARNLOS(("Not a parent item (MULTI)\n"));
-									pDupeDef = CItemBaseDupe::GetDupeRef((ITEMID_TYPE)(pMultiItem->GetDispID()));
+									pDupeDef = CItemBaseDupe::GetDupeRef(pMultiItem->GetDispID());
 									if ( !pDupeDef )
 									{
 										g_Log.EventDebug("AdvancedLoS: Failed to get non-parent reference (multi) (DispID 0%x) (X: %d Y: %d Z: %hhd M: %hhu)\n", pMultiItem->GetDispID(), ptNow.m_x, ptNow.m_y, pMultiItem->m_dz + pItem->GetTopPoint().m_z, ptNow.m_map);

@@ -230,7 +230,7 @@ namespace sl
         /// a<b provides a total order
         friend constexpr bool
             operator<(raw_ptr_view const& lhs, raw_ptr_view const& rhs) noexcept {
-            return std::less<void>()(lhs.ptr, rhs.ptr);
+            return std::less()(lhs.ptr, rhs.ptr);
         }
         /// a>b is b<a
         friend constexpr bool
@@ -266,7 +266,7 @@ namespace std
 
     /// Do a static_cast with object_ptr
     template <typename To, typename From>
-    typename std::enable_if<
+    std::enable_if<
         sizeof(decltype(static_cast<To*>(std::declval<From*>()))) != 0,
         sl::raw_ptr_view<To>>::type
         static_pointer_cast(sl::raw_ptr_view<From> p) {
@@ -275,7 +275,7 @@ namespace std
 
     /// Do a dynamic_cast with object_ptr
     template <typename To, typename From>
-    typename std::enable_if<
+    std::enable_if<
         sizeof(decltype(dynamic_cast<To*>(std::declval<From*>()))) != 0,
         sl::raw_ptr_view<To>>::type
         dynamic_pointer_cast(sl::raw_ptr_view<From> p) {

@@ -100,7 +100,7 @@ public:
 	// -------------------------------
 
 	lpctstr GetName() const override {
-	    return static_cast<lpctstr>(m_sName);
+	    return m_sName;
 	    }
 	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
     bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;

@@ -31,24 +31,22 @@ public:
 	static lpctstr sm_szDirs[DIR_QTY + 1];
 	static const short sm_Moves[DIR_QTY + 1][2];
 
-public:
 	// Do NOT change these datatypes: they seem to not have much sense, but are stored this way inside the mul files.
 	int16 m_x;		// equipped items dont need x,y
 	int16 m_y;
 	int8  m_z;		// this might be layer if equipped ? or equipped on corpse. Not used if in other container.
 	uint8 m_map;		// another map? (only if top level.)
 
-public:
 	CPointBase& InitPoint() noexcept;
 	CPointBase& ZeroPoint() noexcept;
 
-    inline CPointBase() noexcept :
+    CPointBase() noexcept :
         m_x(-1), m_y(-1), m_z(0), m_map(0)	// Same thing as calling InitPoint(), but without this extra function call
     {
         //InitPoint();
     }
 
-    inline CPointBase(short x, short y, char z, uchar map) noexcept :
+    CPointBase(short x, short y, char z, uchar map) noexcept :
         m_x(x), m_y(y), m_z(z), m_map(map)
     {
     }
@@ -117,7 +115,7 @@ public:
 	bool r_LoadVal( lpctstr ptcKey, lpctstr pszArgs );
 };
 
-struct CPointMap : public CPointBase
+struct CPointMap : CPointBase
 {
 	// A point in the world (or in a container) (initialized)
     CPointMap() noexcept = default;
@@ -138,7 +136,7 @@ struct CPointMap : public CPointBase
 
 	CPointMap& operator = (const CPointMap&) noexcept = default;
 	CPointMap& operator = (const CPointBase& pt) noexcept {
-		return CPointMap::operator=(static_cast<const CPointMap&>(pt));
+		return operator=(static_cast<const CPointMap&>(pt));
 	}
 
     //  Trying to avoid "creating a class section" warning, with mixed results...
@@ -155,7 +153,7 @@ struct CPointMap : public CPointBase
     */
 };
 
-struct CPointSort : public CPointMap
+struct CPointSort : CPointMap
 {
     CPointSort() noexcept = default; // InitPoint() already called by CPointBase constructor
 	CPointSort( short x, short y, char z = 0, uchar map = 0 ) noexcept;

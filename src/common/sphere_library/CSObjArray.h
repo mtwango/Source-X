@@ -23,7 +23,7 @@ public:
     /** @name Constructors, Destructor, Assign operator:
     */
     ///@{
-public:
+
     CSObjArray() noexcept :
         _fBaseDestructorShouldDeleteElements(true)
     {}
@@ -34,17 +34,17 @@ public:
     /**
     * @brief No copy on construction allowed.
     */
-    CSObjArray(const CSObjArray<TYPE> & copy) = delete;
+    CSObjArray(const CSObjArray & copy) = delete;
     /**
     * @brief No copy allowed.
     */
-    CSObjArray<TYPE> & operator=(const CSObjArray<TYPE> & other) = delete;
+    CSObjArray & operator=(const CSObjArray & other) = delete;
     ///@}
 
     /** @name Modifiers:
     */
     ///@{
-public:
+
     /**
    * @brief Check if an index is between 0 and element count.
    * @param i index to check.

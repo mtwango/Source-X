@@ -30,14 +30,12 @@ public:
     static const char *m_sClassName;
     CSObjArray<CSString *> m_IgnoredMembers;	// Player's list of ignored members
 
-public:
     CChatChanMember() noexcept;
     virtual ~CChatChanMember() noexcept;
 
     CChatChanMember(const CChatChanMember& copy) = delete;
     CChatChanMember& operator=(const CChatChanMember& other) = delete;
 
-public:
     CClient * GetClientActive() NOEXCEPT_NODEBUG;
     const CClient * GetClientActive() const NOEXCEPT_NODEBUG;
     bool IsChatActive() const noexcept;

@@ -26,7 +26,7 @@ CNetworkThread::CNetworkThread(CNetworkManager* manager, size_t id)
 {
 }
 
-CNetworkThread::~CNetworkThread(void)
+CNetworkThread::~CNetworkThread()
 {
 }
 
@@ -50,7 +50,7 @@ void CNetworkThread::queuePacketTransaction(PacketTransaction* transaction)
     CNetworkOutput::QueuePacketTransaction(transaction);
 }
 
-void CNetworkThread::checkNewStates(void)
+void CNetworkThread::checkNewStates()
 {
     // check for states that have been assigned but not moved to our list
     ADDTOCALLSTACK("CNetworkThread::checkNewStates");
@@ -67,7 +67,7 @@ void CNetworkThread::checkNewStates(void)
     }
 }
 
-void CNetworkThread::dropInvalidStates(void)
+void CNetworkThread::dropInvalidStates()
 {
     // check for states in our list that don't belong to us
     ADDTOCALLSTACK("CNetworkThread::dropInvalidStates");
@@ -105,13 +105,13 @@ void CNetworkThread::init()
     m_profile.EnableProfile(PROFILE_DATA_TX);
 }
 
-void CNetworkThread::onStart(void)
+void CNetworkThread::onStart()
 {
     init();
     AbstractSphereThread::onStart();
 }
 
-void CNetworkThread::tick(void)
+void CNetworkThread::tick()
 {
     // process periodic actions
     ADDTOCALLSTACK("CNetworkThread::tick");
@@ -190,7 +190,7 @@ void CNetworkThread::tick(void)
 	}
 }
 
-void CNetworkThread::flushAllClients(void)
+void CNetworkThread::flushAllClients()
 {
 	ADDTOCALLSTACK("CNetworkThread::flushAllClients");
 	NetworkThreadStateIterator states(this);
@@ -215,12 +215,12 @@ NetworkThreadStateIterator::NetworkThreadStateIterator(const CNetworkThread* thr
     m_safeAccess = m_thread->isActive() && !m_thread->isCurrentThread();
 }
 
-NetworkThreadStateIterator::~NetworkThreadStateIterator(void)
+NetworkThreadStateIterator::~NetworkThreadStateIterator()
 {
     m_thread = nullptr;
 }
 
-CNetState* NetworkThreadStateIterator::next(void)
+CNetState* NetworkThreadStateIterator::next()
 {
     if (m_safeAccess == false)
     {

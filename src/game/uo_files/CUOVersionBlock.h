@@ -38,7 +38,7 @@ public:
 
     word  m_wVal3;  // stuff that would have been in CUOIndexRec
     word  m_wVal4;
-public:
+
     /** @name File ops:
      */
     ///@{

@@ -42,9 +42,9 @@ public:
 	bool IsOpen();
 
 
-	sqlite3 * GetPtr() const    { return m_sqlite3; };
-	int GetLastError() const    { return m_iLastError; };
-	void ClearError()           { m_iLastError=0; };  // SQLITE_OK = 0
+	sqlite3 * GetPtr() const    { return m_sqlite3; }
+	int GetLastError() const    { return m_iLastError; }
+	void ClearError()           { m_iLastError=0; }  // SQLITE_OK = 0
 
 	SQLiteTablePtr QuerySQLPtr( lpctstr strSQL );
 	SQLiteTable QuerySQL( lpctstr strSQL );
@@ -97,19 +97,19 @@ public:
 	virtual ~SQLiteTable();
 
 	// Gets the number of columns
-	int GetColCount(){ return m_iCols; };
+	int GetColCount(){ return m_iCols; }
 
 	// Gets the number of rows
-	int GetRowCount(){ return m_iRows; };
+	int GetRowCount(){ return m_iRows; }
 
 	// Gets the current selected row. -1 when no rows exists.
-	int GetCurRow(){ return m_iPos; };
+	int GetCurRow(){ return m_iPos; }
 
 	// Gets the column name at m_iCol index.
 	// Returns null if the index is out of bounds.
 	lpctstr GetColName( int iCol );
 
-	void ResetRow(){ m_iPos = -1; };
+	void ResetRow(){ m_iPos = -1; }
 
 	// Sets the 'iterator' to the first row
 	// returns false if fails (no records)
@@ -194,10 +194,10 @@ public:
 
 	// Functor operator, will de-reference the m_pTable member.
 	// WARNING: Use with care! Check for non-null m_pTable first!
-	SQLiteTable& operator()() { return *m_pTable; };
+	SQLiteTable& operator()() { return *m_pTable; }
 
 	// bool operator, to check if m_pTable is valid.
-	operator bool() { return m_pTable != nullptr; };
+	operator bool() { return m_pTable != nullptr; }
 
 	// Detaches the class from the Table,
 	// and returns the Table that were just detached...

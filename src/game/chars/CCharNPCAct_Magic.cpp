@@ -179,7 +179,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
         // Stand and fight for a bit.
         return false;
     }
-    int skill = (int)SKILL_NONE;
+    int skill = SKILL_NONE;
     ushort uiStatInt = Stat_GetBase(STAT_INT);
     ushort uiMana = Stat_GetVal(STAT_INT);
     int iChance = ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
@@ -223,7 +223,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
         if (IsTrigUsed(TRIGGER_NPCACTCAST))
         {
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-            pScriptArgs->Init((int)spell, (int)bWandUse, 0, pTarg);
+            pScriptArgs->Init(spell, bWandUse, 0, pTarg);
             pScriptArgs->m_VarsLocal.SetNum("HealThreshold", iHealThreshold);
 
             switch (OnTrigger(CTRIG_NPCActCast, pScriptArgs, this))

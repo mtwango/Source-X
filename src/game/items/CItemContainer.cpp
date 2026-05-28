@@ -24,7 +24,7 @@ CItemContainer::CItemContainer( ITEMID_TYPE id, CItemBase *pItemDef ) :
 CItemContainer::~CItemContainer()
 {
 	CItemContainer::DeletePrepare();
-	CContainer::ClearContainer(false);		// get rid of my contents first to protect against weight calc errors.
+	ClearContainer(false);		// get rid of my contents first to protect against weight calc errors.
 
     CItemMulti *pMulti = nullptr;
     if (_uidMultiSecured.IsValidUID())
@@ -66,7 +66,7 @@ void CItemContainer::DeletePrepare()
 	if ( IsType( IT_EQ_TRADE_WINDOW ))
 		Trade_Delete();
 
-	CContainer::ContentDelete(false);	// This object and its contents need to be deleted on the same tick
+	ContentDelete(false);	// This object and its contents need to be deleted on the same tick
 	CItem::DeletePrepare();
 }
 
@@ -338,7 +338,7 @@ bool CItemContainer::Trade_Delete()
 
 int CItemContainer::GetWeight(word amount) const
 {	// true weight == container item + contents.
-	return( CItem::GetWeight(amount) + CContainer::GetTotalWeight());
+	return( CItem::GetWeight(amount) + GetTotalWeight());
 }
 
 void CItemContainer::OnWeightChange( int iChange )
@@ -673,7 +673,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 		}
 	}
 
-	CContainer::ContentAddPrivate(pItem);
+	ContentAddPrivate(pItem);
 	pItem->SetContainedPoint(pt);
 	pItem->SetContainedGridIndex(gridIndex);
 
@@ -1240,7 +1240,7 @@ void CItemContainer::Game_Create()
 		for ( size_t i = 0; i < ARRAY_COUNT(sm_Item_ChessPieces); ++i )
 		{
 			// Add all it's pieces. (if not already added)
-			CItem *pPiece = CItem::CreateBase(sm_Item_ChessPieces[i]);
+			CItem *pPiece = CreateBase(sm_Item_ChessPieces[i]);
 			if ( !pPiece )
 				break;
 			pPiece->SetType(IT_GAME_PIECE);
@@ -1263,7 +1263,7 @@ void CItemContainer::Game_Create()
 		for ( int i = 0; i < 24; ++i )
 		{
 			// Add all it's pieces. (if not already added)
-			CItem *pPiece = CItem::CreateBase(((i >= (3 * 4)) ? ITEMID_GAME1_CHECKER : ITEMID_GAME2_CHECKER));
+			CItem *pPiece = CreateBase(((i >= (3 * 4)) ? ITEMID_GAME1_CHECKER : ITEMID_GAME2_CHECKER));
 			if ( !pPiece )
 				break;
 			pPiece->SetType(IT_GAME_PIECE);
@@ -1288,7 +1288,7 @@ void CItemContainer::Game_Create()
 		for ( int i = 0; i < 30; i++ )
 		{
 			// Add all it's pieces. (if not already added)
-			CItem *pPiece = CItem::CreateBase(((i >= 15) ? ITEMID_GAME1_CHECKER : ITEMID_GAME2_CHECKER));
+			CItem *pPiece = CreateBase(((i >= 15) ? ITEMID_GAME1_CHECKER : ITEMID_GAME2_CHECKER));
 			if ( !pPiece )
 				break;
 			pPiece->SetType(IT_GAME_PIECE);

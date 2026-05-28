@@ -66,7 +66,7 @@ bool CNetworkOutput::processOutput()
 	ASSERT(!m_thread->isActive() || m_thread->isCurrentThread());
 
 	const ProfileTask networkTask(PROFILE_NETWORK_TX);
-	static thread_local uchar tick = 0;
+    thread_local uchar tick = 0;
 
 	EXC_TRY("CNetworkOutput");
 	tick = (tick == 16) ? 0 : (tick + 1);
@@ -137,7 +137,7 @@ bool CNetworkOutput::processOutput()
 	return false;
 }
 
-void CNetworkOutput::checkFlushRequests(void)
+void CNetworkOutput::checkFlushRequests()
 {
 	// check for clients who need data flushing
 	ADDTOCALLSTACK("CNetworkOutput::checkFlushRequests");
@@ -498,7 +498,7 @@ size_t CNetworkOutput::sendData(CNetState* state, const byte* data, size_t lengt
 		state->m_bufferWSA.buf = reinterpret_cast<CHAR *>(const_cast<byte *>(data));
 
 		DWORD bytesSent;
-		if (state->m_socket.SendAsync(&state->m_bufferWSA, 1, &bytesSent, 0, &state->m_overlapped, (LPWSAOVERLAPPED_COMPLETION_ROUTINE)SendCompleted_Winsock) == 0)
+		if (state->m_socket.SendAsync(&state->m_bufferWSA, 1, &bytesSent, 0, &state->m_overlapped, SendCompleted_Winsock) == 0)
 		{
 			result = bytesSent;
 			state->setSendingAsync(true);

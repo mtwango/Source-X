@@ -144,7 +144,7 @@ void CContainer::ContentAddPrivate( CItem *pItem )
 	if ( pItem->GetParent() == this )
 		return;
 
-	CSObjCont::InsertContentTail( pItem );
+	InsertContentTail( pItem );
 	//pItem->RemoveUIDFlags(UID_O_DISCONNECT);
 
 	if ( !pItem->IsType(IT_EQ_TRADE_WINDOW) )  //Don't apply trade window layer item weight on character weight.
@@ -279,7 +279,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 			{
 				if ( pCont->IsSearchable() )
 				{
-					CContainer *pContBase = dynamic_cast<CContainer *>(pCont);
+					CContainer *pContBase = pCont;
                     TRIGRET_TYPE iRet = pContBase->OnContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, rid, dwArg, iDescendLevels - 1);
 					if ( iRet != TRIGRET_ENDIF )
 						return iRet;
@@ -332,7 +332,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
 		if ( pCont && pCont->IsSearchable() )
 		{
-			CContainer *pContBase = dynamic_cast<CContainer *>(pCont);
+			CContainer *pContBase = pCont;
             iRet = pContBase->OnGenericContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, iDecendLevels - 1);
 			if ( iRet != TRIGRET_ENDIF )
 				return iRet;
@@ -711,7 +711,7 @@ bool CContainer::r_WriteValContainer( lpctstr ptcKey, CSString &sVal, CTextConso
 	{
 		case 0:			//	count
 		{
-			sVal.FormatSTVal(CSObjCont::GetContentCount());
+			sVal.FormatSTVal(GetContentCount());
 			break;
 		}
 

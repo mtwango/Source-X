@@ -142,8 +142,6 @@ public:
     //static constexpr uint32 _kuiSpeciesReservedBytes = 24;
     static constexpr uint32 _kuiSpeciesMaxVal = _kuiSpeciesMask; // 255
 
-
-public:
     CFactionDef() noexcept;
     ~CFactionDef() noexcept = default;
 

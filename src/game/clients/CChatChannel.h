@@ -29,7 +29,6 @@ public:
     sl::unique_ptr_vector<CSString>             m_Moderators;   // Current list of channel's moderators (may or may not be currently in the channel)
     sl::raw_ptr_view_vector<CChatChanMember>    m_Members;	    // Current list of members in this channel
 
-public:
     explicit CChatChannel(lpctstr pszName, lpctstr pszPassword = nullptr, bool fStatic = false);
     CChatChannel(const CChatChannel& copy) = delete;
     CChatChannel& operator=(const CChatChannel& other) = delete;

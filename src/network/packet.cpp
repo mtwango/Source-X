@@ -105,44 +105,44 @@ Packet::Packet(const byte* data, uint size) : m_buffer(nullptr)
 	memcpy(m_buffer, data, size);
 }
 
-Packet::~Packet(void)
+Packet::~Packet()
 {
 	clear();
 }
 
-bool Packet::isValid(void) const
+bool Packet::isValid() const
 {
 	return m_buffer != nullptr && m_length > 0;
 }
 
-uint Packet::getLength(void) const
+uint Packet::getLength() const
 {
 	return m_length;
 }
 
-uint Packet::getPosition(void) const
+uint Packet::getPosition() const
 {
 	return m_position;
 }
 
-byte* Packet::getData(void) const
+byte* Packet::getData() const
 {
 	return m_buffer;
 }
 
-byte* Packet::getRemainingData(void) const
+byte* Packet::getRemainingData() const
 {
 	if (m_position >= m_length)
 		return nullptr;
 	return &(m_buffer[m_position]);
 }
 
-uint Packet::getRemainingLength(void) const
+uint Packet::getRemainingLength() const
 {
 	return m_length - m_position;
 }
 
-void Packet::clear(void)
+void Packet::clear()
 {
 	if (m_buffer != nullptr)
 	{
@@ -674,13 +674,13 @@ void Packet::writeStringFixedNETUTF16(const wchar* value, uint size, bool termin
 #endif
 }
 
-void Packet::fill(void)
+void Packet::fill()
 {
 	while (m_position < m_bufferSize)
 		writeByte(0);
 }
 
-uint Packet::sync(void)
+uint Packet::sync()
 {
 	if (m_length < m_position)
 		m_length = m_position;
@@ -688,13 +688,13 @@ uint Packet::sync(void)
 	return m_length;
 }
 
-void Packet::trim(void)
+void Packet::trim()
 {
 	if (m_length > m_position)
 		m_length = m_position;
 }
 
-bool Packet::readBool(void)
+bool Packet::readBool()
 {
 	if ((m_position + sizeof(byte)) > m_length)
 		return false;
@@ -702,7 +702,7 @@ bool Packet::readBool(void)
 	return (m_buffer[m_position++] != 0);
 }
 
-char Packet::readCharASCII(void)
+char Packet::readCharASCII()
 {
 	if ((m_position + sizeof(char)) > m_length)
 		return '\0';
@@ -710,7 +710,7 @@ char Packet::readCharASCII(void)
 	return m_buffer[m_position++];
 }
 
-wchar Packet::readCharUTF16(void)
+wchar Packet::readCharUTF16()
 {
 	if ((m_position + sizeof(wchar)) > m_length)
 		return '\0';
@@ -722,7 +722,7 @@ wchar Packet::readCharUTF16(void)
 	return wc;
 }
 
-wchar Packet::readCharNETUTF16(void)
+wchar Packet::readCharNETUTF16()
 {
 	if ((m_position + sizeof(wchar)) > m_length)
 		return '\0';
@@ -734,7 +734,7 @@ wchar Packet::readCharNETUTF16(void)
 	return wc;
 }
 
-byte Packet::readByte(void)
+byte Packet::readByte()
 {
 	if ((m_position + sizeof(byte)) > m_length)
 		return 0;
@@ -742,7 +742,7 @@ byte Packet::readByte(void)
 	return m_buffer[m_position++];
 }
 
-word Packet::readInt16(void)
+word Packet::readInt16()
 {
 	if ((m_position + sizeof(word)) > m_length)
 		return 0;
@@ -754,7 +754,7 @@ word Packet::readInt16(void)
 	return w;
 }
 
-dword Packet::readInt32(void)
+dword Packet::readInt32()
 {
 	if ((m_position + sizeof(dword)) > m_length)
 		return 0;
@@ -768,7 +768,7 @@ dword Packet::readInt32(void)
 	return dw;
 }
 
-int64 Packet::readInt64(void)
+int64 Packet::readInt64()
 {
 	if ((m_position + sizeof(int64)) > m_length)
 		return 0;
@@ -1223,7 +1223,7 @@ PacketSend::PacketSend(const PacketSend *other)
 
 PacketSend::~PacketSend() = default;
 
-void PacketSend::initLength(void)
+void PacketSend::initLength()
 {
 //	DEBUGNETWORK(("Packet %x starts dynamic with pos %d.\n", m_buffer[0], m_position));
 
@@ -1246,7 +1246,7 @@ void PacketSend::fixLength()
 	}
 }
 
-PacketSend* PacketSend::clone(void) const
+PacketSend* PacketSend::clone() const
 {
 	return new PacketSend(this);
 }
@@ -1341,7 +1341,7 @@ PacketTransaction::~PacketTransaction() = default;
  *
  *
  ***************************************************************************/
-SimplePacketTransaction::~SimplePacketTransaction(void)
+SimplePacketTransaction::~SimplePacketTransaction()
 {
 	if (m_packet != nullptr)
 		delete m_packet;
@@ -1355,7 +1355,7 @@ SimplePacketTransaction::~SimplePacketTransaction(void)
  *
  *
  ***************************************************************************/
-ExtendedPacketTransaction::~ExtendedPacketTransaction(void)
+ExtendedPacketTransaction::~ExtendedPacketTransaction()
 {
 	for (std::list<PacketSend*>::iterator it = m_packets.begin(), end = m_packets.end(); it != end; ++it)
 		delete *it;
@@ -1380,7 +1380,7 @@ OpenPacketTransaction::OpenPacketTransaction(const CClient* client, int priority
 		m_client->beginTransaction(priority);
 }
 
-OpenPacketTransaction::~OpenPacketTransaction(void)
+OpenPacketTransaction::~OpenPacketTransaction()
 {
 	if (m_client != nullptr)
 		m_client->endTransaction();

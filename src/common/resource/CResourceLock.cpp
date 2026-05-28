@@ -25,7 +25,7 @@ bool CResourceLock::_Open(lpctstr ptcUnused, uint uiUnused)
     // Open a seperate copy of an already opened file.
     _pStream = m_pLock->_pStream;
     _fileDescriptor = m_pLock->_fileDescriptor;
-    CCacheableScriptFile::_dupeFrom(m_pLock);
+    _dupeFrom(m_pLock);
     // Assume this is the new error context !
     m_PrvScriptContext._OpenScript( this );
     return true;

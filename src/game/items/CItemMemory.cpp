@@ -67,7 +67,7 @@ bool CItemMemory::Guild_SetLoyalTo(CUID uid)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetLoyalTo");
 	// Some other place checks to see if this is a valid member.
-	return (m_TagDefs.SetNum("LoyalTo", (dword)uid, false) != nullptr) ? true : false;
+	return (m_TagDefs.SetNum("LoyalTo", (dword)uid, false) != nullptr);
 }
 
 CUID CItemMemory::Guild_GetLoyalTo() const
@@ -80,7 +80,7 @@ CUID CItemMemory::Guild_GetLoyalTo() const
 bool CItemMemory::Guild_SetTitle(lpctstr pszTitle)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetTitle");
-	return (m_TagDefs.SetStr("Title", false, pszTitle) != nullptr) ? true : false;
+	return (m_TagDefs.SetStr("Title", false, pszTitle) != nullptr);
 }
 
 lpctstr CItemMemory::Guild_GetTitle() const

@@ -23,10 +23,10 @@ struct CScriptLineContext
 
     constexpr CScriptLineContext() noexcept :
         m_iOffset(-1), m_iLineNum(-1)
-    {};
+    {}
     constexpr CScriptLineContext(int iOffset, int iLineNum) noexcept :
         m_iOffset(iOffset), m_iLineNum(iLineNum)
-    {};
+    {}
 };
 
 class CScriptFileContext
@@ -36,11 +36,9 @@ class CScriptFileContext
     // Track a temporary context into a script.
     // NOTE: This should ONLY be stack based !
 
-private:
     bool m_fOpenScript;	// nullptr context may be legit.
     const CScript * m_pPrvScriptContext;	// previous general context before this was opened.
 
-private:
     void _Init()
     {
         m_fOpenScript = false;
@@ -53,7 +51,7 @@ private:    void _OpenScript( const CScript * pScriptContext );
 public:     void OpenScript( const CScript * pScriptContext );
 private:	void _Close();
 public:     void Close();
-public:
+
     CScriptFileContext(): m_pPrvScriptContext(nullptr)
     {
         _Init();
@@ -78,11 +76,9 @@ class CScriptObjectContext
     // Track a temporary context of an object.
     // NOTE: This should ONLY be stack based !
 
-private:
     bool m_fOpenObject;	// nullptr context may be legit.
     const CScriptObj * m_pPrvObjectContext;	// previous general context before this was opened.
 
-private:
     void Init()
     {
         m_fOpenObject = false;

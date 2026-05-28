@@ -57,7 +57,7 @@ public:
         return *this;
     }
 
-    inline T& get() noexcept
+    T & get() noexcept
     {
         return _owner->_heldObj;
     }
@@ -83,8 +83,6 @@ public:
     CSReferenceCountedOwned(CSReferenceCountedOwned const& other) noexcept = delete;
     CSReferenceCountedOwned& operator=(CSReferenceCountedOwned const& other) noexcept = delete;
 
-
-public:
     unsigned int _counted_references;
     T _heldObj;
 
@@ -102,7 +100,7 @@ public:
     CSReferenceCountedOwned(CSReferenceCountedOwned&& other) noexcept = default;
     CSReferenceCountedOwned& operator=(CSReferenceCountedOwned&& other) noexcept = default;
 
-    inline T& get() noexcept
+    T & get() noexcept
     {
         return _heldObj;
     }

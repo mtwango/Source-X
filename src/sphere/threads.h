@@ -215,7 +215,6 @@ protected:
  */
 class DummySphereThread : public AbstractSphereThread
 {
-private:
     friend struct GlobalInitializer;
     static DummySphereThread *_instance;
 
@@ -298,7 +297,6 @@ private:
 #ifdef THREAD_TRACK_CALLSTACK
 class StackDebugInformation
 {
-private:
     AbstractSphereThread* m_context;
 
 public:

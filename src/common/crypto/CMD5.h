@@ -15,7 +15,6 @@
 
 class CMD5
 {
-private:
 	uint m_buffer[4];
 	uint m_bits[2];
 	uchar m_input[64];

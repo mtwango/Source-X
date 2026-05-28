@@ -442,8 +442,6 @@ void CClient::addContainerContents( const CItemContainer * pContainer, bool fCor
 		new PacketCorpseEquipment(this, pContainer);
 	else
 		new PacketItemContents(this, pContainer, fShop, fCorpseFilter);
-
-	return;
 }
 
 void CClient::addOpenGump( const CObjBase * pContainer, GUMP_TYPE gump ) const
@@ -789,11 +787,10 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
         if (iTalkmodeFont != UINT16_MAX)
             defaultFont = (FONT_TYPE)(gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsFont[iTalkmodeFont]));
         if (iTalkmodeUnicode != UINT16_MAX)
-            defaultUnicode = gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsUnicode[iTalkmodeUnicode]) > 0 ? true : false;
+            defaultUnicode = gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsUnicode[iTalkmodeUnicode]) > 0;
     }
 
-
-	word Args[] = { (word)wHue, (word)font, (word)fUnicode };
+	word Args[] = { wHue, (word)font, (word)fUnicode };
     lptstr ptcBarkBuffer = Str_GetTemp();  // Be sure to init this before the goto instruction
 
 	if ( *pszText == '@' )
@@ -849,7 +846,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
     if (mode <= TALKMODE_YELL)
     {
         if (Args[0] == HUE_TEXT_DEF)
-            Args[0] = (word)defaultHue;
+            Args[0] = defaultHue;
     }
 
     if (mode != TALKMODE_SPELL)
@@ -884,7 +881,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 				CArgs += ( !strcmp(ppArgs[i], "NULL") ? " " : ppArgs[i] );
 			}
 
-            addBarkLocalizedEx( iClilocId, pSrc, (HUE_TYPE)(Args[0]), mode, (FONT_TYPE)(Args[1]), (AFFIX_TYPE)(iAffixType), ppArgs[2], CArgs.GetBuffer());
+            addBarkLocalizedEx( iClilocId, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), (AFFIX_TYPE)(iAffixType), ppArgs[2], CArgs.GetBuffer());
 			break;
 		}
 
@@ -901,7 +898,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 				CArgs += ( !strcmp(ppArgs[i], "NULL") ? " " : ppArgs[i] );
 			}
 
-            addBarkLocalized( iClilocId, pSrc, (HUE_TYPE)(Args[0]), mode, (FONT_TYPE)(Args[1]), CArgs.GetBuffer());
+            addBarkLocalized( iClilocId, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), CArgs.GetBuffer());
 			break;
 		}
 
@@ -909,7 +906,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 		{
 			nachar szBuffer[ MAX_TALK_BUFFER ];
 			CvtSystemToNETUTF16( szBuffer, ARRAY_COUNT(szBuffer), ptcBarkBuffer, -1 );
-			addBarkUNICODE( szBuffer, pSrc, (HUE_TYPE)(Args[0]), mode, (FONT_TYPE)(Args[1]), 0 );
+			addBarkUNICODE( szBuffer, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), 0 );
 			break;
 		}
 
@@ -923,7 +920,7 @@ bark_default:
 				Str_ConcatLimitNull(ptcBarkBuffer, pszText, Str_TempLength());
 			}
 
-			addBark(ptcBarkBuffer, pSrc, (HUE_TYPE)(Args[0]), mode, (FONT_TYPE)(Args[1]));
+			addBark(ptcBarkBuffer, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]));
 			break;
 		}
 	}
@@ -1318,7 +1315,7 @@ void CClient::addItemName( CItem * pItem )
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, 0, this);
         pScriptArgs->m_VarsLocal.SetStrNew("ClickMsgText", &szName[0]);
-        pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", (int64)(wHue));
+        pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
         TRIGRET_TYPE ret = pItem->OnTrigger( "@AfterClick", pScriptArgs, m_pChar );	// CTRIG_AfterClick, ITRIG_AfterClick
 
@@ -1443,7 +1440,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, 0, this);
         pScriptArgs->m_VarsLocal.SetStrNew("ClickMsgText", pszTemp);
-        pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", (int64)(wHue));
+        pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
         // TODO: const correctness...
         TRIGRET_TYPE ret = const_cast<CChar*>(pChar)->OnTrigger( "@AfterClick", pScriptArgs, m_pChar );	// CTRIG_AfterClick, ITRIG_AfterClick
@@ -2613,14 +2610,14 @@ void CClient::addGlobalChatConnect()
 	// Set Jabber ID (syntax: CharName_CharUID@ServerID)
 	tchar* pszJID = Str_GetTemp();
 	sprintf(pszJID, "%.6s_%.7u@%.2hhu", m_pChar->GetName(), static_cast<dword>(m_pChar->GetUID()), 0);
-	CGlobalChatChanMember::SetJID(pszJID);
+	SetJID(pszJID);
 
 	// Send xml to client
 	tchar* pszXML = Str_GetTemp();
 	sprintf(pszXML, "<iq to=\"%s\" id=\"iq_%.10u\" type=\"6\" version=\"1\" jid=\"%s\" />",
-			CGlobalChatChanMember::GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), CGlobalChatChanMember::GetJID());
+			GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), GetJID());
 
-	CGlobalChatChanMember::SetVisible(false);
+	SetVisible(false);
 	new PacketGlobalChat(this, 0, PacketGlobalChat::Connect, PacketGlobalChat::InfoQuery, pszXML);
 	SysMessage("Global Chat is now connected.");
 }
@@ -2634,7 +2631,7 @@ void CClient::addGlobalChatStatusToggle()
 
 	int iShow;
 	lpctstr pszMsg;
-	if (CGlobalChatChanMember::IsVisible())
+	if (IsVisible())
 	{
 		iShow = 0;
 		pszMsg = "Global Chat Offline";
@@ -2647,9 +2644,9 @@ void CClient::addGlobalChatStatusToggle()
 
 	tchar* pszXML = Str_GetTemp();
 	sprintf(pszXML, "<presence from=\"%s\" id=\"pres_%.10u\" name=\"%.6s\" show=\"%d\" version=\"1\" />",
-			CGlobalChatChanMember::GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), m_pChar->GetName(), iShow);
+			GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), m_pChar->GetName(), iShow);
 
-	CGlobalChatChanMember::SetVisible(static_cast<bool>(iShow));
+	SetVisible(static_cast<bool>(iShow));
 	new PacketGlobalChat(this, 0, PacketGlobalChat::Connect, PacketGlobalChat::Presence, pszXML);
 	SysMessage(pszMsg);
 
@@ -3039,7 +3036,7 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
     else
     {
         uchar uiChars = (uchar)(maximum(m_pAccount->GetMaxChars(), m_pAccount->m_Chars.GetCharCount()));
-        dwFeatureFlags = g_Cfg.GetPacketFlag( false, (RESDISPLAY_VERSION)(m_pAccount->GetResDisp()), uiChars );
+        dwFeatureFlags = g_Cfg.GetPacketFlag( false, m_pAccount->GetResDisp(), uiChars );
     }
 	new PacketEnableFeatures(this, dwFeatureFlags);
 	new PacketCharacterList(this);

@@ -17,7 +17,7 @@ CUOInstall::CUOInstall()
 	memset(m_FileFormat, 0, sizeof(m_FileFormat));
 	memset(m_IsMapUopFormat, 0, sizeof(m_IsMapUopFormat));
 	memset(m_UopMapAddress, 0, sizeof(m_UopMapAddress));
-};
+}
 
 CSString CUOInstall::GetFullExePath( lpctstr pszName ) const
 {
@@ -216,7 +216,7 @@ bool CUOInstall::OpenFile( VERFILE_TYPE i )
 			return true;
 	}
 
-	lpctstr pszTitle = GetBaseFileName((VERFILE_TYPE)i);
+	lpctstr pszTitle = GetBaseFileName(i);
 	if ( !pszTitle )
         return false;
 
@@ -529,7 +529,7 @@ bool CUOInstall::ReadMulIndex(CSFile &file, dword id, CUOIndexRec &Index)
 	if ( file.Seek(iOffset, SEEK_SET) != iOffset )
 		return false;
 
-	if ( (uint)file.Read(static_cast<void *>(&Index), sizeof(CUOIndexRec)) != sizeof(CUOIndexRec) )
+	if ( (uint)file.Read(&Index, sizeof(CUOIndexRec)) != sizeof(CUOIndexRec) )
 		return false;
 
 	return Index.HasData();
@@ -654,7 +654,7 @@ void CVerDataMul::Load(CSFile & file)
 
 	file.SeekToBegin();
 	dword dwQty;
-	if (file.Read(static_cast<void *>(&dwQty), sizeof(dwQty)) <= 0)
+	if (file.Read(&dwQty, sizeof(dwQty)) <= 0)
 	{
 		throw CSError(LOGL_CRIT, CSFile::GetLastError(), "VerData: Read Qty");
 	}
@@ -662,7 +662,7 @@ void CVerDataMul::Load(CSFile & file)
 	Unload();
 	m_Data.resize(dwQty);
 
-	if (file.Read(static_cast<void *>(m_Data.data()), dwQty * sizeof(CUOVersionBlock)) <= 0)
+	if (file.Read(m_Data.data(), dwQty * sizeof(CUOVersionBlock)) <= 0)
 	{
 		throw CSError(LOGL_CRIT, CSFile::GetLastError(), "VerData: Read");
 	}
@@ -749,15 +749,15 @@ ullong HashFileName(CSString csFile)
 	uint eax, ecx, edx, ebx, esi, edi;
 
 	eax = ecx = edx = 0;
-	ebx = edi = esi = (int32) csFile.GetLength() + 0xDEADBEEF;
+	ebx = edi = esi = csFile.GetLength() + 0xDEADBEEF;
 
 	int i = 0;
 
 	for ( ; i + 12 < csFile.GetLength(); i += 12 )
 	{
-		edi = (int32) ( ( csFile[ i + 7 ] << 24 ) | ( csFile[ i + 6 ] << 16 ) | ( csFile[ i + 5 ] << 8 ) | csFile[ i + 4 ] ) + edi;
-		esi = (int32) ( ( csFile[ i + 11 ] << 24 ) | ( csFile[ i + 10 ] << 16 ) | ( csFile[ i + 9 ] << 8 ) | csFile[ i + 8 ] ) + esi;
-		edx = (int32) ( ( csFile[ i + 3 ] << 24 ) | ( csFile[ i + 2 ] << 16 ) | ( csFile[ i + 1 ] << 8 ) | csFile[ i ] ) - esi;
+		edi = ( ( csFile[ i + 7 ] << 24 ) | ( csFile[ i + 6 ] << 16 ) | ( csFile[ i + 5 ] << 8 ) | csFile[ i + 4 ] ) + edi;
+		esi = ( ( csFile[ i + 11 ] << 24 ) | ( csFile[ i + 10 ] << 16 ) | ( csFile[ i + 9 ] << 8 ) | csFile[ i + 8 ] ) + esi;
+		edx = ( ( csFile[ i + 3 ] << 24 ) | ( csFile[ i + 2 ] << 16 ) | ( csFile[ i + 1 ] << 8 ) | csFile[ i ] ) - esi;
 
 		edx = ( edx + ebx ) ^ ( esi >> 28 ) ^ ( esi << 4 );
 		esi += edi;

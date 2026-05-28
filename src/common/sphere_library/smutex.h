@@ -22,7 +22,6 @@
 */
 class SimpleMutex
 {
-private:
 #ifdef _WIN32
     CRITICAL_SECTION m_criticalSection;   // Windows API specific mutex.
 #else
@@ -40,7 +39,7 @@ public:
 	SimpleMutex(const SimpleMutex& copy) = delete;
 	SimpleMutex& operator=(const SimpleMutex& other) = delete;
 	///@}
-public:
+
 	/** @name Interaction:
 	*/
 	///@{
@@ -50,7 +49,7 @@ public:
 	* Waits for ownership of the specified critical section object. The function
 	* returns when the calling thread is granted ownership.
 	*/
-	inline void lock() noexcept
+	void lock() noexcept
 	{
 #ifdef _WIN32
 		EnterCriticalSection(&m_criticalSection);
@@ -66,7 +65,7 @@ public:
     * @return True If the critical section is successfully entered or the current
     * thread already owns the critical section, false otherwise.
 	*/
-	inline bool tryLock() noexcept
+    bool tryLock() noexcept
 	{
 #ifdef _WIN32
 		return TryEnterCriticalSection(&m_criticalSection) == TRUE;
@@ -79,7 +78,7 @@ public:
 	*
 	* Releases ownership of the specified critical section object.
 	*/
-	inline void unlock() noexcept
+    void unlock() noexcept
 	{
 #ifdef _WIN32
 		LeaveCriticalSection(&m_criticalSection);
@@ -101,21 +100,21 @@ public:
 	/** @name Constructors, Destructor, Assign operator:
 	*/
 	///@{
-	inline explicit SimpleThreadLock(SimpleMutex &mutex) noexcept
+    explicit SimpleThreadLock(SimpleMutex &mutex) noexcept
         : m_mutex(mutex), m_locked(true) {
 		mutex.lock();
 	}
-	inline ~SimpleThreadLock() noexcept {
+    ~SimpleThreadLock() noexcept {
 		m_mutex.unlock();
 	}
-	inline void unlock() noexcept {
+    void unlock() noexcept {
         m_mutex.unlock();
     }
 
 	SimpleThreadLock(const SimpleThreadLock& copy) = delete;
 	SimpleThreadLock& operator=(const SimpleThreadLock& other) = delete;
 	///@}
-public:
+
 	/** @name Operators:
 	*/
 	///@{
@@ -124,7 +123,7 @@ public:
 	*
 	* In practice, this is always true.
 	*/
-	inline operator bool() const {
+    operator bool() const {
 		return m_locked;
 	}
 	///@}
@@ -143,13 +142,13 @@ public:
 	/** @name Constructors, Destructor, Assign operator:
 	*/
 	///@{
-	inline ManualThreadLock() noexcept
+    ManualThreadLock() noexcept
         : m_mutex(nullptr), m_locked(false) {
 	}
-	inline explicit ManualThreadLock(SimpleMutex * mutex) noexcept : m_locked(false) {
+    explicit ManualThreadLock(SimpleMutex * mutex) noexcept : m_locked(false) {
 		setMutex(mutex);
 	}
-	inline ~ManualThreadLock() noexcept {
+    ~ManualThreadLock() noexcept {
 		if (m_mutex != nullptr)
 			doUnlock();
 	}
@@ -157,7 +156,7 @@ public:
 	ManualThreadLock(const ManualThreadLock& copy) = delete;
 	ManualThreadLock& operator=(const ManualThreadLock& other) = delete;
 	///@}
-public:
+
 	/** @name Modifiers:
 	*/
 	///@{
@@ -165,14 +164,14 @@ public:
 	* @brief Sets the mutex to modify.
 	* @param mutex
 	*/
-	inline void setMutex(SimpleMutex * mutex) noexcept {
+    void setMutex(SimpleMutex * mutex) noexcept {
 		m_mutex = mutex;
 	}
 	///@}
 	/** @name Operators:
 	*/
 	///@{
-	inline operator bool() const {
+    operator bool() const {
 		return m_locked;
 	}
 	///@}

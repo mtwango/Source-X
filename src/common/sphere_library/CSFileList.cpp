@@ -23,7 +23,7 @@ bool CSFileList::ReadFileInfo( lpctstr pszFilePath, time_t & dwDateChange, dword
 	ADDTOCALLSTACK("CSFileList::ReadFileInfo");
 #ifdef _WIN32
 	// WIN32
-	struct _finddata_t fileinfo;
+    _finddata_t fileinfo;
 	fileinfo.attrib = _A_NORMAL;
 	intptr_t lFind = _findfirst( pszFilePath, &fileinfo );
 
@@ -68,7 +68,7 @@ int CSFileList::ReadDir( lpctstr pszFileDir, bool bShowError )
 #endif
 
 #ifdef _WIN32
-	struct _finddata_t fileinfo;
+    _finddata_t fileinfo;
 	intptr_t lFind = _findfirst(szFileDir, &fileinfo);
 
 	if ( lFind == -1 )

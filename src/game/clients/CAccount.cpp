@@ -216,7 +216,7 @@ bool CAccounts::Account_Delete( CAccount * pAccount )
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(pAccount->GetName());
-	enum TRIGRET_TYPE tr = TRIGRET_RET_FALSE;
+    TRIGRET_TYPE tr = TRIGRET_RET_FALSE;
     g_Serv.r_Call("f_onaccount_delete", pScriptArgs, &g_Serv, nullptr, &tr);
 	if ( tr == TRIGRET_RET_TRUE )
 	{
@@ -584,7 +584,7 @@ CAccount::CAccount( lpctstr pszName, bool fGuest )
 	g_Serv.StatInc( SERV_STAT_ACCOUNTS );
 
 	tchar szName[ MAX_ACCOUNT_NAME_SIZE ];
-	if ( !CAccount::NameStrip( szName, pszName ) )
+	if ( !NameStrip( szName, pszName ) )
 		g_Log.Event(LOGL_ERROR|LOGM_INIT, "Account '%s': BAD name\n", pszName);
 	m_sName = szName;
 
@@ -653,7 +653,7 @@ int64 CAccount::GetDefNum( lpctstr ptcKey ) const
 }
 void CAccount::SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero)
 {
-    CAccount::m_BaseDefs.SetNum(ptcKey, iVal, fZero);
+    m_BaseDefs.SetNum(ptcKey, iVal, fZero);
 }
 void CAccount::SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted, bool fZero)
 {
@@ -854,7 +854,7 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 	BlockLocalTime_t::iterator itData = m_BlockIP.find(dwCurrentIP);
 	if ( itData != m_BlockIP.end() )
 	{
-		BlockLocalTimePair_t itResult = (*itData).second;
+		BlockLocalTimePair_t itResult = itData->second;
 		TimeTriesStruct_t & ttsData = itResult.first;
 		ttsData.m_Last = timeCurrent;
 
@@ -882,7 +882,7 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 				}
 				else if ( itResult.second == iAccountMaxTries )
 				{
-					ttsData.m_vcDelay = ttsData.m_Last + (llong)(g_Cfg.m_iClientLoginTempBan);
+					ttsData.m_vcDelay = ttsData.m_Last + g_Cfg.m_iClientLoginTempBan;
 					bReturn = false;
 				}
 			}
@@ -920,7 +920,7 @@ void CAccount::ClearPasswordTries(bool bAll)
 	llong timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 	for ( BlockLocalTime_t::iterator itData = m_BlockIP.begin(), end = m_BlockIP.end(); itData != end; )
 	{
-		BlockLocalTimePair_t itResult = (*itData).second;
+		BlockLocalTimePair_t itResult = itData->second;
 		if ( (timeCurrent - itResult.first.m_Last) > g_Cfg.m_iClientLoginTempBan )
 		{
 			itData = m_BlockIP.erase(itData);

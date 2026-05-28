@@ -45,7 +45,7 @@ struct nword
 } PACK_NEEDED;
 
 // Aligned network word.
-struct alignas(alignof(wchar)) naword : public nword
+struct alignas(alignof(wchar)) naword : nword
 {
     template <typename T>
     naword& operator = (T) = delete;
@@ -67,7 +67,7 @@ struct alignas(alignof(wchar)) naword : public nword
         return *this;
     }
     naword& operator = (unsigned char var) noexcept {
-        nword::operator=(static_cast<word>(var));
+        nword::operator=(var);
         return *this;
     }
 } PACK_NEEDED;

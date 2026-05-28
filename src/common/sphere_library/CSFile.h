@@ -70,13 +70,14 @@ protected: void _NotifyIOError( lpctstr szMessage ) const;
     ///@}
 	/** @name File Management:
 	 */
-public:
+
 	///@{
 	/**
 	* @brief Closes the file if is open.
 	*/
-protected:  virtual void _Close();
-public:     virtual void Close();
+    virtual void _Close();
+public:
+    virtual void Close();
     /**
     * @brief Open a file in a specified mode.
     * @param ptcFilename file to open.

@@ -733,7 +733,6 @@ public:
     };
     */
 
-public:
 	PacketEffect(const CClient* target, EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBaseTemplate* dst, const CObjBaseTemplate* src, byte speed, byte loop, bool explode);
 	PacketEffect(const CClient* target, EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBaseTemplate* dst, const CObjBaseTemplate* src, byte speed, byte loop, bool explode, dword hue, dword render);
 	PacketEffect(const CClient* target, EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBaseTemplate* dst, const CObjBaseTemplate* src, byte speed, byte loop, bool explode, dword hue, dword render, word effectid, dword explodeid, word explodesound, dword effectuid, byte type);

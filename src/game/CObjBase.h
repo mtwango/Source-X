@@ -521,7 +521,7 @@ public:
      *
      * @return  An int.
      */
-	virtual int IsWeird() const override;
+	int IsWeird() const override;
 
 	// Accessors
 

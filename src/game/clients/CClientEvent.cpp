@@ -1018,7 +1018,7 @@ void CClient::Event_CombatMode( bool fWar ) // Only for switching to combat mode
 			fCleanSkill = false;
 
         if ( pScriptArgs->m_iN3 != 0 && pScriptArgs->m_iN3 < 3)
-            fWar = (pScriptArgs->m_iN3 == 1 ? false : true);
+            fWar = (pScriptArgs->m_iN3 != 1);
 	}
 
 	m_pChar->StatFlag_Mod( STATF_WAR, fWar );

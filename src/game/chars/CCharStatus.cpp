@@ -1179,7 +1179,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
         const PLEVEL_TYPE plevelMe = GetPrivLevel();
         const PLEVEL_TYPE plevelChar = pChar->GetPrivLevel();
 		if ( IsPriv(PRIV_ALLSHOW) )
-			return (plevelMe < plevelChar) ? false : true;
+			return (plevelMe >= plevelChar);
 
 		if ( m_pNPC && pChar->IsStatFlag(STATF_DEAD) )
 		{

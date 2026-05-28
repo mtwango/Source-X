@@ -1418,7 +1418,7 @@ int64 CItem::GetDecayTime() const
             if (m_itCrop.m_Respawn_Sec > 0) // MORE1 override
                 return (m_itCrop.m_Respawn_Sec * MSECS_PER_SEC);
 
-            const int64 iTimeNextNewMoon = CWorldGameTime::GetNextNewMoon((GetTopPoint().m_map == 1) ? false : true);
+            const int64 iTimeNextNewMoon = CWorldGameTime::GetNextNewMoon((GetTopPoint().m_map != 1));
             const int64 iMinutesDelay = g_Rand.GetLLVal(20) * g_Cfg.m_iGameMinuteLength;
 			return (iTimeNextNewMoon - CWorldGameTime::GetCurrentTime().GetTimeRaw() + iMinutesDelay);
         }

@@ -365,7 +365,7 @@ int CSocket::Connect( lpctstr pszHostName, word wPort )
 SOCKET CSocket::Accept(sockaddr_in * pSockAddrIn ) const
 {
 	int len = sizeof(struct sockaddr_in);
-	return accept( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len);
+	return accept( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len));
 }
 
 SOCKET CSocket::Accept( CSocketAddress & SockAddr ) const
@@ -380,14 +380,14 @@ SOCKET CSocket::Accept( CSocketAddress & SockAddr ) const
 int CSocket::Send( const void * pData, int len ) const
 {
 	// RETURN: length sent
-	return( send( m_hSocket, static_cast<const char *>(pData), len, 0 ));
+	return send( m_hSocket, static_cast<const char *>(pData), len, 0 );
 }
 
 int CSocket::Receive( void * pData, int len, int flags )
 {
 	// RETURN: length, <= 0 is closed or error.
 	// flags = MSG_PEEK or MSG_OOB
-	return( recv( m_hSocket, static_cast<char *>(pData), len, flags ));
+	return recv( m_hSocket, static_cast<char *>(pData), len, flags );
 }
 
 int CSocket::GetSockName(sockaddr_in * pSockAddrIn ) const
@@ -395,7 +395,7 @@ int CSocket::GetSockName(sockaddr_in * pSockAddrIn ) const
 	// Get the address of the near end. (us)
 	// RETURN: 0 = success
 	int len = sizeof( *pSockAddrIn );
-	return( getsockname( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len ));
+	return getsockname( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len));
 }
 
 CSocketAddress CSocket::GetSockName() const
@@ -415,7 +415,7 @@ int CSocket::GetPeerName(sockaddr_in * pSockAddrIn ) const
 	// Get the address of the far end.
 	// RETURN: 0 = success
 	int len = sizeof( *pSockAddrIn );
-	return( getpeername( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), &len ));
+	return getpeername( m_hSocket, reinterpret_cast<sockaddr *>(pSockAddrIn), reinterpret_cast<socklen_t *>(&len));
 }
 
 CSocketAddress CSocket::GetPeerName( ) const
@@ -438,7 +438,7 @@ int CSocket::SetSockOpt( int nOptionName, const void * optval, int optlen, int n
 
 int CSocket::GetSockOpt( int nOptionName, void * optval, int * poptlen, int nLevel ) const
 {
-    return( getsockopt( m_hSocket, nLevel, nOptionName, static_cast<char *>(optval), poptlen));
+    return getsockopt( m_hSocket, nLevel, nOptionName, static_cast<char *>(optval), reinterpret_cast<socklen_t *>(poptlen));
 }
 
 #ifdef _WIN32

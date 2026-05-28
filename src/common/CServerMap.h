@@ -52,12 +52,11 @@ public:
 	CServerStaticsBlock(const CServerStaticsBlock& copy) = delete;
 	CServerStaticsBlock& operator=(const CServerStaticsBlock& other) = delete;
 
-public:
     void LoadStatics(dword dwBlockIndex, int map);
     void LoadStatics(uint uiCount, CUOStaticItemRec * pStatics);
 
     // These methods are called so frequently but in so few pieces of code that's very important to inline them
-	inline uint GetStaticQty() const {
+	uint GetStaticQty() const {
 		return m_iStatics;
 	}
     const CUOStaticItemRec * GetStatic( uint i ) const;
@@ -95,14 +94,12 @@ struct CServerMapBlockingState
 	CServerMapBlocker m_Bottom;	// What i would be standing on.
 	CServerMapBlocker m_Lowest;	// the lowest item we have found.
 
-public:
 	CServerMapBlockingState( uint64 uiBlockFlags, int8 m_z, int iHeight = PLAYER_HEIGHT, height_t zHeight = PLAYER_HEIGHT ) noexcept;
 	CServerMapBlockingState( uint64 uiBlockFlags, int8 m_z, int iHeight, int8 zClimb, height_t zHeight = PLAYER_HEIGHT ) noexcept;
 
 	CServerMapBlockingState(const CServerMapBlockingState& copy) = delete;
 	CServerMapBlockingState& operator=(const CServerMapBlockingState& other) = delete;
 
-public:
     bool CheckTile( uint64 uiItemBlockFlags, int8 zBottom, height_t zheight, dword wID ) noexcept;
 	bool CheckTile_Item( uint64 uiItemBlockFlags, int8 zBottom, height_t zheight, dword wID ) noexcept;
 	bool CheckTile_Terrain( uint64 uiItemBlockFlags, int8 z, dword dwID ) noexcept;
@@ -128,7 +125,7 @@ struct CServerMapDiffBlock
 struct CServerMapDiffBlockArray : public CSObjSortArray< CServerMapDiffBlock*, dword >
 {
     CServerMapDiffBlockArray() = default;
-	int CompareKey( dword id, CServerMapDiffBlock* pBase, bool fNoSpaces ) const;
+	int CompareKey( dword id, CServerMapDiffBlock* pBase, bool fNoSpaces ) const override;
 
 	CServerMapDiffBlockArray(const CServerMapDiffBlockArray& copy) = delete;
 	CServerMapDiffBlockArray& operator=(const CServerMapDiffBlockArray& other) = delete;
@@ -151,7 +148,6 @@ public:
 	CServerMapDiffCollection(const CServerMapDiffCollection& copy) = delete;
 	CServerMapDiffCollection& operator=(const CServerMapDiffCollection& other) = delete;
 
-public:
 	void Init();
 	CServerMapDiffBlock * GetAtBlock( int bx, int by, int map );
 	CServerMapDiffBlock * GetAtBlock( dword dwBlockId, int map );

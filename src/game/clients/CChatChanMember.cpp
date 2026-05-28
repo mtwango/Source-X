@@ -182,14 +182,14 @@ CClient * CChatChanMember::GetClientActive() NOEXCEPT_NODEBUG
 {
     ADDTOCALLSTACK("CChatChanMember::GetClientActive");
     DEBUG_ASSERT(dynamic_cast<CClient*>(this));
-    return static_cast <CClient*>( this );
+    return dynamic_cast <CClient*>( this );
 }
 
 const CClient * CChatChanMember::GetClientActive() const NOEXCEPT_NODEBUG
 {
     ADDTOCALLSTACK("CChatChanMember::GetClientActive(const)");
     DEBUG_ASSERT(dynamic_cast<const CClient*>(this));
-    return static_cast <const CClient*>( this );
+    return dynamic_cast <const CClient*>( this );
 }
 
 lpctstr CChatChanMember::GetChatName() const

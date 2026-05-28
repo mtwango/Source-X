@@ -20,33 +20,33 @@ struct CSStringSortArray final : public CSObjSortArray< tchar*, tchar* >
     CSStringSortArray() noexcept {
         _fBaseDestructorShouldDeleteElements = false;
     }
-    virtual ~CSStringSortArray() noexcept;
+    ~CSStringSortArray() noexcept override;
 
     void clear() noexcept = delete;
-    virtual void ClearFree() override;
+    void ClearFree() override;
 
     CSStringSortArray(const CSStringSortArray& copy) = delete;
     CSStringSortArray& operator=(const CSStringSortArray& other) = delete;
 
     // Sorted array of strings
-    virtual int CompareKey( tchar* pszID1, tchar* pszID2, bool fNoSpaces ) const override;
+    int CompareKey( tchar* pszID1, tchar* pszID2, bool fNoSpaces ) const override;
     void AddSortString( lpctstr pszText );
 
 protected:
-    virtual void DestroyElements() noexcept override;
+    void DestroyElements() noexcept override;
 };
 
-struct CObjNameSortArray final : public CSObjSortArray< CScriptObj*, lpctstr >
+struct CObjNameSortArray final : CSObjSortArray< CScriptObj*, lpctstr >
 {
     static const char *m_sClassName;
     CObjNameSortArray() = default;
-    virtual ~CObjNameSortArray() = default;
+    ~CObjNameSortArray() override = default;
 
     CObjNameSortArray(const CObjNameSortArray& copy) = delete;
     CObjNameSortArray& operator=(const CObjNameSortArray& other) = delete;
 
     // Array of CScriptObj. name sorted.
-    int CompareKey( lpctstr pszID, CScriptObj* pObj, bool fNoSpaces ) const;
+    int CompareKey( lpctstr pszID, CScriptObj* pObj, bool fNoSpaces ) const override;
 };
 
 class CSkillKeySortArray final : public CSObjSortArray< CValStr*, lpctstr >
@@ -56,27 +56,27 @@ class CSkillKeySortArray final : public CSObjSortArray< CValStr*, lpctstr >
     CSkillKeySortArray(const CSkillKeySortArray& copy) = delete;
     CSkillKeySortArray& operator=(const CSkillKeySortArray& other) = delete;
 
-    int CompareKey( lpctstr ptcKey, CValStr * pVal, bool fNoSpaces ) const;
+    int CompareKey( lpctstr ptcKey, CValStr * pVal, bool fNoSpaces ) const override;
 };
 
 struct CMultiDefArray final : public CSObjSortArray< CUOMulti*, MULTI_TYPE >
 {
     // store the static components of a IT_MULTI
     // Sorted array
-    int CompareKey( MULTI_TYPE id, CUOMulti* pBase, bool fNoSpaces ) const;
+    int CompareKey( MULTI_TYPE id, CUOMulti* pBase, bool fNoSpaces ) const override;
 };
 
 
 template <typename _ObjType>
 struct CObjUniquePtrNameVectorSorter
 {
-    inline bool operator()(std::unique_ptr<_ObjType> const& s1, std::unique_ptr<_ObjType> const& s2) const noexcept
+    bool operator()(std::unique_ptr<_ObjType> const& s1, std::unique_ptr<_ObjType> const& s2) const noexcept
     {
         //return (Str_CmpHeadI(s1->GetName(), s2->GetName()) < 0); // not needed, since the compared strings don't contain whitespaces (arguments or whatsoever)
         // Current strcmpi implementation internally converts to lowerCASE the strings, so this will work until Str_CmpHeadI checks with tolower, instead of toupper
         return (strcmpi(s1->GetName(), s2->GetName()) < 0);
     }
-    inline static int _compare(std::unique_ptr<_ObjType> const& pObj, lpctstr ptcKey)
+    static int _compare(std::unique_ptr<_ObjType> const& pObj, lpctstr ptcKey)
     {
         return -Str_CmpHeadI(ptcKey, pObj->GetName());  // We use Str_CmpHeadI to ignore '_' and whitespaces (args to the function or whatever) in ptcKey
     }
@@ -86,8 +86,8 @@ class CObjUniquePtrNameSortVector final : public sl::unique_ptr_sorted_vector<_O
 {
 public:
     //static const char *m_sClassName;
-    inline size_t find_sorted(lpctstr ptcKey) const noexcept { return this->find_predicate(ptcKey, CObjUniquePtrNameVectorSorter<_ObjType>::_compare);        }
-    inline bool   ContainsKey(lpctstr ptcKey) const noexcept { return (sl::scont_bad_index() != this->find_sorted(ptcKey)); }
+    size_t find_sorted(lpctstr ptcKey) const noexcept { return this->find_predicate(ptcKey, CObjUniquePtrNameVectorSorter<_ObjType>::_compare);        }
+    bool ContainsKey(lpctstr ptcKey) const noexcept { return (sl::scont_bad_index() != this->find_sorted(ptcKey)); }
 };
 
 #endif // _INC_CRESOURCESORTEDARRAYS_H

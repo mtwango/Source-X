@@ -660,7 +660,7 @@ private:
 public:
 	CServerConfig();
     void SetIniDirectory(const char* path);
-	virtual ~CServerConfig();
+	~CServerConfig() override;
 
 	CServerConfig(const CServerConfig& copy) = delete;
 	CServerConfig& operator=(const CServerConfig& other) = delete;
@@ -672,9 +672,9 @@ private:
     void AddResourceDir( lpctstr pszDirName );
 
 public:
-	virtual bool r_LoadVal( CScript &s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_LoadVal( CScript &s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
 
     /**
      * @brief   Loads sphere.ini.

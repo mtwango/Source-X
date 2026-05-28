@@ -608,7 +608,7 @@ protected:
 public:
 	bool _OnTick() override;
 
-    bool _CanTick(bool fParentGoingToSleep) const override final;
+    bool _CanTick(bool fParentGoingToSleep) const final;
 	bool _CanHoldTimer() const;
 
     void DupeCopy( const CObjBase * pItem ) override;

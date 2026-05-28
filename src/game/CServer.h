@@ -30,7 +30,7 @@ enum class ServMode
     StartupLoadingScripts,  // Initial load.
     StartupLoadingSaves,
     ResyncLoad,             // Loading after resync.
-    Exiting                 // Closing down.
+    Exiting,                 // Closing down.
 };
 
 
@@ -73,12 +73,11 @@ private:
 
 public:
 	CServer();
-	virtual ~CServer() override;
+	~CServer() override;
 
 	CServer(const CServer& copy) = delete;
 	CServer& operator=(const CServer& other) = delete;
 
-public:
     void SetServerMode( ServMode mode );
     ServMode GetServerMode() const noexcept;
     bool IsStartupLoadingScripts() const noexcept;
@@ -101,35 +100,34 @@ public:
 
 	bool Load();
 
-	virtual void SysMessage( lpctstr pMsg ) const override;
+	void SysMessage( lpctstr pMsg ) const override;
     void SysMessage(std::unique_ptr<ConsoleOutput>&& pMsg) const;
 	void PrintTelnet( lpctstr pszMsg ) const;
     void PrintStr(lpctstr pMsg) const;
     void PrintStr(ConsoleTextColor iColor, lpctstr pMsg) const;
 	ssize_t PrintPercent( ssize_t iCount, ssize_t iTotal ) const;
 
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
 
 	lpctstr GetStatusString( byte iIndex = 0 ) const;
-	virtual int64 GetAgeHours() const override;
+	int64 GetAgeHours() const override;
 
 	bool OnConsoleCmd( CSString & sText, CTextConsole * pSrc );
 
 	void _OnTick();
 
-public:
 	void ListClients( CTextConsole * pClient ) const;
 	void SetResyncPause( bool fPause, CTextConsole * pSrc, bool bMessage = false );
     bool CommandLinePreLoad( int argc, tchar * argv[] );
     bool CommandLinePostLoad( int argc, tchar * argv[] );
 
-	virtual lpctstr GetName() const override {
+	lpctstr GetName() const override {
 	    return CServerDef::GetName();
     }
-	virtual PLEVEL_TYPE GetPrivLevel() const override;
+	PLEVEL_TYPE GetPrivLevel() const override;
 } g_Serv;	// current state stuff not saved.
 
 

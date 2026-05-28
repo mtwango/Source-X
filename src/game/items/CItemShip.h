@@ -20,25 +20,24 @@ private:
     CUID m_uidHold;
     std::vector<CUID> m_uidPlanks;
 
-    virtual bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
-    virtual void r_Write(CScript & s) override;
-    virtual bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
-    virtual bool r_LoadVal(CScript & s) override;
-    virtual bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
-    virtual int FixWeirdness() override;
+    bool r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef) override;
+    void r_Write(CScript & s) override;
+    bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_LoadVal(CScript & s) override;
+    bool r_Verb(CScript & s, CTextConsole * pSrc) override; // Execute command from script
+    int FixWeirdness() override;
 
     void OnComponentCreate(CItem * pComponent);
 
 public:
     static const char *m_sClassName;
     CItemShip(ITEMID_TYPE id, CItemBase * pItemDef);
-    virtual ~CItemShip() override = default;
+    ~CItemShip() override = default;
 
     CItemShip(const CItemShip& copy) = delete;
     CItemShip& operator=(const CItemShip& other) = delete;
 
-public:
-    virtual bool _OnTick() override;
+    bool _OnTick() override;
     CItemContainer * GetShipHold();
     size_t GetShipPlankCount();
     CItem * GetShipPlank(size_t index);

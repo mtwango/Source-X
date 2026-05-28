@@ -137,7 +137,7 @@ public:
     void SetWindowTitle(LPCTSTR pText = nullptr);
 
     CNTWindow();
-    virtual ~CNTWindow();
+    ~CNTWindow() override;
 
     char	m_zCommands[5][256];
 } g_NTWindow;   // extern class

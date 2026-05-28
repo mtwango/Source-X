@@ -14,12 +14,10 @@
 template<class TYPE,class KEY_TYPE>
 class CSObjSortArray : public CSObjArray<TYPE>
 {
-	/** @name Constructors, Destructor, Assign operator:
-	 */
-	///@{
+
 public:
     CSObjSortArray() = default;
-    virtual ~CSObjSortArray() override = default;
+    ~CSObjSortArray() override = default;
 
 	/**
     * @brief No copy on construction allowed.
@@ -29,11 +27,7 @@ public:
     * @brief No copy allowed.
     */
 	CSObjSortArray<TYPE, KEY_TYPE> & operator=(const CSObjSortArray<TYPE, KEY_TYPE> & other) = delete;
-	///@}
-	/** @name Modifiers:
-	 */
-	///@{
-public:
+
 	/**
     * @brief Adds a value into a position.
     * @see FindKeyNear()
@@ -64,10 +58,7 @@ public:
     * @param key to remove.
     */
 	void DeleteKey( KEY_TYPE key );
-	///@}
-	/** @name Operations:
-	 */
-	///@{
+
 	/**
     * @brief Check if a key is in the index.
     * @param key key we are looking for.
@@ -92,7 +83,6 @@ public:
     * @return a valid index if the key is in the array, BadIndex otherwise.
     */
 	size_t FindKey( KEY_TYPE key ) const;
-	///@}
 };
 
 

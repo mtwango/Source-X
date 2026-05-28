@@ -121,7 +121,7 @@ public:
     * more1 Resource Check
     * resource (item/char) generation
     */
-    virtual CCRET_TYPE OnTickComponent() override;
+    CCRET_TYPE OnTickComponent() override;
     /**
     * @brief Removes everything created by this spawn, if still belongs to the spawn.
     */

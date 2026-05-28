@@ -15,7 +15,6 @@
 #include "CBase.h"
 #include "CServerConfig.h"
 
-
 class PacketSend;
 class PacketPropertyList;
 class CCSpawn;
@@ -23,7 +22,6 @@ class CClientTooltip;
 
 class CSector;
 class CWorldTicker;
-
 
 /**
  * @brief   Gets dir string.
@@ -96,10 +94,9 @@ protected:
     dword m_PropertyHash;				// latest property list hash
     dword m_PropertyRevision;			// current property list revision
 
-
 public:
     explicit CObjBase(bool fItem);
-    virtual ~CObjBase();
+    ~CObjBase() override;
 
     CObjBase(const CObjBase& copy) = delete;
     CObjBase& operator=(const CObjBase& other) = delete;
@@ -113,7 +110,7 @@ protected:
     void DeleteCleanup(bool fForce) NONVIRTUAL;
 
 public:
-    inline bool _IsBeingDeleted() const noexcept
+    bool _IsBeingDeleted() const noexcept
     {
         return HAS_FLAGS_ANY(_uiInternalStateFlags, SF_DELETING);
     }
@@ -121,8 +118,10 @@ public:
 protected:  virtual bool _IsIdle() const;
 public:     virtual bool  IsIdle() const;
 
-protected:  virtual bool _IsDeleted() const override;
-public:     virtual bool  IsDeleted() const override;
+protected:
+    bool _IsDeleted() const override;
+public:
+    bool  IsDeleted() const override;
 
     /**
      * @brief   Deletes this CObjBase from game (doesn't delete the raw class instance).
@@ -137,7 +136,6 @@ public:     virtual bool  IsDeleted() const override;
      */
     virtual void DupeCopy(const CObjBase* pObj); // overridden by CItem
 
-public:
 	/**
 	* @brief   Base get definition.
 	* @return  null if it fails, else a pointer to a CBaseBaseDef.
@@ -146,13 +144,13 @@ public:
     CBaseBaseDef* Base_GetDef() const;
 
     [[nodiscard]]
-    inline uint64 GetCanFlagsBase() const
+    uint64 GetCanFlagsBase() const
 	{
 		return Base_GetDef()->m_Can;
 	}
 
     [[nodiscard]]
-    inline uint64 GetCanFlags() const
+    uint64 GetCanFlags() const
 	{
 		// m_CanMask is XORed to m_Can:
 		//  If a flag in m_CanMask is enabled in m_Can, it is ignored in this Can check
@@ -168,7 +166,7 @@ public:
 	}
 
     [[nodiscard]]
-    inline bool Can(uint64 uiCan, uint64 uiObjCanFlags) const noexcept
+    bool Can(uint64 uiCan, uint64 uiObjCanFlags) const noexcept
     {
         return (uiObjCanFlags & uiCan);
     }
@@ -185,9 +183,6 @@ public:
 	* @return  true if it succeeds, false if it fails.
 	*/
 	bool CallPersonalTrigger(tchar * pArgs, CTextConsole * pSrc, TRIGRET_TYPE & trResult);
-
-
-public:
 
     /**
     * @brief   Returns Spawn item.
@@ -213,7 +208,7 @@ public:
      */
 	void SetTimeStampS(int64 t_time) noexcept;
 
-    /*
+    /**
     * @brief    Add iDelta to this object's timer (if active) and its child objects.
     */
     void TimeoutRecursiveResync(int64 iDelta);
@@ -278,7 +273,7 @@ public:
     */
     void SetPropNum( CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, CComponentProps::PropertyValNum_t iVal );
 
-    /*
+    /**
     *@brief Sets the value of the numerical-type prop from the CComponentProps.
     *@param iCompPropsType The CComponentProps which the property belongs
     *@param iPropIndex The index (enum) of the property for that CComponentProps
@@ -401,7 +396,7 @@ public:
     *
     * @return  nullptr if it doesn't find a numeric def, else the pointer to the def.
     */
-    inline CVarDefContNum * GetDefKeyNum(lpctstr ptcKey, bool fDef) const
+    CVarDefContNum * GetDefKeyNum(lpctstr ptcKey, bool fDef) const
     {
         return dynamic_cast<CVarDefContNum*>(GetDefKey(ptcKey, fDef));
     }
@@ -416,7 +411,7 @@ public:
     *
     * @return  nullptr if it doesn't find a string def, else the pointer to the def.
     */
-    inline CVarDefContStr * GetDefKeyStr(lpctstr ptcKey, bool fDef) const
+    CVarDefContStr * GetDefKeyStr(lpctstr ptcKey, bool fDef) const
     {
         return dynamic_cast<CVarDefContStr*>(GetDefKey(ptcKey, fDef));
     }
@@ -487,8 +482,6 @@ public:
      */
 	void DeleteKey( lpctstr ptcKey );
 
-
-public:
     /**
      * @fn  virtual int CObjBase::FixWeirdness() = 0;
      *
@@ -553,13 +546,13 @@ public:
 	void SetUID( dword dwVal, bool fItem );
 
     /**
-     * @fn  virtual lpctstr CObjBase::GetName() const;
+     * @fn  lpctstr CObjBase::GetName() const;
      *
      * @brief   Gets the name. Resolves ambiguity w/CScriptObj.
      *
      * @return  The name.
      */
-	virtual lpctstr GetName() const override;
+	lpctstr GetName() const override;
 
     /**
      * @fn  lpctstr CObjBase::GetResourceName() const;
@@ -599,9 +592,6 @@ public:
      * @return  The hue.
      */
 	HUE_TYPE GetHue() const;
-
-
-public:
 
     /**
      * @fn  virtual bool CObjBase::MoveTo(CPointMap pt, bool fCheckLocationEffects = true, bool fForceFix = false) = 0;
@@ -715,11 +705,11 @@ public:
 
 	void r_WriteSafe( CScript & s );
 
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
 	virtual void r_Write( CScript & s );
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;	// some command on this object as a target
+	bool r_LoadVal( CScript & s ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override;	// some command on this object as a target
 
     /**
      * @fn  void CObjBase::Emote(lpctstr pText, CClient * pClientExclude = nullptr, bool fPossessive = false);
@@ -913,10 +903,9 @@ public:
     TRIGRET_TYPE Spell_OnTrigger(SPELL_TYPE spell, SPTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs, CChar * pSrc);
 
 protected:
-    virtual void _GoAwake() override;
-    virtual void _GoSleep() override;
+    void _GoAwake() override;
+    void _GoSleep() override;
 
-protected:
     bool IsStatusUpdatePending() const;
 
     /**
@@ -1043,7 +1032,7 @@ enum ITRIG_TYPE
 	ITRIG_TIMER,                // My timer has expired.
 	ITRIG_ToolTip,              // A tooltip is being requested from me.
 	ITRIG_UNEQUIP,              // I'm being unequiped.
-	ITRIG_QTY
+	ITRIG_QTY,
 };
 
 enum CTRIG_TYPE : short
@@ -1256,7 +1245,7 @@ enum CTRIG_TYPE : short
 	CTRIG_UserVirtueInvoke, // (Client iteraction) Invoquing a Virtue.
 	CTRIG_UserWarmode,      // (Client iteraction) Switching between War/Peace.
 
-	CTRIG_QTY
+	CTRIG_QTY,
 };
 
 

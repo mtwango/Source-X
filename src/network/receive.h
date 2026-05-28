@@ -734,7 +734,7 @@ class PacketAssistVersion : public Packet
 {
 public:
     PacketAssistVersion();
-    virtual ~PacketAssistVersion();
+    ~PacketAssistVersion() override;
 };
 
 /***************************************************************************

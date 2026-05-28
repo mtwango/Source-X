@@ -15,7 +15,6 @@
 #include "CCharBase.h"
 #include "CCharPlayer.h"
 
-
 class CCharNPC;
 class CFactionDef;
 class CItem;
@@ -43,7 +42,7 @@ enum NPCBRAIN_TYPE	// General AI type.
 	NPCBRAIN_MONSTER,	// 8 = not tamable. normally evil.
 	NPCBRAIN_BERSERK,	// 9 = attack closest (blades, vortex)
 	NPCBRAIN_DRAGON,	// 10 = we can breathe fire. may be tamable ? hirable ?
-	NPCBRAIN_QTY
+	NPCBRAIN_QTY,
 };
 
 
@@ -54,7 +53,7 @@ enum WAR_SWING_TYPE	: int // m_Act_War_Swing_State
     WAR_SWING_READY,			// we can swing at any time.
     WAR_SWING_SWINGING,			// we are swinging our weapon.
     //--
-    WAR_SWING_EQUIPPING_NOWAIT = 10 // Special return value for CChar::Fight_Hit, DON'T USE IT IN SCRIPTS!
+    WAR_SWING_EQUIPPING_NOWAIT = 10, // Special return value for CChar::Fight_Hit, DON'T USE IT IN SCRIPTS!
 };
 
 class CChar : public CObjBase, public CContainer, public CTextConsole
@@ -335,9 +334,8 @@ public:
 		} m_atFlee;
 	};
 
-public:
 	CChar( CREID_TYPE id );
-	virtual ~CChar(); // Delete character
+	~CChar() override; // Delete character
 	bool DupeFrom(const CChar * pChar, bool fNewbieItems);
 
 	CChar(const CChar& copy) = delete;
@@ -345,38 +343,44 @@ public:
 
 protected:
     void DeleteCleanup(bool fForce) NONVIRTUAL;
-	virtual void DeletePrepare() override;
+	void DeletePrepare() override;
 public:
 	bool NotifyDelete(bool fForce);
-	virtual bool Delete(bool fForce = false) override;
+	bool Delete(bool fForce = false) override;
 
 	// Status and attributes ------------------------------------
-	virtual int IsWeird() const override;
+	int IsWeird() const override;
 
 #if MT_ENGINES
 //protected:	bool _IsStatFlag(uint64 uiStatFlag) const noexcept;
-public:		bool  IsStatFlag(uint64 uiStatFlag) const noexcept;
+	bool  IsStatFlag(uint64 uiStatFlag) const noexcept;
 #else
-public:
+
     // called very frequently, it's wise to inline it if we can
-    inline bool IsStatFlag(uint64 uiStatFlag) const noexcept
+    bool IsStatFlag(uint64 uiStatFlag) const noexcept
     {
         return (_uiStatFlag & uiStatFlag);
     }
 #endif
 
-//protected:	void _StatFlag_Set(uint64 uiStatFlag) noexcept;
-public:		void  StatFlag_Set(uint64 uiStatFlag) noexcept;
+//protected:
+//  void _StatFlag_Set(uint64 uiStatFlag) noexcept;
+public:
+    void  StatFlag_Set(uint64 uiStatFlag) noexcept;
 
-//protected:	void _StatFlag_Clear(uint64 uiStatFlag) noexcept;
-public:		void  StatFlag_Clear(uint64 uiStatFlag) noexcept;
+//protected:
+//  void _StatFlag_Clear(uint64 uiStatFlag) noexcept;
+public:
+    void  StatFlag_Clear(uint64 uiStatFlag) noexcept;
 
-//protected:	void _StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
-public:		void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
+//protected:
+//  void _StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
+public:
+    void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 
 	char GetFixZ(const CPointMap& pt, uint64 uiBlockFlags = 0);
 	bool IsPriv( word flag ) const;
-	virtual PLEVEL_TYPE GetPrivLevel() const override;
+	PLEVEL_TYPE GetPrivLevel() const override;
 
     [[nodiscard]] RETURNS_NOTNULL
         CCharBase * Char_GetDef() const;
@@ -385,10 +389,10 @@ public:		void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 	CRegion * GetRoom() const;
 
     [[nodiscard]]
-    virtual int GetVisualRange() const override;
+    int GetVisualRange() const override;
 	void SetVisualRange(byte newSight);
 
-	virtual bool IsResourceMatch( const CResourceID& rid, dword dwArg ) const override;
+	bool IsResourceMatch( const CResourceID& rid, dword dwArg ) const override;
 	bool IsResourceMatch( const CResourceID& rid, dword dwArg, dword dwArgResearch ) const;
 
 	bool IsSpeakAsGhost() const;
@@ -403,15 +407,15 @@ public:		void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 
 	// Information about us.
 	CREID_TYPE GetID() const;
-    virtual dword GetIDCommon() const override final;   // The unique index id (will NOT be the same as artwork if outside artwork range).
+    dword GetIDCommon() const final;   // The unique index id (will NOT be the same as artwork if outside artwork range).
     CREID_TYPE GetDispID() const;
 	bool SetDispID(CREID_TYPE id);
 	void SetID( CREID_TYPE id );
 
-    virtual lpctstr GetName() const override final;
+    lpctstr GetName() const final;
 	lpctstr GetNameWithoutIncognito() const;
 	lpctstr GetName( bool fAllowAlt ) const;
-    virtual bool SetName( lpctstr pName ) override final;
+    bool SetName( lpctstr pName ) final;
 
 	height_t GetHeightMount( bool fEyeSubstract = false ) const;
 	height_t GetHeight() const;
@@ -452,7 +456,6 @@ public:		void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 	short   Food_GetLevelPercent() const;
 	lpctstr Food_GetLevelMessage( bool fPet, bool fHappy ) const;
 
-public:
 	ushort	Stat_GetAdjusted( STAT_TYPE i ) const;
 	void	Stat_SetBase( STAT_TYPE i, ushort uiVal );
 	ushort	Stat_GetBase( STAT_TYPE i ) const;
@@ -492,7 +495,7 @@ public:
 private:
 	bool TeleportToCli( int iType, int iArgs );
 	bool TeleportToObj( int iType, tchar * pszArgs );
-private:
+
 	CRegion * CheckValidMove( CPointMap & ptDest, uint64 * uiBlockFlags, DIR_TYPE dir, height_t * ClimbHeight, bool fPathFinding = false ) const;
 	void FixClimbHeight();
 	bool MoveToRoom( CRegion * pNewRoom, bool fAllowReject);
@@ -500,18 +503,18 @@ private:
 
 public:
     [[nodiscard]] RETURNS_NOTNULL
-        virtual CObjBaseTemplate* GetTopLevelObj() override;
+        CObjBaseTemplate* GetTopLevelObj() override;
     [[nodiscard]] RETURNS_NOTNULL
-        virtual const CObjBaseTemplate* GetTopLevelObj() const override;
+        const CObjBaseTemplate* GetTopLevelObj() const override;
 
 	bool IsSwimming() const;
 	bool MoveToRegion(CRegionWorld* pNewArea, bool fAllowReject);
 
 	bool MoveToRegionReTest( dword dwType );
 	bool MoveToChar(const CPointMap& pt, bool fStanding = true, bool fCheckLocationEffects = true, bool fForceFix = false, bool fAllowReject = true);
-	virtual bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
-	virtual void SetTopZ( char z ) override;
-	virtual bool MoveNearObj( const CObjBaseTemplate *pObj, ushort iSteps = 0 ) override;
+	bool MoveTo(const CPointMap& pt, bool fForceFix = false) override;
+	void SetTopZ( char z ) override;
+	bool MoveNearObj( const CObjBaseTemplate *pObj, ushort iSteps = 0 ) override;
 	bool MoveToValidSpot(DIR_TYPE dir, int iDist, int iDistStart = 1, bool fFromShip = false);
 	bool MoveToNearestShore(bool fNoMsg = false);
 
@@ -522,7 +525,6 @@ public:
 	void CheckRevealOnMove();
 	TRIGRET_TYPE CheckLocationEffects(bool fStanding);
 
-public:
 	// Client Player specific stuff. -------------------------
 	bool IsPlayer() const noexcept			{ return nullptr != m_pPlayer; }
 	bool IsClientActive() const noexcept	{ return nullptr != m_pClient; }
@@ -547,10 +549,8 @@ public:
 	NPCBRAIN_TYPE GetNPCBrainAuto() const noexcept;	// Guess default NPC brain
 	void ClearNPC();
 
-
-public:
 	void ObjMessage( lpctstr pMsg, const CObjBase * pSrc ) const;
-	virtual void SysMessage( lpctstr pMsg ) const override;
+	void SysMessage( lpctstr pMsg ) const override;
 
 	void UpdateStatsFlag() const;
 	void UpdateStatVal( STAT_TYPE type, int iChange = 0, ushort uiLimit = 0 );
@@ -570,21 +570,20 @@ public:
 	void UpdateDir( const CObjBaseTemplate * pObj );
 	void UpdateDrag( CItem * pItem, CObjBase * pCont = nullptr, CPointMap * pt = nullptr );
 
-public:
 	lpctstr GetPronoun() const;	// he
 	lpctstr GetPossessPronoun() const;	// his
 	byte GetModeFlag( const CClient *pViewer = nullptr ) const;
 	byte GetDirFlag(bool fSquelchForwardStep = false) const;
 	uint64 GetCanMoveFlags(uint64 uiCanFlags, bool fIgnoreGM = false) const;
 
-	virtual int FixWeirdness() override;
+	int FixWeirdness() override;
 	void CreateNewCharCheck();
 
 	// Contents/Carry stuff. ---------------------------------
 private:
-    virtual void ContentAdd( CItem * pItem, bool fForceNoStack = false ) override;
+    void ContentAdd( CItem * pItem, bool fForceNoStack = false ) override;
 protected:
-	virtual void OnRemoveObj( CSObjContRec* pObRec ) override;	// Override this = called when removed from list.
+	void OnRemoveObj( CSObjContRec* pObRec ) override;	// Override this = called when removed from list.
 
 public:
 	bool CanCarry( const CItem * pItem ) const;
@@ -596,8 +595,8 @@ public:
     TRIGRET_TYPE OnCharTrigForLayerLoop(CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, LAYER_TYPE layer );
     TRIGRET_TYPE OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, word wMemType );
 
-	virtual void OnWeightChange( int iChange ) override;
-	virtual int GetWeight(word amount = 0) const override;
+	void OnWeightChange( int iChange ) override;
+	int GetWeight(word amount = 0) const override;
 	int GetWeightLoadPercent( int iWeight ) const;
 
 	CItem * GetSpellbook(SPELL_TYPE iSpell = SPELL_Clumsy) const;
@@ -608,7 +607,6 @@ public:
 	CItem * GetBackpackItem(ITEMID_TYPE item);
 	void AddGoldToPack( int iAmount, CItemContainer * pPack = nullptr, bool fForceNoStack = true );
 
-public:
     /**
     * @brief   Queries if a trigger is active ( m_RunningTrigger ) .
     * @param   trig    The trig.
@@ -622,18 +620,17 @@ public:
     */
     void SetTriggerActive(lpctstr trig = nullptr);
 
-    virtual TRIGRET_TYPE OnTrigger( lpctstr pTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
+    TRIGRET_TYPE OnTrigger( lpctstr pTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
     TRIGRET_TYPE OnTrigger( CTRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc);
 
-public:
 	// Load/Save----------------------------------
 
-	virtual bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-	virtual bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
-	virtual bool r_LoadVal( CScript & s ) override;
-	virtual bool r_Load( CScript & s ) override;  // Load a character from Script
-	virtual bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
-	virtual void r_Write( CScript & s ) override;
+	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
+	bool r_Verb( CScript & s, CTextConsole * pSrc ) override;
+	bool r_LoadVal( CScript & s ) override;
+	bool r_Load( CScript & s ) override;  // Load a character from Script
+	bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	void r_Write( CScript & s ) override;
 
 	void r_WriteParity( CScript & s );
 
@@ -1043,7 +1040,7 @@ public:
     bool Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic = true);
 	bool Spell_SimpleEffect( CObjBase * pObj, CObjBase * pObjSrc, SPELL_TYPE &spell, int &iSkillLevel, int64 iDuration = 0);
 	bool Spell_CastDone();
-	virtual bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
+	bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
 	bool Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bool fFailMsg, bool fCheckAntiMagic = true );
     CChar* Spell_Summon_Try(SPELL_TYPE spell, CPointMap ptTarg, CREID_TYPE uiCreature, std::optional<short> iFollowerSlotsOverride);
 	int64 GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharSrc = nullptr ); // in tenths of second
@@ -1057,7 +1054,6 @@ public:
 	CItemMemory * Memory_CreateObj( const CUID& uid, word wMemTypes );
 	CItemMemory * Memory_CreateObj( const CObjBase * pObj, word wMemTypes );
 
-public:
 	void Memory_ClearTypes( word wMemTypes );
 	CItemMemory * Memory_FindObj(const CUID& uid ) const;
 	CItemMemory * Memory_FindObj( const CObjBase * pObj ) const;
@@ -1070,7 +1066,6 @@ public:
 	CItemMemory * Memory_AddObj( const CObjBase * pObj, word wMemTypes );
 	// ------------------------------------------------------------
 
-public:
 	void SoundChar(CRESND_TYPE type);
 	void Action_StartSpecial(CREID_TYPE id);
 
@@ -1133,7 +1128,7 @@ public:
 	};
     #define ATTACKER_THREAT_TOLDBYMASTER 1000
 
-	inline int GetAttackersCount() {
+	int GetAttackersCount() {
 		return (int)m_lastAttackers.size();
 	}
     bool	Attacker_Add(CChar * pChar, int iThreat = 0);
@@ -1204,8 +1199,8 @@ public:
 	bool ItemBounce( CItem * pItem, bool fDisplayMsg = true );
 	bool ItemDrop( CItem * pItem, const CPointMap & pt );
 
-	virtual void Update(const CClient* pClientExclude = nullptr) override;
-	virtual void Flip() override;
+	void Update(const CClient* pClientExclude = nullptr) override;
+	void Flip() override;
 
     void EatAnim(CItem* pItem, ushort uiQty);
     bool Reveal( uint64 iFlags = 0 );
@@ -1223,7 +1218,7 @@ public:
         SuccessAndDelete,
         AlreadyDead,
         Aborted,
-        AbortedNoLog
+        AbortedNoLog,
     };
 
     DeathRequestResult Death();
@@ -1250,9 +1245,9 @@ public:
 #define DEATH_HASCORPSE 0x010
 
     void Speak_RevealCheck(TALKMODE_TYPE mode);
-	virtual void Speak( lpctstr pText, HUE_TYPE wHue = HUE_TEXT_DEF, TALKMODE_TYPE mode = TALKMODE_SAY, FONT_TYPE font = FONT_NORMAL ) override;
-	virtual void SpeakUTF8( lpctstr pText, HUE_TYPE wHue= HUE_TEXT_DEF, TALKMODE_TYPE mode= TALKMODE_SAY, FONT_TYPE font = FONT_NORMAL, CLanguageID lang = 0 ) override;
-	virtual void SpeakUTF8Ex( const nachar * pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang ) override;
+	void Speak( lpctstr pText, HUE_TYPE wHue = HUE_TEXT_DEF, TALKMODE_TYPE mode = TALKMODE_SAY, FONT_TYPE font = FONT_NORMAL ) override;
+	void SpeakUTF8( lpctstr pText, HUE_TYPE wHue= HUE_TEXT_DEF, TALKMODE_TYPE mode= TALKMODE_SAY, FONT_TYPE font = FONT_NORMAL, CLanguageID lang = 0 ) override;
+	void SpeakUTF8Ex( const nachar * pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang ) override;
 
 	bool OnFreezeCheck() const;
     bool IsStuck(bool fFreezeCheck);
@@ -1273,7 +1268,7 @@ public:
 	bool Use_MultiLockDown( CItem * pItemTarg );
 	void Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving );
 	bool Use_Repair( CItem * pItem );
-	int  Use_PlayMusic( CItem * pInstrument, int iDifficultyToPlay );
+	int Use_PlayMusic( CItem * pInstrument, int iDifficultyToPlay );
 	void Use_Drink(CItem *pItem);
 	bool Use_Cannon_Feed( CItem * pCannon, CItem * pFeed );
 	bool Use_Item_Web( CItem * pItem );
@@ -1298,7 +1293,6 @@ private:
 	int Do_Use_Item(CItem * pItem, bool fLink = false);
 
 	// NPC AI -----------------------------------------
-private:
 	static CREID_TYPE NPC_GetAllyGroupType(CREID_TYPE idTest);
 
 	bool NPC_StablePetRetrieve( CChar * pCharPlayer );
@@ -1385,35 +1379,36 @@ public:
 	void NPC_OnPetCommand( bool fSuccess, CChar * pMaster );
 	bool NPC_OnHearPetCmd( lpctstr pszCmd, CChar * pSrc, bool fAllPets = false );
 	bool NPC_OnHearPetCmdTarg( int iCmd, CChar * pSrc, CObjBase * pObj, const CPointMap & pt, lpctstr pszArgs );
-	size_t  NPC_OnHearName( lpctstr pszText ) const;
+	size_t NPC_OnHearName( lpctstr pszText ) const;
 	void NPC_OnHear( lpctstr pCmd, CChar * pSrc, bool fAllPets = false );
 	bool NPC_OnItemGive( CChar * pCharSrc, CItem * pItem );
 	bool NPC_SetVendorPrice( CItem * pItem, int iPrice );
     bool OnTriggerSpeech(bool fIsPet, lpctstr pszText, CChar * pSrc, TALKMODE_TYPE & mode, HUE_TYPE wHue = HUE_DEFAULT);
 
 	// Outside events that occur to us.
-	int  OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType, int iDmgPhysical = 0, int iDmgFire = 0, int iDmgCold = 0, int iDmgPoison = 0, int iDmgEnergy = 0, SPELL_TYPE spell = SPELL_NONE );
+	int OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType, int iDmgPhysical = 0, int iDmgFire = 0, int iDmgCold = 0, int iDmgPoison = 0, int iDmgEnergy = 0, SPELL_TYPE spell = SPELL_NONE );
 	void OnTakeDamageInflictArea(int iDmg, CChar* pSrc, DAMAGE_TYPE uType, int iDmgPhysical = 0, int iDmgFire = 0, int iDmgCold = 0, int iDmgPoison = 0, int iDmgEnergy = 0, HUE_TYPE effectHue = HUE_DEFAULT, SOUND_TYPE effectSound = SOUND_NONE);
 	void OnHarmedBy( CChar * pCharSrc );
 	bool OnAttackedBy( CChar * pCharSrc, bool fPetsCommand = false, bool fShouldReveal = true );
 
 protected:
-	virtual void _GoAwake() override final;
-	virtual void _GoSleep() override final;
+	void _GoAwake() final;
+	void _GoSleep() final;
 
     bool IsPeriodicTickPending() const;
 
-protected:	virtual bool _OnTick() override final;  // _OnTick timeout for skills, AI, etc.
-//public:	virtual bool  _OnTick() override final;
+    bool _OnTick() final;  // _OnTick timeout for skills, AI, etc.
+//public:
+//  bool  _OnTick() final;
 
 public:
-    virtual bool _CanTick(bool fParentGoingToSleep) const override final;
+    bool _CanTick(bool fParentGoingToSleep) const override final;
     bool IsTickableEvenIfDisconnected() const;
 
     bool OnTickEquip( CItem * pItem );
 	void OnTickFood( ushort uiVal, int HitsHungerLoss );
 
-	virtual void OnTickStatusUpdate() override;
+	void OnTickStatusUpdate() override;
 	bool OnTickPeriodic();  // Periodic tick calls (update stats, status bar, notoriety & attackers, death check, etc.)
 
 	void OnTickSkill(); // _OnTick timeout specific for the skill behavior

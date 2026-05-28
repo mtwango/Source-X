@@ -45,22 +45,21 @@ public:
 	static const char *m_sClassName;
 	CSFileText m_FileOut;
 
-public:
 	CSFileConsole() = default;
-    virtual ~CSFileConsole();
+    ~CSFileConsole() override;
     CSFileConsole(const CSFileConsole& copy) = delete;
 	CSFileConsole& operator=(const CSFileConsole& other) = delete;
 
 
-	virtual PLEVEL_TYPE GetPrivLevel() const
+	PLEVEL_TYPE GetPrivLevel() const override
 	{
 		return PLEVEL_Admin;
 	}
-	virtual lpctstr GetName() const
+	lpctstr GetName() const override
 	{
 		return "WebFile";
 	}
-	virtual void SysMessage( lpctstr pszMessage ) const
+	void SysMessage( lpctstr pszMessage ) const override
 	{
 		if ( pszMessage == nullptr )
 			return;

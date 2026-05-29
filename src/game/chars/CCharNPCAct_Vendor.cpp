@@ -227,8 +227,6 @@ ushort CChar::NPC_OnTrainCheck( CChar * pCharSrc, SKILL_TYPE Skill )
 	int iTrainVal = (int)NPC_GetTrainMax(pCharSrc, Skill) - uiSkillSrcVal;
     if (iTrainVal < 0)
         iTrainVal = 0;
-    else if (iTrainVal > USHRT_MAX)
-        iTrainVal = USHRT_MAX;
     const ushort uiTrainVal = (ushort)iTrainVal;
 
 	// Train npc skill cap

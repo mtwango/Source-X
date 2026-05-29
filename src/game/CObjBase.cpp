@@ -2249,7 +2249,7 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 				{
 					pChar->OnTakeDamage((int)(piCmd[0]),
 						pCharSrc,
-						(iArgQty >= 1) ? (DAMAGE_TYPE)(piCmd[1]) : DAMAGE_HIT_BLUNT | DAMAGE_GENERAL,
+						(DAMAGE_TYPE)piCmd[1],
 						(iArgQty >= 3) ? (int)(piCmd[3]) : 0,	// physical damage %
 						(iArgQty >= 4) ? (int)(piCmd[4]) : 0,	// fire damage %
 						(iArgQty >= 5) ? (int)(piCmd[5]) : 0,	// cold damage %
@@ -2261,7 +2261,7 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 				{
 					pItem->OnTakeDamage((int)(piCmd[0]),
 						pCharSrc,
-						(iArgQty >= 1) ? (DAMAGE_TYPE)(piCmd[1]) : DAMAGE_HIT_BLUNT | DAMAGE_GENERAL
+						(DAMAGE_TYPE)piCmd[1]
 					);
 				}
 			}
@@ -2339,9 +2339,9 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 			pThis->EffectLocation((EFFECT_TYPE)(piCmd[3]), (ITEMID_TYPE)(ResGetIndex((dword)piCmd[4])),
                 pCharSrc ? &pCharSrc->GetTopPoint() : nullptr,
                 &ptDest,
-				(iArgQty >= 3) ? (uchar)(piCmd[5]) : 5,		// byte bSpeedSeconds = 5,
-				(iArgQty >= 4) ? (uchar)(piCmd[6]) : 1,		// byte bLoop = 1,
-				(iArgQty >= 5) ? (piCmd[7] != 0) : false,	// bool fExplode = false
+				(uchar)piCmd[5],		// byte bSpeedSeconds = 5,
+				(uchar)piCmd[6],		// byte bLoop = 1,
+				(piCmd[7] != 0),	// bool fExplode = false
 				(iArgQty >= 6) ? (uint)(piCmd[8]) : 0,		// hue
 				(iArgQty >= 7) ? (uint)(piCmd[9]) : 0,		// render mode,
 				(iArgQty >= 8) ? (word)(piCmd[10]) : 0,		// EffectID	//New Packet 0xc7

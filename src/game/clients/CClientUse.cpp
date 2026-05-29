@@ -1238,11 +1238,8 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 		g_Cfg.GetDefaultMsg( DEFMSG_TRACKING_FAIL_ANIMAL ),
 		g_Cfg.GetDefaultMsg( DEFMSG_TRACKING_FAIL_MONSTER ),
 		g_Cfg.GetDefaultMsg( DEFMSG_TRACKING_FAIL_HUMAN ),
-		g_Cfg.GetDefaultMsg( DEFMSG_TRACKING_FAIL_HUMAN )
+		g_Cfg.GetDefaultMsg( DEFMSG_TRACKING_FAIL_HUMAN ),
 	};
-
-	if ( track_sel >= ARRAY_COUNT(sm_Track_FailMsg) )
-		track_sel = ARRAY_COUNT(sm_Track_FailMsg) - 1;
 
 	SysMessage(sm_Track_FailMsg[track_sel]);
 	return false;

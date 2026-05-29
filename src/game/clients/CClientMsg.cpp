@@ -73,6 +73,11 @@ void CClient::resendBuffs() const
         SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pItem->m_itSpell.m_spell));
         const CSpellDef* pSpellDef = g_Cfg.GetSpellDef(spell);
 
+	    if (pSpellDef == nullptr)
+	    {
+            continue;
+	    }
+
 		switch (spell)
 		{
 			case SPELL_Night_Sight:

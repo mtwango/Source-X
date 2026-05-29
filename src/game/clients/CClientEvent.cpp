@@ -1344,7 +1344,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                     pItemNew->SetAmount(1);
                     pItemNew->m_TagDefs.SetNum("NOSAVE", 0, true);
 
-                    if (!pPack->CanContainerHold(pItemNew, m_pChar) || (!m_pChar->CanCarry(pItemNew)))
+                    if (pPack == nullptr || !pPack->CanContainerHold(pItemNew, m_pChar) || (!m_pChar->CanCarry(pItemNew)))
                         m_pChar->ItemDrop( pItemNew, m_pChar->GetTopPoint() );
                     else
                         pPack->ContentAdd( pItemNew );
@@ -1355,7 +1355,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                 CItem * pItemNew = CItem::CreateDupeItem(pItem);
                 pItemNew->SetAmount(wAmount);
                 pItemNew->m_TagDefs.SetNum("NOSAVE", 0, true);
-                if (!pPack->CanContainerHold(pItemNew, m_pChar) || (!m_pChar->CanCarry(pItemNew)))
+                if (pPack == nullptr || !pPack->CanContainerHold(pItemNew, m_pChar) || (!m_pChar->CanCarry(pItemNew)))
                     m_pChar->ItemDrop(pItemNew, m_pChar->GetTopPoint());
                 else
                     pPack->ContentAdd(pItemNew);
@@ -1365,7 +1365,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
         {
             if ( pItem->GetAmount() <= wAmount ) //Buy the whole item
             {
-                if ((!pPack->CanContainerHold(pItem, m_pChar)) || (!m_pChar->CanCarry(pItem)))
+                if (pPack == nullptr || (!pPack->CanContainerHold(pItem, m_pChar)) || (!m_pChar->CanCarry(pItem)))
                     m_pChar->ItemDrop(pItem, m_pChar->GetTopPoint());
                 else
                     pPack->ContentAdd(pItem);
@@ -1379,7 +1379,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                 CItem *pItemNew = CItem::CreateDupeItem(pItem);
                 pItemNew->m_TagDefs.SetNum("NOSAVE", 0, true);
                 pItemNew->SetAmount(wAmount);
-                if ((!pPack->CanContainerHold(pItemNew, m_pChar)) || (!m_pChar->CanCarry(pItemNew)))
+                if (pPack == nullptr || (!pPack->CanContainerHold(pItemNew, m_pChar)) || (!m_pChar->CanCarry(pItemNew)))
                     m_pChar->ItemDrop(pItemNew, m_pChar->GetTopPoint());
                 else
                     pPack->ContentAdd(pItemNew);

@@ -1412,7 +1412,7 @@ bool PacketMenuChoice::onReceive(CNetState* net)
 
 		case CLIMODE_MENU_SKILL:
 			// some skill menu got us here
-			if (select >= ARRAY_COUNT(client->m_tmMenu.m_Item))
+			if (select >= std::size(client->m_tmMenu.m_Item))
 				return true;
 
 			client->Cmd_Skill_Menu(client->m_tmMenu.m_ResourceID, (select > 0) ? client->m_tmMenu.m_Item[select] : 0 );
@@ -1456,9 +1456,9 @@ bool PacketServersReq::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketServersReq::onReceive");
 
 	tchar acctname[MAX_ACCOUNT_NAME_SIZE];
-	readStringASCII(acctname, ARRAY_COUNT(acctname));
+	readStringASCII(acctname, std::size(acctname));
 	tchar acctpass[MAX_NAME_SIZE];
-	readStringASCII(acctpass, ARRAY_COUNT(acctpass));
+	readStringASCII(acctpass, std::size(acctpass));
 	skip(1); // "NextLoginKey" value from uo.cfg on client machine.
 
 	CClient* client = net->getClient();
@@ -1703,9 +1703,9 @@ bool PacketCharListReq::onReceive(CNetState* net)
 
 	skip(4); // Session key sent to the client in packet 0x8c (customerId).
 	tchar acctname[MAX_ACCOUNT_NAME_SIZE];
-	readStringASCII(acctname, ARRAY_COUNT(acctname));
+	readStringASCII(acctname, std::size(acctname));
 	tchar acctpass[MAX_NAME_SIZE];
-	readStringASCII(acctpass, ARRAY_COUNT(acctpass));
+	readStringASCII(acctpass, std::size(acctpass));
 
 	net->getClient()->Setup_ListReq(acctname, acctpass, false);
 	return true;
@@ -1733,10 +1733,10 @@ bool PacketBookHeaderEdit::onReceive(CNetState* net)
 	skip(2); // pages
 
 	tchar title[2 * MAX_NAME_SIZE];
-	readStringASCII(title, ARRAY_COUNT(title));
+	readStringASCII(title, std::size(title));
 
 	tchar author[MAX_NAME_SIZE];
-	readStringASCII(author, ARRAY_COUNT(author));
+	readStringASCII(author, std::size(author));
 
 	net->getClient()->Event_Book_Title(bookSerial, title, author);
 	return true;
@@ -2113,7 +2113,7 @@ bool PacketSpeakReqUNICODE::onReceive(CNetState* net)
 	HUE_TYPE hue = readInt16();
 	FONT_TYPE font = (FONT_TYPE)(readInt16());
 	tchar language[4];
-	readStringASCII(language, ARRAY_COUNT(language));
+	readStringASCII(language, std::size(language));
 
 	if (packetLength < getPosition())
 		return false;
@@ -2141,7 +2141,7 @@ bool PacketSpeakReqUNICODE::onReceive(CNetState* net)
 
 		skip((int)(toskip));
 		tchar text[MAX_TALK_BUFFER];
-		readStringNullASCII(text, ARRAY_COUNT(text));
+		readStringNullASCII(text, std::size(text));
 		client->Event_Talk(text, hue, mode, true);
 	}
 	else
@@ -2333,7 +2333,7 @@ bool PacketChatCommand::onReceive(CNetState* net)
 
 	uint packetLength = readInt16();
 	tchar language[4];
-	readStringASCII(language, ARRAY_COUNT(language));
+	readStringASCII(language, std::size(language));
 
 	if (packetLength < getPosition())
 		return false;
@@ -2379,7 +2379,7 @@ bool PacketChatButton::onReceive(CNetState* net)
 		// On old chat system, client will always send this packet when click on chat button
 		skip(1);	// 0x0
 		nachar name[MAX_NAME_SIZE * 2 + 2];
-		readStringUTF16(reinterpret_cast<wchar *>(name), ARRAY_COUNT(name));
+		readStringUTF16(reinterpret_cast<wchar *>(name), std::size(name));
 		client->Event_ChatButton(name);
 	}
 	return true;
@@ -2849,7 +2849,7 @@ bool PacketLanguage::onReceive(CNetState* net)
 	ASSERT(client);
 
 	tchar language[4];
-	readStringNullASCII(language, ARRAY_COUNT(language));
+	readStringNullASCII(language, std::size(language));
 
 	client->GetAccount()->m_lang.Set(language);
 	return true;
@@ -2914,7 +2914,7 @@ bool PacketAnimationReq::onReceive(CNetState* net)
 
 	ANIM_TYPE anim = static_cast<ANIM_TYPE>(readInt32());
 	bool ok = false;
-	for (uint i = 0; ok == false && i < ARRAY_COUNT(validAnimations); i++)
+	for (uint i = 0; ok == false && i < std::size(validAnimations); i++)
 		ok = (anim == validAnimations[i]);
 
 	if (ok == false)
@@ -3481,7 +3481,7 @@ bool PacketPromptResponseUnicode::onReceive(CNetState* net)
 	dword context2 = readInt32();
 	dword type = readInt32();
 	char language[4];
-	readStringASCII(language, ARRAY_COUNT(language));
+	readStringASCII(language, std::size(language));
 
 	if (length < getPosition())
 		return false;
@@ -4291,7 +4291,7 @@ bool PacketBugReport::onReceive(CNetState* net)
 		return false;
 
 	tchar language[4];
-	readStringASCII(language, ARRAY_COUNT(language));
+	readStringASCII(language, std::size(language));
 
 	BUGREPORT_TYPE type = static_cast<BUGREPORT_TYPE>(readInt16());
 
@@ -4595,9 +4595,9 @@ bool PacketCrashReport::onReceive(CNetState* net)
 	skip(4); // unknown
 	dword errorCode = readInt32();
 	tchar executable[100];
-	readStringASCII(executable, ARRAY_COUNT(executable));
+	readStringASCII(executable, std::size(executable));
 	tchar description[100];
-	readStringASCII(description, ARRAY_COUNT(description));
+	readStringASCII(description, std::size(description));
 	skip(1); // zero
 	dword errorOffset = readInt32();
 
@@ -4735,7 +4735,7 @@ bool PacketGlobalChatReq::onReceive(CNetState* net)
 	skip(1);
 
 	tchar xml[MAX_TALK_BUFFER * 2];
-	readStringASCII(xml, ARRAY_COUNT(xml));
+	readStringASCII(xml, std::size(xml));
 	//DEBUG_ERR(("GlobalChat XML received: %s\n", xml));
 
 	switch (action)

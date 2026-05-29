@@ -390,7 +390,7 @@ bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, b
 		return true;
 	}
 
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1);
+	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 	switch ( index )
 	{
 		case DBO_AEXECUTE:
@@ -403,7 +403,7 @@ bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, b
 				if ( ptcKey[0] != '\0' )
 				{
 					tchar * ppArgs[2];
-					if ( Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, ARRAY_COUNT( ppArgs )) != 2)
+					if ( Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs)) != 2)
 					{
 						DEBUG_ERR(("Not enough arguments for %s\n", CDataBase::sm_szLoadKeys[index]));
 					}
@@ -469,7 +469,7 @@ bool CDataBase::r_Verb(CScript & s, CTextConsole * pSrc)
 	if (!g_Cfg.m_fMySql)
 		return true;
 
-	int index = FindTableSorted(s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1);
+	int index = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
 	switch ( index )
 	{
 		case DBOV_CLOSE:

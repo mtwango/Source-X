@@ -81,7 +81,7 @@ bool CResourceRefArray::r_LoadVal( CScript & s, RES_TYPE restype )
 
     tchar * pszCmd = s.GetArgStr();
     tchar * ppBlocks[128];	// max is arbitrary
-    int iArgCount = Str_ParseCmds( pszCmd, ppBlocks, ARRAY_COUNT(ppBlocks));
+    int iArgCount = Str_ParseCmds( pszCmd, ppBlocks, std::size(ppBlocks));
     for ( int i = 0; i < iArgCount; ++i )
     {
         CResourceLink* pResourceLink = nullptr;

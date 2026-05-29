@@ -251,7 +251,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 		case '\0':
 			return 0;
 	}
-    INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE) FindTableHeadSorted( ptcRefArgs, sm_IntrinsicFunctions, ARRAY_COUNT(sm_IntrinsicFunctions)-1 );
+    INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE) FindTableHeadSorted( ptcRefArgs, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1 );
 	if ( iIntrinsic >= 0 )
 	{
 		size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);

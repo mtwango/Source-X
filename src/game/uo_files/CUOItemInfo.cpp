@@ -42,7 +42,7 @@ CUOItemInfo::CUOItemInfo( ITEMID_TYPE id, bool fNameNotNeeded)
     m_height = cachedEntry->m_height;
     if (!fNameNotNeeded)
     {
-        Str_CopyLimitNull(m_name, cachedEntry->m_name, ARRAY_COUNT(m_name));
+        Str_CopyLimitNull(m_name, cachedEntry->m_name, std::size(m_name));
     }
     else
     {

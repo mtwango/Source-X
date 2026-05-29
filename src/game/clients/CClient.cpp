@@ -550,7 +550,7 @@ lpctstr const CClient::sm_szRefKeys[CLIR_QTY+1] =
 bool CClient::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CClient::r_GetRef");
-	int i = FindTableHeadSorted( ptcKey, sm_szRefKeys, ARRAY_COUNT(sm_szRefKeys)-1 );
+	int i = FindTableHeadSorted( ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1 );
 	if ( i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
@@ -671,7 +671,7 @@ bool CClient::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 	else if ( !strnicmp( "REPORTEDCLIVER", ptcKey, 14 ) && ( ptcKey[14] == '\0' || ptcKey[14] == '.' ) )
 		index = CC_REPORTEDCLIVER;
 	else
-		index = FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 );
+		index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
 	switch (index)
 	{
@@ -805,7 +805,7 @@ bool CClient::r_LoadVal( CScript & s )
         }
     }
 
-	switch ( FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 ))
+	switch ( FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case CC_ALLMOVE:
 			addRemoveAll(true, false);
@@ -931,7 +931,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 	}
 
 	EXC_SET_BLOCK("Verb-Statement");
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1 );
+	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	switch (index)
 	{
 		case CV_ADD:
@@ -939,7 +939,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             if (s.HasArgs())
             {
                 tchar *ppszArgs[2];
-                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, ARRAY_COUNT(ppszArgs));
+                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, std::size(ppszArgs));
 
                 if (!IsValidGameObjDef(ppszArgs[0]))
                 {
@@ -992,7 +992,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             }
             {
                 tchar *ppszArgs[2];
-                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, ARRAY_COUNT(ppszArgs));
+                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, std::size(ppszArgs));
 
                 if (!IsValidGameObjDef(ppszArgs[0]))
                 {
@@ -1025,7 +1025,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             }
             {
                 tchar *ppszArgs[2];
-                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, ARRAY_COUNT(ppszArgs));
+                size_t iQty = Str_ParseCmds(s.GetArgStr(), ppszArgs, std::size(ppszArgs));
 
                 if (!IsValidGameObjDef(ppszArgs[0]))
                 {
@@ -1053,7 +1053,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_ADDBUFF:
 			{
 				tchar * ppArgs[11];
-				Str_ParseCmds( s.GetArgStr(), ppArgs, ARRAY_COUNT(ppArgs));
+				Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
 
 				int iArgs[4];
 				for ( int idx = 0; idx < 4; ++idx )
@@ -1097,7 +1097,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_ADDCONTEXTENTRY:
 			{
 				tchar * ppLocArgs[20];
-				if ( Str_ParseCmds(s.GetArgRaw(), ppLocArgs, ARRAY_COUNT(ppLocArgs), ",") > 4 )
+				if ( Str_ParseCmds(s.GetArgRaw(), ppLocArgs, std::size(ppLocArgs), ",") > 4 )
 				{
 					DEBUG_ERR(("Bad AddContextEntry usage: Function takes maximum of 4 arguments!\n"));
 					return true;
@@ -1133,7 +1133,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_ARROWQUEST:
 			{
 				int64 piVal[3];
-				Str_ParseCmds( s.GetArgRaw(), piVal, ARRAY_COUNT(piVal));
+				Str_ParseCmds( s.GetArgRaw(), piVal, std::size(piVal));
 				addArrowQuest( (int)piVal[0], (int)piVal[1], (int)piVal[2] );
 #ifdef _ALPHASPHERE
 				// todo: should use a proper container for these, since the arrows are lost
@@ -1294,7 +1294,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
         case CV_CODEXOFWISDOM:
         {
             int64 piArgs[2];
-            size_t iArgQty = Str_ParseCmds(s.GetArgStr(), piArgs, ARRAY_COUNT(piArgs));
+            size_t iArgQty = Str_ParseCmds(s.GetArgStr(), piArgs, std::size(piArgs));
             if ( iArgQty < 1 )
             {
                 SysMessage("Usage: CODEXOFWISDOM TopicID [ForceOpen]");
@@ -1331,7 +1331,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			else
 			{
 				tchar * ppArgs[2];
-				Str_ParseCmds( s.GetArgStr(), ppArgs, ARRAY_COUNT( ppArgs ));
+				Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
 
 				m_Targ_Text = ppArgs[0]; // Point at the options, if any
 				m_tmTile.m_ptFirst.InitPoint(); // Clear this first
@@ -1351,7 +1351,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			else
 			{
 				tchar * ppArgs[2];
-				Str_ParseCmds( s.GetArgStr(), ppArgs, ARRAY_COUNT( ppArgs ));
+				Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
 
 				m_Targ_Text = ppArgs[0]; // Point at the options, if any
 				m_tmTile.m_ptFirst.InitPoint(); // Clear this first
@@ -1417,7 +1417,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
         case CV_MAPWAYPOINT:
         {
             int64 piVal[2];
-            Str_ParseCmds(s.GetArgRaw(), piVal, ARRAY_COUNT(piVal));
+            Str_ParseCmds(s.GetArgRaw(), piVal, std::size(piVal));
 
             CObjBase *pObj = static_cast<CUID>((dword)piVal[0]).ObjFind();
             if (pObj)
@@ -1433,7 +1433,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_MIDILIST:
 			{
 				int64 piMidi[64];
-				int64 iQty = Str_ParseCmds( s.GetArgStr(), piMidi, ARRAY_COUNT(piMidi) );
+				int64 iQty = Str_ParseCmds( s.GetArgStr(), piMidi, std::size(piMidi));
 				if ( iQty > 0 )
 				{
 					addMusic( static_cast<MIDI_TYPE>(piMidi[ g_Rand.GetLLVal( iQty ) ]) );
@@ -1481,7 +1481,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_OPENTRADEWINDOW:
 		{
 			tchar *ppArgs[2];
-			Str_ParseCmds(s.GetArgStr(), ppArgs, ARRAY_COUNT(ppArgs));
+			Str_ParseCmds(s.GetArgStr(), ppArgs, std::size(ppArgs));
 
 			CChar *pChar = nullptr;
 			CItem *pItem = nullptr;
@@ -1591,7 +1591,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGEF: //There is still an issue with numbers not resolving properly when %i,%d,or other numeric format code is in use
 			{
 				tchar * pszArgs[4];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), pszArgs, ARRAY_COUNT(pszArgs) );
+				int iArgQty = Str_ParseCmds( s.GetArgRaw(), pszArgs, std::size(pszArgs));
 				if ( iArgQty < 2 )
 				{
 					g_Log.EventError("SysMessagef with less than 1 args for the given text\n");
@@ -1623,13 +1623,13 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGEUA:
 			{
 				tchar * pszArgs[5];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), pszArgs, ARRAY_COUNT(pszArgs) );
+				int iArgQty = Str_ParseCmds( s.GetArgRaw(), pszArgs, std::size(pszArgs));
                 if (iArgQty < 5)
                     return false;
 				// Font and mode are actually ignored here, but they never made a difference
 				// anyway.. I'd like to keep the syntax similar to SAYUA
                 nachar szBuffer[MAX_TALK_BUFFER];
-                CvtSystemToNETUTF16(szBuffer, ARRAY_COUNT(szBuffer), pszArgs[4], -1);
+                CvtSystemToNETUTF16(szBuffer, std::size(szBuffer), pszArgs[4], -1);
                 addBarkUNICODE(szBuffer, nullptr, (HUE_TYPE)(Exp_GetVal(pszArgs[0])), TALKMODE_SAY, FONT_NORMAL, pszArgs[3]);
 			}
 			break;
@@ -1637,7 +1637,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGELOC:
 			{
 				tchar * ppArgs[256];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), "," );
+				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, std::size(ppArgs), "," );
 				if ( iArgQty > 1 )
 				{
 					int hue = -1;
@@ -1664,7 +1664,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGELOCEX:
 			{
 				tchar * ppArgs[256];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), "," );
+				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, std::size(ppArgs), "," );
 				if ( iArgQty > 2 )
 				{
 					int hue = -1;

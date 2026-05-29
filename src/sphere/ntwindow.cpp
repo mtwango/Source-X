@@ -440,7 +440,7 @@ int CNTWindow::OnCreate( HWND hWnd, LPCREATESTRUCT lParam )
         m_pnid.uFlags = NIF_TIP | NIF_ICON | NIF_MESSAGE;
         m_pnid.uCallbackMessage = WM_USER_TRAY_NOTIFY;
         m_pnid.hIcon  = theApp.LoadIcon( IDR_MAINFRAME );
-        Str_CopyLimitNull(m_pnid.szTip, theApp.m_pszAppName, ARRAY_COUNT(m_pnid.szTip)-1);
+        Str_CopyLimitNull(m_pnid.szTip, theApp.m_pszAppName, std::size(m_pnid.szTip) - 1);
 		Shell_NotifyIcon(NIM_ADD, &m_pnid);
 	}
 
@@ -901,7 +901,7 @@ bool CNTWindow::NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLine, int nCmdSho
 	char	className[32] = SPHERE_TITLE;
 	TCHAR	*argv[32];
 	argv[0] = nullptr;
-	int argc = Str_ParseCmds(lpCmdLine, &argv[1], ARRAY_COUNT(argv)-1, " \t") + 1;
+	int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " \t") + 1;
 	if (( argc > 1 ) && _IS_SWITCH(*argv[1]) )
 	{
 		if ( toupper(argv[1][1]) == 'C' )
@@ -1014,7 +1014,7 @@ void CNTWindow::NTWindow_CheckUpdateWindowTitle()
 	if ( Sphere_GetOSInfo()->dwPlatformId > VER_PLATFORM_WIN32s )
 	{
 		theApp.m_wndMain.m_pnid.uFlags = NIF_TIP;
-        Str_CopyLimitNull(theApp.m_wndMain.m_pnid.szTip, psTitle, ARRAY_COUNT(theApp.m_wndMain.m_pnid.szTip)-1);
+        Str_CopyLimitNull(theApp.m_wndMain.m_pnid.szTip, psTitle, std::size(theApp.m_wndMain.m_pnid.szTip) - 1);
 		Shell_NotifyIcon(NIM_MODIFY, &theApp.m_wndMain.m_pnid);
 	}
 }

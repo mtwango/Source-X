@@ -120,7 +120,7 @@ lpctstr const CCItemDamageable::sm_szLoadKeys[CIDMGL_QTY + 1] =
 bool CCItemDamageable::r_LoadVal(CScript & s)
 {
     ADDTOCALLSTACK("CCItemDamageable::r_LoadVal");
-    int iKeyNum = FindTableSorted(s.GetKey(), sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iKeyNum = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iKeyNum < 0)
     {
         return false;
@@ -147,7 +147,7 @@ bool CCItemDamageable::r_WriteVal(lpctstr ptcKey, CSString & s, CTextConsole * p
 {
     ADDTOCALLSTACK("CCItemDamageable::r_WriteVal");
     UnreferencedParameter(pSrc);
-    int iKeyNum = FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iKeyNum = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iKeyNum < 0)
     {
         return false;

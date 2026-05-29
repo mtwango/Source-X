@@ -123,7 +123,7 @@ bool CScriptObj::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	ADDTOCALLSTACK("CScriptObj::r_GetRef");
 	// A key name that just links to another object.
 
-    int index = FindTableHeadSorted(ptcKey, _ptcSRefKeys, ARRAY_COUNT(_ptcSRefKeys)-1);
+    int index = FindTableHeadSorted(ptcKey, _ptcSRefKeys, std::size(_ptcSRefKeys) - 1);
     switch (index)
     {
         case SREF_SERV:
@@ -340,7 +340,7 @@ bool CScriptObj::r_LoadVal( CScript & s )
 	lpctstr ptcKey = s.GetKey();
 
 	// ignore these.
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1);
+	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 	if ( index < 0 )
 	{
 		return ParseError_UndefinedKeyword(s.GetKey());
@@ -398,7 +398,7 @@ static void StringFunction( int iFunc, lpctstr ptcKey, CSString &sVal )
 		++ptcKey;
 
 	tchar * ppCmd[4];
-	int iCount = Str_ParseCmds( const_cast<tchar *>(ptcKey), ppCmd, ARRAY_COUNT(ppCmd), ")" );
+	int iCount = Str_ParseCmds( const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ")" );
 	if ( iCount <= 0 )
 	{
 		DEBUG_ERR(( "Bad string function usage. missing )\n" ));
@@ -535,7 +535,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
     }
 
 	EXC_SET_BLOCK("Writeval-Statement");
-	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	if ( index < 0 )
 	{
 		// <dSOMEVAL> same as <eval <SOMEVAL>> to get dec from the val
@@ -822,7 +822,7 @@ badcmd:
         case SSC_StrSub:
         {
             tchar * ppArgs[3];
-            int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, ARRAY_COUNT(ppArgs));
+            int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs));
             if ( iQty < 3 )
                 return false;
 
@@ -917,7 +917,7 @@ badcmd:
 		case SSC_ASCPAD:
 			{
 				tchar * ppArgs[2];
-				int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, ARRAY_COUNT(ppArgs));
+				int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs));
 				if ( iQty < 2 )
 					return false;
 
@@ -956,7 +956,7 @@ badcmd:
 				tchar	*buf = Str_GetTemp();
 				tchar	*Arg_ppCmd[10];		// limit to 9 arguments
 				Str_CopyLimitNull(buf, ptcKey, Str_TempLength());
-				int iQty = Str_ParseCmds(buf, Arg_ppCmd, ARRAY_COUNT(Arg_ppCmd));
+				int iQty = Str_ParseCmds(buf, Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( iQty < 1 )
 					return false;
 
@@ -1002,7 +1002,7 @@ badcmd:
         case SSC_StrToken:
         {
             tchar *ppArgs[3];
-            int iQty = Str_ParseCmdsAdv(const_cast<tchar *>(ptcKey), ppArgs, ARRAY_COUNT(ppArgs), ",");
+            int iQty = Str_ParseCmdsAdv(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs), ",");
             if ( iQty < 3 )
                 return false;
 
@@ -1013,11 +1013,11 @@ badcmd:
             tchar *pScriptArgs = Str_UnQuote(ppArgs[0]);
             sVal.Clear();
             tchar *ppCmd[255];
-            int count = Str_ParseCmdsAdv(pScriptArgs, ppCmd, ARRAY_COUNT(ppCmd), iSep); //Remove unnecessary chars from seperator to avoid issues.
+            int count = Str_ParseCmdsAdv(pScriptArgs, ppCmd, std::size(ppCmd), iSep); //Remove unnecessary chars from seperator to avoid issues.
             tchar *ppArrays[2];
 
             //Getting range of array index...
-            int iArrays = Str_ParseCmdsAdv(ppArgs[1], ppArrays, ARRAY_COUNT(ppArrays), "-");
+            int iArrays = Str_ParseCmdsAdv(ppArgs[1], ppArrays, std::size(ppArrays), "-");
             llong iValue = Exp_GetLLVal(ppArgs[1]);
             llong iValueEnd = iValue;
             if (iArrays > 1)
@@ -1069,7 +1069,7 @@ badcmd:
 					tchar *ppCmd[255];
 					tchar * z = Str_GetTemp();
 					Str_CopyLimitNull(z, p, Str_TempLength());
-					const int count = Str_ParseCmds(z, ppCmd, ARRAY_COUNT(ppCmd), separators);
+					const int count = Str_ParseCmds(z, ppCmd, std::size(ppCmd), separators);
 					if (count > 0)
 					{
 						sVal.Add(ppCmd[0]);
@@ -1095,7 +1095,7 @@ badcmd:
         case SSC_BCRYPTHASH:
         {
             tchar * ppCmd[3];
-            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, ARRAY_COUNT(ppCmd), ", ");
+            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, std::size(ppCmd), ", ");
             if ( iQty < 3 )
                 return false;
 
@@ -1118,7 +1118,7 @@ badcmd:
         case SSC_BCRYPTVALIDATE:
         {
             tchar * ppCmd[2];
-            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, ARRAY_COUNT(ppCmd), ", ");
+            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, std::size(ppCmd), ", ");
             if ( iQty < 2 )
                 return false;
 
@@ -1292,7 +1292,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 		return true;
 	}
 
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
+	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	switch (index)
 	{
 		case SSV_OBJ:
@@ -1340,7 +1340,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 		case SSV_NEWITEM:	// just add an item but don't put it anyplace yet..
 			{
 				tchar * ppCmd[4];
-				int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, ARRAY_COUNT(ppCmd), ",");
+				int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ",");
 				if ( iQty <= 0 )
 					return false;
 
@@ -1425,7 +1425,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
         case SSV_NEWSUMMON:
 	        {
 	            tchar * ppCmd[2];
-	            int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, ARRAY_COUNT(ppCmd), ",");
+	            int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ",");
 	            if (iQty <= 0)
 	                return false;
 
@@ -1568,7 +1568,7 @@ bool CScriptObj::Execute_FullTrigger(CScript& s, CScriptTriggerArgsPtr const& pS
 	tchar* piCmd[7];
 	tchar* ptcTmp = Str_GetTemp();
 	Str_CopyLimitNull(ptcTmp, s.GetArgRaw(), Str_TempLength());
-	int iArgQty = Str_ParseCmds(ptcTmp, piCmd, ARRAY_COUNT(piCmd), " ,\t");
+	int iArgQty = Str_ParseCmds(ptcTmp, piCmd, std::size(piCmd), " ,\t");
 
 	CScriptObj* pRef = this;
 	if (iArgQty == 2)
@@ -1884,7 +1884,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 		int iMin = 0;
 		int iMax = 0;
 		tchar* ppArgs[3];
-		int iQty = Str_ParseCmds(s.GetArgStr(), ppArgs, ARRAY_COUNT(ppArgs), ", ");
+		int iQty = Str_ParseCmds(s.GetArgStr(), ppArgs, std::size(ppArgs), ", ");
 		CSString sLoopVar("_FOR");
 
 		switch (iQty)
@@ -2212,7 +2212,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 	if (s.HasArgs())
 	{
 		tchar* ppArgs[2];
-		int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), " \t,");
+		int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), " \t,");
 
 		if (iArgQty > 1)
 		{
@@ -2289,7 +2289,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, SK_TYPE iCmd, C
     SKIP_SEPARATORS(ptcKey);
 
     tchar* ppArgs[2];
-    if (Str_ParseCmds(ptcKey, ppArgs, ARRAY_COUNT(ppArgs), " \t,") < 1)
+    if (Str_ParseCmds(ptcKey, ppArgs, std::size(ppArgs), " \t,") < 1)
     {
         g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect arguments.\n", (dword)pObjCont->GetUID());
         iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
@@ -2384,7 +2384,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerRun( CScript &s, TRIGRUN_TYPE trigrun, CScript
 			break;
 
 jump_in:
-		SK_TYPE iCmd = (SK_TYPE) FindTableSorted( s.GetKey(), sm_szScriptKeys, ARRAY_COUNT( sm_szScriptKeys )-1 );
+		SK_TYPE iCmd = (SK_TYPE) FindTableSorted( s.GetKey(), sm_szScriptKeys, std::size(sm_szScriptKeys) - 1 );
 		TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
 
 		switch ( iCmd )

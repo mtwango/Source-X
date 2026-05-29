@@ -2033,7 +2033,7 @@ lpctstr const CItemMulti::sm_szRefKeys[SHR_QTY + 1] =
 bool CItemMulti::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
 {
     ADDTOCALLSTACK("CItemMulti::r_GetRef");
-    int iCmd = FindTableHeadSorted(ptcKey, sm_szRefKeys, ARRAY_COUNT(sm_szRefKeys) - 1);
+    int iCmd = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1);
 
     if (iCmd >= 0)
     {
@@ -2263,7 +2263,7 @@ bool CItemMulti::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command fro
     {
         return true;
     }
-    const int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys) - 1);
+    const int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
     switch (iCmd)
     {
         case SHV_DELACCESS:
@@ -2390,7 +2390,7 @@ bool CItemMulti::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command fro
         case SHV_REDEED:
         {
             int64 piCmd[2];
-            Str_ParseCmds(s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd));
+            Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd));
             const bool fShowMsg = piCmd[0] ? true : false;
             const bool fMoveToBank = piCmd[1] ? true : false;
             CUID charUID;
@@ -2706,7 +2706,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
     {
         return true;
     }
-    int iCmd = FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iCmd >= 0)
     {
         ptcKey += strlen(sm_szLoadKeys[iCmd]);
@@ -3006,7 +3006,7 @@ bool CItemMulti::r_LoadVal(CScript & s)
     {
         return true;
     }
-    int iCmd = FindTableHeadSorted(s.GetKey(), sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableHeadSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 
     switch (iCmd)
     {
@@ -3051,7 +3051,7 @@ bool CItemMulti::r_LoadVal(CScript & s)
         case SHL_ADDKEY:
         {
             int64 piCmd[2];
-            int iLen = Str_ParseCmds(s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd));
+            int iLen = Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd));
             CUID uidOwner((dword)piCmd[0]);
             bool fDupeOnBank = false;
             if (iLen > 1)

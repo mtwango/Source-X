@@ -630,7 +630,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
 			}
 		}
 
-		if ( count >= (ARRAY_COUNT(item) - 1) )
+		if ( count >= (std::size(item) - 1) )
 			break;
 	}
 
@@ -1138,8 +1138,8 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			NPCBRAIN_NONE	// players
 		};
 
-		if ( track_sel >= ARRAY_COUNT(sm_Track_Brain) )
-			track_sel = ARRAY_COUNT(sm_Track_Brain) - 1;
+		if ( track_sel >= std::size(sm_Track_Brain))
+			track_sel = std::size(sm_Track_Brain) - 1;
 
 		NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
         ASSERT(ARRAY_COUNT(m_tmMenu.m_Item) == MAX_MENU_ITEMS);
@@ -1215,7 +1215,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			item[count].m_sText = pChar->GetName();
 			m_tmMenu.m_Item[count] = pChar->GetUID();
 
-			if ( count >= (ARRAY_COUNT(item) - 1) )
+			if ( count >= (std::size(item) - 1) )
 				break;
 		}
 

@@ -154,7 +154,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, bool fTakePets, bool fCheckAntiMagi
                     g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_1),
                     g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_2)
                 };
-                SysMessage(sm_szPunishMsg[g_Rand.GetVal(ARRAY_COUNT(sm_szPunishMsg))]);
+                SysMessage(sm_szPunishMsg[g_Rand.GetVal(std::size(sm_szPunishMsg))]);
 
                 int iCell = 0;
                 if ( m_pPlayer && m_pPlayer->GetAccount() )
@@ -272,7 +272,7 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic)
                 g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_1),
                 g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_2)
             };
-            SysMessage(sm_szPunishMsg[g_Rand.GetVal(ARRAY_COUNT(sm_szPunishMsg))]);
+            SysMessage(sm_szPunishMsg[g_Rand.GetVal(std::size(sm_szPunishMsg))]);
             return false;
         }
 
@@ -1836,7 +1836,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 			if (IsClientActive())
 			{
 				static constexpr SOUND_TYPE sm_sounds[] = { 0x243, 0x244 };
-				m_pClient->addSound(sm_sounds[g_Rand.GetVal(ARRAY_COUNT(sm_sounds))]);
+				m_pClient->addSound(sm_sounds[g_Rand.GetVal(std::size(sm_sounds))]);
 				m_pClient->addChar(this);
 				m_pClient->addPlayerSee(CPointMap());
 			}
@@ -3320,7 +3320,7 @@ bool CChar::Spell_CastDone()
 				};
 
 				int iGet = 0;
-				for (size_t i = 0; i < ARRAY_COUNT(sm_Item_Bone); ++i)
+				for (size_t i = 0; i < std::size(sm_Item_Bone); ++i)
 				{
 					if (!g_Rand.GetVal(2 + iGet))
 						break;
@@ -3704,7 +3704,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	if ( fPotion )
 	{
 		static constexpr SOUND_TYPE sm_DrinkSounds[] = { 0x030, 0x031 };
-		iSound = sm_DrinkSounds[g_Rand.GetVal(ARRAY_COUNT(sm_DrinkSounds))];
+		iSound = sm_DrinkSounds[g_Rand.GetVal(std::size(sm_DrinkSounds))];
 	}
 
     //If true allows the spell to bypass the magic reflection checks.

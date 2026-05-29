@@ -2918,7 +2918,7 @@ PacketDisplayBook::PacketDisplayBook(const CClient* target, CItem* book) : Packe
 		{
 			while (s.ReadKeyParse())
 			{
-				switch (FindTableSorted(s.GetKey(), CItemMessage::sm_szLoadKeys, ARRAY_COUNT(CItemMessage::sm_szLoadKeys )-1))
+				switch (FindTableSorted(s.GetKey(), CItemMessage::sm_szLoadKeys, std::size(CItemMessage::sm_szLoadKeys) - 1))
 				{
 					case CIC_AUTHOR:
 						author = s.GetArgStr();
@@ -4694,7 +4694,7 @@ PacketDisplayBookNew::PacketDisplayBookNew(const CClient* target, CItem* book) :
 		{
 			while (s.ReadKeyParse())
 			{
-				switch (FindTableSorted(s.GetKey(), CItemMessage::sm_szLoadKeys, ARRAY_COUNT(CItemMessage::sm_szLoadKeys )-1))
+				switch (FindTableSorted(s.GetKey(), CItemMessage::sm_szLoadKeys, std::size(CItemMessage::sm_szLoadKeys) - 1))
 				{
 					case CIC_AUTHOR:
 						author = s.GetArgStr();

@@ -27,11 +27,11 @@ void CSkillClassDef::Init()
     m_SkillSumMax = 10*1000;
     m_StatSumMax = 300;
     size_t i;
-    for ( i = 0; i < ARRAY_COUNT(m_SkillLevelMax); ++i )
+    for ( i = 0; i < std::size(m_SkillLevelMax); ++i )
     {
         m_SkillLevelMax[i] = 1000;
     }
-    for ( i = 0; i < ARRAY_COUNT(m_StatMax); ++i )
+    for ( i = 0; i < std::size(m_StatMax); ++i )
     {
         m_StatMax[i] = 100;
     }
@@ -42,7 +42,7 @@ bool CSkillClassDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole *
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CSkillClassDef::r_WriteVal");
     EXC_TRY("WriteVal");
-    switch ( FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+    switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
     {
         case SCC_NAME: // "NAME"
             sVal = m_sName;
@@ -86,7 +86,7 @@ bool CSkillClassDef::r_LoadVal( CScript &s )
 {
     ADDTOCALLSTACK("CSkillClassDef::r_LoadVal");
     EXC_TRY("LoadVal");
-    switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+    switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
     {
         case SCC_DEFNAME:
             return SetResourceName( s.GetArgStr());

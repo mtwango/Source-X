@@ -2776,14 +2776,14 @@ void CChar::SoundChar( CRESND_TYPE type )
 
 					if (type == CRESND_HIT)
 					{
-						id = sm_Snd_Hit[ g_Rand.GetVal( ARRAY_COUNT( sm_Snd_Hit )) ];		// same sound for every race and sex
+						id = sm_Snd_Hit[ g_Rand.GetVal( std::size(sm_Snd_Hit)) ];		// same sound for every race and sex
 					}
 					else if ( pCharDef->IsFemale() )
 					{
 						switch ( type )
 						{
-							case CRESND_GETHIT:	id = sm_Snd_Wom_Omf[ g_Rand.GetVal( ARRAY_COUNT(sm_Snd_Wom_Omf)) ];	break;
-							case CRESND_DIE:	id = sm_Snd_Wom_Die[ g_Rand.GetVal( ARRAY_COUNT(sm_Snd_Wom_Die)) ];	break;
+							case CRESND_GETHIT:	id = sm_Snd_Wom_Omf[ g_Rand.GetVal( std::size(sm_Snd_Wom_Omf)) ];	break;
+							case CRESND_DIE:	id = sm_Snd_Wom_Die[ g_Rand.GetVal( std::size(sm_Snd_Wom_Die)) ];	break;
 							default:	break;
 						}
 					}
@@ -2791,8 +2791,8 @@ void CChar::SoundChar( CRESND_TYPE type )
 					{
 						switch ( type )
 						{
-							case CRESND_GETHIT:	id = sm_Snd_Man_Omf[ g_Rand.GetVal( ARRAY_COUNT(sm_Snd_Man_Omf)) ];	break;
-							case CRESND_DIE:	id = sm_Snd_Man_Die[ g_Rand.GetVal( ARRAY_COUNT(sm_Snd_Man_Die)) ];	break;
+							case CRESND_GETHIT:	id = sm_Snd_Man_Omf[ g_Rand.GetVal( std::size(sm_Snd_Man_Omf)) ];	break;
+							case CRESND_DIE:	id = sm_Snd_Man_Die[ g_Rand.GetVal( std::size(sm_Snd_Man_Die)) ];	break;
 							default:	break;
 						}
 					}
@@ -3472,7 +3472,7 @@ void CChar::EatAnim(CItem* pItem, ushort uiQty)
     ASSERT(pItem); //Should never happen, but make sure item is valid.
 
 	static constexpr SOUND_TYPE sm_EatSounds[] = { 0x03a, 0x03b, 0x03c };
-	Sound(sm_EatSounds[g_Rand.GetVal(ARRAY_COUNT(sm_EatSounds))]);
+	Sound(sm_EatSounds[g_Rand.GetVal(std::size(sm_EatSounds))]);
 
 	if ( !IsStatFlag(STATF_ONHORSE) )
 		UpdateAnimate(ANIM_EAT);
@@ -5554,7 +5554,7 @@ bool CChar::IsTriggerActive(lpctstr trig) const
     if (_iRunningTriggerId != -1)
     {
         ASSERT(_iRunningTriggerId < CTRIG_QTY);
-        const int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
+        const int iAction = FindTableSorted( trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1 );
         return (_iRunningTriggerId == iAction);
     }
     ASSERT(!_sRunningTrigger.IsEmpty());
@@ -5569,7 +5569,7 @@ void CChar::SetTriggerActive(lpctstr trig)
         _sRunningTrigger.Clear();
         return;
     }
-	const int iAction = FindTableSorted( trig, sm_szTrigName, ARRAY_COUNT(CChar::sm_szTrigName)-1 );
+	const int iAction = FindTableSorted( trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1 );
     if (iAction != -1)
     {
         _iRunningTriggerId = (short)iAction;
@@ -5614,7 +5614,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
     {
 		tchar ptcCharTrigName[TRIGGER_NAME_MAX_LEN] = "@CHAR";
 		Str_ConcatLimitNull(ptcCharTrigName + 5, pszTrigName + 1, TRIGGER_NAME_MAX_LEN - 5);
-        const CTRIG_TYPE iCharAction = (CTRIG_TYPE)FindTableSorted(ptcCharTrigName, sm_szTrigName, ARRAY_COUNT(sm_szTrigName) - 1);
+        const CTRIG_TYPE iCharAction = (CTRIG_TYPE)FindTableSorted(ptcCharTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1);
         if ((iCharAction > XTRIG_UNKNOWN) && IsTrigUsed(ptcCharTrigName))
         {
             CChar* pChar = pSrc->GetChar();

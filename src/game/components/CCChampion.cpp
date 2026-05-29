@@ -842,7 +842,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
 {
     UnreferencedParameter(pSrc);
     ADDTOCALLSTACK("CCChampion::r_WriteVal");
-    int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 
     if (iCmd < 0)
     {
@@ -964,7 +964,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
 bool CCChampion::r_LoadVal(CScript& s)
 {
     ADDTOCALLSTACK("CCChampion::r_LoadVal");
-    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, (int)ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, (int)std::size(sm_szLoadKeys) - 1);
     lpctstr ptcKey = s.GetKey();
 
     if (iCmd < 0)
@@ -1014,7 +1014,7 @@ bool CCChampion::r_LoadVal(CScript& s)
         {
             uchar iGroup = Exp_GetUCVal(ptcKey);
             tchar* piCmd[UCHAR_MAX];
-            size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, ARRAY_COUNT(piCmd), ",");
+            size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
             _spawnGroupsId[iGroup].clear();
             for (uint i = 0; i < iArgQty; ++i)
             {
@@ -1128,7 +1128,7 @@ bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CCChampion::r_Verb");
     //UnreferencedParameter(pSrc);
-    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, (int)ARRAY_COUNT(sm_szVerbKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, (int)std::size(sm_szVerbKeys) - 1);
     CChar* pCharSrc = pSrc->GetChar();
 
     switch (iCmd)
@@ -1300,7 +1300,7 @@ bool CCChampionDef::r_LoadVal(CScript& s)
 {
     ADDTOCALLSTACK("CCChampionDef::r_LoadVal");
     lpctstr ptcKey = s.GetKey();
-    CHAMPIONDEF_TYPE iCmd = (CHAMPIONDEF_TYPE)FindTableSorted(ptcKey, sm_szLoadKeys, (int)ARRAY_COUNT(sm_szLoadKeys) - 1);
+    CHAMPIONDEF_TYPE iCmd = (CHAMPIONDEF_TYPE)FindTableSorted(ptcKey, sm_szLoadKeys, (int)std::size(sm_szLoadKeys) - 1);
 
     if (iCmd < 0)
     {
@@ -1324,7 +1324,7 @@ bool CCChampionDef::r_LoadVal(CScript& s)
     {
         uchar iGroup = Exp_GetUCVal(ptcKey);
         tchar* piCmd[UCHAR_MAX];
-        size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, ARRAY_COUNT(piCmd), ",");
+        size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
         _idSpawn[iGroup].clear();
         for (uint i = 0; i < iArgQty; ++i)
         {

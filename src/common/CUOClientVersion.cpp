@@ -232,7 +232,7 @@ void CUOClientVersion::ApplyVersionFromStringOldFormat(lptstr ptcVersion) noexce
 
     tchar *piVer[3]{};
     lptstr ptcVersionParsed = ptcVersion;
-    Str_ParseCmds(ptcVersionParsed, piVer, ARRAY_COUNT(piVer), ".");
+    Str_ParseCmds(ptcVersionParsed, piVer, std::size(piVer), ".");
 
     // Don't rely on all values reported by client, because it can be easily faked. Injection users can report any
     // client version they want, and some custom clients may also report client version as "Custom" instead X.X.Xy

@@ -116,7 +116,7 @@ bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 	EXC_TRY("WriteVal");
 
 	bool fZero = false;
-	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	switch ( index )
 	{
 		//return as string or hex number or nullptr if not set
@@ -304,7 +304,7 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
         }
     }
 
-    int i = FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+    int i = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
     //if (i != 0 && !g_Serv.IsLoadingGeneric())
     //    return false;   // shouldn't ever happen?
@@ -342,7 +342,7 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_ARMOR:
 			{
 				int64 piVal[2];
-                int iQty = Str_ParseCmds( s.GetArgStr(), piVal, ARRAY_COUNT(piVal));
+                int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
 				m_defenseBase = (word)(piVal[0]);
 				if ( iQty > 1 )
 					m_defenseRange = (word)(piVal[1]) - m_defenseBase;
@@ -354,7 +354,7 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_DAM:
 			{
 				int64 piVal[2];
-				int iQty = Str_ParseCmds( s.GetArgStr(), piVal, ARRAY_COUNT(piVal));
+				int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
 				m_attackBase = (word)(piVal[0]);
 				if ( iQty > 1 )
 					m_attackRange = (word)(piVal[1]) - m_attackBase;
@@ -493,7 +493,7 @@ ushort CBaseBaseDef::ConvertRangeStr(lpctstr ptcRange) // static
 	int64 piVal[2];
 	tchar* ptcTmp = Str_GetTemp();
 	Str_CopyLimitNull(ptcTmp, ptcRange, Str_TempLength());
-	const int iQty = Str_ParseCmds(ptcTmp, piVal, ARRAY_COUNT(piVal));
+	const int iQty = Str_ParseCmds(ptcTmp, piVal, std::size(piVal));
 	ushort iHi = 0, iLo = 0;
 	if (iQty > 1)	// args: "min, max"
 	{

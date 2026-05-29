@@ -142,7 +142,7 @@ bool CChar::NPC_OnVerb( CScript &s, CTextConsole * pSrc ) // Execute command fro
 	EXC_TRY("OnVerb");
 	CChar * pCharSrc = pSrc->GetChar();
 
-	switch ( FindTableSorted( s.GetKey(), CCharNPC::sm_szVerbKeys, ARRAY_COUNT(CCharNPC::sm_szVerbKeys)-1 ))
+	switch ( FindTableSorted( s.GetKey(), CCharNPC::sm_szVerbKeys, std::size(CCharNPC::sm_szVerbKeys) - 1 ))
 	{
 	case NV_BUY:
 	{
@@ -404,7 +404,7 @@ void CChar::NPC_OnNoticeSnoop( const CChar * pCharThief, const CChar * pCharMark
 
 	if ( NPC_CanSpeak())
 	{
-		Speak( g_Cfg.GetDefaultMsg(sm_szTextSnoop[ g_Rand.GetValFast( ARRAY_COUNT( sm_szTextSnoop )) ]));
+		Speak( g_Cfg.GetDefaultMsg(sm_szTextSnoop[ g_Rand.GetValFast( std::size(sm_szTextSnoop)) ]));
 	}
 	if ( ! g_Rand.Get16ValFast(4))
 	{
@@ -724,7 +724,7 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger )
 			return false;
 
 		tchar *pszMsg = Str_GetTemp();
-		snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(sm_szSpeakGuardJeer[ g_Rand.GetValFast( ARRAY_COUNT( sm_szSpeakGuardJeer )) ]), pChar->GetName());
+		snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(sm_szSpeakGuardJeer[ g_Rand.GetValFast( std::size(sm_szSpeakGuardJeer)) ]), pChar->GetName());
 		Speak(pszMsg);
 		UpdateDir(pChar);
 		return false;
@@ -753,7 +753,7 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger )
 	}
 	if ( !IsStatFlag(STATF_WAR) || m_Act_UID != pChar->GetUID() )
 	{
-		Speak(g_Cfg.GetDefaultMsg(sm_szSpeakGuardStrike[g_Rand.GetValFast(ARRAY_COUNT(sm_szSpeakGuardStrike))]));
+		Speak(g_Cfg.GetDefaultMsg(sm_szSpeakGuardStrike[g_Rand.GetValFast(std::size(sm_szSpeakGuardStrike))]));
 		Fight_Attack(pChar, true);
 	}
 	return true;
@@ -895,7 +895,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if ( !IsStatFlag( STATF_CRIMINAL ) && NotoThem == NOTO_CRIMINAL )
 	{
-		pszRefuseMsg = sm_szHealerRefuseCriminals[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseCriminals )) ];
+		pszRefuseMsg = sm_szHealerRefuseCriminals[ g_Rand.GetValFast( std::size(sm_szHealerRefuseCriminals)) ];
 		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
@@ -908,7 +908,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if (!fImNeutral && !fImEvil && NotoThem >= NOTO_NEUTRAL)
 	{
-		pszRefuseMsg = sm_szHealerRefuseEvils[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseEvils )) ];
+		pszRefuseMsg = sm_szHealerRefuseEvils[ g_Rand.GetValFast( std::size(sm_szHealerRefuseEvils)) ];
 		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
@@ -917,7 +917,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if ((fImNeutral || fImEvil ) && NotoThem == NOTO_GOOD)
 	{
-		pszRefuseMsg = sm_szHealerRefuseGoods[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseGoods )) ];
+		pszRefuseMsg = sm_szHealerRefuseGoods[ g_Rand.GetValFast( std::size(sm_szHealerRefuseGoods)) ];
 		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
@@ -925,7 +925,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 	}
 
 	// Attempt to res.
-	Speak( sm_szHealer[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealer )) ] );
+	Speak( sm_szHealer[ g_Rand.GetValFast( std::size(sm_szHealer)) ] );
 	UpdateAnimate( ANIM_CAST_AREA );
 	if ( ! pChar->OnSpellEffect( SPELL_Resurrection, this, 1000, nullptr ))
 	{
@@ -1481,7 +1481,7 @@ bool CChar::NPC_Act_Talk()
 				g_Cfg.GetDefaultMsg( DEFMSG_NPC_GENERIC_GONE_2 )
 			};
 			tchar *pszMsg = Str_GetTemp();
-			snprintf(pszMsg, Str_TempLength(), sm_szText[ g_Rand.GetValFast(ARRAY_COUNT(sm_szText)) ], pChar->GetName() );
+			snprintf(pszMsg, Str_TempLength(), sm_szText[ g_Rand.GetValFast(std::size(sm_szText)) ], pChar->GetName() );
 			Speak(pszMsg);
 		}
 		return false;

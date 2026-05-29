@@ -1,5 +1,5 @@
 /**
- * @file startup_monitor_thread.h
+ * @file StartupMonitorThread.h
  *
  * StartupMonitorThread
  *  - Provides a proper Sphere thread context on the bootstrap OS thread during startup.

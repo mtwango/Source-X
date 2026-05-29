@@ -103,7 +103,7 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		{ nullptr, INT32_MAX }
 	};
 
-    SC_TYPE key = (SC_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    SC_TYPE key = (SC_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 	switch ( key )
 	{
         case SC_CANSLEEP:
@@ -301,7 +301,7 @@ bool CSector::r_LoadVal( CScript &s )
 {
 	ADDTOCALLSTACK("CSector::r_LoadVal");
 	EXC_TRY("LoadVal");
-	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case SC_COLDCHANCE:
 			SetWeatherChance( false, s.HasArgs() ? s.GetArgVal() : -1 );
@@ -354,7 +354,7 @@ bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
 	ADDTOCALLSTACK("CSector::r_Verb");
 	ASSERT(pSrc);
 	EXC_TRY("Verb-Statement");
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1 );
+	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	switch (index)
 	{
 		case SEV_ALLCHARS:		// "ALLCHARS"
@@ -1289,7 +1289,7 @@ bool CSector::_OnTick()
 
 			case WEATHER_SNOW:
 				if ( ! g_Rand.GetValFast(5) )
-					sound = sm_SfxWind[ g_Rand.GetValFast( ARRAY_COUNT( sm_SfxWind )) ];
+					sound = sm_SfxWind[ g_Rand.GetValFast( std::size(sm_SfxWind)) ];
 				break;
 
 			case WEATHER_RAIN:
@@ -1299,12 +1299,12 @@ bool CSector::_OnTick()
 					{
 						// Mess up the light levels for a sec..
 						LightFlash();
-						sound = sm_SfxThunder[ g_Rand.GetValFast( ARRAY_COUNT( sm_SfxThunder )) ];
+						sound = sm_SfxThunder[ g_Rand.GetValFast( std::size(sm_SfxThunder)) ];
 					}
 					else if ( iVal < 10 )
-						sound = sm_SfxRain[ g_Rand.GetValFast( ARRAY_COUNT( sm_SfxRain )) ];
+						sound = sm_SfxRain[ g_Rand.GetValFast( std::size(sm_SfxRain)) ];
 					else if ( iVal < 15 )
-						sound = sm_SfxWind[ g_Rand.GetValFast( ARRAY_COUNT( sm_SfxWind )) ];
+						sound = sm_SfxWind[ g_Rand.GetValFast( std::size(sm_SfxWind)) ];
 				}
 				break;
 

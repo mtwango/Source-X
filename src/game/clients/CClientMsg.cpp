@@ -874,7 +874,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 		case 3:	// Extended localized message (with affixed ASCII text)
 		{
             tchar * ppArgs[256];
-			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, ARRAY_COUNT(ppArgs), "," );
+			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
 			int iClilocId = Exp_GetVal( pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
 			int iAffixType = Exp_GetVal( ppArgs[1] );
 			CSString CArgs;
@@ -893,7 +893,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 		case 2:	// Localized
 		{
             tchar * ppArgs[256];
-			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, ARRAY_COUNT(ppArgs), "," );
+			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
 			int iClilocId = Exp_GetVal(pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
 			CSString CArgs;
 			for ( int i = 1; i < iQty; ++i )
@@ -910,7 +910,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
 		case 1:	// Unicode
 		{
 			nachar szBuffer[ MAX_TALK_BUFFER ];
-			CvtSystemToNETUTF16( szBuffer, ARRAY_COUNT(szBuffer), ptcBarkBuffer, -1 );
+			CvtSystemToNETUTF16( szBuffer, std::size(szBuffer), ptcBarkBuffer, -1 );
 			addBarkUNICODE( szBuffer, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), 0 );
 			break;
 		}
@@ -1225,7 +1225,7 @@ void CClient::addItemName( CItem * pItem )
 	lpctstr pszNameFull = pItem->GetNameFull( fIdentified );
 
 	tchar szName[ MAX_ITEM_NAME_SIZE * 2 ];
-	size_t len = Str_CopyLimitNull( szName, pszNameFull, ARRAY_COUNT(szName) );
+	size_t len = Str_CopyLimitNull( szName, pszNameFull, std::size(szName));
 
 	const CContainer* pCont = dynamic_cast<const CContainer*>(pItem);
 	if ( pCont != nullptr )
@@ -1330,7 +1330,7 @@ void CClient::addItemName( CItem * pItem )
         lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText");
 
 		if ( pNewStr != nullptr )
-			Str_CopyLimitNull(szName, pNewStr, ARRAY_COUNT(szName));
+			Str_CopyLimitNull(szName, pNewStr, std::size(szName));
 
         wHue = (HUE_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
 	}
@@ -2926,7 +2926,7 @@ byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
 	CAccount* pAccount = GetAccount();
 	if ( !pAccount )
 		return( PacketLoginError::Invalid );
-	if ( iSlot >= ARRAY_COUNT(m_tmSetupCharList))
+	if ( iSlot >= std::size(m_tmSetupCharList))
 		return( PacketLoginError::BadCharacter );
 
 	CChar * pChar = m_tmSetupCharList[ iSlot ].CharFind();
@@ -2954,7 +2954,7 @@ byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
 	ADDTOCALLSTACK("CClient::Setup_Delete");
 	ASSERT( GetAccount() );
 	DEBUG_MSG(( "%x:Setup_Delete slot=%u\n", GetSocketID(), iSlot ));
-	if ( iSlot >= ARRAY_COUNT(m_tmSetupCharList))
+	if ( iSlot >= std::size(m_tmSetupCharList))
 		return PacketDeleteError::NotExist;
 
     CChar * pChar = m_tmSetupCharList[iSlot].CharFind();

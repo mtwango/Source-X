@@ -426,7 +426,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 		return false;
 
 	tchar * ppCmd[5];
-	size_t iQty = Str_ParseCmds( pszArgs, ppCmd, ARRAY_COUNT( ppCmd ));
+	size_t iQty = Str_ParseCmds( pszArgs, ppCmd, std::size(ppCmd));
 
 	VACS_TYPE index;
 	if ( iQty <= 0 ||
@@ -437,7 +437,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 	}
 	else
 	{
-		index = (VACS_TYPE) FindTableSorted( ppCmd[0], sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
+		index = (VACS_TYPE) FindTableSorted( ppCmd[0], sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	}
 
 	static constexpr lpctstr sm_pszCmds[] =
@@ -466,7 +466,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 
 		case VACS_HELP:
 			{
-				for ( size_t i = 0; i < ARRAY_COUNT(sm_pszCmds); ++i )
+				for ( size_t i = 0; i < std::size(sm_pszCmds); ++i )
 					pSrc->SysMessage( sm_pszCmds[i] );
 			}
 			return true;
@@ -540,7 +540,7 @@ bool CAccount::NameStrip( tchar * pszNameOut, lpctstr pszNameInp )
 	if ( !strnicmp(pszNameOut, "EOF", 3) || !strnicmp(pszNameOut, "ACCOUNT", 7) )
 		return false;
 	// Check for name already used.
-	if ( FindTableSorted(pszNameOut, CAccounts::sm_szVerbKeys, ARRAY_COUNT(CAccounts::sm_szVerbKeys)-1) >= 0 )
+	if ( FindTableSorted(pszNameOut, CAccounts::sm_szVerbKeys, std::size(CAccounts::sm_szVerbKeys) - 1) >= 0 )
 		return false;
 	if ( g_Cfg.IsObscene(pszNameOut) )
 		return false;
@@ -564,7 +564,7 @@ static lpctstr constexpr sm_szPrivLevels[ PLEVEL_QTY+1 ] =
 PLEVEL_TYPE CAccount::GetPrivLevelText( lpctstr pszFlags ) // static
 {
 	ADDTOCALLSTACK("CAccount::GetPrivLevelText");
-	int level = FindTable( pszFlags, sm_szPrivLevels, ARRAY_COUNT(sm_szPrivLevels)-1 );
+	int level = FindTable( pszFlags, sm_szPrivLevels, std::size(sm_szPrivLevels) - 1 );
 	if ( level >= 0 )
 		return (PLEVEL_TYPE)level;
 
@@ -1218,7 +1218,7 @@ bool CAccount::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 
 	bool fZero = false;
 
-	switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case AC_NAME:
 		case AC_ACCOUNT:
@@ -1367,7 +1367,7 @@ bool CAccount::r_LoadVal( CScript & s )
 	ADDTOCALLSTACK("CAccount::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	int i = FindTableHeadSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+	int i = FindTableHeadSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	if ( i < 0 )
 	{
 		return false;
@@ -1646,7 +1646,7 @@ bool CAccount::r_Verb( CScript &s, CTextConsole * pSrc )
 		return true;
 	}
 
-	int i = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
+	int i = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	if ( i < 0 )
 	{
 		bool fLoad = CScriptObj::r_Verb( s, pSrc );

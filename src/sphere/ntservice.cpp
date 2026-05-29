@@ -321,7 +321,7 @@ bailout1:
 	sfaFailure.dwResetPeriod = (1 * 60 * 60); // reset failure count after an hour passes with no fails
 	sfaFailure.lpRebootMsg = nullptr;	// no reboot message
 	sfaFailure.lpCommand = nullptr;	// no command executed
-	sfaFailure.cActions = ARRAY_COUNT(scAction);		// number of actions
+	sfaFailure.cActions = std::size(scAction);		// number of actions
 	sfaFailure.lpsaActions = scAction;	//
 	if ( !ChangeServiceConfig2(schService, SERVICE_CONFIG_FAILURE_ACTIONS, &sfaFailure) )
 	{
@@ -465,7 +465,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	TCHAR	*argv[32];
 	argv[0] = nullptr;
-	int argc = Str_ParseCmds(lpCmdLine, &argv[1], ARRAY_COUNT(argv)-1, " =\t") + 1;
+	int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " =\t") + 1;
 
     // Process the command line arguments.
     if (argc > 1 && _IS_SWITCH(*argv[1]))

@@ -875,8 +875,8 @@ void CItemContainer::SetKeyRing()
 	};
 
 	size_t iQty = GetContentCount();
-	if ( iQty >= ARRAY_COUNT(sm_Item_Keyrings) )
-		iQty = ARRAY_COUNT(sm_Item_Keyrings) - 1;
+	if ( iQty >= std::size(sm_Item_Keyrings))
+		iQty = std::size(sm_Item_Keyrings) - 1;
 
 	ITEMID_TYPE id = sm_Item_Keyrings[iQty];
 	if ( id != GetID() )
@@ -1237,7 +1237,7 @@ void CItemContainer::Game_Create()
 
 	if ( m_itGameBoard.m_GameType == 0 )	// Chess
 	{
-		for ( size_t i = 0; i < ARRAY_COUNT(sm_Item_ChessPieces); ++i )
+		for ( size_t i = 0; i < std::size(sm_Item_ChessPieces); ++i )
 		{
 			// Add all it's pieces. (if not already added)
 			CItem *pPiece = CreateBase(sm_Item_ChessPieces[i]);
@@ -1335,7 +1335,7 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 	ADDTOCALLSTACK("CItemContainer::r_Verb");
 	EXC_TRY("Verb");
 	ASSERT(pSrc);
-	switch ( FindTableSorted(s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys) - 1) )
+	switch ( FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
 	{
 		case ICV_DELETE:
 			if ( s.HasArgs() )

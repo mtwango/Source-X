@@ -837,7 +837,7 @@ bool CCSpawn::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc)
     UnreferencedParameter(pSrc);
     EXC_TRY("WriteVal");
 
-    int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iCmd < 0)
     {
         return false;
@@ -917,7 +917,7 @@ bool CCSpawn::r_LoadVal(CScript & s)
     ADDTOCALLSTACK("CCSpawn::r_LoadVal");
     EXC_TRY("LoadVal");
 
-    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iCmd < 0)
     {
         return false;
@@ -1064,7 +1064,7 @@ bool CCSpawn::r_LoadVal(CScript & s)
             if (IsDigit(pszTemp[0]) || pszTemp[0] == '-')
             {
                 tchar * ppVal[3];
-                iArgs = Str_ParseCmds(pszTemp, ppVal, ARRAY_COUNT(ppVal), " ,\t");
+                iArgs = Str_ParseCmds(pszTemp, ppVal, std::size(ppVal), " ,\t");
                 switch (iArgs)
                 {
                     case 3: // m_z
@@ -1156,9 +1156,9 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
     ADDTOCALLSTACK("CCSpawn::r_GetRef");
     int iCmd = -1;
     if (!strnicmp(ptcKey, "at.", 3))
-        iCmd = FindTableSorted("at", sm_szRefKeys, ARRAY_COUNT(sm_szRefKeys) - 1);
+        iCmd = FindTableSorted("at", sm_szRefKeys, std::size(sm_szRefKeys) - 1);
     else
-        iCmd = FindTableSorted(ptcKey, sm_szRefKeys, ARRAY_COUNT(sm_szRefKeys) - 1);
+        iCmd = FindTableSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1);
 
     if (iCmd < 0)
     {
@@ -1230,7 +1230,7 @@ bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CCSpawn::r_Verb");
     UnreferencedParameter(pSrc);
-    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
     if (iCmd < 0)
     {
         return false;

@@ -161,7 +161,7 @@ TRIGRET_TYPE CClient::Dialog_OnButton(const CResourceID& rid, dword dwButtonID, 
 		if ( ! s.IsKeyHead( "ON", 2 ))
 			continue;
 
-		size_t iArgs = Str_ParseCmds( s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd) );
+		size_t iArgs = Str_ParseCmds( s.GetArgStr(), piCmd, std::size(piCmd));
 		if ( iArgs == 0 )
 			continue;
 
@@ -397,7 +397,7 @@ void CClient::Menu_Setup( CResourceID rid, CObjBase * pObj )
 		if ( ! item[i].ParseLine( s.GetArgRaw(), pObj, m_pChar ))
 			--i;
 
-		if ( i >= (ARRAY_COUNT( item ) - 1))
+		if ( i >= (std::size(item) - 1))
 			break;
 	}
 

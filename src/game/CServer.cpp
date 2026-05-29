@@ -175,8 +175,8 @@ static void defragSphere(char *path)
         while ( inf.ReadString(file_buf, sizeof(file_buf)) )
         {
             dwIdxUID = (dword)strlen(file_buf);
-            if (dwIdxUID > (ARRAY_COUNT(file_buf) - 3))
-                dwIdxUID = ARRAY_COUNT(file_buf) - 3;
+            if (dwIdxUID > (std::size(file_buf) - 3))
+                dwIdxUID = std::size(file_buf) - 3;
 
             file_buf[dwIdxUID] = file_buf[dwIdxUID +1] = file_buf[dwIdxUID +2] = 0;	// just to be sure to be in line always
                 // NOTE: it is much faster than to use memcpy to clear before reading
@@ -1779,7 +1779,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 	lpctstr ptcKey = s.GetKey();
 	tchar *pszMsg = nullptr;
 
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
+	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 
 	if ( index < 0 )
 	{
@@ -1883,7 +1883,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 				int iTimeDecay(-1);
 
 				tchar* ppArgs[2];
-				if (Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), ", ") == false)
+				if (Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ", ") == false)
 					return false;
 
 				if (ppArgs[1])
@@ -1921,7 +1921,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
         case SV_CALCCRYPT:
             {
                 tchar* ppArgs[3];
-                const int iArgs = Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs), ", ");
+                const int iArgs = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ", ");
                 if (iArgs < 1)
                     return false;
                 // 1st arg: client version string
@@ -1973,7 +1973,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			if ( s.HasArgs())
 			{
 				tchar * Arg_ppCmd[5];
-				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, ARRAY_COUNT( Arg_ppCmd ) );
+				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( Arg_Qty <= 0 )
 					break;
 				// IMPFLAGS_ITEMS
@@ -2050,7 +2050,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			if (s.HasArgs())
 			{
 				tchar * Arg_ppCmd[5];
-				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, ARRAY_COUNT( Arg_ppCmd ));
+				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( Arg_Qty <= 0 )
 				{
 					break;
@@ -2151,7 +2151,7 @@ log_cont:
 			if (s.HasArgs())
 			{
 				tchar * Arg_ppCmd[4];
-				size_t Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, ARRAY_COUNT( Arg_ppCmd ));
+				size_t Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( Arg_Qty <= 0 )
 				{
 					break;

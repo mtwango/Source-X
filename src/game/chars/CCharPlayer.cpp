@@ -110,10 +110,10 @@ SKILL_TYPE CCharPlayer::Skill_GetLockType( lpctstr ptcKey ) const
 	ADDTOCALLSTACK("CCharPlayer::Skill_GetLockType");
 
 	tchar szTmpKey[128];
-    Str_CopyLimitNull( szTmpKey, ptcKey, ARRAY_COUNT(szTmpKey) );
+    Str_CopyLimitNull( szTmpKey, ptcKey, std::size(szTmpKey));
 
 	tchar * ppArgs[3];
-	size_t i = Str_ParseCmds( szTmpKey, ppArgs, ARRAY_COUNT(ppArgs), ".[]" );
+	size_t i = Str_ParseCmds( szTmpKey, ppArgs, std::size(ppArgs), ".[]" );
 	if ( i <= 1 )
 		return SKILL_NONE;
 
@@ -145,10 +145,10 @@ STAT_TYPE CCharPlayer::Stat_GetLockType( lpctstr ptcKey ) const
 	ADDTOCALLSTACK("CCharPlayer::Stat_GetLockType");
 
 	tchar szTmpKey[128];
-    Str_CopyLimitNull( szTmpKey, ptcKey, ARRAY_COUNT(szTmpKey) );
+    Str_CopyLimitNull( szTmpKey, ptcKey, std::size(szTmpKey));
 
 	tchar * ppArgs[3];
-	size_t i = Str_ParseCmds( szTmpKey, ppArgs, ARRAY_COUNT(ppArgs), ".[]" );
+	size_t i = Str_ParseCmds( szTmpKey, ppArgs, std::size(ppArgs), ".[]" );
 	if ( i <= 1 )
 		return STAT_NONE;
 
@@ -379,7 +379,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 				break;
 			}
 			int64 piCmd[2];
-			Str_ParseCmds(s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd));
+			Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd));
 			HOUSE_PRIV ePriv = HP_OWNER;
 			if (piCmd[1] > 0 && piCmd[1] < HP_QTY)
 			{
@@ -408,7 +408,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 				break;
 			}
 			int64 piCmd[2];
-			Str_ParseCmds(s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd));
+			Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd));
 			HOUSE_PRIV ePriv = HP_OWNER;
 			if (piCmd[1] > 0 && piCmd[1] < HP_QTY)
 			{
@@ -648,7 +648,7 @@ bool CChar::Player_OnVerb( CScript &s, CTextConsole * pSrc )
 		return false;
 
 	lpctstr ptcKey = s.GetKey();
-	int cpVerb = FindTableSorted( ptcKey, CCharPlayer::sm_szVerbKeys, ARRAY_COUNT(CCharPlayer::sm_szVerbKeys)-1 );
+	int cpVerb = FindTableSorted( ptcKey, CCharPlayer::sm_szVerbKeys, std::size(CCharPlayer::sm_szVerbKeys) - 1 );
 
 	if ( cpVerb <= -1 )
 	{

@@ -1216,7 +1216,7 @@ const tchar * Str_GetArticleAndSpace(lpctstr_restrict pszWord) noexcept
     {
         static constexpr tchar sm_Vowels[] = { 'A', 'E', 'I', 'O', 'U' };
         tchar chName = static_cast<tchar>(toupper(pszWord[0]));
-        for (uint x = 0; x < ARRAY_COUNT(sm_Vowels); ++x)
+        for (uint x = 0; x < std::size(sm_Vowels); ++x)
         {
             if (chName == sm_Vowels[x])
                 return "an ";

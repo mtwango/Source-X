@@ -585,7 +585,7 @@ bool CPartyDef::r_LoadVal( CScript &s )
 	EXC_TRY("LoadVal");
 	lpctstr ptcKey = s.GetKey();
 
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 	switch ( index )
 	{
 		case PDC_SPEECHFILTER:
@@ -655,7 +655,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 	}
 
 	bool fZero = false;
-	switch ( FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1) )
+	switch ( FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case PDC_ISSAMEPARTYOF:
 		{
@@ -764,7 +764,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 		}
 	}
 
-	int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys) - 1);
+	int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
 	switch ( iIndex )
 	{
 		case PDV_ADDMEMBER:

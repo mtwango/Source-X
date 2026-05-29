@@ -487,7 +487,7 @@ int CItemBase::IsID_Door( ITEMID_TYPE id ) noexcept // static
 		return 2;
 	}
 
-	for ( uint i = 0; i < ARRAY_COUNT(sm_Item_DoorBase); ++i)
+	for ( uint i = 0; i < std::size(sm_Item_DoorBase); ++i)
 	{
         if (id < sm_Item_DoorBase[i])
             continue;
@@ -1085,7 +1085,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
     }
 
     EXC_SET_BLOCK("Keyword");
-	switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		//return as string or hex number or nullptr if not set
 		case IBC_ALTERITEM:
@@ -1421,7 +1421,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 
     EXC_SET_BLOCK("Keyword");
 	lpctstr	ptcKey = s.GetKey();
-	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ) )
+	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ) )
 	{
 		//Set as Strings
 		case IBC_ALTERITEM:
@@ -1510,7 +1510,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                 }
 
                 int64 piVal[2];
-				size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, ARRAY_COUNT(piVal));
+				size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal));
 				if (iQty == 2)
 				{
 					pItemMulti->_shipSpeed.period = (uchar)(piVal[0]);
@@ -1544,7 +1544,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 		case IBC_DUPELIST:
 			{
 				tchar * ppArgs[512];
-				int iArgQty = Str_ParseCmds( s.GetArgStr(), ppArgs, ARRAY_COUNT(ppArgs));
+				int iArgQty = Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
 				if ( iArgQty <= 0 )
 					return false;
 				m_flip_id.clear();
@@ -1942,7 +1942,7 @@ void CItemBaseMulti::SetMultiRegion( tchar * pArgs )
 	ADDTOCALLSTACK("CItemBaseMulti::SetMultiRegion");
 	// inclusive region.
 	int64 piArgs[5];
-	size_t iQty = Str_ParseCmds( pArgs, piArgs, ARRAY_COUNT(piArgs));
+	size_t iQty = Str_ParseCmds( pArgs, piArgs, std::size(piArgs));
 	if ( iQty <= 1 )
 		return;
 	m_Components.clear();	// might be after a resync
@@ -1953,7 +1953,7 @@ bool CItemBaseMulti::AddComponent( tchar * pArgs )
 {
 	ADDTOCALLSTACK("CItemBaseMulti::AddComponent");
 	int64 piArgs[4];
-	size_t iQty = Str_ParseCmds( pArgs, piArgs, ARRAY_COUNT(piArgs));
+	size_t iQty = Str_ParseCmds( pArgs, piArgs, std::size(piArgs));
 	if ( iQty <= 1 )
 		return false;
 	return AddComponent((ITEMID_TYPE)(ResGetIndex((dword)piArgs[0])), (short)piArgs[1], (short)piArgs[2], (char)piArgs[3] );
@@ -2047,7 +2047,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 {
     ADDTOCALLSTACK("CItemBaseMulti::r_LoadVal");
     EXC_TRY("LoadVal");
-    switch (FindTableSorted(s.GetKey(), sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1))
+    switch (FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case MLC_BASESTORAGE:
             _iBaseStorage = s.GetArgU16Val();
@@ -2063,7 +2063,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 		case MLC_MULTIOFFSET:
 		{
 			int64 ppArgs[3];
-			size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs));
+			size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs));
 			if (iQty < 1)
 				return false;
 
@@ -2084,7 +2084,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 
             // SHIPSPEED x[,y]
             int64 ppArgs[2];
-            size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, ARRAY_COUNT(ppArgs));
+            size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs));
             if (iQty < 1)
                 return false;
 
@@ -2113,7 +2113,7 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemBaseMulti::r_WriteVal");
     EXC_TRY("WriteVal");
-    switch (FindTableHeadSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1))
+    switch (FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case MLC_BASESTORAGE:
             sVal.FormatU16Val(_iBaseStorage);

@@ -861,8 +861,8 @@ lpctstr CChar::Food_GetLevelMessage(bool fPet, bool fHappy) const
 			g_Cfg.GetDefaultMsg(DEFMSG_MSG_PET_FOOD_8)
 		};
 
-		if ( index >= (ARRAY_COUNT(sm_szPetHunger) - 1) )
-			index = ARRAY_COUNT(sm_szPetHunger) - 1;
+		if ( index >= (std::size(sm_szPetHunger) - 1) )
+			index = std::size(sm_szPetHunger) - 1;
 
 		return fHappy ? sm_szPetHappy[index] : sm_szPetHunger[index];
 	}
@@ -879,8 +879,8 @@ lpctstr CChar::Food_GetLevelMessage(bool fPet, bool fHappy) const
 		g_Cfg.GetDefaultMsg(DEFMSG_MSG_FOOD_LVL_8)
 	};
 
-	if ( index >= (ARRAY_COUNT(sm_szFoodLevel) - 1) )
-		index = ARRAY_COUNT(sm_szFoodLevel) - 1;
+	if ( index >= (std::size(sm_szFoodLevel) - 1) )
+		index = std::size(sm_szFoodLevel) - 1;
 
 	return sm_szFoodLevel[index];
 }

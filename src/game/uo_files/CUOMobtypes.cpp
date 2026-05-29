@@ -49,7 +49,7 @@ void CUOMobTypes::Load()
 
                 //Split the string
                 tchar* pptcSplitArray[4]; // Bigger on purpose, put possible trailing garbage in the fourth element to keep clean the third.
-                const int iQty = Str_ParseCmds(ptcTemp, pptcSplitArray, ARRAY_COUNT(pptcSplitArray), " \t#");
+                const int iQty = Str_ParseCmds(ptcTemp, pptcSplitArray, std::size(pptcSplitArray), " \t#");
                 if (iQty < 3)
                 {
                     g_Log.EventError("Mobtypes.txt: not enough parameters on line %" PRIuSIZE_T " \n", uiLineCount);

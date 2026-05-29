@@ -143,7 +143,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 
 		Str_CopyLimitNull(_strLoadBufferNumbers.data(), ptcArg, _strLoadBufferNumbers.size());	// because ptcArg is constant and Str_ParseCmds wants a non-constant string
 		tchar* ppVal[3];
-		const size_t iArgs = Str_ParseCmds(_strLoadBufferNumbers.data(), ppVal, ARRAY_COUNT(ppVal), " ,\t" );
+		const size_t iArgs = Str_ParseCmds(_strLoadBufferNumbers.data(), ppVal, std::size(ppVal), " ,\t" );
 		if ( iArgs != 3 )
         {
             g_Log.Event( LOGM_INIT|LOGL_ERROR, "Invalid TimerF line in %sdata.scp: %s=%s (arguments mismatch: 3 needed).\n", SPHERE_FILE, ptcKeyword, ptcArg);

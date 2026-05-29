@@ -894,8 +894,8 @@ public:
      *
      * @param   spell           The spell.
      * @param   stage           The stage.
+     * @param [in,out]  pScriptArgs   If non-null, the arguments.
      * @param [in,out]  pSrc    If non-null, source for the.
-     * @param [in,out]  pArgs   If non-null, the arguments.
      *
      * @return  A TRIGRET_TYPE.
      */

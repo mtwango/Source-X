@@ -510,7 +510,7 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
     uint iDirection = 0;
     for (; ; ++iDirection)
     {
-        if (iDirection >= ARRAY_COUNT(sm_FaceDir))
+        if (iDirection >= std::size(sm_FaceDir))
             return false;
         if (dir == sm_FaceDir[iDirection])
             break;
@@ -982,7 +982,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
     //"One (direction*)", " (Direction*), one" Moves ship one tile in desired direction and stops.
     //"Slow (direction*)" Moves ship slowly in desired direction (see below for possible directions).
 
-    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
     if (iCmd < 0)
         return false;
 
@@ -1303,7 +1303,7 @@ bool CCMultiMovable::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
 {
     ADDTOCALLSTACK("CItemShip::r_WriteVal");
     UnreferencedParameter(pSrc);
-    int index = FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    int index = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (index == -1)
     {
         if (!strnicmp(ptcKey, "SHIPSPEED.", 10))
@@ -1388,7 +1388,7 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
 {
     ADDTOCALLSTACK("CItemShip::r_LoadVal");
     lpctstr	ptcKey = s.GetKey();
-    CML_TYPE index = (CML_TYPE)FindTableSorted(ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys) - 1);
+    CML_TYPE index = (CML_TYPE)FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     // CItem *pItemThis = dynamic_cast<CItem*>(this);
     // ASSERT(pItemThis);
     if (index == (CML_TYPE)-1)
@@ -1427,7 +1427,7 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
                     return true;
                 }
                 int64 piVal[2];
-                size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, ARRAY_COUNT(piVal));
+                size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal));
                 if (iQty == 2)
                 {
                     _shipSpeed.period = (ushort)(piVal[0] * (IsSetOF(OF_NoSmoothSailing) ? MSECS_PER_TENTH : 1));

@@ -12,7 +12,7 @@ lpctstr const CCPropsChar::_ptcPropertyKeys[PROPCH_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsChar::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)ARRAY_COUNT(_ptcPropertyKeys)};
+    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
 }
 
 RESDISPLAY_VERSION CCPropsChar::_iPropertyExpansion[PROPCH_QTY + 1] =

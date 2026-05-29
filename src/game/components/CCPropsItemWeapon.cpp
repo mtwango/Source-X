@@ -12,7 +12,7 @@ lpctstr const CCPropsItemWeapon::_ptcPropertyKeys[PROPIWEAP_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsItemWeapon::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)ARRAY_COUNT(_ptcPropertyKeys)};
+    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
 }
 
 RESDISPLAY_VERSION CCPropsItemWeapon::_iPropertyExpansion[PROPIWEAP_QTY + 1] =

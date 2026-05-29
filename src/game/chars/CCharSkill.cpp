@@ -2364,7 +2364,7 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 			return 0;
 
 		tchar * pszMsg = Str_GetTemp();
-		snprintf(pszMsg, Str_TempLength(), sm_szTameSpeak[ g_Rand.GetVal( ARRAY_COUNT( sm_szTameSpeak )) ], pChar->GetName());
+		snprintf(pszMsg, Str_TempLength(), sm_szTameSpeak[ g_Rand.GetVal( std::size(sm_szTameSpeak)) ], pChar->GetName());
 		Speak(pszMsg);
 
 		// Keep trying and updating the animation
@@ -3401,7 +3401,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 	if ( pDam )
 	{
 		int64 DVal[2];
-		size_t iQty = Str_ParseCmds( const_cast<tchar *>(pDam->GetValStr()), DVal, ARRAY_COUNT(DVal));
+		size_t iQty = Str_ParseCmds( const_cast<tchar *>(pDam->GetValStr()), DVal, std::size(DVal));
 		switch(iQty)
 		{
 			case 1:

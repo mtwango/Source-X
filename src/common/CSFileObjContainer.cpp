@@ -192,7 +192,7 @@ bool CSFileObjContainer::r_LoadVal( CScript & s )
     EXC_TRY("LoadVal");
     lpctstr ptcKey = s.GetKey();
 
-    int index = FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+    int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
     switch ( index )
     {
@@ -245,7 +245,7 @@ bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
         return false;
     }
 
-    int iIndex = FindTableHeadSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+    int iIndex = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
     if ( iIndex < 0 )
     {
@@ -320,7 +320,7 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
         return false;
     }
 
-    int index = FindTableSorted( ptcKey, sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
+    int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 
     if ( index < 0 )
     {

@@ -305,8 +305,8 @@ int Str_ParseCmds(tchar * pszCmdLine, tchar ** ppCmd, int iMax, const tchar * ps
 int Str_ParseCmds(tchar * pszCmdLine, int64 * piCmd, int iMax, const tchar * pszSep) noexcept
 {
     tchar * ppTmp[256];
-    if (iMax > (int)ARRAY_COUNT(ppTmp))
-        iMax = (int)ARRAY_COUNT(ppTmp);
+    if (iMax > (int)std::size(ppTmp))
+        iMax = (int)std::size(ppTmp);
 
     int iQty = Str_ParseCmds(pszCmdLine, ppTmp, iMax, pszSep);
     int i;
@@ -820,7 +820,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
     {
         // Symbol or intrinsinc function ?
 
-        INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, ARRAY_COUNT(sm_IntrinsicFunctions) - 1);
+        INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
         if (iIntrinsic >= 0)
         {
             size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);

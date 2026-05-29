@@ -15,15 +15,15 @@ PacketManager::PacketManager()
 PacketManager::~PacketManager()
 {
     // delete standard packet handlers
-    for (size_t i = 0; i < ARRAY_COUNT(m_handlers); ++i)
+    for (size_t i = 0; i < std::size(m_handlers); ++i)
         unregisterPacket((uint)i);
 
     // delete extended packet handlers
-    for (size_t i = 0; i < ARRAY_COUNT(m_extended); ++i)
+    for (size_t i = 0; i < std::size(m_extended); ++i)
         unregisterExtended((uint)i);
 
     // delete encoded packet handlers
-    for (size_t i = 0; i < ARRAY_COUNT(m_encoded); ++i)
+    for (size_t i = 0; i < std::size(m_encoded); ++i)
         unregisterEncoded((uint)i);
 }
 
@@ -214,7 +214,7 @@ void PacketManager::unregisterEncoded(uint id)
 Packet* PacketManager::getHandler(uint id) const
 {
     // get standard packet handler
-    if (id >= ARRAY_COUNT(m_handlers))
+    if (id >= std::size(m_handlers))
         return nullptr;
 
     return m_handlers[id];
@@ -223,7 +223,7 @@ Packet* PacketManager::getHandler(uint id) const
 Packet* PacketManager::getExtendedHandler(uint id) const
 {
     // get extended packet handler
-    if (id >= ARRAY_COUNT(m_extended))
+    if (id >= std::size(m_extended))
         return nullptr;
 
     return m_extended[id];
@@ -232,7 +232,7 @@ Packet* PacketManager::getExtendedHandler(uint id) const
 Packet* PacketManager::getEncodedHandler(uint id) const
 {
     // get encoded packet handler
-    if (id >= ARRAY_COUNT(m_encoded))
+    if (id >= std::size(m_encoded))
         return nullptr;
 
     return m_encoded[id];

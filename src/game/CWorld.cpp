@@ -1571,7 +1571,7 @@ bool CWorld::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bo
 	ADDTOCALLSTACK("CWorld::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 ))
+	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
         case WC_CURTICK:
             sVal.Format64Val(_GameClock.GetCurrentTick());
@@ -1612,7 +1612,7 @@ bool CWorld::r_LoadVal( CScript &s )
 	EXC_TRY("LoadVal");
 
 	lpctstr	ptcKey = s.GetKey();
-	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 ))
+	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case WC_PREVBUILD:
 			m_iPrevBuild = s.GetArgVal();
@@ -1682,7 +1682,7 @@ void CWorld::Restock()
 	g_Log.Event(LOGL_EVENT, "World Restock: started.\n");
     g_Serv.SetServerMode(ServMode::RestockAll);
 
-	for ( size_t i = 0; i < ARRAY_COUNT(g_Cfg.m_ResHash.m_Array); ++i )
+	for ( size_t i = 0; i < std::size(g_Cfg.m_ResHash.m_Array); ++i )
 	{
 		for ( size_t j = 0; j < g_Cfg.m_ResHash.m_Array[i].size(); ++j )
 		{

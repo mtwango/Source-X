@@ -57,7 +57,7 @@ bool CRegionResourceDef::r_LoadVal( CScript & s )
     ADDTOCALLSTACK("CRegionResourceDef::r_LoadVal");
     EXC_TRY("LoadVal");
     // RES_REGIONRESOURCE
-    switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+    switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
     {
         case RMC_AMOUNT: // AMOUNT
             m_vcAmount.Load( s.GetArgRaw() );
@@ -94,7 +94,7 @@ bool CRegionResourceDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConso
     ADDTOCALLSTACK("CRegionResourceDef::r_WriteVal");
     EXC_TRY("r_WriteVal");
     // RES_REGIONRESOURCE
-    switch ( FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+    switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
     {
         case RMC_AMOUNT:
             sVal = m_vcAmount.Write();

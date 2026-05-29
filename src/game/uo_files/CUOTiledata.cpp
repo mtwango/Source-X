@@ -115,7 +115,7 @@ void CUOTiledata::Load()
                 cachedEntry->m_flags = record.m_flags;
                 cachedEntry->m_unknown = 0;
                 cachedEntry->m_index = record.m_index;
-                Str_CopyLimitNull(cachedEntry->m_name, record.m_name, ARRAY_COUNT(cachedEntry->m_name));
+                Str_CopyLimitNull(cachedEntry->m_name, record.m_name, std::size(cachedEntry->m_name));
                 break;
             }
         }
@@ -181,7 +181,7 @@ void CUOTiledata::Load()
                 cachedEntry->m_wHue = record.m_wHue;
                 cachedEntry->m_wLightIndex = record.m_wLightIndex;
                 cachedEntry->m_height = record.m_height;
-                Str_CopyLimitNull(cachedEntry->m_name, record.m_name, ARRAY_COUNT(cachedEntry->m_name));
+                Str_CopyLimitNull(cachedEntry->m_name, record.m_name, std::size(cachedEntry->m_name));
                 break;
             }
         }

@@ -13,7 +13,7 @@ lpctstr const CCPropsItemEquippable::_ptcPropertyKeys[PROPIEQUIP_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsItemEquippable::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)ARRAY_COUNT(_ptcPropertyKeys)};
+    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
 }
 
 RESDISPLAY_VERSION CCPropsItemEquippable::_iPropertyExpansion[PROPIEQUIP_QTY + 1] =

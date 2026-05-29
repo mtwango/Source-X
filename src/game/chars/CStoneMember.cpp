@@ -174,7 +174,7 @@ bool CStoneMember::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 	ASSERT(pSrc);
 
 	lpctstr ptcKey = s.GetKey();
-	int index = FindTableSorted( ptcKey, sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1 );
+	int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	if ( index < 0 )
 	{
 		if ( r_LoadVal(s) ) // if it's successful all ok, else go on verb.
@@ -217,7 +217,7 @@ bool CStoneMember::r_LoadVal( CScript & s ) // Load an item Script
 	ADDTOCALLSTACK("CStoneMember::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
 	if ( GetLinkUID().IsChar() )
 	{
@@ -289,7 +289,7 @@ bool CStoneMember::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 	ADDTOCALLSTACK("CStoneMember::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
 	if ( GetLinkUID().IsChar() )
 	{

@@ -951,7 +951,7 @@ void AbstractSphereThread::printStackTrace() noexcept
     g_Log.EventDebug("Printing STACK TRACE for debugging purposes (thread id %" PRIx64 ").\n", threadId);
     g_Log.EventDebug("_ thread name _ |   # | _____________ function _____________ |\n");
 
-    for (ssize_t i = 0; i < (ssize_t)ARRAY_COUNT(m_stackInfoCopy); ++i)
+    for (ssize_t i = 0; i < (ssize_t)std::size(m_stackInfoCopy); ++i)
     {
         if (stackInfo[i].functionName == nullptr)
             break;

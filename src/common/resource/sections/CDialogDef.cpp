@@ -123,7 +123,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
 
     // The first part of the key is GUMPCTL_TYPE
     lpctstr ptcKey = s.GetKey();
-    const int index = FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 );
+    const int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
     if ( index < 0 )
     {
         // TODO: This function check is already done in CObjBase::r_Verb... remove this?
@@ -406,7 +406,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
         case GUMPCTL_TOOLTIP:
         {
             tchar* pptcArgs[2];
-            const int iArgs = Str_ParseCmds(ptcArgs, pptcArgs, ARRAY_COUNT(pptcArgs));
+            const int iArgs = Str_ParseCmds(ptcArgs, pptcArgs, std::size(pptcArgs));
             if (iArgs < 2)
                 return false;
 
@@ -599,7 +599,7 @@ bool CDialogDef::GumpSetup( int iPage, CClient * pClient, CObjBase * pObjSrc, lp
     CScriptExprContext scpContext{._pScriptObjI = m_pObj};
     expr_parser.ParseScriptText( pszBuf, scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pClient->GetChar() );
 
-    Str_ParseCmds( pszBuf, iSizes, ARRAY_COUNT(iSizes) );
+    Str_ParseCmds( pszBuf, iSizes, std::size(iSizes));
     m_x	= (int)(iSizes[0]);
     m_y	= (int)(iSizes[1]);
 

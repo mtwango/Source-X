@@ -401,7 +401,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, bool fSetup )
 
 	pItem->SetAnim((ITEMID_TYPE)(pItem->GetDispID() + 1), 3 * 1000);
 	static const SOUND_TYPE sm_TrainingDummySounds[] = { 0x3A4, 0x3A6, 0x3A9, 0x3AE, 0x3B4, 0x3B6 };
-	pItem->Sound(sm_TrainingDummySounds[g_Rand.GetVal(ARRAY_COUNT(sm_TrainingDummySounds))]);
+	pItem->Sound(sm_TrainingDummySounds[g_Rand.GetVal(std::size(sm_TrainingDummySounds))]);
 	Skill_Experience(skill, g_Rand.GetVal(40));
 	return true;
 }
@@ -611,7 +611,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 			g_Cfg.GetDefaultMsg(DEFMSG_ITEMUSE_ARCHBUTTE_HIT3),
 			g_Cfg.GetDefaultMsg(DEFMSG_ITEMUSE_ARCHBUTTE_HIT4)
 		};
-		Emote(sm_Txt_ArcheryButte_Success[g_Rand.GetVal(ARRAY_COUNT(sm_Txt_ArcheryButte_Success))]);
+		Emote(sm_Txt_ArcheryButte_Success[g_Rand.GetVal(std::size(sm_Txt_ArcheryButte_Success))]);
 		Sound(pWeapon->Weapon_GetSoundHit());
 
 		if ( WeaponAmmoID )
@@ -2021,7 +2021,7 @@ bool CChar::ItemEquipArmor( bool fForce )
 	if ( !fForce )
 	{
 		// Block those layers that are already used
-		for ( size_t i = 0; i < ARRAY_COUNT(iBestScore); ++i )
+		for ( size_t i = 0; i < std::size(iBestScore); ++i )
 		{
 			pBestArmor[i] = LayerFind((LAYER_TYPE)i);
 			if ( pBestArmor[i] != nullptr )
@@ -2049,7 +2049,7 @@ bool CChar::ItemEquipArmor( bool fForce )
 	}
 
 	// Equip all the stuff we found
-	for ( size_t i = 0; i < ARRAY_COUNT(iBestScore); ++i )
+	for ( size_t i = 0; i < std::size(iBestScore); ++i )
 	{
 		if ( pBestArmor[i] )
 			ItemEquip(pBestArmor[i], this);

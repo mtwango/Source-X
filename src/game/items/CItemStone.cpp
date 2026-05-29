@@ -130,7 +130,7 @@ void CItemStone::r_Write( CScript & s )
 		s.WriteKeyStr( "ABBREV", m_sAbbrev.GetBuffer() );
 
 	TemporaryString tsTemp;
-	for ( uint i = 0; i < ARRAY_COUNT(m_sCharter); ++i )
+	for ( uint i = 0; i < std::size(m_sCharter); ++i )
 	{
 		if ( ! m_sCharter[i].IsEmpty())
 		{
@@ -342,7 +342,7 @@ bool CItemStone::r_LoadVal( CScript & s ) // Load an item Script
 	ADDTOCALLSTACK("CItemStone::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case STC_ABBREV: // "ABBREV"
 			m_sAbbrev = s.GetArgStr();
@@ -398,7 +398,7 @@ bool CItemStone::r_LoadVal( CScript & s ) // Load an item Script
 		case STC_MEMBER: // "MEMBER"
 			{
 			tchar *Arg_ppCmd[8];		// Maximum parameters in one line
-			size_t Arg_Qty = Str_ParseCmds( s.GetArgStr(), Arg_ppCmd, ARRAY_COUNT( Arg_ppCmd ), "," );
+			size_t Arg_Qty = Str_ParseCmds( s.GetArgStr(), Arg_ppCmd, std::size(Arg_ppCmd), "," );
 			if (Arg_Qty < 1) // must at least provide the member uid
 				return false;
 
@@ -434,7 +434,7 @@ bool CItemStone::r_LoadVal( CScript & s ) // Load an item Script
 	if ( s.IsKeyHead( sm_szLoadKeys[STC_CHARTER], 7 ))
 	{
 		uint i = atoi(s.GetKey() + 7);
-		if ( i >= ARRAY_COUNT(m_sCharter))
+		if ( i >= std::size(m_sCharter))
 			return false;
 		m_sCharter[i] = s.GetArgStr();
 		return true;
@@ -636,7 +636,7 @@ bool CItemStone::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSr
     {
         lpctstr pszCmd = ptcKey + 7;
         uint i         = atoi(pszCmd);
-        if (i >= ARRAY_COUNT(m_sCharter))
+        if (i >= std::size(m_sCharter))
             sVal.Clear();
         else
             sVal = m_sCharter[i];
@@ -645,7 +645,7 @@ bool CItemStone::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSr
     }
 
 
-    STC_TYPE iIndex = (STC_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 );
+    STC_TYPE iIndex = (STC_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
 	switch ( iIndex )
 	{
@@ -781,7 +781,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 	ASSERT(pSrc);
 
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1 );
+	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	if ( index < 0 )
 		return CItem::r_Verb( s, pSrc );
 
@@ -924,7 +924,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 				if ( s.HasArgs() )
 				{
 					int64 piCmd[2];
-					int iArgQty = Str_ParseCmds( s.GetArgStr(), piCmd, ARRAY_COUNT(piCmd));
+					int iArgQty = Str_ParseCmds( s.GetArgStr(), piCmd, std::size(piCmd));
 					if ( iArgQty == 2 )
 					{
 						const CUID uidGuild((dword)piCmd[0]);

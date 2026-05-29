@@ -13,7 +13,7 @@ CTeleport::CTeleport(tchar* pszArgs)
 	// Assume valid iArgs >= 5
 
 	tchar* ppCmds[4];
-	size_t iArgs = Str_ParseCmds(pszArgs, ppCmds, ARRAY_COUNT(ppCmds), "=");
+	size_t iArgs = Str_ParseCmds(pszArgs, ppCmds, std::size(ppCmds), "=");
 	if (iArgs < 2)
 	{
 		DEBUG_ERR(("Bad CTeleport Def\n"));

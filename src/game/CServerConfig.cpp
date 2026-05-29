@@ -353,7 +353,7 @@ CServerConfig::CServerConfig()
 
 CServerConfig::~CServerConfig()
 {
-	for ( size_t i = 0; i < ARRAY_COUNT(m_ResHash.m_Array); ++i )
+	for ( size_t i = 0; i < std::size(m_ResHash.m_Array); ++i )
 	{
 		for ( size_t j = 0; j < m_ResHash.m_Array[i].size(); ++j )
 		{
@@ -1064,7 +1064,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 #define LOG_WARN_NOINIT(x)  if (g_Serv.GetServerMode() != ServMode::StartupPreLoadingIni) g_Log.EventWarn(x)
 #define LOG_ERR_NOINIT(x)   if (g_Serv.GetServerMode() != ServMode::StartupPreLoadingIni) g_Log.EventError(x)
 
-	int i = FindCAssocRegTableHeadSorted( s.GetKey(), reinterpret_cast<lpctstr const *>(sm_szLoadKeys), ARRAY_COUNT( sm_szLoadKeys )-1, sizeof(sm_szLoadKeys[0]));
+	int i = FindCAssocRegTableHeadSorted( s.GetKey(), reinterpret_cast<lpctstr const *>(sm_szLoadKeys), std::size(sm_szLoadKeys) - 1, sizeof(sm_szLoadKeys[0]));
 	if ( i < 0 )
 	{
 		if ( s.IsKeyHead( "REGEN", 5 ))			//	REGENx=<stat regeneration rate>
@@ -1622,7 +1622,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 	ADDTOCALLSTACK("CServerConfig::r_WriteVal");
 	EXC_TRY("WriteVal");
 	// Just do stats values for now.
-	int index = FindCAssocRegTableHeadSorted( ptcKey, reinterpret_cast<lpctstr const *>(sm_szLoadKeys), ARRAY_COUNT(sm_szLoadKeys) - 1, sizeof(sm_szLoadKeys[0]) );
+	int index = FindCAssocRegTableHeadSorted( ptcKey, reinterpret_cast<lpctstr const *>(sm_szLoadKeys), std::size(sm_szLoadKeys) - 1, sizeof(sm_szLoadKeys[0]) );
 	if ( index < 0 )
 	{
 		if ( !strnicmp( ptcKey, "REGEN", 5 ))
@@ -1666,7 +1666,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 				// Parse the arguments inside the round brackets
 				tchar * ppVal[4];
-				int iArgs = Str_ParseCmds( const_cast<tchar*>(ptcKey), ppVal, ARRAY_COUNT( ppVal ), "," );
+				int iArgs = Str_ParseCmds( const_cast<tchar*>(ptcKey), ppVal, std::size(ppVal), "," );
 
 				switch ( iArgs )
 				{
@@ -2207,7 +2207,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						int64 piVal[6];
 
 						// year, month, day, hour, minute, second
-						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), piVal, ARRAY_COUNT(piVal));
+						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), piVal, std::size(piVal));
 						if ( iQty != 6 )
 							return false;
 
@@ -2224,7 +2224,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						tchar *ppVal[2];
 
 						// timestamp, formatstr
-						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppVal, ARRAY_COUNT(ppVal));
+						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppVal, std::size(ppVal));
 						if ( iQty < 1 )
 							return false;
 
@@ -2378,7 +2378,7 @@ static constexpr lpctstr _ptcStatName[STAT_QTY] = // not alphabetically sorted o
 STAT_TYPE CServerConfig::GetStatKey( lpctstr ptcKey ) // static
 {
 	//ADDTOCALLSTACK_DEBUG("CServerConfig::GetStatKey");
-	return (STAT_TYPE) FindTable( ptcKey, _ptcStatName, ARRAY_COUNT(_ptcStatName));
+	return (STAT_TYPE) FindTable( ptcKey, _ptcStatName, std::size(_ptcStatName));
 }
 
 lpctstr CServerConfig::GetStatName(STAT_TYPE iKey) // static
@@ -3277,7 +3277,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	}
     else
     {
-        restype = (RES_TYPE)FindTableSorted(pszSection, sm_szResourceBlocks, ARRAY_COUNT(sm_szResourceBlocks));
+        restype = (RES_TYPE)FindTableSorted(pszSection, sm_szResourceBlocks, std::size(sm_szResourceBlocks));
     }
 
 
@@ -3488,7 +3488,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			size_t i = 0, iQty = 0;
 
 			// read karma levels
-			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, ARRAY_COUNT(piNotoLevels));
+			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, std::size(piNotoLevels));
 			for (i = 0; i < iQty; ++i)
 				m_NotoKarmaLevels.assign_at_grow(i, (int) (piNotoLevels[i]));
 
@@ -3501,7 +3501,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			}
 
 			// read fame levels
-			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, ARRAY_COUNT(piNotoLevels));
+			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, std::size(piNotoLevels));
 			for (i = 0; i < iQty; ++i)
 				m_NotoFameLevels.assign_at_grow(i, (int) (piNotoLevels[i]));
 
@@ -3536,7 +3536,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	case RES_PLEVEL:
 		{
 			int index = rid.GetResIndex();
-			if ( index < 0 || (uint)(index) >= ARRAY_COUNT(m_PrivCommands) )
+			if ( index < 0 || (uint)(index) >= std::size(m_PrivCommands))
 				return false;
 			while ( pScript->ReadKey() )
 			{
@@ -5224,7 +5224,7 @@ bool CServerConfig::Load( bool fResync )
 	if (!m_sChatStaticChannels.IsEmpty())
 	{
 		tchar* ppArgs[32];
-		size_t iChannels = Str_ParseCmds(const_cast<tchar *>(g_Cfg.m_sChatStaticChannels.GetBuffer()), ppArgs, ARRAY_COUNT(ppArgs), ",");
+		size_t iChannels = Str_ParseCmds(const_cast<tchar *>(g_Cfg.m_sChatStaticChannels.GetBuffer()), ppArgs, std::size(ppArgs), ",");
 		for (size_t i = 0; i < iChannels; i++)
 			g_Serv.m_Chats.CreateChannel(ppArgs[i]);
 	}
@@ -5428,10 +5428,10 @@ bool CServerConfig::DumpUnscriptedItems( CTextConsole * pSrc, lpctstr pszFilenam
 			 continue;
 
 		s.WriteSection("ITEMDEF 0%04x", i);
-        Str_CopyLimitNull(ptcItemName, tiledata.m_name, ARRAY_COUNT(ptcItemName));
+        Str_CopyLimitNull(ptcItemName, tiledata.m_name, std::size(ptcItemName));
 
 		// generate a suitable defname
-		if (GenerateDefname(ptcItemName, ARRAY_COUNT(ptcItemName), "i_", &tsDefnameBuffer, true, &defnames))
+		if (GenerateDefname(ptcItemName, std::size(ptcItemName), "i_", &tsDefnameBuffer, true, &defnames))
 		{
 			s.Printf("// %s\n", ptcItemName);
 			s.WriteKeyStr("DEFNAME", tsDefnameBuffer.buffer());

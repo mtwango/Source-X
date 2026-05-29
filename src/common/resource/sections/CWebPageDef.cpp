@@ -116,7 +116,7 @@ bool CWebPageDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pS
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CWebPageDef::r_WriteVal");
 	EXC_TRY("WriteVal");
-	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case WC_PLEVEL:
 			sVal.FormatVal( m_privlevel );
@@ -149,7 +149,7 @@ bool CWebPageDef::r_LoadVal( CScript & s ) // Load an item Script
 {
 	ADDTOCALLSTACK("CWebPageDef::r_LoadVal");
 	EXC_TRY("LoadVal");
-	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, ARRAY_COUNT( sm_szLoadKeys )-1 ))
+	switch ( FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case WC_PLEVEL:
 			m_privlevel = static_cast<PLEVEL_TYPE>(s.GetArgVal());
@@ -185,7 +185,7 @@ bool CWebPageDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on 
 	sm_iListIndex = 0;
 	tchar *pszTmp2 = Str_GetTemp();
 
-	WV_TYPE iHeadKey = (WV_TYPE) FindTableSorted( s.GetKey(), sm_szVerbKeys, ARRAY_COUNT(sm_szVerbKeys)-1 );
+	WV_TYPE iHeadKey = (WV_TYPE) FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	switch ( iHeadKey )
 	{
 		case WV_WEBPAGE:
@@ -479,7 +479,7 @@ bool CWebPageDef::SetSourceFile( lpctstr pszName, CClient * pClient )
 	if ( pszExt == nullptr || pszExt[0] == '\0' )
 		return false;
 
-    const int iType = FindTable(pszExt, sm_szPageExt, ARRAY_COUNT(sm_szPageExt));
+    const int iType = FindTable(pszExt, sm_szPageExt, std::size(sm_szPageExt));
 	if ( iType < 0 )
 		return false;
 	m_type = sm_szPageExtType[iType];
@@ -750,7 +750,7 @@ bool CWebPageDef::ServPagePost( CClient * pClient, lpctstr pszURLArgs, tchar * p
 	// Parse the data.
 	pContentData[uiContentLength] = 0;
 	tchar * ppArgs[64];
-	int iArgs = Str_ParseCmds(pContentData, ppArgs, ARRAY_COUNT(ppArgs), "&");
+	int iArgs = Str_ParseCmds(pContentData, ppArgs, std::size(ppArgs), "&");
 	if (( iArgs <= 0 ) || ( iArgs >= 63 ))
 		return false;
 

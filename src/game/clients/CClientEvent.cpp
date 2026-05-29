@@ -1103,7 +1103,7 @@ bool CClient::Event_Command(lpctstr pszCommand, TALKMODE_TYPE mode)
 		fAllowSay = false;
 
 		// Assume you don't mean yourself !
-		if ( FindTableHeadSorted( pszCommand, sm_szCmd_Redirect, ARRAY_COUNT(sm_szCmd_Redirect)) >= 0 )
+		if ( FindTableHeadSorted( pszCommand, sm_szCmd_Redirect, std::size(sm_szCmd_Redirect)) >= 0 )
 		{
 			// targetted verbs are logged once the target is selected.
 			addTargetVerb(pszCommand, "");
@@ -1698,11 +1698,11 @@ void CClient::Event_PromptResp( lpctstr pszText, size_t len, dword context1, dwo
 	else
 	{
 		if ( fNoStrip )	// Str_GetBare will eat unicode characters
-			len = Str_CopyLimitNull( szText, pszText, ARRAY_COUNT(szText) );
+			len = Str_CopyLimitNull( szText, pszText, std::size(szText));
 		else if ( promptMode == CLIMODE_PROMPT_SCRIPT_VERB )
-			len = Str_GetBare( szText, pszText, ARRAY_COUNT(szText), "|~=[]{|}~" );
+			len = Str_GetBare( szText, pszText, std::size(szText), "|~=[]{|}~" );
 		else
-			len = Str_GetBare( szText, pszText, ARRAY_COUNT(szText), "|~,=[]{|}~" );
+			len = Str_GetBare( szText, pszText, std::size(szText), "|~,=[]{|}~" );
 	}
 
 	lpctstr pszReName = nullptr;
@@ -2222,7 +2222,7 @@ bool CClient::Event_SetName( CUID uid, const char * pszCharName )
 	// Do we have the right to do this ?
 	if ( (m_pChar == pChar) || !pChar->IsOwnedBy( m_pChar, true ) )
 		return false;
-	if ( FindTableSorted( pszCharName, sm_szCmd_Redirect, ARRAY_COUNT(sm_szCmd_Redirect) ) >= 0 )
+	if ( FindTableSorted( pszCharName, sm_szCmd_Redirect, std::size(sm_szCmd_Redirect)) >= 0 )
 		return false;
 	if ( FindTableSorted( pszCharName, CCharNPC::sm_szVerbKeys, 14 ) >= 0 )
 		return false;
@@ -3027,7 +3027,7 @@ void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
 	tchar *ppArgs[2];
 	if (type != EXTCMD_DOOR_AUTO)
     {
-        if ((*pszName == '\0') || (0 == Str_ParseCmds(pszName, ppArgs, ARRAY_COUNT(ppArgs), " ")))
+        if ((*pszName == '\0') || (0 == Str_ParseCmds(pszName, ppArgs, std::size(ppArgs), " ")))
         {
             g_Log.EventWarn("%0x:Event_ExtCmd received malformed data %d, '%s'\n", GetSocketID(), type, pszName);
             return;

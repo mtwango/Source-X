@@ -451,7 +451,7 @@ lpctstr const CWebPageDef::sm_szPageExt[] =
 bool CWebPageDef::SetSourceFile( lpctstr pszName, CClient * pClient )
 {
 	ADDTOCALLSTACK("CWebPageDef::SetSourceFile");
-	static WEBPAGE_TYPE const sm_szPageExtType[] =
+	static constexpr WEBPAGE_TYPE sm_szPageExtType[] =
 	{
 		WEBPAGE_BMP,
 	    WEBPAGE_GIF,

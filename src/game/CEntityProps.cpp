@@ -1,6 +1,7 @@
 #include "../common/CLog.h"
 #include "chars/CChar.h"
 #include "CEntityProps.h"
+#include <ranges>
 
 CEntityProps::CEntityProps()
 {
@@ -85,9 +86,9 @@ bool CEntityProps::CEPLoopLoad(CEPLoopRet_t *pRet, CScript& s, CObjBase* pLinked
 {
     const lpctstr ptcKey = s.GetKey();
     CEPLoopRet_t localRet(*pRet); // init with implicit copy constructor (working with a copy on the stack should be faster?)
-    for (const auto& pairElem : _lComponentProps)
+    for (const auto &val : _lComponentProps | std::views::values)
     {
-        if (CComponentProps* pComponent = pairElem.second.get())
+        if (CComponentProps* pComponent = val.get())
         {
             const KeyTableDesc_s ktd = pComponent->GetPropertyKeysData();
             localRet.iPropIndex = (CComponentProps::PropertyIndex_t) FindTableSorted(ptcKey, ktd.pptcTable, ktd.iTableSize - 1);
@@ -154,9 +155,9 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
 
 bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, lpctstr ptcKey, CSString& sVal) const
 {
-    for (const auto& pairElem : _lComponentProps)
+    for (const auto &val : _lComponentProps | std::views::values)
     {
-        if (CComponentProps* pComponent = pairElem.second.get())
+        if (CComponentProps* pComponent = val.get())
         {
             const KeyTableDesc_s ktd = pComponent->GetPropertyKeysData();
             pRet->iPropIndex = (COMPPROPS_TYPE)FindTableSorted(ptcKey, ktd.pptcTable, ktd.iTableSize - 1);

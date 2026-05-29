@@ -1145,7 +1145,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 				if (!fSkip && IsClientActive() && pObjCont->IsItem() && pObjCont->GetTopLevelObj() != this)
 				{
 					const CClient *pClient = GetClientActive();
-					if (pClient && (pClient->m_openedContainers.find(pObjCont->GetUID().GetPrivateUID()) == pClient->m_openedContainers.end()))
+					if (pClient && (!pClient->m_openedContainers.contains(pObjCont->GetUID().GetPrivateUID())))
 					{
 					/*
 					#ifdef _DEBUG

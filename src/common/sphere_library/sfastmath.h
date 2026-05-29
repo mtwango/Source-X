@@ -113,7 +113,7 @@ namespace sl::fmath
     T uAbsDiff(T a, T b) noexcept
     {
         // Use the corresponding signed type.
-        using SignedT = std::make_signed<T>::type;
+        using SignedT = std::make_signed_t<T>;
 
         // Compute the difference in signed space.
         const SignedT diff = static_cast<SignedT>(a) - static_cast<SignedT>(b);

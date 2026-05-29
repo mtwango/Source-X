@@ -50,7 +50,7 @@ enum SREF_TYPE
     SREF_QTY
 };
 
-static lpctstr const _ptcSRefKeys[SREF_QTY+1] =
+static constexpr lpctstr _ptcSRefKeys[SREF_QTY+1] =
 {
     "DB",
     "FILE",

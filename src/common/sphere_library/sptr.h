@@ -266,18 +266,18 @@ namespace std
 
     /// Do a static_cast with object_ptr
     template <typename To, typename From>
-    std::enable_if<
+    std::enable_if_t<
         sizeof(decltype(static_cast<To*>(std::declval<From*>()))) != 0,
-        sl::raw_ptr_view<To>>::type
+        sl::raw_ptr_view<To>>
         static_pointer_cast(sl::raw_ptr_view<From> p) {
         return static_cast<To*>(p.get());
     }
 
     /// Do a dynamic_cast with object_ptr
     template <typename To, typename From>
-    std::enable_if<
+    std::enable_if_t<
         sizeof(decltype(dynamic_cast<To*>(std::declval<From*>()))) != 0,
-        sl::raw_ptr_view<To>>::type
+        sl::raw_ptr_view<To>>
         dynamic_pointer_cast(sl::raw_ptr_view<From> p) {
         return dynamic_cast<To*>(p.get());
     }

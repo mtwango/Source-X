@@ -2732,10 +2732,9 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
         return;
     }
 
-	bool isLayerSent[LAYER_HORSE];
-	memset(isLayerSent, 0, sizeof(isLayerSent));
+	bool isLayerSent[LAYER_HORSE] = {};
 
-	initLength();
+    initLength();
 	writeInt32(corpse->GetUID());
 
 	LAYER_TYPE layer;

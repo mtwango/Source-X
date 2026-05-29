@@ -307,7 +307,7 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic)
     idOrig = idDest = pSpellDef->m_idEffect;
     if (idOrig == ITEMID_NOTHING)
     {
-        const dword dwSafeFlags = REGION_FLAG_SAFE | REGION_FLAG_GUARDED | REGION_FLAG_NO_PVP;
+        constexpr dword dwSafeFlags = REGION_FLAG_SAFE | REGION_FLAG_GUARDED | REGION_FLAG_NO_PVP;
         idOrig = pAreaDest->IsFlag(dwSafeFlags) ? ITEMID_MOONGATE_BLUE : ITEMID_MOONGATE_RED;
         idDest = pArea->IsFlag    (dwSafeFlags) ? ITEMID_MOONGATE_BLUE : ITEMID_MOONGATE_RED;
     }
@@ -610,13 +610,13 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 		}
 		case LAYER_SPELL_Polymorph:
 		{
-            auto _EffectSetRegenVal = [this](STAT_TYPE stat, auto& spellPow) -> void
+            auto _EffectSetRegenVal = [this]<typename T0>(STAT_TYPE stat, T0& spellPow) -> void
             {
                 int iMod = Stats_GetRegenVal(stat) - spellPow;
                 if (iMod < 0)
                 {
                     // Reduce spellPow, because we don't want to go below 0 with the RegenVal
-                    spellPow += static_cast<std::remove_reference_t<decltype(spellPow)>>(iMod);
+                    spellPow += static_cast<std::remove_reference_t<T0>>(iMod);
                     iMod = 0;
                 }
                 Stats_SetRegenVal(stat, (ushort)iMod);
@@ -1835,7 +1835,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 
 			if (IsClientActive())
 			{
-				static const SOUND_TYPE sm_sounds[] = { 0x243, 0x244 };
+				static constexpr SOUND_TYPE sm_sounds[] = { 0x243, 0x244 };
 				m_pClient->addSound(sm_sounds[g_Rand.GetVal(ARRAY_COUNT(sm_sounds))]);
 				m_pClient->addChar(this);
 				m_pClient->addPlayerSee(CPointMap());
@@ -3310,7 +3310,7 @@ bool CChar::Spell_CastDone()
 				pCorpse->ContentsDump(pCorpse->GetTopPoint());
 				pCorpse->Delete();
 
-				static const ITEMID_TYPE sm_Item_Bone[] =
+				static constexpr ITEMID_TYPE sm_Item_Bone[] =
 				{
 					ITEMID_BONE_ARMS,
 					ITEMID_BONE_ARMOR,
@@ -3703,7 +3703,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	bool fPotion = (pSourceItem && pSourceItem->IsType(IT_POTION));
 	if ( fPotion )
 	{
-		static const SOUND_TYPE sm_DrinkSounds[] = { 0x030, 0x031 };
+		static constexpr SOUND_TYPE sm_DrinkSounds[] = { 0x030, 0x031 };
 		iSound = sm_DrinkSounds[g_Rand.GetVal(ARRAY_COUNT(sm_DrinkSounds))];
 	}
 

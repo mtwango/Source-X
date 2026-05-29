@@ -16,6 +16,7 @@
 #include "CItemShip.h"
 #include "CItemContainer.h"
 #include <algorithm>
+#include <ranges>
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -3517,9 +3518,9 @@ CMultiStorage::CMultiStorage(const CUID& uidSrc)
 
 CMultiStorage::~CMultiStorage()
 {
-    for (auto& pair : _lHouses)
+    for (const auto &key : _lHouses | std::views::keys)
     {
-        const CUID& uid = pair.first;
+        const CUID& uid = key;
         CItemMulti *pMulti = static_cast<CItemMulti*>(uid.ItemFind());
         if (!pMulti)
             continue;
@@ -3534,9 +3535,9 @@ CMultiStorage::~CMultiStorage()
         }
     }
 
-    for (auto& pair : _lShips)
+    for (const auto &key : _lShips | std::views::keys)
     {
-        const CUID& uid = pair.first;
+        const CUID& uid = key;
         CItemShip *pShip = static_cast<CItemShip*>(uid.ItemFind());
         if (!pShip)
             continue;
@@ -3664,7 +3665,7 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
         return;
     }
 
-    if (_lHouses.find(uidHouse) != _lHouses.end())
+    if (_lHouses.contains(uidHouse))
     {
         CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidHouse.ItemFind());
         if (pMulti == nullptr)
@@ -3849,7 +3850,7 @@ void CMultiStorage::DelShip(const CUID& uidShip)
         return;
     }
 
-    if (_lShips.find(uidShip) != _lShips.end())
+    if (_lShips.contains(uidShip))
     {
         CItemMulti* pMulti = dynamic_cast<CItemMulti*>(uidShip.ItemFind());
         if (pMulti == nullptr)

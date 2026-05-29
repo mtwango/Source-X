@@ -676,7 +676,7 @@ void AbstractThread::run()
 
 SPHERE_THREADENTRY_RETNTYPE SPHERE_THREADENTRY_CALLTYPE AbstractThread::runner(void *callerThread)
 {
-    auto* caller = reinterpret_cast<AbstractThread*>(callerThread);
+    auto* caller = static_cast<AbstractThread*>(callerThread);
     if (caller)
     {
         caller->run();

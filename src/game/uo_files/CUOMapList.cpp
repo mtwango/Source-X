@@ -11,7 +11,7 @@
 
 void CUOMapList::MapGeoDataHolder::clear() noexcept
 {
-    const MapGeoData invalid_data = MapGeoData::invalid();
+    constexpr MapGeoData invalid_data = MapGeoData::invalid();
     for (auto& map : maps)
     {
         memcpy(&map, &invalid_data, sizeof(MapGeoData));

@@ -204,7 +204,7 @@ CServerConfig::CServerConfig()
 	m_iEmoteFlags			= 0;
 	m_fDisplayPercentAr = false;
 	m_fDisplayElementalResistance = false;
-	m_fNoResRobe		= 0;
+	m_fNoResRobe		= false;
     m_iBounceMessage        = false;
 	m_iLostNPCTeleport	= 50;
 	m_iAutoProcessPriority = 0;
@@ -296,7 +296,7 @@ CServerConfig::CServerConfig()
     _iItemHitpointsUpdate   = 10ll * MSECS_PER_SEC;       // Delay to send hitpoints update packet for items.
 
 	_iTimerCall			= 0;
-	_iTimerCallUnit		= 0;
+	_iTimerCallUnit		= false;
 	m_fAllowLightOverride	= true;
 	m_fAllowNewbTransfer	= false;
 	m_sZeroPoint			= "1323,1624,0";

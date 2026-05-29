@@ -7,7 +7,7 @@
 #include "CServer.h"
 
 
-static const SOUND_TYPE sm_Sounds_Ghost[] =
+static constexpr SOUND_TYPE sm_Sounds_Ghost[] =
 {
 	SOUND_GHOST_1,
 	SOUND_GHOST_2,

@@ -8,6 +8,7 @@
 #include "CWorldClock.h"
 #include "CWorldGameTime.h"
 #include "CWorldTicker.h"
+#include <ranges>
 #include <unordered_set>
 
 /*
@@ -91,7 +92,7 @@ static void UnsortedVecDifference(
         removeSet.insert(vecToRemoveUnsorted.cbegin(), vecToRemoveUnsorted.cend());
         std::copy_if(vecMain.cbegin(), vecMain.cend(), std::back_inserter(vecElemBuffer),
             [](const TPair& pair) constexpr {
-                return removeSet.find(pair.second) == removeSet.end();
+                return !removeSet.contains(pair.second);
             });
     }
 
@@ -1036,11 +1037,11 @@ void CWorldTicker::ProcessTimedObjects()
                     _vTimedObjsTimeouts.size(), _vTimedObjsTimeoutsEraseReq.size(), _vTimedObjsTimeoutsAddReq.size());
 #endif
 
-            for (TickingTimedObjEntry& elem : _vTimedObjsTimeoutsAddReq)
+            for (auto &val : _vTimedObjsTimeoutsAddReq | std::views::values)
             {
-                ASSERT(elem.second->_fIsInWorldTickAddList == true);
-                elem.second->_fIsInWorldTickAddList = false;
-                elem.second->_fIsInWorldTickList = true;
+                ASSERT(val->_fIsInWorldTickAddList == true);
+                val->_fIsInWorldTickAddList = false;
+                val->_fIsInWorldTickList = true;
             }
 
             _vTimedObjsTimeoutsElementBuffer.clear();

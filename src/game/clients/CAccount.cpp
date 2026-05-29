@@ -442,7 +442,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 		index = (VACS_TYPE) FindTableSorted( ppCmd[0], sm_szVerbKeys, ARRAY_COUNT( sm_szVerbKeys )-1 );
 	}
 
-	static lpctstr const sm_pszCmds[] =
+	static constexpr lpctstr sm_pszCmds[] =
 	{
 		"/ACCOUNT UPDATE\n",
 		"/ACCOUNT UNUSED days [command]\n",

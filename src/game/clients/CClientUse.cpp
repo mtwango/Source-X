@@ -1129,7 +1129,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 			return true;
 		}
 
-		static const NPCBRAIN_TYPE sm_Track_Brain[] =
+		static constexpr NPCBRAIN_TYPE sm_Track_Brain[] =
 		{
 			NPCBRAIN_QTY,	// not used here.
 			NPCBRAIN_ANIMAL,

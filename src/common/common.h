@@ -233,7 +233,7 @@ template<typename T>
 [[nodiscard]]
 constexpr T sign(const T n) noexcept
 {
-    static_assert(std::is_arithmetic<T>::value, "Invalid data type.");
+    static_assert(std::is_arithmetic_v<T>, "Invalid data type.");
 	return ( (n < 0) ? -1 : ((n > 0) ? 1 : 0) );
 }
 

@@ -435,7 +435,7 @@ bool CItemBase::IsID_House(ITEMID_TYPE id) noexcept
 int CItemBase::IsID_Door( ITEMID_TYPE id ) noexcept // static
 {
 	// IT_DOOR
-	static const ITEMID_TYPE sm_Item_DoorBase[] =
+	static constexpr ITEMID_TYPE sm_Item_DoorBase[] =
 	{
 		ITEMID_DOOR_SECRET_1,
 		ITEMID_DOOR_SECRET_2,

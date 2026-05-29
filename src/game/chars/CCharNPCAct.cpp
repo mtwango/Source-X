@@ -391,7 +391,7 @@ void CChar::NPC_OnNoticeSnoop( const CChar * pCharThief, const CChar * pCharMark
 	ASSERT(m_pNPC);
 
 	// start making them angry at you.
-	static uint const sm_szTextSnoop[] =
+	static constexpr uint sm_szTextSnoop[] =
 	{
 		DEFMSG_NPC_GENERIC_SNOOPED_1,
 		DEFMSG_NPC_GENERIC_SNOOPED_2,
@@ -710,7 +710,7 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger )
 
 	if ( ! pChar->m_pArea->IsGuarded())
 	{
-		static uint const sm_szSpeakGuardJeer[] =
+		static constexpr uint sm_szSpeakGuardJeer[] =
 		{
 			DEFMSG_NPC_GUARD_THREAT_1,
 			DEFMSG_NPC_GUARD_THREAT_2,
@@ -730,7 +730,7 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger )
 		return false;
 	}
 
-	static uint const sm_szSpeakGuardStrike[] =
+	static constexpr uint sm_szSpeakGuardStrike[] =
 	{
 		DEFMSG_NPC_GUARD_STRIKE_1,
 		DEFMSG_NPC_GUARD_STRIKE_2,

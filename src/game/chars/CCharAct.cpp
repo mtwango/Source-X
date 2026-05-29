@@ -2763,15 +2763,15 @@ void CChar::SoundChar( CRESND_TYPE type )
 				// Special (hardcoded) sounds
 				case SOUND_SPECIAL_HUMAN:
 				{
-					static const SOUND_TYPE sm_Snd_Hit[] =
+					static constexpr SOUND_TYPE sm_Snd_Hit[] =
 					{
 						0x135,	//= hit01 = (slap)
 						0x137,	//= hit03 = (hit sand)
 						0x13b	//= hit07 = (hit slap)
 					};
-					static const SOUND_TYPE sm_Snd_Man_Die[] = { 0x15a, 0x15b, 0x15c, 0x15d };
+					static constexpr SOUND_TYPE sm_Snd_Man_Die[] = { 0x15a, 0x15b, 0x15c, 0x15d };
 					static const SOUND_TYPE sm_Snd_Man_Omf[] = { 0x154, 0x155, 0x156, 0x157, 0x158, 0x159 };
-					static const SOUND_TYPE sm_Snd_Wom_Die[] = { 0x150, 0x151, 0x152, 0x153 };
+					static constexpr SOUND_TYPE sm_Snd_Wom_Die[] = { 0x150, 0x151, 0x152, 0x153 };
 					static const SOUND_TYPE sm_Snd_Wom_Omf[] = { 0x14b, 0x14c, 0x14d, 0x14e, 0x14f };
 
 					if (type == CRESND_HIT)
@@ -3471,7 +3471,7 @@ void CChar::EatAnim(CItem* pItem, ushort uiQty)
 	ADDTOCALLSTACK("CChar::EatAnim");
     ASSERT(pItem); //Should never happen, but make sure item is valid.
 
-	static const SOUND_TYPE sm_EatSounds[] = { 0x03a, 0x03b, 0x03c };
+	static constexpr SOUND_TYPE sm_EatSounds[] = { 0x03a, 0x03b, 0x03c };
 	Sound(sm_EatSounds[g_Rand.GetVal(ARRAY_COUNT(sm_EatSounds))]);
 
 	if ( !IsStatFlag(STATF_ONHORSE) )

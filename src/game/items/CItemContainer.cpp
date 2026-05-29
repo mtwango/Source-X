@@ -864,7 +864,7 @@ void CItemContainer::SetKeyRing()
 {
 	ADDTOCALLSTACK("CItemContainer::SetKeyRing");
 	// Look of a key ring depends on how many keys it has in it.
-	static const ITEMID_TYPE sm_Item_Keyrings[] =
+	static constexpr ITEMID_TYPE sm_Item_Keyrings[] =
 	{
 		ITEMID_KEY_RING0, // empty key ring.
 		ITEMID_KEY_RING1,
@@ -1128,7 +1128,7 @@ void CItemContainer::Game_Create()
 	if ( !IsContainerEmpty() )
 		return;	// already here.
 
-	static const ITEMID_TYPE sm_Item_ChessPieces[] =
+	static constexpr ITEMID_TYPE sm_Item_ChessPieces[] =
 	{
 		ITEMID_GAME1_ROOK,		// 42,4
 		ITEMID_GAME1_KNIGHT,
@@ -1170,7 +1170,7 @@ void CItemContainer::Game_Create()
 	CPointMap pt;
 
 	// Chess has 2 rows of 8 pieces on each side
-	static const word sm_ChessRow[] =
+	static constexpr word sm_ChessRow[] =
 	{
 		5,
 		40,

@@ -2016,7 +2016,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						0x709, 0x70B, 0x70D, 0x70F, 0x711, 0x763, 0x765, 0x768, 0x76B,
 						0x6F3, 0x6F1, 0x6EF, 0x6E4, 0x6E2, 0x6E0, 0x709, 0x70B, 0x70D
 					};
-                    const uint uiMax = ARRAY_COUNT(sm_GargoyleBeardHues);
+                    constexpr uint uiMax = ARRAY_COUNT(sm_GargoyleBeardHues);
 					bool isValid = false;
                     for ( uint i = 0; i < uiMax; ++i )
 					{
@@ -5118,7 +5118,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 	if (!g_Cfg.m_iExperienceMode)
 		return;
 
-	static uint const keyWords[] =
+	static constexpr uint keyWords[] =
 	{
 		DEFMSG_MSG_EXP_CHANGE_1,		// 0
 		DEFMSG_MSG_EXP_CHANGE_2,

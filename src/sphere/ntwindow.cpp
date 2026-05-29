@@ -269,7 +269,7 @@ void CNTWindow::List_Clear()
 
 void CNTWindow::List_AddSingle(COLORREF color, LPCTSTR ptcText)
 {
-	const int iMaxTextLen = (64 * 1024);
+    constexpr int iMaxTextLen = (64 * 1024);
 
 	const int iTextLen = (int)strlen(ptcText);
 	const int iNewLen = m_iLogTextLen + iTextLen;
@@ -312,7 +312,7 @@ void CNTWindow::List_AddSingle(COLORREF color, LPCTSTR ptcText)
 void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 {
     std::deque moved_msgs(std::move(msgs));
-	const int iMaxTextLen = (64 * 1024);
+    constexpr int iMaxTextLen = (64 * 1024);
 
 	// Erase the old text to make space for all the message queue at once
 	int iTotalTextLen = 0;
@@ -376,10 +376,9 @@ void CNTWindow::SetWindowTitle(LPCTSTR pText)
 
 bool CNTWindow::RegisterClass(char *className)	// static
 {
-	WNDCLASS wc;
-	memset( &wc, 0, sizeof(wc));
+	WNDCLASS wc = {};
 
-	wc.style = CS_DBLCLKS | CS_VREDRAW | CS_HREDRAW;
+    wc.style = CS_DBLCLKS | CS_VREDRAW | CS_HREDRAW;
 	wc.lpfnWndProc = WindowProc;
 	wc.hInstance = theApp.m_hInstance;
 	wc.hIcon = theApp.LoadIcon( IDR_MAINFRAME );
@@ -417,9 +416,8 @@ int CNTWindow::OnCreate( HWND hWnd, LPCREATESTRUCT lParam )
 
 	// TEXTMODE
 	m_wndLog.SetBackgroundColor( false, RGB(0,0,0) );
-	CHARFORMAT cf;
-	memset( &cf, 0, sizeof(cf));
-	cf.cbSize = sizeof(cf);
+	CHARFORMAT cf = {};
+    cf.cbSize = sizeof(cf);
 	cf.dwMask = CFM_COLOR;
 	cf.crTextColor = m_dwColorPrv;
 	cf.bCharSet = ANSI_CHARSET;
@@ -675,9 +673,8 @@ void CNTWindow::SetLogFont( const char * pszFont )
 	}
 	else
 	{
-		LOGFONT logfont;
-   		memset( &logfont, 0, sizeof(logfont) );
-   		strcpy( logfont.lfFaceName, pszFont );
+		LOGFONT logfont = {};
+        strcpy( logfont.lfFaceName, pszFont );
 
 		// calculate height for a 10pt font, some systems can produce an unreadable
 		// font size if we let CreateFontIndirect pick a system default size

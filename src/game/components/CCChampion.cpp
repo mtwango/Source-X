@@ -907,7 +907,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
                     }
                 }
             }
-            if (spawnGroup.count(uiGroup) <= 0)  // Didn't found any group for the given level, stop!
+            if (!spawnGroup.contains(uiGroup))  // Didn't found any group for the given level, stop!
             {
                 sVal.FormatVal(-1);
                 break;
@@ -1263,7 +1263,7 @@ bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * p
             uchar uiGroup = (uchar)Exp_GetSingle(ptcKey);
             ++ptcKey;
             uchar uiNPC = (uchar)Exp_GetSingle(ptcKey);
-            if (uiNPC && (_idSpawn.find(uiGroup) == _idSpawn.end()))
+            if (uiNPC && (!_idSpawn.contains(uiGroup)))
             {
                 sVal.FormatVal(-1);
                 return true;

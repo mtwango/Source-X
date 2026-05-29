@@ -440,7 +440,7 @@ void CChar::Noto_ChangeDeltaMsg( int iDelta, lpctstr pszType )
 #define	NOTO_DEGREES	8
 #define	NOTO_FACTOR		(300/NOTO_DEGREES)
 
-	static uint const sm_DegreeTable[8] =
+	static constexpr uint sm_DegreeTable[8] =
 	{
 		DEFMSG_MSG_NOTO_CHANGE_1,
 		DEFMSG_MSG_NOTO_CHANGE_2,

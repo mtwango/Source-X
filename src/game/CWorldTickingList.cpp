@@ -2,7 +2,7 @@
 #include "chars/CChar.h"
 #include "CWorld.h"
 #include "CWorldTicker.h"
-
+#include <ranges>
 
 void CWorldTickingList::AddObjSingle(int64 iTimeout, CTimedObject* pObj, bool fForce) // static
 {
@@ -58,13 +58,13 @@ void CWorldTickingList::ClearTickingLists() // static
 #if MT_ENGINES
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vTimedObjsTimeouts.MT_CMUTEX);
 #endif
-        for (auto& cont = g_World._Ticker._vTimedObjsTimeouts; auto& elem : cont) {
+        for (auto &cont = g_World._Ticker._vTimedObjsTimeouts; auto &val : cont | std::views::values) {
             DEBUG_ASSERT(elem.second->_fIsInWorldTickAddList == false);
-            elem.second->_fIsInWorldTickList = false;
+            val->_fIsInWorldTickList = false;
         }
-        for (auto& cont = g_World._Ticker._vTimedObjsTimeoutsAddReq; auto& elem : cont) {
+        for (auto &cont = g_World._Ticker._vTimedObjsTimeoutsAddReq; auto &val : cont | std::views::values) {
             DEBUG_ASSERT(elem.second->_fIsInWorldTickList == false);
-            elem.second->_fIsInWorldTickAddList = false;
+            val->_fIsInWorldTickAddList = false;
         }
 #ifdef _DEBUG
         for (auto& cont = g_World._Ticker._vTimedObjsTimeoutsEraseReq; auto& elem : cont) {
@@ -80,11 +80,11 @@ void CWorldTickingList::ClearTickingLists() // static
 #if MT_ENGINES
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vPeriodicCharsTicks.MT_CMUTEX);
 #endif
-        for (auto& cont = g_World._Ticker._vPeriodicCharsTicks ; auto& elem : cont) {
-            elem.second->_iTimePeriodicTick = 0;
+        for (auto &cont = g_World._Ticker._vPeriodicCharsTicks; auto &val : cont | std::views::values) {
+            val->_iTimePeriodicTick = 0;
         }
-        for (auto& cont = g_World._Ticker._vPeriodicCharsAddRequests; auto& elem : cont) {
-            elem.second->_iTimePeriodicTick = 0;
+        for (auto &cont = g_World._Ticker._vPeriodicCharsAddRequests; auto &val : cont | std::views::values) {
+            val->_iTimePeriodicTick = 0;
         }
 #ifdef _DEBUG
         for (auto& cont = g_World._Ticker._vPeriodicCharsEraseRequests; auto& elem : cont) {

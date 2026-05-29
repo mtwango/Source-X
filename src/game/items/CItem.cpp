@@ -2220,7 +2220,7 @@ void CItem::SetAmount(word amount )
 	// sometimes the diff graphics for the types are not in the client.
 	if ( IsType(IT_ORE) )
 	{
-		static const ITEMID_TYPE sm_Item_Ore[] =
+		static constexpr ITEMID_TYPE sm_Item_Ore[] =
 		{
 			ITEMID_ORE_1,
 			ITEMID_ORE_1,

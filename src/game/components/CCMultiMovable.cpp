@@ -607,9 +607,9 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
                     const CItemBaseMulti::CMultiComponentItem & component = pMultiOld->m_Components[j];
                     if ((xdiff == component.m_dx) && (ydiff == component.m_dy) && ((pItem->GetTopZ() - pMultiThis->GetTopZ()) == component.m_dz))
                     {
-                        const CItemBaseMulti::CMultiComponentItem & componentnew = pMultiNew->m_Components[j];
+                        const auto &[m_id, m_dx, m_dy, m_dz] = pMultiNew->m_Components[j];
                         IT_TYPE oldType = pItem->GetType();
-                        pItem->SetID(componentnew.m_id);
+                        pItem->SetID(m_id);
                         pItem->SetType(oldType);
                         if ( oldType == IT_SHIP_PLANK && pItem->m_itShipPlank.m_wSideType == IT_SHIP_SIDE_LOCKED)
                         {
@@ -618,9 +618,9 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
 
                         }
 
-                        pt.m_x = pMultiThis->GetTopPoint().m_x + componentnew.m_dx;
-                        pt.m_y = pMultiThis->GetTopPoint().m_y + componentnew.m_dy;
-                        pt.m_z = pMultiThis->GetTopPoint().m_z + componentnew.m_dz;
+                        pt.m_x = pMultiThis->GetTopPoint().m_x + m_dx;
+                        pt.m_y = pMultiThis->GetTopPoint().m_y + m_dy;
+                        pt.m_z = pMultiThis->GetTopPoint().m_z + m_dz;
                     }
                 }
             }

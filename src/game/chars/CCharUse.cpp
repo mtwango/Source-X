@@ -1273,9 +1273,9 @@ bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, bool fChe
         if (iPetFollowerSlots >= 0)
         {
             bool fCharAlreadyFollower = false;
-            for (auto const& follower_data : m_followers)
+            for (const auto &[uid, followerslots] : m_followers)
             {
-                if (follower_data.uid == pCharPet->GetUID())
+                if (uid == pCharPet->GetUID())
                 {
                     fCharAlreadyFollower = true;
                     break;

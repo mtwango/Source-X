@@ -90,8 +90,8 @@ bool CEntityProps::CEPLoopLoad(CEPLoopRet_t *pRet, CScript& s, CObjBase* pLinked
     {
         if (CComponentProps* pComponent = val.get())
         {
-            const KeyTableDesc_s ktd = pComponent->GetPropertyKeysData();
-            localRet.iPropIndex = (CComponentProps::PropertyIndex_t) FindTableSorted(ptcKey, ktd.pptcTable, ktd.iTableSize - 1);
+            const auto [pptcTable, iTableSize] = pComponent->GetPropertyKeysData();
+            localRet.iPropIndex = (CComponentProps::PropertyIndex_t) FindTableSorted(ptcKey, pptcTable, iTableSize - 1);
             if (localRet.iPropIndex == (CComponentProps::PropertyIndex_t) - 1)
             {
                 // The key doesn't belong to this CComponentProps.
@@ -159,8 +159,8 @@ bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, lpctstr ptcKey, CSString& sV
     {
         if (CComponentProps* pComponent = val.get())
         {
-            const KeyTableDesc_s ktd = pComponent->GetPropertyKeysData();
-            pRet->iPropIndex = (COMPPROPS_TYPE)FindTableSorted(ptcKey, ktd.pptcTable, ktd.iTableSize - 1);
+            const auto [pptcTable, iTableSize] = pComponent->GetPropertyKeysData();
+            pRet->iPropIndex = (COMPPROPS_TYPE)FindTableSorted(ptcKey, pptcTable, iTableSize - 1);
             if (pRet->iPropIndex == (CComponentProps::PropertyIndex_t) - 1)
             {
                 // The key doesn't belong to this CComponentProps.

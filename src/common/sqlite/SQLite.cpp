@@ -252,8 +252,8 @@ int CSQLite::ImportDB(lpctstr strInFileName)
         }
         return iErr;
     */
-
-    sqlite3_backup *in_backup = sqlite3_backup_init(m_sqlite3, "main", in_db, "main");
+    sqlite3_backup *in_backup;
+    in_backup = sqlite3_backup_init(m_sqlite3, "main", in_db, "main");
     if (in_backup == nullptr)
     {
         iErr = sqlite3_errcode(m_sqlite3);
@@ -287,7 +287,8 @@ int CSQLite::ExportDB(lpctstr strOutFileName)
     if (iErr != SQLITE_OK)
         goto clean_and_ret;
 
-    sqlite3_backup *out_backup = sqlite3_backup_init(out_db, "main", m_sqlite3, "main");
+    sqlite3_backup *out_backup;
+    out_backup = sqlite3_backup_init(out_db, "main", m_sqlite3, "main");
     if (out_backup == nullptr)
     {
         iErr = sqlite3_errcode(out_db);

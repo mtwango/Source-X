@@ -482,10 +482,10 @@ void CServerMapBlock::Load( int bx, int by )
 		{
 			for ( int i = 0; i < MAP_SUPPORTED_QTY; ++i )
 			{
-				MapAddress pMapAddress = g_Install.m_UopMapAddress[iMapNumber][i];
-				if ((uiBlockIndex <= pMapAddress.dwLastBlock ) && (uiBlockIndex >= pMapAddress.dwFirstBlock ))
+				auto [dwFirstBlock, dwLastBlock, qwAdress] = g_Install.m_UopMapAddress[iMapNumber][i];
+				if ((uiBlockIndex <= dwLastBlock ) && (uiBlockIndex >= dwFirstBlock ))
 				{
-					fileOffset = (dword)(pMapAddress.qwAdress + ((uiBlockIndex - pMapAddress.dwFirstBlock)*196LL));
+					fileOffset = (dword)(qwAdress + ((uiBlockIndex - dwFirstBlock)*196LL));
 					break;
 				}
 			}

@@ -48,8 +48,8 @@ void CEntity::SubscribeComponent(CComponent * pComponent)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::SubscribeComponent");
     const COMP_TYPE compType = pComponent->GetType();
-    const auto pairResult = _lComponents.try_emplace(compType, pComponent);
-    if (pairResult.second == false)
+    const auto [fst, snd] = _lComponents.try_emplace(compType, pComponent);
+    if (snd == false)
     {
         delete pComponent;
         ASSERT(false);  // This should never happen

@@ -815,10 +815,10 @@ void CCChampion::r_Write(CScript& s)
 
     if (!_spawnGroupsId.empty())
     {
-        for (auto const& group : _spawnGroupsId)
+        for (const auto &[fst, snd] : _spawnGroupsId)
         {
             std::stringstream groupStream;
-            auto const& vec = group.second;
+            auto const& vec = snd;
             if (vec.empty() == true)
             {
                 continue;
@@ -832,7 +832,7 @@ void CCChampion::r_Write(CScript& s)
             groupString.pop_back(); //Remove the last comma.
 
             std::stringstream finalStream;
-            finalStream << "npcgroup[" << (int)group.first << "]";
+            finalStream << "npcgroup[" << (int)fst << "]";
             s.WriteKeyStr(finalStream.str().c_str(), groupString.c_str());
         }
     }

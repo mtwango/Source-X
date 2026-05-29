@@ -82,16 +82,16 @@ bool CUOMapList::Load(int map, char *args)
         return false;
     }
 
-    MapGeoData& map_data = m_mapGeoData.maps[map];
-    if ( false == map_data.fInitialized )	// disable double intialization
+    auto &[iNum, iId, uiSizeX, uiSizeY, iSectorSize, fEnabled, fInitialized] = m_mapGeoData.maps[map];
+    if ( false == fInitialized )	// disable double intialization
     {
         tchar * ppCmd[5];	// maxx,maxy,sectorsize,mapnum[like 0 for map0/statics0/staidx0],mapid
         size_t iCount = Str_ParseCmds(args, ppCmd, std::size(ppCmd), ",");
 
         if ( iCount <= 0 )	// simple MAPX= same as disabling the map
         {
-            map_data.fEnabled = false;
-            map_data.fInitialized = true;
+            fEnabled = false;
+            fInitialized = true;
             return true;
         }
 
@@ -108,20 +108,20 @@ bool CUOMapList::Load(int map, char *args)
             if (( maxx < 8 ) || ( maxx % 8 ))
             {
                 g_Log.EventError("MAP%d: X coord must be multiple of 8 (%d is invalid, %d is still effective).\n",
-                    map, maxx, map_data.uiSizeX);
+                    map, maxx, uiSizeX);
             }
             else
-                map_data.uiSizeX = (ushort)std::clamp(maxx, 0, (int)UINT16_MAX);
+                uiSizeX = (ushort)std::clamp(maxx, 0, (int)UINT16_MAX);
         }
         if ( maxy )
         {
             if (( maxy < 8 ) || ( maxy % 8 ))
             {
                 g_Log.EventError("MAP%d: Y coord must be multiple of 8 (%d is invalid, %d is still effective).\n",
-                    map, maxy, map_data.uiSizeY);
+                    map, maxy, uiSizeY);
             }
             else
-                map_data.uiSizeY = (ushort)std::clamp(maxy, 0, (int)UINT16_MAX);
+                uiSizeY = (ushort)std::clamp(maxy, 0, (int)UINT16_MAX);
         }
         if ( sectorsize > 0 )
         {
@@ -131,15 +131,15 @@ bool CUOMapList::Load(int map, char *args)
                     map, sectorsize);
             }
             else
-                map_data.iSectorSize = (int16)sectorsize;
+                iSectorSize = (int16)sectorsize;
         }
         if ( realmapnum >= 0 )
-            map_data.iNum = (int16)realmapnum;
+            iNum = (int16)realmapnum;
         if ( mapid >= 0 )
-            map_data.iId = (int16)mapid;
+            iId = (int16)mapid;
     }
 
-    map_data.fInitialized = true;
+    fInitialized = true;
     return true;
 }
 

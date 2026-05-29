@@ -49,8 +49,8 @@ public:
 	std::vector<Spells> m_spells;	// Spells stored in this NPC
 
 	int Spells_GetCount();
-	SPELL_TYPE Spells_GetAt(uchar id);
-	bool Spells_DelAt(uchar id);
+	SPELL_TYPE Spells_GetAt(uchar index);
+	bool Spells_DelAt(uchar index);
 	bool Spells_Add(SPELL_TYPE spell);
 	int Spells_FindSpell(SPELL_TYPE spell);
 

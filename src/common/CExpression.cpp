@@ -1837,10 +1837,7 @@ CExpression::GetConditionalSubexpressions(
 	// Now that we found the subexpressions, prepare them for their evaluation.
     for (uint i = 0; i < uiSubexprQty; ++i)
 	{
-        SubexprState_t& sCurSubexpr = parsingSubexprsStates[i];
-		lptstr ptcStart             = sCurSubexpr.ptcStart;
-		lptstr ptcEnd               = sCurSubexpr.ptcEnd;
-
+        auto &[ptcStart, ptcEnd, uiType, uiNonAssociativeOffset] = parsingSubexprsStates[i];
 		for (lptstr ptcTest = ptcStart; ptcTest != ptcEnd; ++ptcTest)
 		{
 			if (
@@ -1851,7 +1848,7 @@ CExpression::GetConditionalSubexpressions(
 			   )
 			{
 				// We have logical operators inside, so it's a nested subexpression.
-                sCurSubexpr.uiType |= SubexprType_t::MaybeNestedSubexpr;
+                uiType |= SubexprType_t::MaybeNestedSubexpr;
 				break;
 			}
 		}
@@ -1859,16 +1856,16 @@ CExpression::GetConditionalSubexpressions(
 		GETNONWHITESPACE(ptcStart);				// After this, ptcStart is the first char of the expression
 		Str_EatEndWhitespace(ptcStart, ptcEnd);	// After this, ptcEnd is the last char of the expression (so it's before the \0)
 
-		if (sCurSubexpr.uiNonAssociativeOffset)
+		if (uiNonAssociativeOffset)
 		{
 			// ptcStart might have changed, so update uiNonAssociativeOffset accordingly (given that it's relative to ptcStart).
-			const int iDiff = static_cast<int>(ptcStart - sCurSubexpr.ptcStart);
+			const int iDiff = static_cast<int>(ptcStart - ptcStart);
 			ASSERT(iDiff >= 0);
 			const uint uiNewOff = std::min((uint)USHRT_MAX, (uint)iDiff);
-			sCurSubexpr.uiNonAssociativeOffset += static_cast<uchar>(uiNewOff);
+			uiNonAssociativeOffset += static_cast<uchar>(uiNewOff);
 		}
-		sCurSubexpr.ptcStart = ptcStart;
-		sCurSubexpr.ptcEnd   = ptcEnd;
+		ptcStart = ptcStart;
+		ptcEnd   = ptcEnd;
 	}
 
     return pSubexprsArena;

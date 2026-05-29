@@ -2605,23 +2605,23 @@ bool CServer::SocketsInit() // Initialize sockets
         g_Log.Event(LOGM_INIT, "Querying hostname '%s' address with timeout %d milliseconds...\n", ptcName, kiTimeoutMs);
 
         //ptcName[sizeof(ptcName)-1] = '\0';
-        std::pair<bool, sl::ResolveResultV4> res = sl::hostname_resolve_with_timeout_v4(ptcName, kiTimeoutMs);
-        if (res.first)
+        auto [fst, snd] = sl::hostname_resolve_with_timeout_v4(ptcName, kiTimeoutMs);
+        if (fst)
         {
             // Prefer canonical DNS name if provided (same role as hostent->h_name)
-            if (!res.second.canon.empty())
+            if (!snd.canon.empty())
             {
                 /* The canonical name is the “true” DNS name for a host after alias resolution, typically an FQDN,
                     and DNS represents aliases using CNAME records that point an alias hostname to the canonical target name.
                     If “www.example.com” is a CNAME alias to “example.com,” the canonical name for “www.example.com” will be “example.com,” */
-                Str_CopyLimitNull(ptcName, res.second.canon.c_str(), SPHERE_MAX_PATH);
+                Str_CopyLimitNull(ptcName, snd.canon.c_str(), SPHERE_MAX_PATH);
             }
 
             // Log IPv4 addresses like iterating hostent->h_addr_list
-            for (size_t i = 0; i < res.second.addrs_v4.size(); ++i)
+            for (size_t i = 0; i < snd.addrs_v4.size(); ++i)
             {
                 CSocketAddressIP ip;
-                ip.SetAddrIP(res.second.addrs_v4[i]); // network byte order, same as h_addr_list
+                ip.SetAddrIP(snd.addrs_v4[i]); // network byte order, same as h_addr_list
                 if (!m_ip.IsLocalAddr() && !m_ip.IsSameIP(ip))
                     continue;
 

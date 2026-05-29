@@ -167,12 +167,12 @@ bool CCrypto::SetClientVerFromKeyIndex( uint uiIndex, bool fSetEncrypt )
 	if ( (size_t)uiIndex >= keys_holder->client_keys.size() )
 		return false;
 
-	CCryptoClientKey & key = keys_holder->client_keys[uiIndex];
+	auto &[m_client, m_key_1, m_key_2, m_EncType] = keys_holder->client_keys[uiIndex];
 
-	SetClientVerNumber(key.m_client);
-	SetMasterKeys(key.m_key_1, key.m_key_2); // Hi - Lo
+	SetClientVerNumber(m_client);
+	SetMasterKeys(m_key_1, m_key_2); // Hi - Lo
 	if ( fSetEncrypt )
-		SetEncryptionType(key.m_EncType);
+		SetEncryptionType(m_EncType);
 
 	return true;
 }

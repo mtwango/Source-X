@@ -33,31 +33,31 @@ int CCharNPC::Spells_GetCount()
 }
 
 // Retrieve the spell stored at index = n
-SPELL_TYPE CCharNPC::Spells_GetAt(uchar id)
+SPELL_TYPE CCharNPC::Spells_GetAt(uchar index)
 {
     ADDTOCALLSTACK("CCharNPC::Spells_GetAt");
     if (m_spells.empty())
         return SPELL_NONE;
-    if (m_spells.size() <= id)
+    if (m_spells.size() <= index)
         return SPELL_NONE;
-    Spells refSpell = m_spells[id];
-    if (refSpell.id)
-        return refSpell.id;
+    auto [id] = m_spells[index];
+    if (id)
+        return id;
     return SPELL_NONE;
 }
 
 // Delete the spell at the given index
-bool CCharNPC::Spells_DelAt(uchar id)
+bool CCharNPC::Spells_DelAt(uchar index)
 {
     ADDTOCALLSTACK("CCharNPC::Spells_DelAt");
     if (m_spells.empty())
         return false;
-    if (m_spells.size() <= id)
+    if (m_spells.size() <= index)
         return SPELL_NONE;
-    Spells refSpell = m_spells[id];
-    if (refSpell.id)
+    auto [id] = m_spells[index];
+    if (id)
     {
-        std::vector<Spells>::iterator it = m_spells.begin() + id;
+        std::vector<Spells>::iterator it = m_spells.begin() + index;
         m_spells.erase(it);
         return true;
     }
@@ -89,8 +89,8 @@ int CCharNPC::Spells_FindSpell(SPELL_TYPE spellID)
     uint count = 0;
     while (count < m_spells.size())
     {
-        Spells spell = m_spells[count];
-        if (spell.id == spellID)
+        auto [id] = m_spells[count];
+        if (id == spellID)
             return count;
         ++count;
     }

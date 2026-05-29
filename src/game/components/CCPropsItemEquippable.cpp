@@ -257,10 +257,10 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
     /* Tooltips for "dynamic" properties (stored in the BaseConts: _mPropsNum and _mPropsStr) */
 
     // Numeric properties
-    for (const BaseContNumPair_t& propPair : _mPropsNum)
+    for (const auto &[fst, snd] : _mPropsNum)
     {
-        PropertyIndex_t prop = propPair.first;
-        PropertyValNum_t iVal = propPair.second;
+        PropertyIndex_t prop = fst;
+        PropertyValNum_t iVal = snd;
 
         if (iVal == 0)
             continue;
@@ -628,10 +628,10 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
 
 
     // String properties
-    for (const BaseContStrPair_t& propPair : _mPropsStr)
+    for (const auto &[fst, snd] : _mPropsStr)
     {
-        PropertyIndex_t prop = propPair.first;
-        lpctstr ptcVal = propPair.second.GetBuffer();
+        PropertyIndex_t prop = fst;
+        lpctstr ptcVal = snd.GetBuffer();
 
         switch (prop)
         {

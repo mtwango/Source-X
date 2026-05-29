@@ -1695,8 +1695,8 @@ void CItemMulti::GenerateBaseComponents(bool *pfNeedKey, dword dwKeyCode)
     ASSERT(pMultiDef);
     for (size_t i = 0; i < pMultiDef->m_Components.size(); ++i)
     {
-        const CItemBaseMulti::CMultiComponentItem &component = pMultiDef->m_Components[i];
-        *pfNeedKey |= Multi_CreateComponent(component.m_id, component.m_dx, component.m_dy, component.m_dz, dwKeyCode);
+        const auto &[m_id, m_dx, m_dy, m_dz] = pMultiDef->m_Components[i];
+        *pfNeedKey |= Multi_CreateComponent(m_id, m_dx, m_dy, m_dz, dwKeyCode);
     }
 }
 

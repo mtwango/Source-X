@@ -2208,14 +2208,14 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
                     return false;
 
                 SKIP_SEPARATORS(ptcKey);
-                const CMultiComponentItem& item = m_Components[(size_t)iIndex];
+                const auto &[m_id, m_dx, m_dy, m_dz] = m_Components[(size_t)iIndex];
 
-                if (!strnicmp(ptcKey, "ID", 2)) sVal.FormatVal(item.m_id);
-                else if (!strnicmp(ptcKey, "DX", 2)) sVal.FormatVal(item.m_dx);
-                else if (!strnicmp(ptcKey, "DY", 2)) sVal.FormatVal(item.m_dy);
-                else if (!strnicmp(ptcKey, "DZ", 2)) sVal.FormatVal(item.m_dz);
-                else if (!strnicmp(ptcKey, "D", 1)) sVal.Format("%i,%i,%i", item.m_dx, item.m_dy, item.m_dz);
-                else sVal.Format("%u,%i,%i,%i", item.m_id, item.m_dx, item.m_dy, item.m_dz);
+                if (!strnicmp(ptcKey, "ID", 2)) sVal.FormatVal(m_id);
+                else if (!strnicmp(ptcKey, "DX", 2)) sVal.FormatVal(m_dx);
+                else if (!strnicmp(ptcKey, "DY", 2)) sVal.FormatVal(m_dy);
+                else if (!strnicmp(ptcKey, "DZ", 2)) sVal.FormatVal(m_dz);
+                else if (!strnicmp(ptcKey, "D", 1)) sVal.Format("%i,%i,%i", m_dx, m_dy, m_dz);
+                else sVal.Format("%u,%i,%i,%i", m_id, m_dx, m_dy, m_dz);
             }
             else
                 return false;

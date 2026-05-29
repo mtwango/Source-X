@@ -2489,32 +2489,32 @@ do_default:
 						SKIP_SEPARATORS(ptcKey);
 						if ( attackerIndex < (int)m_lastAttackers.size() )
 						{
-							const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+							const auto &[elapsed, charUID, amountDone, threat, ignore] = m_lastAttackers[(size_t)attackerIndex];
 
 							if( !strnicmp(ptcKey, "DAM", 3) )
 							{
-								sVal.FormatLLVal(refAttacker.amountDone);
+								sVal.FormatLLVal(amountDone);
 								return true;
 							}
                             if (!strnicmp(ptcKey, "ELAPSED", 7))
                             {
-                                sVal.FormatLLVal(refAttacker.elapsed);
+                                sVal.FormatLLVal(elapsed);
                                 return true;
                             }
                             if ((!strnicmp(ptcKey, "UID", 3)) || (*ptcKey == '\0'))
                             {
-                                const CUID uid(refAttacker.charUID);
-                                sVal.FormatHex(uid.CharFind() ? refAttacker.charUID : 0);
+                                const CUID uid(charUID);
+                                sVal.FormatHex(uid.CharFind() ? charUID : 0);
                                 return true;
                             }
                             if (!strnicmp(ptcKey, "THREAT", 6))
                             {
-                                sVal.FormatVal(refAttacker.threat);
+                                sVal.FormatVal(threat);
                                 return true;
                             }
                             if (!strnicmp(ptcKey, "IGNORE", 6))
                             {
-                                sVal.FormatVal(refAttacker.ignore ? 1 : 0);
+                                sVal.FormatVal(ignore ? 1 : 0);
                                 return true;
                             }
                         }
@@ -2569,27 +2569,27 @@ do_default:
 						SKIP_SEPARATORS(ptcKey);
 						if ( notoIndex < m_notoSaves.size() )
 						{
-							NotoSaves & refnoto = m_notoSaves[notoIndex];
+							auto &[time, charUID, color, value] = m_notoSaves[notoIndex];
 
 							if ( !strnicmp(ptcKey, "VALUE", 5) )
 							{
-								sVal.FormatVal(refnoto.value);
+								sVal.FormatVal(value);
 								return true;
 							}
                             if (!strnicmp(ptcKey, "ELAPSED", 7))
                             {
-                                sVal.FormatLLVal(refnoto.time);
+                                sVal.FormatLLVal(time);
                                 return true;
                             }
                             if ((!strnicmp(ptcKey, "UID", 3)) || (*ptcKey == '\0'))
                             {
-                                const CUID uid(refnoto.charUID);
-                                sVal.FormatHex(uid.CharFind() ? refnoto.charUID : 0);
+                                const CUID uid(charUID);
+                                sVal.FormatHex(uid.CharFind() ? charUID : 0);
                                 return true;
                             }
                             if (!strnicmp(ptcKey, "COLOR", 5))
                             {
-                                sVal.FormatVal(refnoto.color);
+                                sVal.FormatVal(color);
                                 return true;
                             }
                             return false;
@@ -3526,9 +3526,9 @@ bool CChar::r_LoadVal( CScript & s )
                 if (m_followers.empty())
                     return true;
 
-                for (auto& follower : m_followers)
+                for (auto &[uid, followerslots] : m_followers)
                 {
-                    CChar *pFollower = follower.uid.CharFind();
+                    CChar *pFollower = uid.CharFind();
                     if (!pFollower)
                         continue;
                     pFollower->NPC_PetClearOwners();
@@ -3547,17 +3547,17 @@ bool CChar::r_LoadVal( CScript & s )
                 if (m_followers.empty())
                     return false;
 
-                const CUID uid(s.GetArgDWVal());
+                const CUID cuid(s.GetArgDWVal());
                 for (auto it = m_followers.begin(); it != m_followers.end();)
                 {
-                    auto& followerData = *it;
-                    if (followerData.uid != uid)
+                    auto &[uid, followerslots] = *it;
+                    if (uid != cuid)
                     {
                         ++it;
                         continue;
                     }
 
-                    CChar *pChar = uid.CharFind();
+                    CChar *pChar = cuid.CharFind();
                     it = m_followers.erase(it);
 
                     if (!pChar)
@@ -4125,10 +4125,10 @@ void CChar::r_Write( CScript & s )
 
 	CObjBase::r_Write(s);
 
-    for (uint i = 0; auto const& fdata : m_followers) {
+    for (uint i = 0; const auto &[uid, followerslots] : m_followers) {
         char *pcTag = Str_GetTemp();
         snprintf(pcTag, Str_TempLength(), "FOLLOWER.%u", i);
-        s.WriteKeyFormat(pcTag, "0%" PRIx32 ",%d", fdata.uid.GetObjUID(), fdata.followerslots);
+        s.WriteKeyFormat(pcTag, "0%" PRIx32 ",%d", uid.GetObjUID(), followerslots);
         ++ i;
     }
 

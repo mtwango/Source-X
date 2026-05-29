@@ -29,20 +29,20 @@ void CDataBaseAsyncHelper::tick()
     m_queriesTodo.pop_front();
     lock.unlock();
 
-    FunctionQueryPair_t currentFunctionPair = currentPair.second;
+    auto [fst, snd] = currentPair.second;
 
     // Don't take it from CScriptParserBufs, since we are using a thread-unsafe object pool (script parsing is done in one thread only)
     //CScriptTriggerArgsPtr theArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     auto theArgs = std::make_shared<CScriptTriggerArgs>();
     theArgs->m_iN1 = currentPair.first;
-    theArgs->m_s1 = currentFunctionPair.second;
+    theArgs->m_s1 = snd;
 
     if ( currentPair.first )
-        theArgs->m_iN2 = g_Serv._hDb.query(currentFunctionPair.second, theArgs->m_VarsLocal);
+        theArgs->m_iN2 = g_Serv._hDb.query(snd, theArgs->m_VarsLocal);
     else
-        theArgs->m_iN2 = g_Serv._hDb.exec(currentFunctionPair.second);
+        theArgs->m_iN2 = g_Serv._hDb.exec(snd);
 
-    g_Serv._hDb.addQueryResult(currentFunctionPair.first, std::move(theArgs));
+    g_Serv._hDb.addQueryResult(fst, std::move(theArgs));
 }
 
 void CDataBaseAsyncHelper::waitForClose()

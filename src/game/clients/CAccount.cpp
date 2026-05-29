@@ -853,19 +853,19 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 	if ( itData != m_BlockIP.end() )
 	{
 		BlockLocalTimePair_t itResult = itData->second;
-		TimeTriesStruct_t & ttsData = itResult.first;
-		ttsData.m_Last = timeCurrent;
+		auto &[m_First, m_Last, m_vcDelay] = itResult.first;
+		m_Last = timeCurrent;
 
-		if ( ttsData.m_vcDelay > timeCurrent )
+		if ( m_vcDelay > timeCurrent )
 		{
 			bReturn = false;
 		}
 		else
 		{
-			if ((( ttsData.m_Last - ttsData.m_First ) > 15* MSECS_PER_SEC) && (itResult.second < iAccountMaxTries))
+			if ((( m_Last - m_First ) > 15* MSECS_PER_SEC) && (itResult.second < iAccountMaxTries))
 			{
-				ttsData.m_First = timeCurrent;
-				ttsData.m_vcDelay = 0;
+				m_First = timeCurrent;
+				m_vcDelay = 0;
 				itResult.second = 0;
 			}
 			else
@@ -874,13 +874,13 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 
 				if ( itResult.second > iAccountMaxTries )
 				{
-					ttsData.m_First = ttsData.m_vcDelay;
-					ttsData.m_vcDelay = 0;
+					m_First = m_vcDelay;
+					m_vcDelay = 0;
 					itResult.second = 0;
 				}
 				else if ( itResult.second == iAccountMaxTries )
 				{
-					ttsData.m_vcDelay = ttsData.m_Last + g_Cfg.m_iClientLoginTempBan;
+					m_vcDelay = m_Last + g_Cfg.m_iClientLoginTempBan;
 					bReturn = false;
 				}
 			}
@@ -918,8 +918,8 @@ void CAccount::ClearPasswordTries(bool bAll)
 	llong timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 	for ( BlockLocalTime_t::iterator itData = m_BlockIP.begin(), end = m_BlockIP.end(); itData != end; )
 	{
-		BlockLocalTimePair_t itResult = itData->second;
-		if ( (timeCurrent - itResult.first.m_Last) > g_Cfg.m_iClientLoginTempBan )
+		auto [fst, snd] = itData->second;
+		if ( (timeCurrent - fst.m_Last) > g_Cfg.m_iClientLoginTempBan )
 		{
 			itData = m_BlockIP.erase(itData);
 			end = m_BlockIP.end();

@@ -62,23 +62,23 @@ bool CComponentProps::BaseProp_WritePropVal(PropertyIndex_t iPropIndex, bool fPr
 
 void CComponentProps::BaseCont_Write_ContNum(const BaseContNum_t* container, const lpctstr *ptcPropsTable, CScript &s) // static
 {
-    for (const BaseContNumPair_t& propPair : *container)
+    for (const auto &[fst, snd] : *container)
     {
-        if (propPair.second == 0)
+        if (snd == 0)
             continue;
-        s.WriteKeyVal(ptcPropsTable[propPair.first], propPair.second);
+        s.WriteKeyVal(ptcPropsTable[fst], snd);
     }
 }
 
 void CComponentProps::BaseCont_Write_ContStr(const BaseContStr_t* container, const lpctstr *ptcPropsTable, CScript &s) // static
 {
-    for (const BaseContStrPair_t& propPair : *container)
+    for (const auto &[fst, snd] : *container)
     {
-        lpctstr ptcVal = propPair.second.GetBuffer();
+        lpctstr ptcVal = snd.GetBuffer();
         ASSERT(ptcVal);
         if (ptcVal[0] == '\0')
             continue;
-        s.WriteKeyStr(ptcPropsTable[propPair.first], ptcVal);
+        s.WriteKeyStr(ptcPropsTable[fst], ptcVal);
     }
 }
 

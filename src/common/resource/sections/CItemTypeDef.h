@@ -13,7 +13,7 @@ class CItemTypeDef : public CResourceLink
 {
 public:
     static const char *m_sClassName;
-    explicit CItemTypeDef( CResourceID rid ) : CResourceLink( rid )
+    explicit CItemTypeDef(const CResourceID &rid) : CResourceLink( rid )
     {
     }
 

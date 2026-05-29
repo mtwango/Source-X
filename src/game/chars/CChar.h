@@ -948,8 +948,8 @@ public:
     TRIGRET_TYPE Skill_OnCharTrigger( SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs); //pArgs.m_iN1 will be rewritten with skill
 
 	bool Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg );
-	bool Skill_Tracking( CUID uidTarg, DIR_TYPE & dirPrv, int iDistMax = INT16_MAX );
-	bool Skill_MakeItem( ITEMID_TYPE id, CUID uidTarg, SKTRIG_TYPE stage, bool fSkillOnly = false, int iReplicationQty = 1 );
+	bool Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax = INT16_MAX );
+	bool Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE stage, bool fSkillOnly = false, int iReplicationQty = 1 );
 	bool Skill_MakeItem_Success();
 	bool Skill_Snoop_Check( const CItemContainer * pItem );
 	void Skill_Cleanup();	 // may have just cancelled targetting.
@@ -1011,17 +1011,17 @@ private:
 	int Skill_Act_Training( SKTRIG_TYPE stage );
 
 	void Spell_Dispel( int iskilllevel );
-	CChar * Spell_Summon_Place( CChar * pChar, CPointMap ptTarg, int64 iDuration = 0);
+	CChar * Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, int64 iDuration = 0);
 	bool Spell_Recall(CItem * pRune, bool fGate);
     CItem * Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEffect, int64 iDurationInTenths, CObjBase * pSrc = nullptr, bool fEquip = true );
 	SPELL_TYPE Spell_GetIndex(SKILL_TYPE skill = SKILL_NONE);	//gets first spell for the magic skill given.
 	SPELL_TYPE Spell_GetMax(SKILL_TYPE skill = SKILL_NONE);	//gets first spell for the magic skill given.
 	bool Spell_Equip_OnTick( CItem * pItem );
 
-	void Spell_Field(CPointMap pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill,
+	void Spell_Field(const CPointMap &pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill,
         CChar * pCharSrc = nullptr, ITEMID_TYPE idnewEW = (ITEMID_TYPE)0, ITEMID_TYPE idnewNS = (ITEMID_TYPE)0,
         int64 iDuration = 0, HUE_TYPE iColor = HUE_DEFAULT);
-	void Spell_Area( CPointMap pt, int iDist, int iSkill, int64 iDuration = 0);
+	void Spell_Area(const CPointMap &pt, int iDist, int iSkill, int64 iDuration = 0);
 	bool Spell_TargCheck_Face();
 	bool Spell_TargCheck();
 	bool Spell_Unequip( LAYER_TYPE layer );
@@ -1038,7 +1038,7 @@ public:
 	bool Spell_CastDone();
 	bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
 	bool Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bool fFailMsg, bool fCheckAntiMagic = true );
-    CChar* Spell_Summon_Try(SPELL_TYPE spell, CPointMap ptTarg, CREID_TYPE uiCreature, std::optional<short> iFollowerSlotsOverride);
+    CChar* Spell_Summon_Try(SPELL_TYPE spell, const CPointMap &ptTarg, CREID_TYPE uiCreature, std::optional<short> iFollowerSlotsOverride);
 	int64 GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharSrc = nullptr ); // in tenths of second
 
 	// Memories about objects in the world. -------------------
@@ -1182,7 +1182,7 @@ public:
 	bool IsOwnedBy( const CChar * pChar, bool fAllowGM = true ) const;
 	CChar * GetOwner() const;
 	CChar * Use_Figurine( CItem * pItem, bool fCheckFollowerSlots = true );
-    CItem * Make_Figurine(CUID uidOwner, ITEMID_TYPE id = ITEMID_NOTHING);
+    CItem * Make_Figurine(const CUID &uidOwner, ITEMID_TYPE id = ITEMID_NOTHING);
 	CItem * NPC_Shrink();
     bool FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots = 0, bool fCheckOnly = false );
     short GetFollowerSlots() const;

@@ -301,7 +301,7 @@ CSector * CRect::GetSectorAtIndex( int i ) const noexcept
 }
 
 // get the n-th sector that makes up this rect.
-CSector * CRect::GetSectorAtIndexWithHints(int i, SectIndexingHints_s hints) const noexcept
+CSector * CRect::GetSectorAtIndexWithHints(const int i, const SectIndexingHints_s &hints) const noexcept
 {
     //if (g_MapList.IsMapSupported(m_map) == false)
     //    return nullptr;

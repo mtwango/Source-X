@@ -158,7 +158,7 @@ public:
     */
     static void ServPage(CClient * pClient, tchar * pszPage, CSTime * pDateLastMod);
 
-    explicit CWebPageDef(CResourceID id);
+    explicit CWebPageDef(const CResourceID &id);
     ~CWebPageDef() override = default;
 
     CWebPageDef(const CWebPageDef& copy) = delete;

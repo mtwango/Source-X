@@ -863,7 +863,7 @@ int CChar::SkillResourceTest( const CResourceQtyArray * pResources )
 }
 
 
-bool CChar::Skill_MakeItem( ITEMID_TYPE id, CUID uidTarg, SKTRIG_TYPE stage, bool fSkillOnly, int iReplicationQty )
+bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE stage, bool fSkillOnly, int iReplicationQty )
 {
 	ADDTOCALLSTACK("CChar::Skill_MakeItem");
 	// "MAKEITEM"
@@ -1282,7 +1282,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 	return true;
 }
 
-bool CChar::Skill_Tracking( CUID uidTarg, DIR_TYPE & dirPrv, int iDistMax )
+bool CChar::Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax )
 {
 	ADDTOCALLSTACK("CChar::Skill_Tracking");
 	// SKILL_TRACKING

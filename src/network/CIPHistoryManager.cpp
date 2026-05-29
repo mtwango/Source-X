@@ -72,7 +72,7 @@ void IPHistoryManager::tick()
     ADDTOCALLSTACK("IPHistoryManager::tick");
 
     // check if ttl should decay (only do this once every second)
-    const bool decayTTL = (!(m_lastDecayTime > 0) || CWorldGameTime::GetCurrentTime().GetTimeDiff(m_lastDecayTime) > 1 * MSECS_PER_SEC);
+    const bool decayTTL = m_lastDecayTime <= 0 || CWorldGameTime::GetCurrentTime().GetTimeDiff(m_lastDecayTime) > 1 * MSECS_PER_SEC;
     if (decayTTL)
         m_lastDecayTime = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 

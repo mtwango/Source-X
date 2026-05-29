@@ -93,7 +93,7 @@ void CClient::Event_ChatText( const nachar* pszText, int len, CLanguageID lang )
 	g_Serv.m_Chats.Action( this, pszText, len, lang );
 }
 
-void CClient::Event_Item_Dye( CUID uid, HUE_TYPE wHue ) // Rehue an item
+void CClient::Event_Item_Dye(const CUID &uid, HUE_TYPE wHue) // Rehue an item
 {
 	ADDTOCALLSTACK("CClient::Event_Item_Dye");
 	// CLIMODE_DYE : Result from addDyeOption()
@@ -160,7 +160,7 @@ void CClient::Event_Tips(word i) // Tip of the day window
 	addScrollScript( s, SCROLL_TYPE_TIPS, i + 1 );
 }
 
-void CClient::Event_Book_Title( CUID uid, lpctstr pszTitle, lpctstr pszAuthor )
+void CClient::Event_Book_Title(const CUID &uid, const lpctstr pszTitle, const lpctstr pszAuthor)
 {
 	ADDTOCALLSTACK("CClient::Event_Book_Title");
 	// XCMD_BookOpen : user is changing the books title/author info.
@@ -186,7 +186,7 @@ void CClient::Event_Book_Title( CUID uid, lpctstr pszTitle, lpctstr pszAuthor )
 	pBook->m_sAuthor = pszAuthor;
 }
 
-void CClient::Event_Item_Pickup(CUID uid, word amount) // Client grabs an item
+void CClient::Event_Item_Pickup(const CUID &uid, const word amount) // Client grabs an item
 {
 	ADDTOCALLSTACK("CClient::Event_Item_Pickup");
 	EXC_TRY("CClient::Event_Item_Pickup");
@@ -279,7 +279,7 @@ void CClient::Event_Item_Drop_Fail( CItem *pItem )
 	pItem->MoveToCheck(m_pChar->GetTopPoint()); // Drop the item at player foot
 }
 
-void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gridIndex )
+void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uidOn, const uchar gridIndex)
 {
 	ADDTOCALLSTACK("CClient::Event_Item_Drop");
 	// This started from the Event_Item_Pickup()
@@ -773,7 +773,7 @@ bool CClient::Event_CheckWalkBuffer(byte rawdir)
 			iTimeMin = 200;
 	}
 
-	if (!(iTimeDiff > iTimeMin + 350))
+	if (iTimeDiff <= iTimeMin + 350)
 		// We don't want to do process if time is greater of 350 (Ping of player should be lower than this)
 		// Accept a Big number cause a big offset on the average. When player stop moving, you'll always get big number.
 
@@ -1122,7 +1122,7 @@ bool CClient::Event_Command(lpctstr pszCommand, TALKMODE_TYPE mode)
 	return !fAllowSay;
 }
 
-void CClient::Event_Attack( CUID uid )
+void CClient::Event_Attack(const CUID &uid)
 {
 	ADDTOCALLSTACK("CClient::Event_Attack");
 	// d-click in war mode
@@ -1583,7 +1583,7 @@ void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, uint uiI
 	}
 }
 
-void CClient::Event_Profile( byte fWriteMode, CUID uid, lpctstr pszProfile, int iProfileLen )
+void CClient::Event_Profile(const byte fWriteMode, const CUID &uid, const lpctstr pszProfile, const int iProfileLen)
 {
 	ADDTOCALLSTACK("CClient::Event_Profile");
 	UnreferencedParameter(iProfileLen);
@@ -1622,7 +1622,7 @@ void CClient::Event_Profile( byte fWriteMode, CUID uid, lpctstr pszProfile, int 
 }
 
 
-void CClient::Event_MailMsg( CUID uid1, CUID uid2 )
+void CClient::Event_MailMsg(const CUID &uid1, const CUID &uid2)
 {
 	ADDTOCALLSTACK("CClient::Event_MailMsg");
 	UnreferencedParameter(uid2);
@@ -1655,7 +1655,7 @@ void CClient::Event_MailMsg( CUID uid1, CUID uid2 )
 }
 
 
-void CClient::Event_ToolTip( CUID uid )
+void CClient::Event_ToolTip(const CUID &uid)
 {
 	ADDTOCALLSTACK("CClient::Event_ToolTip");
 	CObjBase * pObj = uid.ObjFind();
@@ -2208,7 +2208,7 @@ void CClient::Event_TalkUNICODE(nachar* wszText, int iTextLen, HUE_TYPE wHue, TA
 	}
 }
 
-bool CClient::Event_SetName( CUID uid, const char * pszCharName )
+bool CClient::Event_SetName(const CUID &uid, const char * pszCharName)
 {
 	ADDTOCALLSTACK("CClient::Event_SetName");
 	// Set the name in the character status window.
@@ -2331,7 +2331,7 @@ bool CDialogResponseArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConso
 	return false;
 }
 
-bool CClient::Event_DoubleClick( CUID uid, bool fMacro, bool fTestTouch, bool fScript )
+bool CClient::Event_DoubleClick(const CUID &uid, const bool fMacro, const bool fTestTouch, const bool fScript)
 {
 	ADDTOCALLSTACK("CClient::Event_DoubleClick");
 	// Try to use the object in some way.
@@ -2408,7 +2408,7 @@ bool CClient::Event_DoubleClick( CUID uid, bool fMacro, bool fTestTouch, bool fS
 	return true;
 }
 
-void CClient::Event_SingleClick( CUID uid )
+void CClient::Event_SingleClick(const CUID &uid)
 {
 	ADDTOCALLSTACK("CClient::Event_SingleClick");
 	// The client is doing a single click on obj.

@@ -1063,7 +1063,7 @@ void CItemMulti::Eject(const CUID& uidChar)
     pChar->Spell_Teleport(m_uidLink.ItemFind()->GetTopPoint(), true, false);
 }
 
-void CItemMulti::EjectAll(CUID uidCharNoTp)
+void CItemMulti::EjectAll(const CUID &uidCharNoTp)
 {
     auto Area = CWorldSearchHolder::GetInstance(m_pRegion->m_pt, Multi_GetDistanceMax());
     Area->SetSearchSquare(true);
@@ -1198,7 +1198,7 @@ int16 CItemMulti::GetMultiCount() const
     return _iMultiCount;
 }
 
-void CItemMulti::Redeed(bool fDisplayMsg, bool fMoveToBank, CUID uidRedeedingChar)
+void CItemMulti::Redeed(const bool fDisplayMsg, bool fMoveToBank, const CUID &uidRedeedingChar)
 {
     ADDTOCALLSTACK("CItemMulti::Redeed");
     if (GetKeyNum("REMOVED") > 0) // Just don't pass from here again, to avoid duplicated deeds.

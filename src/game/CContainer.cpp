@@ -469,7 +469,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, dword dwArg 
 	return amount;
 }
 
-int CContainer::ContentCount( CResourceID rid, dword dwArg ) const
+int CContainer::ContentCount(const CResourceID &rid, const dword dwArg) const
 {
 	ADDTOCALLSTACK("CContainer::ContentCount");
 	// Calculate total (gold or other items) in this recursed container

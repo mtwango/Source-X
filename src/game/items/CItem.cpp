@@ -807,7 +807,7 @@ int CItem::IsWeird() const
 	return( ( ptCont == nullptr ) ? 0x2106 : ptCont->IsWeird() );
 }
 
-char CItem::GetFixZ( CPointMap pt, uint64 uiBlockFlags )
+char CItem::GetFixZ(const CPointMap &pt, uint64 uiBlockFlags)
 {
 	height_t zHeight = CItemBase::GetItemHeight( GetDispID(), &uiBlockFlags );
 	CServerMapBlockingState block(uiBlockFlags, pt.m_z, pt.m_z + zHeight, pt.m_z + 2, zHeight);
@@ -5316,7 +5316,7 @@ lpctstr CItem::Use_SpyGlass( CChar * pUser ) const
 	return pResult;
 }
 
-lpctstr CItem::Use_Sextant( CPointMap pntCoords ) const
+lpctstr CItem::Use_Sextant(const CPointMap &pntCoords) const
 {
 	ADDTOCALLSTACK("CItem::Use_Sextant");
 	// IT_SEXTANT

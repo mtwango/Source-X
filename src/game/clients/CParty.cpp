@@ -236,7 +236,7 @@ bool CPartyDef::SendRemoveList( CChar *pCharRemove, bool bFor )
 }
 
 // ---------------------------------------------------------
-bool CPartyDef::MessageEvent( CUID uidDst, CUID uidSrc, const nachar *pText, int ilenmsg )
+bool CPartyDef::MessageEvent(const CUID &uidDst, const CUID &uidSrc, const nachar *pText, const int ilenmsg)
 {
 	ADDTOCALLSTACK("CPartyDef::MessageEvent");
 	UnreferencedParameter(ilenmsg);
@@ -375,7 +375,7 @@ bool CPartyDef::RemoveMember(const CUID& uidRemove, const CUID &uidCommand, cons
 	return true;
 }
 
-bool CPartyDef::Disband( CUID uidMaster )
+bool CPartyDef::Disband(const CUID &uidMaster)
 {
 	ADDTOCALLSTACK("CPartyDef::Disband");
 	// Make sure i am the master.
@@ -418,7 +418,7 @@ bool CPartyDef::Disband( CUID uidMaster )
 }
 
 // ---------------------------------------------------------
-bool CPartyDef::DeclineEvent( CChar *pCharDecline, CUID uidInviter )	// static
+bool CPartyDef::DeclineEvent(const CChar *pCharDecline, const CUID &uidInviter)	// static
 {
 	ADDTOCALLSTACK("CPartyDef::DeclineEvent");
 	// This should happen after a timeout as well.
@@ -443,7 +443,7 @@ bool CPartyDef::DeclineEvent( CChar *pCharDecline, CUID uidInviter )	// static
 	return true;
 }
 
-bool CPartyDef::AcceptEvent( CChar *pCharAccept, CUID uidInviter, bool bForced, bool bSendMessages ) // static
+bool CPartyDef::AcceptEvent(CChar *pCharAccept, const CUID &uidInviter, const bool bForced, const bool bSendMessages) // static
 {
 	ADDTOCALLSTACK("CPartyDef::AcceptEvent");
 	// We are accepting the invite to join a party

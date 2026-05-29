@@ -649,7 +649,7 @@ public:
 	void SetAnim( ITEMID_TYPE id, int64 iTicksTimeout); // time in ticks
 
 	int IsWeird() const override;
-	char GetFixZ(CPointMap pt, uint64 uiBlockFlags = 0);
+	char GetFixZ(const CPointMap &pt, uint64 uiBlockFlags = 0);
 
 	byte GetSpeed() const;
 
@@ -880,7 +880,7 @@ public:
 	bool Use_Light();
 	int Use_LockPick( CChar * pCharSrc, bool fTest, bool fFail );
 	lpctstr Use_SpyGlass( CChar * pUser ) const;
-	lpctstr Use_Sextant( CPointMap pntCoords ) const;
+	lpctstr Use_Sextant(const CPointMap &pntCoords ) const;
 
 	bool IsBookWritable() const;
 	bool IsBookSystem() const;

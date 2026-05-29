@@ -1487,7 +1487,7 @@ void CItemStone::TheyDeclarePeace( CItemStone* pEnemyStone, bool fForcePeace )
 		return;
 }
 
-void CItemStone::WeDeclarePeace(CUID uid, bool fForcePeace)
+void CItemStone::WeDeclarePeace(const CUID &uid, const bool fForcePeace)
 {
 	ADDTOCALLSTACK("CItemStone::WeDeclarePeace");
 	CItemStone * pEnemyStone = dynamic_cast <CItemStone*>( uid.ItemFind());

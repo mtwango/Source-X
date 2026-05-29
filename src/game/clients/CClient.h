@@ -297,13 +297,13 @@ private:
 	bool OnTarg_GlobalChat_Add(CChar* pChar);
 	CItem* OnTarg_Use_Multi( const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed );
 
-	int OnSkill_AnimalLore( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_Anatomy( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_Forensics( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_EvalInt( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_ArmsLore( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_ItemID( CUID uid, int iTestLevel, bool fTest );
-	int OnSkill_TasteID( CUID uid, int iTestLevel, bool fTest );
+	int OnSkill_AnimalLore(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_Anatomy(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_Forensics(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_EvalInt(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_ArmsLore(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_ItemID(const CUID &uid, int iTestLevel, bool fTest );
+	int OnSkill_TasteID(const CUID &uid, int iTestLevel, bool fTest );
 
 	bool OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Skill_Herd_Dest( CObjBase * pObj, const CPointMap & pt );
@@ -323,30 +323,30 @@ public:
 	void GetAdjustedCharID( const CChar * pChar, CREID_TYPE & id, HUE_TYPE &wHue ) const;
 	void GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMID_TYPE & id, HUE_TYPE &wHue ) const;
 
-	void Event_Attack(CUID uid);
-	void Event_Book_Title( CUID uid, lpctstr pszTitle, lpctstr pszAuthor );
+	void Event_Attack(const CUID &uid);
+	void Event_Book_Title(const CUID &uid, lpctstr pszTitle, lpctstr pszAuthor );
 	void Event_BugReport( const tchar * pszText, int len, BUGREPORT_TYPE type, CLanguageID lang = 0 );
 	void Event_ChatButton(const nachar* pszName = nullptr); // Client's chat button was pressed
 	void Event_ChatText( const nachar* pszText, int len, CLanguageID lang = 0 ); // Text from a client
     void Event_CombatAbilitySelect(dword dwAbility);
 	void Event_CombatMode( bool fWar ); // Only for switching to combat mode
-	bool Event_DoubleClick( CUID uid, bool fMacro, bool fTestTouch, bool fScript = false );
+	bool Event_DoubleClick(const CUID &uid, bool fMacro, bool fTestTouch, bool fScript = false );
 	void Event_ExtCmd( EXTCMD_TYPE type, tchar * pszName );
-	void Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gridIndex = 0 ); // Item is dropped on ground
+	void Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uidOn, uchar gridIndex = 0 ); // Item is dropped on ground
 	void Event_Item_Drop_Fail( CItem *pItem );
-	void Event_Item_Dye( CUID uid, HUE_TYPE wHue );	// Rehue an item
-	void Event_Item_Pickup( CUID uid, word amount ); // Client grabs an item
-	void Event_MailMsg( CUID uid1, CUID uid2 );
-	void Event_Profile( byte fWriteMode, CUID uid, lpctstr pszProfile, int iProfileLen );
+	void Event_Item_Dye(const CUID &uid, HUE_TYPE wHue );	// Rehue an item
+	void Event_Item_Pickup(const CUID &uid, word amount ); // Client grabs an item
+	void Event_MailMsg(const CUID &uid1, const CUID &uid2 );
+	void Event_Profile( byte fWriteMode, const CUID &uid, lpctstr pszProfile, int iProfileLen );
 	void Event_PromptResp( lpctstr pszText, size_t len, dword context1, dword context2, dword type, bool fNoStrip = false );
 	void Event_PromptResp_GMPage( lpctstr pszReason );
-	bool Event_SetName( CUID uid, const char * pszCharName );
-	void Event_SingleClick( CUID uid );
+	bool Event_SetName(const CUID &uid, const char * pszCharName );
+	void Event_SingleClick(const CUID &uid );
 	void Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, bool fNoStrip = false ); // PC speech
 	void Event_TalkUNICODE(nachar* wszText, int iTextLen, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, lpctstr pszLang );
 	void Event_Target( dword context, CUID uid, CPointMap pt, byte flags = 0, ITEMID_TYPE id = ITEMID_NOTHING );
 	void Event_Tips( word i ); // Tip of the day window
-	void Event_ToolTip( CUID uid );
+	void Event_ToolTip(const CUID &uid );
 	void Event_UseToolbar(byte bType, dword dwArg);
 	void Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiItemCount);
 	void Event_VendorBuy_Cheater( int iCode = 0 );
@@ -497,7 +497,7 @@ public:
 	void addDyeOption( const CObjBase * pBase );
 	void addWebLaunch( lpctstr pMsg ); // Direct client to a web page
 
-	void addPromptConsole(CLIMODE_TYPE mode, lpctstr pMsg, CUID context1 = {}, CUID context2 = {}, bool fUnicode = false);
+	void addPromptConsole(CLIMODE_TYPE mode, lpctstr pMsg, const CUID &context1 = {}, const CUID &context2 = {}, bool fUnicode = false);
 	void addTarget( CLIMODE_TYPE targmode, lpctstr pMsg, bool fAllowGround = false, bool fCheckCrime = false, int64 iTicksTimeout = 0, int iCliloc = 0 ); // Send targetting cursor to client
 	void addTargetDeed( const CItem * pDeed );
 	bool addTargetItems( CLIMODE_TYPE targmode, ITEMID_TYPE id, HUE_TYPE color = HUE_DEFAULT, bool fAllowGround = true );
@@ -813,9 +813,9 @@ public:
 
 	bool Dialog_Setup( CLIMODE_TYPE mode, const CResourceID& rid, int iPage, CObjBase * pObj, lpctstr Arguments = "" );
 	bool Dialog_Close( CObjBase * pObj, dword dwRid, int buttonID );
-	void Menu_Setup( CResourceID rid, CObjBase * pObj = nullptr );
+	void Menu_Setup(const CResourceID &rid, CObjBase * pObj = nullptr );
 
-	int OnSkill_Info( SKILL_TYPE skill, CUID uid, int iTestLevel, bool fTest );
+	int OnSkill_Info( SKILL_TYPE skill, const CUID &uid, int iTestLevel, bool fTest );
 
 	bool Cmd_Use_Item( CItem * pItem, bool fTestTouch, bool fScript = false );
 	void Cmd_EditItem( CObjBase * pObj, int iSelect );

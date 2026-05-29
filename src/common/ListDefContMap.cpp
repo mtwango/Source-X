@@ -275,7 +275,7 @@ bool CListDefCont::AddElementStr(lpctstr ptcKey)
 	return true;
 }
 
-void CListDefCont::DeleteAtIterator(DefList::iterator it, bool fEraseFromDefList)
+void CListDefCont::DeleteAtIterator(const DefList::iterator &it, const bool fEraseFromDefList)
 {
     ADDTOCALLSTACK("CListDefCont::DeleteAtIterator");
 

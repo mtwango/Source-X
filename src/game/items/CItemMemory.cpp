@@ -63,7 +63,7 @@ void CItemMemory::Guild_SetVotes(word wVotes)
 	m_itEqMemory.m_Skill = wVotes;
 }
 
-bool CItemMemory::Guild_SetLoyalTo(CUID uid)
+bool CItemMemory::Guild_SetLoyalTo(const CUID &uid)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetLoyalTo");
 	// Some other place checks to see if this is a valid member.

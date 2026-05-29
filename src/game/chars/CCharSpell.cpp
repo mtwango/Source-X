@@ -338,7 +338,7 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic)
     return true;
 }
 
-CChar * CChar::Spell_Summon_Place( CChar * pChar, CPointMap ptTarg, int64 iDuration)
+CChar * CChar::Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, const int64 iDuration)
 {
 	ADDTOCALLSTACK("CChar::Spell_Summon_Place");
 	// Finally place the NPC in the world.
@@ -2152,7 +2152,7 @@ CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEff
 	return pSpell;
 }
 
-void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDuration)
+void CChar::Spell_Area(const CPointMap &pntTarg, int iDist, int iSkillLevel, int64 iDuration)
 {
 	ADDTOCALLSTACK("CChar::Spell_Area");
 	// Effects all creatures in the area. (but not us)
@@ -2194,7 +2194,7 @@ void CChar::Spell_Area( CPointMap pntTarg, int iDist, int iSkillLevel, int64 iDu
 	}
 }
 
-void CChar::Spell_Field(CPointMap pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkillLevel, CChar * pCharSrc, ITEMID_TYPE idnewEW, ITEMID_TYPE idnewNS, int64 iDuration, HUE_TYPE iColor)
+void CChar::Spell_Field(const CPointMap &pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkillLevel, CChar * pCharSrc, ITEMID_TYPE idnewEW, ITEMID_TYPE idnewNS, int64 iDuration, HUE_TYPE iColor)
 {
 	ADDTOCALLSTACK("CChar::Spell_Field");
 	// Cast the field spell to here.
@@ -2585,7 +2585,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bo
 
 	return true;
 }
-CChar * CChar::Spell_Summon_Try(SPELL_TYPE spell, CPointMap ptTarg, CREID_TYPE uiCreature, std::optional<short> iFollowerSlotsOverride)
+CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg, const CREID_TYPE uiCreature, const std::optional<short> iFollowerSlotsOverride)
 {
 	ADDTOCALLSTACK("CChar::Spell_CanSummon");
 	//Create the NPC and check if we can actually place it in the world, but do not place it yet.

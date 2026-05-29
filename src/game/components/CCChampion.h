@@ -344,7 +344,7 @@ public:
     idSpawn _idSpawn;
     CREID_TYPE _idChampion;             ///< Boss id
 
-    explicit CCChampionDef(CResourceID rid);
+    explicit CCChampionDef(const CResourceID &rid);
     ~CCChampionDef() override;
     lpctstr GetName() const override { return(m_sName); }
     bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;

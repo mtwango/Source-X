@@ -1092,7 +1092,7 @@ public:
      *
      * @return  The calculated mapto sextant.
      */
-	lpctstr Calc_MaptoSextant( CPointMap pntCoords );
+	lpctstr Calc_MaptoSextant(const CPointMap &pntCoords );
 
     /*
     *@brief Calculates mana cost of a spell, taking in consideration the LowerManaCost and and if is  being cast by a wand or scroll.

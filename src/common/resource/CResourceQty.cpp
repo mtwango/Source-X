@@ -300,7 +300,7 @@ bool CResourceQtyArray::operator == ( const CResourceQtyArray & array ) const
             if ( j >= array.size() )
                 return false;
             const CResourceQty& resQty = (*this)[i];
-            if ( ! (resQty.GetResourceID() == array[j].GetResourceID() ) )
+            if (resQty.GetResourceID() != array[j].GetResourceID())
                 continue;
             if (resQty.GetResQty() != array[j].GetResQty() )
                 continue;

@@ -53,7 +53,7 @@ struct CImportFile
 	tchar * m_pszArg1;	// account
 	tchar * m_pszArg2;	// name
 
-	CImportFile( word wModeFlags, CPointMap ptCenter, int iDist ) :
+	CImportFile(const word wModeFlags, const CPointMap &ptCenter, const int iDist ) :
 		m_wModeFlags(wModeFlags),
 		m_ptCenter(ptCenter),
 		m_iDist(iDist)
@@ -148,7 +148,7 @@ void CImportFile::ImportFix()
 					if ( ! pItem->IsSameType( m_pCurSer->m_pObj ))
 						continue;
 					pItem->SetName( m_pCurSer->m_pObj->GetName());
-					if ( ! ( m_pCurSer->m_pObj->GetTopZ() == pItem->GetTopZ()))
+					if (m_pCurSer->m_pObj->GetTopZ() != pItem->GetTopZ())
 						continue;
 
 					goto item_delete;

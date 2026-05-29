@@ -31,7 +31,7 @@ public:
 	void Guild_SetAbbrev( bool fAbbrevShow );
 	word Guild_GetVotes() const;
 	void Guild_SetVotes( word wVotes );
-	bool Guild_SetLoyalTo( CUID uid );
+	bool Guild_SetLoyalTo(const CUID &uid );
 	CUID Guild_GetLoyalTo() const;
 	bool Guild_SetTitle( lpctstr pszTitle );
 	lpctstr Guild_GetTitle() const;

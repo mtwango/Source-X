@@ -171,7 +171,7 @@ public:
      * @param   dwArg   The argument.
      * @return  An int.
      */
-	int ContentCount( CResourceID rid, dword dwArg = 0 ) const;
+	int ContentCount(const CResourceID &rid, dword dwArg = 0 ) const;
 
     /**
      * @fn  size_t CContainer::ContentCountAll() const;

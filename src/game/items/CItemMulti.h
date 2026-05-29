@@ -300,7 +300,7 @@ public:
     * @brief Ejects all chars from this house
     * @param uidChar this char will not be ejected (eg: the owner kicking all people)
     */
-    void EjectAll(CUID uidChar = CUID());
+    void EjectAll(const CUID &uidChar = CUID());
     ///@}
 
 
@@ -343,7 +343,7 @@ public:
     * @param fMoveToBank Places the deed on the bank.
     * @param uidChar the char doing the redeed (if any).
     */
-    void Redeed(bool fDisplayMsg = true, bool fMoveToBank = true, CUID uidChar = CUID());
+    void Redeed(bool fDisplayMsg = true, bool fMoveToBank = true, const CUID &uidChar = CUID());
 
     //Moving Crate
     /**

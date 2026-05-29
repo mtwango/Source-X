@@ -88,7 +88,7 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
     CSector * GetSectorAtIndex( int i ) const noexcept;
 
     // get all the sectors that make up this rect (using cached precomputed data, that's faster if the use case allows its usage).
-    CSector * GetSectorAtIndexWithHints(int i, SectIndexingHints_s hints) const noexcept;
+    CSector * GetSectorAtIndexWithHints(int i, const SectIndexingHints_s &hints) const noexcept;
     SectIndexingHints_s PrecomputeSectorIndexingHints() const noexcept;
 
 	void SetRect( int left, int top, int right, int bottom, int map ) noexcept;

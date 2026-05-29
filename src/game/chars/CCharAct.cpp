@@ -3649,7 +3649,7 @@ void CChar::SpeakUTF8Ex( const nachar * pszText, HUE_TYPE wHue, TALKMODE_TYPE mo
 }
 
 // Convert me into a figurine
-CItem * CChar::Make_Figurine(const CUID uidOwner, ITEMID_TYPE id )
+CItem * CChar::Make_Figurine(const CUID &uidOwner, ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CChar::Make_Figurine");
 	if ( IsDisconnected() || m_pPlayer )

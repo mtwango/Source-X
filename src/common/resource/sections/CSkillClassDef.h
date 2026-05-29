@@ -34,7 +34,7 @@ public:
 private:
     void Init();
 public:
-    explicit CSkillClassDef( CResourceID rid ) : CResourceLink( rid )
+    explicit CSkillClassDef(const CResourceID &rid ) : CResourceLink( rid )
     {
         // If there was none defined in scripts.
         Init();

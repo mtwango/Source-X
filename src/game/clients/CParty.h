@@ -55,8 +55,8 @@ private:
 	CPartyDef& operator=(const CPartyDef& other);
 
 public:
-	static bool AcceptEvent( CChar * pCharAccept, CUID uidInviter, bool bForced = false, bool bSendMessages = true);
-	static bool DeclineEvent( CChar * pCharDecline, CUID uidInviter );
+	static bool AcceptEvent( CChar * pCharAccept, const CUID &uidInviter, bool bForced = false, bool bSendMessages = true);
+	static bool DeclineEvent(const CChar * pCharDecline, const CUID &uidInviter );
 
 	bool IsPartyFull() const;
 	bool IsInParty( const CChar * pChar ) const;
@@ -69,7 +69,7 @@ public:
 	bool SendRemoveList( CChar * pCharRemove, bool bFor );
 	bool SendAddList( CChar * pCharDest );
 	// Party message sending wrappers
-	bool MessageEvent( CUID uidDst, CUID uidSrc, const nachar* pText, int ilenmsg );
+	bool MessageEvent(const CUID &uidDst, const CUID &uidSrc, const nachar* pText, int ilenmsg );
 	// void MessageAll( CUID uidSrc, const nchar * pText, int ilenmsg );
 	// bool MessageMember( CUID uidDst, CUID uidSrc, const nchar * pText, int ilenmsg );
 	// Sysmessage sending wrappers
@@ -77,7 +77,7 @@ public:
     void UpdateWaypointAll(CChar *pCharSrc, MAPWAYPOINT_TYPE type);
 
 	// Commands
-	bool Disband( CUID uidMaster );
+	bool Disband(const CUID &uidMaster );
 
     /**
      * Removes a member from party. If leader is removed, it tries to pass leader to another character.

@@ -756,7 +756,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 //-----------------------------------------------------------------------
 // Targetted Informational skills
 
-int CClient::OnSkill_AnimalLore( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_AnimalLore");
 	UnreferencedParameter(iSkillLevel);
@@ -841,7 +841,7 @@ int CClient::OnSkill_AnimalLore( CUID uid, int iSkillLevel, bool fTest )
 	return 0;
 }
 
-int CClient::OnSkill_ItemID( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_ItemID");
 	// SKILL_ITEMID
@@ -913,7 +913,7 @@ int CClient::OnSkill_ItemID( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_EvalInt( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_EvalInt");
 	// SKILL_EVALINT
@@ -1002,7 +1002,7 @@ int CClient::OnSkill_EvalInt( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_ArmsLore( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_ArmsLore(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_ArmsLore");
 
@@ -1114,7 +1114,7 @@ int CClient::OnSkill_ArmsLore( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_Anatomy( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_Anatomy");
 	// SKILL_ANATOMY
@@ -1187,7 +1187,7 @@ int CClient::OnSkill_Anatomy( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_Forensics( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_Forensics");
 	// SKILL_FORENSICS
@@ -1242,7 +1242,7 @@ int CClient::OnSkill_Forensics( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_TasteID( CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::OnSkill_TasteID");
 	// SKILL_TASTEID
@@ -1331,7 +1331,7 @@ int CClient::OnSkill_TasteID( CUID uid, int iSkillLevel, bool fTest )
 	return iSkillLevel;
 }
 
-int CClient::OnSkill_Info( SKILL_TYPE skill, CUID uid, int iSkillLevel, bool fTest )
+int CClient::OnSkill_Info(const SKILL_TYPE skill, const CUID &uid, int iSkillLevel, const bool fTest)
 {
 	ADDTOCALLSTACK("CClient::OnSkill_Info");
 	// Skill timer has expired.

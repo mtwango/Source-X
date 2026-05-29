@@ -28,7 +28,7 @@ class CRandGroupDef : public CResourceLink
     int CalcTotalWeight();
 public:
     static const char *m_sClassName;
-    explicit CRandGroupDef( CResourceID rid ) : CResourceLink( rid )
+    explicit CRandGroupDef(const CResourceID &rid ) : CResourceLink( rid )
     {
         m_iTotalWeight = 0;
     }

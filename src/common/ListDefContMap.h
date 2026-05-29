@@ -109,7 +109,7 @@ class CListDefCont
 protected:
 	DefList	m_listElements;
 
-	void DeleteAtIterator(DefList::iterator it, bool fEraseFromDefList = true);
+	void DeleteAtIterator(const DefList::iterator &it, bool fEraseFromDefList = true);
 
 public:
 	static const char *m_sClassName;

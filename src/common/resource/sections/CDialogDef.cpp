@@ -520,7 +520,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
 }
 
 
-CDialogDef::CDialogDef( CResourceID rid ) :
+CDialogDef::CDialogDef(const CResourceID &rid) :
     CResourceLink( rid )
 {
     m_pObj = nullptr;

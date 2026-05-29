@@ -86,7 +86,7 @@ public:
 class PacketCombatDamage : public PacketSend
 {
 public:
-	PacketCombatDamage(const CClient* target, word damage, CUID defender);
+	PacketCombatDamage(const CClient* target, word damage, const CUID &defender);
 
     bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);
@@ -218,7 +218,7 @@ public:
 class PacketRemoveObject : public PacketSend
 {
 public:
-	PacketRemoveObject(const CClient* target, CUID uid);
+	PacketRemoveObject(const CClient* target, const CUID &uid);
 };
 
 /***************************************************************************
@@ -1070,7 +1070,7 @@ public:
 class PacketAddPrompt : public PacketSend
 {
 public:
-	PacketAddPrompt(const CClient* target, CUID context1, CUID context2, bool useUnicode);
+	PacketAddPrompt(const CClient* target, const CUID &context1, const CUID &context2, bool useUnicode);
 };
 
 /***************************************************************************
@@ -1189,7 +1189,7 @@ public:
 class PacketAttack : public PacketSend
 {
 public:
-	PacketAttack(const CClient* target, CUID serial);
+	PacketAttack(const CClient* target, const CUID &serial);
 };
 
 /***************************************************************************
@@ -1478,7 +1478,7 @@ class PacketDisplayPopup : public PacketExtended
 	int m_popupCount;
 
 public:
-	PacketDisplayPopup(const CClient* target, CUID uid);
+	PacketDisplayPopup(const CClient* target, const CUID &uid);
 
 	void addOption(word entryTag, dword textId, word flags, word color);
 	void finalise();
@@ -1659,7 +1659,7 @@ public:
 class PacketCombatDamageOld : public PacketExtended
 {
 public:
-	PacketCombatDamageOld(const CClient* target, byte damage, CUID defender);
+	PacketCombatDamageOld(const CClient* target, byte damage, const CUID &defender);
 
     bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState* state);

@@ -77,7 +77,7 @@ public:
 private:
 	void TheyDeclarePeace( CItemStone* pEnemyStone, bool fForcePeace );
 	bool WeDeclareWar(CItemStone * pEnemyStone);
-	void WeDeclarePeace(CUID uidEnemy, bool fForcePeace = false);
+	void WeDeclarePeace(const CUID &uidEnemy, bool fForcePeace = false);
 	void AnnounceWar( const CItemStone * pEnemyStone, bool fWeDeclare, bool fWar );
 public:
 	bool IsAtWarWith( const CItemStone * pStone ) const;

@@ -504,7 +504,7 @@ bool CServerConfig::Calc_CrimeSeen( const CChar * pCharThief, const CChar * pCha
 	return true;
 }
 
-lpctstr CServerConfig::Calc_MaptoSextant( CPointMap pntCoords )
+lpctstr CServerConfig::Calc_MaptoSextant(const CPointMap &pntCoords)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_MaptoSextant");
 	// Conversion from map square to degrees, minutes

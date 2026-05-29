@@ -72,8 +72,8 @@ namespace sl
 
         const_iterator find_ptr(_Type const* const elem) const {
             return this->cbegin() + this->find_predicate(elem,
-                [](auto const& stored, _Type const* const elem) {
-                    return (stored.get() == elem);
+                [](auto const& stored, _Type const* const element) {
+                    return (stored.get() == element);
                 });
         }
 

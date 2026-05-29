@@ -24,7 +24,7 @@ public:
     bool r_LoadVal( CScript & s ) override;
     bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
 
-    explicit CDialogDef( CResourceID rid );
+    explicit CDialogDef(const CResourceID &rid );
     ~CDialogDef() override = default;
 
     CDialogDef(const CDialogDef& copy) = delete;

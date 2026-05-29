@@ -74,7 +74,7 @@ CSFileConsole::~CSFileConsole() = default;
 
 int CWebPageDef::sm_iListIndex;
 
-CWebPageDef::CWebPageDef( CResourceID rid ) : CResourceLink( rid )
+CWebPageDef::CWebPageDef(const CResourceID &rid ) : CResourceLink( rid )
 {
 	// Web page m_sWebPageFilePath
 	m_type = WEBPAGE_TEMPLATE;

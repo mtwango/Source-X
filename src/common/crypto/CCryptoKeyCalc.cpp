@@ -8,7 +8,7 @@
 /* Static functions (not methods) */
 
 ENCRYPTION_TYPE
-static GetEncryptionTypeForClient(CUOClientVersion ver) noexcept
+static GetEncryptionTypeForClient(const CUOClientVersion &ver) noexcept
 {
     if (ver.m_major == 1)
     {
@@ -57,7 +57,7 @@ static EncryptionTypeToString(ENCRYPTION_TYPE enc) noexcept
 /* Methods */
 
 CCryptoClientKey
-CCryptoKeyCalc::CalculateLoginKeysReportedVer(CUOClientVersion ver, ENCRYPTION_TYPE forceCryptType) noexcept   // static
+CCryptoKeyCalc::CalculateLoginKeysReportedVer(const CUOClientVersion &ver, const ENCRYPTION_TYPE forceCryptType) noexcept   // static
 {
     uint key1 = (ver.m_major << 23) | (ver.m_minor << 14) | (ver.m_revision << 4);
     key1 ^= (ver.m_revision * ver.m_revision) << 9;
@@ -82,7 +82,7 @@ CCryptoKeyCalc::CalculateLoginKeysReportedVer(CUOClientVersion ver, ENCRYPTION_T
 }
 
 CCryptoClientKey
-CCryptoKeyCalc::CalculateLoginKeys(CUOClientVersion ver, GAMECLIENT_TYPE cliType, ENCRYPTION_TYPE forceCryptType) noexcept   // static
+CCryptoKeyCalc::CalculateLoginKeys(CUOClientVersion ver, const GAMECLIENT_TYPE cliType, const ENCRYPTION_TYPE forceCryptType) noexcept   // static
 {
     if (cliType == CLIENTTYPE_EC)
         ver.m_major += CUOClientVersion::kuiECMajorVerOffset;
@@ -90,7 +90,7 @@ CCryptoKeyCalc::CalculateLoginKeys(CUOClientVersion ver, GAMECLIENT_TYPE cliType
 }
 
 std::string
-CCryptoKeyCalc::FormattedLoginKey(CUOClientVersion ver, GAMECLIENT_TYPE cliType, CCryptoClientKey cryptoKey) // static
+CCryptoKeyCalc::FormattedLoginKey(const CUOClientVersion &ver, const GAMECLIENT_TYPE cliType, const CCryptoClientKey cryptoKey) // static
 {
     // Outputs a line ready to be inserted in SphereCrypt.ini
     // Accepts standard client version (the one shown in the client), not the reported client version (the one the client sends in a packet to the server).

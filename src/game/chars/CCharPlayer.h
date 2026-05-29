@@ -77,7 +77,7 @@ public:
 	bool getKrToolbarStatus() const noexcept;
 	CMultiStorage* GetMultiStorage();
 
-	bool SetSkillClass(CChar* pChar, CResourceID rid);
+	bool SetSkillClass(CChar* pChar, const CResourceID &rid);
 	CSkillClassDef* GetSkillClass() const;
 
 	void r_WriteChar( CChar * pChar, CScript & s );

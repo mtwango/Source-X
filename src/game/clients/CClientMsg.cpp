@@ -1787,7 +1787,7 @@ void CClient::ClearTargMode() noexcept
     m_Targ_Timeout = 0;
 }
 
-void CClient::addPromptConsole( CLIMODE_TYPE mode, lpctstr pPrompt, CUID context1, CUID context2, bool bUnicode )
+void CClient::addPromptConsole(const CLIMODE_TYPE mode, lpctstr pPrompt, const CUID &context1, const CUID &context2, bool bUnicode)
 {
 	ADDTOCALLSTACK("CClient::addPromptConsole");
 

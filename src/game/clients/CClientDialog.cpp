@@ -357,7 +357,7 @@ bool CMenuItem::ParseLine( tchar * pszArgs, CScriptObj * pObjBase, CTextConsole 
 	return !m_sText.IsEmpty();
 }
 
-void CClient::Menu_Setup( CResourceID rid, CObjBase * pObj )
+void CClient::Menu_Setup(const CResourceID &rid, CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CClient::Menu_Setup");
 	// Menus for general purpose

@@ -14,9 +14,9 @@
 
 struct CCryptoKeyCalc
 {
-    static CCryptoClientKey CalculateLoginKeysReportedVer(CUOClientVersion ver, ENCRYPTION_TYPE forceCryptType = ENC_NONE) noexcept;
+    static CCryptoClientKey CalculateLoginKeysReportedVer(const CUOClientVersion &ver, ENCRYPTION_TYPE forceCryptType = ENC_NONE) noexcept;
     static CCryptoClientKey CalculateLoginKeys(CUOClientVersion ver, GAMECLIENT_TYPE cliType, ENCRYPTION_TYPE forceCryptType = ENC_NONE) noexcept;
-    static std::string FormattedLoginKey(CUOClientVersion ver, GAMECLIENT_TYPE cliType, CCryptoClientKey cryptoKey);
+    static std::string FormattedLoginKey(const CUOClientVersion &ver, GAMECLIENT_TYPE cliType, CCryptoClientKey cryptoKey);
 };
 
 #endif // _INC_CCRYPTOKEYCALC_H

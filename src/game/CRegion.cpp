@@ -15,7 +15,7 @@
 //*************************************************************************
 // -CRegion
 
-CRegion::CRegion( CResourceID rid, lpctstr pszName ) :
+CRegion::CRegion(const CResourceID &rid, const lpctstr pszName) :
 	CResourceDef( rid )
 {
     ADDTOCALLSTACK("CRegion::CRegion");
@@ -922,7 +922,7 @@ TRIGRET_TYPE CRegion::OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction )
 //*************************************************************************
 // -CRegionWorld
 
-CRegionWorld::CRegionWorld( CResourceID rid, lpctstr pszName ) :
+CRegionWorld::CRegionWorld(const CResourceID &rid, const lpctstr pszName) :
 	CRegion( rid, pszName )
 {
 }

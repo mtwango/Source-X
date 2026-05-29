@@ -1213,7 +1213,7 @@ lpctstr const CCChampionDef::sm_szLoadKeys[CHAMPIONDEF_QTY + 1] =
 };
 
 
-CCChampionDef::CCChampionDef(CResourceID rid) : CResourceLink(rid)
+CCChampionDef::CCChampionDef(const CResourceID &rid) : CResourceLink(rid)
 {
     ADDTOCALLSTACK("CCChampionDef::CCChampionDef");
     _iSpawnsMax = MAXSPAWN;

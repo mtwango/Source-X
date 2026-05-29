@@ -54,7 +54,10 @@ static void dword_q_sort(dword *numbers, dword left, dword right)
             numbers[left] = numbers[right];
             left++;
         }
-        while ((numbers[left] <= pivot) && (left < right)) left++;
+        while (left < right && numbers[left] <= pivot)
+        {
+            left++;
+        }
         if (left != right)
         {
             numbers[right] = numbers[left];

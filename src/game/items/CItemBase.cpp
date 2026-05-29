@@ -1194,6 +1194,11 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 				*pszTemp = '\0';
 				for ( size_t i = 0; i < m_flip_id.size(); ++i )
 				{
+				    if (iLen >= SCRIPT_MAX_LINE_LEN)
+				    {
+				        break;
+				    }
+
 					if ( i > 0 )
 						iLen += Str_CopyLimitNull( pszTemp + iLen, ",", SCRIPT_MAX_LINE_LEN - iLen);
 

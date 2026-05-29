@@ -358,10 +358,10 @@ template <typename T>
 dynamic_list_stack<T>::dynamic_list_stack(const dynamic_list_stack & o) {
     _size = o._size;
     _top = nullptr;
-    _dynamicliststackitem * next = o._top, * prev;
+    _dynamicliststackitem * next = o._top;
     if (next) {
         _top = new _dynamicliststackitem(next->_item, nullptr);
-        prev = _top;
+        _dynamicliststackitem *prev = _top;
         next = next->_next;
         while (next) {
             prev->_next = new _dynamicliststackitem(next->_item, nullptr);
@@ -380,10 +380,10 @@ template <typename T>
 dynamic_list_stack<T> & dynamic_list_stack<T>::operator=(const dynamic_list_stack & o) {
     _size = o._size;
     _top = nullptr;
-    _dynamicliststackitem * next = o._top, * prev;
+    _dynamicliststackitem * next = o._top;
     if (next) {
         _top = new _dynamicliststackitem(next->_item, nullptr);
-        prev = _top;
+        _dynamicliststackitem *prev = _top;
         next = next->_next;
         while (next) {
             prev->_next = new _dynamicliststackitem(next->_item, nullptr);

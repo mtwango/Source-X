@@ -52,7 +52,7 @@ int CResourceHashArray::_compare(std::unique_ptr<CResourceDef> const& pObjStored
 void CResourceHashArray::ManualSort()
 {
     auto sorter = CResourceHashArraySorter();
-    std::sort(this->begin(), this->end(), sorter);
+    std::ranges::sort(*this, sorter);
     auto it = this->cbegin();
     const auto itEnd = this->cend();
     while (true)

@@ -292,17 +292,16 @@ VERFILE_TYPE CUOInstall::OpenFiles( ullong ullMask )
 								{
 									m_IsMapUopFormat[index] = true;
 
-									dword dwHashLo, dwHashHi, dwCompressedSize, dwHeaderLenght, dwFilesInBlock, dwTotalFiles, dwLoop;
-									uint64 qwUOPPtr;
+									dword dwHashLo, dwHashHi, dwCompressedSize, dwHeaderLenght, dwFilesInBlock, dwTotalFiles;
 
-									m_Maps[index].Seek(sizeof(dword) * 3, SEEK_SET);
+                                    m_Maps[index].Seek(sizeof(dword) * 3, SEEK_SET);
 									m_Maps[index].Read(&dwHashLo, sizeof(dword));
 									m_Maps[index].Read(&dwHashHi, sizeof(dword));
-									qwUOPPtr = ((uint64)dwHashHi << 32) + dwHashLo;
+									uint64 qwUOPPtr = ((uint64)dwHashHi << 32) + dwHashLo;
 									m_Maps[index].Seek(sizeof(dword), SEEK_CUR);
 									m_Maps[index].Read(&dwTotalFiles, sizeof(dword));
 									m_Maps[index].Seek((int)qwUOPPtr, SEEK_SET);
-									dwLoop = dwTotalFiles;
+									dword dwLoop = dwTotalFiles;
 
 									while (qwUOPPtr > 0)
 									{
@@ -746,10 +745,10 @@ bool CVerDataMul::FindVerDataBlock(VERFILE_TYPE type, dword id, CUOIndexRec & In
 // -UOP Filename Hash function
 ullong HashFileName(CSString csFile)
 {
-	uint eax, ecx, edx, ebx, esi, edi;
+	uint ecx, edx, esi, edi;
 
-	eax = ecx = edx = 0;
-	ebx = edi = esi = csFile.GetLength() + 0xDEADBEEF;
+	uint eax = ecx = edx = 0;
+	uint ebx = edi = esi = csFile.GetLength() + 0xDEADBEEF;
 
 	int i = 0;
 

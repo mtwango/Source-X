@@ -252,7 +252,7 @@ void CWorldThread::CloseAllUIDs()
 
     for (auto const& elem : m_ObjNew)
     {
-        auto itObjDel = std::find(m_ObjDelete.begin(), m_ObjDelete.end(), elem);
+        auto itObjDel = std::ranges::find(m_ObjDelete, elem);
         if (itObjDel != m_ObjDelete.end()) {
             // Avoid duplicates between the containers, for some reason it happens...
             // This will just remove the pointer from the container, it doesn't call the destructor.'
@@ -552,7 +552,7 @@ void CWorldThread::GarbageCollection_NewObjs()
 
 		for (size_t i = 0; i < iObjCount; ++i)
 		{
-            auto itObjDel = std::find(m_ObjDelete.begin(), m_ObjDelete.end(), m_ObjNew.data()[i]);
+            auto itObjDel = std::ranges::find(m_ObjDelete, m_ObjNew.data()[i]);
             if (itObjDel != m_ObjDelete.end()) {
                 // This will just remove the pointer from the container, it doesn't call the destructor.'
                 // Not doing this might result in a double free.

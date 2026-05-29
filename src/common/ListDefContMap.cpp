@@ -395,12 +395,12 @@ void CListDefCont::Sort(bool bDesc, bool bCase)
 		return;
 
 	if (bCase)
-		std::sort(m_listElements.begin(), m_listElements.end(), compare_insensitive);
+		std::ranges::sort(m_listElements, compare_insensitive);
 	else
-        std::sort(m_listElements.begin(), m_listElements.end(), compare_sensitive);
+        std::ranges::sort(m_listElements, compare_sensitive);
 
 	if (bDesc)
-		std::reverse(m_listElements.begin(), m_listElements.end());
+		std::ranges::reverse(m_listElements);
 }
 
 bool CListDefCont::InsertElementNum(size_t nIndex, int64 iVal)
@@ -464,10 +464,9 @@ void CListDefCont::PrintElements(CSString& strElements) const
 
 	strElements = "{";
 
-    const CListDefContStr *pListElemStr;
-	for ( const CListDefContElem *pListElem : m_listElements)
+    for ( const CListDefContElem *pListElem : m_listElements)
     {
-		pListElemStr = dynamic_cast<const CListDefContStr*>(pListElem);
+		const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem);
 
 		if ( pListElemStr )
 		{
@@ -507,14 +506,13 @@ void CListDefCont::r_WriteSave( CScript& s ) const
 	if ( m_listElements.empty() )
 		return;
 
-    const CListDefContStr *pListElemStr;
-	CSString strElement;
+    CSString strElement;
 
 	s.WriteSection("LIST %s", m_Key.GetBuffer());
 
     for ( const CListDefContElem *pListElem : m_listElements)
 	{
-		pListElemStr = dynamic_cast<const CListDefContStr*>(pListElem);
+		const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem);
 
 		if ( pListElemStr )
 		{

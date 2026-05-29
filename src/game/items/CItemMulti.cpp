@@ -1633,7 +1633,7 @@ void CItemMulti::DeleteComponent(const CUID& uidComponent, bool fRemoveFromList)
     ADDTOCALLSTACK("CItemMulti::DeleteComponent");
     if (fRemoveFromList)
     {
-        _lComps.erase(std::find(_lComps.begin(), _lComps.end(), uidComponent));
+        _lComps.erase(std::ranges::find(_lComps, uidComponent));
     }
 
     if (!uidComponent.IsValidUID()) // Doing this after the erase to force check the vector, just in case...
@@ -1789,7 +1789,7 @@ void CItemMulti::UnlockItem(const CUID& uidItem, bool fRemoveFromList)
     ADDTOCALLSTACK("CItemMulti::UnlockItem");
     if (fRemoveFromList)
     {
-        _lLockDowns.erase(std::find(_lLockDowns.begin(), _lLockDowns.end(), uidItem));
+        _lLockDowns.erase(std::ranges::find(_lLockDowns, uidItem));
     }
 
     CItem *pItem = uidItem.ItemFind();
@@ -1869,7 +1869,7 @@ void CItemMulti::Release(const CUID& uidContainer, bool fRemoveFromList)
     // remove from secured list
     if (fRemoveFromList)
     {
-        _lSecureContainers.erase(std::find(_lSecureContainers.begin(), _lSecureContainers.end(), uidContainer));
+        _lSecureContainers.erase(std::ranges::find(_lSecureContainers, uidContainer));
     }
 
     // remove container from secure
@@ -3297,7 +3297,6 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
 
         if (!pDeed->IsAttr(ATTR_MAGIC))
         {
-            CRect rect;
             CRect baseRect;
             if (pMultiDef)
             {
@@ -3309,7 +3308,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
             }
             baseRect.m_map = pt.m_map;          // set it's map to the current map.
             baseRect.OffsetRect(pt.m_x, pt.m_y);// fill the rect.
-            rect = baseRect;
+            CRect rect    = baseRect;
             CPointMap ptn = pt;             // A copy to work on.
 
             // Check for chars in the way, just search for any char in the house area, no extra tiles, it's enough for them to do not be inside the house.

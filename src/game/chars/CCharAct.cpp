@@ -5641,7 +5641,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
         auto fnShouldSkipLink = [&executedEvents, &iAction](const CResourceLink *pLink) -> bool
         {
             return (!pLink || !pLink->HasTrigger(iAction)
-            || (executedEvents.end() != std::find(executedEvents.begin(), executedEvents.end(), pLink)));
+            || (executedEvents.end() != std::ranges::find(executedEvents, pLink)));
         };
 
         {

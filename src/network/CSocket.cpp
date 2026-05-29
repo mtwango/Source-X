@@ -506,9 +506,8 @@ void CSocket::CloseSocket( SOCKET hClose )
 
 short CSocket::GetProtocolIdByName( lpctstr pszName )
 {
-	protoent * ppe;
 
-	ppe = getprotobyname(pszName);
+    protoent *ppe = getprotobyname(pszName);
 	if ( !ppe )
 		return 0;
 

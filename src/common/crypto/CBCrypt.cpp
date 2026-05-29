@@ -29,10 +29,8 @@
 */
 static int timing_safe_strcmp(const char *str1, const char *str2)
 {
-	const unsigned char *u1;
-	const unsigned char *u2;
 
-	const size_t len1 = strlen(str1);
+    const size_t len1 = strlen(str1);
     const size_t len2 = strlen(str2);
 
 	/* In our context both strings should always have the same length
@@ -41,8 +39,8 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
 		return 1;
 
 	/* Force unsigned for bitwise operations. */
-	u1 = (const unsigned char *)str1;
-	u2 = (const unsigned char *)str2;
+	const unsigned char *u1 = (const unsigned char *)str1;
+	const unsigned char *u2 = (const unsigned char *)str2;
 
 	int ret = 0;
 	for (size_t i = 0; i < len1; ++i)
@@ -66,8 +64,6 @@ static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHS
 #define RANDBYTES (16)
 	//char input[RANDBYTES];
     uint16_t input;
-	int workf;
-	char *aux;
 
     std::mt19937 rng;
     rng.seed(std::random_device()());
@@ -75,8 +71,8 @@ static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHS
     input = dist(rng);
 
 	/* Generate salt. */
-	workf = (factor < 4 || factor > 31)?12:factor;
-	aux = crypt_gensalt_rn(prefix, workf, reinterpret_cast<const char*>(&input), RANDBYTES, salt, BCRYPT_HASHSIZE);
+	int workf = (factor < 4 || factor > 31) ? 12 : factor;
+	char *aux = crypt_gensalt_rn(prefix, workf, reinterpret_cast<const char *>(&input), RANDBYTES, salt, BCRYPT_HASHSIZE);
 	return (aux == nullptr)?5:0;
 #undef RANDBYTES
 }
@@ -96,8 +92,7 @@ static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHS
  */
 static int bcrypt_hashpw(const char *passwd, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE])
 {
-	char *aux;
-	aux = crypt_rn(passwd, salt, hash, BCRYPT_HASHSIZE);
+    char *aux = crypt_rn(passwd, salt, hash, BCRYPT_HASHSIZE);
 	return (aux == nullptr)?1:0;
 }
 
@@ -112,10 +107,9 @@ static int bcrypt_hashpw(const char *passwd, const char salt[BCRYPT_HASHSIZE], c
  */
 static int bcrypt_checkpw(const char *passwd, const char hash[BCRYPT_HASHSIZE])
 {
-	int ret;
-	char outhash[BCRYPT_HASHSIZE];
+    char outhash[BCRYPT_HASHSIZE];
 
-	ret = bcrypt_hashpw(passwd, hash, outhash);
+	int ret = bcrypt_hashpw(passwd, hash, outhash);
 	if (ret != 0)
 		return -1;
 

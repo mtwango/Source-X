@@ -757,8 +757,8 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_
             "IMSG_DEF_UNICODE",
         };
 
-    ushort iTalkmodeHue, iTalkmodeFont, iTalkmodeUnicode;
-    iTalkmodeHue = iTalkmodeFont = iTalkmodeUnicode = UINT16_MAX;
+    ushort iTalkmodeFont, iTalkmodeUnicode;
+    ushort iTalkmodeHue = iTalkmodeFont = iTalkmodeUnicode = UINT16_MAX;
     switch ( mode )
 	{
 		case TALKMODE_SYSTEM:

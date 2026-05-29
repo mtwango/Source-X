@@ -980,11 +980,9 @@ lpctstr CChar::GetTradeTitle() const // Paperdoll title for character p (2)
 	if ( !m_pPlayer )
 		return pTemp;
 
-	int len;
     const SKILL_TYPE skill = Skill_GetBest();
     const uint uiSkVal = Skill_GetBase(skill);
-    len = snprintf(pTemp, Str_TempLength(),
-                           "%s ", g_ExprGlobals.mtEngineLockedReader()->SkillTitle(skill, uiSkVal));
+    int len                = snprintf(pTemp, Str_TempLength(), "%s ", g_ExprGlobals.mtEngineLockedReader()->SkillTitle(skill, uiSkVal));
 
 	snprintf(pTemp + len, Str_TempLength() - len, "%s", g_Cfg.GetSkillDef(skill)->m_sTitle.GetBuffer());
 	return pTemp;

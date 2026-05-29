@@ -2037,12 +2037,10 @@ height_t CItem::GetHeight() const
 {
 	ADDTOCALLSTACK("CItem::GetHeight");
 
-    height_t tmpHeight;
-
     const ITEMID_TYPE uiDispID = GetDispID();
     const CItemBase * pItemDef = CItemBase::FindItemBase(uiDispID);
     ASSERT(pItemDef);
-    tmpHeight = pItemDef->GetHeight();
+    height_t tmpHeight = pItemDef->GetHeight();
     if (tmpHeight)
         return tmpHeight;
 

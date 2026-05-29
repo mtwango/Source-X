@@ -149,12 +149,12 @@ bool Str_Parse(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     tchar ch;
     // variables used to track opened/closed quotes and brackets
     bool fQuotes = false;
-    int iCurly, iSquare, iRound, iAngle;
-    iCurly = iSquare = iRound = iAngle = 0;
+    int iSquare, iRound, iAngle;
+    int iCurly = iSquare = iRound = iAngle = 0;
 
     // ignore opened/closed brackets if that type of bracket is also a separator
-    bool fSepHasCurly, fSepHasSquare, fSepHasRound, fSepHasAngle;
-    fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
+    bool fSepHasSquare, fSepHasRound, fSepHasAngle;
+    bool fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
     for (uint j = 0; pszSep[j] != '\0'; ++j)		// loop through each separator
     {
         const tchar & sep = pszSep[j];
@@ -333,16 +333,16 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     // skip leading white space.
     GETNONWHITESPACE(pLine);
 
-    tchar ch, chNext;
+    tchar ch;
     // variables used to track opened/closed quotes and brackets
     bool fQuotes = false;
     int iQuotes = 0;
-    int iCurly, iSquare, iRound, iAngle;
-    iCurly = iSquare = iRound = iAngle = 0;
+    int iSquare, iRound, iAngle;
+    int iCurly = iSquare = iRound = iAngle = 0;
 
     // ignore opened/closed brackets if that type of bracket is also a separator
-    bool fSepHasCurly, fSepHasSquare, fSepHasRound, fSepHasAngle;
-    fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
+    bool fSepHasSquare, fSepHasRound, fSepHasAngle;
+    bool fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
     for (uint j = 0; pszSep[j] != '\0'; ++j)		// loop through each separator
     {
         const tchar & sep = pszSep[j];
@@ -361,7 +361,7 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
         tchar * pLineNext = pLine;
         ++pLineNext;
         ch = *pLine;
-        chNext = *pLineNext;
+        tchar chNext = *pLineNext;
         if ((ch == '"') || (ch == '\''))
         {
             if (!fQuotes) //Has first quote?
@@ -1641,11 +1641,10 @@ CExpression::GetConditionalSubexpressions(
         auto skipBracketedSubexpression = [](lptstr pExpr_) -> lptstr
         {
             ASSERT(*pExpr_ == '(');
-            tchar ch_;
             uint uiOpenedCurlyBrackets = 1;
             while (uiOpenedCurlyBrackets != 0)	// i'm interested only to the outermost range, not eventual sub-sub-sub-blah ranges
             {
-                ch_ = *(++pExpr_);
+                tchar ch_ = *(++pExpr_);
                 if (ch_ == '(')
                     ++uiOpenedCurlyBrackets;
                 else if (ch_ == ')')
@@ -1836,12 +1835,11 @@ CExpression::GetConditionalSubexpressions(
 	} // End of the main while loop
 
 	// Now that we found the subexpressions, prepare them for their evaluation.
-	lptstr ptcStart, ptcEnd;
     for (uint i = 0; i < uiSubexprQty; ++i)
 	{
         SubexprState_t& sCurSubexpr = parsingSubexprsStates[i];
-		ptcStart = sCurSubexpr.ptcStart;
-		ptcEnd = sCurSubexpr.ptcEnd;
+		lptstr ptcStart             = sCurSubexpr.ptcStart;
+		lptstr ptcEnd               = sCurSubexpr.ptcEnd;
 
 		for (lptstr ptcTest = ptcStart; ptcTest != ptcEnd; ++ptcTest)
 		{
@@ -2172,7 +2170,6 @@ bool CExpression::EvaluateConditionalSingle(
 
     using SType = CScriptSubExprState::Type;
     bool fVal;
-    lptstr ptcSubexpr;
 
     // Evaluate the subexpression body
     if (refExprContext._iEvaluate_Conditional_Reentrant >= 16)
@@ -2214,7 +2211,7 @@ bool CExpression::EvaluateConditionalSingle(
     }
 
     ASSERT(len < Str_TempLength());
-    ptcSubexpr = Str_GetTemp();
+    lptstr ptcSubexpr = Str_GetTemp();
     memcpy(ptcSubexpr, ptcParsingStart, len);
     ptcSubexpr[len] = '\0';
 

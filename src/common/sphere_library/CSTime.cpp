@@ -277,9 +277,8 @@ static void FormatDateTime(tchar * pszTemp, lpctstr pszFormat, const tm * ptmTem
 #ifdef _WIN32
 #ifdef MSVC_COMPILER
 	// on windows we need to set the invalid parameter handler, or else the program will terminate when a bad format is encountered
-    _invalid_parameter_handler newHandler, oldHandler;
-	newHandler = static_cast<_invalid_parameter_handler>(invalidParameterHandler);
-	oldHandler = _set_invalid_parameter_handler(newHandler);
+    _invalid_parameter_handler newHandler = invalidParameterHandler;
+	_invalid_parameter_handler oldHandler = _set_invalid_parameter_handler(newHandler);
 #endif // MSVC_COMPILER
 	try
 	{

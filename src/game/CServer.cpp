@@ -41,11 +41,10 @@
 
 static void dword_q_sort(dword *numbers, dword left, dword right)
 {
-    dword pivot, l_hold, r_hold;
 
-    l_hold = left;
-    r_hold = right;
-    pivot = numbers[left];
+    dword l_hold = left;
+    dword r_hold = right;
+    dword pivot  = numbers[left];
     while (left < right)
     {
         while ((numbers[right] >= pivot) && (left < right)) right--;
@@ -255,16 +254,15 @@ static void defragSphere(char *path)
             //	here we definitely know that this is very uid-like
             if ( str_ptr )
             {
-                char c, c1, c2;
-                c = *str_ptr_2;
+                char c = *str_ptr_2;
 
                 *str_ptr_2 = 0;
                 //	here in p we have the current value of the line.
                 //	check if it is a valid UID
 
                 //	prepare converting 0.. to 0x..
-                c1 = *(str_ptr-1);
-                c2 = *str_ptr;
+                char c1      = *(str_ptr - 1);
+                char c2      = *str_ptr;
                 *(str_ptr-1) = '0';
                 *str_ptr = 'x';
                 --str_ptr;
@@ -1472,8 +1470,6 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
         }
 		else
 		{
-			CScriptProfiler::CScriptProfilerFunction * pFun;
-			CScriptProfiler::CScriptProfilerTrigger * pTrig;
             const long double average = (long double)g_profiler.total / g_profiler.called;
 
             char tmpstring[255];
@@ -1495,7 +1491,7 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
                 ftDump->Printf(tmpstring);
             }
 
-			for ( pFun = g_profiler.FunctionsHead; pFun != nullptr; pFun = pFun->next )
+			for ( CScriptProfiler::CScriptProfilerFunction *pFun = g_profiler.FunctionsHead; pFun != nullptr; pFun = pFun->next )
 			{
 				if ( pFun->average > average )
 				{
@@ -1522,7 +1518,7 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
                     }
 				}
 			}
-			for ( pTrig = g_profiler.TriggersHead; pTrig != nullptr; pTrig = pTrig->next )
+			for ( CScriptProfiler::CScriptProfilerTrigger *pTrig = g_profiler.TriggersHead; pTrig != nullptr; pTrig = pTrig->next )
 			{
 				if ( pTrig->average > average )
 				{

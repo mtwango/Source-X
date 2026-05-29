@@ -1394,9 +1394,8 @@ PacketItemContents::PacketItemContents(const CClient* target, const CItemContain
     const CNetState* ns = target->GetNetState();
     ASSERT(ns);
     const bool fIncludeGrid = (ns->isClientVersionNumber(MINCLIVER_ITEMGRID) || ns->isClientKR() || ns->isClientEnhanced());
-	const CSpellDef* spellDefinition;
 
-	initLength();
+    initLength();
 	skip(2);
 
 	for (const CSObjContRec* pObjRec : *spellbook)
@@ -1405,7 +1404,7 @@ PacketItemContents::PacketItemContents(const CClient* target, const CItemContain
 		if (item->IsType(IT_SCROLL) == false)
 			continue;
 
-		spellDefinition = g_Cfg.GetSpellDef((SPELL_TYPE)(item->m_itSpell.m_spell));
+		const CSpellDef *spellDefinition = g_Cfg.GetSpellDef((SPELL_TYPE)(item->m_itSpell.m_spell));
 		if (spellDefinition == nullptr)
 			continue;
 
@@ -2737,8 +2736,7 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
     initLength();
 	writeInt32(corpse->GetUID());
 
-	LAYER_TYPE layer;
-	uint count = 0;
+    uint count = 0;
 
 	for (CSObjContRec* pObjRec : *corpse)
 	{
@@ -2746,7 +2744,7 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
 		if (item == nullptr || (item->IsAttr(ATTR_INVIS) && !viewer->CanSee(item)))
 			continue;
 
-		layer = (LAYER_TYPE)(item->GetContainedLayer());
+		LAYER_TYPE layer = (LAYER_TYPE)(item->GetContainedLayer());
 		ASSERT(layer < LAYER_HORSE);
 		switch (layer) // don't put these on a corpse.
 		{

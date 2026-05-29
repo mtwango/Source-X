@@ -258,7 +258,6 @@ void CCChampion::SpawnNPC()
 {
     ADDTOCALLSTACK("CCChampion::SpawnNPC");
     CREID_TYPE pNpc = CREID_INVALID;
-    CResourceIDBase rid;
 
     bool _fChampionSummoned = false;
     if (_iLevel >= _iLevelMax)
@@ -319,7 +318,7 @@ void CCChampion::SpawnNPC()
     if (!pNpc)
         return;
 
-    rid = CResourceIDBase(RES_CHARDEF, pNpc);
+    CResourceIDBase rid = CResourceIDBase(RES_CHARDEF, pNpc);
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(rid);
     if (!pRes)
         return;

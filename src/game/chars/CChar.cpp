@@ -1518,10 +1518,8 @@ height_t CChar::GetHeight() const
 	if ( m_height ) //set by a dynamic variable (On=@Create  Height=10)
 		return m_height;
 
-	height_t tmpHeight;
-
-	const CCharBase * pCharDef = Char_GetDef();
-	tmpHeight = pCharDef->GetHeight();
+    const CCharBase * pCharDef = Char_GetDef();
+	height_t tmpHeight        = pCharDef->GetHeight();
 	if ( tmpHeight ) //set by a chardef variable ([CHARDEF 10]  Height=10)
 		return tmpHeight;
 
@@ -3420,7 +3418,7 @@ bool CChar::r_LoadVal( CScript & s )
             const bool fExists =
                 !m_followers.empty() &&
                 m_followers.end() !=
-                    std::find_if(m_followers.begin(), m_followers.end(),
+                    std::ranges::find_if(m_followers,
                                  [&uidPet](auto const& inp_struct) -> bool {
                                      return inp_struct.uid == uidPet;
                                  });
@@ -3602,7 +3600,7 @@ bool CChar::r_LoadVal( CScript & s )
                 const bool fExists =
                     !m_followers.empty() &&
                     m_followers.end() !=
-                        std::find_if(m_followers.begin(), m_followers.end(),
+                        std::ranges::find_if(m_followers,
                                      [&uidNewFollower](auto const& inp_struct) -> bool {
                                          return inp_struct.uid == uidNewFollower;
                                      });
@@ -5322,11 +5320,10 @@ uint CChar::GetSkillTotal(int what, bool how)
 {
 	ADDTOCALLSTACK("CChar::GetSkillTotal");
 	uint	uiTotal = 0;
-	ushort	uiBase;
 
-	for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
+    for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		uiBase = Skill_GetBase((SKILL_TYPE)i);
+		ushort uiBase = Skill_GetBase((SKILL_TYPE)i);
 		if ( how )
 		{
 			if ( what < 0 )

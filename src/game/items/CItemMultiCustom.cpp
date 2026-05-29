@@ -504,7 +504,6 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         }
 
         CMultiComponent * pPrevComponents[INT8_MAX];
-        size_t iCount;
 
         /*
         // abort if we are placing a floor tile above some stairs (not needed for ground floor)
@@ -526,7 +525,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         */
 
         // remove previous item(s) in this location
-        iCount = GetComponentsAt(x, y, z, pPrevComponents, &m_designWorking);
+        size_t iCount = GetComponentsAt(x, y, z, pPrevComponents, &m_designWorking);
         if (iCount > 0)
         {
             for (size_t i = 0; i < iCount; ++i)
@@ -1278,13 +1277,12 @@ void CItemMultiCustom::CopyDesign(CDesignDetails * designFrom, CDesignDetails * 
     ADDTOCALLSTACK("CItemMultiCustom::CopyComponents");
     // overwrite the details of one design with the details
     // of another
-    CMultiComponent * pComponent;
 
     // copy components
     designTo->m_vectorComponents.clear();
     for (auto i = designFrom->m_vectorComponents.begin(); i != designFrom->m_vectorComponents.end(); ++i)
     {
-        pComponent = new CMultiComponent;
+        CMultiComponent *pComponent = new CMultiComponent;
         *pComponent = **i;
 
         designTo->m_vectorComponents.push_back(pComponent);
@@ -1474,14 +1472,12 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         pCrate->ContentAdd(pItem);
     }
 
-    CMultiComponent *comp;
-
     // Reset Main Design
     i = (int)m_designMain.m_vectorComponents.size()-1;
 
     for (;i >= 0;--i)   //decreasing iteration.
     {
-        comp = m_designMain.m_vectorComponents[i];
+        CMultiComponent *comp = m_designMain.m_vectorComponents[i];
         if (comp->m_item.m_wTileID == ITEMID_DIRT_TILE)
         {
             continue;
@@ -1729,10 +1725,9 @@ void CItemMultiCustom::r_Write(CScript & s)
     ADDTOCALLSTACK_DEBUG("CItemMultiCustom::r_Write");
     CItemMulti::r_Write(s);
 
-    CMultiComponent * comp;
     for (auto i = m_designMain.m_vectorComponents.begin(); i != m_designMain.m_vectorComponents.end(); ++i)
     {
-        comp = *i;
+        CMultiComponent *comp = *i;
         s.WriteKeyFormat("COMP", "%d,%d,%d,%d,%d", comp->m_item.GetDispID(), comp->m_item.m_dx, comp->m_item.m_dy, (char)(comp->m_item.m_dz), comp->m_isStair);
     }
 

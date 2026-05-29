@@ -1147,14 +1147,13 @@ size_t Str_ConcatLimitNull(tchar *dst, const tchar *src, size_t siz) noexcept
 
     tchar *d = dst;
     size_t n = siz;
-    size_t dlen;
 
     /* Find the end of dst and adjust bytes left but don't go past end */
     while ((n-- != 0) && (*d != '\0'))
     {
         ++d;
     }
-    dlen = d - dst;
+    size_t dlen = d - dst;
     n = siz - dlen;
 
     if (n == 0)

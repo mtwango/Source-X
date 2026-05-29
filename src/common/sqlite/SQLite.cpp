@@ -224,10 +224,8 @@ int CSQLite::ImportDB(lpctstr strInFileName)
     //if (IsStrEmpty(strTable))
     //    return SQLITE_ERROR;
 
-    int iErr;
-
     sqlite3 *in_db;
-    iErr = sqlite3_open(strInFileName, &in_db);
+    int iErr = sqlite3_open(strInFileName, &in_db);
     if (iErr != SQLITE_OK)
         goto clean_and_ret;
 
@@ -255,8 +253,7 @@ int CSQLite::ImportDB(lpctstr strInFileName)
         return iErr;
     */
 
-    sqlite3_backup *in_backup;
-    in_backup = sqlite3_backup_init(m_sqlite3, "main", in_db, "main");
+    sqlite3_backup *in_backup = sqlite3_backup_init(m_sqlite3, "main", in_db, "main");
     if (in_backup == nullptr)
     {
         iErr = sqlite3_errcode(m_sqlite3);
@@ -285,15 +282,12 @@ int CSQLite::ExportDB(lpctstr strOutFileName)
 {
     ADDTOCALLSTACK("CSQLite::ExportDB");
 
-    int iErr;
-
     sqlite3 *out_db;
-    iErr = sqlite3_open(strOutFileName, &out_db);
+    int iErr = sqlite3_open(strOutFileName, &out_db);
     if (iErr != SQLITE_OK)
         goto clean_and_ret;
 
-    sqlite3_backup *out_backup;
-    out_backup = sqlite3_backup_init(out_db, "main", m_sqlite3, "main");
+    sqlite3_backup *out_backup = sqlite3_backup_init(out_db, "main", m_sqlite3, "main");
     if (out_backup == nullptr)
     {
         iErr = sqlite3_errcode(out_db);

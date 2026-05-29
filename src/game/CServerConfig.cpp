@@ -1604,10 +1604,9 @@ const CSkillDef * CServerConfig::SkillLookup( lpctstr ptcKey )
 	ADDTOCALLSTACK("CServerConfig::SkillLookup");
 
 	const size_t iLen = strlen( ptcKey );
-    const CSkillDef * pDef;
-	for ( size_t i = 0; i < m_SkillIndexDefs.size(); ++i )
+    for ( size_t i = 0; i < m_SkillIndexDefs.size(); ++i )
 	{
-		pDef = static_cast<const CSkillDef *>(m_SkillIndexDefs[i].get());
+		const CSkillDef *pDef = m_SkillIndexDefs[i].get();
 		ASSERT(pDef);
 		if ( !strnicmp(ptcKey, (pDef->m_sName.IsEmpty() ? pDef->GetKey() : pDef->m_sName.GetBuffer()), iLen) )
 			return pDef;
@@ -2531,10 +2530,9 @@ bool CServerConfig::SetKRDialogMap(dword rid, dword idKRDialog)
 	ADDTOCALLSTACK("CServerConfig::SetKRDialogMap");
 	// Defines a link between the given ResourceID and KR DialogID, so that
 	// the dialogs of KR clients can be handled in scripts.
-	KRGumpsMap::const_iterator it;
 
-	// prevent double mapping of same dialog
-	it = m_mapKRGumps.find(rid);
+    // prevent double mapping of same dialog
+	KRGumpsMap::const_iterator it = m_mapKRGumps.find(rid);
 	if ( it != m_mapKRGumps.end() )
 	{
 		if ( it->second == idKRDialog )	// already mapped to this kr dialog
@@ -3171,7 +3169,7 @@ void CServerConfig::AddResourceDir( lpctstr pszDirName )
     }
 
     // Order them by name (not including path, it is added later).
-    std::sort(vecFileNames.begin(), vecFileNames.end(),
+    std::ranges::sort(vecFileNames,
         [](lpctstr ptcFirst, lpctstr ptcSecond) noexcept {return strcmp(ptcFirst, ptcSecond) < 0;}
         );
 

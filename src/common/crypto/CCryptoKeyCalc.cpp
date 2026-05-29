@@ -59,15 +59,14 @@ static EncryptionTypeToString(ENCRYPTION_TYPE enc) noexcept
 CCryptoClientKey
 CCryptoKeyCalc::CalculateLoginKeysReportedVer(CUOClientVersion ver, ENCRYPTION_TYPE forceCryptType) noexcept   // static
 {
-    uint key1, key2;
-    key1 = (ver.m_major << 23) | (ver.m_minor << 14) | (ver.m_revision << 4);
+    uint key1 = (ver.m_major << 23) | (ver.m_minor << 14) | (ver.m_revision << 4);
     key1 ^= (ver.m_revision * ver.m_revision) << 9;
     key1 ^= (ver.m_minor * ver.m_minor);
     key1 ^= (ver.m_minor * 11) << 24;
     key1 ^= (ver.m_revision * 7) << 19;
     key1 ^= 0x2C13A5FD;
 
-    key2 = (ver.m_major << 22) | (ver.m_revision << 13) | (ver.m_minor << 3);
+    uint key2 = (ver.m_major << 22) | (ver.m_revision << 13) | (ver.m_minor << 3);
     key2 ^= (ver.m_revision * ver.m_revision * 3) << 10;
     key2 ^= (ver.m_minor * ver.m_minor);
     key2 ^= (ver.m_minor * 13) << 23;

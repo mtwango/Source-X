@@ -310,7 +310,7 @@ void CChar::NPC_CreateTrigger()
 	{
 		CResourceLink * pLink = pCharDef->m_TEvents[i].GetRef();
         if (!pLink || !pLink->HasTrigger(iAction)
-            || (executedEvents.end() != std::find(executedEvents.begin(), executedEvents.end(), pLink)))
+            || (executedEvents.end() != std::ranges::find(executedEvents, pLink)))
 			continue;
 
 		CResourceLock s;
@@ -328,7 +328,7 @@ void CChar::NPC_CreateTrigger()
 	{
 		CResourceLink * pLink = g_Cfg.m_pEventsPetLink[i].GetRef();
         if (!pLink || !pLink->HasTrigger(iAction)
-            || (executedEvents.end() != std::find(executedEvents.begin(), executedEvents.end(), pLink)))
+            || (executedEvents.end() != std::ranges::find(executedEvents, pLink)))
             continue;
 
 		CResourceLock s;

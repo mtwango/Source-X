@@ -90,7 +90,7 @@ CChar * CChar::NPC_FightFindBestTarget(const std::vector<CChar*>* pvExcludeList)
             }
             if (pvExcludeList)
             {
-                if (pvExcludeList->cend() != std::find(pvExcludeList->cbegin(), pvExcludeList->cend(), pChar))
+                if (pvExcludeList->cend() != std::ranges::find(*pvExcludeList, pChar))
                 {
                     ++i;
                     continue;
@@ -156,7 +156,7 @@ CChar * CChar::NPC_FightFindBestTarget(const std::vector<CChar*>* pvExcludeList)
     CChar *pTarget = m_Fight_Targ_UID.CharFind();
     if (pTarget)
     {
-        if (!pvExcludeList || (pvExcludeList->cend() == std::find(pvExcludeList->cbegin(), pvExcludeList->cend(), pTarget)))
+        if (!pvExcludeList || (pvExcludeList->cend() == std::ranges::find(*pvExcludeList, pTarget)))
             return pTarget;
     }
 

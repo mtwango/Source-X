@@ -69,12 +69,10 @@ bool CAccounts::Account_Load( lpctstr pszNameRaw, CScript & s, bool fChanges )
 bool CAccounts::Account_LoadAll( bool fChanges, bool fClearChanges )
 {
 	ADDTOCALLSTACK("CAccounts::Account_LoadAll");
-	lpctstr pszBaseDir;
-	lpctstr pszBaseName;
-	char *z = Str_GetTemp();
+    char *z = Str_GetTemp();
 
-	pszBaseDir = g_Cfg.m_sAcctBaseDir.IsEmpty() ? g_Cfg.m_sWorldBaseDir : g_Cfg.m_sAcctBaseDir;
-	pszBaseName = ( fChanges ) ? (SPHERE_FILE "acct" SPHERE_SCRIPT_EXT) : (SPHERE_FILE "accu" SPHERE_SCRIPT_EXT);
+	lpctstr pszBaseDir  = g_Cfg.m_sAcctBaseDir.IsEmpty() ? g_Cfg.m_sWorldBaseDir : g_Cfg.m_sAcctBaseDir;
+	lpctstr pszBaseName = (fChanges) ? (SPHERE_FILE "acct" SPHERE_SCRIPT_EXT) : (SPHERE_FILE "accu" SPHERE_SCRIPT_EXT);
 
 	Str_CopyLimitNull(z, pszBaseDir, Str_TempLength());
 	Str_ConcatLimitNull(z, pszBaseName, Str_TempLength());

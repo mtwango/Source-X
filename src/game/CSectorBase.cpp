@@ -384,7 +384,7 @@ bool CSectorBase::UnLinkRegion( CRegion * pRegionOld )
 	ADDTOCALLSTACK("CSectorBase::UnLinkRegion");
 	if ( !pRegionOld )
 		return false;
-    auto it = std::find(m_RegionLinks.begin(), m_RegionLinks.end(), pRegionOld);
+    auto it = std::ranges::find(m_RegionLinks, pRegionOld);
     if (it == m_RegionLinks.end())
         return false;
     m_RegionLinks.erase(it);

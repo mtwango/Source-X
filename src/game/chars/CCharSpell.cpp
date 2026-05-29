@@ -303,8 +303,8 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic)
     const int64 iDuration = pSpellDef->m_Duration.GetLinear(0) * MSECS_PER_TENTH;
 
     ptDest.m_z = GetFixZ(ptDest);
-    ITEMID_TYPE idOrig, idDest;
-    idOrig = idDest = pSpellDef->m_idEffect;
+    ITEMID_TYPE idDest;
+    ITEMID_TYPE idOrig = idDest = pSpellDef->m_idEffect;
     if (idOrig == ITEMID_NOTHING)
     {
         constexpr dword dwSafeFlags = REGION_FLAG_SAFE | REGION_FLAG_GUARDED | REGION_FLAG_NO_PVP;

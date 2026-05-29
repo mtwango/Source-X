@@ -124,7 +124,7 @@ bool CPathFinder::FindPath() //A* algorithm
 	while ( !m_Opened.empty() )
 	{
         // Sort open (explorable) points by FValue
-        std::sort(m_Opened.begin(), m_Opened.end(), CPathFinderPointPtrCompLess);
+        std::ranges::sort(m_Opened, CPathFinderPointPtrCompLess);
 
         // Take the point with the lowest FValue
         CPathFinderPoint *Current = *m_Opened.begin();
@@ -170,7 +170,7 @@ bool CPathFinder::FindPath() //A* algorithm
             //const auto InOpened = std::find(m_Opened.cbegin(), m_Opened.cend(), Cell);
             //if (InOpened == m_Opened.cend())
             // Binary search (m_Opened were pre-sorted by our call to std::sort at the beginning of the cycle)
-            if (!std::binary_search(m_Opened.cbegin(), m_Opened.cend(), Cell, CPathFinderPointPtrCompLess))
+            if (!std::ranges::binary_search(std::as_const(m_Opened), Cell, CPathFinderPointPtrCompLess))
             {
                 Cell->_Parent = Current;
                 Cell->_GValue = Current->_GValue;

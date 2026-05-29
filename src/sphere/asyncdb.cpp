@@ -25,8 +25,7 @@ void CDataBaseAsyncHelper::tick()
     if ( m_queriesTodo.empty() )
         return;
 
-    QueryBlob_t currentPair;
-    currentPair = m_queriesTodo.front();
+    QueryBlob_t currentPair = m_queriesTodo.front();
     m_queriesTodo.pop_front();
     lock.unlock();
 

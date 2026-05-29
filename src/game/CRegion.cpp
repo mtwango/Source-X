@@ -137,7 +137,6 @@ bool CRegion::MakeRegionDefname()
     if ( m_pDefName )
         return true;
 
-    tchar ch;
     lpctstr ptcKey = nullptr;	// auxiliary, the key of a similar CVarDef, if any found
     tchar * pbuf = Str_GetTemp();
     tchar * pszDef = pbuf + 2;
@@ -163,7 +162,7 @@ bool CRegion::MakeRegionDefname()
         if ( !strnicmp( " the ", pszName, 5 )  )
         {	pszName	+= 5;	continue;	}
 
-        ch	= *pszName;
+        tchar ch = *pszName;
         if ( ch == ' ' || ch == '\t' || ch == '-' )
             ch	= '_';
         else if ( !IsAlnum( ch ) )

@@ -111,9 +111,9 @@ bool CSFile::_Open( lpctstr ptcFilename, uint uiModeFlags )
     _uiMode = uiModeFlags;
 
 #ifdef _WIN32
-    DWORD dwShareMode, dwCreationDisposition, dwDesiredAccess;
+    DWORD dwShareMode, dwCreationDisposition;
 
-    dwDesiredAccess = GENERIC_READ;
+    DWORD dwDesiredAccess = GENERIC_READ;
     if ( uiModeFlags & OF_WRITE )
         dwDesiredAccess |= GENERIC_WRITE;
     if ( uiModeFlags & OF_READWRITE )

@@ -146,7 +146,7 @@ CUOClientVersion::CUOClientVersion(lpctstr ptcVersion, bool fEnhancedClient) noe
     // Ranges algorithms not yet supported by Apple Clang...
     // const size_t count = std::ranges::count(std::string_view(ptcVersion), '.');
     const auto svVersion = std::string_view(ptcVersion);
-    const auto count = std::count(svVersion.cbegin(), svVersion.cend(), '.');
+    const auto count = std::ranges::count(svVersion, '.');
     if (count == 2)
     {
         if (fEnhancedClient)

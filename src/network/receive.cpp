@@ -4413,10 +4413,9 @@ bool PacketEquipItemMacro::onReceive(CNetState* net)
 	if ( itemCount > 3 )	// prevent packet exploit sending fake values just to create heavy loops and overload server CPU
 		itemCount = 3;
 
-	CItem* item;
-	for (byte i = 0; i < itemCount; i++)
+    for (byte i = 0; i < itemCount; i++)
 	{
-		item = CUID(readInt32()).ItemFind();
+		CItem *item = CUID(readInt32()).ItemFind();
 		if (item == nullptr)
 			continue;
 
@@ -4459,13 +4458,11 @@ bool PacketUnEquipItemMacro::onReceive(CNetState* net)
 	if ( itemCount > 3 )	// prevent packet exploit sending fake values just to create heavy loops and overload server CPU
 		itemCount = 3;
 
-	LAYER_TYPE layer;
-	CItem* item;
-	for (byte i = 0; i < itemCount; i++)
+    for (byte i = 0; i < itemCount; i++)
 	{
-		layer = static_cast<LAYER_TYPE>(readInt16());
+		LAYER_TYPE layer = static_cast<LAYER_TYPE>(readInt16());
 
-		item = character->LayerFind(layer);
+		CItem *item = character->LayerFind(layer);
 		if (item == nullptr)
 			continue;
 

@@ -218,7 +218,6 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
 size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, bool fTrigger ) const
 {
     ADDTOCALLSTACK("CRandGroupDef::GetRandMemberIndex");
-    int rid;
     size_t iCount = m_Members.size();
     if ( iCount <= 0 )
         return sl::scont_bad_index();
@@ -250,7 +249,7 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, bool fTrigger ) cons
         // If no regionresource, return just some random entry!
         if (pOreDef != nullptr)
         {
-            rid = pOreDef->m_ReapItem;
+            int rid = pOreDef->m_ReapItem;
             if (rid != 0)
             {
                 if (!pCharSrc->Skill_MakeItem((ITEMID_TYPE)(rid), CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT))

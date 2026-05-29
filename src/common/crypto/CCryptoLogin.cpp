@@ -42,10 +42,9 @@ bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, size_t outLen, 
             pOutput[i]   = pInput[i] ^ (byte)m_CryptMaskLo;
             dword MaskLo = m_CryptMaskLo;
             dword MaskHi = m_CryptMaskHi;
-            dword MaskShiftOperand, MaskShifted;
 
-            MaskShiftOperand = ((5 * MaskHi * MaskHi) & 0xff);
-            MaskShifted = (MaskShiftOperand >= 32u /*sizeof(dword)*/) ? 0u : (m_MasterHi >> MaskShiftOperand);
+            dword MaskShiftOperand = ((5 * MaskHi * MaskHi) & 0xff);
+            dword MaskShifted = (MaskShiftOperand >= 32u /*sizeof(dword)*/) ? 0u : (m_MasterHi >> MaskShiftOperand);
             m_CryptMaskHi = MaskShifted + (MaskHi * m_MasterHi) + (MaskLo * MaskLo * 0x35ce9581) + 0x07afcc37;
 
             MaskShiftOperand = ((3 * MaskLo * MaskLo) & 0xff);

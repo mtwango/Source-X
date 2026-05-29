@@ -27,7 +27,7 @@ void CCSpawn::AddBadSpawn()
         return;
     }
     MT_ENGINE_UNIQUE_LOCK_SET(this);
-    if (std::find(_vBadSpawns.cbegin(), _vBadSpawns.cend(), this) == _vBadSpawns.cend())
+    if (std::ranges::find(std::as_const(_vBadSpawns), this) == _vBadSpawns.cend())
     {
         _vBadSpawns.emplace_back(this); //only if it's not inserted already.
     }
@@ -40,7 +40,7 @@ void CCSpawn::DelBadSpawn()
     MT_ENGINE_UNIQUE_LOCK_SET(this);
     if (!_vBadSpawns.empty())
     {
-        _vBadSpawns.erase(std::find(_vBadSpawns.begin(), _vBadSpawns.end(), this));
+        _vBadSpawns.erase(std::ranges::find(_vBadSpawns, this));
     }
     _fIsBadSpawn = false;
 }
@@ -520,7 +520,7 @@ void CCSpawn::DelObj(const CUID& uid)
         return;
     }
 
-    auto itObj = std::find(_uidList.begin(), _uidList.end(), uid);
+    auto itObj = std::ranges::find(_uidList, uid);
 
     if (itObj == _uidList.end())
     {

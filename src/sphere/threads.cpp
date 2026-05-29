@@ -114,9 +114,7 @@ ThreadHolder& ThreadHolder::get() noexcept
 bool ThreadHolder::isSystemIdRegistered(threadid_t sysId, AbstractSphereThread** outExisting) const noexcept
 {
     std::shared_lock lock(m_mutex);
-    auto it = std::find_if(
-        m_spherethreadpairs_systemid_ptr.begin(),
-        m_spherethreadpairs_systemid_ptr.end(),
+    auto it = std::ranges::find_if(m_spherethreadpairs_systemid_ptr,
         [sysId](const spherethreadpair_t& elem) noexcept {
             return elem.first == sysId;
         }
@@ -154,9 +152,8 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         std::unique_lock lock(m_mutex);
 
         // 1) Idempotency: same pointer already registered.
-        auto itExistingPtr = std::find_if(
-            m_spherethreadpairs_systemid_ptr.begin(),
-            m_spherethreadpairs_systemid_ptr.end(),
+        auto itExistingPtr = std::ranges::find_if(
+            m_spherethreadpairs_systemid_ptr,
             [pSphereThread](const spherethreadpair_t& elem) noexcept {
                 return elem.second == pSphereThread;
             }
@@ -164,9 +161,8 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         if (itExistingPtr != m_spherethreadpairs_systemid_ptr.end())
         {
             // Refresh holder id from current slot if present.
-            auto itSlot = std::find_if(
-                m_threads.begin(),
-                m_threads.end(),
+            auto itSlot = std::ranges::find_if(
+                m_threads,
                 [pAbstractThread](const SphereThreadData& s) noexcept { return s.m_ptr == pAbstractThread; }
                 );
             if (itSlot != m_threads.end())
@@ -187,9 +183,8 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         }
 
         // 2) System-id uniqueness: refuse a second Sphere context on the same OS thread.
-        auto itExistingSys = std::find_if(
-            m_spherethreadpairs_systemid_ptr.begin(),
-            m_spherethreadpairs_systemid_ptr.end(),
+        auto itExistingSys = std::ranges::find_if(
+            m_spherethreadpairs_systemid_ptr,
             [pSphereThread](const spherethreadpair_t& elem) noexcept {
                 // Correct equality for pthread_t vs DWORD handled by threadid_t typedef.
                 return elem.first == pSphereThread->m_threadSystemId;
@@ -252,7 +247,7 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
     std::unique_lock lock(m_mutex);
 
     // Remove from main list.
-    auto it = std::find_if(m_threads.begin(), m_threads.end(),
+    auto it = std::ranges::find_if(m_threads,
         [pAbstractThread](const SphereThreadData& s) noexcept { return s.m_ptr == pAbstractThread; });
     if (it != m_threads.end())
         m_threads.erase(it);

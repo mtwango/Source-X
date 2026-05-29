@@ -210,22 +210,16 @@ auto CWorldTicker::IsTimeoutRegistered(const CTimedObject* pTimedObject) -> std:
         return pTimedObject == rhs.second;
     };
 
-    const auto itEntryInAddList = std::find_if(
-        _vTimedObjsTimeoutsAddReq.cbegin(),
-        _vTimedObjsTimeoutsAddReq.cend(),
+    const auto itEntryInAddList = std::ranges::find_if(std::as_const(_vTimedObjsTimeoutsAddReq),
         fnFindEntryByObj);
     if (_vTimedObjsTimeoutsAddReq.end() != itEntryInAddList)
         return *itEntryInAddList;
 
-    const auto itEntryInTickList = std::find_if(
-        _vTimedObjsTimeouts.cbegin(),
-        _vTimedObjsTimeouts.cend(),
+    const auto itEntryInTickList = std::ranges::find_if(std::as_const(_vTimedObjsTimeouts),
         fnFindEntryByObj);
     if (_vTimedObjsTimeouts.cend() != itEntryInTickList)
     {
-        const auto itEntryInEraseList = std::find(
-            _vTimedObjsTimeoutsEraseReq.cbegin(),
-            _vTimedObjsTimeoutsEraseReq.cend(),
+        const auto itEntryInEraseList = std::ranges::find(std::as_const(_vTimedObjsTimeoutsEraseReq),
             pTimedObject);
 
         if (itEntryInEraseList == _vTimedObjsTimeoutsEraseReq.cend())
@@ -254,9 +248,7 @@ bool CWorldTicker::_InsertTimedObject(const int64 iTimeout, CTimedObject* pTimed
 
     if (pTimedObject->_fIsInWorldTickAddList)
     {
-        const auto itEntryInAddList = std::find_if(
-            _vTimedObjsTimeoutsAddReq.begin(),
-            _vTimedObjsTimeoutsAddReq.end(),
+        const auto itEntryInAddList = std::ranges::find_if(_vTimedObjsTimeoutsAddReq,
             fnFindEntryByObj);
         ASSERT(_vTimedObjsTimeoutsAddReq.end() != itEntryInAddList);
 
@@ -336,9 +328,7 @@ bool CWorldTicker::_EraseTimedObject(CTimedObject* pTimedObject)
         // What's happening: it has the flag, so it must be in the add list. Ensure it, and remove it from there.
         //  We are reasonably sure that there isn't another entry in the main ticking list, because we would have gotten an error
         //  trying to append a request to the add list.
-        const auto itEntryInAddList = std::find_if(
-            _vTimedObjsTimeoutsAddReq.begin(),
-            _vTimedObjsTimeoutsAddReq.end(),
+        const auto itEntryInAddList = std::ranges::find_if(_vTimedObjsTimeoutsAddReq,
             fnFindEntryByObj);
         ASSERT(itEntryInAddList != _vTimedObjsTimeoutsAddReq.end());
 
@@ -474,22 +464,16 @@ auto CWorldTicker::IsCharPeriodicTickRegistered(const CChar* pChar) -> std::opti
         return pChar == rhs.second;
     };
 
-    const auto itEntryInAddList = std::find_if(
-        _vPeriodicCharsAddRequests.cbegin(),
-        _vPeriodicCharsAddRequests.cend(),
+    const auto itEntryInAddList = std::ranges::find_if(std::as_const(_vPeriodicCharsAddRequests),
         fnFindEntryByObj);
     if (_vPeriodicCharsAddRequests.cend() != itEntryInAddList)
         return *itEntryInAddList;
 
-    const auto itEntryInTickList = std::find_if(
-        _vPeriodicCharsTicks.cbegin(),
-        _vPeriodicCharsTicks.cend(),
+    const auto itEntryInTickList = std::ranges::find_if(std::as_const(_vPeriodicCharsTicks),
         fnFindEntryByObj);
     if (_vPeriodicCharsTicks.cend() != itEntryInTickList)
     {
-        const auto itEntryInEraseList = std::find(
-            _vPeriodicCharsEraseRequests.cbegin(),
-            _vPeriodicCharsEraseRequests.cend(),
+        const auto itEntryInEraseList = std::ranges::find(std::as_const(_vPeriodicCharsEraseRequests),
             pChar);
 
         if (itEntryInEraseList == _vPeriodicCharsEraseRequests.cend())
@@ -566,9 +550,7 @@ bool CWorldTicker::_EraseCharTicking(CChar* pChar)
     const auto fnFindEntryByChar = [pChar](TickingPeriodicCharEntry const& rhs) constexpr noexcept {
         return pChar == rhs.second;
     };
-    const auto itEntryInAddList = std::find_if(
-        _vPeriodicCharsAddRequests.cbegin(),
-        _vPeriodicCharsAddRequests.cend(),
+    const auto itEntryInAddList = std::ranges::find_if(std::as_const(_vPeriodicCharsAddRequests),
         fnFindEntryByChar);
     if (_vPeriodicCharsAddRequests.cend() != itEntryInAddList)
     {
@@ -762,15 +744,11 @@ bool CWorldTicker::IsStatusUpdateTickRegistered(const CObjBase *pObj)
         return *itEntryInAddList;
     */
 
-    const auto itEntryInTickList = std::find(
-        _vObjStatusUpdates.cbegin(),
-        _vObjStatusUpdates.cend(),
+    const auto itEntryInTickList = std::ranges::find(std::as_const(_vObjStatusUpdates),
         pObj);
     if (_vObjStatusUpdates.cend() != itEntryInTickList)
     {
-        const auto itEntryInEraseList = std::find(
-            _vObjStatusUpdatesEraseRequests.cbegin(),
-            _vObjStatusUpdatesEraseRequests.cend(),
+        const auto itEntryInEraseList = std::ranges::find(std::as_const(_vObjStatusUpdatesEraseRequests),
             pObj);
 
         if (itEntryInEraseList == _vObjStatusUpdatesEraseRequests.cend())
@@ -793,9 +771,7 @@ bool CWorldTicker::AddObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
 
     if (pObj->_fIsInStatusUpdatesAddList)
     {
-        const auto itEntryInAddList = std::find(
-            _vObjStatusUpdatesAddRequests.cbegin(),
-            _vObjStatusUpdatesAddRequests.cend(),
+        const auto itEntryInAddList = std::ranges::find(std::as_const(_vObjStatusUpdatesAddRequests),
             pObj);
         ASSERT(_vObjStatusUpdatesAddRequests.cend() != itEntryInAddList);
 
@@ -863,9 +839,7 @@ bool CWorldTicker::DelObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
         // What's happening: it has the flag, so it must be in the add list. Ensure it, and remove it from there.
         //  We are reasonably sure that there isn't another entry in the main ticking list, because we would have gotten an error
         //  trying to append a request to the add list.
-        const auto itEntryInAddList = std::find(
-            _vObjStatusUpdatesAddRequests.cbegin(),
-            _vObjStatusUpdatesAddRequests.cend(),
+        const auto itEntryInAddList = std::ranges::find(std::as_const(_vObjStatusUpdatesAddRequests),
             pObj);
         ASSERT(itEntryInAddList != _vObjStatusUpdatesAddRequests.cend());
 
@@ -1045,8 +1019,8 @@ void CWorldTicker::ProcessTimedObjects()
             }
 
             _vTimedObjsTimeoutsElementBuffer.clear();
-            std::sort(_vTimedObjsTimeoutsEraseReq.begin(), _vTimedObjsTimeoutsEraseReq.end());
-            std::sort(_vTimedObjsTimeoutsAddReq.begin(), _vTimedObjsTimeoutsAddReq.end());
+            std::ranges::sort(_vTimedObjsTimeoutsEraseReq);
+            std::ranges::sort(_vTimedObjsTimeoutsAddReq);
             SortedVecRemoveAddQueued(_vTimedObjsTimeouts, _vTimedObjsTimeoutsElementBuffer, _vTimedObjsTimeoutsEraseReq, _vTimedObjsTimeoutsAddReq);
             EXC_CATCHSUB("");
         }
@@ -1262,8 +1236,8 @@ void CWorldTicker::ProcessCharPeriodicTicks()
 #endif
 
             _vPeriodicCharsElementBuffer.clear();
-            std::sort(_vPeriodicCharsEraseRequests.begin(), _vPeriodicCharsEraseRequests.end());
-            std::sort(_vPeriodicCharsAddRequests.begin(), _vPeriodicCharsAddRequests.end());
+            std::ranges::sort(_vPeriodicCharsEraseRequests);
+            std::ranges::sort(_vPeriodicCharsAddRequests);
             SortedVecRemoveAddQueued(_vPeriodicCharsTicks, _vPeriodicCharsElementBuffer, _vPeriodicCharsEraseRequests, _vPeriodicCharsAddRequests);
 
             ASSERT(sl::ContainerIsSorted(_vPeriodicCharsTicks));

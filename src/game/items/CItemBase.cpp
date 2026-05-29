@@ -2139,6 +2139,10 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
                 SKIP_SEPARATORS(ptcKey);
                 const CUOMultiItemRec_HS* item = pMulti->GetItem(index);
 
+                if (item == nullptr)
+                {
+                    return false;
+                }
                 if (*ptcKey == '\0')
                 {
                     sVal.Format("%u,%i,%i,%i", item->m_wTileID, item->m_dx, item->m_dy, item->m_dz);

@@ -63,8 +63,8 @@ void CClient::resendBuffs() const
 
 	for (const CSObjContRec* pObjRec : *pChar)
 	{
-		const CItem* pItem = static_cast<const CItem*>(pObjRec);
-		if ( !pItem->IsType(IT_SPELL) )
+		const CItem* pItem = dynamic_cast<const CItem*>(pObjRec);
+		if (pItem == nullptr || !pItem->IsType(IT_SPELL))
 			continue;
 
 		wStatEffect = pItem->m_itSpell.m_spelllevel;
@@ -1950,6 +1950,12 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
 
     const bool fOSIMultiSight = IsSetOF(OF_OSIMultiSight);
     const CChar *pCharThis = GetChar();
+
+    if (pCharThis == nullptr)
+    {
+        return;
+    }
+
 	const int iViewDist = pCharThis->GetVisualRange();
     const CPointMap& ptCharThis = pCharThis->GetTopPoint();
 	const CRegion *pCurrentCharRegion = ptCharThis.GetRegion(REGION_TYPE_HOUSE);
@@ -1977,7 +1983,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
         if ( pItem->IsTypeMulti() )		// incoming multi on radar view
 		{
             const DIR_TYPE dirFace = pItem->GetDir(pCharThis);
-            const CItemMulti* pMulti = static_cast<const CItemMulti*>(pItem);
+            const CItemMulti* pMulti = dynamic_cast<const CItemMulti*>(pItem);
 
             // This looks like the only way to make this thing work. Even if i send the worldobj packet with the commented code, the client
             //  will ignore it (and SpyUO 2 doesn't show that packet ?! it only shows packets that actually result in the generation of a world item, how weird)
@@ -2571,12 +2577,12 @@ bool CClient::addBBoardMessage( const CItemContainer * pBoard, BBOARDF_TYPE flag
 	ADDTOCALLSTACK("CClient::addBBoardMessage");
 	ASSERT(pBoard);
 
-	CItemMessage *pMsgItem = static_cast<CItemMessage *>(uidMsg.ItemFind());
-	if (pBoard->IsItemInside( pMsgItem ) == false)
+	CItemMessage *pMsgItem = dynamic_cast<CItemMessage *>(uidMsg.ItemFind());
+	if (pMsgItem == nullptr || !pBoard->IsItemInside( pMsgItem ))
 		return false;
 
 	// check author is properly linked
-	if (pMsgItem->m_sAuthor.IsEmpty() == false && pMsgItem->m_uidLink.CharFind() == nullptr)
+	if (!pMsgItem->m_sAuthor.IsEmpty() && pMsgItem->m_uidLink.CharFind() == nullptr)
 	{
 		pMsgItem->Delete();
 		return false;
@@ -2919,7 +2925,7 @@ byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
 		return( PacketLoginError::BadCharacter );
 
 	CChar * pChar = m_tmSetupCharList[ iSlot ].CharFind();
-	if ( !pAccount->IsMyAccountChar( pChar ))
+	if (pChar == nullptr || !pAccount->IsMyAccountChar(pChar))
 		return( PacketLoginError::BadCharacter );
 
 	CChar * pCharLast = pAccount->m_uidLastChar.CharFind();
@@ -2946,7 +2952,10 @@ byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
 	if ( iSlot >= ARRAY_COUNT(m_tmSetupCharList))
 		return PacketDeleteError::NotExist;
 
-	CChar * pChar = m_tmSetupCharList[iSlot].CharFind();
+    CChar * pChar = m_tmSetupCharList[iSlot].CharFind();
+    if (pChar == nullptr) {
+        return PacketDeleteError::NotExist;
+    }
 	if ( ! GetAccount()->IsMyAccountChar( pChar ))
 		return PacketDeleteError::BadPass;
 
@@ -2964,8 +2973,6 @@ byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
 			return PacketDeleteError::NotOldEnough;
 		}
 	}
-
-
 
 	if (pChar->Delete()) //	Do the scripts allow to delete the char?
 	{

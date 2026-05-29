@@ -527,6 +527,9 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
     if (IsClientActive())
     {
         CClient *pClient = GetClientActive();
+        if (pClient == nullptr) {
+            return false;
+        }
         pClient->addSeason(GetTopSector()->GetSeason());
     }
 	return true;
@@ -3322,6 +3325,10 @@ bool CChar::Spell_CastDone()
 					if (!g_Rand.GetVal(2 + iGet))
 						break;
 					CItem *pItem = CItem::CreateScript(sm_Item_Bone[i], this);
+				    if (pItem == nullptr)
+				    {
+				        break;
+				    }
 					pItem->MoveToCheck(m_Act_p, this);
 					++ iGet;
 				}

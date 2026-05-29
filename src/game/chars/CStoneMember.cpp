@@ -184,11 +184,21 @@ bool CStoneMember::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 	if ( GetLinkUID().IsChar() )
 	{
 		CScriptObj *pRef = GetLinkUID().CharFind();
+	    if (pRef == nullptr)
+	    {
+	        return false;
+	    }
+
 		return pRef->r_Verb( s, pSrc );
 	}
     if (GetLinkUID().IsItem())
     {
         CScriptObj *pRef = GetLinkUID().ItemFind();
+        if (pRef == nullptr)
+        {
+            return false;
+        }
+
         return pRef->r_Verb(s, pSrc);
     }
 
@@ -315,7 +325,11 @@ bool CStoneMember::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 			default:
                 if (!fNoCallParent)
 			    {
-				    CScriptObj *pRef = GetLinkUID().CharFind();
+                    CScriptObj *pRef = GetLinkUID().CharFind();
+                    if (pRef == nullptr)
+                    {
+                        return false;
+                    }
 				    return pRef->r_WriteVal(ptcKey,sVal,pSrc);
 			    }
 		}
@@ -346,6 +360,10 @@ bool CStoneMember::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
                 if (!fNoCallParent)
 			    {
 				    CScriptObj *pRef = GetLinkUID().ItemFind();
+                    if (pRef == nullptr)
+                    {
+                        return false;
+                    }
 				    return pRef->r_WriteVal(ptcKey,sVal,pSrc);
 			    }
 		}

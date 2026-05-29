@@ -44,6 +44,11 @@ void CChatChannel::WhoIs(lpctstr pszBy, lpctstr pszMember)
 {
     ADDTOCALLSTACK("CChatChannel::WhoIs");
     CChatChanMember * pBy = FindMember(pszBy);
+    if (pBy == nullptr)
+    {
+        return;
+    }
+
     CChatChanMember * pMember = FindMember(pszMember);
     CChar * pChar = pMember? pMember->GetClientActive()->GetChar() : nullptr;
     if (!pMember||!pChar)
@@ -401,6 +406,10 @@ void CChatChannel::Broadcast(CHATMSG_TYPE iType, lpctstr pszName, lpctstr pszTex
     ADDTOCALLSTACK("CChatChannel::Broadcast");
     CSString sName;
     CChatChanMember *pSendingMember = FindMember(pszName);
+    if (pSendingMember == nullptr)
+    {
+        return;
+    }
 
     if (iType >= CHATMSG_PlayerTalk && iType <= CHATMSG_PlayerPrivate) // Only chat, emote, and privates get a color status number
         g_Serv.m_Chats.FormatName(sName, pSendingMember, fOverride);

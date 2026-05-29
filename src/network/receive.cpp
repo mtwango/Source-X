@@ -999,7 +999,7 @@ bool PacketBookPageEdit::onReceive(CNetState* net)
 	word pageCount = readInt16();
 
 	CItem* book = bookSerial.ItemFind();
-	if (character->CanSee(book) == false)
+	if (book == nullptr || character->CanSee(book) == false)
 	{
 		client->addObjectRemoveCantSee(bookSerial, "the book");
 		return true;
@@ -1015,7 +1015,7 @@ bool PacketBookPageEdit::onReceive(CNetState* net)
 
 	// trying to write to the book
 	CItemMessage* text = dynamic_cast<CItemMessage*>( book );
-	if (text == nullptr || book->IsBookWritable() == false)
+	if (text == nullptr || !book->IsBookWritable())
 		return true;
 
 	skip(-4);
@@ -1190,7 +1190,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 	CUID messageSerial(readInt32());
 
 	CItemContainer* board = dynamic_cast<CItemContainer*>( boardSerial.ItemFind() );
-	if (character->CanSee(board) == false)
+	if (board == nullptr || !character->CanSee(board))
 	{
 		client->addObjectRemoveCantSee(boardSerial, "the board");
 		return true;
@@ -1278,13 +1278,13 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 		{
 			// remove the message
 			CItemMessage* message = dynamic_cast<CItemMessage*>( messageSerial.ItemFind() );
-			if (board->IsItemInside(message) == false)
+			if (message == nullptr || !board->IsItemInside(message))
 			{
 				client->SysMessageDefault(DEFMSG_ITEMUSE_BBOARD_COR);
 				return true;
 			}
 
-			if (client->IsPriv(PRIV_GM) == false && message->m_uidLink != character->GetUID())
+			if (!client->IsPriv(PRIV_GM) && message->m_uidLink != character->GetUID())
 			{
 				client->SysMessageDefault(DEFMSG_ITEMUSE_BBOARD_DEL);
 				return true;
@@ -1663,10 +1663,22 @@ bool PacketCreateNew::onReceive(CNetState* net)
 
 	//CItemBase * pItemDef = CItemBase::FindItemBase( shirtid );
 	CItem* pItem = CItem::CreateScript( shirtid );
-	pItem->SetHue(shirthue);
+
+    if (pItem == nullptr)
+    {
+        return false;
+    }
+
+    pItem->SetHue(shirthue);
 	pChar->LayerAdd(pItem);
 
 	pItem = CItem::CreateScript( faceid );
+
+    if (pItem == nullptr)
+    {
+        return false;
+    }
+
 	pItem->SetHue(facehue);
 	pChar->LayerAdd(pItem);
 

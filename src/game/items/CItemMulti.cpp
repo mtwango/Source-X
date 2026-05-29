@@ -1123,6 +1123,11 @@ CItem *CItemMulti::GenerateKey(const CUID& uidTarget, bool fDupeOnBank)
 
     // Put in your pack
     CItemContainer* pContPack = pTarget->GetPackSafe();
+    if (pContPack == nullptr)
+    {
+        return nullptr;
+    }
+
     pContPack->ContentAdd(pKey);
     return pKey;
 }
@@ -3582,7 +3587,11 @@ void CMultiStorage::AddMulti(const CUID& uidMulti, HOUSE_PRIV ePriv)
 
 void CMultiStorage::DelMulti(const CUID& uidMulti)
 {
-    CItemMulti *pMulti = static_cast<CItemMulti*>(uidMulti.ItemFind());
+    CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidMulti.ItemFind());
+    if (pMulti == nullptr)
+    {
+        return;
+    }
     CObjBase *pSrc = _uidSrc.ObjFind();
     if (pMulti->IsType(IT_SHIP))
     {
@@ -3617,7 +3626,11 @@ void CMultiStorage::AddHouse(const CUID& uidHouse, HOUSE_PRIV ePriv)
         return;
     }
 
-    const CItemMulti *pMulti = static_cast<CItemMulti*>(uidHouse.ItemFind());
+    const CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidHouse.ItemFind());
+    if (pMulti == nullptr)
+    {
+        return;
+    }
     TRIGRET_TYPE tRet = TRIGRET_RET_DEFAULT;
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
@@ -3653,7 +3666,11 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
 
     if (_lHouses.find(uidHouse) != _lHouses.end())
     {
-        CItemMulti *pMulti = static_cast<CItemMulti*>(uidHouse.ItemFind());
+        CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidHouse.ItemFind());
+        if (pMulti == nullptr)
+        {
+            return;
+        }
         HOUSE_PRIV ePriv = GetPriv( uidHouse );
 
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
@@ -3681,7 +3698,11 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
 HOUSE_PRIV CMultiStorage::GetPriv(const CUID& uidMulti)
 {
     ADDTOCALLSTACK("CMultiStorage::GetPrivMulti");
-    const CItemMulti *pMulti = static_cast<CItemMulti*>(uidMulti.ItemFind());
+    const CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidMulti.ItemFind());
+    if (pMulti == nullptr)
+    {
+        return HP_NONE;
+    }
     if (pMulti->IsType(IT_MULTI) || pMulti->IsType(IT_MULTI_CUSTOM))
     {
         return _lHouses[uidMulti];
@@ -3790,7 +3811,11 @@ void CMultiStorage::AddShip(const CUID& uidShip, HOUSE_PRIV ePriv)
         return;
     }
 
-    const CItemShip* pShip = static_cast<CItemShip*>(uidShip.ItemFind());
+    const CItemShip* pShip = dynamic_cast<CItemShip*>(uidShip.ItemFind());
+    if (pShip == nullptr)
+    {
+        return;
+    }
     TRIGRET_TYPE tRet = TRIGRET_RET_DEFAULT;
 
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
@@ -3826,7 +3851,11 @@ void CMultiStorage::DelShip(const CUID& uidShip)
 
     if (_lShips.find(uidShip) != _lShips.end())
     {
-        CItemMulti* pMulti = static_cast<CItemMulti*>(uidShip.ItemFind());
+        CItemMulti* pMulti = dynamic_cast<CItemMulti*>(uidShip.ItemFind());
+        if (pMulti == nullptr)
+        {
+            return;
+        }
         HOUSE_PRIV ePriv = GetPriv(uidShip);
 
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();

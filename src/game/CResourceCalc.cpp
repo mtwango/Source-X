@@ -272,7 +272,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 		else if (pChar->m_uidWeapon.IsItem())		// parry using weapon
 		{
 			CItem* pTempItemParry = pChar->m_uidWeapon.ItemFind();
-			if (fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1))
+			if (pTempItemParry != nullptr && fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1))
 			{
 				pItemParry = pTempItemParry;
 
@@ -286,7 +286,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 
 				iParryChance = maximum(iChanceSE, iChanceLegacy);
 			}
-			else if (fCanTwoHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND2))
+			else if (pTempItemParry != nullptr && fCanTwoHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND2))
 			{
 				pItemParry = pTempItemParry;
 
@@ -312,8 +312,8 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 		else if (pChar->m_uidWeapon.IsItem())		// parry using weapon
 		{
 			CItem* pTempItemParry = pChar->m_uidWeapon.ItemFind();
-			if ((fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1)) ||
-				(fCanTwoHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND2)))
+			if (pTempItemParry != nullptr && ((fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1)) ||
+				(fCanTwoHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND2))))
 			{
 				pItemParry = pTempItemParry;
 				iParryChance = iParrying / 80;

@@ -120,7 +120,10 @@ void CPartyDef::SysMessageAll( lpctstr pText )
 	for ( size_t i = 0; i < iQty; i++ )
 	{
 		CChar *pChar = m_Chars.GetChar(i).CharFind();
-		pChar->SysMessage(pText);
+	    if (pChar != nullptr)
+	    {
+		    pChar->SysMessage(pText);
+	    }
 	}
 }
 
@@ -884,8 +887,11 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 
 			if ( toSysmessage.IsValidUID() )
 			{
-				CChar *pSend = toSysmessage.CharFind();
-				pSend->SysMessage(ptcArg);
+			    CChar *pSend = toSysmessage.CharFind();
+			    if (pSend != nullptr)
+			    {
+				    pSend->SysMessage(ptcArg);
+			    }
 			}
 			else
 				SysMessageAll(ptcArg);

@@ -625,7 +625,12 @@ PacketPlayerStart::PacketPlayerStart(const CClient* target) : PacketSend(XCMD_St
 {
 	ADDTOCALLSTACK("PacketPlayerStart::PacketPlayerStart");
 
-	const CChar* character = target->GetChar();
+    const CChar* character = target->GetChar();
+    if (character == nullptr)
+    {
+        return;
+    }
+
 	const CPointMap& pt = character->GetTopPoint();
 
 	writeInt32(character->GetUID());
@@ -809,6 +814,12 @@ PacketDragAnimation::PacketDragAnimation(const CChar* source, const CItem* item,
 	{
 		// item is being dragged into a container
 		const CObjBaseTemplate* target = container->GetTopLevelObj();
+
+	    if (target == nullptr)
+	    {
+	        return;
+	    }
+
 		const CPointMap& targetpos = target->GetTopPoint();
 
 		writeInt32(source->GetUID());
@@ -905,7 +916,12 @@ PacketItemContainer::PacketItemContainer(const CClient* target, const CItem* ite
 {
 	ADDTOCALLSTACK("PacketItemContainer::PacketItemContainer");
 
-	const CItemContainer* container = dynamic_cast<CItemContainer*>( item->GetParent() );
+    const CItemContainer* container = dynamic_cast<CItemContainer*>( item->GetParent() );
+    if (container == nullptr)
+    {
+        return;
+    }
+
 	const CPointBase& pt = item->GetContainedPoint();
 
 	const CItemBase* itemDefinition = item->Item_GetDef();
@@ -1212,7 +1228,11 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 	const bool fIncludeGrid = (ns->isClientVersionNumber(MINCLIVER_ITEMGRID) || ns->isClientKR() || fClientEnhanced);
     bool fIsLayerSent[LAYER_HORSE] = {};
 
-	const CChar* viewer = target->GetChar();
+    const CChar* viewer = target->GetChar();
+    if (viewer == nullptr)
+    {
+        return;
+    }
 	std::vector<CItem*> items;
 	items.reserve(container->GetContentCount());
 
@@ -1227,13 +1247,13 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 		{
 			if (itRev == itRevEnd)
 				break;
-			item = static_cast<CItem *>(*itRev);
+			item = dynamic_cast<CItem *>(*itRev);
 		}
 		else
 		{
 			if (it == itEnd)
 				break;
-			item = static_cast<CItem*>(*it);
+			item = dynamic_cast<CItem*>(*it);
 		}
 		ASSERT (item != nullptr);
 
@@ -1491,7 +1511,11 @@ PacketQueryClient::PacketQueryClient(CClient* target, byte bCmd) : PacketSend(XC
 		case 0xFF:
 		{
 			//Query Client Command
-            const CChar* pChar = target->GetChar();
+		    const CChar* pChar = target->GetChar();
+		    if (pChar == nullptr)
+		    {
+		        return;
+		    }
 			byte bMap = pChar->GetTopMap();
 			CPointMap pt = pChar->GetTopPoint();
 			dword dwBlockId = (pt.m_x * (g_MapList.GetMapSizeY( bMap ) / UO_BLOCK_SIZE)) + pt.m_y;
@@ -1988,7 +2012,11 @@ void PacketEffect::writeBasicEffect(EFFECT_TYPE motion, ITEMID_TYPE id, const CO
 	ADDTOCALLSTACK("PacketEffect::writeBasicEffect");
 
 	bool oneDirection = true;
-	dst = dst->GetTopLevelObj();
+    dst = dst->GetTopLevelObj();
+    if (dst == nullptr)
+    {
+        return;
+    }
 	CPointMap dstpos = dst->GetTopPoint();
 
 	CPointMap srcpos;
@@ -2698,7 +2726,11 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
 {
 	ADDTOCALLSTACK("PacketCorpseEquipment::PacketCorpseEquipment");
 
-	const CChar* viewer = target->GetChar();
+    const CChar* viewer = target->GetChar();
+    if (viewer == nullptr)
+    {
+        return;
+    }
 
 	bool isLayerSent[LAYER_HORSE];
 	memset(isLayerSent, 0, sizeof(isLayerSent));
@@ -2711,8 +2743,8 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
 
 	for (CSObjContRec* pObjRec : *corpse)
 	{
-		CItem* item = static_cast<CItem*>(pObjRec);
-		if (item->IsAttr(ATTR_INVIS) && viewer->CanSee(item) == false)
+		CItem* item = dynamic_cast<CItem*>(pObjRec);
+		if (item == nullptr || (item->IsAttr(ATTR_INVIS) && !viewer->CanSee(item)))
 			continue;
 
 		layer = (LAYER_TYPE)(item->GetContainedLayer());

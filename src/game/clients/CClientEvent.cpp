@@ -101,6 +101,11 @@ void CClient::Event_Item_Dye( CUID uid, HUE_TYPE wHue ) // Rehue an item
 		return;
 
 	CObjBase *pObj = uid.ObjFind();
+    if (pObj == nullptr)
+    {
+        return;
+    }
+
 	if ( !m_pChar->CanTouch(pObj) )
 	{
 		SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_ITEMUSE_DYE_REACH));
@@ -163,6 +168,9 @@ void CClient::Event_Book_Title( CUID uid, lpctstr pszTitle, lpctstr pszAuthor )
 		return;
 
 	CItemMessage * pBook = dynamic_cast <CItemMessage *> (uid.ItemFind());
+    if (pBook == nullptr) {
+		return;
+    }
 	if ( !m_pChar->CanTouch(pBook) )
 	{
 		SysMessage( g_Cfg.GetDefaultMsg(DEFMSG_REACH_FAIL) );
@@ -337,7 +345,7 @@ void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gri
 
 		// Is the object on a person ? check the weight.
 		CObjBaseTemplate * pObjTop = pObjOn->GetTopLevelObj();
-		if ( pObjTop->IsChar())
+		if (pObjTop != nullptr && pObjTop->IsChar())
 		{
 			CChar * pChar = dynamic_cast <CChar*>( pObjTop );
 			ASSERT(pChar);
@@ -378,7 +386,7 @@ void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gri
 			}
 		}
 
-		if (pObjTop->IsItem())
+		if (pObjTop != nullptr && pObjTop->IsItem())
 		{
 			CItemContainer * pTopContainer = dynamic_cast<CItemContainer*>(pObjTop);
 			if (pTopContainer && !pTopContainer->CanContainerHold(pItem, m_pChar))
@@ -1193,6 +1201,11 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                 if (IsSetOF(OF_PetSlots))
                 {
                     CItemBase* pItemPet = CItemBase::FindItemBase(pItem->GetID());
+                    if (pItemPet == nullptr)
+                    {
+                        return;
+                    }
+
                     CCharBase* pPetDef = CCharBase::FindCharBase(CREID_TYPE(pItemPet->m_ttFigurine.m_idChar.GetResIndex()));
                     if (pPetDef)
                     {
@@ -1878,7 +1891,7 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 
 	// Are there items on the ground that might hear u ?
 	CSector *pSector = m_pChar->GetTopSector();
-	if ( pSector->HasListenItems() )
+	if (pSector != nullptr && pSector->HasListenItems())
 		pSector->OnHearItem(m_pChar, pszText);
 
 	// Find an NPC that may have heard us.
@@ -2409,6 +2422,11 @@ void CClient::Event_SingleClick( CUID uid )
 		return;
 
 	CObjBase * pObj = uid.ObjFind();
+    if (pObj == nullptr)
+    {
+        return;
+    }
+
 	if ( !m_pChar->CanSee(pObj) )
 	{
 		// ALLNAMES makes this happen as we are running thru an area,

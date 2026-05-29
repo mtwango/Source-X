@@ -1321,6 +1321,11 @@ void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<C
     for (std::vector<CUID>::iterator it = _lLockDowns.begin(); it != _lLockDowns.end(); ++it)
     {
         CItem *pItem = it->ItemFind();
+        if (pItem == nullptr)
+        {
+            return;
+        }
+
         if ((pItem->GetTopPoint().m_x == iFixedX)
             && pItem->GetTopPoint().m_y == iFixedY
             && (CalculateLevel(pItem->GetTopPoint().m_z) == iFloor))
@@ -1342,6 +1347,11 @@ void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUI
     for (std::vector<CUID>::iterator it = _lSecureContainers.begin(); it != _lSecureContainers.end(); ++it)
     {
         CItemContainer *pCont = static_cast<CItemContainer*>(it->ItemFind());
+        if (pCont == nullptr)
+        {
+            return;
+        }
+
         if ((pCont->GetTopPoint().m_x == iFixedX)
             && pCont->GetTopPoint().m_y == iFixedY
             && (CalculateLevel(pCont->GetTopPoint().m_z) == iFloor))
@@ -1364,7 +1374,11 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
     int8 iBaseZ = GetTopPoint().m_z + (iFloor * 20) + 6;
     int16 iMaxZ = iBaseZ + 19;
     int16 iMinZ = iBaseZ;
-    CItemContainer *pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    CItemContainer *pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    if (pCrate == nullptr)
+    {
+        return;
+    }
     int i = 0;
     // Removing Secured Containers.
     int max = (int)_lSecureContainers.size();
@@ -1373,7 +1387,11 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid(_lSecureContainers[i]);
-            CItemContainer *pCont = static_cast<CItemContainer*>(uid.ItemFind());
+            CItemContainer *pCont = dynamic_cast<CItemContainer*>(uid.ItemFind());
+            if (pCont == nullptr)
+            {
+                break;
+            }
             if ((pCont->GetTopPoint().m_z >= iMinZ) && (pCont->GetTopPoint().m_z <= iMaxZ))
             {
                 Release(uid, true);
@@ -1390,6 +1408,10 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         {
             CUID uid = _lLockDowns[i];
             CItem *pItem = uid.ItemFind();
+            if (pItem == nullptr)
+            {
+                break;
+            }
             if ((pItem->GetTopPoint().m_z >= iMinZ) && (pItem->GetTopPoint().m_z <= iMaxZ))
             {
                 UnlockItem(uid, true);
@@ -1405,7 +1427,11 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid = _lLockDowns[i];
-            CItemMulti *pAddon = static_cast<CItemMulti*>(uid.ItemFind());
+            CItemMulti *pAddon = dynamic_cast<CItemMulti*>(uid.ItemFind());
+            if (pAddon == nullptr)
+            {
+                break;
+            }
             if ((pAddon->GetTopPoint().m_z >= iMinZ) && (pAddon->GetTopPoint().m_z <= iMaxZ))
             {
                 pAddon->Redeed(false, false);
@@ -1440,7 +1466,7 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         }
         if (pItem->IsType(IT_MULTI_ADDON) || pItem->IsType(IT_MULTI))  // If the item is a house Addon, redeed it.
         {
-            static_cast<CItemMulti*>(pItem)->Redeed(false, false);
+            dynamic_cast<CItemMulti*>(pItem)->Redeed(false, false);
             Area->RestartSearch();	// we removed an item and this will mess the search loop, so restart to fix it.
             continue;
         }
@@ -1491,7 +1517,7 @@ enum
     IMCV_RESET,
     IMCV_RESYNC,
     IMCV_REVERT,
-    IMCV_QTY
+    IMCV_QTY,
 };
 
 lpctstr const CItemMultiCustom::sm_szVerbKeys[IMCV_QTY + 1] =
@@ -1508,7 +1534,7 @@ lpctstr const CItemMultiCustom::sm_szVerbKeys[IMCV_QTY + 1] =
     "RESET",
     "RESYNC",
     "REVERT",
-    nullptr
+    nullptr,
 };
 
 bool CItemMultiCustom::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)

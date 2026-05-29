@@ -462,8 +462,11 @@ bool CChar::Delete(bool fForce)
 	if (IsClientActive())
 	{
 		CClient* pClient = GetClientActive();
-		pClient->CharDisconnect();
-		pClient->GetNetState()->markReadClosed();
+	    if (pClient)
+	    {
+	        pClient->CharDisconnect();
+	        pClient->GetNetState()->markReadClosed();
+	    }
 	}
 
 	DeletePrepare();
@@ -2227,7 +2230,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				{
 					const int16 iPos = (int16)Exp_GetSingle(ptcKey);
 					CMultiStorage* pMultiStorage = m_pPlayer->GetMultiStorage();
-					if (pMultiStorage->GetHouseCountReal() <= iPos)
+					if (pMultiStorage == nullptr || pMultiStorage->GetHouseCountReal() <= iPos)
 					{
 						return false;
 					}
@@ -2241,7 +2244,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				{
 					const int16 iPos = (int16)Exp_GetSingle(ptcKey);
 					CMultiStorage* pMultiStorage = m_pPlayer->GetMultiStorage();
-					if (pMultiStorage->GetShipCountReal() <= iPos)
+					if (pMultiStorage == nullptr || pMultiStorage->GetShipCountReal() <= iPos)
 					{
 						return false;
 					}

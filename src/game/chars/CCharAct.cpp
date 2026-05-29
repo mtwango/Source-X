@@ -2862,9 +2862,13 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 
 	if( IsClientActive() )
 	{
-		CClient *client    = GetClientActive();
-		CItem   *pItemCont = dynamic_cast <CItem*> (pItemParent);
+		CClient *client = GetClientActive();
+	    if (client == nullptr)
+	    {
+	        return -1;
+	    }
 
+		CItem *pItemCont = dynamic_cast<CItem*>(pItemParent);
 		if ( pItemCont != nullptr )
 		{
             const CPointMap& ptTop = GetTopPoint();
@@ -3144,7 +3148,7 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
 			{
 				fCanAddToPack = false;
 				const CItem* pCont = dynamic_cast<const CItem*>(pItem->GetContainer());
-				if (pPrevCont == pCont) //In the same cont, but unable to go there
+				if (pCont == nullptr || pPrevCont == pCont) //In the same cont, but unable to go there
 					fDropOnGround = true;
 				else //we changed the cont in the script
 				{
@@ -5506,6 +5510,11 @@ bool CChar::SetPrivLevel(CTextConsole * pSrc, lpctstr pszFlags)
 		return false;
 
 	CAccount *pAccount = m_pPlayer->GetAccount();
+    if (pAccount == nullptr)
+    {
+        return false;
+    }
+
 	PLEVEL_TYPE PrivLevel = CAccount::GetPrivLevelText(pszFlags);
 
 	// Remove Previous GM Robe
@@ -5642,7 +5651,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
             for (size_t i = 0; i < curEvents; ++i) // EVENTS (could be modifyed ingame!)
             {
                 CResourceLink* pLink = m_OEvents[i].GetRef();
-                if (fnShouldSkipLink(pLink))
+                if (pLink == nullptr || fnShouldSkipLink(pLink))
                     continue;
 
                 CResourceLock s;
@@ -5670,7 +5679,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 			for ( size_t i = 0; i < pCharDef->m_TEvents.size(); ++i )
 			{
 				CResourceLink * pLink = pCharDef->m_TEvents[i].GetRef();
-                if (fnShouldSkipLink(pLink))
+                if (pLink == nullptr || fnShouldSkipLink(pLink))
 					continue;
 
 				CResourceLock s;
@@ -5707,7 +5716,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 			for (size_t i = 0; i < g_Cfg.m_pEventsPetLink.size(); ++i)
 			{
 				CResourceLink * pLink = g_Cfg.m_pEventsPetLink[i].GetRef();
-                if (fnShouldSkipLink(pLink))
+                if (pLink == nullptr || fnShouldSkipLink(pLink))
 					continue;
 
 				CResourceLock s;
@@ -5729,7 +5738,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
 			for ( size_t i = 0; i < g_Cfg.m_pEventsPlayerLink.size(); ++i )
 			{
 				CResourceLink *pLink = g_Cfg.m_pEventsPlayerLink[i].GetRef();
-                if (fnShouldSkipLink(pLink))
+                if (pLink == nullptr || fnShouldSkipLink(pLink))
 					continue;
 
 				CResourceLock s;
@@ -6160,6 +6169,10 @@ bool CChar::OnTickPeriodic()
     if (IsClientActive())
     {
         CClient* pClient = GetClientActive();
+        if (pClient == nullptr)
+        {
+            return false;
+        }
 
         // Players have a silly "always run" flag that gets stuck on.
         if ( (iTimeCur - pClient->m_timeLastEventWalk) > (2 * MSECS_PER_TENTH) )

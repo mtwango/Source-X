@@ -184,7 +184,11 @@ int CSString::Resize(int iNewLength, bool fPreciseSize)
 #endif
 
         if (fValid)
+        {
             delete[] m_pchData;
+            m_pchData = nullptr;
+            m_iMaxLength = 0;
+        }
 
 		m_pchData = pNewData;
         m_iMaxLength = iNewMax;

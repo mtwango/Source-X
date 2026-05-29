@@ -97,13 +97,18 @@ void AbstractString::ensureLengthHeap(size_t newLength)
 			throw CSError(LOGL_FATAL, 0, "Run out of memory while allocating memory for string");
 		}
 
-		if (m_buf != nullptr)
+	    // Protection from use after freeing newBuf.
+        const char *oldBuf = m_buf;
+		if (oldBuf != nullptr)
 		{
-			Str_CopyLimitNull(newBuf, m_buf, m_length);
-			delete[] m_buf;
+		    Str_CopyLimitNull(newBuf, oldBuf, m_length);
 		}
 		newBuf[m_length] = 0;
-		m_buf = newBuf;
+	    m_buf = newBuf;
+	    if (oldBuf != nullptr)
+	    {
+	        delete[] oldBuf;
+	    }
 	}
 	m_length = newLength;
 	m_buf[m_length] = '\0';

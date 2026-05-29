@@ -90,7 +90,7 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, int iMaxDist
 		}
 	}
 
-	if ( abs(int(ptSrc.m_z) - int(ptDst.m_z)) >= 20 )
+	if ( abs(static_cast<int>(ptSrc.m_z) - static_cast<int>(ptDst.m_z)) >= 20 )
 		return false;
 	return true;	// made it all the way to the object with no obstructions.
 }
@@ -228,7 +228,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 	int lp_x = 0, lp_y = 0;
 	short min_z = 0, max_z = 0;
 
-	for (uint i = 0, pathSize = uint(path.size()); i < pathSize; lp_x = ptNow.m_x, lp_y = ptNow.m_y, pItemDef = nullptr, pStatic = nullptr, pMulti = nullptr, pMultiItem = nullptr, min_z = 0, max_z = 0, ++i )
+	for (uint i = 0, pathSize = static_cast<uint>(path.size()); i < pathSize; lp_x = ptNow.m_x, lp_y = ptNow.m_y, pItemDef = nullptr, pStatic = nullptr, pMulti = nullptr, pMultiItem = nullptr, min_z = 0, max_z = 0, ++i )
 	{
 		ptNow = path[i];
 		WARNLOS(("---------------------------------------------\n"));

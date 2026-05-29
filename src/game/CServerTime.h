@@ -80,7 +80,7 @@ void CServerTime::InitTime(int64 llTimeBase) noexcept
 
 bool CServerTime::IsTimeValid() const noexcept
 {
-    return bool(m_llPrivateTime > 0);
+    return m_llPrivateTime > 0;
 }
 
 int64 CServerTime::GetTimeDiff(const CServerTime & time) const noexcept

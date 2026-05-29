@@ -743,8 +743,8 @@ char CChar::GetFixZ( const CPointMap& pt, uint64 uiBlockFlags)
 	const short iZClimbed = pt.m_z + m_zClimbHeight;
     const height_t uiHeightMount = GetHeightMount( false );
 
-	const int iBlockMaxHeight = std::max(int(iZClimbed + uiHeightMount), int(INT8_MAX));
-	const height_t uiClimbHeight = height_t(std::max(short(iZClimbed + 2), short(UINT8_MAX)));
+	const int iBlockMaxHeight = std::max(iZClimbed + uiHeightMount, static_cast<int>(INT8_MAX));
+	const height_t uiClimbHeight = static_cast<height_t>(std::max(static_cast<short>(iZClimbed + 2), static_cast<short>(UINT8_MAX)));
 
 	CServerMapBlockingState block(uiBlockFlags, pt.m_z, iBlockMaxHeight, uiClimbHeight, uiHeightMount);
 	CWorldMap::GetFixPoint(pt, block);
@@ -1527,12 +1527,12 @@ height_t CChar::GetHeight() const
     auto gReader = g_ExprGlobals.mtEngineLockedReader();
     const uint uiDispID = pCharDef->GetDispID();
     char heightDef[20]{"height_"};
-    Str_FromUI(uint(uiDispID), heightDef + 7, sizeof(heightDef) - 7, 16);
+    Str_FromUI(uiDispID, heightDef + 7, sizeof(heightDef) - 7, 16);
     tmpHeight = (height_t)(gReader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_0a)
 		return tmpHeight;
 
-	Str_FromUI(uint(uiDispID), heightDef + 7, sizeof(heightDef) - 7, 10);
+	Str_FromUI(uiDispID, heightDef + 7, sizeof(heightDef) - 7, 10);
     tmpHeight = (height_t)(gReader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_10)
 		return tmpHeight;

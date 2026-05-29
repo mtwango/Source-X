@@ -432,7 +432,7 @@ void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
 	if ( uiSkillLevelFixed < (ushort)iSkillMax )	// are we in position to gain skill ?
 	{
 		// slightly more chance of decay than gain
-		if ( (iRoll * 3) <= int(iChance * 4) )
+		if ( (iRoll * 3) <= static_cast<int>(iChance * 4) )
 			Skill_Decay();
 
 		if (iDifficulty > 0 )
@@ -717,7 +717,7 @@ bool CChar::Skill_MakeItem_Success()
 		// minimum quality is 1, maximum quality is 200.  100 is average.
 
 		// How much variance? This is the difference in quality levels from what I can normally make.
-		int variance = 2 - (int)(log10( 1.0 + double(g_Rand.GetVal(250)) ));	// this should result in a value between 0 and 2
+		int variance = 2 - (int)(log10( 1.0 + static_cast<double>(g_Rand.GetVal(250)) ));	// this should result in a value between 0 and 2
 
 		// Determine if lower or higher quality
 		if ( !g_Rand.GetVal(2) )

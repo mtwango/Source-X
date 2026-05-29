@@ -865,7 +865,7 @@ bool CClient::Event_Walk( byte rawdir, byte sequence ) // Player moves
 	if ( !m_pChar )
 		return false;
 
-	DIR_TYPE dir = DIR_TYPE(rawdir & 0xF);
+	DIR_TYPE dir = static_cast<DIR_TYPE>(rawdir & 0xF);
 	if ( dir >= DIR_QTY )
 	{
 		new PacketMovementRej(this, sequence);
@@ -1206,7 +1206,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                         return;
                     }
 
-                    CCharBase* pPetDef = CCharBase::FindCharBase(CREID_TYPE(pItemPet->m_ttFigurine.m_idChar.GetResIndex()));
+                    CCharBase* pPetDef = CCharBase::FindCharBase(static_cast<CREID_TYPE>(pItemPet->m_ttFigurine.m_idChar.GetResIndex()));
                     if (pPetDef)
                     {
                         const short uiFollowerSlots = n64_narrow_n16(pItem->GetDefNum("FOLLOWERSLOTS", true));
@@ -1296,7 +1296,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
 
         if ((IsTrigUsed(TRIGGER_BUY)) || (IsTrigUsed(TRIGGER_ITEMBUY)))
         {
-            const int64 iItemCost = int64(wAmount) * items[i].m_price;
+            const int64 iItemCost = static_cast<int64>(wAmount) * items[i].m_price;
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(wAmount, iItemCost, 0, pVendor);
             pScriptArgs->m_VarsLocal.SetNum( "TOTALCOST", iCostTotal);

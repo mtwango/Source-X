@@ -2222,7 +2222,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 		pItemTarg->m_itLoom.m_ridCloth = CResourceIDBase(RES_ITEMDEF, pItemUse->GetDispID());
 
 		int iUsed = 0;
-		int iNeed = int(std::size(sm_Txt_LoomUse) - 1);
+		int iNeed = std::size(sm_Txt_LoomUse) - 1;
 		int iHave = pItemTarg->m_itLoom.m_iClothQty;
 		if ( iHave < iNeed )
 		{
@@ -2230,7 +2230,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 			iUsed = pItemUse->ConsumeAmount( (word)iNeed );
 		}
 
-		if ( (iHave + iUsed) < int(std::size(sm_Txt_LoomUse) - 1) )
+		if ( (iHave + iUsed) < static_cast<int>(std::size(sm_Txt_LoomUse) - 1) )
 		{
 			pItemTarg->m_itLoom.m_iClothQty += iUsed;
 			SysMessage( sm_Txt_LoomUse[ pItemTarg->m_itLoom.m_iClothQty ] );

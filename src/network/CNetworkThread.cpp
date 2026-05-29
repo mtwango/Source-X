@@ -226,7 +226,7 @@ CNetState* NetworkThreadStateIterator::next()
     {
         // current thread, we can use the thread's state list directly
         // find next non-null state
-        const int sz = int(m_thread->m_states.size());
+        const int sz = static_cast<int>(m_thread->m_states.size());
         while (m_nextIndex < sz)
         {
             CNetState* state = m_thread->m_states[m_nextIndex];

@@ -1097,10 +1097,9 @@ void CWorldTicker::ProcessTimedObjects()
     } // destroy mutex
     // Done working with _vTimedObjsTimeouts, we don't need the lock from now on.
 
-    lpctstr ptcSubDesc;
     for (CTimedObject* pTimedObj : _vTimedObjsTimeoutsBuffer)    // Loop through all msecs stored, unless we passed the timestamp.
     {
-        ptcSubDesc = "Generic";
+        lpctstr ptcSubDesc = "Generic";
 
         EXC_TRYSUB("Tick");
         EXC_SETSUB_BLOCK("Elapsed");

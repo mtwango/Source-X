@@ -335,7 +335,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	if (iDex < 80)
 	{
 		const float fDexMod = (80 - iDex) / 100.0f;
-		iParryChance = int((float)iParryChance * (1.0f - fDexMod));
+		iParryChance = static_cast<int>(static_cast<float>(iParryChance) * (1.0f - fDexMod));
 	}
 
 	return iParryChance;

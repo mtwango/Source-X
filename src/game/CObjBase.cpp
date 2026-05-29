@@ -1339,9 +1339,9 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
             SKIP_SEPARATORS(ptcKey);
             GETNONWHITESPACE(ptcKey);
 
-            COMPPROPS_TYPE id = (COMPPROPS_TYPE)Exp_GetVal(ptcKey);
+            COMPPROPS_TYPE id = static_cast<COMPPROPS_TYPE>(Exp_GetVal(ptcKey));
             bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
-            sVal.FormatVal(int(fRes));
+            sVal.FormatVal(static_cast<int>(fRes));
             break;
         }
 		case OC_ISCHAR:

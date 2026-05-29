@@ -2411,7 +2411,7 @@ bool CServer::CommandLinePostLoad( int argc, tchar * argv[] )
                     }
 
                     auto r = g_ExprGlobals.mtEngineLockedReader();
-                    ssize_t count = ssize_t(r->m_VarDefs.GetCount());
+                    ssize_t count = static_cast<ssize_t>(r->m_VarDefs.GetCount());
                     ssize_t i = 0;
                     for ( const CVarDefCont * pCont : r->m_VarDefs )
 					{
@@ -2430,7 +2430,7 @@ bool CServer::CommandLinePostLoad( int argc, tchar * argv[] )
                         return false;
                     }
 
-                    count = ssize_t(r->m_VarResDefs.GetCount());
+                    count = static_cast<ssize_t>(r->m_VarResDefs.GetCount());
                     i = 0;
                     for ( const CVarDefCont * pCont : r->m_VarResDefs )
                     {

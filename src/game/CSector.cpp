@@ -319,10 +319,10 @@ bool CSector::r_LoadVal( CScript &s )
 			SetWeatherChance( true, s.HasArgs() ? s.GetArgVal() : -1 );
 			return true;
 		case SC_SEASON:
-			SetSeason(s.HasArgs() ? SEASON_TYPE(s.GetArgVal()) : SEASON_Summer);
+			SetSeason(s.HasArgs() ? static_cast<SEASON_TYPE>(s.GetArgVal()) : SEASON_Summer);
 			return (true);
 		case SC_WEATHER:
-			SetWeather(s.HasArgs() ? WEATHER_TYPE(s.GetArgVal()) : WEATHER_DRY);
+			SetWeather(s.HasArgs() ? static_cast<WEATHER_TYPE>(s.GetArgVal()) : WEATHER_DRY);
 			return true;
 	}
 	EXC_CATCH;
@@ -386,7 +386,7 @@ bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
 				g_Log.EventWarn("AllowLightOverride flag is disabled in sphere.ini, so sector's LIGHT property wasn't set\n");
 			break;
 		case SEV_RAIN:
-			SetWeather(s.HasArgs() ? WEATHER_TYPE(s.GetArgVal()) : WEATHER_RAIN);
+			SetWeather(s.HasArgs() ? static_cast<WEATHER_TYPE>(s.GetArgVal()) : WEATHER_RAIN);
 			break;
 		case SEV_RESPAWN:
 			( toupper(s.GetArgRaw()[0]) == 'A' ) ? g_World.RespawnDeadNPCs() : RespawnDeadNPCs();
@@ -396,7 +396,7 @@ bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
 			( toupper(s.GetArgRaw()[0]) == 'A' ) ? g_World.Restock() : Restock();
 			break;
 		case SEV_SEASON:
-			SetSeason(SEASON_TYPE(s.GetArgVal()));
+			SetSeason(static_cast<SEASON_TYPE>(s.GetArgVal()));
 			break;
         case SEV_SLEEP:
             {
@@ -716,9 +716,9 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
 	{
 		// Clouds of some sort...
 		if (fNight)
-			uiTargLight += byte( g_Rand.Get16ValFast( 2 ) + 1 );	// 1-2 light levels darker if cloudy at night
+			uiTargLight += static_cast<byte>(g_Rand.Get16ValFast(2) + 1);	// 1-2 light levels darker if cloudy at night
 		else
-			uiTargLight += byte( g_Rand.Get16ValFast( 4 ) + 1 );	// 1-4 light levels darker if cloudy during the day.
+			uiTargLight += static_cast<byte>(g_Rand.Get16ValFast(4) + 1);	// 1-4 light levels darker if cloudy during the day.
 	}
 
 	if ( fNight )

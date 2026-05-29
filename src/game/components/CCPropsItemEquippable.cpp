@@ -637,7 +637,7 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
         {
             case PROPIEQUIP_HITSPELL: // unimplemented
             {
-                SPELL_TYPE iSpellNumber = SPELL_TYPE(g_Cfg.ResourceGetID(RES_SPELL, ptcVal, 0).GetResIndex());
+                SPELL_TYPE iSpellNumber = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetID(RES_SPELL, ptcVal, 0).GetResIndex());
                 const CSpellDef * pSpellDef = g_Cfg.GetSpellDef(iSpellNumber);
                 if (!pSpellDef)
                     break;

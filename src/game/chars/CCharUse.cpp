@@ -905,7 +905,7 @@ void CChar::Use_EatQty( CItem * pFood, ushort uiQty )
 
 	if ( (uiQty > 1) && ((uiRestore * uiQty) > iSpace) )
     {
-        uiQty = ushort(iSpace / uiRestore);
+        uiQty = static_cast<ushort>(iSpace / uiRestore);
         uiQty = maximum(1, uiQty);
     }
 

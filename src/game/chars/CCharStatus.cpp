@@ -2008,7 +2008,7 @@ CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, DIR_TYP
             if (!ptOld.IsValidPoint())
             {
                 g_Log.EventWarn("Character with UID=0%x on invalid location %d,%d,%d,%d wants to move into another invalid location %d,%d,%d,%d. Is pathfinding check: %d\n",
-                    GetUID().GetObjUID(), ptOld.m_x, ptOld.m_y, ptOld.m_z, ptOld.m_map, ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map, int(fPathFinding));
+                    GetUID().GetObjUID(), ptOld.m_x, ptOld.m_y, ptOld.m_z, ptOld.m_map, ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map, static_cast<int>(fPathFinding));
             }
             return nullptr;
         }

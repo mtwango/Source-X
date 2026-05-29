@@ -2365,7 +2365,7 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	}
 
 	OpenPacketTransaction transaction(this, PacketSend::PRI_NORMAL);
-	addOpenGump( pBook, GUMP_TYPE(gumpID));
+	addOpenGump( pBook, static_cast<GUMP_TYPE>(gumpID));
 	if (count <= 0)
 		return;
 

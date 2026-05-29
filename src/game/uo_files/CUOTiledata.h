@@ -21,7 +21,7 @@ public:
     void Load();
     uint GetItemMaxIndex() const {
         ASSERT(!_tiledataItemEntries.empty());
-        return uint(_tiledataItemEntries.size() - 1);
+        return static_cast<uint>(_tiledataItemEntries.size() - 1);
     }
     const CUOItemTypeRec_HS* GetItemEntry(ITEMID_TYPE id) const {
         return &(_tiledataItemEntries[id]);

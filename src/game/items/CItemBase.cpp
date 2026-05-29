@@ -1683,7 +1683,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                  * xwerswoodx
                  */
                  if (!pItemDef->IsDupedItem(id))
-                    id = ITEMID_TYPE(pItemDef->m_dwDispIndex);
+                    id = static_cast<ITEMID_TYPE>(pItemDef->m_dwDispIndex);
 
                 if ( ! IsValidDispID(id) )
                 {

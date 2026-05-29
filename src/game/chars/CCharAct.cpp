@@ -4029,7 +4029,7 @@ bool CChar::Horse_Mount(CChar *pHorse)
         if ( OnTrigger(CTRIG_Mount, pScriptArgs, this) == TRIGRET_RET_TRUE )
 		    return false;
 
-	    memoryId = ITEMID_TYPE(pScriptArgs->m_iN1);
+	    memoryId = static_cast<ITEMID_TYPE>(pScriptArgs->m_iN1);
         //(ITEMID_TYPE) Args.m_iN1;
 	}
 
@@ -4259,7 +4259,7 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 		if (iDist <= g_Cfg.m_iMapViewSizeMax)
 		{
 			if (iSkill >= 1000)		//Lethal-Deadly
-				iPoisonLevel = 3 + !bool(g_Rand.GetVal(10));
+				iPoisonLevel = 3 + !static_cast<bool>(g_Rand.GetVal(10));
 			else if (iSkill > 850)	//Greater
 				iPoisonLevel = 2;
 			else if (iSkill > 650)	//Standard
@@ -4800,7 +4800,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 	EXC_TRY("CanMoveWalkTo");
 	EXC_SET_BLOCK("Check Valid Move");
 
-	pArea = CheckValidMove(ptDst, &uiBlockFlags, DIR_TYPE(dir & ~DIR_MASK_RUNNING), &ClimbHeight, fPathFinding);
+	pArea = CheckValidMove(ptDst, &uiBlockFlags, static_cast<DIR_TYPE>(dir & ~DIR_MASK_RUNNING), &ClimbHeight, fPathFinding);
 	if ( !pArea )
 	{
 		if (g_Cfg.m_iDebugFlags & DEBUGF_WALK && IsPlayer())
@@ -4863,7 +4863,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 			{
 
 				pVal = GetKey("OVERRIDE.STAMINAWALKINGPENALTY", true);
-				uiStamPenalty = (ushort)std::min(USHRT_MAX, int(pVal ? pVal->GetValNum() : 1));
+				uiStamPenalty = (ushort)std::min(USHRT_MAX, static_cast<int>(pVal ? pVal->GetValNum() : 1));
 
 			}
 			uiStamReq += uiStamPenalty;
@@ -4872,11 +4872,11 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
         {
             //Overweight and lost more stamina each step
 
-            ushort uiWeightPenalty = ushort(g_Cfg.m_iStaminaLossOverweight + ((iWeight - iMaxWeight) / 5));
+            ushort uiWeightPenalty = static_cast<ushort>(g_Cfg.m_iStaminaLossOverweight + ((iWeight - iMaxWeight) / 5));
             if (IsStatFlag(STATF_ONHORSE))
 				uiWeightPenalty /= 3;
 			if (IsStatFlag(STATF_FLY | STATF_HOVERING))
-				uiWeightPenalty += ushort((uiWeightPenalty * g_Cfg.m_iStamRunningPenaltyOverweight) / 100);
+				uiWeightPenalty += static_cast<ushort>((uiWeightPenalty * g_Cfg.m_iStamRunningPenaltyOverweight) / 100);
 
             uiStamReq += uiWeightPenalty;
         }

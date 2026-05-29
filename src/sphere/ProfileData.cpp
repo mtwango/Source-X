@@ -148,7 +148,7 @@ bool ProfileData::IsEnabled(PROFILE_TYPE id) const noexcept
 	// check all profiles
 	for (int i = PROFILE_OVERHEAD; i < PROFILE_QTY; ++i)
 	{
-		if (IsEnabled( PROFILE_TYPE(i) ))
+		if (IsEnabled( static_cast<PROFILE_TYPE>(i) ))
 			return true;
 	}
 

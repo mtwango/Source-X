@@ -1657,7 +1657,7 @@ void CChar::Fight_SetDefaultSwingDelays()
     // Be wary that with the new animation packet the anim delay ("speed") is always 1.0 s, no matter the value we send, and then the char will keep waiting the remaining time.
     // With the old packet, the minimum anim delay is 1.0s, it doesn't matter if you send 0.
 
-    int16 iAttackSpeed = int16(g_Cfg.Calc_CombatAttackSpeed(this, m_uidWeapon.ItemFind()));
+    int16 iAttackSpeed = static_cast<int16>(g_Cfg.Calc_CombatAttackSpeed(this, m_uidWeapon.ItemFind()));
     if (iAttackSpeed < kiMinSwingAnimationDelay)
         iAttackSpeed = kiMinSwingAnimationDelay;
     if (IsSetCombatFlags(COMBAT_ANIM_HIT_SMOOTH))

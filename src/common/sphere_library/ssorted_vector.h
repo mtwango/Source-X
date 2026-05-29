@@ -9,7 +9,7 @@
 namespace sl
 {
         consteval size_t scont_bad_index() noexcept {
-            return size_t(-1);
+            return static_cast<size_t>(-1);
         }
 
         // --

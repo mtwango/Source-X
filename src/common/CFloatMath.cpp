@@ -274,7 +274,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
                     if ( *ptcRefArgs )
 					{
 						iCount = 1;
-                        rResult = ResGetIndex(int(MakeFloatMath(ptcRefArgs))); // ResGetIndex
+                        rResult = ResGetIndex(static_cast<int>(MakeFloatMath(ptcRefArgs))); // ResGetIndex
 					}
 					else
 					{

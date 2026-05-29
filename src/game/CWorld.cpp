@@ -361,7 +361,7 @@ dword CWorldThread::AllocUID( dword dwIndex, CObjBase * pObj )
 setcount:
 		// We have run out of free UID's !!! Grow the array
 		const size_t uiOldArraySize = _uiUIDObjArraySize;
-		_uiUIDObjArraySize = size_t((dwIndex + 0x1000u) & ~0xFFFu);
+		_uiUIDObjArraySize = static_cast<size_t>((dwIndex + 0x1000u) & ~0xFFFu);
 
 		CObjBase** pNewBlock = (CObjBase**)realloc(_ppUIDObjArray, _uiUIDObjArraySize * sizeof(CObjBase*));
 		if (pNewBlock == nullptr)

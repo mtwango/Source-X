@@ -2055,12 +2055,12 @@ height_t CItem::GetHeight() const
     auto reader = g_ExprGlobals.mtEngineLockedReader();
 
     char heightDef[24]{"itemheight_"};
-    Str_FromUI(uint(uiDispID), heightDef + 11, sizeof(heightDef) - 11, 16);
+    Str_FromUI(uiDispID, heightDef + 11, sizeof(heightDef) - 11, 16);
     tmpHeight = static_cast<height_t>(reader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_0a)
 		return tmpHeight;
 
-    Str_FromUI(uint(uiDispID), heightDef + 11, sizeof(heightDef) - 11, 10);
+    Str_FromUI(uiDispID, heightDef + 11, sizeof(heightDef) - 11, 10);
     tmpHeight = static_cast<height_t>(reader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_10)
 		return tmpHeight;
@@ -4389,11 +4389,11 @@ bool CItem::IsSpellInBook( SPELL_TYPE spell ) const
 {
 	ADDTOCALLSTACK("CItem::IsSpellInBook");
 	CItemBase *pItemDef = Item_GetDef();
-	if ( uint(spell) <= pItemDef->m_ttSpellbook.m_iOffset || spell < 0)
+	if ( static_cast<uint>(spell) <= pItemDef->m_ttSpellbook.m_iOffset || spell < 0)
 		return false;
 
 	// Convert spell back to format of the book and check whatever it is in.
-	const uint i = uint(spell) - (pItemDef->m_ttSpellbook.m_iOffset + 1u);
+	const uint i = static_cast<uint>(spell) - (pItemDef->m_ttSpellbook.m_iOffset + 1u);
 	if ( i < 32 ) // Replaced the <= with < because of the formula above, the first 32 spells have an i value from 0 to 31 and are stored in more1.
 		return ((m_itSpellbook.m_spells1 & (1u << i)) != 0);
     if (i < 64)   // Replaced the <= with < because of the formula above, the remaining 32 spells have an i value from 32 to 63 and are stored in more2.
@@ -4410,11 +4410,11 @@ uint CItem::GetSpellcountInBook() const
 	// n = number of spells
 
 	if ( !IsTypeSpellbook() )
-		return uint(-1);
+		return static_cast<uint>(-1);
 
 	const CItemBase *pItemDef = Item_GetDef();
 	if ( !pItemDef )
-		return uint(-1);
+		return static_cast<uint>(-1);
 
 	const uint min = pItemDef->m_ttSpellbook.m_iOffset + 1;
 	const uint max = pItemDef->m_ttSpellbook.m_iOffset + pItemDef->m_ttSpellbook.m_iMaxSpells;
@@ -4469,7 +4469,7 @@ uint CItem::AddSpellbookSpell( SPELL_TYPE spell, bool fUpdate )
 	if ( !IsTypeSpellbook() )
 		return 3;
 	const CItemBase *pBookDef = Item_GetDef();
-	if ( uint(spell) <= pBookDef->m_ttSpellbook.m_iOffset )
+	if ( static_cast<uint>(spell) <= pBookDef->m_ttSpellbook.m_iOffset )
 		return 3;
 	const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
 	if ( !pSpellDef )

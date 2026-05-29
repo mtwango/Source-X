@@ -85,7 +85,7 @@ bool CCharNPC::r_LoadVal( CChar * pChar, CScript &s )
             m_Act_Motivation = s.GetArgUCVal();
 			break;
 		case CNC_NPC:
-			m_Brain = NPCBRAIN_TYPE(s.GetArgVal());
+			m_Brain = static_cast<NPCBRAIN_TYPE>(s.GetArgVal());
 			break;
 		case CNC_HOMEDIST:
 			if ( ! pChar->m_ptHome.IsValidPoint())

@@ -87,7 +87,7 @@ void CSString::InitDefault()
 
     m_iMaxLength = CSTRING_DEFAULT_SIZE;
 	m_iLength = 0;
-    m_pchData = new tchar[size_t(m_iMaxLength + 1)];
+    m_pchData = new tchar[static_cast<size_t>(m_iMaxLength + 1)];
 	m_pchData[m_iLength] = '\0';
 #ifdef DEBUG_STRINGS
         gMemAmount += m_iMaxLength;
@@ -162,7 +162,7 @@ int CSString::Resize(int iNewLength, bool fPreciseSize)
         tchar *pNewData = nullptr;
         try
         {
-            pNewData = new tchar[size_t(iNewMax + 1)];
+            pNewData = new tchar[static_cast<size_t>(iNewMax + 1)];
         }
         catch (const std::bad_alloc &)
         {
@@ -276,7 +276,7 @@ void CSString::Copy(lpctstr pszStr)
     }
 
     Resize((int)uiLen, true); // it adds a +1
-    Str_CopyLimitNull(m_pchData, pszStr, size_t(uiLen + 1));
+    Str_CopyLimitNull(m_pchData, pszStr, uiLen + 1);
 }
 
 void CSString::CopyLen(lpctstr pszStr, int iLen)
@@ -301,7 +301,7 @@ void CSString::CopyLen(lpctstr pszStr, int iLen)
     }
 
     Resize(iLen, true); // it adds a +1
-    Str_CopyLimitNull(m_pchData, pszStr, size_t(iLen + 1));
+    Str_CopyLimitNull(m_pchData, pszStr, static_cast<size_t>(iLen + 1));
 }
 
 
@@ -593,8 +593,8 @@ int CSString::indexOf(const CSString& str, int offset) noexcept
 	if (slen > len)
 		return -1;
 
-	tchar * str_value = new tchar[size_t(slen + 1)];
-	Str_CopyLimitNull(str_value, str.GetBuffer(), size_t(slen+1));
+	tchar * str_value = new tchar[static_cast<size_t>(slen + 1)];
+	Str_CopyLimitNull(str_value, str.GetBuffer(), static_cast<size_t>(slen+1));
 	tchar firstChar = str_value[0];
 
 	for (int i = offset; i < len; ++i)

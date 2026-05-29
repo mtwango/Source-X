@@ -153,7 +153,7 @@ bool cstr_to_num(
 
             while (*str)
             {
-                if (stop_at_len && (size_t(str - startDigits) >= stop_at_len))
+                if (stop_at_len && (static_cast<size_t>(str - startDigits) >= stop_at_len))
                     break;
 
                 const char c = *str;
@@ -193,7 +193,7 @@ bool cstr_to_num(
 
             while (*str)
             {
-                if (stop_at_len && (size_t(str - startDigits) >= stop_at_len))
+                if (stop_at_len && (static_cast<size_t>(str - startDigits) >= stop_at_len))
                     break;
 
                 const char c = *str;
@@ -221,13 +221,13 @@ bool cstr_to_num(
         // Generic path: other bases (2-15, cold path)
         default:
         {
-            const _UIntType base_casted = uint8_t(base);
+            const _UIntType base_casted = static_cast<uint8_t>(base);
             const _UIntType maxDiv = limit / base_casted;
             const _UIntType maxRem = limit % base_casted;
 
             while (*str)
             {
-                if (stop_at_len && (size_t(str - startDigits) >= stop_at_len))
+                if (stop_at_len && (static_cast<size_t>(str - startDigits) >= stop_at_len))
                     break;
 
                 const char c = *str;
@@ -471,8 +471,8 @@ static constexpr std::array<char, 200> DEC_00_99 = []{
     for (int i = 0; i < 100; ++i) {
         const int tens = i / 10;            // exact for 0..99
         const int ones = i - tens * 10;     // exact for 0..99
-        a[2*i + 0] = char('0' + tens);
-        a[2*i + 1] = char('0' + ones);
+        a[2*i + 0] = static_cast<char>('0' + tens);
+        a[2*i + 1] = static_cast<char>('0' + ones);
     }
     return a;
 }();
@@ -858,7 +858,7 @@ err:
     if (fPrintError) {
         g_Log.EventError("Buffer size too small for snprintf.\n");
     }
-    return (uiBufSize > 1) ? int(uiBufSize - 1) : 0; // Bytes written, excluding the string terminator.
+    return (uiBufSize > 1) ? static_cast<int>(uiBufSize - 1) : 0; // Bytes written, excluding the string terminator.
 }
 
 bool IsStrEmpty( const tchar * pszTest ) noexcept
@@ -1242,19 +1242,19 @@ int Str_GetBare(tchar * ptcOut, const tchar *ptcSrc, size_t uiMaxOutSize, const 
     // Process each char until SRC ends or output buffer is full
     for (; *ptcSrc && out < outEnd; ++ptcSrc)
     {
-        const uchar ch = uchar(*ptcSrc);
+        const uchar ch = static_cast<uchar>(*ptcSrc);
 
         if (ch < ' ' || ch >= 127)  // or !std::isprint(ch)
             continue;	// Special format chars.
         if (strchr(ptcStripList, ch))
             continue;
 
-        *out++ = tchar(ch);
+        *out++ = static_cast<tchar>(ch);
     }
 
     // NUL-terminate and return length
     *out = '\0';
-    return int(out - ptcOut);
+    return static_cast<int>(out - ptcOut);
 }
 
 /* Old impl.
@@ -1394,7 +1394,7 @@ tchar * Str_GetUnQuoted(lptstr_restrict pStr) noexcept
     GETNONWHITESPACE(pStr);
     if (*pStr != '"')
     {
-        Str_TrimEndWhitespace(pStr, int(strlen(pStr)));
+        Str_TrimEndWhitespace(pStr, static_cast<int>(strlen(pStr)));
         return pStr;
     }
 
@@ -1410,7 +1410,7 @@ tchar * Str_GetUnQuoted(lptstr_restrict pStr) noexcept
         }
     }
 
-    Str_TrimEndWhitespace(pStr, int(pEnd - pStr));
+    Str_TrimEndWhitespace(pStr, static_cast<int>(pEnd - pStr));
     return pStr;
 }
 
@@ -1649,7 +1649,7 @@ bool Str_Untrusted_InvalidTermination(const tchar * pszIn, size_t uiMaxAcceptabl
 
     const tchar * p = pszIn;
     while ((*p != '\0') && (*p != 0x0A /* '\n' */) && (*p != 0x0D /* '\r' */)
-           && ((p - pszIn) < ptrdiff_t(uiMaxAcceptableSize)))
+           && ((p - pszIn) < static_cast<ptrdiff_t>(uiMaxAcceptableSize)))
     {
         ++p;
     }
@@ -1663,7 +1663,7 @@ bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize) 
         return true;
 
     const tchar * p = pszIn;
-    while (*p != '\0' && ((p - pszIn) < ptrdiff_t(uiMaxAcceptableSize))
+    while (*p != '\0' && ((p - pszIn) < static_cast<ptrdiff_t>(uiMaxAcceptableSize))
         &&  (
             ((*p >= 'A') && (*p <= 'Z')) ||
             ((*p >= 'a') && (*p <= 'z')) ||

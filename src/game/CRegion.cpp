@@ -88,7 +88,7 @@ bool CRegion::RealizeRegion()
             //	Yes, this sector is overlapped, so add it to the sector list
 			if ( !pSector->LinkRegion(this) )
 			{
-				g_Log.EventError("Linking sector #%d (map %d) for region %s failed (fatal for this region).\n", i, int(m_pt.m_map), GetName());
+				g_Log.EventError("Linking sector #%d (map %d) for region %s failed (fatal for this region).\n", i, static_cast<int>(m_pt.m_map), GetName());
 				return false;
 			}
 			++m_iLinkedSectors;

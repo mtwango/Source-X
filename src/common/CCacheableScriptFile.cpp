@@ -263,8 +263,8 @@ tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, int sizemax)
         return pBuffer;
 
     size_t bytes_to_copy = uiSize;
-    if (bytes_to_copy >= size_t(sizemax))
-        bytes_to_copy = size_t(sizemax) - 1;
+    if (bytes_to_copy >= static_cast<size_t>(sizemax))
+        bytes_to_copy = static_cast<size_t>(sizemax) - 1;
     //if (!cur_line.empty())
     //{
         size_t copied = Str_CopyLimit(pBuffer, cur_line.data(), bytes_to_copy);

@@ -66,7 +66,7 @@ std::string CUOClientVersion::GetVersionString() const noexcept
 
         if (m_build)
         {
-            ret[iWrittenChars] = uchar(m_build) + uchar('a' - 1); // 'a' = 'patch' 1
+            ret[iWrittenChars] = static_cast<uchar>(m_build) + static_cast<uchar>('a' - 1); // 'a' = 'patch' 1
             ++iWrittenChars;
         }
         if (m_build_sub)
@@ -225,7 +225,7 @@ void CUOClientVersion::ApplyVersionFromStringOldFormat(lptstr ptcVersion) noexce
     {
         if (IsAlpha(ptcVersion[uiLetterPos]))
         {
-            uiLetter = uchar(ptcVersion[uiLetterPos] - 'a') + 1u;
+            uiLetter = static_cast<uchar>(ptcVersion[uiLetterPos] - 'a') + 1u;
             break;
         }
     }
@@ -242,14 +242,14 @@ void CUOClientVersion::ApplyVersionFromStringOldFormat(lptstr ptcVersion) noexce
         return;
     }
 
-    m_major = uint(atoi(piVer[0]));
-    m_minor = uint(atoi(piVer[1]));
-    m_revision = uint(atoi(piVer[2]));
+    m_major = static_cast<uint>(atoi(piVer[0]));
+    m_minor = static_cast<uint>(atoi(piVer[1]));
+    m_revision = static_cast<uint>(atoi(piVer[2]));
     m_build = uiLetter;
 
     ++ uiLetterPos;
     if (ptcVersion[uiLetterPos] != '\0')
-        m_build_sub = uint(atoi(ptcVersion + uiLetterPos));
+        m_build_sub = static_cast<uint>(atoi(ptcVersion + uiLetterPos));
 }
 
 void CUOClientVersion::ApplyVersionFromStringNewFormat(lptstr ptcVersion, bool fEnhancedClient) noexcept

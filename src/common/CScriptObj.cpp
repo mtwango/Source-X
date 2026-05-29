@@ -1395,7 +1395,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 		case SSV_NEWNPC:
 			{
-				CREID_TYPE id = CREID_TYPE(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgRaw()));
+				CREID_TYPE id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgRaw()));
 				CChar * pChar = CChar::CreateNPC(id);
 				if ( !pChar )
 				{
@@ -1429,7 +1429,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 	            if (iQty <= 0)
 	                return false;
 
-	            CREID_TYPE id = CREID_TYPE(g_Cfg.ResourceGetIndexType(RES_CHARDEF, ppCmd[0]));
+	            CREID_TYPE id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, ppCmd[0]));
 	            CChar * pChar = CChar::CreateNPC(id);
 	            CChar * pCharSrc = nullptr;
 	            if (!pChar)
@@ -2570,7 +2570,7 @@ jump_in:
 					pResult->Copy( s.GetArgStr() );
 					return clean_return(TRIGRET_RET_TRUE);
 				}
-				return clean_return(TRIGRET_TYPE(s.GetArgVal()));
+				return clean_return(static_cast<TRIGRET_TYPE>(s.GetArgVal()));
 
 			case SK_IF:
 				{

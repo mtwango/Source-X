@@ -46,7 +46,7 @@ void CChar::Stat_SetMod( STAT_TYPE i, int iVal )
 	}
 
 	const int iPrevVal = iVal;
-    iVal = std::clamp(iVal, int(-UINT16_MAX), int(UINT16_MAX));
+    iVal = std::clamp(iVal, -UINT16_MAX, static_cast<int>(UINT16_MAX));
 	if (iVal != iPrevVal)
     {
 		g_Log.EventError("Trying to set MOD%s to invalid value=%d. Defaulting it to %d.\n",
@@ -101,7 +101,7 @@ void CChar::Stat_SetMaxMod( STAT_TYPE i, int iVal )
     }
 
 	const int iPrevVal = iVal;
-    iVal = std::clamp(iVal, int(-UINT16_MAX), int(UINT16_MAX));
+    iVal = std::clamp(iVal, -UINT16_MAX, static_cast<int>(UINT16_MAX));
 	if (iVal != iPrevVal)
     {
 		g_Log.EventError("Trying to set MODMAX%s to invalid value=%d. Defaulting it to %d.\n",
@@ -128,7 +128,7 @@ void CChar::Stat_AddMaxMod( STAT_TYPE i, int iVal )
         return;
 
 	const int iPrevVal = iVal;
-    iVal = std::clamp(iVal, int(-UINT16_MAX), int(UINT16_MAX));
+    iVal = std::clamp(iVal, -UINT16_MAX, static_cast<int>(UINT16_MAX));
 	if (iVal != iPrevVal)
     {
 		g_Log.EventError("Trying to add to MODMAX%s an invalid value=%d. Defaulting the addend to %d.\n",
@@ -191,7 +191,7 @@ void CChar::Stat_AddVal( STAT_TYPE i, int iVal )
     ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
 
     int iPrevVal = iVal;
-    iVal = std::clamp(iVal, int(-UINT16_MAX), int(UINT16_MAX));
+    iVal = std::clamp(iVal, -UINT16_MAX, static_cast<int>(UINT16_MAX));
 	if (iVal != iPrevVal)
     {
 		g_Log.EventError("Trying to add to %s an invalid value=%d. Defaulting the addend to %d.\n",
@@ -301,7 +301,7 @@ ushort CChar::Stat_GetMax( STAT_TYPE i ) const
 ushort CChar::Stat_GetMaxAdjusted( STAT_TYPE i ) const
 {
     ADDTOCALLSTACK("CChar::Stat_GetMaxAdjusted");
-    return ushort(Stat_GetMax(i) + Stat_GetMaxMod(i));
+    return static_cast<ushort>(Stat_GetMax(i) + Stat_GetMaxMod(i));
 }
 
 uint CChar::Stat_GetSum() const
@@ -317,7 +317,7 @@ uint CChar::Stat_GetSum() const
 ushort CChar::Stat_GetAdjusted( STAT_TYPE i ) const
 {
 	ADDTOCALLSTACK_DEBUG("CChar::Stat_GetAdjusted");
-    return ushort(Stat_GetBase(i) + Stat_GetMod(i));
+    return static_cast<ushort>(Stat_GetBase(i) + Stat_GetMod(i));
 }
 
 ushort CChar::Stat_GetBase( STAT_TYPE i ) const
@@ -334,7 +334,7 @@ void CChar::Stat_AddBase( STAT_TYPE i, int iVal )
     if (iVal == 0)
         return;
 
-	Stat_SetBase( i, ushort(Stat_GetBase(i) + iVal) );
+	Stat_SetBase( i, static_cast<ushort>(Stat_GetBase(i) + iVal) );
 }
 
 void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
@@ -358,7 +358,7 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 			// do not restore argn1 to i, bad things will happen! leave i untouched. (matex)
 
             int64 iPrevVal = pScriptArgs->m_iN3;
-            int64 iVal = std::clamp(iPrevVal, int64(-UINT16_MAX), int64(UINT16_MAX));
+            int64 iVal = std::clamp(iPrevVal, static_cast<int64>(-UINT16_MAX), static_cast<int64>(UINT16_MAX));
             if (iVal != iPrevVal)
             {
                 g_Log.EventError("Trying to set %s to invalid value=%" PRId64 ". Defaulting it to %" PRId64 ".\n",
@@ -378,7 +378,7 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 				// do not restore argn1 to i, bad things will happen! leave i untouched. (matex)
 
                 iPrevVal = pScriptArgs->m_iN3;
-                iVal = std::clamp(iPrevVal, int64(-UINT16_MAX), int64(UINT16_MAX));
+                iVal = std::clamp(iPrevVal, static_cast<int64>(-UINT16_MAX), static_cast<int64>(UINT16_MAX));
                 if (iVal != iPrevVal)
                 {
                     g_Log.EventError("Trying to set MAX%s to invalid value=%" PRId64 ". Defaulting it to %" PRId64 ".\n",
@@ -631,7 +631,7 @@ void CChar::Stats_AddRegenVal(STAT_TYPE iStat, int iVal)
     if (iVal == 0)
         return;
 
-    m_Stat[iStat].m_regenVal = ushort(m_Stat[iStat].m_regenVal + iVal);
+    m_Stat[iStat].m_regenVal = static_cast<ushort>(m_Stat[iStat].m_regenVal + iVal);
 }
 
 SKILLLOCK_TYPE CChar::Stat_GetLock(STAT_TYPE stat)

@@ -315,12 +315,12 @@ bool CServerDef::r_LoadVal( CScript & s )
 			// Treat it as a value or a string.
 			if ( IsDigit( ptcArg[0] ))
             {
-				m_eAccApp = ACCAPP_TYPE(s.GetArgVal() );
+				m_eAccApp = static_cast<ACCAPP_TYPE>(s.GetArgVal());
             }
 			else
 			{
 				// Treat it as a string. "Manual","Automatic","Guest"
-				m_eAccApp = ACCAPP_TYPE(FindTable(ptcArg, sm_AccAppTable, std::size(sm_AccAppTable)));
+				m_eAccApp = static_cast<ACCAPP_TYPE>(FindTable(ptcArg, sm_AccAppTable, std::size(sm_AccAppTable)));
 			}
 			if ( m_eAccApp < 0 || m_eAccApp >= ACCAPP_QTY )
 				m_eAccApp = ACCAPP_Unspecified;

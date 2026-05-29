@@ -135,7 +135,7 @@ bool CPathFinder::FindPath() //A* algorithm
 			while (Current->_Parent)
 			{
                 Current = Current->_Parent;
-				m_LastPath.emplace_front(short(Current->m_x + m_RealX), short(Current->m_y + m_RealY), char(0), Current->m_map);
+				m_LastPath.emplace_front(static_cast<short>(Current->m_x + m_RealX), static_cast<short>(Current->m_y + m_RealY), static_cast<char>(0), Current->m_map);
 			}
 			Clear();
 			return true; // path found

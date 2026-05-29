@@ -322,7 +322,7 @@ llong CSQLite::GetLastInsertRowID()
 	if (m_sqlite3==nullptr)
         return 0; // RowID's starts with 1...
 
-	return llong(sqlite3_last_insert_rowid(m_sqlite3));
+	return sqlite3_last_insert_rowid(m_sqlite3);
 }
 
 bool CSQLite::BeginTransaction()

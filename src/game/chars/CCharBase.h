@@ -78,11 +78,11 @@ public:
 
 	CREID_TYPE GetID() const noexcept
 	{
-		return CREID_TYPE(GetResourceID().GetResIndex());
+		return static_cast<CREID_TYPE>(GetResourceID().GetResIndex());
 	}
 	CREID_TYPE GetDispID() const noexcept
 	{
-		return CREID_TYPE(m_dwDispIndex);
+		return static_cast<CREID_TYPE>(m_dwDispIndex);
 	}
 	bool SetDispID( CREID_TYPE id );
 

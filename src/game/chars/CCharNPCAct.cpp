@@ -681,10 +681,10 @@ int CChar::NPC_WalkToPoint( bool fRun )
                     if (iDex < 75)
                         iDex = 75;
                 }
-                iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast(int32(100 - (iDex*tTick) / 100) / 5) * MSECS_PER_SEC / 10;   // TODO MSEC to TICK? custom timers for npc's movement?
+                iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 5) * MSECS_PER_SEC / 10;   // TODO MSEC to TICK? custom timers for npc's movement?
             }
             else
-                iTickNext = MSECS_PER_SEC + g_Rand.GetValFast(int32(100 - (iDex*tTick) / 100) / 3) * MSECS_PER_SEC / 10;
+                iTickNext = MSECS_PER_SEC + g_Rand.GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 3) * MSECS_PER_SEC / 10;
         }
 
         if (iTickNext < MSECS_PER_TENTH) // Do not allow less than a tenth of second. This may be decreased in the future to allow more precise timers, at the cost of cpu.
@@ -1128,7 +1128,7 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
     const int iRand = g_Rand.Get16ValFast(g_Cfg.m_iMapViewRadar);
     const CPointMap& ptTop(GetTopPoint());
 
-    int iRange = std::min(GetVisualRange(), int(g_Cfg.m_iMapViewRadar));
+    int iRange = std::min(GetVisualRange(), static_cast<int>(g_Cfg.m_iMapViewRadar));
 	int iRangeBlur = UO_MAP_VIEW_SIGHT;
 
 	// If I can't move don't look too far.
@@ -1231,7 +1231,7 @@ void CChar::NPC_Act_Wander()
 		return;
 
     // Call the rand function once, since repeated calls can be expensive (and this function is called a LOT of times, if there are lots of active NPCs).
-    const uint uiRand = uint32_t(g_Rand.Get16ValFast(100));
+    const uint uiRand = static_cast<uint32_t>(g_Rand.Get16ValFast(100));
 	int iStopWandering = 0;
 
     if ( !(uiRand % (7u + (Stat_GetVal(STAT_DEX) / 30u))) )

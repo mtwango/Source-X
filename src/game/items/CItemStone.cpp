@@ -470,7 +470,7 @@ bool CItemStone::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSr
 			if ( *pszCmd )
 			{
 				SKIP_ARGSEP(pszCmd);
-				STONEPRIV_TYPE iPriv = STONEPRIV_TYPE(Exp_GetVal(pszCmd));
+				STONEPRIV_TYPE iPriv = static_cast<STONEPRIV_TYPE>(Exp_GetVal(pszCmd));
 
 				for (; pMember != nullptr; pMember = pMember->GetNext())
 				{
@@ -889,7 +889,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 		case ISV_CHANGEALIGN:
 			if ( s.HasArgs())
 			{
-				SetALIGNTYPE(STONEALIGN_TYPE(s.GetArgVal()));
+				SetALIGNTYPE(static_cast<STONEALIGN_TYPE>(s.GetArgVal()));
 				tchar *pszMsg = Str_GetTemp();
 				snprintf(pszMsg, SCRIPT_MAX_LINE_LEN, "%s is now a %s %s\n", GetName(), GetAlignName(), GetTypeName());
 				Speak(pszMsg);

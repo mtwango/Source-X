@@ -58,14 +58,14 @@ bool CSkillClassDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole *
             int i = g_Cfg.FindSkillKey(ptcKey);
             if ( i != SKILL_NONE )
             {
-                ASSERT( (i >= 0) && (uint(i) < ARRAY_COUNT(m_SkillLevelMax)) );
+                ASSERT( (i >= 0) && (static_cast<uint>(i) < ARRAY_COUNT(m_SkillLevelMax)) );
                 sVal.FormatUSVal( m_SkillLevelMax[i] );
                 break;
             }
             i = g_Cfg.GetStatKey( ptcKey);
             if ( i >= 0 )
             {
-                ASSERT( uint(i) < ARRAY_COUNT(m_StatMax));
+                ASSERT( static_cast<uint>(i) < ARRAY_COUNT(m_StatMax));
                 sVal.FormatUSVal( m_StatMax[i] );
                 break;
             }
@@ -105,7 +105,7 @@ bool CSkillClassDef::r_LoadVal( CScript &s )
             int i = g_Cfg.FindSkillKey(ptcKey);
             if ( i != SKILL_NONE )
             {
-                ASSERT( (i >= 0) && (uint(i) < ARRAY_COUNT(m_SkillLevelMax)) );
+                ASSERT( (i >= 0) && (static_cast<uint>(i) < ARRAY_COUNT(m_SkillLevelMax)) );
                 m_SkillLevelMax[i] = s.GetArgUSVal();
                 break;
             }

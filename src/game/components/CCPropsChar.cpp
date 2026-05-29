@@ -41,7 +41,7 @@ bool CCPropsChar::IgnoreElementalProperty(PropertyIndex_t iPropIndex) // static
 {
     if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE))
         return false;
-    switch ( PROPCH_TYPE(iPropIndex) )
+    switch ( static_cast<PROPCH_TYPE>(iPropIndex) )
     {
         case PROPCH_DAMCHAOS:
         case PROPCH_DAMCOLD:
@@ -133,11 +133,11 @@ bool CCPropsChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iV
 
     else if (iPropIndex == PROPCH_FACTION_GROUP)
     {
-        return _faction.SetGroup(enum_alias_cast<CFactionDef::Group>(uint32(iVal)));
+        return _faction.SetGroup(enum_alias_cast<CFactionDef::Group>(static_cast<uint32>(iVal)));
     }
     else if (iPropIndex == PROPCH_FACTION_SPECIES)
     {
-        return _faction.SetSpecies(enum_alias_cast<CFactionDef::Species>(uint32(iVal)));
+        return _faction.SetSpecies(enum_alias_cast<CFactionDef::Species>(static_cast<uint32>(iVal)));
     }
     else
     {

@@ -302,8 +302,8 @@ bool CPointBase::IsValidXY() const noexcept
     const uint32 sx = g_MapList.GetMapSizeX(m_map);
     const uint32 sy = g_MapList.GetMapSizeY(m_map);
 
-    const uint32 ux = uint32(uint16(m_x));
-    const uint32 uy = uint32(uint16(m_y));
+    const uint32 ux = static_cast<uint16>(m_x);
+    const uint32 uy = static_cast<uint16>(m_y);
 
     // Two unsigned compares fold both < 0 and >= size checks. 0 is valid x or y,
     return ux < sx && uy < sy;
@@ -733,7 +733,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 
 			if ( *ptcKey ) iDistance = Exp_GetVal(ptcKey);
 			if ( *ptcKey ) bCheckMulti = Exp_GetVal(ptcKey) != 0;
-			sVal.FormatVal( CWorldMap::IsItemTypeNear(*this, IT_TYPE(iType), iDistance, bCheckMulti));
+			sVal.FormatVal( CWorldMap::IsItemTypeNear(*this, static_cast<IT_TYPE>(iType), iDistance, bCheckMulti));
 			break;
 		}
 		case PT_REGION:

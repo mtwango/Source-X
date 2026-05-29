@@ -876,7 +876,7 @@ bool CScript::WriteSection( lpctstr ptcSection, ... )
 	offset += Str_ConcatLimitNull(tsHeader.buffer() + offset, "]\n", tsHeader.capacity() - offset);
 
 	MT_UNIQUE_LOCK_SET(this);
-	_Write(tsHeader.buffer(), int(offset));
+	_Write(tsHeader.buffer(), static_cast<int>(offset));
 
 	return true;
 }
@@ -903,7 +903,7 @@ bool CScript::WriteKeySingle(lptstr ptcKey)
 	// Write: "KEY\n"
 	size_t uiStrLen = strlen(ptcKey);
 	ptcKey[uiStrLen++] = '\n'; // No need for string terminator, since i'm explicitly passing the number of bytes to write
-	Write(ptcKey, int(uiStrLen));
+	Write(ptcKey, static_cast<int>(uiStrLen));
 
 	if (ptcSep != nullptr)
 		*ptcSep = ch;
@@ -928,7 +928,7 @@ bool CScript::WriteKeyStr(lpctstr ptcKey, lpctstr ptcVal)
 	{
 		g_Log.Event(LOGL_WARN | LOGM_CHEAT, "Carriage return in value string - truncating.\n");
 		lptstr ptcTruncated = Str_GetTemp();
-		Str_CopyLimitNull(ptcTruncated, ptcVal, size_t(ptcSep - ptcVal));
+		Str_CopyLimitNull(ptcTruncated, ptcVal, static_cast<size_t>(ptcSep - ptcVal));
 		ptcVal = ptcTruncated;
 	}
 
@@ -940,7 +940,7 @@ bool CScript::WriteKeyStr(lpctstr ptcKey, lpctstr ptcVal)
 	uiStrLen += Str_ConcatLimitNull(ptcBuf + uiStrLen, ptcVal, SCRIPT_MAX_LINE_LEN - uiStrLen);
 	ptcBuf[uiStrLen++] = '\n';
 	ptcBuf[uiStrLen] = '\0';
-	Write(ptcBuf, int(uiStrLen));
+	Write(ptcBuf, static_cast<int>(uiStrLen));
 
 	return true;
 }

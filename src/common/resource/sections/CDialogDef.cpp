@@ -112,7 +112,7 @@ uint CDialogDef::GumpAddText( lpctstr ptcText )
 {
     ADDTOCALLSTACK("CDialogDef::GumpAddText");
     m_sText.emplace_back(ptcText);
-    return uint(m_sText.size() - 1);
+    return static_cast<uint>(m_sText.size() - 1);
 }
 
 

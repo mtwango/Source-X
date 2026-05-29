@@ -1731,13 +1731,13 @@ CExpression::GetConditionalSubexpressions(
                 if (ptcTopLevelNegation &&                     // The whole expression is preceded by a '!' character.
                     (0 == sCurSubexpr.uiNonAssociativeOffset)) // I've not yet checked if its position is valid.
                 {
-                    uint uiTempOffset = uint(sCurSubexpr.ptcStart - ptcTopLevelNegation);
+                    uint uiTempOffset = static_cast<uint>(sCurSubexpr.ptcStart - ptcTopLevelNegation);
                     if (uiTempOffset > USHRT_MAX)
                     {
                         g_Log.EventError("Too much characters before the the expression negation. Trimming to %d.\n", USHRT_MAX);
                         uiTempOffset = USHRT_MAX;
                     }
-                    sCurSubexpr.uiNonAssociativeOffset = uchar(uiTempOffset);
+                    sCurSubexpr.uiNonAssociativeOffset = static_cast<uchar>(uiTempOffset);
                 }
 
                 // Just skip what's enclosed in the subexpression.
@@ -1862,10 +1862,10 @@ CExpression::GetConditionalSubexpressions(
 		if (sCurSubexpr.uiNonAssociativeOffset)
 		{
 			// ptcStart might have changed, so update uiNonAssociativeOffset accordingly (given that it's relative to ptcStart).
-			const int iDiff = int(ptcStart - sCurSubexpr.ptcStart);
+			const int iDiff = static_cast<int>(ptcStart - sCurSubexpr.ptcStart);
 			ASSERT(iDiff >= 0);
 			const uint uiNewOff = std::min((uint)USHRT_MAX, (uint)iDiff);
-			sCurSubexpr.uiNonAssociativeOffset += uchar(uiNewOff);
+			sCurSubexpr.uiNonAssociativeOffset += static_cast<uchar>(uiNewOff);
 		}
 		sCurSubexpr.ptcStart = ptcStart;
 		sCurSubexpr.ptcEnd   = ptcEnd;
@@ -1993,8 +1993,8 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 
 		// Copy the value in a new string
         const size_t uiToParseLen = std::min(
-            size_t(THREAD_STRING_LENGTH-1),
-            size_t(pElementsStart[0][1] - pElementsStart[0][0]));
+            static_cast<size_t>(THREAD_STRING_LENGTH - 1),
+            static_cast<size_t>(pElementsStart[0][1] - pElementsStart[0][0]));
         memcpy(ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
@@ -2009,8 +2009,8 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 
 		// Copy the first element in a new string
         size_t uiToParseLen = std::min(
-            size_t(THREAD_STRING_LENGTH-1),
-            size_t(pElementsStart[0][1] - pElementsStart[0][0]));
+            static_cast<size_t>(THREAD_STRING_LENGTH - 1),
+            static_cast<size_t>(pElementsStart[0][1] - pElementsStart[0][0]));
         memcpy(ptcToParse, pElementsStart[0][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
@@ -2019,8 +2019,8 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 
 		// Copy the second element in a new string
         uiToParseLen = std::min(
-            size_t(THREAD_STRING_LENGTH-1),
-            size_t(pElementsStart[1][1] - pElementsStart[1][0]));
+            static_cast<size_t>(THREAD_STRING_LENGTH - 1),
+            static_cast<size_t>(pElementsStart[1][1] - pElementsStart[1][0]));
         memcpy(ptcToParse, pElementsStart[1][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
@@ -2046,8 +2046,8 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 
 		// Copy the weight element in a new string
         const size_t uiToParseLen = std::min(
-            size_t(THREAD_STRING_LENGTH-1),
-            size_t(pElementsStart[i][1] - pElementsStart[i][0]));
+            static_cast<size_t>(THREAD_STRING_LENGTH - 1),
+            static_cast<size_t>(pElementsStart[i][1] - pElementsStart[i][0]));
         memcpy(ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
         ptcToParse[uiToParseLen] = '\0';
 
@@ -2076,8 +2076,8 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 	// Copy the value element in a new string
 	ASSERT(nullptr != pElementsStart[i][0]);
     const size_t uiToParseLen = std::min(
-        size_t(THREAD_STRING_LENGTH-1),
-        size_t(pElementsStart[i][1] - pElementsStart[i][0]));
+        static_cast<size_t>(THREAD_STRING_LENGTH - 1),
+        static_cast<size_t>(pElementsStart[i][1] - pElementsStart[i][0]));
     memcpy(ptcToParse, pElementsStart[i][0], uiToParseLen * sizeof(tchar));
     ptcToParse[uiToParseLen] = '\0';
 
@@ -2103,7 +2103,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
     if (iQty == 1) // It's just a simple value
     {
 		ASSERT(pElementsStart[0] != nullptr);
-        const int iToParseLen = int(size_t(pElementsStart[0][1] - pElementsStart[0][0]));
+        const int iToParseLen = static_cast<int>(static_cast<size_t>(pElementsStart[0][1] - pElementsStart[0][0]));
         return CSString(pElementsStart[0][0], iToParseLen - 1);
     }
 
@@ -2124,7 +2124,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
 		//	break;	// Shouldn't really happen...
 
         // Copy the weight element in a new string
-        const size_t iToParseLen = size_t(pElementsStart[i][1] - pElementsStart[i][0]);
+        const size_t iToParseLen = static_cast<size_t>(pElementsStart[i][1] - pElementsStart[i][0]);
         memcpy(pToParse, pElementsStart[i][0], iToParseLen * sizeof(tchar));
         pToParse[iToParseLen] = '\0';
         lptstr pToParseCasted = pToParse;
@@ -2154,7 +2154,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
 
 	ASSERT(i < iQty);
     i -= 1; // pick the value instead of the weight
-    const int iToParseLen = int(size_t(pElementsStart[i][1] - pElementsStart[i][0]));
+    const int iToParseLen = static_cast<int>(static_cast<size_t>(pElementsStart[i][1] - pElementsStart[i][0]));
     return CSString(pElementsStart[i][0], iToParseLen);
 }
 
@@ -2189,7 +2189,7 @@ bool CExpression::EvaluateConditionalSingle(
     const bool fFullyEnclosed = (refSubExprState.uiType & SType::TopParenthesizedExpr);
 
     // Length to copy: include the last valid char (i'm not copying the subsequent char, which can be another char or '\0'
-    size_t len = std::min(Str_TempLength() - 1U, size_t(refSubExprState.ptcEnd - refSubExprState.ptcStart));
+    size_t len = std::min(Str_TempLength() - 1U, static_cast<size_t>(refSubExprState.ptcEnd - refSubExprState.ptcStart));
     if (len == 0)
     {
         g_Log.EventError("Empty subexpression. Defaulting its value to false.\n");
@@ -2228,7 +2228,7 @@ bool CExpression::EvaluateConditionalSingle(
         // If an expression is enclosed by parentheses, ParseScriptText needs to read both the open and the closed one, we cannot
         //  pass the string starting with the character after the '('.
         ParseScriptText(ptcSubexpr, refExprContext, pScriptArgs, pSrc, 0);
-        fVal = bool(Exp_GetLLVal(ptcSubexpr));
+        fVal = static_cast<bool>(Exp_GetLLVal(ptcSubexpr));
     }
 
     -- refExprContext._iEvaluate_Conditional_Reentrant;

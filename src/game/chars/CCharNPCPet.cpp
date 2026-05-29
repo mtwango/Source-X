@@ -719,7 +719,7 @@ void CChar::NPC_OnHirePayMore( CItem * pGold, uint uiWage, bool fHire )
 	}
 
 	tchar *pszMsg = Str_GetTemp();
-	snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_PET_HIRE_TIME), int(pBank->m_itEqBankBox.m_Check_Amount / uiWage));
+	snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_PET_HIRE_TIME), static_cast<int>(pBank->m_itEqBankBox.m_Check_Amount / uiWage));
 	Speak(pszMsg);
 }
 

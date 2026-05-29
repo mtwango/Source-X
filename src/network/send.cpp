@@ -3418,7 +3418,7 @@ PacketCharacterList::PacketCharacterList(CClient* target) : PacketSend(XCMD_Char
 	skip(count * 60);
 
 	size_t startCount = g_Cfg.m_StartDefs.size();
-	writeByte( byte((startCount > UINT8_MAX) ? UINT8_MAX : startCount) );
+	writeByte( static_cast<byte>((startCount > UINT8_MAX) ? UINT8_MAX : startCount) );
 
 	// since 7.0.13.0, start locations have extra information
 	dword tmVer = (dword)(account->m_TagDefs.GetKeyNum("clientversion"));
@@ -4400,8 +4400,8 @@ PacketStatueAnimation::PacketStatueAnimation(const CClient * target, const CChar
     writeByte(0x00);
     writeByte(0xFF);
     writeByte(0x01);
-    writeInt16(word(iAnimation));
-    writeInt16(word(iFrame));
+    writeInt16(static_cast<word>(iAnimation));
+    writeInt16(static_cast<word>(iFrame));
 
     push(target);
 }

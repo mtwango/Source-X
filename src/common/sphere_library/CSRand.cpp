@@ -79,8 +79,8 @@ int16 CSRand::Get16ValFast(int16 iQty) noexcept
     if (iQty < 2)
         return 0;
     const uint16 r = getRandEngines().fast_generator_u16();
-    const uint16 s = (uint32(r) * uint32_t(iQty)) >> 16u;
-    return int16(s);
+    const uint16 s = (static_cast<uint32>(r) * static_cast<uint32_t>(iQty)) >> 16u;
+    return static_cast<int16>(s);
 }
 
 int16 CSRand::Get16Val2Fast(int16 iMin, int16 iMax) noexcept
@@ -97,8 +97,8 @@ int32 CSRand::GetValFast(int32 iQty) noexcept
     if (iQty < 2)
         return 0;
     const uint32 r = getRandEngines().fast_generator_u32();
-    const uint32 b = (uint64(r) * uint64_t(iQty)) >> 32u;
-    return int32(b);
+    const uint32 b = (static_cast<uint64>(r) * static_cast<uint64_t>(iQty)) >> 32u;
+    return static_cast<int32>(b);
 }
 
 int32 CSRand::GetVal2Fast(int32 iMin, int32 iMax) noexcept
@@ -116,7 +116,7 @@ int64 CSRand::GetLLValFast(int64 iQty) noexcept
         return 0;
     const uint64 r = getRandEngines().fast_generator_u64();
     const uint64 b = r % iQty;
-    return int64(b);
+    return static_cast<int64>(b);
 }
 
 int64 CSRand::GetLLVal2Fast(int64 iMin, int64 iMax) noexcept

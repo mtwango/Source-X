@@ -147,7 +147,7 @@ public:
 	}
     bool IsFlag( dword dwFlags ) const noexcept
 	{
-        return (bool( m_dwFlags & dwFlags ));
+        return static_cast<bool>(m_dwFlags & dwFlags);
 	}
     void SetRegionFlags( dword dwFlags ) noexcept
 	{

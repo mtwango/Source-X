@@ -130,8 +130,7 @@ word CItemBase::GetMaxAmount()
 	if (!IsStackableType())
 		return 0;
 
-	int64 iMax = GetDefNum("MaxAmount");
-	if (iMax)
+    if (int64 iMax = GetDefNum("MaxAmount"))
 		return (word)minimum(iMax, UINT16_MAX);
 
     return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
@@ -492,8 +491,7 @@ int CItemBase::IsID_Door( ITEMID_TYPE id ) noexcept // static
         if (id < sm_Item_DoorBase[i])
             continue;
 
-		const uint did = id - sm_Item_DoorBase[i];
-		if ( did <= 15 )
+        if (const uint did = id - sm_Item_DoorBase[i]; did <= 15 )
 			return ( did+1 );
 	}
 	return 0;
@@ -813,13 +811,11 @@ height_t CItemBase::GetItemHeight( ITEMID_TYPE id, uint64 *uiBlockFlags ) // sta
 	// used for walk block checking.
 
 	const CResourceID rid( RES_ITEMDEF, id );
-	size_t index = g_Cfg.m_ResHash.FindKey(rid);
-	if ( index != sl::scont_bad_index() ) // already loaded ?
+    if (size_t index = g_Cfg.m_ResHash.FindKey(rid); index != sl::scont_bad_index() ) // already loaded ?
 	{
 		CResourceDef * pBaseStub = g_Cfg.m_ResHash.GetBarePtrAt( rid, index );
 		ASSERT(pBaseStub);
-		CItemBase * pBase = dynamic_cast <CItemBase *>(pBaseStub);
-		if ( pBase )
+        if ( CItemBase *pBase = dynamic_cast<CItemBase *>(pBaseStub) )
 		{
 			*uiBlockFlags = pBase->m_Can & CAN_I_MOVEMASK;
 			return pBase->GetHeight();
@@ -984,8 +980,7 @@ int CItemBase::CalculateMakeValue( int iQualityLevel ) const
 
 		// this is the normal skill required.
 		// if iQuality is much less than iSkillNeed then something is wrong.
-		int iSkillNeed = (int)(m_SkillMake[i].GetResQty());
-		if ( iQualityLevel < iSkillNeed )
+        if (int iSkillNeed = (int)(m_SkillMake[i].GetResQty()); iQualityLevel < iSkillNeed )
 			iQualityLevel = iSkillNeed;
 
 		lValue += pSkillDef->m_Values.GetLinear( iQualityLevel );
@@ -1005,8 +1000,7 @@ word CItemBase::GetWeight() const noexcept
 
 byte CItemBase::GetSpeed() const
 {
-    const CVarDefCont *pVarDef = m_TagDefs.GetKey("OVERRIDE.SPEED");
-	if (pVarDef)
+    if (const CVarDefCont *pVarDef = m_TagDefs.GetKey("OVERRIDE.SPEED"))
 		return (byte)pVarDef->GetValNum();
 	return m_speed;
 }
@@ -1377,8 +1371,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 			// sVal.FormatVal( m_type );
 			{
 				CResourceID	rid( RES_TYPEDEF, m_type );
-				CResourceDef *pRes = g_Cfg.RegisteredResourceGetDef( rid );
-				if ( !pRes )
+                if (CResourceDef *pRes = g_Cfg.RegisteredResourceGetDef(rid); !pRes )
 					sVal.FormatVal( m_type );
 				else
 					sVal = pRes->GetResourceName();
@@ -1510,8 +1503,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                 }
 
                 int64 piVal[2];
-				size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal));
-				if (iQty == 2)
+                if (size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
 				{
 					pItemMulti->_shipSpeed.period = (uchar)(piVal[0]);
 					pItemMulti->_shipSpeed.tiles = (uchar)(piVal[1]);
@@ -1727,8 +1719,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			m_SkillMake.Load( s.GetArgStr() );
             for (const CResourceQty& res : m_SkillMake)
             {
-                RES_TYPE type = res.GetResType();
-                if ((type != RES_SKILL) && (type != RES_TYPEDEF) && (type != RES_ITEMDEF))
+                if (RES_TYPE type = res.GetResType(); (type != RES_SKILL) && (type != RES_TYPEDEF) && (type != RES_ITEMDEF))
                 {
                     g_Log.EventWarn("Invalid requirement in SKILLMAKE (allowed: skill, typedef, itemdef).\n");
                     break;
@@ -1918,8 +1909,7 @@ bool CItemBaseMulti::AddComponent( ITEMID_TYPE id, short dx, short dy, char dz )
 	m_rect.UnionPoint( dx, dy );
 	if ( id > 0 )
 	{
-		const CItemBase * pItemBase = FindItemBase(id);
-		if ( pItemBase == nullptr )	// make sure the item is valid
+        if (const CItemBase *pItemBase = FindItemBase(id); pItemBase == nullptr )	// make sure the item is valid
 		{
 			g_Log.EventError( "Bad Multi COMPONENT 0%x\n", id );
 			return false;
@@ -1942,8 +1932,7 @@ void CItemBaseMulti::SetMultiRegion( tchar * pArgs )
 	ADDTOCALLSTACK("CItemBaseMulti::SetMultiRegion");
 	// inclusive region.
 	int64 piArgs[5];
-	size_t iQty = Str_ParseCmds( pArgs, piArgs, std::size(piArgs));
-	if ( iQty <= 1 )
+    if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return;
 	m_Components.clear();	// might be after a resync
 	m_rect.SetRect( (int)(piArgs[0]), (int)(piArgs[1]), (int)(piArgs[2]+1), (int)(piArgs[3]+1), (int)(piArgs[4]) );
@@ -1953,8 +1942,7 @@ bool CItemBaseMulti::AddComponent( tchar * pArgs )
 {
 	ADDTOCALLSTACK("CItemBaseMulti::AddComponent");
 	int64 piArgs[4];
-	size_t iQty = Str_ParseCmds( pArgs, piArgs, std::size(piArgs));
-	if ( iQty <= 1 )
+    if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return false;
 	return AddComponent((ITEMID_TYPE)(ResGetIndex((dword)piArgs[0])), (short)piArgs[1], (short)piArgs[2], (char)piArgs[3] );
 }
@@ -2063,8 +2051,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 		case MLC_MULTIOFFSET:
 		{
 			int64 ppArgs[3];
-			size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs));
-			if (iQty < 1)
+            if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs)); iQty < 1)
 				return false;
 
 			m_Offset.m_dx = (short)(ppArgs[0]);
@@ -2288,8 +2275,7 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 	if ( pBase )
 		return pBase;	// already loaded all base info.
 
-	const CItemBaseDupe * pBaseDupe = dynamic_cast <const CItemBaseDupe *>(pBaseStub);
-	if (pBaseDupe)
+    if (const CItemBaseDupe *pBaseDupe = dynamic_cast<const CItemBaseDupe *>(pBaseStub))
 		return pBaseDupe->GetItemDef();	// this is just a dupeitem
 
     // The rid was added to the ResourceHash, but it's not linked yet to a CItemBase (we do it on the first request).
@@ -2383,12 +2369,10 @@ CItemBaseDupe * CItemBaseDupe::GetDupeRef( ITEMID_TYPE id ) // static
 
 	CResourceDef * pBaseStub = g_Cfg.m_ResHash.GetBarePtrAt( rid, index );
 
-	CItemBase * pBase = dynamic_cast <CItemBase *>(pBaseStub);
-	if ( pBase )
+    if ( dynamic_cast<CItemBase *>(pBaseStub) )
 		return nullptr; //We want to return Dupeitem, not Baseitem
 
-	CItemBaseDupe * pBaseDupe = dynamic_cast <CItemBaseDupe *>(pBaseStub);
-	if ( pBaseDupe )
+    if ( CItemBaseDupe *pBaseDupe = dynamic_cast<CItemBaseDupe *>(pBaseStub) )
 		return pBaseDupe;	// this is just a dupeitem
 
 	return nullptr; //we suspect item is loaded

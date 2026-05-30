@@ -772,8 +772,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
                 if (!iconv.has_value())
                     return false;
 
-                const int i = *iconv;
-                switch (i)
+                switch (*iconv)
                 {
                     case 0x01:
                         pChar->SetNPCBrain(NPCBRAIN_HEALER);

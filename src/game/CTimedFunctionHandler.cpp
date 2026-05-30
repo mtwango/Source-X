@@ -21,8 +21,7 @@ int64 CTimedFunctionHandler::IsTimer(const CUID& uid, lpctstr ptcCommand) const
 	ADDTOCALLSTACK("CTimedFunctionHandler::IsTimer");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-		auto tfObj = static_cast<CTimedFunction*>(obj);
-		if ((tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); (tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			return tfObj->GetTimerAdjusted();
 		}
@@ -35,8 +34,7 @@ void CTimedFunctionHandler::ClearUID( const CUID& uid )
 	ADDTOCALLSTACK("CTimedFunctionHandler::Erase");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-		auto tfObj = static_cast<CTimedFunction*>(obj);
-		if (tfObj->GetUID() == uid)
+        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj->GetUID() == uid)
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
@@ -48,8 +46,7 @@ void CTimedFunctionHandler::Stop(const CUID& uid, lpctstr ptcCommand)
 	ADDTOCALLSTACK("CTimedFunctionHandler::Stop");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
 	{
-		auto tfObj = static_cast<CTimedFunction*>(obj);
-		if ((tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); (tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
@@ -76,8 +73,7 @@ TRIGRET_TYPE CTimedFunctionHandler::Loop(lpctstr ptcCommand, int iLoopsMade, CSc
 			return TRIGRET_ENDIF;
 		}
 
-		auto tfObj = static_cast<CTimedFunction*>(obj);
-		if (!strcmpi(tfObj->GetCommand(), ptcCommand))
+        if (auto tfObj = static_cast<CTimedFunction *>(obj); !strcmpi(tfObj->GetCommand(), ptcCommand))
 		{
 			CObjBase* pObj = tfObj->GetUID().ObjFind();
 			if (!pObj)
@@ -143,8 +139,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 
 		Str_CopyLimitNull(_strLoadBufferNumbers.data(), ptcArg, _strLoadBufferNumbers.size());	// because ptcArg is constant and Str_ParseCmds wants a non-constant string
 		tchar* ppVal[3];
-		const size_t iArgs = Str_ParseCmds(_strLoadBufferNumbers.data(), ppVal, std::size(ppVal), " ,\t" );
-		if ( iArgs != 3 )
+        if (const size_t iArgs = Str_ParseCmds(_strLoadBufferNumbers.data(), ppVal, std::size(ppVal), " ,\t"); iArgs != 3 )
         {
             g_Log.Event( LOGM_INIT|LOGL_ERROR, "Invalid TimerF line in %sdata.scp: %s=%s (arguments mismatch: 3 needed).\n", SPHERE_FILE, ptcKeyword, ptcArg);
             return -1;
@@ -203,8 +198,7 @@ void CTimedFunctionHandler::r_Write( CScript & s )
 	{
         auto tfObj = static_cast<CTimedFunction*>(obj);
         ASSERT(tfObj);
-		const CUID& uid = tfObj->GetUID();
-		if (uid.IsValidUID())
+        if (const CUID &uid = tfObj->GetUID(); uid.IsValidUID())
 		{
 			s.WriteKeyFormat("TimerFCall", "%s", tfObj->GetCommand());
 			s.WriteKeyFormat("TimerFNumbers", STRINGIFY(TF_TICK_MAGIC_NUMBER) ",%" PRIu32 ",%" PRId64, uid.GetObjUID(), tfObj->GetTimerAdjusted());

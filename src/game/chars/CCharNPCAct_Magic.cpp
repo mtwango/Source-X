@@ -40,8 +40,7 @@ SPELL_TYPE CCharNPC::Spells_GetAt(uchar index)
         return SPELL_NONE;
     if (m_spells.size() <= index)
         return SPELL_NONE;
-    auto [id] = m_spells[index];
-    if (id)
+    if (auto [id] = m_spells[index]; id)
         return id;
     return SPELL_NONE;
 }
@@ -54,8 +53,7 @@ bool CCharNPC::Spells_DelAt(uchar index)
         return false;
     if (m_spells.size() <= index)
         return SPELL_NONE;
-    auto [id] = m_spells[index];
-    if (id)
+    if (auto [id] = m_spells[index]; id)
     {
         std::vector<Spells>::iterator it = m_spells.begin() + index;
         m_spells.erase(it);
@@ -70,8 +68,7 @@ bool CCharNPC::Spells_Add(SPELL_TYPE spell)
     ADDTOCALLSTACK("CCharNPC::Spells_Add");
     if (Spells_FindSpell(spell) >= 0)
         return false;
-    CSpellDef * pSpell = g_Cfg.GetSpellDef(spell);
-    if (!pSpell)
+    if (CSpellDef *pSpell = g_Cfg.GetSpellDef(spell); !pSpell)
         return false;
     Spells refSpell;
     refSpell.id = spell;
@@ -89,8 +86,7 @@ int CCharNPC::Spells_FindSpell(SPELL_TYPE spellID)
     uint count = 0;
     while (count < m_spells.size())
     {
-        auto [id] = m_spells[count];
-        if (id == spellID)
+        if (auto [id] = m_spells[count]; id == spellID)
             return count;
         ++count;
     }
@@ -105,19 +101,16 @@ void CChar::NPC_GetAllSpellbookSpells()		// Add all spells found on spellbooks t
     //	search for suitable book in hands first
     for (CSObjContRec* pObjRec : *this)
     {
-        CItem* pBook = static_cast<CItem*>(pObjRec);
-        if (pBook->IsTypeSpellbook())
+        if (CItem *pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
             NPC_AddSpellsFromBook(pBook);
     }
 
     //	then search in the top level of the pack
-    CItemContainer *pPack = GetPack();
-    if (pPack)
+    if (CItemContainer *pPack = GetPack())
     {
         for (CSObjContRec* pObjRec : *pPack)
         {
-            CItem* pBook = static_cast<CItem*>(pObjRec);
-            if (pBook->IsTypeSpellbook())
+            if (CItem *pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
                 NPC_AddSpellsFromBook(pBook);
         }
     }
@@ -137,8 +130,7 @@ void CChar::NPC_AddSpellsFromBook(CItem * pBook)
 
     for (uint i = min; i <= max; ++i)
     {
-        SPELL_TYPE spell = (SPELL_TYPE)i;
-        if (pBook->IsSpellInBook(spell))
+        if (SPELL_TYPE spell = (SPELL_TYPE)i; pBook->IsSpellInBook(spell))
             m_pNPC->Spells_Add(spell);
     }
 }
@@ -233,8 +225,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
             }
             spell = (SPELL_TYPE)pScriptArgs->m_iN1;
             iHealThreshold = (int)pScriptArgs->m_VarsLocal.GetKeyNum("HealThreshold");
-            CObjBase* pNewTarg = pScriptArgs->m_VarObjs.Get(1); //We switch to a new targ if REF1 is set in the trigger.
-            if (pNewTarg)
+            if (CObjBase *pNewTarg = pScriptArgs->m_VarObjs.Get(1))
             {
                 pTarg = pNewTarg;
                 bIgnoreAITargetChoice = true;
@@ -328,8 +319,8 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
                         if (!pTarget)
                             break;
 
-                        CItemMemory* pMemory = pTarget->Memory_FindObj(pTarg);
-                        if (pMemory && pMemory->IsMemoryTypes(MEMORY_FIGHT | MEMORY_HARMEDBY | MEMORY_IRRITATEDBY))
+                        if (CItemMemory *pMemory = pTarget->Memory_FindObj(pTarg);
+                            pMemory && pMemory->IsMemoryTypes(MEMORY_FIGHT | MEMORY_HARMEDBY | MEMORY_IRRITATEDBY))
                         {
                             pFriend[iFriendIndex++] = pTarget;
                             if (iFriendIndex >= 4)
@@ -367,8 +358,7 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
                     }
                     if (pSpellDef->IsSpellType(SPELLFLAG_BLESS))
                     {
-                        LAYER_TYPE layer = pSpellDef->m_idLayer;
-                        if (layer != LAYER_NONE)	// If the spell applies an effect.
+                        if (LAYER_TYPE layer = pSpellDef->m_idLayer; layer != LAYER_NONE)	// If the spell applies an effect.
                         {
                             if (!pTarget->LayerFind(layer))	// and target doesn't have this effect already...
                             {

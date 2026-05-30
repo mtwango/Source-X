@@ -53,8 +53,7 @@ int CObjNameSortArray::CompareKey( lpctstr pszID, CScriptObj* pObj, bool fNoSpac
     const lpctstr objStr = pObj->GetName();
     if ( fNoSpaces )
     {
-        const char * const p = strchr( pszID, ' ' );
-        if (p != nullptr)
+        if (const char *const p = strchr(pszID, ' '); p != nullptr)
         {
             return strnicmp( pszID, objStr, (p - pszID) );
 
@@ -100,7 +99,7 @@ int CObjUniquePtrNameSortVector::_compare(const CScriptObj* pObj, lpctstr ptcKey
 {
     ASSERT( pObj );
     ASSERT( ptcKey );
-  
+
     // We can use Str_CmpHeadI to ignore whitespaces (args to the function or whatever) in ptcKey, but i'm not totally sure if this is faster than the code below
     //return -Str_CmpHeadI(ptcKey, pObj->GetName());
 

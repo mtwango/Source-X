@@ -27,8 +27,7 @@ bool CTimedFunction::IsDeleted() const // virtual
 
 static bool _ExecTimedFunction(CUID&& uid, CScript&& s)
 {
-	CObjBase* obj = uid.ObjFind();
-	if (obj != nullptr) //just in case
+    if (CObjBase *obj = uid.ObjFind(); obj != nullptr) //just in case
 	{
 		CObjBaseTemplate* topobj = obj->GetTopLevelObj();
 		ASSERT(topobj);

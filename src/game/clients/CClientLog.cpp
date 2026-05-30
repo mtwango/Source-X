@@ -319,8 +319,7 @@ byte CClient::Login_ServerList( const char * pszAccount, const char * pszPasswor
 	// if ( LogIn( pszAccount, pszPassword ) )
 	//   return( PacketLoginError::BadPass );
 	CSString sMsg;
-	byte lErr = LogIn( pszAccount, pszPassword, sMsg );
-	if ( lErr != PacketLoginError::Success )
+    if (byte lErr = LogIn(pszAccount, pszPassword, sMsg); lErr != PacketLoginError::Success )
 	{
 		return( lErr );
 	}
@@ -360,8 +359,7 @@ bool CClient::OnRxConsole( const byte * pData, uint iLen )
 
 	if ( IsSetEF( EF_AllowTelnetPacketFilter ) )
 	{
-		bool fFiltered = xPacketFilter(pData, iLen);
-		if ( fFiltered )
+        if ( bool fFiltered = xPacketFilter(pData, iLen) )
 			return fFiltered;
 	}
 
@@ -389,8 +387,7 @@ bool CClient::OnRxConsole( const byte * pData, uint iLen )
 				}
 				else
 				{
-					CAccount * pAccount = g_Accounts.Account_Find(m_zLogin);
-					if (( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Admin ))
+                    if (CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Admin ))
 					{
 						SysMessagef("%s\n", g_Cfg.GetDefaultMsg(DEFMSG_CONSOLE_NOT_PRIV));
 						m_Targ_Text.Clear();
@@ -449,8 +446,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 				}
 				else
 				{
-					CAccount * pAccount = g_Accounts.Account_Find(m_zLogin);
-					if (( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Counsel ))
+                    if (CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Counsel ))
 					{
 						SysMessagef("\"MSG:%s\"", g_Cfg.GetDefaultMsg(DEFMSG_AXIS_NOT_PRIV));
 						m_Targ_Text.Clear();
@@ -483,9 +479,8 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 								return false;
 							}
 
-							time_t dateChange;
-							dword dwSize;
-							if ( ! CSFileList::ReadFileInfo( "Axis.db", dateChange, dwSize ))
+                            dword dwSize;
+							if (time_t dateChange; ! CSFileList::ReadFileInfo( "Axis.db", dateChange, dwSize ))
 							{
 								SysMessagef("\"MSG:%s\"", g_Cfg.GetDefaultMsg(DEFMSG_AXIS_INFO_ERROR));
 								return false;
@@ -570,8 +565,7 @@ bool CClient::OnRxPing( const byte * pData, uint iLen )
 					if ( pAccount )
 					{
 						CSString sMsg;
-						byte lErr = LogIn( pAccount, sMsg );
-						if ( lErr != PacketLoginError::Success )
+                        if (byte lErr = LogIn(pAccount, sMsg); lErr != PacketLoginError::Success )
 						{
 							if ( lErr != PacketLoginError::Invalid )
 								SysMessage( sMsg );
@@ -705,8 +699,7 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 	uint uiContentLength = 0;
 	for ( int j = 1; j < iQtyLines; ++j )
 	{
-		tchar *pszArgs = Str_TrimWhitespace(ppLines[j]);
-		if ( !strnicmp(pszArgs, "Connection:", 11 ) )
+        if (tchar *pszArgs = Str_TrimWhitespace(ppLines[j]); !strnicmp(pszArgs, "Connection:", 11 ) )
 		{
 			pszArgs += 11;
 			GETNONWHITESPACE(pszArgs);
@@ -736,8 +729,7 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 	}
 
 	tchar * ppRequest[4];
-	int iQtyArgs = Str_ParseCmds(ppLines[0], ppRequest, std::size(ppRequest), " ");
-	if (( iQtyArgs < 2 ) || ( strlen(ppRequest[1]) >= SPHERE_MAX_PATH ))
+    if (int iQtyArgs = Str_ParseCmds(ppLines[0], ppRequest, std::size(ppRequest), " "); ( iQtyArgs < 2 ) || ( strlen(ppRequest[1]) >= SPHERE_MAX_PATH ))
 		return false;
 
 	if ( strchr(ppRequest[1], '\r') || strchr(ppRequest[1], 0x0c) )
@@ -896,8 +888,7 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 			if ( lErr == PacketLoginError::Success )
 			{
 				Str_GetBare( szAccount, pEvent->ServersReq.m_acctname, sizeof(szAccount)-1 );
-				CAccount * pAcc = g_Accounts.Account_Find( szAccount );
-				if (pAcc)
+                if (CAccount *pAcc = g_Accounts.Account_Find(szAccount))
 				{
                     if (m_Crypt.GetClientVerNumber())
                         pAcc->m_TagDefs.SetNum("clientversion", m_Crypt.GetClientVerNumber());
@@ -926,8 +917,7 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 			{
 				// pass detected client version to the game server to make valid cliver used
 				Str_GetBare( szAccount, pEvent->CharListReq.m_acctname, sizeof(szAccount)-1 );
-				CAccount * pAcc = g_Accounts.Account_Find( szAccount );
-				if (pAcc)
+                if (CAccount *pAcc = g_Accounts.Account_Find(szAccount))
 				{
 					dword tmSid = 0x7f000001;
 					dword tmVer = (dword)(pAcc->m_TagDefs.GetKeyNum("clientversion"));

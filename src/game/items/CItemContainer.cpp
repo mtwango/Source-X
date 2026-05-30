@@ -120,8 +120,7 @@ bool CItemContainer::IsItemInTrade() const
 	// recursively get the item that is at "top" level.
 	if ( IsType(IT_EQ_TRADE_WINDOW) )
 		return true;
-	CItemContainer *pItemCont = dynamic_cast<CItemContainer *>(GetContainer());
-	if (pItemCont)
+    if (CItemContainer *pItemCont = dynamic_cast<CItemContainer *>(GetContainer()))
 		return pItemCont->IsItemInTrade();
 	return false;
 }
@@ -267,8 +266,7 @@ void CItemContainer::Trade_UpdateGold( dword platinum, dword gold )
 	bool bUpdateChar2 = pChar2->GetClientActive()->GetNetState()->isClientVersionNumber(MINCLIVER_NEWSECURETRADE);
 
 	// To prevent cheating, check if the char really have these gold/platinum values
-	const int64 iMaxValue = pChar1->m_virtualGold;
-	if ( gold + (platinum * 1000000000LL) > iMaxValue )
+    if (const int64 iMaxValue = pChar1->m_virtualGold; gold + (platinum * 1000000000LL) > iMaxValue )
 	{
 		gold = (dword)(iMaxValue % 1000000000);
 		platinum = (dword)(iMaxValue / 1000000000);
@@ -799,8 +797,7 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 	}
 	if ( IsType(IT_EQ_VENDOR_BOX) && IsItemEquipped() )	// vendor boxes should ALWAYS be equipped !
 	{
-		CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem);
-		if ( pItemVend )
+        if ( CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem) )
 			pItemVend->SetPlayerVendorPrice(0);
 	}
 	CContainer::OnRemoveObj(pObjRec);
@@ -878,8 +875,7 @@ void CItemContainer::SetKeyRing()
 	if ( iQty >= std::size(sm_Item_Keyrings))
 		iQty = std::size(sm_Item_Keyrings) - 1;
 
-	ITEMID_TYPE id = sm_Item_Keyrings[iQty];
-	if ( id != GetID() )
+    if (ITEMID_TYPE id = sm_Item_Keyrings[iQty]; id != GetID() )
 	{
 		SetID(id);	// change the type as well.
 		Update();
@@ -895,8 +891,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 		return true;
 
 	size_t pTagTmp = (size_t)(GetKeyNum("OVERRIDE.MAXITEMS"));
-	size_t iMaxItemsCont = pTagTmp ? pTagTmp : g_Cfg.m_iContainerMaxItems;
-	if ( GetContentCount() >= iMaxItemsCont )
+    if (size_t iMaxItemsCont = pTagTmp ? pTagTmp : g_Cfg.m_iContainerMaxItems; GetContentCount() >= iMaxItemsCont )
 	{
 		pCharMsg->SysMessageDefault(DEFMSG_CONT_FULL_ITEMS);
 		return false;
@@ -933,8 +928,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 			// Too many items or too much weight?
 
 			int iBankIMax = g_Cfg.m_iBankIMax;
-			CVarDefCont *pTagTemp = GetKey("OVERRIDE.MAXITEMS", false);
-			if ( pTagTemp )
+            if ( CVarDefCont *pTagTemp = GetKey("OVERRIDE.MAXITEMS", false) )
 				iBankIMax = (int)(pTagTemp->GetValNum());
 
 			if ( iBankIMax >= 0 )
@@ -942,8 +936,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 				// Check if the item dropped in the bank is a container. If it is
 				// we need to calculate the number of items in that too.
 				size_t iItemsInContainer = 0;
-				const CItemContainer *pContItem = dynamic_cast<const CItemContainer *>(pItem);
-				if ( pContItem )
+                if ( const CItemContainer *pContItem = dynamic_cast<const CItemContainer *>(pItem) )
 					iItemsInContainer = pContItem->ContentCountAll();
 
 				// Check the total number of items in the bankbox and the ev.
@@ -1039,8 +1032,7 @@ void CItemContainer::Restock()
 	if ( IsItemEquipped() )
 	{
 		// Part of a vendor.
-		CChar *pChar = dynamic_cast<CChar *>(GetParent());
-		if ( pChar && !pChar->IsStatFlag(STATF_PET) )
+        if (CChar *pChar = dynamic_cast<CChar *>(GetParent()); pChar && !pChar->IsStatFlag(STATF_PET) )
 		{
 			switch ( GetEquipLayer() )
 			{
@@ -1050,8 +1042,7 @@ void CItemContainer::Restock()
 					for (CSObjContRec* pObjRec : *this)
 					{
 						CItem* pItem = static_cast<CItem*>(pObjRec);
-						CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem);
-						if ( pVendItem )
+                        if ( CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem) )
 							pVendItem->Restock(true);
 					}
 				}
@@ -1069,8 +1060,7 @@ void CItemContainer::Restock()
 					for (CSObjContRec* pObjRec : *this)
 					{
 						CItem* pItem = static_cast<CItem*>(pObjRec);
-						CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem);
-						if ( pVendItem )
+                        if ( CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem) )
 							pVendItem->Restock(false);
 					}
 				}
@@ -1341,8 +1331,7 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 			if ( s.HasArgs() )
 			{
 				// 1 based pages.
-				size_t index = s.GetArgVal();
-				if ( index > 0 && index <= GetContentCount() )
+                if (size_t index = s.GetArgVal(); index > 0 && index <= GetContentCount() )
 				{
 					CItem *pItem = static_cast<CItem*>(GetContentIndex(index - 1));
 					ASSERT(pItem);
@@ -1362,8 +1351,7 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 		case ICV_OPEN:
 			if ( pSrc->GetChar() )
 			{
-				CChar *pChar = pSrc->GetChar();
-				if ( pChar->IsClientActive() )
+                if (CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
 				{
 					CClient *pClient = pChar->GetClientActive();
 					ASSERT(pClient);
@@ -1383,8 +1371,7 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 		case ICV_CLOSE:
 			if ( pSrc->GetChar() )
 			{
-				CChar *pChar = pSrc->GetChar();
-				if ( pChar->IsClientActive() )
+                if (CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
 				{
 					CClient *pClient = pChar->GetClientActive();
 					ASSERT(pClient);

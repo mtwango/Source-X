@@ -213,8 +213,7 @@ bool CResourceLink::ResourceLock( CResourceLock &s )
     ASSERT(m_pScript);
 
     //	Give several tryes to lock the script while multithreading
-    int iRet = s.OpenLock( m_pScript, m_Context );
-    if ( ! iRet )
+    if (int iRet = s.OpenLock(m_pScript, m_Context); ! iRet )
         return true;
 
     s.AttachObj( this );

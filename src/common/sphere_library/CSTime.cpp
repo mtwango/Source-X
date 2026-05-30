@@ -336,8 +336,7 @@ bool CSTime::Read(tchar *pszVal)
 	// Read the full date format.
 
 	tchar *ppCmds[10];
-	size_t iQty = Str_ParseCmds( pszVal, ppCmds, std::size(ppCmds), "/,: \t");
-	if ( iQty < 6 )
+    if (size_t iQty = Str_ParseCmds(pszVal, ppCmds, std::size(ppCmds), "/,: \t"); iQty < 6 )
 		return false;
 
     tm atm;

@@ -157,8 +157,7 @@ bool Str_Parse(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     bool fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
     for (uint j = 0; pszSep[j] != '\0'; ++j)		// loop through each separator
     {
-        const tchar & sep = pszSep[j];
-        if (sep == '{' || sep == '}')
+        if (const tchar &sep = pszSep[j]; sep == '{' || sep == '}')
             fSepHasCurly = true;
         else if (sep == '[' || sep == ']')
             fSepHasSquare = true;
@@ -345,8 +344,7 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     bool fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
     for (uint j = 0; pszSep[j] != '\0'; ++j)		// loop through each separator
     {
-        const tchar & sep = pszSep[j];
-        if (sep == '{' || sep == '}')
+        if (const tchar &sep = pszSep[j]; sep == '{' || sep == '}')
             fSepHasCurly = true;
         else if (sep == '[' || sep == ']')
             fSepHasSquare = true;
@@ -525,8 +523,7 @@ bool IsValidGameObjDef( lpctstr ptcTest )
 		if ( pVarBase == nullptr )
 			return false;
 
-		const tchar ch = *pVarBase->GetValStr();
-		if ( !ch || (ch == '<') )
+        if (const tchar ch = *pVarBase->GetValStr(); !ch || (ch == '<') )
 			return false;
 
 		const CResourceID rid = g_Cfg.ResourceGetID(RES_QTY, ptcTest);
@@ -756,8 +753,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             if (ch < '0' || ch > '9')
                 break;
 
-            const int d = ch - '0';
-            if (!overflow && (val > LIM10 || (val == LIM10 && d > LIMDG)))
+            if (const int d = ch - '0'; !overflow && (val > LIM10 || (val == LIM10 && d > LIMDG)))
             {
                 overflow = true; // keep consuming the whole token for the caller
             }
@@ -820,11 +816,10 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
     {
         // Symbol or intrinsinc function ?
 
-        INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
-        if (iIntrinsic >= 0)
+        if (INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
+            iIntrinsic >= 0)
         {
-            size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);
-            if (strchr("( ", refStrExpr[iLen]))
+            if (size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]); strchr("( ", refStrExpr[iLen]))
             {
                 refStrExpr += (iLen + 1);
                 tchar *pszArgsNext;
@@ -884,8 +879,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
 
                         if (*refStrExpr)
                         {
-                            llong iArgument = GetVal(refStrExpr);
-                            if (iArgument <= 0)
+                            if (llong iArgument = GetVal(refStrExpr); iArgument <= 0)
                             {
                                 DEBUG_ERR(("Exp_GetVal: (x)Log(%lld) is %s\n", iArgument, (!iArgument ? "infinite" : "undefined")));
                             }
@@ -907,8 +901,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                                     }
                                     else
                                     {
-                                        llong iBase = GetVal(refStrExpr);
-                                        if (iBase <= 0)
+                                        if (llong iBase = GetVal(refStrExpr); iBase <= 0)
                                         {
                                             DEBUG_ERR(("Exp_GetVal: (%lld)Log(%lld) is %s\n", iBase, iArgument, (!iBase ? "infinite" : "undefined")));
                                             iCount = 0;
@@ -946,9 +939,8 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
 
                         if (*refStrExpr)
                         {
-                            llong iTosquare = GetVal(refStrExpr);
 
-                            if (iTosquare >= 0)
+                            if (llong iTosquare = GetVal(refStrExpr); iTosquare >= 0)
                             {
                                 ++iCount;
                                 iResult = (llong)sqrt((double)iTosquare);
@@ -1188,8 +1180,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         else
                         {
                             const llong a1 = GetSingle(ppCmd[0]);
-                            const llong a2 = GetSingle(ppCmd[1]);
-                            if (a1 < a2)
+                            if (const llong a2 = GetSingle(ppCmd[1]); a1 < a2)
                             {
                                 iResult = GetSingle(ppCmd[2]);
                             }
@@ -1617,8 +1608,7 @@ CExpression::GetConditionalSubexpressions(
             ASSERT(*pExpr_ != '\0');
             lptstr pExprFinder;
             const size_t uiExprLength = strlen(pExpr_);
-            const lptstr pComment = Str_FindSubstring(pExpr_, "//", uiExprLength, 2);
-            if (nullptr == pComment) {
+            if (const lptstr pComment = Str_FindSubstring(pExpr_, "//", uiExprLength, 2); nullptr == pComment) {
                 pExprFinder = pExpr_ + uiExprLength - 1;
                 // Now pExprFinder is at the end of the string
             }
@@ -1629,8 +1619,7 @@ CExpression::GetConditionalSubexpressions(
 
             // Search for open brackets
             do {
-                const bool fWhite = IsWhitespace(*pExprFinder);
-                if (fWhite)
+                if (IsWhitespace(*pExprFinder))
                     --pExprFinder;
                 else
                     break;
@@ -1644,8 +1633,7 @@ CExpression::GetConditionalSubexpressions(
             uint uiOpenedCurlyBrackets = 1;
             while (uiOpenedCurlyBrackets != 0)	// i'm interested only to the outermost range, not eventual sub-sub-sub-blah ranges
             {
-                tchar ch_ = *(++pExpr_);
-                if (ch_ == '(')
+                if (tchar ch_ = *(++pExpr_); ch_ == '(')
                     ++uiOpenedCurlyBrackets;
                 else if (ch_ == ')')
                     --uiOpenedCurlyBrackets;
@@ -1791,8 +1779,8 @@ CExpression::GetConditionalSubexpressions(
                     }
                     else
                     {
-                        const ushort prevSubexprType = ((uiSubexprQty == 1) ? (ushort)SubexprType_t::None : parsingSubexprsStates[uiSubexprQty - 2].uiType);
-                        if ((prevSubexprType & SubexprType_t::None))
+                        if (const ushort prevSubexprType = ((uiSubexprQty == 1) ? (ushort)SubexprType_t::None : parsingSubexprsStates[uiSubexprQty - 2].uiType);
+                            (prevSubexprType & SubexprType_t::None))
                         {
                             // This subexpr is not preceded by a two-way operator, so probably i'm an operator: skip me.
                             sCurSubexpr.uiType = SubexprType_t::BinaryNonLogical | (sCurSubexpr.uiType & ~SubexprType_t::None);
@@ -2217,8 +2205,7 @@ bool CExpression::EvaluateConditionalSingle(
 
     ++ refExprContext._iEvaluate_Conditional_Reentrant;
 
-    const bool fNested = (refSubExprState.uiType & SType::MaybeNestedSubexpr);
-    if (fNested)
+    if ((refSubExprState.uiType & SType::MaybeNestedSubexpr))
     {
         // Probably this subexpression has other conditional subexpressions inside.
         fVal = EvaluateConditionalWhole(ptcSubexpr, refExprContext, pScriptArgs, pSrc);
@@ -2481,8 +2468,7 @@ int CExpression::ParseScriptText(
                     // Is a << operator? I want a whitespace after the operator.
                     if ((ptcResponse[i + 2] != '\0') && (ptcResponse[i + 3] != '\0') && IsWhitespace(ptcResponse[i + 2]))
                     {
-                        lpctstr ptcOpTest = &(ptcResponse[4]);
-                        if (*ptcOpTest != '\0')
+                        if (lpctstr ptcOpTest = &(ptcResponse[4]); *ptcOpTest != '\0')
                         {
                             GETNONWHITESPACE(ptcOpTest);
                             if (*ptcOpTest != '\0')  // There's more text to parse
@@ -2501,8 +2487,7 @@ int CExpression::ParseScriptText(
                 pContext._fParseScriptText_Brackets = true;
 
                 // Set-up to process special statements: is it a QVAL?
-                const bool fIsQval = !strnicmp(ptcResponse + i + 1, "QVAL", 4);
-                if (fIsQval)
+                if (!strnicmp(ptcResponse + i + 1, "QVAL", 4))
                 {
                     ++iQvalOpenBrackets;
                     eQval = QvalStatus::Condition;
@@ -2525,8 +2510,7 @@ int CExpression::ParseScriptText(
         // Handle possibly recursive angular brackets (i'm already inside an open bracket)
         if (pContext._fParseScriptText_Brackets && (ch == '<'))
         {
-            const tchar chNext = ptcResponse[i + 1];
-            if (chNext == '<')
+            if (const tchar chNext = ptcResponse[i + 1]; chNext == '<')
             {
                 // Nested angular brackets? like: <<SKILL>>
                 lptstr ptcTestNested = ptcResponse + i;
@@ -2566,8 +2550,7 @@ int CExpression::ParseScriptText(
             // Detect nested QVALs
             if (eQval != QvalStatus::None)
             {
-                const bool fIsQval = !strnicmp(ptcResponse + i + 1, "QVAL", 4);
-                if (fIsQval)
+                if (!strnicmp(ptcResponse + i + 1, "QVAL", 4))
                 {
                     // Nested QVAL... Needs to be evaluated separately, but we only want to know where it ends.
                     ASSERT(pContext._fParseScriptText_Brackets == true);

@@ -33,8 +33,7 @@ CRectMap & CRegionBase::GetRegionRect(size_t i)
 {
 	ADDTOCALLSTACK("CRegionBase::GetRegionRect");
 	// Get a particular rectangle.
-	const size_t iQty = m_Rects.size();
-	if ( iQty <= 0 )
+    if (const size_t iQty = m_Rects.size(); iQty <= 0 )
 		return m_rectUnion;
 	return m_Rects[i];
 }
@@ -42,8 +41,7 @@ CRectMap & CRegionBase::GetRegionRect(size_t i)
 const CRectMap & CRegionBase::GetRegionRect(size_t i) const
 {
 	ADDTOCALLSTACK("CRegionBase::GetRegionRect");
-	const size_t iQty = m_Rects.size();
-	if ( iQty <= 0 )
+    if (const size_t iQty = m_Rects.size(); iQty <= 0 )
 		return m_rectUnion;
 	return m_Rects[i];
 }
@@ -61,8 +59,7 @@ bool CRegionBase::IsInside2d( const CPointMap & pt ) const
 	if ( ! m_rectUnion.IsInside2d( pt ))
 		return false;
 
-	const size_t iQty = m_Rects.size();
-	if ( iQty > 0 )
+    if (const size_t iQty = m_Rects.size(); iQty > 0 )
 	{
 		for ( size_t i = 0; i < iQty; ++i )
 		{
@@ -80,8 +77,7 @@ bool CRegionBase::AddRegionRect( const CRectMap & rect )
 	if ( rect.IsRectEmpty() )
 		return false;
 
-	const size_t iQty = m_Rects.size();
-	if ( iQty <= 0 && IsRegionEmpty())
+    if (const size_t iQty = m_Rects.size(); iQty <= 0 && IsRegionEmpty())
 	{
 		m_rectUnion = rect;
 	}
@@ -148,9 +144,7 @@ bool CRegionBase::IsOverlapped( const CRectMap & rect ) const noexcept
 
     for ( uint i = 0; i < iQty; ++i )
 	{
-        CRect const& r = m_Rects[i];
-        if (
-            (right      > r.m_left) &&  // Left edge of rect is to the left of this rect's right edge
+        if (CRect const &r = m_Rects[i]; (right > r.m_left) &&  // Left edge of rect is to the left of this rect's right edge
             (r.m_right  > left)     &&  // Right edge of rect is to the right of this rect's left edge
             (bottom     > r.m_top)  &&  // Top edge of rect is above this rect's bottom edge
             (r.m_bottom > top)          // Bottom edge of rect is below this rect's top edge

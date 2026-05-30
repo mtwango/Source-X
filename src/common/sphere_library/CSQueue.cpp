@@ -23,8 +23,7 @@ byte * CSQueueBytes::AddNewDataLock( size_t iLen )
 {
 	// lock the queue to place this data in it.
 
-	size_t iLenNew = m_iDataQty + iLen;
-	if ( iLenNew > m_Mem.GetDataLength() )
+    if (size_t iLenNew = m_iDataQty + iLen; iLenNew > m_Mem.GetDataLength() )
 	{
 		// re-alloc a bigger buffer. as needed.
 

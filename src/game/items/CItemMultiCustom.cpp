@@ -203,8 +203,7 @@ void CItemMultiCustom::EndCustomize(bool fForce)
     CClient * pClient = m_pArchitect;
     m_pArchitect = nullptr;
 
-    CChar * pChar = pClient->GetChar();
-    if (pChar != nullptr)
+    if (CChar *pChar = pClient->GetChar(); pChar != nullptr)
     {
         if (IsTrigUsed(TRIGGER_HOUSEDESIGNEXIT))
         {
@@ -256,8 +255,7 @@ void CItemMultiCustom::SwitchToLevel(CClient * pClientSrc, uchar iLevel)
     if (pChar == nullptr)
         return;
 
-    uchar iMaxLevel = GetLevelCount();
-    if (iLevel > iMaxLevel)
+    if (uchar iMaxLevel = GetLevelCount(); iLevel > iMaxLevel)
         iLevel = iMaxLevel;
 
     CPointMap pt = GetTopPoint();
@@ -277,8 +275,7 @@ void CItemMultiCustom::CommitChanges(CClient * pClientSrc)
     if (m_designWorking.m_iRevision == m_designMain.m_iRevision)
         return;
 
-    CChar* pCharClient = pClientSrc ? pClientSrc->GetChar() : nullptr;
-    if (pCharClient)
+    if (CChar *pCharClient = pClientSrc ? pClientSrc->GetChar() : nullptr)
     {
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         const bool fSendFullTrigger = IsTrigUsed(TRIGGER_HOUSEDESIGNCOMMITITEM);
@@ -297,8 +294,7 @@ void CItemMultiCustom::CommitChanges(CClient * pClientSrc)
                 pScriptArgs->m_VarsLocal.SetNum("VISIBLE", pComp->m_item.m_visible);
                 pScriptArgs->m_pO1 = this;
 
-                const TRIGRET_TYPE iRet = pCharClient->OnTrigger(CTRIG_HouseDesignCommitItem, pScriptArgs, pCharClient);
-                if (iRet == TRIGRET_RET_FALSE)
+                if (const TRIGRET_TYPE iRet = pCharClient->OnTrigger(CTRIG_HouseDesignCommitItem, pScriptArgs, pCharClient); iRet == TRIGRET_RET_FALSE)
                 {
                     it = m_designWorking.m_vectorComponents.erase(it);
                     continue;
@@ -478,8 +474,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         {
             // if a client is placing the item, make sure that
             // it is within the design area
-            CRect rectDesign = GetDesignArea();
-            if (!rectDesign.IsInside2d(pt))
+            if (CRect rectDesign = GetDesignArea(); !rectDesign.IsInside2d(pt))
             {
                 if (!rectDesign.IsInsideX(pt.m_x) || !rectDesign.IsInsideY(pt.m_y - 1))
                 {
@@ -525,8 +520,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         */
 
         // remove previous item(s) in this location
-        size_t iCount = GetComponentsAt(x, y, z, pPrevComponents, &m_designWorking);
-        if (iCount > 0)
+        if (size_t iCount = GetComponentsAt(x, y, z, pPrevComponents, &m_designWorking); iCount > 0)
         {
             for (size_t i = 0; i < iCount; ++i)
             {
@@ -561,8 +555,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         {
             for (const CUID& uid : vListLocks)
             {
-                CItem *pItem = uid.ItemFind();
-                if (pItem)
+                if (CItem *pItem = uid.ItemFind())
                 {
                     UnlockItem(uid, true);
                     pMovingCrate->ContentAdd(pItem);
@@ -578,8 +571,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         {
             for (const CUID& uid : vListLocks)
             {
-                CItemContainer *pCont = static_cast<CItemContainer*>(uid.ItemFind());
-                if (pCont)
+                if (CItemContainer *pCont = static_cast<CItemContainer *>(uid.ItemFind()))
                 {
                     Release(uid, true);
                     pMovingCrate->ContentAdd(pCont);
@@ -844,14 +836,12 @@ bool CItemMultiCustom::RemoveStairs(CMultiComponent * pStairComponent)
 
     for (auto it = m_designWorking.m_vectorComponents.begin(); it != m_designWorking.m_vectorComponents.end(); )
     {
-        CMultiComponent* pComp = *it;
-        if (pComp->m_isStair == iStairID)
+        if (CMultiComponent *pComp = *it; pComp->m_isStair == iStairID)
         {
             bool fReplaceDirt = false;
             if (pComp->m_isFloor)
             {
-                const uchar uiCompPlane = GetPlane(pComp);
-                if ((uiCompPlane == 1) && (GetPlaneZ(uiCompPlane) == pComp->m_item.m_dz))
+                if (const uchar uiCompPlane = GetPlane(pComp); (uiCompPlane == 1) && (GetPlaneZ(uiCompPlane) == pComp->m_item.m_dz))
                     fReplaceDirt = true;
             }
 
@@ -1082,8 +1072,7 @@ void CItemMultiCustom::ResetStructure(CClient * pClientSrc)
 
     m_designWorking.m_vectorComponents.clear();
     ++ m_designWorking.m_iRevision;
-    const CUOMulti * pMulti = g_Cfg.GetMultiItemDefs(GetID());
-    if (pMulti != nullptr)
+    if (const CUOMulti *pMulti = g_Cfg.GetMultiItemDefs(GetID()); pMulti != nullptr)
     {
         uint iQty = pMulti->GetItemCount();
         for (uint i = 0; i < iQty; ++i)
@@ -1119,8 +1108,7 @@ uchar CItemMultiCustom::GetLevelCount()
     ADDTOCALLSTACK("CItemMultiCustom::GetLevelCount");
     // return how many levels (including the roof) there are
     // client decides this based on the size of the foundation
-    const CRect rectDesign = GetDesignArea();
-    if (rectDesign.GetWidth() >= 14 || rectDesign.GetHeight() >= 14)
+    if (const CRect rectDesign = GetDesignArea(); rectDesign.GetWidth() >= 14 || rectDesign.GetHeight() >= 14)
         return 4;
 
     return 3;
@@ -1212,8 +1200,7 @@ const CRect CItemMultiCustom::GetDesignArea()
     {
         m_rectDesignArea.SetRect(0, 0, 1, 1, GetTopMap());
 
-        const CUOMulti * pMulti = g_Cfg.GetMultiItemDefs(GetID());
-        if (pMulti != nullptr)
+        if (const CUOMulti *pMulti = g_Cfg.GetMultiItemDefs(GetID()); pMulti != nullptr)
         {
             // the client uses the multi items to determine the area
             // that's editable
@@ -1566,8 +1553,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
         case IMCV_ADDITEM:
         {
             tchar * ppArgs[4];
-            int iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ",");
-            if (iQty != 4)
+            if (int iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iQty != 4)
             {
                 return false;
             }
@@ -1583,8 +1569,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
         case IMCV_ADDMULTI:
         {
             tchar * ppArgs[4];
-            size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ",");
-            if (iQty != 4)
+            if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iQty != 4)
                 return false;
 
             ITEMID_TYPE id = (ITEMID_TYPE)(Exp_GetVal(ppArgs[0]));
@@ -1610,8 +1595,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
 
         case IMCV_CLEARFLOOR:
         {
-            int8 iFloor = s.GetArg8Val();
-            if (iFloor == -1)
+            if (int8 iFloor = s.GetArg8Val(); iFloor == -1)
             {
                 ASSERT(_iMaxPlane < INT8_MAX);
                 for (int8 i = 0; i < (int8)_iMaxPlane; ++i)
@@ -1669,8 +1653,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
         case IMCV_REMOVEITEM:
         {
             tchar * ppArgs[4];
-            size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ",");
-            if (iQty != 4)
+            if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iQty != 4)
                 return false;
 
             RemoveItem(nullptr,
@@ -1817,8 +1800,7 @@ bool CItemMultiCustom::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole 
         case IMCC_DESIGNER:
         {
             //ptcKey += 8;
-            CChar * pDesigner = m_pArchitect ? m_pArchitect->GetChar() : nullptr;
-            if (pDesigner != nullptr)
+            if (CChar *pDesigner = m_pArchitect ? m_pArchitect->GetChar() : nullptr; pDesigner != nullptr)
                 sVal.FormatHex(pDesigner->GetUID());
             else
                 sVal.FormatHex(0);
@@ -1865,8 +1847,7 @@ bool CItemMultiCustom::r_LoadVal(CScript & s)
         if (s.IsKey("COMP"))
         {
             tchar * ppArgs[5];
-            int iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ",");
-            if (iQty != 5)
+            if (int iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iQty != 5)
                 return false;
 
             AddItem(nullptr,
@@ -1939,8 +1920,7 @@ bool CItemMultiCustom::IsValidItem(ITEMID_TYPE id, CClient * pClientSrc, bool fM
         return false;
 
     // check if client enabled features contains the item FeatureMask
-    uint iFeatureFlag = g_Cfg.GetPacketFlag(false, (RESDISPLAY_VERSION)(pClientSrc->GetResDisp()));
-    if ((iFeatureFlag & it->second) != it->second)
+    if (uint iFeatureFlag = g_Cfg.GetPacketFlag(false, (RESDISPLAY_VERSION)(pClientSrc->GetResDisp())); (iFeatureFlag & it->second) != it->second)
         return false;
 
     return true;

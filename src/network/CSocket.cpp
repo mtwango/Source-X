@@ -401,8 +401,7 @@ int CSocket::GetSockName(sockaddr_in * pSockAddrIn ) const
 CSocketAddress CSocket::GetSockName() const
 {
 	sockaddr_in SockAddrIn;
-	int iRet = GetSockName( &SockAddrIn );
-	if ( iRet )
+    if (GetSockName(&SockAddrIn))
 	{
 		return( CSocketAddress( INADDR_BROADCAST, 0 ));	// invalid.
 	}
@@ -421,8 +420,7 @@ int CSocket::GetPeerName(sockaddr_in * pSockAddrIn ) const
 CSocketAddress CSocket::GetPeerName( ) const
 {
 	sockaddr_in SockAddrIn;
-	int iRet = GetPeerName( &SockAddrIn );
-	if ( iRet )
+    if (GetPeerName(&SockAddrIn))
 	{
 		return( CSocketAddress( INADDR_BROADCAST, 0 ));	// invalid.
 	}

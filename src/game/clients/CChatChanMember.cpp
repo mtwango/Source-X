@@ -94,8 +94,7 @@ void CChatChanMember::DontIgnore(lpctstr pszName)
 void CChatChanMember::ToggleIgnore(lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::ToggleIgnore");
-    size_t i = FindIgnoringIndex( pszName );
-    if ( i != sl::scont_bad_index() )
+    if (size_t i = FindIgnoringIndex(pszName); i != sl::scont_bad_index() )
     {
         ASSERT( m_IgnoredMembers.IsValidIndex(i) );
         m_IgnoredMembers.erase_at(i);
@@ -105,8 +104,7 @@ void CChatChanMember::ToggleIgnore(lpctstr pszName)
         // Resend the un ignored member to the client's local list of members (but only if they are currently in the same channel!)
         if (m_pChannel)
         {
-            CChatChanMember * pMember = m_pChannel->FindMember(pszName);
-            if (pMember)
+            if (CChatChanMember *pMember = m_pChannel->FindMember(pszName))
                 m_pChannel->SendMember(pMember, this);
         }
     }
@@ -131,8 +129,7 @@ void CChatChanMember::ClearIgnoreList()
 void CChatChanMember::RenameChannel(lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::RenameChannel");
-    CChatChannel * pChannel = GetChannel();
-    if (!pChannel)
+    if (CChatChannel *pChannel = GetChannel(); !pChannel)
         SendChatMsg(CHATMSG_MustBeInAConference);
     else if (!pChannel->IsModerator(pszName))
         SendChatMsg(CHATMSG_MustHaveOps);
@@ -195,9 +192,8 @@ const CClient * CChatChanMember::GetClientActive() const NOEXCEPT_NODEBUG
 lpctstr CChatChanMember::GetChatName() const
 {
     ADDTOCALLSTACK("CChatChanMember::GetChatName");
-    const CClient *pClient = GetClientActive();
 
-    if (pClient && pClient->GetAccount() && !pClient->GetAccount()->m_sChatName.IsEmpty())
+    if (const CClient *pClient = GetClientActive(); pClient && pClient->GetAccount() && !pClient->GetAccount()->m_sChatName.IsEmpty())
         return(pClient->GetAccount()->m_sChatName);
     return "";
 }

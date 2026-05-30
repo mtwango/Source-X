@@ -43,8 +43,7 @@ TRIGRET_TYPE CRegionResourceDef::OnTrigger(lpctstr pszTrigName, CScriptTriggerAr
     // Attach some trigger to the cchar. (PC or NPC)
     // RETURN: true = block further action.
 
-    CResourceLock s;
-    if ( ResourceLock( s ))
+    if (CResourceLock s; ResourceLock( s ))
     {
         TRIGRET_TYPE iRet = OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc);
         return iRet;

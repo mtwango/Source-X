@@ -47,8 +47,7 @@ void CClient::resendBuffs() const
 	if ( pChar->IsStatFlag(STATF_HIDDEN | STATF_INSUBSTANTIAL) )
 		addBuff(BI_HIDDEN, 1075655, 1075656);
 
-	const CItem *pStuck = pChar->LayerFind(LAYER_FLAG_Stuck);
-	if ( pStuck )
+    if ( const CItem *pStuck = pChar->LayerFind(LAYER_FLAG_Stuck) )
 	{
 		removeBuff(BI_PARALYZE);
 		addBuff(BI_PARALYZE, 1075827, 1075828, (word)(pStuck->GetTimerSAdjusted()));
@@ -371,8 +370,7 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 	// send corpse clothing
 	if ( !IsPriv(PRIV_DEBUG) && (fCorpse && CCharBase::IsPlayableID(pItem->GetCorpseType())) )	// cloths on corpse
 	{
-		const CItemCorpse *pCorpse = static_cast<const CItemCorpse *>(pItem);
-		if ( pCorpse )
+        if ( const CItemCorpse *pCorpse = static_cast<const CItemCorpse *>(pItem) )
 		{
 			addContainerContents( pCorpse, false, true );	// send all corpse items
 			addContainerContents( pCorpse, true, true );	// equip proper items on corpse
@@ -411,8 +409,7 @@ void CClient::addItem_InContainer( const CItem * pItem )
 {
 	ADDTOCALLSTACK("CClient::addItem_InContainer");
 	ASSERT(pItem);
-	CItemContainer * pCont = dynamic_cast <CItemContainer*> (pItem->GetParent());
-	if ( pCont == nullptr )
+    if (CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem->GetParent()); pCont == nullptr )
 		return;
 
 	new PacketItemContainer(this, pItem);
@@ -1024,8 +1021,7 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 	{
 		// check the reslevel of the ridden horse
 		CREID_TYPE idHorse = pItem->m_itFigurine.m_ID;
-		const CCharBase * pCharDef = CCharBase::FindCharBase(idHorse);
-		if ( pCharDef && (uiResDisp < pCharDef->GetResLevel() ) )
+        if (const CCharBase *pCharDef = CCharBase::FindCharBase(idHorse); pCharDef && (uiResDisp < pCharDef->GetResLevel() ) )
 		{
 			idHorse = (CREID_TYPE)(pCharDef->GetResDispDnId());
 			wHue = pCharDef->GetResDispDnHue();
@@ -1227,8 +1223,7 @@ void CClient::addItemName( CItem * pItem )
 	tchar szName[ MAX_ITEM_NAME_SIZE * 2 ];
 	size_t len = Str_CopyLimitNull( szName, pszNameFull, std::size(szName));
 
-	const CContainer* pCont = dynamic_cast<const CContainer*>(pItem);
-	if ( pCont != nullptr )
+    if (const CContainer *pCont = dynamic_cast<const CContainer *>(pItem); pCont != nullptr )
 	{
 		// ??? Corpses show hair as an item !!
 		len += snprintf( szName+len, sizeof(szName) - len,
@@ -1238,8 +1233,7 @@ void CClient::addItemName( CItem * pItem )
 	// obviously damaged ?
 	else if ( pItem->IsTypeArmorWeapon())
 	{
-		const int iPercent = pItem->Armor_GetRepairPercent();
-		if ( iPercent < 50 &&
+        if (const int iPercent = pItem->Armor_GetRepairPercent(); iPercent < 50 &&
 			( m_pChar->Skill_GetAdjusted( SKILL_ARMSLORE ) / 10 > iPercent ))
 		{
 			len += snprintf( szName+len, sizeof(szName) - len, " (%s)", pItem->Armor_GetRepairDesc());
@@ -1250,23 +1244,19 @@ void CClient::addItemName( CItem * pItem )
 	CItemContainer * pMyCont = dynamic_cast <CItemContainer *>( pItem->GetParent());
 	if ( pMyCont != nullptr && pMyCont->IsType(IT_EQ_VENDOR_BOX))
 	{
-		const CItemVendable * pVendItem = dynamic_cast <const CItemVendable *> (pItem);
-		if ( pVendItem )
+        if ( const CItemVendable *pVendItem = dynamic_cast<const CItemVendable *>(pItem) )
 		{
 			len += snprintf( szName+len, sizeof(szName) - len, " (%u gp)", pVendItem->GetBasePrice());
 		}
 	}
 
 	HUE_TYPE wHue = HUE_TEXT_DEF;
-	const CVarDefCont* sVal = pItem->GetKey("NAME.HUE", true);
-	if (sVal)
+    if (const CVarDefCont *sVal = pItem->GetKey("NAME.HUE", true))
 		wHue = (HUE_TYPE)(sVal->GetValNum());
 
-	const CItemCorpse * pCorpseItem = dynamic_cast <const CItemCorpse *>(pItem);
-	if ( pCorpseItem )
+    if ( const CItemCorpse *pCorpseItem = dynamic_cast<const CItemCorpse *>(pItem) )
 	{
-		CChar * pCharCorpse = pCorpseItem->m_uidLink.CharFind();
-		if ( pCharCorpse )
+        if ( CChar *pCharCorpse = pCorpseItem->m_uidLink.CharFind() )
 		{
 			wHue = pCharCorpse->Noto_GetHue( m_pChar, true );
 		}
@@ -1288,8 +1278,7 @@ void CClient::addItemName( CItem * pItem )
 			case IT_SPAWN_CHAR:
 			case IT_SPAWN_ITEM:
 				{
-					CCSpawn *pSpawn = pItem->GetSpawn();
-					if ( pSpawn )
+                if ( CCSpawn *pSpawn = pItem->GetSpawn() )
 						len += pSpawn->WriteName(szName + len);
 				}
 				break;
@@ -1301,8 +1290,7 @@ void CClient::addItemName( CItem * pItem )
 				{
                     if (pItem->m_itResource.m_ridRes.IsValidResource())
                     {
-                        CResourceDef* pResDef = g_Cfg.RegisteredResourceGetDef(pItem->m_itResource.m_ridRes);
-                        if (pResDef)
+                        if (CResourceDef *pResDef = g_Cfg.RegisteredResourceGetDef(pItem->m_itResource.m_ridRes))
                             len += snprintf(szName + len, sizeof(szName) - len, " (%s)", pResDef->GetName());
                     }
 				}
@@ -1322,14 +1310,10 @@ void CClient::addItemName( CItem * pItem )
         pScriptArgs->m_VarsLocal.SetStrNew("ClickMsgText", &szName[0]);
         pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
-        TRIGRET_TYPE ret = pItem->OnTrigger( "@AfterClick", pScriptArgs, m_pChar );	// CTRIG_AfterClick, ITRIG_AfterClick
-
-		if ( ret == TRIGRET_RET_TRUE )
+        if (TRIGRET_TYPE ret = pItem->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
 			return;
 
-        lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText");
-
-		if ( pNewStr != nullptr )
+        if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(szName, pNewStr, std::size(szName));
 
         wHue = (HUE_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
@@ -1376,8 +1360,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 	{
 		if ( pChar->GetNPCBrainGroup() == NPCBRAIN_HUMAN )
 		{
-			lpctstr title = pChar->GetTradeTitle();
-			if ( *title )
+            if (lpctstr title = pChar->GetTradeTitle(); *title )
 			{
                 Str_ConcatLimitNull( pszTemp, " ", Str_TempLength() );
                 Str_ConcatLimitNull( pszTemp, title, Str_TempLength() );
@@ -1448,14 +1431,11 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
         pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
         // TODO: const correctness...
-        TRIGRET_TYPE ret = const_cast<CChar*>(pChar)->OnTrigger( "@AfterClick", pScriptArgs, m_pChar );	// CTRIG_AfterClick, ITRIG_AfterClick
 
-		if ( ret == TRIGRET_RET_TRUE )
+        if (TRIGRET_TYPE ret = const_cast<CChar *>(pChar)->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
 			return;
 
-        lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText");
-
-		if ( pNewStr != nullptr )
+        if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(pszTemp, pNewStr, Str_TempLength());
 
         wHue = (HUE_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
@@ -1480,8 +1460,7 @@ void CClient::addPlayerStart( CChar * pChar )
 	ASSERT(m_pChar->m_pPlayer);
 	ASSERT(m_pAccount);
 
-	CItem * pItemChange = m_pChar->LayerFind(LAYER_FLAG_ClientLinger);
-	if ( pItemChange != nullptr )
+    if (CItem *pItemChange = m_pChar->LayerFind(LAYER_FLAG_ClientLinger); pItemChange != nullptr )
 		pItemChange->Delete();
 
 	if ( g_Cfg.m_fAutoResDisp )
@@ -1551,9 +1530,8 @@ bool CClient::addBookOpen( CItem * pBook ) const
 	if (pBook->IsBookSystem() == false)
 	{
 		// User written book.
-		CItemMessage *pMsgItem = static_cast<CItemMessage *>(pBook);
 
-		if (pMsgItem->IsBookWritable())
+        if (CItemMessage *pMsgItem = dynamic_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
             wPagesNow = pMsgItem->GetPageCount(); // for some reason we must send them now
 	}
 
@@ -1669,8 +1647,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 		} break;
 		case CLIMODE_TARG_USE_ITEM:
 		{
-			CItem * pItemUse = m_Targ_UID.ItemFind();
-			if (pItemUse && (IsTrigUsed(TRIGGER_TARGON_CANCEL) || IsTrigUsed(TRIGGER_ITEMTARGON_CANCEL)))
+            if (CItem *pItemUse = m_Targ_UID.ItemFind(); pItemUse && (IsTrigUsed(TRIGGER_TARGON_CANCEL) || IsTrigUsed(TRIGGER_ITEMTARGON_CANCEL)))
 			{
                 if ( pItemUse->OnTrigger( ITRIG_TARGON_CANCEL, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pCharThis) == TRIGRET_RET_TRUE )
 					fSuppressCancelMessage = true;
@@ -1679,8 +1656,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 
 		case CLIMODE_TARG_SKILL_MAGERY:
 		{
-			const CSpellDef* pSpellDef = g_Cfg.GetSpellDef(m_tmSkillMagery.m_iSpell);
-			if (pSpellDef)
+            if (const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_tmSkillMagery.m_iSpell))
 			{
                 CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(m_tmSkillMagery.m_iSpell, 0, 0, m_Targ_Prv_UID.ObjFind());
@@ -1760,8 +1736,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 	if ((curTargMode != CLIMODE_NORMAL) && (targmode != CLIMODE_NORMAL))
 	{
 		//If there's any item in LAYER_DRAGGING we remove it from view and then bounce it
-		CItem * pItem = pCharThis->LayerFind( LAYER_DRAGGING );
-		if (pItem != nullptr)
+        if (CItem *pItem = pCharThis->LayerFind(LAYER_DRAGGING); pItem != nullptr)
 		{
 			pItem->RemoveFromView();		//Removing from view to avoid seeing it in the cursor
 			pCharThis->ItemBounce(pItem);
@@ -1860,8 +1835,7 @@ bool CClient::addTargetItems( CLIMODE_TYPE targmode, ITEMID_TYPE id, HUE_TYPE co
 		if ( pItemDef->IsType(IT_STONE_GUILD) )
 		{
 			// Check if they are already in a guild first
-			CItemStone * pStone = m_pChar->Guild_Find(MEMORY_GUILD);
-			if (pStone)
+            if (CItemStone *pStone = m_pChar->Guild_Find(MEMORY_GUILD))
 			{
 				addSysMessage( g_Cfg.GetDefaultMsg(DEFMSG_GUILD_ALREADY_MEMBER) );
 				return false;
@@ -1993,8 +1967,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
             // This looks like the only way to make this thing work. Even if i send the worldobj packet with the commented code, the client
             //  will ignore it (and SpyUO 2 doesn't show that packet ?! it only shows packets that actually result in the generation of a world item, how weird)
             const int iOldDist = ptOld.GetDistSight(ptItemTop);  // handles also the case of an invalid point
-            const int iCornerDistFromCenter = pMulti->GetSideDistanceFromCenter(dirFace);
-            if ((iOldDist + iCornerDistFromCenter) > iViewDist)
+            if (const int iCornerDistFromCenter = pMulti->GetSideDistanceFromCenter(dirFace); (iOldDist + iCornerDistFromCenter) > iViewDist)
             {
                 //const int iCurDist = ptCharThis.GetDistSight(ptItemTop);
                 //if (iCurDist + iCornerDistFromCenter <= iViewDist)
@@ -2282,8 +2255,7 @@ void CClient::addHealthBarUpdate( const CChar * pChar ) const
 	if ( pChar == nullptr )
 		return;
 
-    const CNetState* pNetState = GetNetState();
-    if ( PacketHealthBarUpdateNew::CanSendTo(pNetState) )
+    if (const CNetState *pNetState = GetNetState(); PacketHealthBarUpdateNew::CanSendTo(pNetState) )
         new PacketHealthBarUpdateNew(this, pChar);
     else if ( PacketHealthBarUpdate::CanSendTo(pNetState) )
         new PacketHealthBarUpdate(this, pChar);
@@ -2358,8 +2330,7 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	int count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-		auto pItem = static_cast<const CItem*>(pObjRec);
-		if ( !pItem->IsType( IT_SCROLL ) )
+        if (auto pItem = dynamic_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
 			continue;
 		++ count;
 	}
@@ -2477,8 +2448,7 @@ bool CClient::addShopMenuSell( CChar * pVendor )
 		pContainer2 = nullptr;		// no stock
 
 	PacketVendorSellList cmd( pVendor );
-	size_t count = cmd.fillSellList( this, m_pChar->GetPackSafe(), pContainer1, pContainer2, -pVendor->NPC_GetVendorMarkup() );
-	if ( count <= 0 )
+    if (size_t count = cmd.fillSellList(this, m_pChar->GetPackSafe(), pContainer1, pContainer2, -pVendor->NPC_GetVendorMarkup()); count <= 0 )
 		return false;
 
 	cmd.send( this );
@@ -2852,8 +2822,7 @@ byte CClient::Setup_Start( CChar * pChar ) // Send character startup stuff to pl
 				g_Serv.StatGet(SERV_STAT_CLIENTS)-1 );
 			addSysMessage(z);
 
-            const lpctstr ptcLastLogged = pAccount->m_TagDefs.GetKeyStr("LastLogged");
-            if (!IsStrEmpty(ptcLastLogged))
+            if (const lpctstr ptcLastLogged = pAccount->m_TagDefs.GetKeyStr("LastLogged"); !IsStrEmpty(ptcLastLogged))
             {
                 snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_LOGIN_LASTLOGGED ), ptcLastLogged);
                 addSysMessage(z);
@@ -2933,8 +2902,7 @@ byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
 	if (pChar == nullptr || !pAccount->IsMyAccountChar(pChar))
 		return( PacketLoginError::BadCharacter );
 
-	CChar * pCharLast = pAccount->m_uidLastChar.CharFind();
-	if ( pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
+    if (CChar *pCharLast = pAccount->m_uidLastChar.CharFind(); pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
 		! pCharLast->IsDisconnected() && (pChar->GetUID() != pCharLast->GetUID()))
 	{
 		addIdleWarning(PacketWarningMessage::CharacterInWorld);
@@ -3012,9 +2980,8 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
 	}
 
 	CSString sMsg;
-	byte lErr = LogIn( pszAccName, pszPassword, sMsg );
 
-	if ( lErr != PacketLoginError::Success )
+    if (byte lErr = LogIn(pszAccName, pszPassword, sMsg); lErr != PacketLoginError::Success )
 	{
 		if ( fTest && lErr != PacketLoginError::Other )
 		{
@@ -3040,8 +3007,7 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
 	}*/
 
     dword dwFeatureFlags;
-    dword dwCliVer = m_Crypt.GetClientVerNumber();
-    if ( dwCliVer && (dwCliVer < 1260000) )
+    if (dword dwCliVer = m_Crypt.GetClientVerNumber(); dwCliVer && (dwCliVer < 1260000) )
     {
         dwFeatureFlags = 0x03;
     }
@@ -3071,8 +3037,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 	}
 
 	// Look for this account already in use.
-	CClient * pClientPrev = pAccount->FindClient( this );
-	if ( pClientPrev != nullptr )
+    if (CClient *pClientPrev = pAccount->FindClient(this); pClientPrev != nullptr )
 	{
 		// Only if it's from a diff ip ?
 		ASSERT( pClientPrev != this );
@@ -3085,11 +3050,9 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 		else
 		{
 			//	from same ip - allow reconnect if the old char is lingering out
-			CChar *pCharOld = pClientPrev->GetChar();
-			if ( pCharOld )
+            if ( CChar *pCharOld = pClientPrev->GetChar() )
 			{
-				CItem *pItem = pCharOld->LayerFind(LAYER_FLAG_ClientLinger);
-				if ( !pItem )
+                if (CItem *pItem = pCharOld->LayerFind(LAYER_FLAG_ClientLinger); !pItem )
 					fInUse = true;
 			}
 
@@ -3116,8 +3079,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 	if ( g_Cfg.m_iClientsMax <= 0 )
 	{
 		// Allow no one but locals on.
-		CSocketAddress SockName = GetPeer();
-		if ( ! GetPeer().IsLocalAddr() && SockName.GetAddrIP() != GetPeer().GetAddrIP() )
+        if (CSocketAddress SockName = GetPeer(); ! GetPeer().IsLocalAddr() && SockName.GetAddrIP() != GetPeer().GetAddrIP() )
 		{
 			g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached (only local connections allowed).\n", GetSocketID(), pAccount->GetName());
 			sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_SERV_LD );

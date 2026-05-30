@@ -62,8 +62,7 @@ void CChar::Guild_Resign( MEMORY_TYPE MemType )
 
 	if ( pMember->IsPrivMember())
 	{
-		CItemMemory * pMemFight = Memory_FindTypes( MEMORY_FIGHT );
-		if ( pMemFight )
+        if ( Memory_FindTypes(MEMORY_FIGHT) )
 		{
 			CItemStone * pMyStone = pMember->GetParentStone();
 			ASSERT(pMyStone);
@@ -134,8 +133,7 @@ bool CChar::Memory_UpdateFlags(CItemMemory * pMemory)
 		iCheckTime = 20 * 60 * MSECS_PER_SEC;
 
 	pMemory->SetTimeout(iCheckTime);	// update its decay time.
-	CChar * pCharLink = pMemory->m_uidLink.CharFind();
-	if (pCharLink)
+    if (CChar *pCharLink = pMemory->m_uidLink.CharFind())
 	{
 		pCharLink->NotoSave_Update();	// Clear my notoriety from the target.
 		NotoSave_Update();				// iAggressor is stored in the other char, so the call should be reverted.
@@ -331,8 +329,7 @@ TRIGRET_TYPE CChar::OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr 
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
 		// just skip to the end.
-        TRIGRET_TYPE iRet = OnTriggerRun( s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult );
-		if ( iRet != TRIGRET_ENDIF )
+        if (TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -367,8 +364,7 @@ bool CChar::Memory_OnTick( CItemMemory * pMemory )
 	ADDTOCALLSTACK("CChar::Memory_OnTick");
 	ASSERT(pMemory);
 
-	CObjBase * pObj = pMemory->m_uidLink.ObjFind();
-	if ( pObj == nullptr )
+    if (CObjBase *pObj = pMemory->m_uidLink.ObjFind(); pObj == nullptr )
 		return false;
 
 	if ( pMemory->IsMemoryTypes( MEMORY_FIGHT ))
@@ -465,13 +461,11 @@ void CChar::Memory_Fight_Start( const CChar * pTarg )
 	}
 
 	word MemTypes;
-	CItemMemory * pMemory = Memory_FindObj( pTarg );
-	if ( pMemory == nullptr )
+    if (CItemMemory *pMemory = Memory_FindObj(pTarg); pMemory == nullptr )
 	{
 		// I have no memory of them yet.
 		// There was no fight. Am I the aggressor ?
-		CItemMemory * pTargMemory = pTarg->Memory_FindObj( this );
-		if ( pTargMemory != nullptr )	// My target remembers me.
+        if (CItemMemory *pTargMemory = pTarg->Memory_FindObj(this); pTargMemory != nullptr )	// My target remembers me.
 		{
 			if ( pTargMemory->IsMemoryTypes( MEMORY_IAGGRESSOR ))
 				MemTypes = MEMORY_HARMEDBY;

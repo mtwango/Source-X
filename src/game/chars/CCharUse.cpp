@@ -256,8 +256,7 @@ void CChar::Use_MoonGate( CItem * pItem )
             if (IsSetOF(OF_GuardOutsideGuardedArea))
             {
                 // I come from a guarded area, so i don't want to leave it unprotected; otherwise, i don't care if my destination region is guarded or not
-                const CRegion * pAreaHome = m_ptHome.GetRegion( REGION_TYPE_AREA );
-                if (!pAreaHome || (pAreaHome->IsGuarded() && !fToGuardedArea))
+                if (const CRegion *pAreaHome = m_ptHome.GetRegion(REGION_TYPE_AREA); !pAreaHome || (pAreaHome->IsGuarded() && !fToGuardedArea))
                     return;
             }
             else
@@ -270,8 +269,7 @@ void CChar::Use_MoonGate( CItem * pItem )
 		}
 		if ( Noto_IsCriminal() )	// criminals won't enter on guarded regions
 		{
-            const CRegion *pArea = pt.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA);
-			if ( !pArea || pArea->IsGuarded() )
+            if (const CRegion *pArea = pt.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA); !pArea || pArea->IsGuarded() )
 				return;
 		}
 	}
@@ -380,8 +378,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, bool fSetup )
 		char skilltag[38];
 		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", (int)(skill & ~0xD2000000));
 		CVarDefCont *pSkillTag = pItem->GetKey(skilltag, true);
-		word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax;
-		if ( Skill_GetBase(skill) > iMaxSkill )
+        if (word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax; Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_SKILL);
 			return false;
@@ -542,8 +539,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 		char skilltag[38];
 		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", (int)(skill & ~0xD2000000));
 		CVarDefCont *pSkillTag = pButte->GetKey(skilltag, true);
-		word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax;
-		if ( Skill_GetBase(skill) > iMaxSkill )
+        if (word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax; Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_SKILL);
 			return false;
@@ -562,8 +558,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 		return false;
 
 	CItem *pAmmo = nullptr;
-	const CResourceID ridAmmo(pWeapon->Weapon_GetRangedAmmoRes());
-	if (ridAmmo.IsValidUID() && ridAmmo.GetObjUID() > 0)
+    if (const CResourceID ridAmmo(pWeapon->Weapon_GetRangedAmmoRes()); ridAmmo.IsValidUID() && ridAmmo.GetObjUID() > 0)
 	{
 		pAmmo = pWeapon->Weapon_FindRangedAmmo(ridAmmo);
 		if ( !pAmmo )
@@ -805,8 +800,7 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	int iDamageHits = pItemArmor->m_itArmor.m_wHitsMax - pItemArmor->m_itArmor.m_wHitsCur;
 	int iDamagePercent = IMulDiv(100, iDamageHits, iTotalHits);
 
-	size_t iMissing = ResourceConsumePart(&(pItemDef->m_BaseResources), 1, iDamagePercent / 2, true);
-	if ( iMissing != sl::scont_bad_index() )
+    if (size_t iMissing = ResourceConsumePart(&(pItemDef->m_BaseResources), 1, iDamagePercent / 2, true); iMissing != sl::scont_bad_index() )
 	{
 		// Need this to repair.
 		const CResourceDef *pCompDef = g_Cfg.RegisteredResourceGetDef(pItemDef->m_BaseResources.at(iMissing).GetResourceID());
@@ -965,8 +959,7 @@ bool CChar::Use_Eat( CItem * pItemFood, ushort uiQty )
 	Use_EatQty(pItemFood, uiQty);
 
 	lpctstr pMsg;
-	int index = IMulDiv(Stat_GetVal(STAT_FOOD), 5, uiFoodMax);
-	switch ( index )
+    switch ( IMulDiv(Stat_GetVal(STAT_FOOD), 5, uiFoodMax) )
 	{
 		case 0:
 			pMsg = g_Cfg.GetDefaultMsg(DEFMSG_FOOD_FULL_1);
@@ -1049,8 +1042,7 @@ void CChar::Use_Drink( CItem * pItem )
 		// GLASS or MUG or Bottle ?
 
 		// Get you Drunk, but check to see if we already are drunk
-		CItem *pDrunkLayer = LayerFind(LAYER_FLAG_Drunk);
-		if ( pDrunkLayer )
+        if ( CItem *pDrunkLayer = LayerFind(LAYER_FLAG_Drunk) )
 		{
 			// lengthen/strengthen the effect
 			Spell_Effect_Remove(pDrunkLayer);
@@ -1061,8 +1053,7 @@ void CChar::Use_Drink( CItem * pItem )
 		}
 		else
 		{
-			CItem *pSpell = Spell_Effect_Create(SPELL_Liquor, LAYER_FLAG_Drunk, g_Cfg.GetSpellEffect(SPELL_Liquor, iStrength), (int64)dwDelay, this);
-		    if (pSpell != nullptr) {
+            if (CItem *pSpell = Spell_Effect_Create(SPELL_Liquor, LAYER_FLAG_Drunk, g_Cfg.GetSpellEffect(SPELL_Liquor, iStrength), dwDelay, this); pSpell != nullptr) {
 			    pSpell->m_itSpell.m_spellcharges = 10;	// how long to last.
 		    }
 		}
@@ -1078,8 +1069,7 @@ void CChar::Use_Drink( CItem * pItem )
 
 		// Convey the effect of the potion.
 		int iSkillQuality = pItem->m_itPotion.m_dwSkillQuality;
-		int iEnhance = (int)GetPropNum(COMP_PROPS_CHAR, PROPCH_ENHANCEPOTIONS, true);
-		if ( iEnhance )
+        if ( int iEnhance = GetPropNum(COMP_PROPS_CHAR, PROPCH_ENHANCEPOTIONS, true) )
 			iSkillQuality += IMulDiv(iSkillQuality, iEnhance, 100);
 
 		OnSpellEffect((SPELL_TYPE)(ResGetIndex(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
@@ -1117,8 +1107,7 @@ void CChar::Use_Drink( CItem * pItem )
 	// Create the empty bottle ?
     if (idbottle != ITEMID_NOTHING)
     {
-        CItem* pBottle = CItem::CreateScript(idbottle, this);
-        if (pBottle != nullptr && wBottleAmount > 0)
+        if (CItem *pBottle = CItem::CreateScript(idbottle, this); pBottle != nullptr && wBottleAmount > 0)
         {
             pBottle->SetAmount(wBottleAmount);
             ItemBounce(pBottle, g_Cfg.m_iBounceMessage);
@@ -1154,8 +1143,7 @@ CChar * CChar::Use_Figurine( CItem * pItem, bool fCheckFollowerSlots )
 
     if (fShouldCheckFollowerSlots)
     {
-        const CVarDefCont *pFigurineVarDef = pItem->m_TagDefs.GetKey("FOLLOWERSLOTS");
-        if (pFigurineVarDef)
+        if (const CVarDefCont *pFigurineVarDef = pItem->m_TagDefs.GetKey("FOLLOWERSLOTS"))
         {
             // The figurine has a FOLLOWERSLOTS override for the char. Use this.
             iFollowerSlots = n64_narrow_n16(pFigurineVarDef->GetValNum());
@@ -1183,8 +1171,7 @@ CChar * CChar::Use_Figurine( CItem * pItem, bool fCheckFollowerSlots )
 		pPet = CreateNPC(id);
 		ASSERT(pPet);
 		pPet->SetName(pItem->GetName());
-        const HUE_TYPE iMountHue = pItem->GetHue();
-		if (iMountHue)
+        if (const HUE_TYPE iMountHue = pItem->GetHue())
 		{
 			pPet->_wPrev_Hue = iMountHue;
 			pPet->SetHue(iMountHue);
@@ -1282,8 +1269,7 @@ bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, bool fChe
                 }
             }
 
-            const short iNewCurFollower = GetCurFollowers() + iPetFollowerSlots;
-            if (!fCharAlreadyFollower && (fIgnoreMax || (iNewCurFollower <= iMaxFollower)))
+            if (const short iNewCurFollower = GetCurFollowers() + iPetFollowerSlots; !fCharAlreadyFollower && (fIgnoreMax || (iNewCurFollower <= iMaxFollower)))
             {
                 if (!fCheckOnly)
                 {
@@ -1303,8 +1289,7 @@ bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, bool fChe
             std::erase_if(
                 m_followers,
                 [pCharPet, iPetFollowerSlots](auto const& inp_struct) -> bool {
-                    const bool fIsSame = inp_struct.uid == pCharPet->GetUID();
-                    if (!fIsSame)
+                    if (const bool fIsSame = inp_struct.uid == pCharPet->GetUID(); !fIsSame)
                         return false;
                     if (inp_struct.followerslots != abs(iPetFollowerSlots))
                         g_Log.EventWarn("Removed Follower with UID 0%" PRIx32 " with actual FollowerSlots %d, but expected %d.\n",
@@ -1598,8 +1583,7 @@ int CChar::Do_Use_Item(CItem *pItem, bool fLink)
 			return false;
 	}
 
-    CCSpawn *pSpawn = GetSpawn();
-	if (pSpawn)
+    if (CCSpawn *pSpawn = GetSpawn())
 		pSpawn->DelObj(pItem->GetUID());    // remove this item from it's spawn when DClicks it
 
 	int fAction = true;
@@ -1815,8 +1799,7 @@ int CChar::Do_Use_Item(CItem *pItem, bool fLink)
 		case IT_DOOR_OPEN:
 		case IT_DOOR:
 		{
-			bool fOpen = pItem->Use_DoorNew(fLink);
-			if (fLink || !fOpen)    // don't link if we are just closing the door
+            if (bool fOpen = pItem->Use_DoorNew(fLink); fLink || !fOpen)    // don't link if we are just closing the door
 				return true;
 		}
 			break;
@@ -2078,8 +2061,7 @@ bool CChar::ItemEquipWeapon( bool fForce )
 	for (CSObjContRec* pObjRec : *pPack)
 	{
 		CItem* pItem = static_cast<CItem*>(pObjRec);
-		int iWeaponScore = NPC_GetWeaponUseScore(pItem);
-		if ( iWeaponScore > iWeaponScoreMax )
+        if (int iWeaponScore = NPC_GetWeaponUseScore(pItem); iWeaponScore > iWeaponScoreMax )
 		{
 			iWeaponScoreMax = iWeaponScore;
 			pBestWeapon = pItem;

@@ -317,8 +317,7 @@ AbstractThread * ThreadHolder::getThreadAt(size_t at) noexcept
 AbstractThread * ThreadHolder::current() noexcept // static
 {
     // TLS fast path: the absolutely hottest path in the system.
-    AbstractSphereThread* tls = sg_tlsCurrentSphereThread;
-    if (tls != nullptr) [[likely]]
+    if (AbstractSphereThread *tls = sg_tlsCurrentSphereThread; tls != nullptr) [[likely]]
         return tls;
 
     /*
@@ -671,8 +670,7 @@ void AbstractThread::run()
 
 SPHERE_THREADENTRY_RETNTYPE SPHERE_THREADENTRY_CALLTYPE AbstractThread::runner(void *callerThread)
 {
-    auto* caller = static_cast<AbstractThread*>(callerThread);
-    if (caller)
+    if (auto *caller = static_cast<AbstractThread *>(callerThread))
     {
         caller->run();
         caller->terminate(true);
@@ -1026,8 +1024,7 @@ getThreadRawStringBuffer() CANTHROW
             tsholder.g_tmpTemporaryStringIndex.store(index, std::memory_order_relaxed);
         }
 
-        auto* store = &(tsholder.g_tmpTemporaryStringStorage[index]);
-        if (store->m_state == 0)
+        if (auto *store = &(tsholder.g_tmpTemporaryStringStorage[index]); store->m_state == 0)
         {
             store->m_state = 1;
             store->m_buffer[0] = '\0';
@@ -1111,16 +1108,14 @@ StackDebugInformation::~StackDebugInformation() noexcept
 
 void StackDebugInformation::printStackTrace() noexcept
 {
-    AbstractThread* pThreadState = ThreadHolder::current();
-    if (pThreadState)
+    if (AbstractThread *pThreadState = ThreadHolder::current())
         if (auto* s = dynamic_cast<AbstractSphereThread*>(pThreadState))
             s->printStackTrace();
 }
 
 void StackDebugInformation::freezeCallStack(bool freeze) noexcept
 {
-    AbstractThread* pThreadState = ThreadHolder::current();
-    if (pThreadState)
+    if (AbstractThread *pThreadState = ThreadHolder::current())
         if (auto* s = dynamic_cast<AbstractSphereThread*>(pThreadState))
             s->freezeCallStack(freeze);
 }

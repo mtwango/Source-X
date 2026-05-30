@@ -148,8 +148,7 @@ bool CCrypto::SetClientVerFromNumber( dword uiVer, bool fSetEncrypt )
 	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
 	for (uint i = 0; i < keys_holder->client_keys.size(); ++i )
 	{
-		CCryptoClientKey & key = keys_holder->client_keys[i];
-		if ( uiVer == key.m_client )
+        if (CCryptoClientKey &key = keys_holder->client_keys[i]; uiVer == key.m_client )
 		{
 			if ( SetClientVerFromKeyIndex( i, fSetEncrypt ))
 				return true;
@@ -209,10 +208,9 @@ bool CCrypto::SetClientVerFromString( lpctstr pszVersion )
 
 CCrypto::CCrypto()
 {
-	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
 
-	// Always at least one crypt code, for non encrypted clients!
-	if ( !keys_holder->client_keys.size() )
+    // Always at least one crypt code, for non encrypted clients!
+	if (CCryptoKeysHolder *keys_holder = CCryptoKeysHolder::get(); !keys_holder->client_keys.size() )
 		keys_holder->addNoCryptKey();
 
 	m_fInit = false;
@@ -418,8 +416,7 @@ bool CCrypto::Encrypt( byte * pOutput, const byte * pInput, uint outLen, uint in
 	if ( m_ConnectType == CONNECT_LOGIN )
 		return false;
 
-    const ENCRYPTION_TYPE enc = GetEncryptionType();
-	if ( enc == ENC_TFISH )
+    if (const ENCRYPTION_TYPE enc = GetEncryptionType(); enc == ENC_TFISH )
 	{
 		if (!EncryptMD5( pOutput, pInput, outLen, inLen ))
             return false;
@@ -565,8 +562,7 @@ bool CCrypto::LoginCryptStart( dword dwIP, const byte * pEvent, uint inLen )
 #ifdef DEBUG_CRYPT_MSGS
 		DEBUG_MSG(("LoginCrypt %" PRIuSIZE_T " (%" PRIu32 ") type %" PRIx8 "-%" PRIx8 "\n", i, GetClientVerNumber(), m_Raw[0], pEvent[0]));
 #endif
-		bool isValid = (pRaw[0] == 0x80 && pRaw[30] == 0x00 && pRaw[60] == 0x00 );
-		if ( isValid )
+        if ( bool isValid = (pRaw[0] == 0x80 && pRaw[30] == 0x00 && pRaw[60] == 0x00) )
 		{
 			// -----------------------------------------------------
 			// This is a sanity check, sometimes client keys (like 4.0.0) can intercept, incorrectly,

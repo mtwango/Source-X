@@ -387,8 +387,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 			for ( uint i = 0; i < uiStaticMaxQty; ++i )
 			{
 				const CUOStaticItemRec * pStatic = pBlock->m_Statics.GetStatic( i );
-				const CPointMap ptTest( pStatic->m_x + pBlock->m_x, pStatic->m_y + pBlock->m_y, pStatic->m_z, this->m_map );
-				if ( this->GetDist( ptTest ) > 0 )
+                if (const CPointMap ptTest(pStatic->m_x + pBlock->m_x, pStatic->m_y + pBlock->m_y, pStatic->m_z, this->m_map); this->GetDist( ptTest ) > 0 )
 					continue;
 				++uiStaticQty;
 			}
@@ -431,8 +430,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 			for ( uint i = 0; i < uiStaticMaxQty; pStatic = nullptr, ++i )
 			{
 				pStatic = pBlock->m_Statics.GetStatic( i );
-				CPointMap ptTest( pStatic->m_x+pBlock->m_x, pStatic->m_y+pBlock->m_y, pStatic->m_z, this->m_map);
-				if ( this->GetDist( ptTest ) > 0 )
+                if (CPointMap ptTest(pStatic->m_x + pBlock->m_x, pStatic->m_y + pBlock->m_y, pStatic->m_z, this->m_map); this->GetDist( ptTest ) > 0 )
 					continue;
 				if ( pStatic->GetDispID() == pItemDef->GetDispID() )
 					break;
@@ -444,8 +442,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 			for ( uint i = 0; i < uiStaticMaxQty; pStatic = nullptr, ++i )
 			{
 				pStatic = pBlock->m_Statics.GetStatic( i );
-				CPointMap ptTest( pStatic->m_x+pBlock->m_x, pStatic->m_y+pBlock->m_y, pStatic->m_z, this->m_map);
-				if ( this->GetDist( ptTest ) > 0 )
+                if (CPointMap ptTest(pStatic->m_x + pBlock->m_x, pStatic->m_y + pBlock->m_y, pStatic->m_z, this->m_map); this->GetDist( ptTest ) > 0 )
 					continue;
 				if ( iStatic == 0 )
 					break;
@@ -601,8 +598,8 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
                     if (GetDist(ptTest) > 0)
                         continue;
 
-                    const CItemBase *pMultiItemDef = CItemBase::FindItemBase(pMultiItem->GetDispID());
-                    if (pMultiItemDef != nullptr && pMultiItemDef->GetDispID() == pItemDef->GetDispID())
+                    if (const CItemBase *pMultiItemDef = CItemBase::FindItemBase(pMultiItem->GetDispID());
+                        pMultiItemDef != nullptr && pMultiItemDef->GetDispID() == pItemDef->GetDispID())
                         break;
                 }
 
@@ -782,23 +779,20 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 			if ( ptcKey[6] == '.' )
 			{
 				ptcKey += 7;
-				CSector * pSectorTemp = this->GetSector();
-				if (pSectorTemp)
+                if (CSector *pSectorTemp = this->GetSector())
 					return pSectorTemp->r_WriteVal(ptcKey, sVal, &g_Serv);
 			}
 			return false;
 		}
 		default:
 		{
-			std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted(*this);
-			if ( pMeter )
+            if ( std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted(*this) )
 			{
 				switch( index )
 				{
 					case PT_TYPE:
 					{
-						CItemTypeDef * pTypeDef = CWorldMap::GetTerrainItemTypeDef( pMeter->m_wTerrainIndex );
-						if ( pTypeDef != nullptr )
+                        if (CItemTypeDef *pTypeDef = CWorldMap::GetTerrainItemTypeDef(pMeter->m_wTerrainIndex); pTypeDef != nullptr )
 							sVal = pTypeDef->GetResourceName();
 						else
 							sVal.Clear();

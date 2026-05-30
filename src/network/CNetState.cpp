@@ -65,8 +65,7 @@ void CNetState::clear()
         else if (connectionType == CONNECT_GAME)
         {
             const lpctstr ptcAccountName = m_client->GetName();
-            const CChar* pAttachedChar = m_client->GetChar();
-            if (!pAttachedChar)
+            if (const CChar *pAttachedChar = m_client->GetChar(); !pAttachedChar)
             {
                 g_Log.Event(logFlags, "%x:Client disconnected [Total:%" PRIuSIZE_T "]. Account: '%s'. IP='%s'.\n",
                     m_id, uiClients, ptcAccountName, ptcAddress);

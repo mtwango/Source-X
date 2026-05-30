@@ -13,8 +13,7 @@ CTeleport::CTeleport(tchar* pszArgs)
 	// Assume valid iArgs >= 5
 
 	tchar* ppCmds[4];
-	size_t iArgs = Str_ParseCmds(pszArgs, ppCmds, std::size(ppCmds), "=");
-	if (iArgs < 2)
+    if (size_t iArgs = Str_ParseCmds(pszArgs, ppCmds, std::size(ppCmds), "="); iArgs < 2)
 	{
 		DEBUG_ERR(("Bad CTeleport Def\n"));
 		_fNpc = false;
@@ -36,8 +35,7 @@ bool CTeleport::RealizeTeleport()
 		DEBUG_ERR(("CTeleport bad coords %s\n", WriteUsed()));
 		return false;
 	}
-	CSector* pSector = GetSector();
-	if (pSector)
+    if (CSector *pSector = GetSector())
 		return pSector->AddTeleport(this);
 
     return false;

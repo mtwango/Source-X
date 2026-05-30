@@ -50,8 +50,7 @@ void CChatChannel::WhoIs(lpctstr pszBy, lpctstr pszMember)
     }
 
     CChatChanMember * pMember = FindMember(pszMember);
-    CChar * pChar = pMember? pMember->GetClientActive()->GetChar() : nullptr;
-    if (!pMember||!pChar)
+    if (CChar *pChar = pMember ? pMember->GetClientActive()->GetChar() : nullptr; !pMember||!pChar)
     {
         pBy->SendChatMsg(CHATMSG_NoPlayer, pszMember);
     }
@@ -118,8 +117,7 @@ void CChatChannel::SendPrivateMessage(CChatChanMember * pFrom, lpctstr pszTo, lp
         return;
     }
     // Can always send private messages to moderators (but only if they are receiving)
-    bool fHasVoice = HasVoice(pFrom->GetChatName());
-    if ( !fHasVoice && !IsModerator(pszTo))
+    if (bool fHasVoice = HasVoice(pFrom->GetChatName()); !fHasVoice && !IsModerator(pszTo))
     {
         pFrom->SendChatMsg(CHATMSG_RevokedSpeaking);
         return;
@@ -342,15 +340,13 @@ void CChatChannel::AddMember(CChatChanMember * pMember)
     pMember->SetChannel(this);
     m_Members.emplace_back(pMember);
     // See if only moderators have a voice by default
-    lpctstr pszName = pMember->GetChatName();
-    if (!IsModerator(pszName))
+    if (lpctstr pszName = pMember->GetChatName(); !IsModerator(pszName))
     {
         if (!GetVoiceDefault())
             SetVoice(pszName);
 
         // GMs always have moderation privs
-        CClient* pClient = pMember->GetClientActive();
-        if (pClient && pClient->IsPriv(PRIV_GM))
+        if (CClient *pClient = pMember->GetClientActive(); pClient && pClient->IsPriv(PRIV_GM))
             SetModerator(pszName);
     }
 }

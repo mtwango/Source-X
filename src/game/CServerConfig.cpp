@@ -357,8 +357,7 @@ CServerConfig::~CServerConfig()
 	{
 		for ( size_t j = 0; j < m_ResHash.m_Array[i].size(); ++j )
 		{
-			CResourceDef* pResDef = m_ResHash.m_Array[i][j].get();
-			if ( pResDef != nullptr )
+            if (CResourceDef *pResDef = m_ResHash.m_Array[i][j].get(); pResDef != nullptr )
 				pResDef->UnLink();
 		}
 	}
@@ -432,18 +431,16 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	else if ( iResType == RES_SPELL && *ptcKey == '-' )
 	{
 		++ptcKey;
-		size_t uiOrder = Exp_GetSTVal( ptcKey );
-		if ( !m_SpellDefs_Sorted.valid_index( uiOrder ) )
+        if (size_t uiOrder = Exp_GetSTVal(ptcKey); !m_SpellDefs_Sorted.valid_index( uiOrder ) )
 			pRef = nullptr;
 		else
 			pRef = m_SpellDefs_Sorted[uiOrder].get();
 	}
 	else
 	{
-		CResourceID	rid	= ResourceGetID((RES_TYPE)iResType, ptcKey, RES_PAGE_ANY);
 
-		// check the found resource type matches what we searched for
-		if ( rid.GetResType() == iResType )
+        // check the found resource type matches what we searched for
+		if (CResourceID rid = ResourceGetID((RES_TYPE)iResType, ptcKey, RES_PAGE_ANY); rid.GetResType() == iResType )
 			pRef = RegisteredResourceGetDef( rid );
 	}
 
@@ -1092,14 +1089,11 @@ bool CServerConfig::r_LoadVal( CScript &s )
             if (ok && ts.size() > 0)
                 return g_MapList.Load(atoi(ptcStr), s.GetArgRaw());
 
-            size_t length = ts.size();
-
-            if (length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]))
+            if (size_t length = ts.size(); length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]))
             {
                 lpctstr pszStr = &(ptcStr[1]);
-                int nMapNumber = Exp_GetVal(pszStr);
 
-                if (g_MapList.IsMapSupported(nMapNumber))
+                if (int nMapNumber = Exp_GetVal(pszStr); g_MapList.IsMapSupported(nMapNumber))
                 {
                     if (!strnicmp(pszStr, "ALLSECTORS", 10))
                     {
@@ -1129,8 +1123,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
                         pszStr = s.GetArgRaw();
                         if (pszStr && *pszStr)
                         {
-                            CSector *pSector = CWorldMap::GetSectorByIndex(nMapNumber, iSecNumber);
-                            if (pSector)
+                            if (CSector *pSector = CWorldMap::GetSectorByIndex(nMapNumber, iSecNumber))
                             {
                                 CScript script(pszStr);
                                 script.CopyParseState(s);
@@ -1146,11 +1139,9 @@ bool CServerConfig::r_LoadVal( CScript &s )
         }
         if (s.IsKeyHead("PACKET", 6)) //	PACKETx=<function name to execute upon packet>
         {
-            int index = atoi(s.GetKey() + 6);
-            if ((index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
+            if (int index = atoi(s.GetKey() + 6); (index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
             {
-                char *args = s.GetArgRaw();
-                if (!args || (strlen(args) >= 31))
+                if (char *args = s.GetArgRaw(); !args || (strlen(args) >= 31))
                     g_Log.EventError("Invalid function name for packet filtering (limit is 30 chars).\n");
                 else
                 {
@@ -1164,11 +1155,9 @@ bool CServerConfig::r_LoadVal( CScript &s )
         }
         else if (s.IsKeyHead("OUTPACKET", 9)) //	OUTPACKETx=<function name to execute upon packet>
         {
-            int index = atoi(s.GetKey() + 9);
-            if ((index >= 0) && (index < 255))
+            if (int index = atoi(s.GetKey() + 9); (index >= 0) && (index < 255))
             {
-                char *args = s.GetArgRaw();
-                if (!args || (strlen(args) >= 31))
+                if (char *args = s.GetArgRaw(); !args || (strlen(args) >= 31))
                     g_Log.EventError("Invalid function name for outgoing packet filtering (limit is 30 chars).\n");
                 else
                 {
@@ -1258,8 +1247,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 		break;
         case RC_CONTAINERMAXITEMS:
         {
-            const uint uiVal = s.GetArgUVal();
-            if ((uiVal > 0) && (uiVal < MAX_ITEMS_CONT))
+            if (const uint uiVal = s.GetArgUVal(); (uiVal > 0) && (uiVal < MAX_ITEMS_CONT))
                 m_iContainerMaxItems = uiVal;
         }
 		break;
@@ -1379,8 +1367,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 				size_t threadCount = ThreadHolder::get().getActiveThreads();
 				for (size_t j = 0; j < threadCount; ++j)
 				{
-					AbstractSphereThread* thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().getThreadAt(j));
-					if (thread != nullptr)
+                    if (AbstractSphereThread *thread = static_cast<AbstractSphereThread *>(ThreadHolder::get().getThreadAt(j)); thread != nullptr)
 						thread->m_profile.SetActive(seconds);
 				}
 			}
@@ -1640,8 +1627,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			SKIP_SEPARATORS( ptcKey );
 			GETNONWHITESPACE( ptcKey );
 
-			const CSkillDef * pSkillDef = SkillLookup( ptcKey );
-			if ( !pSkillDef )
+            if (const CSkillDef *pSkillDef = SkillLookup(ptcKey); !pSkillDef )
 				sVal.FormatVal( -1 );
 			else
 				sVal.FormatVal( pSkillDef->GetResourceID().GetResIndex() );
@@ -1666,9 +1652,8 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 				// Parse the arguments inside the round brackets
 				tchar * ppVal[4];
-				int iArgs = Str_ParseCmds( const_cast<tchar*>(ptcKey), ppVal, std::size(ppVal), "," );
 
-				switch ( iArgs )
+                switch ( int iArgs = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppVal, std::size(ppVal), ",") )
 				{
 					default:
 					case 4:
@@ -2207,12 +2192,11 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						int64 piVal[6];
 
 						// year, month, day, hour, minute, second
-						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), piVal, std::size(piVal));
-						if ( iQty != 6 )
+                        if (size_t iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), piVal, std::size(piVal)); iQty != 6 )
 							return false;
 
-						CSTime datetime((int)(piVal[0]), (int)(piVal[1]), (int)(piVal[2]), (int)(piVal[3]), (int)(piVal[4]), (int)(piVal[5]));
-						if ( datetime.GetTime() == -1 )
+                        if (CSTime datetime((int)(piVal[0]), (int)(piVal[1]), (int)(piVal[2]), (int)(piVal[3]), (int)(piVal[4]), (int)(piVal[5]));
+                            datetime.GetTime() == -1 )
 							sVal.FormatVal(-1);
 						else
 							sVal.FormatLLVal(datetime.GetTime());
@@ -2446,8 +2430,7 @@ bool CServerConfig::IsValidEmailAddressFormat( lpctstr pszEmail ) // static
 		return false;
 
 	tchar szEmailStrip[256];
-	size_t len2 = Str_GetBare( szEmailStrip, pszEmail, sizeof(szEmailStrip), " !\"#%&()*,/:;<=>?[\\]^{|}'`+" );
-	if ( len2 != len1 )
+    if (size_t len2 = Str_GetBare(szEmailStrip, pszEmail, sizeof(szEmailStrip), " !\"#%&()*,/:;<=>?[\\]^{|}'`+"); len2 != len1 )
 		return false;
 
 	lpctstr pszAt =strchr( pszEmail, '@' );
@@ -2517,9 +2500,8 @@ bool CServerConfig::IsObscene( lpctstr pszText ) const
 		match.Resize(static_cast<int>(2 * strlen(m_Obscene[i])));
         lptstr ptcMatch = const_cast<lptstr>(match.GetBuffer()); // Do that just because we know that the buffer has the right size and we won't write past the buffer's end.
 		snprintf(ptcMatch, match.GetCapacity(), "%s%s%s", "*", m_Obscene[i], "*");
-		MATCH_TYPE ematch = Str_Match( ptcMatch , pszText );
 
-		if ( ematch == MATCH_VALID )
+        if (MATCH_TYPE ematch = Str_Match(ptcMatch, pszText); ematch == MATCH_VALID )
 			return true;
 	}
 	return false;
@@ -2577,8 +2559,7 @@ dword CServerConfig::GetKRDialog(dword rid)
 	ADDTOCALLSTACK("CServerConfig::GetKRDialog");
 	// Translates the given ResourceID into it's equivalent KR DialogID.
 	// Returns 0 on failure
-	KRGumpsMap::const_iterator it = m_mapKRGumps.find(rid);
-	if (it != m_mapKRGumps.end())
+    if (KRGumpsMap::const_iterator it = m_mapKRGumps.find(rid); it != m_mapKRGumps.end())
 		return it->second;
 
 	return 0;
@@ -2590,8 +2571,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs( CItem * pItem )
 	if ( !pItem )
 		return nullptr;
 
-	CItemMultiCustom *pItemMultiCustom = dynamic_cast<CItemMultiCustom*>(pItem);
-	if ( pItemMultiCustom )
+    if ( CItemMultiCustom *pItemMultiCustom = dynamic_cast<CItemMultiCustom *>(pItem) )
 		return pItemMultiCustom->GetMultiItemDefs();	// customized multi
 
 	return GetMultiItemDefs(pItem->GetDispID());		// multi.mul multi
@@ -2626,8 +2606,7 @@ PLEVEL_TYPE CServerConfig::GetPrivCommandLevel( lpctstr pszCmd ) const
 	{
 		--ilevel;
 		lpctstr const * pszTable = m_PrivCommands[ilevel].data();
-		int iCount = (int)m_PrivCommands[ilevel].size();
-		if ( FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
+        if (int iCount = (int)m_PrivCommands[ilevel].size(); FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
 			return (PLEVEL_TYPE)ilevel;
 	}
 
@@ -2651,8 +2630,7 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, lpctstr pszCmd,
 
 	// Are they more privleged than me ?
 
-	const CChar * pChar = dynamic_cast <const CChar*> (pObjTarg);
-	if ( pChar )
+    if ( const CChar *pChar = dynamic_cast<const CChar *>(pObjTarg) )
 	{
 		if ( pSrc->GetChar() == pChar )
 			return true;
@@ -2668,8 +2646,7 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, lpctstr pszCmd,
 	if ( pSrc->GetChar() == nullptr )
 	{
 		// I'm not a cchar. what am i ?
-		CClient * pClient = dynamic_cast <CClient *>(pSrc);
-		if ( pClient )
+        if ( CClient *pClient = dynamic_cast<CClient *>(pSrc) )
 		{
 			// We are not logged in as a player char ? so we cannot do much !
 			if ( pClient->GetAccount() == nullptr )
@@ -2749,15 +2726,13 @@ CPointMap CServerConfig::GetRegionPoint( lpctstr pCmd ) const // Decode a telepo
 	{
 		tchar *pszTemp = Str_GetTemp();
 		Str_CopyLimitNull( pszTemp, pCmd, Str_TempLength() );
-		const size_t uiCount = pt.Read( pszTemp );
-		if ( uiCount >= 2 )
+        if (const size_t uiCount = pt.Read(pszTemp); uiCount >= 2 )
 			return pt;
 	}
 	else
 	{
 		// Match the region name with global regions.
-		const CRegion * pRegion = GetRegion(pCmd);
-		if ( pRegion != nullptr )
+        if (const CRegion *pRegion = GetRegion(pCmd); pRegion != nullptr )
 		{
 			return pRegion->m_pt;
 		}
@@ -2790,8 +2765,7 @@ CRegion * CServerConfig::GetRegion( lpctstr pKey ) const
         uchar minMap = 255;
         for (CRegion* pRegion : regions)
         {
-			const uchar m = pRegion->GetRegionCorner(DIR_N).m_map;
-            if (m <= minMap)
+            if (const uchar m = pRegion->GetRegionCorner(DIR_N).m_map; m <= minMap)
             {
                 minMap = m;
                 pRet = pRegion;
@@ -2815,8 +2789,7 @@ CRegion * CServerConfig::GetRegion( lpctstr pKey ) const
     const uchar uiMapIdx = Exp_GetUCVal(ptcColonPos);
     for (CRegion *pRegion : regions)
     {
-        const uchar m = pRegion->GetRegionCorner(DIR_N).m_map;
-        if (uiMapIdx == m)
+        if (const uchar m = pRegion->GetRegionCorner(DIR_N).m_map; uiMapIdx == m)
         {
             return pRegion;
         }
@@ -3027,8 +3000,7 @@ CResourceScript * CServerConfig::FindResourceFile( lpctstr pszPath )
         CResourceScript * pResFile = GetResourceFile(i);
         if ( pResFile == nullptr )
             break;
-        lpctstr pszTitle2 = pResFile->GetFileTitle();
-        if ( ! strcmpi( pszTitle2, pszTitle ))
+        if (lpctstr pszTitle2 = pResFile->GetFileTitle(); ! strcmpi( pszTitle2, pszTitle ))
             return pResFile;
     }
     return nullptr;
@@ -3096,8 +3068,7 @@ CResourceScript * CServerConfig::AddResourceFile( lpctstr pszName )
         return nullptr;
     }
 
-    lpctstr pszExt = CScript::GetFilesExt( szTitle );
-    if ( pszExt == nullptr )
+    if (lpctstr pszExt = CScript::GetFilesExt(szTitle); pszExt == nullptr )
     {
         // No file extension provided, so append .scp to the filename
         Str_ConcatLimitNull( szName,  SPHERE_SCRIPT_EXT, sizeof(szName) );
@@ -3161,8 +3132,8 @@ void CServerConfig::AddResourceDir( lpctstr pszDirName )
     std::vector<lpctstr> vecFileNames;
 
     // Collect them from the list
-    CSStringListRec * psFile = filelist.GetHead(), *psFileNext = nullptr;
-    for ( ; psFile; psFile = psFileNext )
+    CSStringListRec *psFileNext = nullptr;
+    for (CSStringListRec *psFile = filelist.GetHead(); psFile; psFile = psFileNext )
     {
         psFileNext = psFile->GetNext();
         vecFileNames.push_back(*psFile);
@@ -3300,8 +3271,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
         //restype = rid.GetResType();
 
 		CResourceDef *	pRes = nullptr;
-		size_t index = m_ResHash.FindKey( rid );
-		if ( index != sl::scont_bad_index() )
+        if (size_t index = m_ResHash.FindKey(rid); index != sl::scont_bad_index() )
 			pRes = m_ResHash.GetBarePtrAt(rid, index);
 
 		if ( pRes == nullptr )
@@ -3645,8 +3615,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			const size_t iQty = g_World.m_TileTypes.size();
 			for ( size_t i = 0; i < iQty; ++i )
 			{
-				auto pCurTypeDef = static_cast<CItemTypeDef*>(g_World.m_TileTypes[i].get());
-				if (pCurTypeDef == pTypeDef)
+                if (auto pCurTypeDef = static_cast<CItemTypeDef *>(g_World.m_TileTypes[i].get()); pCurTypeDef == pTypeDef)
 					g_World.m_TileTypes.emplace_index_grow(i, nullptr);
 			}
 
@@ -3655,8 +3624,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CItemTypeDef( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3691,8 +3659,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CResourceLink( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3709,8 +3676,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CDialogDef( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3728,8 +3694,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CRegionResourceDef( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3819,8 +3784,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CRandGroupDef( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3844,8 +3808,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
             pNewLink = new CCChampionDef(rid);
             if (pNewLink)
             {
-                CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-                if (pLinkResScript != nullptr)
+                if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
                     pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
                 RESHASH_ADD(rid, pNewLink);
             }
@@ -3868,8 +3831,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CSkillClassDef( rid );
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3891,8 +3853,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			if ( !pNewLink )
 				return true;
 
-			CBaseBaseDef * pBaseDef = dynamic_cast <CBaseBaseDef*> (pNewLink);
-			if ( pBaseDef )
+            if ( CBaseBaseDef *pBaseDef = dynamic_cast<CBaseBaseDef *>(pNewLink) )
 			{
 				pBaseDef->UnLink();
 				CScriptLineContext LineContext = pScript->GetContext();
@@ -3904,8 +3865,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CResourceLink(rid);
 			ASSERT(pNewLink);
-			CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-			if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3939,16 +3899,14 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	case RES_FUNCTION:
 	{
         lpctstr ptcFunctionName = pScript->GetArgStr();
-        const size_t uiFunctionIndex = m_Functions.find_sorted(ptcFunctionName);
-        if (uiFunctionIndex == sl::scont_bad_index())
+        if (const size_t uiFunctionIndex = m_Functions.find_sorted(ptcFunctionName); uiFunctionIndex == sl::scont_bad_index())
         {
             // Define a char macro. (Name is NOT DEFNAME)
             pNewLink = new CResourceNamedDef(rid, ptcFunctionName);
 
             // Link the CResourceLink to the CResourceScript it was read and created,
             //	so later we can retrieve the file and the line for debugging purposes.
-            CResourceScript* pLinkResScript = dynamic_cast<CResourceScript*>(pScript);
-            if (pLinkResScript != nullptr)
+            if (CResourceScript *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
                 pNewLink->SetLink(pLinkResScript);
 
             m_Functions.emplace(static_cast<CResourceNamedDef*>(pNewLink));
@@ -3969,8 +3927,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 				// Does the name already exist ?
 				bool fAddNew = false;
 				CServerRef pServ;
-				const size_t i = m_Servers.FindKey( pScript->GetKey());
-				if ( i == sl::scont_bad_index() )
+                if (const size_t i = m_Servers.FindKey(pScript->GetKey()); i == sl::scont_bad_index() )
 				{
 					pServ = new CServerDef( pScript->GetKey(), CSocketAddressIP( SOCKET_LOCAL_ADDRESS ));
 					fAddNew = true;
@@ -4017,9 +3974,8 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
                 const int iIndex = pScript->GetArgVal();
                 CResourceID ridnew( RES_TYPEDEF, iIndex );
 
-                CResourceDef *pResDef = RegisteredResourceGetDef(ridnew);
                 // Do we already have a TYPEDEF with the same index?
-                if (pResDef)
+                if (CResourceDef *pResDef = RegisteredResourceGetDef(ridnew))
                 {
                     pResDef->SetResourceName( ptcName );   // update name
                 }
@@ -4133,8 +4089,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	case RES_KRDIALOGLIST:
 		while ( pScript->ReadKeyParse() )
 		{
-			CDialogDef *pDef = dynamic_cast<CDialogDef *>( ResourceGetDefByName(RES_DIALOG, pScript->GetKey()) );
-			if ( pDef != nullptr )
+            if (CDialogDef *pDef = dynamic_cast<CDialogDef *>(ResourceGetDefByName(RES_DIALOG, pScript->GetKey())); pDef != nullptr )
 				SetKRDialogMap( pDef->GetResourceID().GetPrivateUID(), pScript->GetArgVal());
 			else
 				DEBUG_ERR(("Dialog '%s' not found...\n", pScript->GetKey()));
@@ -4281,8 +4236,7 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 			{
 				// For a book the page is... the page number
 				// For a REGIONTYPE block, the page (pArg2) is the landtile type associated with the REGIONTYPE
-                int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2));
-                if ( iArgPage < RES_PAGE_MAX )
+                if (int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2)); iArgPage < RES_PAGE_MAX )
                     wPage = (word)iArgPage;
                 else
                     DEBUG_ERR(( "Bad resource index page %d for Resource named %s\n", iArgPage, pszName ));
@@ -4405,8 +4359,7 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 		}
 
 
-        CVarDefCont * pVarBase = g_ExprGlobals.mtEngineLockedReader()->m_VarResDefs.GetKey( pszName );
-		if ( pVarBase )
+        if ( CVarDefCont *pVarBase = g_ExprGlobals.mtEngineLockedReader()->m_VarResDefs.GetKey(pszName) )
 		{
 			// An existing VarDef with the same name ?
 			// We are creating a new Block but using an old name ? weird.
@@ -4424,8 +4377,7 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 					case RES_WORLDITEM:
 					case RES_WORLDSCRIPT:
 					{
-						const CVarDefContStr * pVarStr = dynamic_cast <CVarDefContStr*>( pVarBase );
-						if ( pVarStr != nullptr )
+                        if (const CVarDefContStr *pVarStr = dynamic_cast<CVarDefContStr *>(pVarBase); pVarStr != nullptr )
 							return ResourceGetNewID(restype, pVarStr->GetValStr(), ppVarNum, fNewStyleDef);
 					}
 					break;
@@ -4625,8 +4577,7 @@ sl::smart_ptr_view<CResourceDef> CServerConfig::RegisteredResourceGetDefRef(cons
 		return {};
 
     const int iIndex = rid.GetResIndex();
-    const RES_TYPE iType = rid.GetResType();
-    switch (iType)
+    switch (rid.GetResType())
 	{
 	case RES_WEBPAGE:
 	{
@@ -4729,8 +4680,7 @@ lpctstr CServerConfig::ResourceGetName( const CResourceID& rid ) const
 
     if (rid.IsValidResource())
     {
-        const CResourceDef* pResourceDef = RegisteredResourceGetDef(rid);
-        if (pResourceDef)
+        if (const CResourceDef *pResourceDef = RegisteredResourceGetDef(rid))
             return pResourceDef->GetResourceName();
     }
 
@@ -4760,8 +4710,7 @@ void CServerConfig::_OnTick( bool fNow )
 			EXC_TRY("WebTick");
 			if ( !m_WebPages[i] )
 				continue;
-			CWebPageDef * pWeb = static_cast <CWebPageDef *>(m_WebPages[i].get());
-			if ( pWeb )
+            if ( CWebPageDef *pWeb = dynamic_cast<CWebPageDef *>(m_WebPages[i].get()) )
 			{
 				pWeb->WebPageUpdate(fNow, nullptr, &g_Serv);
 				pWeb->WebPageLog();
@@ -4873,8 +4822,7 @@ bool CServerConfig::LoadIni(bool fTest)
     // Check, if CLI argument -I=/path/to/ini/directory/ was used.
     if (m_iniDirectory[0] != '\0')
     {
-        int const ret = snprintf(filename, SPHERE_MAX_PATH, "%s" SPHERE_FILE ".ini", m_iniDirectory);
-        if (ret < 0)
+        if (int const ret = snprintf(filename, SPHERE_MAX_PATH, "%s" SPHERE_FILE ".ini", m_iniDirectory); ret < 0)
         {
 			g_Log.Event(LOGL_FATAL|LOGM_INIT|LOGF_CONSOLE_ONLY, "Path to %s" SPHERE_FILE ".ini is too long.\n", m_iniDirectory);
             return false;
@@ -4912,8 +4860,7 @@ bool CServerConfig::LoadCryptIni()
     // Check, if CLI argument -I=/path/to/ini/directory/ was used.
     if (m_iniDirectory[0] != '\0')
     {
-        int const ret = snprintf(filename, SPHERE_MAX_PATH, "%s" SPHERE_FILE "Crypt.ini", m_iniDirectory);
-        if (ret < 0)
+        if (int const ret = snprintf(filename, SPHERE_MAX_PATH, "%s" SPHERE_FILE "Crypt.ini", m_iniDirectory); ret < 0)
         {
             g_Log.Event(LOGL_FATAL|LOGM_INIT|LOGF_CONSOLE_ONLY, "Path to %s" SPHERE_FILE "Crypt.ini is too long.\n", m_iniDirectory);
             return false;
@@ -5113,8 +5060,7 @@ bool CServerConfig::Load( bool fResync )
     // ROOMs have to inherit stuff from the parent AREADEF
 	for (CRegion* pCurRegion : m_RegionDefs)
 	{
-		const RES_TYPE resType = pCurRegion->GetResourceID().GetResType();
-		if (resType != RES_ROOM)
+        if (const RES_TYPE resType = pCurRegion->GetResourceID().GetResType(); resType != RES_ROOM)
 			continue;
 
 		const CPointBase ptRoomCenter = pCurRegion->m_rectUnion.GetCenter();
@@ -5411,8 +5357,7 @@ bool CServerConfig::DumpUnscriptedItems( CTextConsole * pSrc, lpctstr pszFilenam
 		if ( !( i % 0xff ))
 			g_Serv.PrintPercent(i, idMaxItem);
 
-		CResourceID rid = CResourceID(RES_ITEMDEF, i);
-		if (m_ResHash.FindKey(rid) != sl::scont_bad_index())
+        if (CResourceID rid = CResourceID(RES_ITEMDEF, i); m_ResHash.FindKey(rid) != sl::scont_bad_index())
 			continue;
 
 		// check item in tiledata

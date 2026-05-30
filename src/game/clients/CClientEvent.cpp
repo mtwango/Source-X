@@ -120,8 +120,8 @@ void CClient::Event_Item_Dye(const CUID &uid, HUE_TYPE wHue) // Rehue an item
 	{
 		if ( !pObj->IsChar() )
 		{
-			CItem *pItem = dynamic_cast<CItem *>(pObj);
-			if (pItem == nullptr || (( pObj->GetIDCommon() != 0xFAB ) && (!pItem->IsType(IT_DYE_VAT) || !IsSetOF(OF_DyeType))))
+            if (CItem *pItem = dynamic_cast<CItem *>(pObj);
+                pItem == nullptr || (( pObj->GetIDCommon() != 0xFAB ) && (!pItem->IsType(IT_DYE_VAT) || !IsSetOF(OF_DyeType))))
 				return;
 
 			if ( wHue < HUE_BLUE_LOW )
@@ -262,15 +262,13 @@ void CClient::Event_Item_Drop_Fail( CItem *pItem )
 	if ( !pItem || (pItem != m_pChar->LayerFind(LAYER_DRAGGING)) )
 		return;
 
-	CItemContainer *pPrevCont = static_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind());
-	if ( pPrevCont )
+    if ( CItemContainer *pPrevCont = static_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()) )
 	{
 		pPrevCont->ContentAdd(pItem, m_Targ_p);
 		return;
 	}
 
-	CChar *pPrevChar = m_Targ_Prv_UID.CharFind();
-	if ( pPrevChar )
+    if ( CChar *pPrevChar = m_Targ_Prv_UID.CharFind() )
 	{
 		pPrevChar->ItemEquip(pItem);
 		return;
@@ -328,8 +326,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 
 		if ( pObjOn->IsChar())	// Drop on a chars head.
 		{
-			CChar * pChar = dynamic_cast <CChar*>( pObjOn );
-			if ( pChar != m_pChar )
+            if (CChar *pChar = dynamic_cast<CChar *>(pObjOn); pChar != m_pChar )
 			{
 				if ( ! Cmd_SecureTrade( pChar, pItem ))
 					Event_Item_Drop_Fail( pItem );
@@ -388,8 +385,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 
 		if (pObjTop != nullptr && pObjTop->IsItem())
 		{
-			CItemContainer * pTopContainer = dynamic_cast<CItemContainer*>(pObjTop);
-			if (pTopContainer && !pTopContainer->CanContainerHold(pItem, m_pChar))
+            if (CItemContainer *pTopContainer = dynamic_cast<CItemContainer *>(pObjTop); pTopContainer && !pTopContainer->CanContainerHold(pItem, m_pChar))
 			{
 				Event_Item_Drop_Fail(pItem);
 				return;
@@ -447,8 +443,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
             pScriptArgs->m_pO1 = pItem;
             if ( pItemOn->OnTrigger( ITRIG_DROPON_SELF, pScriptArgs, m_pChar ) == TRIGRET_RET_TRUE )
 			{
-                CItem* pCont = dynamic_cast<CItem*>(pItem->GetContainer());
-                if (pPrevCont == pCont)
+                if (CItem *pCont = dynamic_cast<CItem *>(pItem->GetContainer()); pPrevCont == pCont)
 				    Event_Item_Drop_Fail( pItem );
 				return;
 			}
@@ -550,8 +545,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 	{
 		if ( pObjOn == nullptr || m_Targ_Prv_UID != pObjOn->GetUID())
 		{
-			CItemContainer * pGame = dynamic_cast <CItemContainer *>( m_Targ_Prv_UID.ItemFind());
-			if ( pGame != nullptr )
+            if (CItemContainer *pGame = dynamic_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()); pGame != nullptr )
 			{
 				pGame->ContentAdd( pItem, m_Targ_p );
 			}
@@ -573,9 +567,8 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 		{
 			if ( pObjOn->IsChar() )
 			{
-				CChar* pChar = dynamic_cast <CChar*>(pObjOn);
 
-				if ( pChar )
+                if ( CChar *pChar = dynamic_cast<CChar *>(pObjOn) )
 					pContOn = pChar->GetBank( LAYER_PACK );
 			}
 
@@ -647,8 +640,8 @@ void CClient::Event_Skill_Use( SKILL_TYPE skill ) // Skill is clicked on the ski
 
 	if ( g_Cfg.IsSkillFlag( skill, SKF_SCRIPTED ) )
 	{
-		const CSkillDef * pSkillDef = g_Cfg.GetSkillDef(skill);
-		if (pSkillDef != nullptr && (pSkillDef->m_sTargetPrompt.IsEmpty() == false || pSkillDef->m_sTargetPromptCliloc.IsEmpty() == false))
+        if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(skill);
+            pSkillDef != nullptr && (pSkillDef->m_sTargetPrompt.IsEmpty() == false || pSkillDef->m_sTargetPromptCliloc.IsEmpty() == false))
 		{
 			m_tmSkillTarg.m_iSkill = skill;	// targetting what skill ?
 			addTarget( CLIMODE_TARG_SKILL, pSkillDef->m_sTargetPrompt.GetBuffer(), false, fCheckCrime, 0, atoi(pSkillDef->m_sTargetPromptCliloc.GetBuffer()));
@@ -1110,8 +1103,7 @@ bool CClient::Event_Command(lpctstr pszCommand, TALKMODE_TYPE mode)
 		}
 		else
 		{
-			CScript s(pszCommand);
-			if ( !m_pChar->r_Verb(s, m_pChar) )
+            if (CScript s(pszCommand); !m_pChar->r_Verb(s, m_pChar) )
 				SysMessageDefault(DEFMSG_CMD_INVALID);
 		}
 	}
@@ -1206,11 +1198,10 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiIt
                         return;
                     }
 
-                    CCharBase* pPetDef = CCharBase::FindCharBase(static_cast<CREID_TYPE>(pItemPet->m_ttFigurine.m_idChar.GetResIndex()));
-                    if (pPetDef)
+                    if (CCharBase::FindCharBase(static_cast<CREID_TYPE>(pItemPet->m_ttFigurine.m_idChar.GetResIndex())))
                     {
-                        const short uiFollowerSlots = n64_narrow_n16(pItem->GetDefNum("FOLLOWERSLOTS", true));
-                        if (!m_pChar->FollowersUpdate(pVendor, (uiFollowerSlots * items[i].m_vcAmount), true))
+                        if (const short uiFollowerSlots = n64_narrow_n16(pItem->GetDefNum("FOLLOWERSLOTS", true));
+                            !m_pChar->FollowersUpdate(pVendor, (uiFollowerSlots * items[i].m_vcAmount), true))
                         {
                             m_pChar->SysMessageDefault(DEFMSG_PETSLOTS_TRY_CONTROL);
                             return;
@@ -1413,8 +1404,7 @@ do_consume:
         }
         else
         {
-            int iGold = m_pChar->GetPackSafe()->ContentConsume( CResourceID(RES_TYPEDEF,IT_GOLD), (int)iCostTotal);
-            if (!g_Cfg.m_fPayFromPackOnly && iGold)
+            if (int iGold = m_pChar->GetPackSafe()->ContentConsume(CResourceID(RES_TYPEDEF, IT_GOLD), (int)iCostTotal); !g_Cfg.m_fPayFromPackOnly && iGold)
                 m_pChar->ContentConsume( CResourceID(RES_TYPEDEF,IT_GOLD), iGold);
             pVendor->GetBank()->m_itEqBankBox.m_Check_Amount += (uint)iCostTotal;
         }
@@ -1725,8 +1715,7 @@ void CClient::Event_PromptResp( lpctstr pszText, size_t len, dword context1, dwo
 			{
 				if ( type == 0 || szText[0] == '\0' )	// cancel
 					return;
-				CChar * pCharVendor = CUID(context2).CharFind();
-				if ( pCharVendor )
+                if ( CChar *pCharVendor = CUID(context2).CharFind() )
 				{
 					pCharVendor->NPC_SetVendorPrice( m_Prompt_Uid.ItemFind(), atoi(szText) );
 				}
@@ -1764,8 +1753,7 @@ void CClient::Event_PromptResp( lpctstr pszText, size_t len, dword context1, dwo
 			// m_Prompt_Text = the prefix.
 			if ( szText[0] != '\0' )
 			{
-				CObjBase * pObj = m_Prompt_Uid.ObjFind();
-				if ( pObj )
+                if ( CObjBase *pObj = m_Prompt_Uid.ObjFind() )
 				{
 					CScript script( m_Prompt_Text, szText );
 					pObj->r_Verb( script, this );
@@ -1884,14 +1872,12 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 	// Are we in a region that can hear ?
 	if ( m_pChar->m_pArea->GetResourceID().IsUIDItem() )
 	{
-		CItemMulti *pItemMulti = dynamic_cast<CItemMulti *>(m_pChar->m_pArea->GetResourceID().ItemFindFromResource());
-		if ( pItemMulti )
+        if ( CItemMulti *pItemMulti = dynamic_cast<CItemMulti *>(m_pChar->m_pArea->GetResourceID().ItemFindFromResource()) )
 			pItemMulti->OnHearRegion(pszText, m_pChar);
 	}
 
 	// Are there items on the ground that might hear u ?
-	CSector *pSector = m_pChar->GetTopSector();
-	if (pSector != nullptr && pSector->HasListenItems())
+    if (CSector *pSector = m_pChar->GetTopSector(); pSector != nullptr && pSector->HasListenItems())
 		pSector->OnHearItem(m_pChar, pszText);
 
 	// Find an NPC that may have heard us.
@@ -1923,8 +1909,7 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 		{
 			for (CSObjContRec* pObjRec : pChar->GetIterationSafeCont())
 			{
-				CItem* pItem = static_cast<CItem*>(pObjRec);
-                if (pItem->CanHear()) {
+                if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->CanHear()) {
                     pItem->OnHear(pszText, m_pChar);
                 }
 			}
@@ -2609,8 +2594,7 @@ void CClient::Event_AOSPopupMenuRequest( dword uid ) //construct packet after a 
 		if ( IsTrigUsed(TRIGGER_CONTEXTMENUREQUEST) )
 		{
             pScriptArgs->m_iN1 = 1;
-            TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_ContextMenuRequest, pScriptArgs, GetChar());
-			if ( iRet == TRIGRET_RET_TRUE )
+            if (TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_ContextMenuRequest, pScriptArgs, GetChar()); iRet == TRIGRET_RET_TRUE )
 				fPreparePacket = true;
 		}
 	}
@@ -3075,8 +3059,7 @@ void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
 
 		case EXTCMD_AUTOTARG:	// bizarre new autotarget mode. "target x y z"
 		{
-			CObjBase *pObj = CUID::ObjFindFromUID(atoi(ppArgs[0]));
-			if ( pObj )
+            if ( CObjBase *pObj = CUID::ObjFindFromUID(atoi(ppArgs[0])) )
 				DEBUG_ERR(("%x:Event_ExtCmd AutoTarg '%s' '%s'\n", GetSocketID(), pObj->GetName(), !ppArgs[1] ? TSTRING_NULL : ppArgs[1]));
 			else
 				DEBUG_ERR(("%x:Event_ExtCmd AutoTarg unk '%s' '%s'\n", GetSocketID(), ppArgs[0], !ppArgs[1] ? TSTRING_NULL : ppArgs[1]));

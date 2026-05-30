@@ -55,8 +55,7 @@ bool CNetworkInput::processInput()
         // wake up the thread
         if (m_thread->isActive() && m_thread->getPriority() == ThreadPriority::Disabled)
         {
-            fd_set fds;
-            if (checkForData(fds))
+            if (fd_set fds; checkForData(fds))
                 m_thread->awaken();
         }
 
@@ -157,13 +156,12 @@ void CNetworkInput::processData()
         EXC_SET_BLOCK("check message");
         if (state->m_incoming.rawPackets.empty())
         {
-            const CONNECT_TYPE connecttype = client->GetConnectType();
-            if ((connecttype != CONNECT_TELNET) && (connecttype != CONNECT_AXIS))
+            if (const CONNECT_TYPE connecttype = client->GetConnectType(); (connecttype != CONNECT_TELNET) && (connecttype != CONNECT_AXIS))
             {
                 // check for timeout
                 EXC_SET_BLOCK("check frozen");
-                const int64 iLastEventDiff = CWorldGameTime::GetCurrentTime().GetTimeDiff(client->m_timeLastEvent);
-                if ((g_Cfg.m_iDeadSocketTime > 0) && (iLastEventDiff > g_Cfg.m_iDeadSocketTime))
+                if (const int64 iLastEventDiff = CWorldGameTime::GetCurrentTime().GetTimeDiff(client->m_timeLastEvent);
+                    (g_Cfg.m_iDeadSocketTime > 0) && (iLastEventDiff > g_Cfg.m_iDeadSocketTime))
                 {
                     g_Log.Event(LOGM_CLIENTS_LOG | LOGL_EVENT, "%x:Frozen client disconnected (DeadSocketTime reached).\n", state->id());
                     state->m_client->addLoginErr(PacketLoginError::Other);		//state->markReadClosed();
@@ -209,8 +207,7 @@ void CNetworkInput::processData()
             const ProfileTask clientTask(PROFILE_CLIENTS);
 
             EXC_SET_BLOCK("packets - process");
-            Packet* buffer = state->m_incoming.rawBuffer;
-            if (buffer != nullptr)
+            if (Packet *buffer = state->m_incoming.rawBuffer; buffer != nullptr)
             {
                 // we have a buffer of raw bytes, we need to go through them all and process as much as we can
                 while (state->isReadClosed() == false && buffer->getRemainingLength() > 0)

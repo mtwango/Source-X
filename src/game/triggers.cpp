@@ -37,8 +37,7 @@ bool IsTrigUsed(const char *name)
     if ( g_Serv.IsLoadingGeneric() == true)
         return false;
 
-    const int index = FindTableSorted(name, kOrderedTrigsNames, std::size(kOrderedTrigsNames));
-    if (index >= 0)
+    if (const int index = FindTableSorted(name, kOrderedTrigsNames, std::size(kOrderedTrigsNames)); index >= 0)
         return IsTrigUsed((E_TRIGGERS)index);
 
     return true; //Must return true for custom triggers

@@ -75,8 +75,7 @@ void CNetworkThread::dropInvalidStates()
 
     for (NetworkStateList::iterator it = m_states.begin(); it != m_states.end(); )
     {
-        CNetState* state = *it;
-        if (state->getParentThread() != this)
+        if (CNetState *state = *it; state->getParentThread() != this)
         {
             // state has been unassigned or reassigned elsewhere
             it = m_states.erase(it);
@@ -133,8 +132,7 @@ void CNetworkThread::tick()
     setPriority(static_cast<ThreadPriority>(g_Cfg._iNetworkThreadPriority));
 
     static constexpr int64 kiStateDataCheckPeriodMilli = 10 * 1000; // 10 seconds, expressed in milliseconds
-    const int64 iTimeCur = CSTime::GetMonotonicSysTimeMilli();
-    if (iTimeCur - _iTimeLastStateDataCheck > kiStateDataCheckPeriodMilli)
+    if (const int64 iTimeCur = CSTime::GetMonotonicSysTimeMilli(); iTimeCur - _iTimeLastStateDataCheck > kiStateDataCheckPeriodMilli)
     {
         _iTimeLastStateDataCheck = iTimeCur;
 

@@ -80,9 +80,8 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, int iMaxDist
 			ptSrc.Move(dir);	// NOTE: The dir is very coarse and can change slightly.
 			uiBlockFlags = CAN_C_SWIM|CAN_C_WALK|CAN_C_FLY;
 			char z = CWorldMap::GetHeightPoint2(ptSrc, uiBlockFlags, true);
-            short zDiff = (short)(abs(z - ptSrc.m_z));
 
-			if ( (zDiff > PLAYER_HEIGHT) || (uiBlockFlags & (CAN_I_BLOCK|CAN_I_DOOR)) || (iDistTry > iMaxDist) )
+            if (short zDiff = (short)(abs(z - ptSrc.m_z)); (zDiff > PLAYER_HEIGHT) || (uiBlockFlags & (CAN_I_BLOCK|CAN_I_DOOR)) || (iDistTry > iMaxDist) )
 				goto blocked;
 
 			ptSrc.m_z = z;
@@ -173,8 +172,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 			// Add point to vector
 			if ( !path.empty() )
 			{
-				const CPointMap& ptEnd = path.back();
-				if ( ptEnd.m_x != dx || ptEnd.m_y != dy || ptEnd.m_z != dz )
+                if (const CPointMap &ptEnd = path.back(); ptEnd.m_x != dx || ptEnd.m_y != dy || ptEnd.m_z != dz )
 					path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
 			}
 			else
@@ -271,8 +269,8 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 				terrainid = pBlock->GetTerrain(UO_BLOCK_OFFSET(ptNow.m_x), UO_BLOCK_OFFSET(ptNow.m_y))->m_wTerrainIndex;
 				WARNLOS(("Terrain %d\n", terrainid));
 
-				const IT_TYPE itTerrain = CWorldMap::GetTerrainItemType(terrainid);
-				if ( (flags & LOS_FISHING) && (ptSrc.GetDist(ptNow) >= 2) && (itTerrain != IT_WATER) && (itTerrain != IT_NORMAL) )
+                if (const IT_TYPE itTerrain = CWorldMap::GetTerrainItemType(terrainid);
+                    (flags & LOS_FISHING) && (ptSrc.GetDist(ptNow) >= 2) && (itTerrain != IT_WATER) && (itTerrain != IT_NORMAL) )
 				{
 					WARNLOS(("Terrain %d blocked - flags & LOS_FISHING, distance >= 2 and type of pItemDef is not IT_WATER\n", terrainid));
 					WARNLOS(("ptSrc: %d,%d,%d; ptNow: %d,%d,%d; terrainid: %d; terrainid type: %d\n", ptSrc.m_x, ptSrc.m_y, ptSrc.m_z, ptNow.m_x, ptNow.m_y, ptNow.m_z, terrainid, itTerrain));
@@ -319,8 +317,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 							bPath = false;
 							break;
 						}
-						const CUOTerrainInfo land(terrainid);
-						if ( (land.m_flags & UFLAG1_WATER) && (flags & LOS_NC_WATER) )
+                        if (const CUOTerrainInfo land(terrainid); (land.m_flags & UFLAG1_WATER) && (flags & LOS_NC_WATER) )
 							bNullTerrain = true;
 					}
 				}
@@ -480,8 +477,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 							if ( !pDupeDef )
 							{
                                 // Not an error: i have changed the DISPID of the item.
-                                const CItemBase* pParentDef = CItemBase::FindItemBase(pItem->GetDispID());
-                                if (pParentDef)
+                                if (const CItemBase *pParentDef = CItemBase::FindItemBase(pItem->GetDispID()))
                                 {
                                     qwTFlags = pParentDef->GetTFlags();
                                     Height = pParentDef->GetHeight();
@@ -535,8 +531,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 		{
 			if ( !((flags & LOS_NB_LOCAL_MULTI) && (pSrcRegion == pNowRegion)) )
 			{
-				size_t iQtyr = ptNow.GetRegions(REGION_TYPE_MULTI, &rlinks);
-				if ( iQtyr > 0 )
+                if (size_t iQtyr = ptNow.GetRegions(REGION_TYPE_MULTI, &rlinks); iQtyr > 0 )
 				{
 					for ( size_t ii = 0; ii < iQtyr; pMulti = nullptr, ++ii, pItem = nullptr, pRegion = nullptr )
 					{
@@ -675,8 +670,7 @@ bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, word wFlags, bool bCombatCh
 	if ( (m_pPlayer && (g_Cfg.m_iAdvancedLos & ADVANCEDLOS_PLAYER)) || (m_pNPC && (g_Cfg.m_iAdvancedLos & ADVANCEDLOS_NPC)) )
 	{
 		CPointMap pt = pObj->GetTopPoint();
-		const CChar *pChar = dynamic_cast<const CChar*>(pObj);
-		if ( pChar )
+        if ( const CChar *pChar = dynamic_cast<const CChar *>(pObj) )
 		{
 			short iTotalZ = pt.m_z + pChar->GetHeightMount(true);
 			pt.m_z = (char)minimum(iTotalZ, UO_SIZE_Z);

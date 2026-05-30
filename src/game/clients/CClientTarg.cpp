@@ -42,8 +42,7 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 
 	if ( pObj->IsItem() )
 	{
-		const CItem * pItem = static_cast <CItem*> (pObj);
-		if ( pItem->GetAmount() > 1 )
+        if (const CItem *pItem = static_cast<CItem *>(pObj); pItem->GetAmount() > 1 )
 			snprintf(pszLogMsg, Str_TempLength(), "'%s' commands uid=0%x (%s) [amount=%u] to '%s'",
                      GetName(), (dword)(pObj->GetUID()), pObj->GetName(), pItem->GetAmount(), static_cast<lpctstr>(m_Targ_Text));
 		else
@@ -97,8 +96,7 @@ bool CClient::OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, ITEMID
 		GETNONWHITESPACE( pSpace );
 
     lpctstr ptcFunction = m_Targ_Text.GetBuffer();
-    const size_t uiFunctionIndex = r_GetFunctionIndex(ptcFunction);
-    if ( r_CanCall(uiFunctionIndex) )
+    if (const size_t uiFunctionIndex = r_GetFunctionIndex(ptcFunction); r_CanCall(uiFunctionIndex) )
     {
         // It's a scripted FUNCTION
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
@@ -137,8 +135,7 @@ bool CClient::OnTarg_Obj_Info( CObjBase * pObj, const CPointMap & pt, ITEMID_TYP
 			len = snprintf( pszTemp, Str_TempLength(), "[Static z=%d, 0%x=", pt.m_z, id );
 
 			// static items have no uid's but we can still use them.
-			CItemBase * pItemDef = CItemBase::FindItemBase(id);
-			if ( pItemDef )
+            if ( CItemBase *pItemDef = CItemBase::FindItemBase(id) )
 			{
 				len += snprintf( pszTemp+len, Str_TempLength() - len, "%s->%s], ", pItemDef->GetResourceName(),
 					g_Cfg.ResourceGetName( CResourceID( RES_TYPEDEF, pItemDef->GetType() )));
@@ -154,8 +151,7 @@ bool CClient::OnTarg_Obj_Info( CObjBase * pObj, const CPointMap & pt, ITEMID_TYP
 			len = Str_CopyLimitNull( pszTemp, "[No static tile], ", Str_TempLength());
 		}
 
-		std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted( pt );
-		if ( pMeter )
+        if ( std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted(pt) )
 		{
 			len += snprintf( pszTemp+len, Str_TempLength() - len, "TERRAIN=0%x   TYPE=%s",
 				pMeter->m_wTerrainIndex,
@@ -213,8 +209,7 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 
 	// Put my GM pack stuff in it's inventory.
 	CItemContainer *pPack1 = pChar1->GetPack();
-	CItemContainer *pPack2 = pChar2->GetPackSafe();
-	if ( pPack1 && pPack2 )
+    if (CItemContainer *pPack2 = pChar2->GetPackSafe(); pPack1 && pPack2 )
 	{
 		for (CSObjContRec* pObjRec : pPack1->GetIterationSafeContReverse())
 		{
@@ -679,8 +674,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 				}
 				else
 				{
-					CScript script(m_Targ_Text);
-					if ( ! pItem->r_Verb( script, this ))
+                    if (CScript script(m_Targ_Text); ! pItem->r_Verb( script, this ))
 						continue;
 				}
 				iCount++;
@@ -709,8 +703,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 				}
 				else
 				{
-					CScript script(m_Targ_Text);
-					if ( ! pChar->r_Verb( script, this ))
+                    if (CScript script(m_Targ_Text); ! pChar->r_Verb( script, this ))
 						continue;
 				}
 				iCount++;
@@ -785,8 +778,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 
 		if ( m_pChar->IsStatFlag( STATF_ONHORSE ) )
 		{
-			CItem * pItem = m_pChar->LayerFind( LAYER_HORSE );
-			if ( pItem && pItem->m_itFigurine.m_UID == uid)
+            if (CItem *pItem = m_pChar->LayerFind(LAYER_HORSE); pItem && pItem->m_itFigurine.m_UID == uid)
 				return 1;
 		}
 
@@ -882,8 +874,7 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 
 	// ??? Estimate it's worth ?
 
-	CItemVendable * pItemVend = dynamic_cast <CItemVendable *>(pItem);
-	if ( pItemVend == nullptr )
+    if (CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem); pItemVend == nullptr )
 	{
 		SysMessage( g_Cfg.GetDefaultMsg( DEFMSG_ITEMID_NOVAL ));
 	}
@@ -1370,8 +1361,7 @@ bool CClient::OnTarg_Skill( CObjBase * pObj )
 	if ( g_Cfg.IsSkillFlag( m_tmSkillTarg.m_iSkill, SKF_SCRIPTED ) )
 	{
 		// is this scripted skill a targeted skill ?
-		const CSkillDef * pSkillDef = g_Cfg.GetSkillDef(m_tmSkillTarg.m_iSkill);
-		if (pSkillDef && pSkillDef->m_sTargetPrompt.IsEmpty() == false)
+        if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(m_tmSkillTarg.m_iSkill); pSkillDef && pSkillDef->m_sTargetPrompt.IsEmpty() == false)
 		{
 			m_pChar->m_Act_UID = m_Targ_UID;
 			return m_pChar->Skill_Start( m_tmSkillTarg.m_iSkill );
@@ -1468,8 +1458,7 @@ bool CClient::OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt )
 	// The client player has targeted a spell.
 	// CLIMODE_TARG_SKILL_MAGERY
 
-    const CChar *pTargChar = dynamic_cast<CChar*>(pObj);
-    if (pTargChar && pTargChar->Can(CAN_C_NONSELECTABLE))
+    if (const CChar *pTargChar = dynamic_cast<CChar *>(pObj); pTargChar && pTargChar->Can(CAN_C_NONSELECTABLE))
         return false;
 
 	const CSpellDef * pSpell = g_Cfg.GetSpellDef( m_tmSkillMagery.m_iSpell );
@@ -1617,8 +1606,7 @@ bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
 		return false;
 	}
 
-	CItemContainer * pPack = pCharPet->GetPack();
-	if ( pPack )
+    if ( CItemContainer *pPack = pCharPet->GetPack() )
 	{
 		if ( ! pPack->IsContainerEmpty() )
 		{
@@ -1662,8 +1650,7 @@ bool CClient::OnTarg_Use_Deed( CItem * pDeed, CPointMap & pt )
         return false;
     }
 
-	const CItemBase * pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(pDeed->m_itDeed.m_Type)));
-    if (!OnTarg_Use_Multi(pItemDef, pt, pDeed))
+    if (const CItemBase *pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(pDeed->m_itDeed.m_Type))); !OnTarg_Use_Multi(pItemDef, pt, pDeed))
     {
         return false;
     }
@@ -2204,8 +2191,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 		// Use more1 to record the type of resource last used on this object
 		// Use more2 to record the number of resources used so far
 		// Check what was used last.
-		ITEMID_TYPE ClothID = (ITEMID_TYPE)pItemTarg->m_itLoom.m_ridCloth.GetResIndex();
-		if ( ClothID && (ClothID != pItemUse->GetDispID()) )
+        if (ITEMID_TYPE ClothID = (ITEMID_TYPE)pItemTarg->m_itLoom.m_ridCloth.GetResIndex(); ClothID && (ClothID != pItemUse->GetDispID()) )
 		{
 			// throw away what was on here before
 			SysMessageDefault( DEFMSG_ITEMUSE_LOOM_REMOVE );
@@ -2477,8 +2463,8 @@ bool CClient::OnTarg_Party_Add( CChar * pChar )
 		return false;
 	}
 
-	CVarDefCont * pTagInvitetime = m_pChar->m_TagDefs.GetKey("PARTY_LASTINVITETIME");
-	if ( pTagInvitetime && (CWorldGameTime::GetCurrentTime().GetTimeDiff(pTagInvitetime->GetValNum()) <= 0) )
+    if (CVarDefCont *pTagInvitetime = m_pChar->m_TagDefs.GetKey("PARTY_LASTINVITETIME");
+        pTagInvitetime && (CWorldGameTime::GetCurrentTime().GetTimeDiff(pTagInvitetime->GetValNum()) <= 0) )
 	{
 		SysMessageDefault( DEFMSG_PARTY_ADD_TOO_FAST );
 		return false;
@@ -2544,8 +2530,8 @@ bool CClient::OnTarg_GlobalChat_Add(CChar* pChar)
 		return true;
 	}
 
-	CVarDefCont* pTagInviteTime = m_pChar->m_TagDefs.GetKey("GLOBALCHAT_LASTINVITETIME");
-	if (pTagInviteTime && (CWorldGameTime::GetCurrentTime().GetTimeRaw() < pTagInviteTime->GetValNum()))
+    if (CVarDefCont *pTagInviteTime = m_pChar->m_TagDefs.GetKey("GLOBALCHAT_LASTINVITETIME");
+        pTagInviteTime && (CWorldGameTime::GetCurrentTime().GetTimeRaw() < pTagInviteTime->GetValNum()))
 	{
 		SysMessage("You are unable to add new friends at this time. Please try again in a moment.");
 		return false;

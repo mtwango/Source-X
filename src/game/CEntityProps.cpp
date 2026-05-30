@@ -242,8 +242,7 @@ void CEntityProps::Copy(const CEntityProps *target)
     {
         CComponentProps *pTarget = it->second.get();    // the CComponent to copy from
         ASSERT(pTarget);
-        CComponentProps *pCopy = GetComponentProps(pTarget->GetType());    // the CComponent to copy to.
-        if (pCopy)
+        if (CComponentProps *pCopy = GetComponentProps(pTarget->GetType()))
         {
             pCopy->Copy(pTarget);
         }

@@ -69,13 +69,14 @@ bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
         static constexpr int iMaxFileLength = 5 * 1'000'000;
         const int iFileLength = _GetLength();
         ASSERT(iFileLength >= 0);
-        bool fUTF = false, fFirstLine = true;
         if (iFileLength > iMaxFileLength)
         {
             g_Log.EventError("Single script file bigger than %d MB? Size is %d MB. Skipping.\n", iMaxFileLength / 1'000'000, iFileLength / 1'000'000);
         }
         else
         {
+            bool fUTF = false;
+            bool fFirstLine = true;
             // Fastest method: read the script file all at once.
             /*
             auto fileContentCopy = std::make_unique<char[]>((size_t)iFileLength + 1u);
@@ -98,8 +99,7 @@ bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
                 lpctstr before = str_end;
                 while (true)
                 {
-                    const char ch = *str_end;
-                    if (ch == '\n' && !fDoneN)
+                    if (const char ch = *str_end; ch == '\n' && !fDoneN)
                     {
                         fDoneN = true;
                         ++str_end;

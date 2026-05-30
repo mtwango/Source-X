@@ -343,8 +343,7 @@ void CChat::Action(CClient* pClient, const nachar* pszText, int len, CLanguageID
 		if (!pChannel)
 			goto NoConference;
 
-		CChatChanMember* pMember = pChannel->FindMember(szMsg);
-		if (pMember)
+        if (CChatChanMember *pMember = pChannel->FindMember(szMsg))
 			pChannel->KickMember(pMe, pMember);
 		else
 			pMe->SendChatMsg(CHATMSG_NoPlayer, szMsg);
@@ -393,8 +392,7 @@ void CChat::QuitChat(CChatChanMember* pClient) noexcept
     if (!pClient)
         return;
 
-    CChatChannel* pCurrentChannel = pClient->GetChannel();
-    if (pCurrentChannel)
+    if (CChatChannel *pCurrentChannel = pClient->GetChannel())
     {
         EXC_TRY("Removing channel member");
         pCurrentChannel->RemoveMember(pClient);
@@ -416,8 +414,7 @@ void CChat::FormatName(CSString& sName, const CChatChanMember* pMember, bool fSy
 	int iColor = 0;
 	if (pMember)
 	{
-		CChatChannel* pChannel = pMember->GetChannel();
-		if (pChannel)
+        if (CChatChannel *pChannel = pMember->GetChannel())
 		{
 			lpctstr pszName = pMember->GetChatName();
 			if (pChannel->IsModerator(pszName))

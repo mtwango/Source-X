@@ -93,8 +93,8 @@ void CChar::Spell_Dispel(int iLevel)
 		}
 		else
 		{
-			const LAYER_TYPE itLayer = pItem->GetEquipLayer();
-			if ( ((itLayer == LAYER_FACE) && pItem->IsType(IT_LIGHT_LIT)) || ((itLayer >= LAYER_SPELL_STATS) && (itLayer <= LAYER_SPELL_Summon)) )
+            if (const LAYER_TYPE itLayer = pItem->GetEquipLayer();
+                ((itLayer == LAYER_FACE) && pItem->IsType(IT_LIGHT_LIT)) || ((itLayer >= LAYER_SPELL_STATS) && (itLayer <= LAYER_SPELL_Summon)) )
 				fIncrease = !pItem->Delete();
 		}
 
@@ -145,8 +145,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, bool fTakePets, bool fCheckAntiMagi
 
         if ( IsPriv(PRIV_JAILED) )
         {
-            CRegion *pJail = g_Cfg.GetRegion("jail");
-            if ( !pJail || !pJail->IsInside2d(ptNew) )
+            if (CRegion *pJail = g_Cfg.GetRegion("jail"); !pJail || !pJail->IsInside2d(ptNew) )
             {
                 // Must be /PARDONed to leave jail area
                 static lpctstr const sm_szPunishMsg[] =
@@ -343,9 +342,8 @@ CChar * CChar::Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, const
 	ADDTOCALLSTACK("CChar::Spell_Summon_Place");
 	// Finally place the NPC in the world.
 	int iSkill;
-	CSpellDef* pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell);
 
-	if (!pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr) || !pChar)
+    if (CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr) || !pChar)
 	{
 		return nullptr;
 	}
@@ -502,8 +500,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 
 	if (m_pPlayer)
 	{
-		CItem *pDeathShroud = ContentFind(CResourceID(RES_ITEMDEF, ITEMID_DEATHSHROUD));
-		if (pDeathShroud)
+        if (CItem *pDeathShroud = ContentFind(CResourceID(RES_ITEMDEF, ITEMID_DEATHSHROUD)))
 			pDeathShroud->Delete();
 
 		if (!fRaisedCorpse && !g_Cfg.m_fNoResRobe)
@@ -516,8 +513,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 
 	}
 
-	const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(SPELL_Resurrection);
-	if (pSpellDef)
+    if (const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(SPELL_Resurrection))
 	{
 		if (pSpellDef->m_idEffect)
 			Effect(EFFECT_OBJ, pSpellDef->m_idEffect, this, 10, 16);
@@ -570,8 +566,8 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
         pScriptArgs->m_pO1 = pSpell;
         pScriptArgs->m_iN1 = spell;
 
-        TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellEffectRemove, pScriptArgs, pCaster);
-		if (iRet == TRIGRET_RET_FALSE)	// Return 0: remove the spell memory item but don't execute the default spell behaviour.
+        if (TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellEffectRemove, pScriptArgs, pCaster);
+            iRet == TRIGRET_RET_FALSE)	// Return 0: remove the spell memory item but don't execute the default spell behaviour.
 			return;
 	}
 	if (IsTrigUsed(TRIGGER_EFFECTREMOVE))
@@ -580,8 +576,8 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
         pScriptArgs->m_pO1 = pSpell;
         pScriptArgs->m_iN1 = spell;
 
-        TRIGRET_TYPE iRet = Spell_OnTrigger(spell, SPTRIG_EFFECTREMOVE, pScriptArgs, pCaster);
-		if (iRet == TRIGRET_RET_FALSE)		// Return 0: remove the spell memory item but don't execute the default spell behaviour.
+        if (TRIGRET_TYPE iRet = Spell_OnTrigger(spell, SPTRIG_EFFECTREMOVE, pScriptArgs, pCaster);
+            iRet == TRIGRET_RET_FALSE)		// Return 0: remove the spell memory item but don't execute the default spell behaviour.
 			return;
 	}
 
@@ -701,12 +697,10 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			if (!IsStatFlag(STATF_POLYMORPH) && IsPlayableCharacter())	// polymorph doesn't change the hue of the character, only the id
 				SetHue(_wPrev_Hue);
 
-			CItem *pHair = LayerFind(LAYER_HAIR);
-			if (pHair)
+            if (CItem *pHair = LayerFind(LAYER_HAIR))
 				pHair->SetHue((HUE_TYPE)(pSpell->m_TagDefs.GetKeyNum("COLOR.HAIR")));
 
-			CItem *pBeard = LayerFind(LAYER_BEARD);
-			if (pBeard)
+            if (CItem *pBeard = LayerFind(LAYER_BEARD))
 				pBeard->SetHue((HUE_TYPE)(pSpell->m_TagDefs.GetKeyNum("COLOR.BEARD")));
 
 			NotoSave_Update();
@@ -777,8 +771,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 		{
 			if (pClient)
 				pClient->removeBuff(BI_BLOODOATHCURSE);
-			CChar * pSrc = pSpell->m_uidLink.CharFind();
-			if (pSrc && pSrc->IsClientActive())
+            if (CChar *pSrc = pSpell->m_uidLink.CharFind(); pSrc && pSrc->IsClientActive())
 				pSrc->GetClientActive()->removeBuff(BI_BLOODOATHCASTER);
 			return;
 		}
@@ -958,8 +951,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			return;
 		case SPELL_Curse_Weapon:
 			{
-				CItem * pWeapon = m_uidWeapon.ItemFind();
-				if (pWeapon)
+            if (CItem *pWeapon = m_uidWeapon.ItemFind())
 					pWeapon->ModPropNum(COMP_PROPS_ITEMEQUIPPABLE, PROPCH_HITLEECHLIFE, - pSpell->m_itSpell.m_spelllevel, true);	// Adding 50% HitLeechLife to the weapon, since damaging with it should return 50% of the damage dealt.
 			}
 			return;
@@ -1181,15 +1173,13 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 					SetHue((HUE_TYPE)(g_Rand.GetVal2(HUE_SKIN_LOW, HUE_SKIN_HIGH)) | HUE_UNDERWEAR);
 
 				HUE_TYPE RandomHairHue = (HUE_TYPE)(g_Rand.GetVal2(HUE_HAIR_LOW, HUE_HAIR_HIGH));
-				CItem *pHair = LayerFind(LAYER_HAIR);
-				if (pHair)
+                if (CItem *pHair = LayerFind(LAYER_HAIR))
 				{
 					pSpell->m_TagDefs.SetNum("COLOR.HAIR", (int64)(pHair->GetHue()));
 					pHair->SetHue(RandomHairHue);
 				}
 
-				CItem *pBeard = LayerFind(LAYER_BEARD);
-				if (pBeard)
+                if (CItem *pBeard = LayerFind(LAYER_BEARD))
 				{
 					pSpell->m_TagDefs.SetNum("COLOR.BEARD", (int64)(pBeard->GetHue()));
 					pBeard->SetHue(RandomHairHue);
@@ -1306,8 +1296,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 			return;*/
 		case LAYER_SPELL_Pain_Spike:
 			{
-				CItem * pPrevious = LayerFind(LAYER_SPELL_Pain_Spike);
-				if (pPrevious)
+            if (CItem *pPrevious = LayerFind(LAYER_SPELL_Pain_Spike))
 				{
 					pPrevious = LayerFind(LAYER_SPELL_Pain_Spike);
 					if (pPrevious)
@@ -1340,8 +1329,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 				}
 			    if (pCaster != nullptr)
 			    {
-			        CClient *pCasterClient = pCaster->GetClientActive();
-			        if (pCasterClient)
+                    if (CClient *pCasterClient = pCaster->GetClientActive())
 			        {
 			            Str_CopyLimitNull(NumBuff[0], GetName(), uiBuffElemSize);
 			            pCasterClient->removeBuff(BI_BLOODOATHCASTER);
@@ -1971,8 +1959,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 			For example, suppose the base damage for a Strangle hit is 5. The target currently has 40 out of a maximum of 80 stamina. Final damage for that hit is: 5 x (3 - (40 ÷ 80 x 2) = 10.
 			*/
 
-			int iDiff = iLevel - iCharges;	// Retrieves the total amount of ticks done substracting spellcharges from spelllevel.
-			switch (iDiff) //First tick is in 5 seconds (when mem was created), second one in 4, next one in 3, 2 ... and following ones in each second.
+            switch (iLevel - iCharges) //First tick is in 5 seconds (when mem was created), second one in 4, next one in 3, 2 ... and following ones in each second.
 			{
 				case 0:
 					iSecondsDelay = 4;
@@ -2305,12 +2292,10 @@ void CChar::Spell_Field(const CPointMap &pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE 
 
 				if ( !pSpellDef->IsSpellType(SPELLFLAG_NOUNPARALYZE) )
 				{
-					CItem * pParalyze = pChar->LayerFind(LAYER_SPELL_Paralyze);
-					if ( pParalyze )
+                    if ( CItem *pParalyze = pChar->LayerFind(LAYER_SPELL_Paralyze) )
 						pParalyze->Delete();
 
-					CItem * pStuck = pChar->LayerFind(LAYER_FLAG_Stuck);
-					if ( pStuck )
+                    if ( CItem *pStuck = pChar->LayerFind(LAYER_FLAG_Stuck) )
 						pStuck->Delete();
 				}
 
@@ -2465,8 +2450,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bo
 			return false;
 		}
 
-		CObjBaseTemplate * pObjTop = pSrc->GetTopLevelObj();
-		if ( pObjTop != this )		// magic items must be on your person to use.
+        if (CObjBaseTemplate *pObjTop = pSrc->GetTopLevelObj(); pObjTop != this )		// magic items must be on your person to use.
 		{
 			if ( fFailMsg )
 				SysMessageDefault( DEFMSG_SPELL_ENCHANT_ACTIVATE );
@@ -2533,8 +2517,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bo
 			}
 
 			// check for reagents
-			const size_t iMissingReagents = g_Cfg.Calc_SpellReagentsConsume(this, pSpellDef, pSrc, fTest);
-			if ( iMissingReagents != sl::scont_bad_index() )
+            if (const size_t iMissingReagents = g_Cfg.Calc_SpellReagentsConsume(this, pSpellDef, pSrc, fTest); iMissingReagents != sl::scont_bad_index() )
 			{
 				if ( fFailMsg )
 				{
@@ -2591,8 +2574,7 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 	//Create the NPC and check if we can actually place it in the world, but do not place it yet.
 
 	int iSkill;
-	CSpellDef* pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell);
-	if (!pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr))
+    if (CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr))
 		return nullptr;
 
 	if (uiCreature)//if iC1 is set that means we are overriding the default summoned creature.
@@ -2705,8 +2687,8 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 
 		if (IsSetOF(OF_PetSlots))
 		{
-            short iFollowerSlots = iFollowerSlotsOverride.has_value() ? iFollowerSlotsOverride.value() : pChar->GetFollowerSlots();
-            if (!FollowersUpdate(pChar, iFollowerSlots, true))
+            if (short iFollowerSlots = iFollowerSlotsOverride.has_value() ? iFollowerSlotsOverride.value() : pChar->GetFollowerSlots();
+                !FollowersUpdate(pChar, iFollowerSlots, true))
 			{
 				SysMessageDefault(DEFMSG_PETSLOTS_TRY_SUMMON);
 				pChar->Delete();
@@ -2731,8 +2713,7 @@ bool CChar::Spell_TargCheck_Face()
 		UpdateDir(m_Act_p);
 
 	// Check if target in on anti-magic region
-	CRegion *pArea = m_Act_p.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA);
-	if ( !IsPriv(PRIV_GM) && pArea && pArea->CheckAntiMagic(m_atMagery.m_iSpell) )
+    if (CRegion *pArea = m_Act_p.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA); !IsPriv(PRIV_GM) && pArea && pArea->CheckAntiMagic(m_atMagery.m_iSpell) )
 	{
 		SysMessageDefault( DEFMSG_SPELL_TRY_AM );
 		m_Act_Difficulty = -1;	// Give very little credit for failure !
@@ -2802,8 +2783,8 @@ bool CChar::Spell_TargCheck()
                 // Check if the item is in my bankbox, and i'm not in the same position from which I opened it the last time.
                 const CPointMap& ptTop = GetTopPoint();
                 CItemContainer* pBank = GetBank();
-                bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
-                if (fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
+                if (bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
+                    fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
                     return false;
             }
         }
@@ -2837,8 +2818,7 @@ bool CChar::Spell_TargCheck()
 		}
 
 		//Check if the pos for tp is valid to make sure spellsuccess trigger not trigger unnecessarily.
-		SPELL_TYPE spell = m_atMagery.m_iSpell;
-		if (spell == SPELL_Teleport && !IsPriv(PRIV_GM))
+        if (SPELL_TYPE spell = m_atMagery.m_iSpell; spell == SPELL_Teleport && !IsPriv(PRIV_GM))
 		{
 			if (g_Cfg.m_iMountHeight)
 			{
@@ -2873,8 +2853,7 @@ bool CChar::Spell_TargCheck()
 bool CChar::Spell_Unequip( LAYER_TYPE layer )
 {
 	ADDTOCALLSTACK("CChar::Spell_Unequip");
-	CItem * pItemPrev = LayerFind( layer );
-	if ( pItemPrev != nullptr )
+    if (CItem *pItemPrev = LayerFind(layer); pItemPrev != nullptr )
 	{
 		if ( IsSetMagicFlags(MAGICF_NOCASTFROZENHANDS) && IsStatFlag( STATF_FREEZE ))
 		{
@@ -3171,8 +3150,7 @@ bool CChar::Spell_CastDone()
 
 			case SPELL_Telekin:	// Act as DClick on the object.
 			{
-				CItemCorpse * pCorpse = dynamic_cast<CItemCorpse *>(pObj->GetTopLevelObj());
-				if (pCorpse && pCorpse->m_uidLink != GetUID())
+                if (CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(pObj->GetTopLevelObj()); pCorpse && pCorpse->m_uidLink != GetUID())
 				{
 					CheckCorpseCrime(pCorpse, true, false);
 					Reveal();
@@ -3726,8 +3704,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 		if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 		{
-			CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen);
-			if ( pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
+            if (CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen); pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 				uiResist /= 2;	// Effect 3: Only 50% of magic resistance used in next resistable spell.
 		}
 	}
@@ -4104,8 +4081,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			if ( fPotion )
 				pSourceItem->Delete();
 
-			CItem * pItem = NPC_Shrink(); // this delete's the char !!!
-			if ( pItem )
+            if ( CItem *pItem = NPC_Shrink() )
 				pCharSrc->m_Act_UID = pItem->GetUID();
 		}
 		break;

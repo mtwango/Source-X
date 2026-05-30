@@ -30,8 +30,7 @@ bool CCharRefArray::IsCharIn( const CChar * pChar ) const
 size_t CCharRefArray::AttachChar( const CChar *pChar )
 {
     ADDTOCALLSTACK("CCharRefArray::AttachChar");
-    size_t i = FindChar(pChar);
-    if ( i != sl::scont_bad_index() )
+    if (size_t i = FindChar(pChar); i != sl::scont_bad_index() )
         return i;
     return m_uidCharArray.emplace_back(pChar->GetUID()).GetObjUID();
 }
@@ -39,8 +38,7 @@ size_t CCharRefArray::AttachChar( const CChar *pChar )
 size_t CCharRefArray::InsertChar( const CChar *pChar, size_t i )
 {
     ADDTOCALLSTACK("CCharRefArray::InsertChar");
-    size_t currentIndex = FindChar(pChar);
-    if ( currentIndex != sl::scont_bad_index() )
+    if (size_t currentIndex = FindChar(pChar); currentIndex != sl::scont_bad_index() )
     {
         if ( currentIndex == i )	// already there
             return i;
@@ -75,8 +73,7 @@ void CCharRefArray::DeleteChars()
     size_t iQty = m_uidCharArray.size();
     while ( iQty > 0 )
     {
-        CChar *pChar = m_uidCharArray[--iQty].CharFind();
-        if ( pChar )
+        if ( CChar *pChar = m_uidCharArray[--iQty].CharFind() )
             pChar->Delete();
     }
     m_uidCharArray.clear();

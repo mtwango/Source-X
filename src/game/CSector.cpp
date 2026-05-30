@@ -103,8 +103,7 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		{ nullptr, INT32_MAX }
 	};
 
-    SC_TYPE key = (SC_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-	switch ( key )
+    switch ((SC_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
 	{
         case SC_CANSLEEP:
             {
@@ -210,8 +209,7 @@ void CSector::_GoSleep()
 	for (CSObjContRec* pObjRec : m_Items)
 	{
 		CItem* pItem = static_cast<CItem*>(pObjRec);
-        const bool fCanTick = pItem->_CanTick(true);
-        if (!fCanTick)
+        if (const bool fCanTick = pItem->_CanTick(true); !fCanTick)
             pItem->GoSleep();
     }
     EXC_CATCH;
@@ -256,9 +254,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Items");
 	for (CSObjContRec* pObjRec : m_Items)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		const bool fSleeping = pItem->IsSleeping();
-		if (fSleeping)
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
         	pItem->GoAwake();
     }
 
@@ -275,8 +271,7 @@ void CSector::_GoAwake()
         pCentral = this;
         for (int i = 0; i < (int)DIR_QTY; ++i)
         {
-            CSector *pSector = _GetAdjacentSector((DIR_TYPE)i);
-            if (pSector && pSector->IsSleeping())
+            if (CSector *pSector = _GetAdjacentSector((DIR_TYPE)i); pSector && pSector->IsSleeping())
             {
                 pSector->GoAwake();
             }
@@ -354,8 +349,7 @@ bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
 	ADDTOCALLSTACK("CSector::r_Verb");
 	ASSERT(pSrc);
 	EXC_TRY("Verb-Statement");
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
-	switch (index)
+    switch (FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1))
 	{
 		case SEV_ALLCHARS:		// "ALLCHARS"
 			v_AllChars( s, pSrc );
@@ -498,8 +492,7 @@ void CSector::r_Write()
 	// Items on the ground.
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-        if (pItem->IsTypeMulti())
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsTypeMulti())
         {
             pItem->r_WriteSafe(g_World.m_FileMultis);
         }
@@ -726,9 +719,8 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
 		// Factor in the effects of the moons
 
 		// Trammel
-		uint iTrammelPhase = CWorldGameTime::GetMoonPhase( false );
-		// Check to see if Trammel is up here...
-		if ( IsMoonVisible( iTrammelPhase, localtime ))
+        // Check to see if Trammel is up here...
+		if (uint iTrammelPhase = CWorldGameTime::GetMoonPhase(false); IsMoonVisible( iTrammelPhase, localtime ))
 		{
 			static constexpr byte sm_TrammelPhaseBrightness[] =
 			{
@@ -747,8 +739,7 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
 		}
 
 		// Felucca
-		uint iFeluccaPhase = CWorldGameTime::GetMoonPhase( true );
-		if ( IsMoonVisible( iFeluccaPhase, localtime ))
+        if (uint iFeluccaPhase = CWorldGameTime::GetMoonPhase(true); IsMoonVisible( iFeluccaPhase, localtime ))
 		{
 			static constexpr byte sm_FeluccaPhaseBrightness[] =
 			{
@@ -838,8 +829,7 @@ void CSector::SetDefaultWeatherChance()
 	ADDTOCALLSTACK("CSector::SetDefaultWeatherChance");
     const CSectorList& pSectors = CSectorList::Get();
     const MapSectorsData& sd = pSectors.GetMapSectorDataUnchecked(m_BasePointSectUnits.m_map);
-    byte iPercent = (byte)(IMulDiv( m_BasePointSectUnits.m_y, 100, sd.iSectorRows ));	// 100 = south
-	if ( iPercent < 50 )
+    if (byte iPercent = (byte)(IMulDiv(m_BasePointSectUnits.m_y, 100, sd.iSectorRows)); iPercent < 50 )
 	{
 		// Anywhere north of the Britain Moongate is a good candidate for snow
 		m_ColdChance = 1 + ( 49 - iPercent ) * 2;
@@ -1152,8 +1142,7 @@ void CSector::RespawnDeadNPCs()
         return;
 
 	// Respawn dead NPCs
-    const auto charsActive = m_Chars_Active.GetIterationSafeCont();
-    for (CSObjContRec *pObjRec : charsActive)
+    for (const auto charsActive = m_Chars_Active.GetIterationSafeCont(); CSObjContRec *pObjRec : charsActive)
 	{
         CChar* pChar = static_cast <CChar*>(pObjRec);
 		if (!pChar->m_pNPC || !pChar->m_ptHome.IsValidPoint() || !pChar->IsStatFlag(STATF_DEAD))
@@ -1180,8 +1169,7 @@ void CSector::Restock()
     for (const auto charsActive = m_Chars_Active.GetIterationSafeCont();
         CSObjContRec *pObjRec : charsActive)
     {
-		CChar* pChar = static_cast<CChar*>(pObjRec);
-        if (pChar->m_pNPC)
+        if (CChar *pChar = static_cast<CChar *>(pObjRec); pChar->m_pNPC)
         {
             pChar->NPC_Vendor_Restock(true);
         }
@@ -1191,8 +1179,7 @@ void CSector::Restock()
         CSObjContRec *pObjRec : items)
     {
         CItem* pItem = static_cast<CItem*>(pObjRec);
-        CCSpawn* pSpawn = pItem->GetSpawn();
-        if (pSpawn)
+        if (CCSpawn *pSpawn = pItem->GetSpawn())
         {
             pSpawn->OnTickComponent();
         }
@@ -1244,8 +1231,7 @@ bool CSector::_OnTick()
 
 	EXC_SET_BLOCK("sector sleeping?");
 	// Put the sector to sleep if no clients been here in a while.
-    const bool fCanSleep = _CanSleep(true);
-	if (fCanSleep)
+    if (_CanSleep(true))
 	{
         if (!_IsSleeping())
         {
@@ -1294,8 +1280,7 @@ bool CSector::_OnTick()
 
 			case WEATHER_RAIN:
 				{
-					int iVal = g_Rand.GetValFast(30);
-					if ( iVal < 5 )
+                if (int iVal = g_Rand.GetValFast(30); iVal < 5 )
 					{
 						// Mess up the light levels for a sec..
 						LightFlash();
@@ -1440,8 +1425,7 @@ size_t CSector::GetItemComplexity() const
 
 bool CSector::CheckItemComplexity() const noexcept
 {
-	const size_t uiCount = GetItemComplexity();
-	if (uiCount > g_Cfg.m_iMaxSectorComplexity)
+    if (const size_t uiCount = GetItemComplexity(); uiCount > g_Cfg.m_iMaxSectorComplexity)
     {
         g_Log.Event(LOGL_WARN, "%" PRIuSIZE_T " items at %s. Sector too complex!\n", uiCount, GetBasePointMapUnits().WriteUsed());
         return true;
@@ -1488,8 +1472,7 @@ size_t CSector::GetCharComplexity() const
 
 bool CSector::CheckCharComplexity() const noexcept
 {
-	const size_t uiCount = GetCharComplexity();
-	if (uiCount > g_Cfg.m_iMaxCharComplexity)
+    if (const size_t uiCount = GetCharComplexity(); uiCount > g_Cfg.m_iMaxCharComplexity)
     {
         g_Log.Event(LOGL_WARN, "%" PRIuSIZE_T " chars at %s. Sector too complex!\n", uiCount, GetBasePointMapUnits().WriteUsed());
         return true;

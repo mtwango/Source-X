@@ -240,8 +240,7 @@ void CSString::Add(tchar ch)
 void CSString::Add(lpctstr pszStr)
 {
     ASSERT(pszStr);
-	const int iLenCat = (int)strlen(pszStr);
-	if (iLenCat)
+    if (const int iLenCat = (int)strlen(pszStr))
 	{
 		Resize(iLenCat + m_iLength);
         m_iLength = (int)Str_ConcatLimitNull(m_pchData, pszStr, m_iLength + 1);
@@ -599,11 +598,9 @@ int CSString::indexOf(const CSString& str, int offset) noexcept
 
 	for (int i = offset; i < len; ++i)
 	{
-		tchar c = m_pchData[i];
-		if (c == firstChar)
+        if (tchar c = m_pchData[i]; c == firstChar)
 		{
-			int rem = len - i;
-			if (rem >= slen)
+            if (int rem = len - i; rem >= slen)
 			{
 				int j = i;
 				int k = 0;
@@ -664,8 +661,7 @@ int CSString::lastIndexOf(const CSString& str, int from) noexcept
 	const tchar firstChar = str_value[0];
 	for (int i = (len - 1); i >= from; --i)
 	{
-        const tchar c = m_pchData[i];
-		if (c == firstChar)
+        if (const tchar c = m_pchData[i]; c == firstChar)
 		{
 			if (i >= slen)
 			{

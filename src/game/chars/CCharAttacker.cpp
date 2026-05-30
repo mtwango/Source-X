@@ -16,15 +16,13 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
     {
         for (auto it = m_lastAttackers.begin(), end = m_lastAttackers.end(); it != end; ++it)
         {
-            LastAttackers & refAttacker = *it;
-            if (refAttacker.charUID == uid)
+            if (LastAttackers &refAttacker = *it; refAttacker.charUID == uid)
                 return true;	// found one, no actions needed so we skip
         }
     }
     else if (IsTrigUsed(TRIGGER_COMBATSTART))
     {
-        TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatStart, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar);
-        if (tRet == TRIGRET_RET_TRUE)
+        if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatStart, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar); tRet == TRIGRET_RET_TRUE)
             return false;
         if (pChar->IsNPC())
             UpdateAnimate(ANIM_ALERT);
@@ -36,8 +34,7 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
     pScriptArgs->m_iN2 = fIgnore;
     if (IsTrigUsed(TRIGGER_COMBATADD))
     {
-        TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatAdd, pScriptArgs, pChar);
-        if (tRet == TRIGRET_RET_TRUE)
+        if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatAdd, pScriptArgs, pChar); tRet == TRIGRET_RET_TRUE)
             return false;
         iThreat = (int)pScriptArgs->m_iN1;
         fIgnore = (pScriptArgs->m_iN2 != 0);
@@ -325,8 +322,7 @@ bool CChar::Attacker_Delete(std::vector<LastAttackers>::iterator &itAttacker, bo
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = fForced;
             pScriptArgs->m_iN2 = (int)type;
-            TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatDelete, pScriptArgs, pChar);
-            if ((tRet == TRIGRET_RET_TRUE) && !fForced)
+            if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatDelete, pScriptArgs, pChar); (tRet == TRIGRET_RET_TRUE) && !fForced)
                 return false;
         }
     }
@@ -394,9 +390,7 @@ void CChar::Attacker_CheckTimeout()
         // do not iterate with an iterator here, since Attacker_Delete can invalidate both current and end iterators!
         for (int count = 0; count < (int)m_lastAttackers.size(); )
         {
-            LastAttackers & refAttacker = m_lastAttackers[count];
-            const CChar *pEnemy = CUID::CharFindFromUID(refAttacker.charUID);
-            if (pEnemy)
+            if (LastAttackers &refAttacker = m_lastAttackers[count]; CUID::CharFindFromUID(refAttacker.charUID))
             {
                 // always advance refAttacker.elapsed, i might use it in scripts for a different purpose
                 ++refAttacker.elapsed;

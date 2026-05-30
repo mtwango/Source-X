@@ -114,8 +114,7 @@ CClient::~CClient() noexcept
 	// Clear session-bound containers (CTAG and TOOLTIP)
 	//m_TagDefs.Clear();
 
-	CAccount * pAccount = GetAccount();
-	if ( pAccount )
+    if ( CAccount *pAccount = GetAccount() )
 	{
 		pAccount->OnLogout(this, fWasChar);
 		m_pAccount = nullptr;
@@ -156,8 +155,8 @@ bool CClient::CanInstantLogOut() const
 	if ( pArea->IsFlag( REGION_FLAG_INSTA_LOGOUT ))
 		return true;
 
-	const CRegion * pRoom = m_pChar->GetRoom(); //Allows Room flag to work!
-	if ( pRoom && pRoom->IsFlag( REGION_FLAG_INSTA_LOGOUT )) //sanity check for null rooms // Can C++ guarantee short-circuit evaluation for CRegion ?
+    if (const CRegion *pRoom = m_pChar->GetRoom();
+        pRoom && pRoom->IsFlag( REGION_FLAG_INSTA_LOGOUT )) //sanity check for null rooms // Can C++ guarantee short-circuit evaluation for CRegion ?
 		return true;
 
 	return false;
@@ -226,8 +225,7 @@ void CClient::CharDisconnect()
     m_mapOpenedGumps.clear();
 
     // Layer dragging, moving it to backpack
-    CItem * pItemDragging = m_pChar->LayerFind(LAYER_DRAGGING);
-    if ( pItemDragging )
+    if ( CItem *pItemDragging = m_pChar->LayerFind(LAYER_DRAGGING) )
         m_pChar->ItemBounce(pItemDragging);
 
 	m_pChar = nullptr;
@@ -386,8 +384,7 @@ void CClient::Announce( bool fArrive ) const
 	}
 
 	// Check murder decay timer
-	CItem *pMurders = m_pChar->LayerFind(LAYER_FLAG_Murders);
-	if ( pMurders )
+    if ( CItem *pMurders = m_pChar->LayerFind(LAYER_FLAG_Murders) )
 	{
 		if ( fArrive )	// on client login, set active timer on murder memory
 			pMurders->SetTimeoutS(pMurders->m_itEqMurderCount.m_dwDecayBalance);
@@ -412,8 +409,7 @@ bool CClient::CanSee( const CObjBaseTemplate * pObj ) const
 
 	if ( pObj->IsChar() )
 	{
-		const CChar *pChar = static_cast<const CChar*>(pObj);
-		if ( pChar->IsDisconnected() )
+        if (const CChar *pChar = dynamic_cast<const CChar *>(pObj); pChar->IsDisconnected() )
         {
             if( !IsPriv(PRIV_ALLSHOW) )
                 return false;
@@ -473,8 +469,7 @@ void CClient::addTargetVerb( lpctstr pszCmd, lpctstr ptcArg )
 	}
 
 	// priv here
-	PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel( pszCmd );
-	if ( ilevel > GetPrivLevel() )
+    if (PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel(pszCmd); ilevel > GetPrivLevel() )
 		return;
 
 	m_Targ_Text.Format( "%s%s%s", pszCmd, ( ptcArg[0] && pszCmd[0] ) ? " " : "", ptcArg );
@@ -550,8 +545,7 @@ lpctstr const CClient::sm_szRefKeys[CLIR_QTY+1] =
 bool CClient::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CClient::r_GetRef");
-	int i = FindTableHeadSorted( ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1 );
-	if ( i >= 0 )
+    if (int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
 		SKIP_SEPARATORS(ptcKey);
@@ -909,8 +903,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 	// Old ver
 	if ( s.IsKeyHead( "SET", 3 ) && ( g_Cfg.m_Functions.ContainsKey( ptcKey ) == false ) )
 	{
-		PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel( "SET" );
-		if ( ilevel > GetPrivLevel() )
+        if (PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel("SET"); ilevel > GetPrivLevel() )
 			return false;
 
 		ASSERT( m_pChar );
@@ -920,8 +913,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 
 	if ( toupper( ptcKey[0] ) == 'X' && ( g_Cfg.m_Functions.ContainsKey( ptcKey ) == false ) )
 	{
-		PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel( "SET" );
-		if ( ilevel > GetPrivLevel() )
+        if (PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel("SET"); ilevel > GetPrivLevel() )
 			return false;
 
 		// Target this command verb on some other object.
@@ -931,8 +923,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 	}
 
 	EXC_SET_BLOCK("Verb-Statement");
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
-	switch (index)
+    switch (FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1))
 	{
 		case CV_ADD:
         {
@@ -1004,8 +995,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 if (rid.IsEmpty())
                     rid = g_Cfg.ResourceGetID(RES_ITEMDEF, ppszArgs[0], 0, true);
 
-                const RES_TYPE restype = rid.GetResType();
-                if ((restype != RES_ITEMDEF) /* multi are still considered as items */ &&
+                if (const RES_TYPE restype = rid.GetResType(); (restype != RES_ITEMDEF) /* multi are still considered as items */ &&
                     (restype != RES_CHAMPION) && (restype != RES_SPAWN) /* item spawns? */)
                 {
                     SysMessageDefault(DEFMSG_CMD_INVALID);
@@ -1037,8 +1027,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 if (rid.IsEmpty())
                     rid = g_Cfg.ResourceGetID(RES_CHARDEF, ppszArgs[0], 0, true);
 
-                const RES_TYPE restype = rid.GetResType();
-                if ((restype != RES_CHARDEF) && (restype != RES_SPAWN))
+                if (const RES_TYPE restype = rid.GetResType(); (restype != RES_CHARDEF) && (restype != RES_SPAWN))
                 {
                     SysMessageDefault(DEFMSG_CMD_INVALID);
                     return true;
@@ -1154,8 +1143,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			{
 				//	Loop the world searching for bad spawns
                 int iPos = s.GetArgVal();
-                CCSpawn *pSpawn = CCSpawn::GetBadSpawn(iPos ? iPos : -1);
-                if (pSpawn != nullptr)
+                if (CCSpawn *pSpawn = CCSpawn::GetBadSpawn(iPos ? iPos : -1); pSpawn != nullptr)
                 {
                     CItem* pSpawnItem = pSpawn->GetLink();
                     const CResourceID& rid = pSpawn->GetSpawnID();
@@ -1294,8 +1282,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
         case CV_CODEXOFWISDOM:
         {
             int64 piArgs[2];
-            size_t iArgQty = Str_ParseCmds(s.GetArgStr(), piArgs, std::size(piArgs));
-            if ( iArgQty < 1 )
+            if (size_t iArgQty = Str_ParseCmds(s.GetArgStr(), piArgs, std::size(piArgs)); iArgQty < 1 )
             {
                 SysMessage("Usage: CODEXOFWISDOM TopicID [ForceOpen]");
                 break;
@@ -1309,8 +1296,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			if ( s.HasArgs() )
 			{
 				CUID uid(s.GetArgVal());
-				CObjBase *pObj = uid.ObjFind();
-				if ( pObj )
+                if ( CObjBase *pObj = uid.ObjFind() )
 					addDyeOption(pObj);
 			}
 			break;
@@ -1374,8 +1360,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_GOTARG: // go to my (preselected) target.
 			{
 				ASSERT(m_pChar);
-				CObjBase * pObj = m_Targ_UID.ObjFind();
-				if ( pObj != nullptr )
+                if (CObjBase *pObj = m_Targ_UID.ObjFind(); pObj != nullptr )
 				{
 					const CPointMap po(pObj->GetTopLevelObj()->GetTopPoint());
 					CPointMap pnt = po;
@@ -1400,8 +1385,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			if ( GetTargMode() >= CLIMODE_MOUSE_TYPE )
 			{
 				ASSERT(m_pChar);
-				CObjBase * pObj = m_pChar->m_Act_UID.ObjFind();
-				if ( pObj != nullptr )
+                if (CObjBase *pObj = m_pChar->m_Act_UID.ObjFind(); pObj != nullptr )
 				{
 					Event_Target(GetTargMode(), pObj->GetUID(), pObj->GetUnkPoint());
 					addTargetCancel();
@@ -1419,8 +1403,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             int64 piVal[2];
             Str_ParseCmds(s.GetArgRaw(), piVal, std::size(piVal));
 
-            CObjBase *pObj = static_cast<CUID>((dword)piVal[0]).ObjFind();
-            if (pObj)
+            if (CObjBase *pObj = static_cast<CUID>((dword)piVal[0]).ObjFind())
             {
                 addMapWaypoint(pObj, (MAPWAYPOINT_TYPE)((dword)piVal[1]));
             }
@@ -1433,8 +1416,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_MIDILIST:
 			{
 				int64 piMidi[64];
-				int64 iQty = Str_ParseCmds( s.GetArgStr(), piMidi, std::size(piMidi));
-				if ( iQty > 0 )
+                if (int64 iQty = Str_ParseCmds(s.GetArgStr(), piMidi, std::size(piMidi)); iQty > 0 )
 				{
 					addMusic( static_cast<MIDI_TYPE>(piMidi[ g_Rand.GetLLVal( iQty ) ]) );
 				}
@@ -1623,8 +1605,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGEUA:
 			{
 				tchar * pszArgs[5];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), pszArgs, std::size(pszArgs));
-                if (iArgQty < 5)
+                if (int iArgQty = Str_ParseCmds(s.GetArgRaw(), pszArgs, std::size(pszArgs)); iArgQty < 5)
                     return false;
 				// Font and mode are actually ignored here, but they never made a difference
 				// anyway.. I'd like to keep the syntax similar to SAYUA
@@ -1637,8 +1618,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGELOC:
 			{
 				tchar * ppArgs[256];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, std::size(ppArgs), "," );
-				if ( iArgQty > 1 )
+                if (int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iArgQty > 1 )
 				{
 					int hue = -1;
 					if ( atoi(ppArgs[0]) > 0 )
@@ -1664,8 +1644,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		case CV_SYSMESSAGELOCEX:
 			{
 				tchar * ppArgs[256];
-				int iArgQty = Str_ParseCmds( s.GetArgRaw(), ppArgs, std::size(ppArgs), "," );
-				if ( iArgQty > 2 )
+                if (int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iArgQty > 2 )
 				{
 					int hue = -1;
 					int affix = 0;
@@ -1715,8 +1694,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 		default:
 			if ( r_LoadVal( s ) )
 			{
-				CSString sVal;
-				if ( r_WriteVal( s.GetKey(), sVal, pSrc ))
+                if (CSString sVal; r_WriteVal( s.GetKey(), sVal, pSrc ))
 				{
 					// if ( !s.IsKeyHead( "CTAG.", 5 ) && !s.IsKeyHead( "CTAG0.", 6 ) ) // We don't want output related to ctag
 					//	SysMessagef( "%s = %s", (lpctstr) s.GetKey(), (lpctstr) sVal );	// feedback on what we just did.

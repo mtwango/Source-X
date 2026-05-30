@@ -52,16 +52,15 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, bool fShop)
 
 	// we do not need to send tooltips for items not in LOS (multis/ships)
 	//DEBUG_MSG(("(( m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()) (%x) > UO_MAP_VIEW_SIZE_DEFAULT (%x) ) && ( !bShop ) (%x) )", m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()), UO_MAP_VIEW_SIZE_DEFAULT, ( !bShop )));
-	int iDist = GetChar()->GetTopPoint().GetDistSight(pObj->GetTopPoint());
-	if ( (iDist > GetChar()->GetVisualRange()) && (iDist <= g_Cfg.m_iMapViewRadar) && !fShop ) //(iDist <= UO_MAP_VIEW_RADAR) fShop is needed because items equipped or in a container have invalid GetTopPoint (and a very high iDist)
+    if (int iDist = GetChar()->GetTopPoint().GetDistSight(pObj->GetTopPoint());
+        (iDist > GetChar()->GetVisualRange()) && (iDist <= g_Cfg.m_iMapViewRadar) && !fShop ) //(iDist <= UO_MAP_VIEW_RADAR) fShop is needed because items equipped or in a container have invalid GetTopPoint (and a very high iDist)
 		return false;
 
 	// We check here if we are sending a tooltip for a static/non-movable items
 	// (client doesn't expect us to) but only in the world
 	if (pObj->IsItem())
 	{
-		const CItem * pItem = static_cast<const CItem *>(pObj);
-		if (!pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
+        if (const CItem *pItem = static_cast<const CItem *>(pObj); !pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
 		{
 			if ((!GetChar()->IsPriv(PRIV_GM)) && (!GetChar()->IsPriv(PRIV_ALLMOVE)))
 				return false;
@@ -75,19 +74,17 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, bool fShop)
         pObj->m_TooltipData.clear();
 		pObj->FreePropertyList();
 
-        CClientTooltip* t = nullptr;
         CItem *pItem = pObj->IsItem() ? static_cast<CItem *>(pObj) : nullptr;
         CChar *pChar = pObj->IsChar() ? static_cast<CChar *>(pObj) : nullptr;
 
 		//DEBUG_MSG(("Preparing tooltip for 0%x (%s)\n", (dword)pObj->GetUID(), pObj->GetName()));
 		if (fNameOnly) // if we only want to display the name
 		{
-			dword ClilocName = (dword)(pObj->GetDefNum("NAMELOC", false));
-
-			if (ClilocName)
+            if (dword ClilocName = (dword)(pObj->GetDefNum("NAMELOC", false)))
                 PUSH_FRONT_TOOLTIP(pObj, new CClientTooltip(ClilocName));
 			else
 			{
+                CClientTooltip *t = nullptr;
                 PUSH_FRONT_TOOLTIP(pObj, t = new CClientTooltip(1042971)); // ~1_NOTHING~
 				t->FormatArgs("%s", pObj->GetName());
 			}
@@ -269,8 +266,7 @@ void CClient::AOSTooltip_addName(CObjBase* pObj)
 
 			if (pGuildMember->IsAbbrevOn())
 			{
-				lpctstr ptcAbbrev = pParentStone->GetAbbrev();
-				if (ptcAbbrev[0])
+                if (lpctstr ptcAbbrev = pParentStone->GetAbbrev(); ptcAbbrev[0])
 				{
 					Str_ConcatLimitNull(lpSuffix, " [", Str_TempLength());
 					Str_ConcatLimitNull(lpSuffix, ptcAbbrev, Str_TempLength());
@@ -323,9 +319,8 @@ void CClient::AOSTooltip_addName(CObjBase* pObj)
 
 void CClient::AOSTooltip_addDefaultCharData(CChar * pChar)
 {
-	CClientTooltip* t = nullptr;
 
-	if (pChar->m_pPlayer)
+    if (pChar->m_pPlayer)
 	{
 		if (pChar->IsPriv(PRIV_GM) && !pChar->IsPriv(PRIV_PRIV_NOSHOW))
             PUSH_BACK_TOOLTIP(pChar, new CClientTooltip(1018085)); // Game Master
@@ -334,10 +329,10 @@ void CClient::AOSTooltip_addDefaultCharData(CChar * pChar)
 	{
 		if (g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE)
 		{
-			CREID_TYPE id = pChar->GetID();
-			if (id == CREID_LLAMA_PACK || id == CREID_HORSE_PACK || id == CREID_GIANT_BEETLE)
+            if (CREID_TYPE id = pChar->GetID(); id == CREID_LLAMA_PACK || id == CREID_HORSE_PACK || id == CREID_GIANT_BEETLE)
 			{
-				int iWeight = pChar->GetWeight() / WEIGHT_UNITS;
+                CClientTooltip *t = nullptr;
+                int iWeight = pChar->GetWeight() / WEIGHT_UNITS;
                 PUSH_BACK_TOOLTIP(pChar, t = new CClientTooltip(iWeight == 1 ? 1072788 : 1072789)); // Weight: ~1_WEIGHT~ stone / Weight: ~1_WEIGHT~ stones
 				t->FormatArgs("%d", iWeight);
 			}
@@ -404,8 +399,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		}
 	}
 
-	const CChar *pCraftsman = CUID::CharFindFromUID(static_cast<dword>(pItem->GetDefNum("CRAFTEDBY")));
-	if (pCraftsman)
+    if (const CChar *pCraftsman = CUID::CharFindFromUID(static_cast<dword>(pItem->GetDefNum("CRAFTEDBY"))))
 	{
         PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1050043)); // crafted by ~1_NAME~
 		t->FormatArgs("%s", pCraftsman->GetName());
@@ -414,15 +408,13 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	if (pItem->IsAttr(ATTR_EXCEPTIONAL))
 		PUSH_BACK_TOOLTIP(pItem, new CClientTooltip(1060636)); // exceptional
 
-	int64 ArtifactRarity = pItem->GetDefNum("RARITY", true);
-	if (ArtifactRarity > 0)
+    if (int64 ArtifactRarity = pItem->GetDefNum("RARITY", true); ArtifactRarity > 0)
 	{
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061078)); // artifact rarity ~1_val~
 		t->FormatArgs("%" PRId64, ArtifactRarity);
 	}
 
-	int64 UsesRemaining = pItem->GetDefNum("USESCUR", true);
-	if (UsesRemaining > 0)
+    if (int64 UsesRemaining = pItem->GetDefNum("USESCUR", true); UsesRemaining > 0)
 	{
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060584)); // uses remaining: ~1_val~
 		t->FormatArgs("%" PRId64, UsesRemaining);
@@ -430,8 +422,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 
 	if (pItem->IsTypeArmorWeapon())
 	{
-		int64 SelfRepair = pItem->GetDefNum("SELFREPAIR", true);
-		if (SelfRepair != 0)
+        if (int64 SelfRepair = pItem->GetDefNum("SELFREPAIR", true); SelfRepair != 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060450)); // self repair ~1_val~
 			t->FormatArgs("%" PRId64, SelfRepair);
@@ -454,8 +445,8 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 			ASSERT(pContainer);
 			if ( g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE )
 			{
-				int iMaxWeight = (pItem->GetContainedLayer() == LAYER_PACK) ? g_Cfg.m_iBackpackOverload + pItem->m_ModMaxWeight : pItem->m_ModMaxWeight;
-				if (iMaxWeight > 0)
+                if (int iMaxWeight = (pItem->GetContainedLayer() == LAYER_PACK) ? g_Cfg.m_iBackpackOverload + pItem->m_ModMaxWeight : pItem->m_ModMaxWeight;
+                    iMaxWeight > 0)
 				{
                     PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1072241)); // Contents: ~1_COUNT~/~2_MAXCOUNT~ items, ~3_WEIGHT~/~4_MAXWEIGHT~ stones
 					t->FormatArgs("%" PRIuSIZE_T "\t%d\t%d\t%d", pContainer->GetContentCount(), g_Cfg.m_iContainerMaxItems, pContainer->GetTotalWeight() / WEIGHT_UNITS, iMaxWeight / WEIGHT_UNITS);
@@ -485,10 +476,10 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
         if (!IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE))
         {
             int iArmorRating = pItem->Armor_GetDefense();
-			int iPercentArmorRating = 0;
-			if (g_Cfg.m_fDisplayPercentAr)
+            if (g_Cfg.m_fDisplayPercentAr)
 			{
-				iPercentArmorRating = CChar::CalcPercentArmorDefense(pItem->Item_GetDef()->GetEquipLayer());
+                int iPercentArmorRating = 0;
+                iPercentArmorRating = CChar::CalcPercentArmorDefense(pItem->Item_GetDef()->GetEquipLayer());
 				iArmorRating = IMulDivDown(iArmorRating, iPercentArmorRating, 100);
 			}
             if (iArmorRating != 0)
@@ -539,14 +530,13 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061167)); // weapon speed ~1_val~
 		t->FormatArgs("%hhu", pItem->GetSpeed());
 
-		uchar Range = pItem->GetRangeH();
-		if (Range > 1)
+        if (uchar Range = pItem->GetRangeH(); Range > 1)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061169, Range)); // range ~1_val~
 		}
 
-		int64 StrengthRequirement = (int64)(pItem->Item_GetDef()->m_ttEquippable.m_iStrReq) - pItem->GetPropNum(pCCPItemEquip, PROPIEQUIP_LOWERREQ, pBaseCCPItemEquip);
-		if (StrengthRequirement > 0)
+        if (int64 StrengthRequirement = (int64)(pItem->Item_GetDef()->m_ttEquippable.m_iStrReq) - pItem->GetPropNum(pCCPItemEquip, PROPIEQUIP_LOWERREQ, pBaseCCPItemEquip);
+            StrengthRequirement > 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061170, StrengthRequirement)); // strength requirement ~1_val~
 		}
@@ -630,8 +620,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_SPELLBOOK_MYSTIC:
 	case IT_SPELLBOOK_MASTERY:
 	{
-		int count = pItem->GetSpellcountInBook();
-		if (count > 0)
+        if (int count = pItem->GetSpellcountInBook(); count > 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1042886)); // ~1_NUMBERS_OF_SPELLS~ Spells
 			t->FormatArgs("%d", count);
@@ -648,8 +637,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		lpctstr pszName = nullptr;
 		if (pSpawnCharDef)
 		{
-			CCharBase *pCharBase = dynamic_cast<CCharBase*>(pSpawnCharDef);
-			if (pCharBase)
+            if (CCharBase *pCharBase = dynamic_cast<CCharBase *>(pSpawnCharDef))
 				pszName = pCharBase->GetTradeName();
 			else
 				pszName = pSpawnCharDef->GetName();
@@ -701,8 +689,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	{
 		pItem->m_TooltipData.clear();
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1041429)); // a guildstone
-		const CItemStone *thisStone = static_cast<const CItemStone *>(pItem);
-		if (thisStone)
+        if (const CItemStone *thisStone = static_cast<const CItemStone *>(pItem))
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060802)); // Guild name: ~1_val~
 			if (thisStone->GetAbbrev()[0])

@@ -166,8 +166,7 @@ size_t CResourceRefArray::FindResourceType( RES_TYPE restype ) const
     size_t iQty = size();
     for ( size_t i = 0; i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetRef()->GetResourceID();
-        if ( ridtest.GetResType() == restype )
+        if (const CResourceID &ridtest = (*this)[i].GetRef()->GetResourceID(); ridtest.GetResType() == restype )
             return i;
     }
     return sl::scont_bad_index();
@@ -180,8 +179,7 @@ size_t CResourceRefArray::FindResourceID( const CResourceID & rid ) const
     size_t iQty = size();
     for ( size_t i = 0; i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetRef()->GetResourceID();
-        if ( ridtest == rid )
+        if (const CResourceID &ridtest = (*this)[i].GetRef()->GetResourceID(); ridtest == rid )
             return i;
     }
     return sl::scont_bad_index();

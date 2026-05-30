@@ -72,8 +72,7 @@ static int CvtSystemToUTF16(wchar& wChar, lpctstr pInp, int iSizeInBytes)
         return 0;
 
     wchar wCharTmp = ch & ((1 << iStartBits) - 1);
-    int iInp = 1;
-    for (; iInp < iBytes; iInp++)
+    for (int iInp = 1; iInp < iBytes; iInp++)
     {
         ch = (byte)pInp[iInp];
         if ((ch & 0xc0) != 0x80)	// bad coding.
@@ -132,8 +131,7 @@ static int CvtUTF16ToSystem(tchar* pOut, int iSizeOutBytes, wchar wChar)
     if (iBytes > iSizeOutBytes)	// not big enough to hold it.
         return 0;
 
-    int iOut = iBytes - 1;
-    for (; iOut > 0; --iOut)
+    for (int iOut = iBytes - 1; iOut > 0; --iOut)
     {
         pOut[iOut] = 0x80 | (wChar & ((1 << 6) - 1));
         wChar >>= 6;
@@ -177,8 +175,7 @@ int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, lpctstr pInp, int iSize
     int iOut = 0;
 
 #ifdef _WIN32
-    const OSVERSIONINFO* posInfo = Sphere_GetOSInfo();
-    if (posInfo->dwPlatformId == VER_PLATFORM_WIN32_NT ||
+    if (const OSVERSIONINFO *posInfo = Sphere_GetOSInfo(); posInfo->dwPlatformId == VER_PLATFORM_WIN32_NT ||
         posInfo->dwMajorVersion > 4)
     {
         const int iOutTmp = MultiByteToWideChar(
@@ -211,8 +208,7 @@ int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, lpctstr pInp, int iSize
 #endif // _WIN32
     {
         // Win95 or Linux
-        int iInp = 0;
-        for (; iInp < iSizeInBytes; )
+        for (int iInp = 0; iInp < iSizeInBytes; )
         {
             byte ch = (byte)pInp[iInp];
             if (ch == 0)
@@ -269,8 +265,7 @@ int CvtNETUTF16ToSystem(tchar* pOut, int iSizeOutBytes, const nachar* pInp, int 
     int iInp = 0;
 
 #ifdef _WIN32
-    const OSVERSIONINFO* posInfo = Sphere_GetOSInfo();
-    if ((posInfo->dwPlatformId == VER_PLATFORM_WIN32_NT) || (posInfo->dwMajorVersion > 4))
+    if (const OSVERSIONINFO *posInfo = Sphere_GetOSInfo(); (posInfo->dwPlatformId == VER_PLATFORM_WIN32_NT) || (posInfo->dwMajorVersion > 4))
     {
         // Windows 98, 2000 or NT
 

@@ -283,8 +283,7 @@ void CChar::NPC_OnHear( lpctstr pszCmd, CChar * pSrc, bool fAllPets )
 			{
 				if ( NPC_Act_Talk() )
 				{
-					CChar * pCharOld = m_Act_UID.CharFind();
-					if (pCharOld != nullptr)
+                    if (CChar *pCharOld = m_Act_UID.CharFind(); pCharOld != nullptr)
 					{
 						tchar * z = Str_GetTemp();
 						snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_GENERIC_INTERRUPT), pCharOld->GetName(), pSrc->GetName());
@@ -298,8 +297,7 @@ void CChar::NPC_OnHear( lpctstr pszCmd, CChar * pSrc, bool fAllPets )
 	}
 
 	// I've heard them for the first time.
-	CItemMemory * pMemory = Memory_FindObjTypes( pSrc, MEMORY_SPEAK );
-	if ( pMemory == nullptr )
+    if (CItemMemory *pMemory = Memory_FindObjTypes(pSrc, MEMORY_SPEAK); pMemory == nullptr )
 	{
 		// This or CTRIG_SeeNewPlayer will be our first contact with people.
 		if ( IsTrigUsed(TRIGGER_NPCHEARGREETING) )
@@ -614,8 +612,7 @@ int CChar::NPC_WalkToPoint( bool fRun )
 	// How fast can they move.
     int64 iTickNext = -1;
 
-    int64 iMoveStyle = GetKeyNum("OVERRIDE.MOVESTYLE", true);
-    if ((iMoveStyle == 1) || IsSetOF(OF_NPCMovementOldStyle))
+    if (int64 iMoveStyle = GetKeyNum("OVERRIDE.MOVESTYLE", true); (iMoveStyle == 1) || IsSetOF(OF_NPCMovementOldStyle))
     {
         if (fRun)
         {
@@ -771,10 +768,8 @@ bool CChar::NPC_LookAtCharMonster( CChar * pChar )
 	//  100 = definitely.
 	//
 
-	int iFoodLevel = Food_GetLevelPercent();
-
-	// Attacks those not of my kind.
-	if ( ! Noto_IsCriminal() && (iFoodLevel > 40) )	// Am I not evil ?
+    // Attacks those not of my kind.
+	if (int iFoodLevel = Food_GetLevelPercent(); ! Noto_IsCriminal() && (iFoodLevel > 40) )	// Am I not evil ?
 		return NPC_LookAtCharHuman( pChar );
 
     // Attack if I am stronger, if it's the same target I was attacking, or I'm just stupid.
@@ -784,8 +779,7 @@ bool CChar::NPC_LookAtCharMonster( CChar * pChar )
 	if ( iActMotivation < m_pNPC->m_Act_Motivation )
 		return false;
 
-	int iDist = GetTopDist3D( pChar );
-	if ( IsStatFlag( STATF_HIDDEN ) && ! NPC_FightMayCast() && (iDist > 1) )
+    if (int iDist = GetTopDist3D(pChar); IsStatFlag( STATF_HIDDEN ) && ! NPC_FightMayCast() && (iDist > 1) )
 		return false;	// element of surprise.
 
 	if ( Fight_Attack( pChar ) == false )
@@ -1048,8 +1042,7 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
                 if (OnTrigger(CTRIG_NPCSeeNewPlayer, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar) != TRIGRET_RET_TRUE)
                 {
                     // record that we attempted to speak to them.
-                    CItemMemory *pMemory = Memory_AddObjTypes(pChar, MEMORY_SPEAK);
-                    if (pMemory)
+                    if (CItemMemory *pMemory = Memory_AddObjTypes(pChar, MEMORY_SPEAK))
                         pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_FIRSTSPEAK;
                     // m_Act_Hear_Unknown = 0;
                 }
@@ -1079,8 +1072,7 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
 			// Attack everyone you see!
 			if ( Fight_IsActive()) // Is this a better target than my last ?
 			{
-				CChar * pCharTarg = m_Act_UID.CharFind();
-				if ( pCharTarg && (GetTopDist3D(pCharTarg) <= iDist) )
+                if (CChar *pCharTarg = m_Act_UID.CharFind(); pCharTarg && (GetTopDist3D(pCharTarg) <= iDist) )
 						return true;
 			}
 			if ( Fight_Attack( pChar ) )
@@ -1292,8 +1284,7 @@ void CChar::NPC_Act_Guard()
 	ASSERT(m_pNPC);
 	// Protect our target or owner. (m_Act_UID)
 
-	CChar * pChar = m_Act_UID.CharFind();
-	if ( pChar != nullptr && pChar != this && CanSeeLOS(pChar, LOS_NB_WINDOWS) )
+    if (CChar *pChar = m_Act_UID.CharFind(); pChar != nullptr && pChar != this && CanSeeLOS(pChar, LOS_NB_WINDOWS) )
 	{
 		if ( pChar->Fight_IsActive() )	// protect the target if they're in a fight
 		{
@@ -1507,8 +1498,7 @@ void CChar::NPC_Act_GoHome()
 		// this goes hand in hand with the change that guards aren't
 		// called if the criminal makes it outside guarded territory.
 
-		const CRegion * pAreaHome = m_ptHome.GetRegion( REGION_TYPE_AREA );
-		if ( pAreaHome && pAreaHome->IsGuarded())
+        if (const CRegion *pAreaHome = m_ptHome.GetRegion(REGION_TYPE_AREA); pAreaHome && pAreaHome->IsGuarded())
 		{
 			if ( !m_pArea || !m_pArea->IsGuarded() )
 			{
@@ -1544,8 +1534,7 @@ void CChar::NPC_Act_GoHome()
 
 	if ( g_Cfg.m_iLostNPCTeleport )
 	{
-		const int iDistance = m_ptHome.GetDist( ptCurrent );
-		if ( (iDistance > g_Cfg.m_iLostNPCTeleport) && (iDistance > m_pNPC->m_Home_Dist_Wander) )
+        if (const int iDistance = m_ptHome.GetDist(ptCurrent); (iDistance > g_Cfg.m_iLostNPCTeleport) && (iDistance > m_pNPC->m_Home_Dist_Wander) )
 		{
 			if ( IsTrigUsed(TRIGGER_NPCLOSTTELEPORT) )
 			{
@@ -1585,8 +1574,7 @@ void CChar::NPC_LootMemory( CItem * pItem )
 	// If the item is set to decay.
 	if (pItem->IsTimerSet())
 	{
-		const int64 iTimerDiff = pItem->GetTimerAdjusted();
-		if (iTimerDiff > 0)
+        if (const int64 iTimerDiff = pItem->GetTimerAdjusted(); iTimerDiff > 0)
 			pMemory->SetTimeout(iTimerDiff);		// forget about this once the item is gone
 	}
 }
@@ -1684,8 +1672,7 @@ void CChar::NPC_Act_Runto(int iDist)
 			// Go directly there...
 			if ( NPC_GetAiFlags() & NPC_AI_PERSISTENTPATH )
 			{
-				const CPointMap& ptMe = GetTopPoint();
-				if (!ptMe.IsValidPoint())
+                if (const CPointMap &ptMe = GetTopPoint(); !ptMe.IsValidPoint())
 				{
 					--iDist;
 				}
@@ -1732,8 +1719,7 @@ void CChar::NPC_Act_Goto(int iDist)
 			// Go directly there...
 			if ( NPC_GetAiFlags() & NPC_AI_PERSISTENTPATH )
 			{
-				const CPointMap& ptMe = GetTopPoint();
-				if (!ptMe.IsValidPoint())
+                if (const CPointMap &ptMe = GetTopPoint(); !ptMe.IsValidPoint())
 				{
 					--iDist;
 				}
@@ -1787,9 +1773,8 @@ bool CChar::NPC_Act_Food()
 	{
 		for (CSObjContRec* pObjRec : *pPack)
 		{
-			CItem* pFood = static_cast<CItem*>(pObjRec);
-			// I have some food personally, so no need to search for anything.
-			if ( pFood->IsType(IT_FOOD) )
+            // I have some food personally, so no need to search for anything.
+			if (CItem *pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
 			{
 				if ( (uiEatAmount = Food_CanEat(pFood)) > 0 )
 				{
@@ -1814,8 +1799,7 @@ bool CChar::NPC_Act_Food()
 		if ( pItem->IsType(IT_CROPS) || pItem->IsType(IT_FOLIAGE) )
 		{
 			// is it ripe?
-			const CItemBase * checkItemBase = pItem->Item_GetDef();
-			if ( checkItemBase->m_ttNormal.m_tData3 )
+            if (const CItemBase *checkItemBase = pItem->Item_GetDef(); checkItemBase->m_ttNormal.m_tData3 )
 			{
 				// remember this, just in case we do not find any suitable food
 				pCropItem = pItem;
@@ -1823,8 +1807,7 @@ bool CChar::NPC_Act_Food()
 			}
 		}
 
-        const CPointMap& ptItem = pItem->GetTopPoint();
-		if (ptItem.m_z > (iMyZ + 10) || ptItem.m_z < (iMyZ - 1) )
+        if (const CPointMap &ptItem = pItem->GetTopPoint(); ptItem.m_z > (iMyZ + 10) || ptItem.m_z < (iMyZ - 1) )
 			continue;
 		if ( pItem->IsAttr(ATTR_MOVE_NEVER|ATTR_STATIC|ATTR_LOCKEDDOWN|ATTR_SECURE) )
 			continue;
@@ -1873,8 +1856,7 @@ bool CChar::NPC_Act_Food()
 				case NPCACT_NAPPING:
 				case NPCACT_FLEE:
 					{
-                        CPointMap pt(pClosestFood->GetTopPoint());
-						if ( CanMoveWalkTo(pt) )
+                    if (CPointMap pt(pClosestFood->GetTopPoint()); CanMoveWalkTo(pt) )
 						{
 							m_Act_p = pt;
 							Skill_Start(NPCACT_GOTO);
@@ -1892,8 +1874,7 @@ bool CChar::NPC_Act_Food()
 	{
         // no food around, but maybe I am ok with grass? Or shall I try to pick crops?
 
-		const NPCBRAIN_TYPE brain = GetNPCBrainGroup();
-		if ( brain == NPCBRAIN_ANIMAL )						// animals eat grass always
+        if (const NPCBRAIN_TYPE brain = GetNPCBrainGroup(); brain == NPCBRAIN_ANIMAL )						// animals eat grass always
 			fSearchGrass = true;
 		//else if (( brain == NPCBRAIN_HUMAN ) && !iFood )	// human eat grass if starving nearly to death
 		//	fSearchGrass = true;
@@ -1911,12 +1892,11 @@ bool CChar::NPC_Act_Food()
 	if ( fSearchGrass )
 	{
         const CCharBase *pCharDef = Char_GetDef();
-        const CResourceID rid(RES_TYPEDEF, IT_GRASS);
 
-		if ( pCharDef->m_FoodType.ContainsResourceID(rid) ) // do I accept grass as food?
+        if (const CResourceID rid(RES_TYPEDEF, IT_GRASS); pCharDef->m_FoodType.ContainsResourceID(rid) ) // do I accept grass as food?
 		{
-			CItem *pResBit = CWorldMap::CheckNaturalResource(GetTopPoint(), IT_GRASS, true, this);
-			if ( pResBit && pResBit->GetAmount() && ( pResBit->GetTopPoint().m_z == iMyZ ) )
+            if (CItem *pResBit = CWorldMap::CheckNaturalResource(GetTopPoint(), IT_GRASS, true, this);
+                pResBit && pResBit->GetAmount() && ( pResBit->GetTopPoint().m_z == iMyZ ) )
 			{
 				ushort uiEaten = pResBit->ConsumeAmount(10);
                 pResBit->SetName(g_Cfg.GetDefaultMsg(DEFMSG_NPC_EAT_GRASS));
@@ -1932,8 +1912,8 @@ bool CChar::NPC_Act_Food()
 			}
 
 		    //	search for grass nearby
-            CPointMap pt = CWorldMap::FindTypeNear_Top(GetTopPoint(), IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
-            if ((pt.m_x >= 1) && (pt.m_y >= 1))
+            if (CPointMap pt = CWorldMap::FindTypeNear_Top(GetTopPoint(), IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
+                (pt.m_x >= 1) && (pt.m_y >= 1))
             {
                 if ((pt.m_x != GetTopPoint().m_x) && (pt.m_y != GetTopPoint().m_y) && (pt.m_map == GetTopPoint().m_map))
                 {
@@ -1962,9 +1942,8 @@ void CChar::NPC_Act_Idle()
 
 	if ( NPC_GetAiFlags()&NPC_AI_INTFOOD )
 	{
-		bool fFood = NPC_Act_Food();
-		//DEBUG_ERR(("fFood %d\n",fFood));
-		if ( fFood ) //are we hungry?
+        //DEBUG_ERR(("fFood %d\n",fFood));
+		if ( NPC_Act_Food() ) //are we hungry?
 			return;
 	}
 
@@ -2077,8 +2056,7 @@ bool CChar::NPC_OnItemGive( CChar *pCharSrc, CItem *pItem )
 
     if ( pItem->IsType(IT_GOLD) )
     {
-        CItemMemory *pMemory = Memory_FindObj(pCharSrc);
-        if ( pMemory )
+        if ( CItemMemory *pMemory = Memory_FindObj(pCharSrc) )
         {
             switch ( pMemory->m_itEqMemory.m_Action )
             {
@@ -2236,8 +2214,7 @@ void CChar::NPC_OnTickAction()
 	const SKILL_TYPE iSkillActive = Skill_GetActive();
     if (!m_pArea)
     {
-        const CPointMap& pt = GetUnkPoint();
-		if (pt.IsValidPoint())
+        if (const CPointMap &pt = GetUnkPoint(); pt.IsValidPoint())
 		{
 			if (iSkillActive != NPCACT_RIDDEN)
 			{
@@ -2510,9 +2487,8 @@ void CChar::NPC_Food()
 		EXC_SET_BLOCK("searching in pack");
 		for (CSObjContRec* pObjRec : *pPack)
 		{
-			CItem* pFood = static_cast<CItem*>(pObjRec);
-			// I have some food personally, so no need to search for anything.
-			if ( pFood->IsType(IT_FOOD) )
+            // I have some food personally, so no need to search for anything.
+			if (CItem *pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
 			{
 				if ( (uiEatAmount = Food_CanEat(pFood)) > 0 )
 				{
@@ -2584,8 +2560,7 @@ void CChar::NPC_Food()
 				case NPCACT_FLEE:
 					{
 						EXC_SET_BLOCK("walking to desired");
-						CPointMap pt = pClosestFood->GetTopPoint();
-						if ( CanMoveWalkTo(pt) )
+                        if (CPointMap pt = pClosestFood->GetTopPoint(); CanMoveWalkTo(pt) )
 						{
 							m_Act_p = pt;
 							Skill_Start(NPCACT_GOTO);
@@ -2601,8 +2576,7 @@ void CChar::NPC_Food()
 					// No food around, but maybe I am ok with grass?
 	else
 	{
-		const NPCBRAIN_TYPE brain = GetNPCBrainGroup();
-		if ( brain == NPCBRAIN_ANIMAL )						// animals eat grass always
+        if (const NPCBRAIN_TYPE brain = GetNPCBrainGroup(); brain == NPCBRAIN_ANIMAL )						// animals eat grass always
 			fSearchGrass = true;
 		else if (( brain == NPCBRAIN_HUMAN ) && !iFood )	// human eat grass if starving nearly dead
 			fSearchGrass = true;
@@ -2641,8 +2615,8 @@ void CChar::NPC_Food()
                 case NPCACT_FLEE:
                 {
                     EXC_SET_BLOCK("searching grass nearby");
-                    CPointMap pt = CWorldMap::FindTypeNear_Top(ptMe, IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
-                    if ((pt.m_x >= 1) && (pt.m_y >= 1))
+                    if (CPointMap pt = CWorldMap::FindTypeNear_Top(ptMe, IT_GRASS, minimum(iSearchDistance, m_pNPC->m_Home_Dist_Wander));
+                        (pt.m_x >= 1) && (pt.m_y >= 1))
                     {
                         // we found grass nearby, but has it already been consumed?
                         pResBit = CWorldMap::CheckNaturalResource(pt, IT_GRASS, false, this);
@@ -2694,15 +2668,12 @@ void CChar::NPC_ExtraAI()
 	EXC_SET_BLOCK("weapon/shield");
 	if ( IsStatFlag(STATF_WAR) )
 	{
-		CItem *pWeapon = LayerFind(LAYER_HAND1);
-		if ( !pWeapon || !pWeapon->IsTypeWeapon() )
+        if (CItem *pWeapon = LayerFind(LAYER_HAND1); !pWeapon || !pWeapon->IsTypeWeapon() )
 			ItemEquipWeapon(false);
 
-		CItem *pShield = LayerFind(LAYER_HAND2);
-		if ( !pShield || !pShield->IsTypeArmor() )
+        if (CItem *pShield = LayerFind(LAYER_HAND2); !pShield || !pShield->IsTypeArmor() )
 		{
-			const CItemContainer * pPack = GetPack();
-			if (pPack)
+            if (const CItemContainer *pPack = GetPack())
 			{
 				pShield = pPack->ContentFind(CResourceID(RES_TYPEDEF, IT_SHIELD));
 				if (pShield)
@@ -2715,14 +2686,12 @@ void CChar::NPC_ExtraAI()
 	// Equip light source at nighttime.
 	EXC_SET_BLOCK("light source");
 	const CPointMap& pt = GetTopPoint();
-	const CSector *pSector = pt.GetSector();
-	if ( pSector && pSector->IsDark() )
+    if (const CSector *pSector = pt.GetSector(); pSector && pSector->IsDark() )
 	{
-		const CItem *pLightSourceCheck = LayerFind(LAYER_HAND2);
-		if ( !(pLightSourceCheck && (pLightSourceCheck->IsType(IT_LIGHT_OUT) || pLightSourceCheck->IsType(IT_LIGHT_LIT))) )
+        if (const CItem *pLightSourceCheck = LayerFind(LAYER_HAND2);
+            !(pLightSourceCheck && (pLightSourceCheck->IsType(IT_LIGHT_OUT) || pLightSourceCheck->IsType(IT_LIGHT_LIT))) )
 		{
-			CItem *pLightSource = ContentFind(CResourceID(RES_TYPEDEF, IT_LIGHT_OUT));
-			if ( pLightSource )
+            if ( CItem *pLightSource = ContentFind(CResourceID(RES_TYPEDEF, IT_LIGHT_OUT)) )
 			{
 				ItemEquip(pLightSource);
 				Use_Obj(pLightSource, false);
@@ -2731,8 +2700,7 @@ void CChar::NPC_ExtraAI()
 	}
 	else
 	{
-		CItem *pLightSource = LayerFind(LAYER_HAND2);
-		if ( pLightSource && (pLightSource->IsType(IT_LIGHT_OUT) || pLightSource->IsType(IT_LIGHT_LIT)) )
+        if (CItem *pLightSource = LayerFind(LAYER_HAND2); pLightSource && (pLightSource->IsType(IT_LIGHT_OUT) || pLightSource->IsType(IT_LIGHT_LIT)) )
 			ItemBounce(pLightSource, g_Cfg.m_iBounceMessage);
 	}
 

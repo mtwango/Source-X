@@ -76,8 +76,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
 		return false;
 
 	m_fIgnoreNextPetCmd = false;	// We clear this incase it's true from previous pet cmds.
-	TALKMODE_TYPE mode = TALKMODE_SAY;
-	if ( OnTriggerSpeech(true, pszCmd, pSrc, mode) )
+    if (TALKMODE_TYPE mode = TALKMODE_SAY; OnTriggerSpeech(true, pszCmd, pSrc, mode) )
 	{
 		m_fIgnoreNextPetCmd = !fAllPets;
 		return true;
@@ -241,8 +240,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
 		{
 			// Drop backpack items on ground
 			// NOTE: This is also called on pet release
-			CItemContainer *pPack = GetPack();
-			if ( pPack )
+            if ( CItemContainer *pPack = GetPack() )
 			{
 				pPack->ContentsDump(GetTopPoint(), ATTR_OWNED);
 				break;
@@ -307,8 +305,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
 			if ( !NPC_IsVendor() )
 				return false;
 
-			CItemContainer *pBank = GetBank();
-			if ( pBank )
+            if ( CItemContainer *pBank = GetBank() )
 			{
 				const uint uiWage = pCharDef->GetHireDayWage();
 				tchar *pszMsg = Str_GetTemp();
@@ -464,8 +461,7 @@ bool CChar::NPC_OnHearPetCmdTarg( int iCmd, CChar *pSrc, CObjBase *pObj, const C
 				Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_PET_CONFUSED));
 				break;
 			}
-			CItemMemory *pMemory = Memory_FindObjTypes(pCharTarg, MEMORY_FRIEND);
-			if ( pMemory )
+            if ( Memory_FindObjTypes(pCharTarg, MEMORY_FRIEND) )
 			{
 				pSrc->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_PET_TARG_FRIEND_ALREADY));
 				break;
@@ -521,8 +517,7 @@ bool CChar::NPC_OnHearPetCmdTarg( int iCmd, CChar *pSrc, CObjBase *pObj, const C
 				break;
 			if ( IsSetOF(OF_PetSlots) )
 			{
-                short iFollowerSlots = GetFollowerSlots();
-                if ( !pCharTarg->FollowersUpdate(this, iFollowerSlots, true) )
+                if (short iFollowerSlots = GetFollowerSlots(); !pCharTarg->FollowersUpdate(this, iFollowerSlots, true) )
 				{
 					pSrc->SysMessageDefault(DEFMSG_PETSLOTS_TRY_TRANSFER);
 					break;
@@ -586,8 +581,7 @@ void CChar::NPC_PetClearOwners()
 
 	if ( IsStatFlag(STATF_RIDDEN) )
 	{
-		CChar *pCharRider = Horse_GetMountChar();
-		if ( pCharRider )
+        if ( CChar *pCharRider = Horse_GetMountChar() )
 			pCharRider->Horse_UnMount();
 	}
 
@@ -606,14 +600,12 @@ bool CChar::NPC_PetSetOwner( CChar * pChar )
 	if ( m_pPlayer || !pChar || (pChar == this) )
 		return false;
 
-    CChar * pOwner = NPC_PetGetOwner();
-	if ( pOwner == pChar )
+    if (CChar *pOwner = NPC_PetGetOwner(); pOwner == pChar )
 		return false;
 
 	m_ptHome.InitPoint();	// no longer homed
     NPC_PetClearOwners();	// clear previous owner before set the new owner
-    CCSpawn* pSpawn = GetSpawn();
-	if ( pSpawn )
+    if ( CCSpawn *pSpawn = GetSpawn() )
 		pSpawn->DelObj( GetUID() );
 
 	Memory_AddObjTypes(pChar, MEMORY_IPET);
@@ -663,8 +655,7 @@ bool CChar::NPC_CheckHirelingStatus()
     if ( uiPeriodWage <= 0 )
         uiPeriodWage = 1;
 
-	CItemContainer * pBank = GetBank();
-    if ( pBank->m_itEqBankBox.m_Check_Amount > uiPeriodWage )
+    if (CItemContainer *pBank = GetBank(); pBank->m_itEqBankBox.m_Check_Amount > uiPeriodWage )
 	{
         pBank->m_itEqBankBox.m_Check_Amount -= uiPeriodWage;
 	}
@@ -674,13 +665,11 @@ bool CChar::NPC_CheckHirelingStatus()
         snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_NPC_PET_WAGE_COST ), uiWage);
 		Speak(pszMsg);
 
-		CChar * pOwner = NPC_PetGetOwner();
-		if ( pOwner )
+        if ( CChar *pOwner = NPC_PetGetOwner() )
 		{
 			Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_PET_HIRE_TIMEUP ) );
 
-			CItem * pMemory = Memory_AddObjTypes( pOwner, MEMORY_SPEAK );
-			if ( pMemory )
+            if ( CItem *pMemory = Memory_AddObjTypes(pOwner, MEMORY_SPEAK) )
 				pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_SPEAK_HIRE;
 
 			NPC_PetDesert();
@@ -883,8 +872,7 @@ void CChar::NPC_PetRelease()
 
 	if (Skill_GetActive() == NPCACT_RIDDEN)
 	{
-		CChar* pCharRider = Horse_GetMountChar();
-		if (pCharRider)
+        if (CChar *pCharRider = Horse_GetMountChar())
 			pCharRider->Horse_UnMount();
 	}
 

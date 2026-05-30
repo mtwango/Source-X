@@ -101,8 +101,7 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
     int iSegSize;
     int iLoIdx;
 
-    int iQty = (int) m_aiValues.size();
-    switch (iQty)
+    switch (int iQty = (int)m_aiValues.size())
     {
         case 0:
             return 0;	// no values defined !

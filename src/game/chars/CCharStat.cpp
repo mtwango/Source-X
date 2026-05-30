@@ -63,8 +63,7 @@ void CChar::Stat_SetMod( STAT_TYPE i, int iVal )
 
     if (!IsSetOF(OF_StatAllowValOverMax))
     {
-        const ushort uiMaxValue = Stat_GetMaxAdjusted(i);		// make sure the current value is not higher than new max value
-        if ( m_Stat[i].m_val > uiMaxValue )
+        if (const ushort uiMaxValue = Stat_GetMaxAdjusted(i); m_Stat[i].m_val > uiMaxValue )
             m_Stat[i].m_val = uiMaxValue;
     }
 
@@ -112,8 +111,7 @@ void CChar::Stat_SetMaxMod( STAT_TYPE i, int iVal )
 
     if (!IsSetOF(OF_StatAllowValOverMax))
     {
-        const ushort uiMaxValue = Stat_GetMaxAdjusted(i);		// make sure the current value is not higher than new max value
-        if ( m_Stat[i].m_val > uiMaxValue )
+        if (const ushort uiMaxValue = Stat_GetMaxAdjusted(i); m_Stat[i].m_val > uiMaxValue )
             m_Stat[i].m_val = uiMaxValue;
     }
 
@@ -139,8 +137,7 @@ void CChar::Stat_AddMaxMod( STAT_TYPE i, int iVal )
 
     if (!IsSetOF(OF_StatAllowValOverMax))
     {
-        const ushort uiMaxValue = Stat_GetMaxAdjusted(i);		// make sure the current value is not higher than new max value
-        if ( m_Stat[i].m_val > uiMaxValue )
+        if (const ushort uiMaxValue = Stat_GetMaxAdjusted(i); m_Stat[i].m_val > uiMaxValue )
             m_Stat[i].m_val = uiMaxValue;
     }
 
@@ -255,8 +252,7 @@ void CChar::Stat_SetMax( STAT_TYPE i, ushort uiVal )
 
         if (!IsSetOF(OF_StatAllowValOverMax))
         {
-            const ushort uiMaxValue = Stat_GetMaxAdjusted(i);		// make sure the current value is not higher than new max value
-            if ( m_Stat[i].m_val > uiMaxValue )
+            if (const ushort uiMaxValue = Stat_GetMaxAdjusted(i); m_Stat[i].m_val > uiMaxValue )
                 m_Stat[i].m_val = uiMaxValue;
         }
 
@@ -392,22 +388,19 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 	{
 		case STAT_STR:
 			{
-				CCharBase * pCharDef = Char_GetDef();
-				if ( pCharDef && !pCharDef->m_Str )
+            if (CCharBase *pCharDef = Char_GetDef(); pCharDef && !pCharDef->m_Str )
 					pCharDef->m_Str = uiVal;
 			}
 			break;
 		case STAT_INT:
 			{
-				CCharBase * pCharDef = Char_GetDef();
-				if ( pCharDef && !pCharDef->m_Int )
+            if (CCharBase *pCharDef = Char_GetDef(); pCharDef && !pCharDef->m_Int )
 					pCharDef->m_Int = uiVal;
 			}
 			break;
 		case STAT_DEX:
 			{
-				CCharBase * pCharDef = Char_GetDef();
-				if ( pCharDef && !pCharDef->m_Dex )
+            if (CCharBase *pCharDef = Char_GetDef(); pCharDef && !pCharDef->m_Dex )
 					pCharDef->m_Dex = uiVal;
 			}
 			break;
@@ -427,8 +420,7 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 
     if (!IsSetOF(OF_StatAllowValOverMax))
     {
-        const ushort uiMaxValue = Stat_GetMaxAdjusted(i);		// make sure the current value is not higher than new max value
-        if ( m_Stat[i].m_val > uiMaxValue )
+        if (const ushort uiMaxValue = Stat_GetMaxAdjusted(i); m_Stat[i].m_val > uiMaxValue )
             m_Stat[i].m_val = uiMaxValue;
     }
 
@@ -456,8 +448,7 @@ ushort CChar::Stat_GetLimit( STAT_TYPE i ) const
 
 		if ( m_pPlayer->Stat_GetLock(i) >= SKILLLOCK_DOWN )
 		{
-			ushort uiStatLevel = Stat_GetBase(i);
-			if ( uiStatLevel < uiStatMax )
+            if (ushort uiStatLevel = Stat_GetBase(i); uiStatLevel < uiStatMax )
 				uiStatMax = uiStatLevel;
 		}
 		return uiStatMax;
@@ -475,8 +466,7 @@ uint CChar::Stat_GetSumLimit() const
 {
     ADDTOCALLSTACK("CChar::Stat_GetSumLimit");
     // The return value is uint, but the value supported by the packets is a word (which is smaller)
-	const CVarDefCont* pTagStorage = GetKey("OVERRIDE.STATSUM", true);
-    if (pTagStorage)
+    if (const CVarDefCont *pTagStorage = GetKey("OVERRIDE.STATSUM", true))
         return (uint)pTagStorage->GetValNum();
 
     if ( m_pPlayer )
@@ -673,8 +663,7 @@ void CChar::SetKarma(short iNewKarma, CChar* pNPC)
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iKarmaChange, iOldKarma, 0, pNPC);
-        TRIGRET_TYPE retType = OnTrigger(CTRIG_KarmaChange, pScriptArgs, this);
-		if (retType == TRIGRET_RET_TRUE)
+        if (TRIGRET_TYPE retType = OnTrigger(CTRIG_KarmaChange, pScriptArgs, this); retType == TRIGRET_RET_TRUE)
 			return;
         iKarmaChange = (short)pScriptArgs->m_iN1;
         iNewKarma = (short)(maximum(g_Cfg.m_iMinKarma, minimum(g_Cfg.m_iMaxKarma, iOldKarma + iKarmaChange)));
@@ -711,8 +700,7 @@ void CChar::SetFame(ushort uiNewFame, CChar* pNPC)
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iFameChange, iOldFame, 0, pNPC);
-        TRIGRET_TYPE retType = OnTrigger(CTRIG_FameChange, pScriptArgs, this);
-		if (retType == TRIGRET_RET_TRUE)
+        if (TRIGRET_TYPE retType = OnTrigger(CTRIG_FameChange, pScriptArgs, this); retType == TRIGRET_RET_TRUE)
 			return;
         iFameChange = (short)pScriptArgs->m_iN1;
         uiNewFame = (short)(maximum(0, minimum(g_Cfg.m_iMaxFame, iOldFame + iFameChange)));
@@ -731,12 +719,11 @@ bool CChar::Stat_Decrease(STAT_TYPE stat, SKILL_TYPE skill)
 
 	// Check for stats degrade.
 	const uint uiStatSumLimit = Stat_GetSumLimit();	// Maximum reachable statsum.
-	const uint uiStatSum = Stat_GetSum() + 1;		// Current statsum +1, assuming we are going to have +1 stat at some point thus we are calling this function
 
-	/*Before there was iStatSum < iStatSumAvg:
+    /*Before there was iStatSum < iStatSumAvg:
 	In that case, if the sum of the player's Stats(iStatSum) was at StatCap - 1 (before adding the +1 above) the selected Stat will not increase
 	unless one of the other stats was set for decreasing (stat arrow down) */
-	if (uiStatSum <= uiStatSumLimit)		//No need to lower any stat.
+	if (const uint uiStatSum = Stat_GetSum() + 1; uiStatSum <= uiStatSumLimit)		//No need to lower any stat.
 		return true;
 
 	uint uiMinval;
@@ -747,8 +734,7 @@ bool CChar::Stat_Decrease(STAT_TYPE stat, SKILL_TYPE skill)
 
 	// We are at a point where our skills can degrade a bit.
 	uint uiStatSumMax = uiStatSumLimit + uiStatSumLimit / 4;
-	const int iChanceForLoss = Calc_GetSCurve(uiStatSumMax - uiStatSumLimit, (uiStatSumMax - uiStatSumLimit) / 4);
-	if ( iChanceForLoss > g_Rand.GetVal(1000) )
+    if (const int iChanceForLoss = Calc_GetSCurve(uiStatSumMax - uiStatSumLimit, (uiStatSumMax - uiStatSumLimit) / 4); iChanceForLoss > g_Rand.GetVal(1000) )
 	{
 		// Find the stat that was used least recently and degrade it.
 		int iMin = -1;
@@ -778,8 +764,7 @@ bool CChar::Stat_Decrease(STAT_TYPE stat, SKILL_TYPE skill)
 		if ( iMin < 0 )
 			return false;
 
-		ushort uiStatVal = Stat_GetBase((STAT_TYPE)iMin);
-		if ( uiStatVal > 10 )
+        if (ushort uiStatVal = Stat_GetBase((STAT_TYPE)iMin); uiStatVal > 10 )
 		{
 			Stat_SetBase((STAT_TYPE)iMin, (ushort)(uiStatVal - 1));
 			return true;
@@ -792,8 +777,7 @@ void CChar::Stat_StrCheckEquip()
 {
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if (!CanEquipStr(pItem))
+        if (CItem *pItem = dynamic_cast<CItem *>(pObjRec); !CanEquipStr(pItem))
 		{
 			SysMessagef("%s %s.", g_Cfg.GetDefaultMsg(DEFMSG_EQUIP_NOT_STRONG_ENOUGH), pItem->GetName());
 			ItemBounce(pItem, g_Cfg.m_iBounceMessage);

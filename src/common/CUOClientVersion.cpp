@@ -103,8 +103,7 @@ CUOClientVersion::CUOClientVersion(dword uiClientVersionNumber) noexcept :
         else if (uiClientVersionNumber > 1'00'000'00)
         {
             // The extra digit can be used for a bigger major (EC, like 67.01.00.00) or rev number (CC, like 7.101.00.00)
-            const bool fEC = ((uiClientVersionNumber / 1000'00) < kuiECMajorVerOffset);
-            if (fEC)
+            if ((uiClientVersionNumber / 1000'00) < kuiECMajorVerOffset)
             {
                 m_major = uiClientVersionNumber / 100'00'00;
                 m_minor = (uiClientVersionNumber / 100'00) % 100;
@@ -146,8 +145,7 @@ CUOClientVersion::CUOClientVersion(lpctstr ptcVersion, bool fEnhancedClient) noe
     // Ranges algorithms not yet supported by Apple Clang...
     // const size_t count = std::ranges::count(std::string_view(ptcVersion), '.');
     const auto svVersion = std::string_view(ptcVersion);
-    const auto count = std::ranges::count(svVersion, '.');
-    if (count == 2)
+    if (const auto count = std::ranges::count(svVersion, '.'); count == 2)
     {
         if (fEnhancedClient)
         {

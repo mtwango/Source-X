@@ -182,13 +182,11 @@ CItemContainer * CChar::GetPackSafe()
 CItem *CChar::GetBackpackItem(ITEMID_TYPE id)
 {
 	ADDTOCALLSTACK("CChar::GetBackpackItem");
-	CItemContainer *pPack = GetPack();
-	if ( pPack )
+    if ( CItemContainer *pPack = GetPack() )
 	{
 		for (CSObjContRec* pObjRec : *pPack)
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
-			if ( pItem->GetID() == id )
+            if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->GetID() == id )
 				return pItem;
 		}
 	}
@@ -202,8 +200,7 @@ CItem *CChar::LayerFind( LAYER_TYPE layer ) const
 
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if ( pItem->GetEquipLayer() == layer )
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->GetEquipLayer() == layer )
 			return pItem;
 	}
 	return nullptr;
@@ -217,8 +214,7 @@ TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr co
 
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if ( pItem->GetEquipLayer() == layer )
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->GetEquipLayer() == layer )
 		{
             TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
 			if ( iRet == TRIGRET_BREAK )
@@ -238,8 +234,7 @@ TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr co
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
 		// just skip to the end.
-        TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
-		if ( iRet != TRIGRET_ENDIF )
+        if (TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -270,8 +265,7 @@ bool CChar::CanCarry( const CItem *pItem ) const
 	int iItemWeight = 0;
     if (IsSetOF(OF_OWNoDropCarriedItem))
     {
-        const CObjBaseTemplate * pObjTop = pItem->GetTopLevelObj();
-        if (this != pObjTop)    // Aren't we already carrying it ?
+        if (const CObjBaseTemplate *pObjTop = pItem->GetTopLevelObj(); this != pObjTop)    // Aren't we already carrying it ?
             iItemWeight = pItem->GetWeight();
     }
     else if (pItem->GetEquipLayer() != LAYER_DRAGGING && !pItem->IsItemEquipped())
@@ -301,8 +295,7 @@ bool CChar::CanEquipStr( CItem *pItem ) const
 		return true;
 
     const CItemBase *pItemDef = pItem->Item_GetDef();
-	LAYER_TYPE layer = pItemDef->GetEquipLayer();
-	if ( !pItemDef->IsTypeEquippable() || !CItemBase::IsVisibleLayer(layer) )
+    if (LAYER_TYPE layer = pItemDef->GetEquipLayer(); !pItemDef->IsTypeEquippable() || !CItemBase::IsVisibleLayer(layer) )
 		return true;
 
 	if ( Stat_GetAdjusted(STAT_STR) >= pItemDef->m_ttEquippable.m_iStrReq * (100 - pItem->GetPropNum(COMP_PROPS_ITEMEQUIPPABLE, PROPIEQUIP_LOWERREQ, true)) / 100 )
@@ -514,14 +507,12 @@ bool CChar::IsSwimming() const
 	if ( !pt.IsValidPoint() )
 		return false;
 
-	short iDistZ = ptTop.m_z - pt.m_z;
-	if ( iDistZ < -PLAYER_HEIGHT )	// far under the water somehow
+    if (short iDistZ = ptTop.m_z - pt.m_z; iDistZ < -PLAYER_HEIGHT )	// far under the water somehow
 		return false;
 
 	// Is there a solid surface under us?
 	uint64 uiBlockFlags = GetCanMoveFlags(GetCanFlags());
-	char iSurfaceZ = CWorldMap::GetHeightPoint2(ptTop, uiBlockFlags, true);
-	if ((iSurfaceZ == pt.m_z) && (uiBlockFlags & CAN_I_WATER))
+    if (char iSurfaceZ = CWorldMap::GetHeightPoint2(ptTop, uiBlockFlags, true); (iSurfaceZ == pt.m_z) && (uiBlockFlags & CAN_I_WATER))
 		return true;
 
 	return false;
@@ -773,8 +764,7 @@ CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook fro
 	{
 		const CItemBase *pItemDef = pItem->Item_GetDef();
 		const SPELL_TYPE min = (SPELL_TYPE)pItemDef->m_ttSpellbook.m_iOffset;
-		const SPELL_TYPE max = (SPELL_TYPE)(pItemDef->m_ttSpellbook.m_iOffset + pItemDef->m_ttSpellbook.m_iMaxSpells);
-	    if ( (iSpell > min) && (iSpell <= max) ) //Had to replace < with <= otherwise the spell would not be considered a valid one.
+        if (const SPELL_TYPE max = (SPELL_TYPE)(pItemDef->m_ttSpellbook.m_iOffset + pItemDef->m_ttSpellbook.m_iMaxSpells); (iSpell > min) && (iSpell <= max) ) //Had to replace < with <= otherwise the spell would not be considered a valid one.
 	    {
 		    if (pItem->IsSpellInBook(iSpell) )	//We found a book with this same spell, nothing more to do.
 			    return pItem;
@@ -783,8 +773,7 @@ CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook fro
         }
     }
 	// No book found in layer 1 or 2 or found one which doesn't have the spell I am going to cast, then let's search in the top level of the backpack.
-	CItemContainer *pPack = GetPack();
-	if ( pPack )
+    if ( CItemContainer *pPack = GetPack() )
 	{
 		for (CSObjContRec* pObjRec : *pPack)
 		{
@@ -794,8 +783,7 @@ CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook fro
             // Found a book, let's find each magic school's offsets to search for the desired spell.
 			const CItemBase *pItemDef = pItem->Item_GetDef();
 			const SPELL_TYPE min = (SPELL_TYPE)pItemDef->m_ttSpellbook.m_iOffset;
-			const SPELL_TYPE max = (SPELL_TYPE)(pItemDef->m_ttSpellbook.m_iOffset + pItemDef->m_ttSpellbook.m_iMaxSpells);
-			if ( (iSpell > min) && (iSpell <= max) ) // and check now the spell is within the spells that this book can hold. Had to replace < with <= otherwise the spell would not be considered a valid one.
+            if (const SPELL_TYPE max = (SPELL_TYPE)(pItemDef->m_ttSpellbook.m_iOffset + pItemDef->m_ttSpellbook.m_iMaxSpells); (iSpell > min) && (iSpell <= max) ) // and check now the spell is within the spells that this book can hold. Had to replace < with <= otherwise the spell would not be considered a valid one.
 			{
 				if ( pItem->IsSpellInBook(iSpell) )	//I found a book with this spell, nothing more to do.
 					return pItem;
@@ -900,8 +888,7 @@ ushort CChar::Food_CanEat( CObjBase *pObj ) const
     const CCharBase *pCharDef = Char_GetDef();
 	ASSERT(pCharDef);
 
-	size_t iRet = pCharDef->m_FoodType.FindResourceMatch(pObj);
-	if ( iRet != sl::scont_bad_index() )
+    if (size_t iRet = pCharDef->m_FoodType.FindResourceMatch(pObj); iRet != sl::scont_bad_index() )
 		return (ushort)(pCharDef->m_FoodType[iRet].GetResQty());	// how bad do i want it?
 
 	return 0;
@@ -1002,8 +989,7 @@ bool CChar::CanDisturb( const CChar *pChar ) const
 bool CChar::CanSeeAsDead( const CChar *pChar) const
 {
 	ADDTOCALLSTACK("CChar::CanSeeAsDead");
-	int iDeadCannotSee = g_Cfg.m_fDeadCannotSeeLiving;
-	if ( iDeadCannotSee && !pChar->IsStatFlag(STATF_DEAD) && !IsPriv(PRIV_GM) )
+    if (int iDeadCannotSee = g_Cfg.m_fDeadCannotSeeLiving; iDeadCannotSee && !pChar->IsStatFlag(STATF_DEAD) && !IsPriv(PRIV_GM) )
 	{
 		if ( pChar->m_pPlayer )
 		{
@@ -1045,11 +1031,9 @@ bool CChar::CanSeeInContainer( const CItemContainer *pContItem ) const
 		if ( pChar == this )
 			return true;
 
-        const CItem *pItemTrade = pContItem->m_uidLink.ItemFind();
-		if ( pItemTrade )
+        if ( const CItem *pItemTrade = pContItem->m_uidLink.ItemFind() )
 		{
-            const CChar *pCharTrade = static_cast<const CChar*>(pItemTrade->GetTopLevelObj());
-			if ( pCharTrade == this )
+            if (const CChar *pCharTrade = static_cast<const CChar *>(pItemTrade->GetTopLevelObj()); pCharTrade == this )
 				return true;
 		}
 		return false;
@@ -1113,8 +1097,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 		if ( ptTop.GetDistSight(ptObjTop) > iDistSight )
 			return false;
 
-		const CObjBase *pObjCont = pItem->GetContainer();
-		if ( pObjCont )
+        if ( const CObjBase *pObjCont = pItem->GetContainer() )
 		{
 			if (IsSetEF(EF_FixCanSeeInClosedConts))
 			{
@@ -1142,8 +1125,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 				// A client cannot see the contents of someone else's container, unless they have opened it first
 				if (!fSkip && IsClientActive() && pObjCont->IsItem() && pObjCont->GetTopLevelObj() != this)
 				{
-					const CClient *pClient = GetClientActive();
-					if (pClient && (!pClient->m_openedContainers.contains(pObjCont->GetUID().GetPrivateUID())))
+                    if (const CClient *pClient = GetClientActive(); pClient && (!pClient->m_openedContainers.contains(pObjCont->GetUID().GetPrivateUID())))
 					{
 					/*
 					#ifdef _DEBUG
@@ -1240,8 +1222,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 		{
 			if ( pChar->IsStatFlag(STATF_RIDDEN) )
 			{
-				const CChar *pCharRider = Horse_GetMountChar();
-				if ( pCharRider )
+                if ( const CChar *pCharRider = Horse_GetMountChar() )
 					return CanSee(pCharRider);
 				return false;
 			}
@@ -1324,11 +1305,9 @@ bool CChar::CanTouch( const CObjBase *pObj )
 
         case IT_ARCHERY_BUTTE:
         {
-            const CItem * pWeapon = m_uidWeapon.ItemFind();
-            if (pWeapon)
+            if (const CItem *pWeapon = m_uidWeapon.ItemFind())
             {
-                IT_TYPE iType = pWeapon->GetType();
-                if ((iType == IT_WEAPON_BOW) || (iType == IT_WEAPON_XBOW) || (iType == IT_WEAPON_THROWING))
+                if (IT_TYPE iType = pWeapon->GetType(); (iType == IT_WEAPON_BOW) || (iType == IT_WEAPON_XBOW) || (iType == IT_WEAPON_THROWING))
                     return (iDist <= pWeapon->GetRangeH());
             }
             break;
@@ -1397,8 +1376,8 @@ bool CChar::CanTouch( const CObjBase *pObj )
 		// Check if the item is in my bankbox, and i'm not in the same position from which I opened it the last time.
 		const CPointMap& ptTop = GetTopPoint();
         CItemContainer* pBank = GetBank();
-        const bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
-		if (fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
+        if (const bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
+            fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
 			return false;
 	}
 
@@ -1462,8 +1441,7 @@ IT_TYPE CChar::CanTouchStatic( CPointMap *pPt, ITEMID_TYPE id, const CItem *pIte
 	{
 		if ( !pMapBlock->m_Statics.IsStaticPoint(i, x2, y2) )
 			continue;
-		const CUOStaticItemRec *pStatic = pMapBlock->m_Statics.GetStatic(i);
-		if ( id == pStatic->GetDispID() )
+        if (const CUOStaticItemRec *pStatic = pMapBlock->m_Statics.GetStatic(i); id == pStatic->GetDispID() )
 			return pItemDef->GetType();
 	}
 
@@ -1548,8 +1526,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, TALKMODE_TYPE mode ) const
             break;
     }
 
-    int iDist = GetTopDist3D(pSrc);
-    if ( iDist > iHearRange )	// too far away
+    if (int iDist = GetTopDist3D(pSrc); iDist > iHearRange )	// too far away
         return false;
 
     if ( IsPriv(PRIV_GM) )
@@ -1570,8 +1547,8 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, TALKMODE_TYPE mode ) const
         const CResourceID& ridRegion = pRegion->GetResourceID();
         const bool fRegionFromItem = ridRegion.IsUIDItem();
         bool fCanSpeech = false;
-        const CVarDefCont *pValue = fRegionFromItem ? ridRegion.ItemFindFromResource()->GetKey("NOMUTESPEECH", false) : nullptr;
-        if ( pValue && pValue->GetValNum() > 0 )
+        if (const CVarDefCont *pValue = fRegionFromItem ? ridRegion.ItemFindFromResource()->GetKey("NOMUTESPEECH", false) : nullptr;
+            pValue && pValue->GetValNum() > 0 )
             fCanSpeech = true;
         if ( fRegionFromItem && !pRegion->IsFlag(REGION_FLAG_SHIP) && !fCanSpeech )
             return false;
@@ -1618,8 +1595,7 @@ bool CChar::CanMoveItem( const CItem *pItem, bool fMsg ) const
 		// Can't move items from the trade window (client limitation)
 		if ( pItem->GetContainer()->IsContainer() )
 		{
-            const CItemContainer *pItemCont = dynamic_cast<CItemContainer *> (pItem->GetContainer());
-			if ( pItemCont && pItemCont->IsItemInTrade() )
+            if (const CItemContainer *pItemCont = dynamic_cast<CItemContainer *>(pItem->GetContainer()); pItemCont && pItemCont->IsItemInTrade() )
 			{
 				SysMessageDefault(DEFMSG_MSG_TRADE_CANTMOVE);
 				return false;
@@ -1639,14 +1615,11 @@ bool CChar::CanMoveItem( const CItem *pItem, bool fMsg ) const
 		// Can't steal/move newbie items on another cchar. (even if pet)
 		if ( pItem->IsAttr(ATTR_NEWBIE|ATTR_BLESSED2|ATTR_CURSED|ATTR_CURSED2) )
 		{
-			const CObjBaseTemplate *pObjTop = pItem->GetTopLevelObj();
-			if ( pObjTop->IsItem() )	// is this a corpse or sleeping person ?
+            if (const CObjBaseTemplate *pObjTop = pItem->GetTopLevelObj(); pObjTop->IsItem() )	// is this a corpse or sleeping person ?
 			{
-				const CItemCorpse *pCorpse = dynamic_cast<const CItemCorpse *>(pObjTop);
-				if ( pCorpse )
+                if ( const CItemCorpse *pCorpse = dynamic_cast<const CItemCorpse *>(pObjTop) )
 				{
-                    const CChar *pChar = pCorpse->IsCorpseSleeping();
-					if ( pChar && pChar != this )
+                    if (const CChar *pChar = pCorpse->IsCorpseSleeping(); pChar && pChar != this )
 						return false;
 				}
 			}
@@ -1654,8 +1627,7 @@ bool CChar::CanMoveItem( const CItem *pItem, bool fMsg ) const
 			{
 				if (( pItem->IsAttr(ATTR_NEWBIE) ) && g_Cfg.m_fAllowNewbTransfer )
 				{
-                    const CChar *pPet = dynamic_cast<const CChar*>( pItem->GetTopLevelObj() );
-					if (pPet && (pPet->GetOwner() == this) )
+                    if (const CChar *pPet = dynamic_cast<const CChar *>(pItem->GetTopLevelObj()); pPet && (pPet->GetOwner() == this) )
 						return true;
 				}
 				if ( !pItem->IsItemEquipped() || (pItem->GetEquipLayer() != LAYER_DRAGGING) )
@@ -1665,8 +1637,7 @@ bool CChar::CanMoveItem( const CItem *pItem, bool fMsg ) const
 
 		if ( pItem->IsItemEquipped() )
 		{
-			LAYER_TYPE layer = pItem->GetEquipLayer();
-			switch ( layer )
+            switch ( LAYER_TYPE layer = pItem->GetEquipLayer() )
 			{
 				case LAYER_DRAGGING:
 					return true;
@@ -1706,15 +1677,13 @@ bool CChar::IsTakeCrime( const CItem *pItem, CChar ** ppCharMark ) const
 		if ( pItem->IsAttr(ATTR_OWNED) && pItem->m_uidLink != GetUID() )
 			return true;
 
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pObjTop);
-		if ( pCont )
+        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pObjTop) )
 		{
 			if ( pCont->IsAttr(ATTR_OWNED) )
 				return true;
 		}
 
-		CItemCorpse *pCorpseItem = dynamic_cast<CItemCorpse *>(pObjTop);
-		if ( pCorpseItem )		// taking stuff off someones corpse can be a crime
+        if ( CItemCorpse *pCorpseItem = dynamic_cast<CItemCorpse *>(pObjTop) )		// taking stuff off someones corpse can be a crime
 			return const_cast<CChar*>(this)->CheckCorpseCrime(pCorpseItem, true, true);     // const_cast is BAD!
 
 		return false;	// I guess it's not a crime
@@ -1752,8 +1721,7 @@ bool CChar::CanUse( const CItem *pItem, bool fMoveOrConsume )
 		if ( pItem->IsTopLevel() )
 			return true;
 		// The item is on another character ?
-		const CObjBaseTemplate *pObjTop = pItem->GetTopLevelObj();
-		if ( pObjTop != (static_cast<const CObjBaseTemplate*>(this)) )
+        if (const CObjBaseTemplate *pObjTop = pItem->GetTopLevelObj(); pObjTop != (static_cast<const CObjBaseTemplate*>(this)) )
 		{
 			if ( IsPriv(PRIV_GM) || pItem->IsType(IT_CONTAINER) || pItem->IsType(IT_BOOK) )
 				return true;
@@ -2042,8 +2010,7 @@ CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, DIR_TYP
             uiMovementCan, ptDest.m_z, ptDest.m_z + m_zClimbHeight + uiHeight, ptDest.m_z + m_zClimbHeight + 2, ptDest.m_z, m_zClimbHeight);
     }
 
-    const bool fCanStand = CanStandAt(&ptDest, pArea, uiMovementCan, uiHeight, &blockingState, fPathFinding);
-    if (!fCanStand)
+    if (const bool fCanStand = CanStandAt(&ptDest, pArea, uiMovementCan, uiHeight, &blockingState, fPathFinding); !fCanStand)
         return nullptr;
 
     if (uiBlockFlags)

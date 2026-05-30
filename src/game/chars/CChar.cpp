@@ -394,8 +394,7 @@ void CChar::DeleteCleanup(bool fForce)
 
 	if (IsStatFlag(STATF_RIDDEN))
 	{
-		CItem* pItem = Horse_GetMountItem();
-		if (pItem)
+        if (CItem *pItem = Horse_GetMountItem())
 		{
 			pItem->m_itFigurine.m_UID.InitUID();    // unlink it first.
 			pItem->Delete(fForce);
@@ -461,8 +460,7 @@ bool CChar::Delete(bool fForce)
 	// Character has been deleted
 	if (IsClientActive())
 	{
-		CClient* pClient = GetClientActive();
-	    if (pClient)
+        if (CClient *pClient = GetClientActive())
 	    {
 	        pClient->CharDisconnect();
 	        pClient->GetNetState()->markReadClosed();
@@ -489,8 +487,7 @@ void CChar::ClientDetach()
 	// remove all trade windows.
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if (pItem->IsType(IT_EQ_TRADE_WINDOW) )
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_EQ_TRADE_WINDOW) )
 			pItem->Delete();
 	}
 	if ( !IsClientActive() )
@@ -499,8 +496,7 @@ void CChar::ClientDetach()
 	// If this char is on a IT_SHIP then we need to stop the ship !
 	if ( m_pArea && m_pArea->IsFlag( REGION_FLAG_SHIP ))
 	{
-		CItemShip * pShipItem = dynamic_cast <CItemShip *>( m_pArea->GetResourceID().ItemFindFromResource());
-		if ( pShipItem )
+        if ( CItemShip *pShipItem = dynamic_cast<CItemShip *>(m_pArea->GetResourceID().ItemFindFromResource()) )
 			pShipItem->Stop();
 	}
 
@@ -557,8 +553,7 @@ void CChar::SetDisconnected(CSector* pNewSector)
     RemoveFromView();	// Remove from views.
     MoveToRegion(nullptr, false);
 
-	CSector* pCurSector = GetTopPoint().GetSector();
-	if (pNewSector && (pNewSector != pCurSector))
+    if (CSector *pCurSector = GetTopPoint().GetSector(); pNewSector && (pNewSector != pCurSector))
 	{
 		if (!pNewSector->IsCharDisconnectedIn(this))
 			pNewSector->m_Chars_Disconnect.AddCharDisconnected(this);
@@ -583,8 +578,7 @@ void CChar::ClearPlayer()
     if ( m_pPlayer == nullptr )
         return;
 
-	CAccount* pAccount = m_pPlayer->GetAccount();
-	if (!pAccount)
+    if (CAccount *pAccount = m_pPlayer->GetAccount(); !pAccount)
 	{
 		g_Log.EventError("Player '%s' (UID 0%x) not attached to account?\n", GetName(), (dword)GetUID());
 	}
@@ -925,14 +919,12 @@ int CChar::FixWeirdness()
 
 	if ( IsStatFlag( STATF_HASSHIELD ))
 	{
-        const CItem * pShield = LayerFind( LAYER_HAND2 );
-		if ( pShield == nullptr )
+        if (const CItem *pShield = LayerFind(LAYER_HAND2); pShield == nullptr )
 			StatFlag_Clear( STATF_HASSHIELD );
 	}
 	if ( IsStatFlag( STATF_ONHORSE ))
 	{
-        const CItem * pHorse = LayerFind( LAYER_HORSE );
-		if ( pHorse == nullptr )
+        if (const CItem *pHorse = LayerFind(LAYER_HORSE); pHorse == nullptr )
 			StatFlag_Clear( STATF_ONHORSE );
 	}
 	if ( IsStatFlag( STATF_SPAWNED ))
@@ -942,8 +934,7 @@ int CChar::FixWeirdness()
 	}
 	if ( IsStatFlag( STATF_PET ))
 	{
-        const CItemMemory *pMemory = Memory_FindTypes( MEMORY_IPET );
-		if ( pMemory == nullptr )
+        if (const CItemMemory *pMemory = Memory_FindTypes(MEMORY_IPET); pMemory == nullptr )
 			StatFlag_Clear( STATF_PET );
 	}
 	if ( IsStatFlag( STATF_RIDDEN ))
@@ -969,8 +960,7 @@ int CChar::FixWeirdness()
 				return iResultCode;
 			}
 
-			const CPointMap& pt = pFigurine->GetTopLevelObj()->GetTopPoint();
-			if ( pt != GetTopPoint())
+            if (const CPointMap &pt = pFigurine->GetTopLevelObj()->GetTopPoint(); pt != GetTopPoint())
 			{
 				MoveToChar( pt, true, true );
 				SetDisconnected();
@@ -979,8 +969,7 @@ int CChar::FixWeirdness()
 	}
 	if ( IsStatFlag( STATF_CRIMINAL ))
 	{
-        const CItem * pMemory = LayerFind( LAYER_FLAG_Criminal );
-		if ( pMemory == nullptr )
+        if (const CItem *pMemory = LayerFind(LAYER_FLAG_Criminal); pMemory == nullptr )
 			StatFlag_Clear( STATF_CRIMINAL );
 	}
 
@@ -1005,8 +994,7 @@ int CChar::FixWeirdness()
 			for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 			{
 				const ushort uiSkillMax = Skill_GetMax((SKILL_TYPE)i);
-				const ushort uiSkillVal = Skill_GetBase((SKILL_TYPE)i);
-				if ( uiSkillVal > uiSkillMax * g_Cfg.m_iOverSkillMultiply )
+                if (const ushort uiSkillVal = Skill_GetBase((SKILL_TYPE)i); uiSkillVal > uiSkillMax * g_Cfg.m_iOverSkillMultiply )
 					Skill_SetBase((SKILL_TYPE)i, uiSkillMax);
 			}
 
@@ -1015,8 +1003,7 @@ int CChar::FixWeirdness()
 			{
 				for ( int j = STAT_STR; j < STAT_BASE_QTY; ++j )
 				{
-					const ushort uiStatMax = Stat_GetLimit((STAT_TYPE)j);
-					if ( Stat_GetAdjusted((STAT_TYPE)j) > (uiStatMax * g_Cfg.m_iOverSkillMultiply) )
+                    if (const ushort uiStatMax = Stat_GetLimit((STAT_TYPE)j); Stat_GetAdjusted((STAT_TYPE)j) > (uiStatMax * g_Cfg.m_iOverSkillMultiply) )
 						Stat_SetBase((STAT_TYPE)j, uiStatMax);
 				}
 			}
@@ -1194,8 +1181,7 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 	for ( int i = 0 ; i < LAYER_QTY; ++i)
 	{
         LAYER_TYPE layer = (LAYER_TYPE)i;
-		CItem * myLayer = LayerFind(layer);
-		if ( myLayer )
+        if ( CItem *myLayer = LayerFind(layer) )
 			myLayer->Delete();
 
         CItem * fromLayer = pChar->LayerFind( layer );
@@ -1209,32 +1195,26 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 			pItem->SetAttr(ATTR_NEWBIE);
 			if (pItem->IsType(IT_CONTAINER) )
 			{
-				CItemContainer* pContainer = static_cast<CItemContainer*>(pItem);
-				for (CSObjContRec* pObjRec : *pContainer)
+                for (CItemContainer *pContainer = dynamic_cast<CItemContainer *>(pItem); CSObjContRec * pObjRec : *pContainer)
 				{
 					CItem* pItemCont = static_cast<CItem*>(pObjRec);
 					pItemCont->SetAttr(ATTR_NEWBIE);
 
-					const CChar *pTest = CUID::CharFindFromUID(pItemCont->m_itNormal.m_more1);
-					if (pTest && pTest == pChar)
+                    if (const CChar *pTest = CUID::CharFindFromUID(pItemCont->m_itNormal.m_more1); pTest && pTest == pChar)
 						pItemCont->m_itNormal.m_more1 = myUID;
 
-					const CChar *pTest2 = CUID::CharFindFromUID(pItemCont->m_itNormal.m_more2);
-					if ( pTest2 && pTest2 == pChar )
+                    if (const CChar *pTest2 = CUID::CharFindFromUID(pItemCont->m_itNormal.m_more2); pTest2 && pTest2 == pChar )
 						pItemCont->m_itNormal.m_more2 = myUID;
 
-					const CChar *pTest3 = CUID::CharFindFromUID(pItemCont->m_uidLink);
-					if ( pTest3 && pTest3 == pChar )
+                    if (const CChar *pTest3 = CUID::CharFindFromUID(pItemCont->m_uidLink); pTest3 && pTest3 == pChar )
 						pItemCont->m_uidLink = myUID;
 				}
 			}
 		}
-		const CChar * pTest = CUID::CharFindFromUID(pItem->m_itNormal.m_more1);
-		if ( pTest && pTest == pChar)
+        if (const CChar *pTest = CUID::CharFindFromUID(pItem->m_itNormal.m_more1); pTest && pTest == pChar)
 			pItem->m_itNormal.m_more1 = myUID;
 
-		const CChar * pTest2 = CUID::CharFindFromUID(pItem->m_itNormal.m_more2);
-		if (pTest2)
+        if (const CChar *pTest2 = CUID::CharFindFromUID(pItem->m_itNormal.m_more2))
 		{
 			if (pTest2 == pChar)
 				pItem->m_itNormal.m_more2 = myUID;
@@ -1255,16 +1235,14 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 			}
 		}
 
-		CChar * pTest3 = CUID::CharFindFromUID(pItem->m_uidLink);
-		if (pTest3)
+        if (CChar *pTest3 = CUID::CharFindFromUID(pItem->m_uidLink))
 		{
 			if (pTest3 == pChar)
 				pItem->m_uidLink = myUID; //If the character being duped has an item which linked to himself, set the newly duped character link instead.
 			else if (IsSetOF(OF_PetSlots) &&  pItem->IsMemoryTypes(MEMORY_IPET) && pTest3 == NPC_PetGetOwner())
 			{
-                const short iFollowerSlots = GetFollowerSlots();
-				//If we have reached the maximum follower slots we remove the ownership of the pet by clearing the memory flag instead of using NPC_PetClearOwners().
-				if (!pTest3->FollowersUpdate(this, maximum(0, iFollowerSlots)))
+                //If we have reached the maximum follower slots we remove the ownership of the pet by clearing the memory flag instead of using NPC_PetClearOwners().
+				if (const short iFollowerSlots = GetFollowerSlots(); !pTest3->FollowersUpdate(this, maximum(0, iFollowerSlots)))
 					Memory_ClearTypes(MEMORY_IPET);
 			}
 		}
@@ -1323,8 +1301,7 @@ bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
             // Locate arguments for the called function
-			tchar* ptcArgs = strchr(ptcFunctionName, ' ');
-			if (ptcArgs)
+            if (tchar *ptcArgs = strchr(ptcFunctionName, ' '))
 			{
 				*ptcArgs = 0;
 				++ptcArgs;
@@ -1349,8 +1326,7 @@ bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
                     case ITC_SELL:
                     {
                         fBlockItemAttr = false; //Make sure we reset the value, if the last input is not a ITEM(NEWBIE) or CONTAINER.
-                        CItemContainer *pCont = GetBank((iCmd == ITC_SELL) ? LAYER_VENDOR_STOCK : LAYER_VENDOR_BUYS);
-                        if (pCont)
+                        if (CItemContainer *pCont = GetBank((iCmd == ITC_SELL) ? LAYER_VENDOR_STOCK : LAYER_VENDOR_BUYS))
                         {
                             pItem = CItem::CreateHeader(s.GetArgRaw(), pCont, false);
                             if (pItem)
@@ -1455,8 +1431,7 @@ bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
 		{
 			// I'm setting an attribute to myself, not the item (e.g. @Create trigger). Run that script line.
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-            TRIGRET_TYPE tRet = OnTriggerRun( s, TRIGRUN_SINGLE_EXEC, pScriptArgs, &g_Serv, nullptr );
-			if ((tRet == TRIGRET_RET_FALSE) && fFullInterp)
+            if (TRIGRET_TYPE tRet = OnTriggerRun(s, TRIGRUN_SINGLE_EXEC, pScriptArgs, &g_Serv, nullptr); (tRet == TRIGRET_RET_FALSE) && fFullInterp)
 				;
 			else if ( tRet != TRIGRET_RET_DEFAULT )
 			{
@@ -1686,8 +1661,7 @@ lpctstr CChar::GetName( bool fAllowAlt ) const
 {
 	if ( fAllowAlt )
 	{
-		lpctstr pAltName = GetKeyStr( "NAME.ALT" );
-		if ( pAltName && *pAltName )
+        if (lpctstr pAltName = GetKeyStr("NAME.ALT"); pAltName && *pAltName )
 			return pAltName;
 	}
 	if ( ! IsIndividualName() )			// allow some creatures to go unnamed.
@@ -1707,8 +1681,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 	ADDTOCALLSTACK("CChar::InitPlayer");
 	ASSERT(pClient);
 
-	CAccount *pAccount = pClient->GetAccount();
-	if ( pAccount )
+    if ( CAccount *pAccount = pClient->GetAccount() )
 		SetPlayerAccount(pAccount);
 
 	switch ( rtRace )
@@ -2202,8 +2175,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         return true;
     }
 
-	int i = FindTableHeadSorted( ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1 );
-	if ( i >= 0 )
+    if (int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
 		SKIP_SEPARATORS(ptcKey);
@@ -2339,8 +2311,7 @@ do_default:
 			return true;
 
 		// special write values
-		const SKILL_TYPE iSkill = g_Cfg.FindSkillKey(ptcKey);
-		if ( IsSkillBase(iSkill) )
+        if (const SKILL_TYPE iSkill = g_Cfg.FindSkillKey(ptcKey); IsSkillBase(iSkill) )
 		{
 			// Check some skill name.
 			const ushort uiVal = Skill_GetBase( iSkill );
@@ -2556,8 +2527,7 @@ do_default:
 					if ( !strnicmp(ptcKey, "ID", 2 ) )
 					{
 						ptcKey += 2;	// ID + whitspace
-						CChar * pChar = CUID(Exp_GetSingle(ptcKey)).CharFind();
-						if ( !NotoSave_GetID(pChar) )
+                        if (CChar *pChar = CUID(Exp_GetSingle(ptcKey)).CharFind(); !NotoSave_GetID(pChar) )
 							sVal.FormatVal( -1 );
 						else
 							sVal.FormatVal(NotoSave_GetID(pChar));
@@ -2813,8 +2783,7 @@ do_default:
 				if ( *ptcKey )
 				{
 					tchar * ppArgs[4];
-					int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs));
-					if ( iQty >= 2 )
+                    if (int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs)); iQty >= 2 )
 					{
 						SKILL_TYPE iSkill = g_Cfg.FindSkillKey( ppArgs[0] );
 						if ( iSkill == SKILL_NONE )
@@ -2858,8 +2827,7 @@ do_default:
 
 		case CHC_MOUNT:
 			{
-				CItem *pItem = LayerFind(LAYER_HORSE);
-				if ( pItem )
+            if ( CItem *pItem = LayerFind(LAYER_HORSE) )
 					sVal.FormatHex(pItem->m_itFigurine.m_UID);
 				else
                     sVal.SetValFalse();
@@ -2872,8 +2840,7 @@ do_default:
 
                 CPointMap ptDst = GetTopPoint();
 				ptDst.Move( GetDirStr( ptcKey ) );
-				CRegion * pArea = ptDst.GetRegion( REGION_TYPE_MULTI | REGION_TYPE_AREA );
-				if ( !pArea )
+                if (CRegion *pArea = ptDst.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA); !pArea )
 					sVal.FormatULLHex( UINT64_MAX );
 				else
 				{
@@ -2891,8 +2858,7 @@ do_default:
 			return true;
 		case CHC_GUILDABBREV:
 			{
-				lpctstr ptcAbbrev = Guild_Abbrev(MEMORY_GUILD);
-				if (ptcAbbrev)
+            if (lpctstr ptcAbbrev = Guild_Abbrev(MEMORY_GUILD))
 					sVal = ptcAbbrev;
 				else
 					sVal.Clear();
@@ -3006,8 +2972,7 @@ do_default:
 			break;
 		case CHC_TOWNABBREV:
 			{
-				lpctstr ptcAbbrev = Guild_Abbrev(MEMORY_TOWN);
-				if (ptcAbbrev)
+            if (lpctstr ptcAbbrev = Guild_Abbrev(MEMORY_TOWN))
 					sVal = ptcAbbrev;
 				else
 					sVal.Clear();
@@ -3024,8 +2989,7 @@ do_default:
 					ptcKey += 7;
 					SKIP_SEPARATORS(ptcKey);
 
-					CScriptObj * pRef = m_pPlayer->GetAccount();
-					if ( pRef )
+                    if ( CScriptObj *pRef = m_pPlayer->GetAccount() )
 					{
 						if ( pRef->r_WriteVal( ptcKey, sVal, pSrc ) )
 							break;
@@ -3076,8 +3040,7 @@ do_default:
 			break;
 		case CHC_ACTION:
 		{
-			const CSkillDef* pSkillDef = g_Cfg.GetSkillDef(Skill_GetActive());
-			if (pSkillDef != nullptr)
+            if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(Skill_GetActive()); pSkillDef != nullptr)
 				sVal = pSkillDef->GetKey();
 			else
 			{
@@ -3115,8 +3078,7 @@ do_default:
 		case CHC_DIR:
 			{
 				ptcKey +=3;
-				CChar * pChar = CUID::CharFindFromUID(Exp_GetSingle(ptcKey));
-				if ( pChar )
+                if ( CChar *pChar = CUID::CharFindFromUID(Exp_GetSingle(ptcKey)) )
 					sVal.FormatVal( GetDir(pChar) );
 				else
 					sVal.FormatVal( m_dirFace );
@@ -3302,8 +3264,8 @@ do_default:
 			goto do_default;
         case CHC_RANGE:
         {
-            const uchar iRangeH = GetRangeH(), iRangeL = GetRangeL();
-            if ( iRangeL == 0 )
+            const uchar iRangeH = GetRangeH();
+            if (const uchar iRangeL = GetRangeL(); iRangeL == 0 )
                 sVal.Format( "%hhd", iRangeH );
             else
                 sVal.Format( "%hhd,%hhd", iRangeH, iRangeL );
@@ -3392,8 +3354,7 @@ bool CChar::r_LoadVal( CScript & s )
             // I'm probably loading from a save, or that's a very weird way to add a follower...
             //  Anyways, i expect the followers to be passed with sequential incremental ids: 0, 1, 2... Not random order.
 
-            const uint uiIndex = Exp_GetUVal(ptcKey);
-            if (uiIndex != m_followers.size())
+            if (const uint uiIndex = Exp_GetUVal(ptcKey); uiIndex != m_followers.size())
                 return false;
 
             int64 piVals[2]{};
@@ -3451,8 +3412,7 @@ bool CChar::r_LoadVal( CScript & s )
 		}
 
         // special load values
-		int i = g_Cfg.FindSkillKey( ptcKey );
-		if ( IsSkillBase((SKILL_TYPE)i) )
+        if (int i = g_Cfg.FindSkillKey(ptcKey); IsSkillBase((SKILL_TYPE)i) )
 		{
 			// Check some skill name.
 			Skill_SetBase((SKILL_TYPE)i, s.GetArgUSVal() );
@@ -3550,8 +3510,7 @@ bool CChar::r_LoadVal( CScript & s )
                 const CUID cuid(s.GetArgDWVal());
                 for (auto it = m_followers.begin(); it != m_followers.end();)
                 {
-                    auto &[uid, followerslots] = *it;
-                    if (uid != cuid)
+                    if (auto &[uid, followerslots] = *it; uid != cuid)
                     {
                         ++it;
                         continue;
@@ -3754,9 +3713,8 @@ bool CChar::r_LoadVal( CScript & s )
                     {
                         if (!m_lastAttackers.empty())
                         {
-                            int idx      = s.GetArgVal();
-                            CChar *pChar = CUID::CharFindFromUID(idx);
-                            if (!pChar)
+                            int idx = s.GetArgVal();
+                            if (CChar *pChar = CUID::CharFindFromUID(idx); !pChar)
                                 return false;
                             Attacker_Delete(idx, false, ATTACKER_CLEAR_SCRIPT);
                         }
@@ -3957,8 +3915,7 @@ bool CChar::r_LoadVal( CScript & s )
 				if ( s.GetArgStr() )
 				{
 					tchar * ppArgs[4];
-                    int iQty = Str_ParseCmds(s.GetArgStr(), ppArgs, std::size(ppArgs));
-					if ( iQty >= 2 )
+                    if (int iQty = Str_ParseCmds(s.GetArgStr(), ppArgs, std::size(ppArgs)); iQty >= 2 )
 					{
 						SKILL_TYPE iSkill = g_Cfg.FindSkillKey( ppArgs[0] );
 						if ( iSkill == SKILL_NONE )
@@ -3974,8 +3931,7 @@ bool CChar::r_LoadVal( CScript & s )
 		case CHC_MEMORY:
 			{
 				int64 piCmd[2];
-				int iArgQty = Str_ParseCmds( s.GetArgStr(), piCmd, std::size(piCmd));
-				if ( iArgQty < 2 )
+                if (int iArgQty = Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd)); iArgQty < 2 )
 					return false;
 
 				const CUID uid((dword)piCmd[0]);
@@ -4068,8 +4024,7 @@ bool CChar::r_LoadVal( CScript & s )
                 if (newGold < 0)
                     return false;
 
-                int currentGold = ContentCount(CResourceID(RES_TYPEDEF, IT_GOLD));
-                if (newGold < currentGold)
+                if (int currentGold = ContentCount(CResourceID(RES_TYPEDEF, IT_GOLD)); newGold < currentGold)
                 {
                     ContentConsume(CResourceID(RES_TYPEDEF, IT_GOLD), currentGold - newGold);
                 }
@@ -4142,8 +4097,7 @@ void CChar::r_Write( CScript & s )
 	if ( m_pNPC )
 		m_pNPC->r_WriteChar(this, s);
 
-	const CPointMap& pt = GetTopPoint();
-	if (pt.IsValidPoint())
+    if (const CPointMap &pt = GetTopPoint(); pt.IsValidPoint())
 		s.WriteKeyStr("P", pt.WriteUsed());
 
 	if ( !m_sTitle.IsEmpty() )
@@ -4169,19 +4123,16 @@ void CChar::r_Write( CScript & s )
     if (m_CanMask)
         s.WriteKeyHex("CANMASK", m_CanMask);
 
-    const CREID_TYPE iDispID = GetDispID();
-    if (iDispID != GetID())
+    if (const CREID_TYPE iDispID = GetDispID(); iDispID != GetID())
         s.WriteKeyStr("DISPID", g_Cfg.ResourceGetName(CResourceID(RES_CHARDEF, iDispID)));
 
-	const uint uiActUID = m_Act_UID.GetObjUID();
-	if ((uiActUID & UID_UNUSED) != UID_UNUSED)
+    if (const uint uiActUID = m_Act_UID.GetObjUID(); (uiActUID & UID_UNUSED) != UID_UNUSED)
 		s.WriteKeyHex("ACT", uiActUID);
 
 	if ( m_Act_p.IsValidPoint() )
 		s.WriteKeyStr("ACTP", m_Act_p.WriteUsed());
 
-	const SKILL_TYPE action = Skill_GetActive();
-	if (action != SKILL_NONE)
+    if (const SKILL_TYPE action = Skill_GetActive(); action != SKILL_NONE)
 	{
 		const CSkillDef* pSkillDef = g_Cfg.GetSkillDef(action);
 		tchar* pszActionTemp;
@@ -4291,8 +4242,7 @@ void CChar::r_Write( CScript & s )
 	};
 	for (ushort j = 0; j < STAT_QTY; ++j)
 	{
-		const int64 iRegen = Stats_GetRegenRate((STAT_TYPE)j); //we cannot use ushort here because by default REGENFOOD has a value higher than 65k.
-		if ((iRegen >= 1) && (iRegen != g_Cfg.m_iRegenRate[j]))
+        if (const int64 iRegen = Stats_GetRegenRate((STAT_TYPE)j); (iRegen >= 1) && (iRegen != g_Cfg.m_iRegenRate[j]))
 			s.WriteKeyVal(_ptcKeyRegen[j], iRegen / MSECS_PER_SEC);
 	}
     static constexpr lpctstr _ptcKeyRegenVal[STAT_QTY] =
@@ -4304,8 +4254,7 @@ void CChar::r_Write( CScript & s )
     };
     for (ushort j = 0; j < STAT_QTY; ++j)
     {
-        const ushort uiRegenVal = Stats_GetRegenVal((STAT_TYPE)j);
-        if (uiRegenVal > 1)
+        if (const ushort uiRegenVal = Stats_GetRegenVal((STAT_TYPE)j); uiRegenVal > 1)
             s.WriteKeyVal(_ptcKeyRegenVal[j], uiRegenVal);
     }
 
@@ -4357,8 +4306,7 @@ bool CChar::r_Load( CScript & s ) // Load a character from script
 	{
 		SetDisconnected();
 	}
-	int iResultCode = CObjBase::IsWeird();
-	if ( iResultCode )
+    if ( int iResultCode = CObjBase::IsWeird() )
 	{
 		DEBUG_ERR(( "Char 0%x Invalid, id='%s', code=0%x\n", (dword)GetUID(), GetResourceName(), iResultCode ));
 		Delete();
@@ -4509,8 +4457,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 		case CHV_CRIMINAL:
 			if (s.HasArgs() && !s.GetArgVal())
 			{
-				CItem * pMemoryCriminal = LayerFind(LAYER_FLAG_Criminal);
-                if (pMemoryCriminal)
+                if (CItem *pMemoryCriminal = LayerFind(LAYER_FLAG_Criminal))
                 {
                     pMemoryCriminal->Delete();
                 }
@@ -4562,8 +4509,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				ASSERT(pItem);
 				if ( s.HasArgs())	// how long to last ?
 				{
-					int64 iTimer = s.GetArgLLVal();
-					if ( iTimer > 0 )
+                    if (int64 iTimer = s.GetArgLLVal(); iTimer > 0 )
 						pItem->SetTimeout(iTimer);
 
 					//pItem->Item_GetDef()->m_ttNormal.m_tData4 = 0; // why would we alter the itemdef data?
@@ -4588,8 +4534,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			}
             if (IsStrNumeric(pszVerbArg))
             {
-                CObjBase *pTowards = CUID::ObjFindFromUID(s.GetArgVal());
-                if (pTowards != nullptr)
+                if (CObjBase *pTowards = CUID::ObjFindFromUID(s.GetArgVal()); pTowards != nullptr)
                 {
                     UpdateDir(pTowards);
                     break;
@@ -4734,8 +4679,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 
 		case CHV_MOUNT:
 			{
-				CChar *pChar = CUID::CharFindFromUID(s.GetArgVal());
-				if ( pChar )
+            if ( CChar *pChar = CUID::CharFindFromUID(s.GetArgVal()) )
 					Horse_Mount(pChar);
 			}
 			break;
@@ -4772,8 +4716,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			{
 				if ( m_pNPC && !m_pPlayer && !IsStatFlag(STATF_CONJURED) )
 				{
-					CItem *pItem = CItem::CreateHeader(s.GetArgStr(), nullptr, false, this);
-					if ( !pItem )
+                    if (CItem *pItem = CItem::CreateHeader(s.GetArgStr(), nullptr, false, this); !pItem )
                     {
 						g_World.m_uidNew.ClearUID();
                     }
@@ -4799,8 +4742,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
             if (!s.HasArgs())   // If there are no args, direct call on NPC_PetSetOwner.
                 return NPC_PetSetOwner(pCharSrc);
 
-			CChar * pChar = CUID::CharFindFromUID(s.GetArgDWVal()); // otherwise we try to run it from the CChar with the given UID.
-            if (pChar)
+            if (CChar *pChar = CUID::CharFindFromUID(s.GetArgDWVal()))
                 return pChar->NPC_PetSetOwner(this);
             return false;   // Something went wrong, giving a warning of it.
         }
@@ -4967,8 +4909,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 					}
 					else
 					{
-						const CRegion * pRoom = GetTopPoint().GetRegion( REGION_TYPE_ROOM );
-						if ( ! pRoom )
+                        if (const CRegion *pRoom = GetTopPoint().GetRegion(REGION_TYPE_ROOM); ! pRoom )
 							snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_WHERE_AREA), m_pArea->GetName(), GetTopPoint().WriteUsed());
 						else
 							snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_WHERE_ROOM), m_pArea->GetName(), pRoom->GetName(), GetTopPoint().WriteUsed());
@@ -5007,14 +4948,11 @@ bool CChar::OnTriggerSpeech( bool bIsPet, lpctstr pszText, CChar * pSrc, TALKMOD
 		goto lbl_cchar_ontriggerspeech;
 
 	{
-		CScriptObj * pDef = g_Cfg.RegisteredResourceGetDefByName( RES_SPEECH, pszName );
-		if ( pDef )
+        if ( CScriptObj *pDef = g_Cfg.RegisteredResourceGetDefByName(RES_SPEECH, pszName) )
 		{
-			CResourceLink * pLink	= dynamic_cast <CResourceLink *>( pDef );
-			if ( pLink )
+            if ( CResourceLink *pLink = dynamic_cast<CResourceLink *>(pDef) )
 			{
-				CResourceLock	s;
-				if ( pLink->ResourceLock(s) && pLink->HasTrigger(XTRIG_UNKNOWN) )
+                if (CResourceLock s; pLink->ResourceLock(s) && pLink->HasTrigger(XTRIG_UNKNOWN) )
 				{
 					TRIGRET_TYPE iRet = OnHearTrigger(s, pszText, pSrc, mode, wHue);
 					if ( iRet == TRIGRET_RET_TRUE )
@@ -5137,8 +5075,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 			// limiting delta to current level? check if delta goes out of level
 			if (g_Cfg.m_fLevelSystem && g_Cfg.m_iExperienceMode&EXP_MODE_DOWN_NOLEVEL)
 			{
-				uint exp = Calc_ExpGet_Exp(m_level);
-                if (iExpDelta + m_exp < exp)
+                if (uint exp = Calc_ExpGet_Exp(m_level); iExpDelta + m_exp < exp)
                     iExpDelta = (llong)exp - m_exp;
 			}
 		}
@@ -5172,9 +5109,8 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 		{
 			int iWord = 0;
             llong absval = abs(iExpDelta);
-			llong maxval = (g_Cfg.m_fLevelSystem && g_Cfg.m_iLevelNextAt) ? maximum(g_Cfg.m_iLevelNextAt, 1000) : 1000;
 
-			if (absval >= maxval)				// 100%
+            if (llong maxval = (g_Cfg.m_fLevelSystem && g_Cfg.m_iLevelNextAt) ? maximum(g_Cfg.m_iLevelNextAt, 1000) : 1000; absval >= maxval)				// 100%
 				iWord = 7;
 			else if (absval >= (maxval * 2) / 3)//  66%
 				iWord = 6;
@@ -5197,9 +5133,8 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 
 	if (g_Cfg.m_fLevelSystem)
 	{
-		llong level = Calc_ExpGet_Level(m_exp);
 
-		if (level != m_level)
+        if (llong level = Calc_ExpGet_Level(m_exp); level != m_level)
 		{
             iExpDelta = level - m_level;
 
@@ -5251,21 +5186,18 @@ bool CChar::CanConsume(CItem* pItem, word iQty)
     if (iQty <= iQtyMax)
         return true;
 
-    CObjBaseTemplate* pTopObj = pItem->GetTopLevelObj();
-    if (!pTopObj)
+    if (CObjBaseTemplate *pTopObj = pItem->GetTopLevelObj(); !pTopObj)
         iQty = iQty - iQtyMax;
     else if (pTopObj)
     {
-        CChar* pTopChar = dynamic_cast<CChar*>(pTopObj);
-        if (pTopObj == pItem || (pTopChar && pTopChar != this))
+        if (CChar *pTopChar = dynamic_cast<CChar *>(pTopObj); pTopObj == pItem || (pTopChar && pTopChar != this))
             iQty = iQty - iQtyMax;
     }
 
     if (IsContainer())
     {
         CItemBase* pItemDef = pItem->Item_GetDef();
-        CContainer* pCont = this;
-        if (pCont)
+        if (CContainer *pCont = this)
         {
             CResourceQtyArray Resources;
             Resources.Load(pItemDef->GetResourceName());
@@ -5295,13 +5227,11 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
     }
 
     iQty = iQty - iQtyMax;
-    CItemBase *pItemDef = pItem->Item_GetDef();
-    if (pItemDef)
+    if (CItemBase *pItemDef = pItem->Item_GetDef())
     {
         lpctstr resName = pItemDef->GetResourceName();
         pItem->Delete();
-        CContainer *pCont = this;
-        if (pCont)
+        if (CContainer *pCont = this)
         {
             CResourceQtyArray Resources;
             Resources.Load(resName);

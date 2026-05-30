@@ -252,8 +252,7 @@ void CWorldThread::CloseAllUIDs()
 
     for (auto const& elem : m_ObjNew)
     {
-        auto itObjDel = std::ranges::find(m_ObjDelete, elem);
-        if (itObjDel != m_ObjDelete.end()) {
+        if (auto itObjDel = std::ranges::find(m_ObjDelete, elem); itObjDel != m_ObjDelete.end()) {
             // Avoid duplicates between the containers, for some reason it happens...
             // This will just remove the pointer from the container, it doesn't call the destructor.'
             // Not doing this might result in a double free.
@@ -377,8 +376,7 @@ setcount:
 
 successalloc:
 	_dwUIDIndexLast = dwIndex; // start from here next time so we have even distribution of allocation.
-	CObjBase *pObjPrv = _ppUIDObjArray[dwIndex];
-	if ( pObjPrv )
+    if ( CObjBase *pObjPrv = _ppUIDObjArray[dwIndex] )
 	{
 		//NOTE: We cannot use Delete() in here because the UID will
 		//	still be assigned til the async cleanup time. Delete() will not work here!
@@ -412,13 +410,11 @@ void CWorldThread::AddIdleObj(CSObjContRec* obj)
 void CWorldThread::ScheduleObjDeletion(CSObjContRec* obj)
 {
     // If the world is being destroyed, do not schedule the object for deletion but delete it right away.
-    const auto servMode = g_Serv.GetServerMode();
     // I can't destroy it while ServMode::LoadingScripts/Saves, because the script parser can't know (without creating a global state holder, TODO) that this
     //  object was deleted/destroyed. The object pointer will become invalid, and if something uses it, even for calling a method, Sphere will crash.
     //const bool fDestroy = g_Serv.IsDestroyingWorld();
-    const bool fDestroy = (servMode == ServMode::Exiting);
 
-    if (fDestroy)
+    if (const auto servMode = g_Serv.GetServerMode(); servMode == ServMode::Exiting)
     {
         obj->RemoveSelf();
         delete obj;
@@ -507,8 +503,7 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 		// is it a real error ?
 		if ( pObj->IsItem())
 		{
-			CItem * pItem = dynamic_cast <CItem*>(pObj);
-			if ( pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
+            if (CItem *pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
 			{
                 ReportGarbageCollection(pObj, iResultCode);
 				pObj->Delete();
@@ -520,8 +515,7 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 
 		if ( iResultCode == 0x1203 || iResultCode == 0x1103 )
 		{
-			CChar * pChar = dynamic_cast <CChar*>(pObj);
-			if ( pChar )
+            if ( CChar *pChar = dynamic_cast<CChar *>(pObj) )
 				pChar->Skill_Start( NPCACT_RIDDEN );
 		}
 		else
@@ -545,15 +539,13 @@ void CWorldThread::GarbageCollection_NewObjs()
 	ADDTOCALLSTACK("CWorldThread::GarbageCollection_NewObjs");
 	EXC_TRY("GarbageCollection_NewObjs");
 	// Clean up new objects that are never placed.
-	size_t iObjCount = m_ObjNew.GetContentCount();
-	if (iObjCount > 0 )
+    if (size_t iObjCount = m_ObjNew.GetContentCount(); iObjCount > 0 )
 	{
 		g_Log.Event(LOGL_ERROR, "GC: %" PRIuSIZE_T " unplaced objects!\n", iObjCount);
 
 		for (size_t i = 0; i < iObjCount; ++i)
 		{
-            auto itObjDel = std::ranges::find(m_ObjDelete, m_ObjNew.data()[i]);
-            if (itObjDel != m_ObjDelete.end()) {
+            if (auto itObjDel = std::ranges::find(m_ObjDelete, m_ObjNew.data()[i]); itObjDel != m_ObjDelete.end()) {
                 // This will just remove the pointer from the container, it doesn't call the destructor.'
                 // Not doing this might result in a double free.
                 m_ObjDelete.erase(itObjDel);
@@ -575,8 +567,7 @@ void CWorldThread::GarbageCollection_NewObjs()
 	// Clean up GM pages not linked to an valid char/account
 	for (auto it = g_World.m_GMPages.begin(); it != g_World.m_GMPages.end();)
 	{
-		std::unique_ptr<CGMPage>& pGMPage = *it;
-		if (!pGMPage->m_uidChar.CharFind())
+        if (std::unique_ptr<CGMPage> &pGMPage = *it; !pGMPage->m_uidChar.CharFind())
 		{
 			DEBUG_ERR(("GC: Deleted GM Page linked to invalid char (UID=0%x)\n", (dword)(pGMPage->m_uidChar)));
 			it = g_World.m_GMPages.erase(it);
@@ -612,8 +603,7 @@ void CWorldThread::GarbageCollection_UIDs()
 				continue;
 
 			// Look for anomalies and fix them (that might mean delete it.)
-			int iResultCode = FixObj(pObj, i);
-			if ( iResultCode )
+            if ( FixObj(pObj, i) )
 			{
                 if (pObj->_IsBeingDeleted() || pObj->IsDeleted())
                 {
@@ -660,9 +650,8 @@ void CWorldThread::GarbageCollection_UIDs()
 
 		for ( dword d = 1; d < GetUIDCount(); ++d )
 		{
-			CObjBase *pObj = _ppUIDObjArray[d];
 
-			if ( !pObj )
+            if (CObjBase *pObj = _ppUIDObjArray[d]; !pObj )
 			{
 				if ( _dwFreeUIDOffset >= ( FREE_UIDS_SIZE - 1 ))
 					break;
@@ -830,8 +819,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 		}
 		else
 		{
-			CSector* s = _Sectors.GetSectorAbsolute(_iSaveStage);
-			if (s)
+            if (CSector *s = _Sectors.GetSectorAbsolute(_iSaveStage))
 			{
 				s->r_Write();
 			}
@@ -1108,11 +1096,9 @@ bool CWorld::CheckAvailableSpaceForSave(bool fStatics)
     auto CalcPrevSavesSize = [=, &fSizeErr, &uiPreviousSaveSize](lpctstr ptcSaveName) -> void
     {
         struct stat st;
-        CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT;
-		if (!stat(strSaveFile.GetBuffer(), &st))
+        if (CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
 		{
-			const ullong uiCurSavefileSize = (ullong)st.st_size;
-			if (uiCurSavefileSize == 0)
+            if (const ullong uiCurSavefileSize = (ullong)st.st_size; uiCurSavefileSize == 0)
 				fSizeErr = true;
 			else
 				uiPreviousSaveSize += uiCurSavefileSize;
@@ -1611,8 +1597,7 @@ bool CWorld::r_LoadVal( CScript &s )
 	ADDTOCALLSTACK("CWorld::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	lpctstr	ptcKey = s.GetKey();
-	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
+    switch (lpctstr ptcKey = s.GetKey(); FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case WC_PREVBUILD:
 			m_iPrevBuild = s.GetArgVal();
@@ -1690,8 +1675,7 @@ void CWorld::Restock()
 			if ( pResDef == nullptr || ( pResDef->GetResType() != RES_ITEMDEF ))
 				continue;
 
-			CItemBase * pBase = dynamic_cast<CItemBase *>(pResDef);
-			if ( pBase != nullptr )
+            if (CItemBase *pBase = dynamic_cast<CItemBase *>(pResDef); pBase != nullptr )
 				pBase->Restock();
 		}
 	}

@@ -272,9 +272,8 @@ void CNTWindow::List_AddSingle(COLORREF color, LPCTSTR ptcText)
     constexpr int iMaxTextLen = (64 * 1024);
 
 	const int iTextLen = (int)strlen(ptcText);
-	const int iNewLen = m_iLogTextLen + iTextLen;
 
-	if ( iNewLen > iMaxTextLen )
+    if (const int iNewLen = m_iLogTextLen + iTextLen; iNewLen > iMaxTextLen )
 	{
 		const int iCut = iNewLen - iMaxTextLen;
 
@@ -321,9 +320,7 @@ void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 		iTotalTextLen += co->GetTextString().GetLength();
 	}
 
-	const int iNewLen = m_iLogTextLen + iTotalTextLen;
-
-	if (iNewLen > iMaxTextLen)
+    if (const int iNewLen = m_iLogTextLen + iTotalTextLen; iNewLen > iMaxTextLen)
 	{
 		int iCut = iNewLen - iMaxTextLen;
 		iCut = minimum(iCut, iMaxTextLen);
@@ -387,8 +384,7 @@ bool CNTWindow::RegisterClass(char *className)	// static
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = className;
 
-	ATOM frc = ::RegisterClass( &wc );
-	if ( !frc )
+    if (ATOM frc = ::RegisterClass(&wc); !frc )
 	{
 		return false;
 	}
@@ -476,8 +472,7 @@ LRESULT CNTWindow::OnUserTrayNotify( WPARAM wID, LPARAM lEvent )
 			HMENU hMenu = theApp.LoadMenu( IDM_POP_TRAY );
 			if ( hMenu == nullptr )
 				break;
-			HMENU hMenuPop = GetSubMenu(hMenu,0);
-			if ( hMenuPop )
+            if ( HMENU hMenuPop = GetSubMenu(hMenu, 0) )
 			{
 				POINT point;
 				if ( GetCursorPos( &point ))
@@ -678,8 +673,7 @@ void CNTWindow::SetLogFont( const char * pszFont )
 
 		// calculate height for a 10pt font, some systems can produce an unreadable
 		// font size if we let CreateFontIndirect pick a system default size
-		HDC hdc = GetDC(nullptr);
-		if (hdc != nullptr)
+        if (HDC hdc = GetDC(nullptr); hdc != nullptr)
 		{
 			logfont.lfHeight = IMulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72);
 			ReleaseDC(nullptr, hdc);
@@ -702,8 +696,7 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 	{
 	case EN_LINK:
 		{
-			ENLINK * pLink = (ENLINK *)(pnmh);
-			if ( pLink->msg == WM_LBUTTONDOWN )
+        if (ENLINK *pLink = (ENLINK *)(pnmh); pLink->msg == WM_LBUTTONDOWN )
 				return 1;
 			break;
 		}
@@ -721,8 +714,7 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 					HMENU hMenu = theApp.LoadMenu( IDM_POP_LOG );
 					if ( !hMenu )
 						return 0;
-					HMENU hMenuPop = GetSubMenu(hMenu,0);
-					if ( hMenuPop )
+                    if ( HMENU hMenuPop = GetSubMenu(hMenu, 0) )
 					{
 						POINT point;
 						if ( GetCursorPos( &point ))
@@ -748,8 +740,7 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 						break;
 
 					//	use dclick to open the corresponding script file
-					TCHAR * pos = strstr(zTemp, SPHERE_SCRIPT_EXT);
-					if ( pos != nullptr )
+                    if (TCHAR *pos = strstr(zTemp, SPHERE_SCRIPT_EXT); pos != nullptr )
 					{
 						//	use two formats of file names:
 						//		Loading filepath/filename/name.scp
@@ -801,14 +792,12 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 								TCHAR * z = Str_GetTemp();
 								if (GetFullPathName(filePath, THREAD_STRING_LENGTH, z, nullptr) > 0)
 								{
-									INT_PTR r = reinterpret_cast<INT_PTR>(ShellExecute(nullptr, nullptr, z, nullptr, nullptr, SW_SHOW));
-									if (r > 32)
+                                    if (INT_PTR r = reinterpret_cast<INT_PTR>(ShellExecute(nullptr, nullptr, z, nullptr, nullptr, SW_SHOW)); r > 32)
 										return 1;
 								}
 
 								// failure occurred
-								int errorCode = CSFile::GetLastError();
-								if (CSError::GetSystemErrorMessage(errorCode, z, THREAD_STRING_LENGTH) > 0)
+                                if (int errorCode = CSFile::GetLastError(); CSError::GetSystemErrorMessage(errorCode, z, THREAD_STRING_LENGTH) > 0)
 									g_Log.Event(LOGL_WARN, "Failed to open '%s' code=%d (%s).\n", filePath, errorCode, z);
 								else
 									g_Log.Event(LOGL_WARN, "Failed to open '%s' code=%d.\n", filePath, errorCode);
@@ -823,8 +812,7 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 					// Should we allow CTL C etc ?
 					if ( pMsg->lParam & (1<<29))	// ALT
 						return 0;
-					SHORT sState = GetKeyState( VK_CONTROL );
-					if ( sState & 0xff00 )
+                    if (SHORT sState = GetKeyState(VK_CONTROL); sState & 0xff00 )
 						return 0;
 					m_wndInput.SetFocus();
 					m_wndInput.PostMessage( WM_CHAR, pMsg->wParam, pMsg->lParam );
@@ -901,8 +889,7 @@ bool CNTWindow::NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLine, int nCmdSho
 	char	className[32] = SPHERE_TITLE;
 	TCHAR	*argv[32];
 	argv[0] = nullptr;
-	int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " \t") + 1;
-	if (( argc > 1 ) && _IS_SWITCH(*argv[1]) )
+    if (int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " \t") + 1; ( argc > 1 ) && _IS_SWITCH(*argv[1]) )
 	{
 		if ( toupper(argv[1][1]) == 'C' )
 		{
@@ -942,8 +929,7 @@ void CNTWindow::NTWindow_DeleteIcon()
 void CNTWindow::NTWindow_ExitServer()
 {
 	// Unattach the window.
-	int iExitFlag = g_Serv.GetExitFlag();
-	if ( iExitFlag < 0 )
+    if (int iExitFlag = g_Serv.GetExitFlag(); iExitFlag < 0 )
 	{
 		TCHAR *pszMsg = Str_GetTemp();
 		sprintf(pszMsg, "Server terminated by error %d!", iExitFlag);

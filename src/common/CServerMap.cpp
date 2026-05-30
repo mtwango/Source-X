@@ -368,8 +368,7 @@ void CServerStaticsBlock::LoadStatics( dword ulBlockIndex, int map )
 	// NOTE: What is index.m_wVal3 and index.m_wVal4 in VERFILE_STAIDX ?
 	ASSERT( m_iStatics == 0 );
 
-	CUOIndexRec index;
-	if ( g_Install.ReadMulIndex(g_Install.m_Staidx[g_MapList.GetMapFileNum(map)], ulBlockIndex, index) )
+    if (CUOIndexRec index; g_Install.ReadMulIndex(g_Install.m_Staidx[g_MapList.GetMapFileNum(map)], ulBlockIndex, index) )
 	{
 		// make sure that the statics block length is valid
 		if ((index.GetBlockLength() % sizeof(CUOStaticItemRec)) != 0)
@@ -448,8 +447,7 @@ void CServerMapBlock::Load( int bx, int by )
 	if ( g_Cfg.m_fUseMapDiffs && g_MapList.m_pMapDiffCollection )
 	{
 		// Check to see if the terrain or statics in this block is patched
-		CServerMapDiffBlock * pDiffBlock = g_MapList.m_pMapDiffCollection->GetAtBlock( uiBlockIndex, g_MapList.GetMapFileNum(m_map));
-		if ( pDiffBlock )
+        if ( CServerMapDiffBlock *pDiffBlock = g_MapList.m_pMapDiffCollection->GetAtBlock(uiBlockIndex, g_MapList.GetMapFileNum(m_map)) )
 		{
 			if ( pDiffBlock->m_pTerrainBlock )
 			{
@@ -482,8 +480,8 @@ void CServerMapBlock::Load( int bx, int by )
 		{
 			for ( int i = 0; i < MAP_SUPPORTED_QTY; ++i )
 			{
-				auto [dwFirstBlock, dwLastBlock, qwAdress] = g_Install.m_UopMapAddress[iMapNumber][i];
-				if ((uiBlockIndex <= dwLastBlock ) && (uiBlockIndex >= dwFirstBlock ))
+                if (auto [dwFirstBlock, dwLastBlock, qwAdress] = g_Install.m_UopMapAddress[iMapNumber][i];
+                    (uiBlockIndex <= dwLastBlock ) && (uiBlockIndex >= dwFirstBlock ))
 				{
 					fileOffset = (dword)(qwAdress + ((uiBlockIndex - dwFirstBlock)*196LL));
 					break;
@@ -699,10 +697,9 @@ void CServerMapDiffCollection::LoadMapDiffs()
 		// Load Mapdif Files
 		{
 			CSFile * pFileMapdif	= &(g_Install.m_Mapdif[map]);
-			CSFile * pFileMapdifl	= &(g_Install.m_Mapdifl[map]);
 
-			// Check that the relevant dif files are available
-			if ( pFileMapdif->IsFileOpen() && pFileMapdifl->IsFileOpen() )
+            // Check that the relevant dif files are available
+			if (CSFile *pFileMapdifl = &(g_Install.m_Mapdifl[map]); pFileMapdif->IsFileOpen() && pFileMapdifl->IsFileOpen() )
 			{
 				// Make sure that we're at the beginning of the files
 				pFileMapdif->SeekToBegin();
@@ -712,9 +709,9 @@ void CServerMapDiffCollection::LoadMapDiffs()
 				if (iLength <= 0)
 					continue;
 				dword dwLength = (dword)iLength;
-				dword dwOffset = 0, dwRead = 0;
+				dword dwOffset = 0;
 
-				for ( ; dwRead < dwLength; dwOffset += sizeof(CUOMapBlock) )
+				for (dword dwRead = 0; dwRead < dwLength; dwOffset += sizeof(CUOMapBlock) )
 				{
 					dword dwBlockId = 0;
 					dwRead += (dword)pFileMapdifl->Read( &dwBlockId, sizeof(dwBlockId) );
@@ -761,9 +758,9 @@ void CServerMapDiffCollection::LoadMapDiffs()
 			if (iLength <= 0)
 				continue;
 			dword dwLength = (dword)iLength;
-			dword dwOffset = 0, dwRead = 0;
+			dword dwOffset = 0;
 
-			for ( ; dwRead < dwLength; dwOffset += sizeof(CUOIndexRec) )
+			for (dword dwRead = 0; dwRead < dwLength; dwOffset += sizeof(CUOIndexRec) )
 			{
 				dword dwBlockId = 0;
 				dwRead += (dword)pFileStadifl->Read( &dwBlockId, sizeof(dwBlockId) );

@@ -60,8 +60,7 @@ bool CWorldClock::Advance()
 
 	_timeClock = timeClock_New;
 	// Maths here are done with MSECs precision, if proceed we advance a server's TICK.
-	const CServerTime timeCur = GetCurrentTime();
-	if (_timeNextTick <= timeCur)
+    if (const CServerTime timeCur = GetCurrentTime(); _timeNextTick <= timeCur)
 	{
 		_timeNextTick = timeCur + MSECS_PER_TICK;	// Next hit time.
 		++_iTickCur;

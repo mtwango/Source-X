@@ -172,8 +172,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
         if (pChar->IsDisconnected() && pChar->m_pNPC)
             continue;
 
-        int zdiff = pChar->GetTopZ() - iShipHeight;
-        if ((zdiff < -2) || (zdiff > PLAYER_HEIGHT))
+        if (int zdiff = pChar->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
             continue;
 
         ppObjList[uiCount++] = pChar;
@@ -200,8 +199,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
         if (pItem->IsAttr(ATTR_STATIC))
             continue;
 
-        int zdiff = pItem->GetTopZ() - iShipHeight;
-        if ((zdiff < -2) || (zdiff > PLAYER_HEIGHT))
+        if (int zdiff = pItem->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
             continue;
 
         ppObjList[uiCount++] = pItem;
@@ -220,11 +218,9 @@ void CCMultiMovable::SetPilot(CChar *pChar)
 	Stop();
 
 	// Remove memory on previous pilot
-	CChar *pCharPrev = pItemThis->m_itShip.m_Pilot.CharFind();
-	if (pCharPrev && (pCharPrev == pChar))
+    if (CChar *pCharPrev = pItemThis->m_itShip.m_Pilot.CharFind(); pCharPrev && (pCharPrev == pChar))
 	{
-		CItem *pMemoryPrev = pCharPrev->ContentFind(CResourceID(RES_ITEMDEF, ITEMID_SHIP_PILOT));
-		if (pMemoryPrev)
+        if (CItem *pMemoryPrev = pCharPrev->ContentFind(CResourceID(RES_ITEMDEF, ITEMID_SHIP_PILOT)))
 		{
 			pMemoryPrev->Delete();
 			pCharPrev->SysMessageDefault(DEFMSG_SHIP_PILOT_OFF);
@@ -291,8 +287,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
     CPointMap ptMultiNew(ptMultiOld);
     ptMultiNew += ptDelta;
     CRegionWorld *pRegionOld = dynamic_cast<CRegionWorld*>(ptMultiOld.GetRegion(REGION_TYPE_AREA));
-    CRegionWorld *pRegionNew = dynamic_cast<CRegionWorld*>(ptMultiNew.GetRegion(REGION_TYPE_AREA));
-    if (!MoveToRegion(pRegionOld, pRegionNew))
+    if (CRegionWorld *pRegionNew = dynamic_cast<CRegionWorld *>(ptMultiNew.GetRegion(REGION_TYPE_AREA)); !MoveToRegion(pRegionOld, pRegionNew))
     {
         return false;
     }
@@ -363,8 +358,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
                 }
                 else
                 {
-                    CChar *pChar = dynamic_cast<CChar *>(pObj);
-                    if (pClient == pChar->GetClientActive())
+                    if (CChar *pChar = dynamic_cast<CChar *>(pObj); pClient == pChar->GetClientActive())
                     {
                         if (!fClientUsesSmoothSailing)
                             pClient->addPlayerUpdate();     // update my (client) position
@@ -604,8 +598,8 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
             {
                 for (size_t j = 0; j < pMultiOld->m_Components.size(); ++j)
                 {
-                    const CItemBaseMulti::CMultiComponentItem & component = pMultiOld->m_Components[j];
-                    if ((xdiff == component.m_dx) && (ydiff == component.m_dy) && ((pItem->GetTopZ() - pMultiThis->GetTopZ()) == component.m_dz))
+                    if (const CItemBaseMulti::CMultiComponentItem &component = pMultiOld->m_Components[j];
+                        (xdiff == component.m_dx) && (ydiff == component.m_dy) && ((pItem->GetTopZ() - pMultiThis->GetTopZ()) == component.m_dz))
                     {
                         const auto &[m_id, m_dx, m_dy, m_dz] = pMultiNew->m_Components[j];
                         IT_TYPE oldType = pItem->GetType();
@@ -893,9 +887,8 @@ bool CCMultiMovable::_OnTick()
         return true;
 
     // Calculate the leading point.
-    DIR_TYPE dir = (DIR_TYPE)(pItemThis->m_itShip.m_DirMove);
 
-    if (!Move(dir, _shipSpeed.tiles))
+    if (DIR_TYPE dir = (DIR_TYPE)(pItemThis->m_itShip.m_DirMove); !Move(dir, _shipSpeed.tiles))
     {
         Stop();
         return true;
@@ -1427,8 +1420,7 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
                     return true;
                 }
                 int64 piVal[2];
-                size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal));
-                if (iQty == 2)
+                if (size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
                 {
                     _shipSpeed.period = (ushort)(piVal[0] * (IsSetOF(OF_NoSmoothSailing) ? MSECS_PER_TENTH : 1));
                     _shipSpeed.tiles = (uchar)(piVal[1]);

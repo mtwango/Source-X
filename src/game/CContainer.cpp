@@ -21,9 +21,8 @@ void CContainer::_GoAwake()
 	ADDTOCALLSTACK("CContainer::_GoAwake");
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		//std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-		if (pItem->IsSleeping())
+        //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
+		if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
 			pItem->GoAwake();
 	}
 }
@@ -33,9 +32,8 @@ void CContainer::_GoSleep()
 	ADDTOCALLSTACK("CContainer::_GoSleep");
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		//std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-        if (!pItem->_CanTick(true))
+        //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); !pItem->_CanTick(true))
 		{
             pItem->GoSleep();
 		}
@@ -121,8 +119,7 @@ int CContainer::FixWeight()
 		if (!pCont)
 		{
 			//For every non-container item inside this container add its weight to it.
-			CItem* pItem = dynamic_cast<CItem*>(pObjRec);
-			if (pItem)
+            if (CItem *pItem = dynamic_cast<CItem *>(pObjRec))
 				m_totalweight += pItem->GetWeight();
 			continue;
 		}
@@ -231,13 +228,11 @@ CItem *CContainer::ContentFind(CResourceID const& rid, dword dwArg, int iDescend
         if ( iDescendLevels <= 0 )
 			continue;
 
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-		if ( pCont )
+        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
 		{
 			if ( !pCont->IsSearchable() )
 				continue;
-            CItem *pItemInCont = pCont->ContentFind(rid, dwArg, iDescendLevels - 1);
-			if ( pItemInCont )
+            if ( CItem *pItemInCont = pCont->ContentFind(rid, dwArg, iDescendLevels - 1) )
 				return pItemInCont;
 		}
 	}
@@ -274,14 +269,14 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
             if ( iDescendLevels <= 0 )
 				continue;
 
-			CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-			if ( pCont )
+            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
 			{
 				if ( pCont->IsSearchable() )
 				{
 					CContainer *pContBase = pCont;
-                    TRIGRET_TYPE iRet = pContBase->OnContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, rid, dwArg, iDescendLevels - 1);
-					if ( iRet != TRIGRET_ENDIF )
+                    if (TRIGRET_TYPE iRet =
+                            pContBase->OnContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, rid, dwArg, iDescendLevels - 1);
+                        iRet != TRIGRET_ENDIF )
 						return iRet;
 
 					// Since the previous call has already found the EndContext, set it.
@@ -294,8 +289,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
 		CScriptObj *pScript = dynamic_cast<CScriptObj *>(this);
-        TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
-		if ( iRet != TRIGRET_ENDIF )
+        if (TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -329,8 +323,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 		if ( iDecendLevels <= 0 )
 			continue;
 
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-		if ( pCont && pCont->IsSearchable() )
+        if (CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem); pCont && pCont->IsSearchable() )
 		{
 			CContainer *pContBase = pCont;
             iRet = pContBase->OnGenericContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, iDecendLevels - 1);
@@ -345,8 +338,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
 		CScriptObj *pScript = dynamic_cast<CScriptObj *>(this);
-        TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
-		if ( iRet != TRIGRET_ENDIF )
+        if (TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -395,8 +387,7 @@ int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, dword d
                 break;
         }
 
-        const CItemContainer *pCont = dynamic_cast<const CItemContainer *>(pItem);
-        if ( pCont )	// this is a sub-container.
+        if ( const CItemContainer *pCont = dynamic_cast<const CItemContainer *>(pItem) )	// this is a sub-container.
         {
             if ( rid == CResourceID(RES_TYPEDEF, IT_GOLD) )
             {
@@ -439,8 +430,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, dword dwArg 
 				break;
 		}
 
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-		if ( pCont )	// this is a sub-container.
+        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
 		{
 			if ( rid == CResourceID(RES_TYPEDEF, IT_GOLD) )
 			{
@@ -488,8 +478,7 @@ void CContainer::ContentAttrMod( uint64 iAttr, bool fSet )
 		else
 			pItem->ClrAttr(iAttr);
 
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-		if ( pCont )	// this is a sub-container.
+        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
 			pCont->ContentAttrMod(iAttr, fSet);
 	}
 }
@@ -561,9 +550,7 @@ size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, int
 		if ( iQtyTotal <= 0 )
 			continue;
 
-		const CResourceID rid = (*pResources)[i].GetResourceID();
-		int iRet = fTest ? ContentConsumeTest(rid, iQtyTotal, dwArg) : ContentConsume(rid, iQtyTotal, dwArg);
-		if ( iRet )
+        if (const CResourceID rid = (*pResources)[i].GetResourceID(); fTest ? ContentConsumeTest(rid, iQtyTotal, dwArg) : ContentConsume(rid, iQtyTotal, dwArg) )
 			iMissing = i;
 	}
 
@@ -612,8 +599,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
             {
                 tchar *resOverride = Str_GetTemp();
                 snprintf(resOverride, Str_TempLength(), "matoverride_%s", g_Cfg.ResourceGetName(CResourceID(RES_ITEMDEF, rid.GetResIndex())));
-                CResourceID ridOverride = CResourceID(RES_ITEMDEF, (dword)pChar->m_TagDefs.GetKeyNum(resOverride));
-                if (ridOverride.GetResIndex() > 0)
+                if (CResourceID ridOverride = CResourceID(RES_ITEMDEF, (dword)pChar->m_TagDefs.GetKeyNum(resOverride)); ridOverride.GetResIndex() > 0)
                     rid = ridOverride;
             }
         }

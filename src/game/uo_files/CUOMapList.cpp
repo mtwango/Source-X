@@ -62,8 +62,7 @@ void CUOMapList::Init()
 
     for ( int i = 0; i < MAP_SUPPORTED_QTY; ++i )
     {
-        MapGeoData& map_data = m_mapGeoData.maps[i];
-        if ( map_data.fEnabled )	// map marked as available. check whatever it's possible
+        if (MapGeoData &map_data = m_mapGeoData.maps[i]; map_data.fEnabled )	// map marked as available. check whatever it's possible
         {
             //	check coordinates first
             if ( map_data.iNum == -1 )
@@ -86,9 +85,8 @@ bool CUOMapList::Load(int map, char *args)
     if ( false == fInitialized )	// disable double intialization
     {
         tchar * ppCmd[5];	// maxx,maxy,sectorsize,mapnum[like 0 for map0/statics0/staidx0],mapid
-        size_t iCount = Str_ParseCmds(args, ppCmd, std::size(ppCmd), ",");
 
-        if ( iCount <= 0 )	// simple MAPX= same as disabling the map
+        if (size_t iCount = Str_ParseCmds(args, ppCmd, std::size(ppCmd), ","); iCount <= 0 )	// simple MAPX= same as disabling the map
         {
             fEnabled = false;
             fInitialized = true;

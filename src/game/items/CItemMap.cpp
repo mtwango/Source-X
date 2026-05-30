@@ -24,8 +24,7 @@ CItemMap::~CItemMap()
 
 bool CItemMap::IsSameType(const CObjBase *pObj) const
 {
-    const CItemMap *pItemMap = dynamic_cast<const CItemMap *>(pObj);
-    if ( pItemMap )
+    if ( const CItemMap *pItemMap = dynamic_cast<const CItemMap *>(pObj) )
     {
         // Maps can only stack on top of each other if the pins match
         if (m_Pins.size() != pItemMap->m_Pins.size() )

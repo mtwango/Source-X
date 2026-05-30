@@ -81,9 +81,8 @@ bool CRegion::RealizeRegion()
     for ( int i = 0, iMax = pSectors.GetMapSectorDataUnchecked(m_pt.m_map).iSectorQty; i < iMax; ++i )
 	{
         // TODO: maybe provide a hint on where to start checking, instead of checking every sector in the map...
-        CSector *pSector = pSectors.GetSectorByIndexUnchecked(m_pt.m_map, i);
 
-        if ( pSector && IsOverlapped(pSector->GetRectWorldUnits()) )
+        if (CSector *pSector = pSectors.GetSectorByIndexUnchecked(m_pt.m_map, i); pSector && IsOverlapped(pSector->GetRectWorldUnits()) )
 		{
             //	Yes, this sector is overlapped, so add it to the sector list
 			if ( !pSector->LinkRegion(this) )
@@ -202,11 +201,9 @@ bool CRegion::MakeRegionDefname()
         // Is this is subsequent key with a number? Get the highest (plus one)
         if ( IsStrNumericDec( ptcKey ) )
         {
-            std::optional<int> iconv = Str_ToI( ptcKey );
-            if (iconv.has_value())
+            if (std::optional<int> iconv = Str_ToI(ptcKey); iconv.has_value())
             {
-                int iVarThis = iconv.value();
-                if ( iVarThis >= iVar )
+                if (int iVarThis = iconv.value(); iVarThis >= iVar )
                     iVar = iVarThis + 1;
             }
         }
@@ -469,8 +466,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		case RC_TYPEREGION:
 			{
 				const CItemBase * pBase = nullptr;
-				const CItem * pItem = GetResourceID().ItemFindFromResource();
-				if (pItem != nullptr)
+                if (const CItem *pItem = GetResourceID().ItemFindFromResource(); pItem != nullptr)
 					pBase = pItem->Item_GetDef();
 
 				if (pBase != nullptr)
@@ -672,8 +668,7 @@ void CRegion::r_WriteModified( CScript &s )
 void CRegion::r_WriteBase( CScript &s )
 {
 	ADDTOCALLSTACK("CRegion::r_WriteBase");
-    lpctstr ptcName = GetName();
-	if ( ptcName && ptcName[0] )
+    if (lpctstr ptcName = GetName(); ptcName && ptcName[0] )
 		s.WriteKeyStr("NAME", ptcName);
 
 	if ( ! m_sGroup.IsEmpty() )
@@ -891,8 +886,7 @@ TRIGRET_TYPE CRegion::OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction )
 		if ( !pLink || ( pLink->GetResType() != RES_REGIONTYPE ) || !pLink->HasTrigger(iAction) )
 			continue;
 
-		CResourceLock s;
-		if ( pLink->ResourceLock(s) )
+        if (CResourceLock s; pLink->ResourceLock(s) )
 		{
             iRet = OnTriggerScript(s, sm_szTrigName[iAction], CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc);
 			if ( iRet == TRIGRET_RET_TRUE )

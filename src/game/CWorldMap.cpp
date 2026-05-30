@@ -237,8 +237,7 @@ CSector* CWorldMap::GetSectorByIndex(int map, int index) noexcept // static
         return nullptr;
     }
 
-    const int iMapSectorQty = pSd->iSectorQty;
-	if (index >= iMapSectorQty)
+    if (const int iMapSectorQty = pSd->iSectorQty; index >= iMapSectorQty)
 	{
 		g_Log.EventError("Unsupported sector #%d for map #%d specified.\n", index, map);
 		return nullptr;
@@ -430,8 +429,7 @@ CPointMap CWorldMap::FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int 
 
 	// Parts of multis ?
 	CRegionLinks rlinks;
-	size_t iRegionQty = pt.GetRegions(REGION_TYPE_MULTI, &rlinks);
-	if ( iRegionQty > 0 )
+    if (size_t iRegionQty = pt.GetRegions(REGION_TYPE_MULTI, &rlinks); iRegionQty > 0 )
 	{
         const CRegion *pRegion = nullptr;
 		const CUOMulti *pMulti = nullptr;				// Multi Def (multi check)
@@ -513,8 +511,7 @@ CPointMap CWorldMap::FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int 
 	const CServerMapBlock * pMapBlock = GetMapBlock( pt );
 	ASSERT( pMapBlock );
 
-	uint iStaticQty = pMapBlock->m_Statics.GetStaticQty();
-	if ( iStaticQty > 0 )  // no static items here.
+    if (uint iStaticQty = pMapBlock->m_Statics.GetStaticQty(); iStaticQty > 0 )  // no static items here.
 	{
 		const CUOStaticItemRec * pStatic = nullptr;
 
@@ -810,8 +807,7 @@ CPointMap CWorldMap::FindItemTypeNearby(const CPointMap & pt, IT_TYPE iType, int
                 const CPointMap ptTest((short)x, (short)y, pt.m_z, pt.m_map);
 
 				CRegionLinks rlinks;
-				size_t iRegionQty = ptTest.GetRegions(REGION_TYPE_MULTI, &rlinks);
-				if ( iRegionQty > 0 )
+                if (size_t iRegionQty = ptTest.GetRegions(REGION_TYPE_MULTI, &rlinks); iRegionQty > 0 )
 				{
 					for (size_t iRegion = 0; iRegion < iRegionQty; ++iRegion)
 					{
@@ -1031,8 +1027,7 @@ void CWorldMap::GetFixPoint( const CPointMap & pt, CServerMapBlockingState & blo
 	// Any multi items here ?
 	// Check all of them
 	CRegionLinks rlinks;
-	size_t iRegionQty = pt.GetRegions( REGION_TYPE_MULTI, &rlinks );
-	if ( iRegionQty > 0 )
+    if (size_t iRegionQty = pt.GetRegions(REGION_TYPE_MULTI, &rlinks); iRegionQty > 0 )
 	{
 		//  ------------ For variables --------------------
 		const CRegion * pRegion = nullptr;
@@ -1342,8 +1337,7 @@ void CWorldMap::GetHeightPoint(const CPointMap & pt, CServerMapBlockingState & b
 	if ( fHouseCheck )
 	{
 		CRegionLinks rlinks;
-		size_t iRegionQty = pt.GetRegions( REGION_TYPE_MULTI, &rlinks );
-		if ( iRegionQty > 0 )
+        if (size_t iRegionQty = pt.GetRegions(REGION_TYPE_MULTI, &rlinks); iRegionQty > 0 )
 		{
 			//  ------------ For variables --------------------
             const CRegion * pRegion = nullptr;
@@ -1628,8 +1622,7 @@ void CWorldMap::GetHeightPoint2( const CPointMap & pt, CServerMapBlockingState &
 	}
 
     uint64 uiBlockThis = 0;
-	const uint iStaticQty = pMapBlock->m_Statics.GetStaticQty();
-	if ( iStaticQty > 0 )  // no static items here.
+    if (const uint iStaticQty = pMapBlock->m_Statics.GetStaticQty(); iStaticQty > 0 )  // no static items here.
 	{
 		int x2 = pMapBlock->GetOffsetX(pt.m_x);
 		int y2 = pMapBlock->GetOffsetY(pt.m_y);
@@ -1654,17 +1647,14 @@ void CWorldMap::GetHeightPoint2( const CPointMap & pt, CServerMapBlockingState &
 	if ( fHouseCheck )
 	{
         thread_local CRegionLinks rlinks;
-		size_t iRegionQty = pt.GetRegions( REGION_TYPE_MULTI, &rlinks );
-		if ( iRegionQty > 0 )
+        if (size_t iRegionQty = pt.GetRegions(REGION_TYPE_MULTI, &rlinks); iRegionQty > 0 )
 		{
 			for ( size_t i = 0; i < iRegionQty; ++i)
 			{
                 const CRegion * pRegion = rlinks[i];
-				CItem * pItem = pRegion->GetResourceID().ItemFindFromResource();
-				if ( pItem != nullptr )
+                if (CItem *pItem = pRegion->GetResourceID().ItemFindFromResource(); pItem != nullptr )
 				{
-					const CUOMulti * pMulti = g_Cfg.GetMultiItemDefs(pItem);
-					if ( pMulti )
+                    if ( const CUOMulti *pMulti = g_Cfg.GetMultiItemDefs(pItem) )
 					{
                         const CPointMap& ptItemTop = pItem->GetTopPoint();
 						int x2 = pt.m_x - ptItemTop.m_x;
@@ -1742,8 +1732,8 @@ void CWorldMap::GetHeightPoint2( const CPointMap & pt, CServerMapBlockingState &
             uiBlockThis = CAN_I_BLOCK;
         else
         {
-            const CUOTerrainInfo land(pMeter->m_wTerrainIndex);
-            if (land.m_flags & UFLAG2_PLATFORM) // Platform items should take precendence over non-platforms.
+            if (const CUOTerrainInfo land(pMeter->m_wTerrainIndex);
+                land.m_flags & UFLAG2_PLATFORM) // Platform items should take precendence over non-platforms.
                 uiBlockThis = CAN_I_PLATFORM;
             else if (land.m_flags & UFLAG1_WATER)
                 uiBlockThis = CAN_I_WATER;

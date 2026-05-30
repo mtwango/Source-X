@@ -95,8 +95,7 @@ CChar *CItemCorpse::IsCorpseSleeping() const
 		return nullptr;
 	}
 
-	CChar *pCharCorpse = m_uidLink.CharFind();
-	if ( pCharCorpse && pCharCorpse->IsStatFlag(STATF_SLEEPING) && !GetTimeStampS() )
+    if (CChar *pCharCorpse = m_uidLink.CharFind(); pCharCorpse && pCharCorpse->IsStatFlag(STATF_SLEEPING) && !GetTimeStampS() )
 		return pCharCorpse;
 
 	return nullptr;

@@ -174,8 +174,7 @@ bool CStoneMember::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 	ASSERT(pSrc);
 
 	lpctstr ptcKey = s.GetKey();
-	int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
-	if ( index < 0 )
+    if (int index = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1); index < 0 )
 	{
 		if ( r_LoadVal(s) ) // if it's successful all ok, else go on verb.
 			return true;
@@ -401,8 +400,7 @@ CStoneMember::CStoneMember( CItemStone * pStone, CUID uid, STONEPRIV_TYPE iType,
 
 	if ( ! g_Serv.IsLoadingGeneric() && pStone->GetMemoryType())
 	{
-		CChar * pChar = uid.CharFind();
-		if ( pChar != nullptr )
+        if (CChar *pChar = uid.CharFind(); pChar != nullptr )
 		{
 			pChar->Memory_AddObjTypes(pStone, (word)(pStone->GetMemoryType()));
 			if ( pStone->IsTopLevel())
@@ -426,8 +424,7 @@ CStoneMember::~CStoneMember()
 	if ( m_iPriv == STONEPRIV_ENEMY )
 	{
 		// same as declaring peace.
-		CItemStone * pStoneEnemy = dynamic_cast <CItemStone *>( GetLinkUID().ItemFind());
-		if ( pStoneEnemy != nullptr )
+        if (CItemStone *pStoneEnemy = dynamic_cast<CItemStone *>(GetLinkUID().ItemFind()); pStoneEnemy != nullptr )
 		{
 			pStoneEnemy->TheyDeclarePeace( pStone, true );
 		}
@@ -437,8 +434,7 @@ CStoneMember::~CStoneMember()
 		// If we remove a char with good loyalty we may have changed the vote count.
 		pStone->ElectMaster();
 
-		CChar * pChar = GetLinkUID().CharFind();
-		if ( pChar )
+        if ( CChar *pChar = GetLinkUID().CharFind() )
 		{
 			pChar->Memory_ClearTypes((word)(pStone->GetMemoryType())); 	// Make them forget they were ever in this guild
 		}
@@ -490,8 +486,7 @@ bool CStoneMember::SetLoyalTo( const CChar * pCharLoyal )
 	if ( !pStone )
 		return false;
 
-	CStoneMember * pNewLOYALTO = pStone->GetMember(pCharLoyal);
-	if ( pNewLOYALTO == nullptr || ! pNewLOYALTO->IsPrivMember())
+    if (CStoneMember *pNewLOYALTO = pStone->GetMember(pCharLoyal); pNewLOYALTO == nullptr || ! pNewLOYALTO->IsPrivMember())
 	{
 		// you can't vote for candidates
 		pCharMe->SysMessage( "Can only vote for full members.");

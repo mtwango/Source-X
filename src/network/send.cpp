@@ -185,11 +185,9 @@ PacketObjectStatus::PacketObjectStatus(const CClient* target, CObjBase* object) 
 		}
 		else
 		{
-			const CItem *objectItem = object->IsItem() ? static_cast<const CItem *>(object) : nullptr;
-            if (objectItem)
+            if (const CItem *objectItem = object->IsItem() ? static_cast<const CItem *>(object) : nullptr)
             {
-                CCItemDamageable *pItem = static_cast<CCItemDamageable*>(object->GetComponent(COMP_ITEMDAMAGEABLE));
-                if (pItem)
+                if (CCItemDamageable *pItem = static_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
                 {
                     const ushort tmpMaxHits = pItem->GetMaxHits();
                     iHitsCurrent = static_cast<word>((pItem->GetCurHits() * 100) / maximum(tmpMaxHits, 1));
@@ -480,8 +478,7 @@ PacketItemWorld::PacketItemWorld(const CClient* target, const CItem *item) : Pac
     }
     else if (item->CanSendAmount())
     {
-        word itemAmount = item->GetAmount();
-        if (itemAmount > 1)
+        if (word itemAmount = item->GetAmount(); itemAmount > 1)
             amount = itemAmount;
     }
 	ITEMID_TYPE id = item->GetDispID();
@@ -544,8 +541,7 @@ void PacketItemWorld::adjustItemData(const CClient* target, const CItem* item, I
 	// modify the values for the specific client/item.
 	if (id != ITEMID_CORPSE)
 	{
-		const CItemBase* itemDefintion = item->Item_GetDef();
-		if (itemDefintion && (target->GetResDisp() < itemDefintion->GetResLevel()))
+        if (const CItemBase *itemDefintion = item->Item_GetDef(); itemDefintion && (target->GetResDisp() < itemDefintion->GetResLevel()))
 		{
 			id = (ITEMID_TYPE)(itemDefintion->GetResDispDnId());
 			if (itemDefintion->GetResDispDnHue() != HUE_DEFAULT)
@@ -563,8 +559,8 @@ void PacketItemWorld::adjustItemData(const CClient* target, const CItem* item, I
 	else
 	{
 		// adjust amount and hue of corpse if necessary
-		const CCharBase* charDefinition = CCharBase::FindCharBase(item->m_itCorpse.m_BaseID);
-		if (charDefinition && (target->GetResDisp() < charDefinition->GetResLevel()))
+        if (const CCharBase *charDefinition = CCharBase::FindCharBase(item->m_itCorpse.m_BaseID);
+            charDefinition && (target->GetResDisp() < charDefinition->GetResLevel()))
 		{
 			amount = charDefinition->GetResDispDnId();
 			if (charDefinition->GetResDispDnHue() != HUE_DEFAULT)
@@ -976,8 +972,7 @@ void PacketItemContainer::completeForTarget(const CClient* target, const CItem* 
 	if (getLength() >= 20)
 	{
 		// only append the additional information if it needs to be changed
-		bool containsGrid = getLength() == 21;
-		if (shouldIncludeGrid == containsGrid)
+        if (bool containsGrid = getLength() == 21; shouldIncludeGrid == containsGrid)
 			return;
 	}
 
@@ -1262,8 +1257,8 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 
 		if ( fIsShop )
 		{
-			const CItemVendable* vendorItem = dynamic_cast<const CItemVendable *>(item);
-			if ( vendorItem == nullptr || vendorItem->GetAmount() == 0 || vendorItem->IsType(IT_GOLD) )
+            if (const CItemVendable *vendorItem = dynamic_cast<const CItemVendable *>(item);
+                vendorItem == nullptr || vendorItem->GetAmount() == 0 || vendorItem->IsType(IT_GOLD) )
 				continue;
 
 			wAmount = minimum((word)g_Cfg.m_iVendorMaxSell, wAmount);
@@ -1282,8 +1277,7 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 
 		if ( fFilterLayers )
 		{
-			const LAYER_TYPE layer = (LAYER_TYPE)(item->GetContainedLayer());
-			if ((layer > LAYER_NONE) && (layer < LAYER_HORSE))
+            if (const LAYER_TYPE layer = (LAYER_TYPE)(item->GetContainedLayer()); (layer > LAYER_NONE) && (layer < LAYER_HORSE))
 			{
 				switch (layer)	// don't put these on a corpse.
 				{
@@ -1710,8 +1704,7 @@ void PacketBookPageContent::addPage(const CItem* book, word page)
 
 	if (book->IsBookSystem())
 	{
-		CResourceLock s;
-		if (g_Cfg.ResourceLock(s, CResourceID(RES_BOOK, book->m_itBook.m_ResID.GetResIndex(), page)) == true)
+        if (CResourceLock s; g_Cfg.ResourceLock(s, CResourceID(RES_BOOK, book->m_itBook.m_ResID.GetResIndex(), page)) == true)
 		{
 			while (s.ReadKey(false))
 			{
@@ -1723,14 +1716,12 @@ void PacketBookPageContent::addPage(const CItem* book, word page)
 	else
 	{
 		// user written book pages
-		const CItemMessage* message = dynamic_cast<const CItemMessage*>(book);
-		if (message != nullptr)
+        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			if (page > 0 && page <= message->GetPageCount())
 			{
 				// copy the pages from the book
-				lpctstr text = message->GetPageText(page - 1);
-				if (text != nullptr)
+                if (lpctstr text = message->GetPageText(page - 1); text != nullptr)
 				{
 					for (tchar ch = *text; ch != '\0'; ch = *(++text))
 					{
@@ -1802,8 +1793,7 @@ PacketAddTarget::PacketAddTarget(const CClient* target, TargetType type, dword c
 		return;
 
 	word x = 0, y = 0, z = 0;
-	CItemBaseMulti *pMultiDef = static_cast<CItemBaseMulti *>(pItemDef);
-	if (pMultiDef && CItemBase::IsID_Multi(id))
+    if (CItemBaseMulti *pMultiDef = static_cast<CItemBaseMulti *>(pItemDef); pMultiDef && CItemBase::IsID_Multi(id))
 	{
 		x = (word)(pMultiDef->m_Offset.m_dx != 0 ? (pMultiDef->m_rect.m_left + pMultiDef->m_Offset.m_dx) : 0);
 		y = (word)(pMultiDef->m_rect.m_bottom + pMultiDef->m_Offset.m_dy);
@@ -2687,8 +2677,8 @@ PacketPaperdoll::PacketPaperdoll(const CClient* target, const CChar* character) 
 		tchar* text = Str_GetTemp();
 		int len = 0;
 
-		const CStoneMember* guildMember = character->Guild_FindMember(MEMORY_GUILD);
-		if (guildMember != nullptr && guildMember->IsAbbrevOn() && guildMember->GetParentStone()->GetAbbrev()[0])
+        if (const CStoneMember *guildMember = character->Guild_FindMember(MEMORY_GUILD);
+            guildMember != nullptr && guildMember->IsAbbrevOn() && guildMember->GetParentStone()->GetAbbrev()[0])
 		{
 			len = snprintf(text, Str_TempLength(), "%s [%s], %s",
 				character->Noto_GetTitle(), guildMember->GetParentStone()->GetAbbrev(),
@@ -2913,8 +2903,7 @@ PacketDisplayBook::PacketDisplayBook(const CClient* target, CItem* book) : Packe
 	{
 		isWritable = false;
 
-		CResourceLock s;
-		if (g_Cfg.ResourceLock(s, book->m_itBook.m_ResID))
+        if (CResourceLock s; g_Cfg.ResourceLock(s, book->m_itBook.m_ResID))
 		{
 			while (s.ReadKeyParse())
 			{
@@ -2940,8 +2929,7 @@ PacketDisplayBook::PacketDisplayBook(const CClient* target, CItem* book) : Packe
 	else
 	{
 		// user written book
-		const CItemMessage* message = dynamic_cast<const CItemMessage*>(book);
-		if (message != nullptr)
+        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			isWritable = message->IsBookWritable();
 			pages = isWritable ? MAX_BOOK_PAGES : (int)message->GetPageCount();
@@ -3092,11 +3080,9 @@ uint PacketVendorSellList::fillSellList(CClient* target, const CItemContainer* c
 			}
 			else
 			{
-				CItemVendable* vendItem = dynamic_cast<CItemVendable*>(item);
-				if (vendItem != nullptr)
+                if (CItemVendable *vendItem = dynamic_cast<CItemVendable *>(item); vendItem != nullptr)
 				{
-					CItemVendable* vendSell = CChar::NPC_FindVendableItem(vendItem, stock1, stock2);
-					if (vendSell != nullptr)
+                    if (CItemVendable *vendSell = CChar::NPC_FindVendableItem(vendItem, stock1, stock2); vendSell != nullptr)
 					{
 						HUE_TYPE hue = vendItem->GetHue() & HUE_MASK_HI;
 						if (hue > HUE_QTY)
@@ -3642,8 +3628,7 @@ void PacketGumpDialog::writeControls(const CClient* target, std::vector<CSString
 {
 	ADDTOCALLSTACK("PacketGumpDialog::writeControls");
 
-	const CNetState* net = target->GetNetState();
-	if (net->isClientVersionNumber(MINCLIVER_COMPRESSDIALOG) || net->isClientKR() || net->isClientEnhanced())
+    if (const CNetState *net = target->GetNetState(); net->isClientVersionNumber(MINCLIVER_COMPRESSDIALOG) || net->isClientKR() || net->isClientEnhanced())
 		writeCompressedControls(controls, texts);
 	else
 		writeStandardControls(controls, texts);
@@ -3720,8 +3705,8 @@ void PacketGumpDialog::writeCompressedControls(std::vector<CSString> const* cont
 		zlib::uLong compressLength = zlib::compressBound(textsLength);
 		byte* compressBuffer = new byte[compressLength];
 
-		int error = zlib::compress2(compressBuffer, &compressLength, &m_buffer[textsPosition], textsLength, Z_DEFAULT_COMPRESSION);
-		if (error != Z_OK || compressLength <= 0)
+        if (int error = zlib::compress2(compressBuffer, &compressLength, &m_buffer[textsPosition], textsLength, Z_DEFAULT_COMPRESSION);
+            error != Z_OK || compressLength <= 0)
 		{
 			delete[] compressBuffer;
 			g_Log.EventError("Compress failed with error %d when generating gump. Using old packet.\n", error);
@@ -3893,10 +3878,10 @@ PacketEnableFeatures::PacketEnableFeatures(const CClient* target, dword flags) :
 	const CAccount * account = target->GetAccount();
 	ASSERT(account != nullptr);
 	dword tmVer = (dword)(account->m_TagDefs.GetKeyNum("clientversion"));
-	dword tmVerReported = (dword)(account->m_TagDefs.GetKeyNum("reportedcliver"));
 
-	// since 6.0.14.2, feature flags are 4 bytes instead of 2.
-	if (tmVer >= MINCLIVER_EXTRAFEATURES || tmVerReported >= MINCLIVER_EXTRAFEATURES)
+    // since 6.0.14.2, feature flags are 4 bytes instead of 2.
+	if (dword tmVerReported = (dword)(account->m_TagDefs.GetKeyNum("reportedcliver"));
+        tmVer >= MINCLIVER_EXTRAFEATURES || tmVerReported >= MINCLIVER_EXTRAFEATURES)
 		writeInt32(flags);
 	else
 		writeInt16((word)(flags));
@@ -4137,8 +4122,8 @@ bool PacketPropertyListVersionOld::onSend(const CClient* client)
 		return false;
 
 	const CObjBase* object = m_object.ObjFind();
-	int iCharVisualRange = character->GetVisualRange();
-	if (object == nullptr || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize))
+    if (int iCharVisualRange = character->GetVisualRange();
+        object == nullptr || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize))
 		return false;
 
 	return true;
@@ -4689,8 +4674,7 @@ PacketDisplayBookNew::PacketDisplayBookNew(const CClient* target, CItem* book) :
 	{
 		isWritable = false;
 
-		CResourceLock s;
-		if (g_Cfg.ResourceLock(s, book->m_itBook.m_ResID))
+        if (CResourceLock s; g_Cfg.ResourceLock(s, book->m_itBook.m_ResID))
 		{
 			while (s.ReadKeyParse())
 			{
@@ -4716,8 +4700,7 @@ PacketDisplayBookNew::PacketDisplayBookNew(const CClient* target, CItem* book) :
 	else
 	{
 		// user written book
-		const CItemMessage* message = dynamic_cast<const CItemMessage*>(book);
-		if (message != nullptr)
+        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			isWritable = message->IsBookWritable();
 			pages = isWritable ? MAX_BOOK_PAGES : (int)message->GetPageCount();
@@ -4803,8 +4786,8 @@ bool PacketPropertyList::onSend(const CClient* client)
 		return false;
 
 	const CObjBase* object = m_object.ObjFind();
-	int iCharVisualRange = character->GetVisualRange();
-	if (!object || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize) && !character->IsPriv(PRIV_ALLSHOW))
+    if (int iCharVisualRange = character->GetVisualRange();
+        !object || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize) && !character->IsPriv(PRIV_ALLSHOW))
 		return false;
 
 	if (hasExpired(30 * MSECS_PER_SEC))
@@ -4889,8 +4872,7 @@ bool PacketHouseDesign::writePlaneData(int plane, int itemCount, byte* data, int
 	zlib::uLong compressLength = zlib::compressBound(dataSize);
 	byte* compressBuffer = new byte[compressLength];
 
-	int error = zlib::compress2(compressBuffer, &compressLength, data, dataSize, Z_DEFAULT_COMPRESSION);
-	if ( error != Z_OK )
+    if (int error = zlib::compress2(compressBuffer, &compressLength, data, dataSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
 	{
 		// an error occured with this floor, but we should be able to continue to the next without problems
 		delete[] compressBuffer;
@@ -4950,8 +4932,7 @@ void PacketHouseDesign::flushStairData()
 	zlib::uLong compressLength = zlib::compressBound(stairSize);
 	byte* compressBuffer = new byte[compressLength];
 
-	int error = zlib::compress2(compressBuffer, &compressLength, (byte*)m_stairBuffer, stairSize, Z_DEFAULT_COMPRESSION);
-	if ( error != Z_OK )
+    if (int error = zlib::compress2(compressBuffer, &compressLength, (byte *)m_stairBuffer, stairSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
 	{
 		// an error occured with this block, but we should be able to continue to the next without problems
 		delete[] compressBuffer;
@@ -5031,8 +5012,8 @@ bool PacketPropertyListVersion::onSend(const CClient* client)
 		return false;
 
 	const CObjBase* object = m_object.ObjFind();
-	int iCharVisualRange = character->GetVisualRange();
-	if (object == nullptr || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize))
+    if (int iCharVisualRange = character->GetVisualRange();
+        object == nullptr || character->GetTopDistSight(object->GetTopLevelObj()) > maximum(iCharVisualRange, g_Cfg.m_iMapViewSize))
 		return false;
 
 	return true;
@@ -5298,8 +5279,7 @@ PacketItemWorldNew::PacketItemWorldNew(const CClient* target, const CItem *item)
     }
     else if (item->CanSendAmount())
     {
-        word itemAmount = item->GetAmount();
-        if (itemAmount > 1)
+        if (word itemAmount = item->GetAmount(); itemAmount > 1)
             amount = itemAmount;
     }
 	CPointMap pt = item->GetTopPoint();
@@ -5393,12 +5373,10 @@ PacketDisplayMapNew::PacketDisplayMapNew(const CClient* target, const CItemMap* 
 	word width	= (word)(itemDef->m_ttMap.m_iGumpWidth 	> 0 ? itemDef->m_ttMap.m_iGumpWidth		:	(word)CItemMap::DEFAULT_SIZE);
 	word height = (word)(itemDef->m_ttMap.m_iGumpHeight	> 0 ? itemDef->m_ttMap.m_iGumpHeight	:	(word)CItemMap::DEFAULT_SIZE);
 
-	word overrideWidth = (word)map->GetKeyNum("OVERRIDE.MAPWIDTH", true);
-	if (overrideWidth > 0)
+    if (word overrideWidth = (word)map->GetKeyNum("OVERRIDE.MAPWIDTH", true); overrideWidth > 0)
 		width = overrideWidth;
 
-	word overrideHeight = (word)map->GetKeyNum("OVERRIDE.MAPHEIGHT", true);
-	if (overrideHeight > 0)
+    if (word overrideHeight = (word)map->GetKeyNum("OVERRIDE.MAPHEIGHT", true); overrideHeight > 0)
 		height = overrideHeight;
 
 	writeInt32(map->GetUID());
@@ -5479,8 +5457,7 @@ PacketContainer::PacketContainer(const CClient* target, CObjBase** objects, uint
 
 	for (uint i = 0; i < objectCount; ++i)
 	{
-		CObjBase* object = objects[i];
-		if (object->IsItem())
+        if (CObjBase *object = objects[i]; object->IsItem())
 		{
 			CItem* item = static_cast<CItem*>(object);
 			ds source = ds::TileData;

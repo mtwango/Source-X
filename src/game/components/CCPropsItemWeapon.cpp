@@ -110,8 +110,7 @@ bool CCPropsItemWeapon::GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString* 
                 return false;   // not set
             }
             uchar iRangeH = RANGE_GET_HI(_uiRange);
-            uchar iRangeL = RANGE_GET_LO(_uiRange);
-            if ( iRangeL == 0 )
+            if (uchar iRangeL = RANGE_GET_LO(_uiRange); iRangeL == 0 )
                 psOutVal->Format( "%hhd", iRangeH );
             else
                 psOutVal->Format( "%hhd,%hhd", iRangeL, iRangeH );

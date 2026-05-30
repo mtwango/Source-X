@@ -182,8 +182,7 @@ TRIGRET_TYPE CClient::Dialog_OnButton(const CResourceID& rid, dword dwButtonID, 
 
 		auto stopPrebutton = TRIGRET_RET_FALSE;
 
-		CResourceLock prebutton;
-		if (g_Cfg.ResourceLock(prebutton, CResourceID(RES_DIALOG, rid.GetResIndex(), RES_DIALOG_PREBUTTON)))
+        if (CResourceLock prebutton; g_Cfg.ResourceLock(prebutton, CResourceID(RES_DIALOG, rid.GetResIndex(), RES_DIALOG_PREBUTTON)))
         stopPrebutton = pObj->OnTriggerRun(prebutton, TRIGRUN_SECTION_TRUE, pScriptArgs, m_pChar, nullptr);
 
 		if (stopPrebutton != TRIGRET_RET_TRUE)
@@ -201,11 +200,10 @@ bool CClient::Dialog_Close( CObjBase * pObj, dword dwRid, int buttonID )
 
 	if ( GetNetState()->isClientVersionNumber(MINCLIVER_CLOSEDIALOG) )
 	{
-		CChar * pSrc = dynamic_cast<CChar*>( pObj );
-		if ( pSrc )
+        if ( dynamic_cast<CChar *>(pObj) )
 		{
-			OpenedGumpsMap_t::const_iterator itGumpFound = m_mapOpenedGumps.find(dwRid);
-			if (( itGumpFound != m_mapOpenedGumps.end() ) && ( itGumpFound->second > 0 ))
+            if (OpenedGumpsMap_t::const_iterator itGumpFound = m_mapOpenedGumps.find(dwRid);
+                ( itGumpFound != m_mapOpenedGumps.end() ) && ( itGumpFound->second > 0 ))
 			{
 				PacketGumpDialogRet packet;
 				packet.writeByte(XCMD_GumpDialogRet);
@@ -304,8 +302,7 @@ bool CMenuItem::ParseLine( tchar * pszArgs, CScriptObj * pObjBase, CTextConsole 
 	// The item id (if we want to have an item type menu) or 0
 	if ( strcmp( pszArgStart, "0" ) != 0 )
 	{
-		CItemBase * pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, pszArgStart )));
-		if ( pItemBase != nullptr )
+        if (CItemBase *pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, pszArgStart))); pItemBase != nullptr )
 		{
 			m_id = (word)(pItemBase->GetDispID());
 			pObjBase = pItemBase;

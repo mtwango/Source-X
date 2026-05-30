@@ -1009,8 +1009,7 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
 				size_t iThreadCount = ThreadHolder::get().getActiveThreads();
 				for ( size_t iThreads = 0; iThreads < iThreadCount; ++iThreads )
 				{
-					AbstractThread * thrCurrent = ThreadHolder::get().getThreadAt(iThreads);
-					if (thrCurrent != nullptr)
+                    if (AbstractThread *thrCurrent = ThreadHolder::get().getThreadAt(iThreads); thrCurrent != nullptr)
 					{
                         pSrc->SysMessagef(
                             "%" PRIuSIZE_T " - Id: %" PRIu64 ", Priority: %d, Name: %s.\n",
@@ -1628,8 +1627,7 @@ bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		tchar * pszTempStart = pszTemp;
 
 		Str_CopyLimitNull(pszTemp, ptcKey, Str_TempLength());
-		tchar * split = strchr(pszTemp, '.');
-		if ( split != nullptr )
+        if (tchar *split = strchr(pszTemp, '.'); split != nullptr )
 			*split = '\0';
 
 		// adjust ptcKey to point to end of account name/index
@@ -1638,8 +1636,7 @@ bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		//	try to fetch using indexes
 		if (( *pszTemp >= '0' ) && ( *pszTemp <= '9' ))
 		{
-			uint num = Exp_GetUVal(pszTemp);
-			if (*pszTemp == '\0' && num < g_Accounts.Account_GetCount())
+            if (uint num = Exp_GetUVal(pszTemp); *pszTemp == '\0' && num < g_Accounts.Account_GetCount())
 				pAccount = g_Accounts.Account_Get(num);
 		}
 
@@ -1783,8 +1780,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 
 	if ( index < 0 )
 	{
-        const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey);
-        if (r_CanCall(uiFunctionIndex))
+        if (const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey); r_CanCall(uiFunctionIndex))
         {
             // RES_FUNCTION call
             CSString sVal;
@@ -1803,8 +1799,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			char *pszTemp = Str_GetTemp();
 
 			Str_CopyLimitNull(pszTemp, ptcKey, Str_TempLength());
-			char *split = strchr(pszTemp, '.');
-			if ( split )
+            if ( char *split = strchr(pszTemp, '.') )
 			{
 				*split = 0;
 				pAccount = g_Accounts.Account_Find(pszTemp);
@@ -2151,8 +2146,7 @@ log_cont:
 			if (s.HasArgs())
 			{
 				tchar * Arg_ppCmd[4];
-				size_t Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
-				if ( Arg_Qty <= 0 )
+                if (size_t Arg_Qty = Str_ParseCmds(s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd)); Arg_Qty <= 0 )
 				{
 					break;
 				}
@@ -2546,8 +2540,7 @@ bool CServer::SocketsInit( CSocket & socket )
 	// if ( fGod )
 	//	SockAddr.SetPort(( g_Cfg.m_iUseGodPort > 1 ) ? g_Cfg.m_iUseGodPort : m_ip.GetPort()+1000);
 
-	int iRet = socket.Bind(SockAddr);
-	if ( iRet < 0 )			// Probably already a server running.
+    if (int iRet = socket.Bind(SockAddr); iRet < 0 )			// Probably already a server running.
 	{
 		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Unable to bind listen socket %s port %d (error code: %i)\n", SockAddr.GetAddrStr(), SockAddr.GetPort(), iRet);
 		return false;
@@ -2581,8 +2574,7 @@ bool CServer::SocketsInit() // Initialize sockets
         name and the terminator.
         The OS hostname from gethostname is the local system’s own configured name (often a short label)
         returned directly by the kernel/OS without consulting DNS  */
-    int iRet = gethostname(ptcName, sizeof(ptcName) - 1);
-	if ( iRet )
+    if (gethostname(ptcName, sizeof(ptcName) - 1))
     {
         // Some error retrieving the current host name. Just print my ip from the ini.
         Str_CopyLimitNull(ptcName, m_ip.GetAddrStr(), sizeof(ptcName));
@@ -2605,8 +2597,7 @@ bool CServer::SocketsInit() // Initialize sockets
         g_Log.Event(LOGM_INIT, "Querying hostname '%s' address with timeout %d milliseconds...\n", ptcName, kiTimeoutMs);
 
         //ptcName[sizeof(ptcName)-1] = '\0';
-        auto [fst, snd] = sl::hostname_resolve_with_timeout_v4(ptcName, kiTimeoutMs);
-        if (fst)
+        if (auto [fst, snd] = sl::hostname_resolve_with_timeout_v4(ptcName, kiTimeoutMs); fst)
         {
             // Prefer canonical DNS name if provided (same role as hostent->h_name)
             if (!snd.canon.empty())

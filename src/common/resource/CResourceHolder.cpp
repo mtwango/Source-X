@@ -221,8 +221,7 @@ bool CResourceHolder::ResourceLock( CResourceLock & s, const CResourceID& rid )
 	if ( ! rid.IsValidUID() )
 		return false;
 
-    CResourceLink* pResourceLink = dynamic_cast <CResourceLink*>(ResourceGetDefRef(rid).get());
-    if (pResourceLink)
+    if (CResourceLink *pResourceLink = dynamic_cast<CResourceLink *>(ResourceGetDefRef(rid).get()))
         return pResourceLink->ResourceLock(s);
 
 	return false;

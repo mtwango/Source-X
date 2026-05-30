@@ -145,8 +145,7 @@ NOTO_TYPE CChar::Noto_CalcFlag(const CChar * pCharViewer, const bool fAllowIncog
 {
 	ADDTOCALLSTACK("CChar::Noto_GetFlag");
 
-	const auto iNotoFlag = static_cast<NOTO_TYPE>(m_TagDefs.GetKeyNum("OVERRIDE.NOTO"));
-	if (iNotoFlag != NOTO_INVALID)
+    if (const auto iNotoFlag = static_cast<NOTO_TYPE>(m_TagDefs.GetKeyNum("OVERRIDE.NOTO")); iNotoFlag != NOTO_INVALID)
 		return iNotoFlag;
 
 	if (fAllowIncog && IsStatFlag(STATF_INCOGNITO))
@@ -180,14 +179,12 @@ NOTO_TYPE CChar::Noto_CalcFlag(const CChar * pCharViewer, const bool fAllowIncog
 		if (g_Cfg.m_iPetsInheritNotoriety != 0)
 		{
 			// Get master and his notoriety.
-			const CChar * pMaster = NPC_PetGetOwnerRecursive();
-			if (pMaster && pMaster != pCharViewer)
+            if (const CChar *pMaster = NPC_PetGetOwnerRecursive(); pMaster && pMaster != pCharViewer)
 			{
 				const NOTO_TYPE notoMaster = pMaster->Noto_GetFlag(pCharViewer, fAllowIncog, fAllowInvul);
 
 			    // Get notoriety based on bit flag defined in sphere.ini's `PetsInheritNotoriety`.
-				const int iPetNotoFlag = 1 << (notoMaster - 1);
-				if ((g_Cfg.m_iPetsInheritNotoriety & iPetNotoFlag) == iPetNotoFlag)
+                if (const int iPetNotoFlag = 1 << (notoMaster - 1); (g_Cfg.m_iPetsInheritNotoriety & iPetNotoFlag) == iPetNotoFlag)
 					return notoMaster;
 			}
 		}
@@ -225,10 +222,9 @@ NOTO_TYPE CChar::Noto_CalcFlag(const CChar * pCharViewer, const bool fAllowIncog
 
             // Guild alignment.
             const STONEALIGN_TYPE myAlign = pMyGuild->GetAlignType();
-            const STONEALIGN_TYPE viewerAlign = pViewerGuild->GetAlignType();
 
             // We both aren't in a neutral guild.
-            if (myAlign != STONEALIGN_STANDARD && viewerAlign != STONEALIGN_STANDARD)
+            if (const STONEALIGN_TYPE viewerAlign = pViewerGuild->GetAlignType(); myAlign != STONEALIGN_STANDARD && viewerAlign != STONEALIGN_STANDARD)
             {
                 // Same guilds share notoriety and we are in the same fraction.
                 if (IsSetOF(OF_EnableGuildAlignNotoriety) && myAlign == viewerAlign)
@@ -259,8 +255,7 @@ skip_guilds:
 	if (!fSelfCheck)
 	{
 		// If viewer saw me commit a crime, or I am his aggressor, then criminal to just them.
-		const CItemMemory * pMemory = pCharViewer->Memory_FindObjTypes(this, MEMORY_SAWCRIME | MEMORY_AGGREIVED);
-		if (pMemory != nullptr)
+        if (const CItemMemory *pMemory = pCharViewer->Memory_FindObjTypes(this, MEMORY_SAWCRIME | MEMORY_AGGREIVED); pMemory != nullptr)
 			return NOTO_CRIMINAL;
 	}
 
@@ -276,8 +271,7 @@ skip_guilds:
 HUE_TYPE CChar::Noto_GetHue(const CChar * pCharViewer, bool fIncog) const
 {
 	ADDTOCALLSTACK("CChar::Noto_GetHue");
-	const CVarDefCont * sVal = GetKey("NAME.HUE", true);
-	if (sVal)
+    if (const CVarDefCont *sVal = GetKey("NAME.HUE", true))
 		return (HUE_TYPE)(sVal->GetValNum());
 
 	NOTO_TYPE color = Noto_GetFlag(pCharViewer, fIncog, true, true);
@@ -343,13 +337,11 @@ int CChar::Noto_GetLevel() const
 	ADDTOCALLSTACK("CChar::Noto_GetLevel");
 
 	size_t i = 0;
-	short iKarma = GetKarma();
-	for ( ; i < g_Cfg.m_NotoKarmaLevels.size() && iKarma < g_Cfg.m_NotoKarmaLevels[i]; ++i )
+    for (short iKarma = GetKarma(); i < g_Cfg.m_NotoKarmaLevels.size() && iKarma < g_Cfg.m_NotoKarmaLevels[i]; ++i )
 		;
 
 	size_t j = 0;
-	const ushort uiFame = GetFame();
-	for ( ; j < g_Cfg.m_NotoFameLevels.size() && uiFame > g_Cfg.m_NotoFameLevels[j]; ++j )
+    for (const ushort uiFame = GetFame(); j < g_Cfg.m_NotoFameLevels.size() && uiFame > g_Cfg.m_NotoFameLevels[j]; ++j )
 		;
 
 	return (int)( ( i * (g_Cfg.m_NotoFameLevels.size() + 1) ) + j );
@@ -423,8 +415,7 @@ bool CChar::Noto_Criminal( CChar * pCharViewer, bool fFromSawCrime )
     // Return != 1: remove the SawCrime memory, since i made him criminal to myself and also i may call the guards
     if (pCharViewer)
     {
-        CItemMemory *pMemorySawCrime = pCharViewer->Memory_FindObjTypes(this, MEMORY_SAWCRIME);
-        if (pMemorySawCrime)
+        if (CItemMemory *pMemorySawCrime = pCharViewer->Memory_FindObjTypes(this, MEMORY_SAWCRIME))
             pCharViewer->Memory_ClearTypes(pMemorySawCrime, MEMORY_SAWCRIME);
     }
 
@@ -659,8 +650,7 @@ void CChar::NotoSave_Add( CChar * pChar, NOTO_TYPE value, NOTO_TYPE color  )
 	{
 		for (std::vector<NotoSaves>::iterator it = m_notoSaves.begin(), end = m_notoSaves.end(); it != end; ++it)
 		{
-			NotoSaves & refNoto = *it;
-			if ( refNoto.charUID == uid.GetObjUID() )
+            if (NotoSaves &refNoto = *it; refNoto.charUID == uid.GetObjUID() )
 			{
 				// Found him, no actions needed so I forget about him...
 				// or should I update data ?
@@ -775,8 +765,7 @@ void CChar::NotoSave_Resend(CChar * pChar)
 	ADDTOCALLSTACK("CChar::NotoSave_Resend");
     if (pChar)
     {
-        const CObjBaseTemplate* pObj = pChar->GetTopLevelObj();
-        if (GetDist(pObj) < pChar->GetVisualRange())
+        if (const CObjBaseTemplate *pObj = pChar->GetTopLevelObj(); GetDist(pObj) < pChar->GetVisualRange())
             Noto_GetFlag(pChar, true, true);
     }
 }
@@ -791,8 +780,7 @@ int CChar::NotoSave_GetID( CChar * pChar ) const
 		int id = 0;
 		for (const auto& it : m_notoSaves)
 		{
-			const CUID uid(it.charUID);
-			if ( uid.CharFind() && (uid == pChar->GetUID()) )
+            if (const CUID uid(it.charUID); uid.CharFind() && (uid == pChar->GetUID()) )
 				return id;
 			++id;
 		}

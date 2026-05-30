@@ -122,8 +122,7 @@ void CItemShip::r_Write(CScript & s)
     if (m_uidHold.IsValidUID())
         s.WriteKeyHex("HATCH", m_uidHold.GetObjUID());
 
-    const size_t uiCount = GetShipPlankCount();
-    if (uiCount > 0)
+    if (const size_t uiCount = GetShipPlankCount(); uiCount > 0)
     {
         for (size_t i = 0; i < uiCount; ++i)
             s.WriteKeyHex("PLANK", m_uidPlanks[i].GetObjUID());
@@ -152,15 +151,12 @@ bool CItemShip::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc,
     ADDTOCALLSTACK("CItemShip::r_WriteVal");
     EXC_TRY("WriteVal");
 
-    int index = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-
-    switch (index)
+    switch (FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case IMCS_HATCH:
         {
             //ptcKey += 5;
-            CItem * pItemHold = GetShipHold();
-            if (pItemHold)
+            if (CItem *pItemHold = GetShipHold())
                 sVal.FormatHex(pItemHold->GetUID());
             else
                 sVal.SetValFalse();
@@ -175,8 +171,7 @@ bool CItemShip::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc,
         case IMCS_TILLER:
         {
             //ptcKey += 6;
-            const CItem * pTiller = Multi_GetSign();
-            if (pTiller)
+            if (const CItem *pTiller = Multi_GetSign())
                 sVal.FormatHex(pTiller->GetUID());
             else
                 sVal.SetValFalse();
@@ -200,8 +195,7 @@ bool CItemShip::r_LoadVal(CScript & s)
     ADDTOCALLSTACK("CItemShip::r_LoadVal");
     EXC_TRY("LoadVal");
     lpctstr	ptcKey = s.GetKey();
-    IMCS_TYPE index = (IMCS_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-    if (index >= 0 && g_Serv.IsLoadingGeneric())
+    if (IMCS_TYPE index = (IMCS_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1); index >= 0 && g_Serv.IsLoadingGeneric())
     {
         switch (index)
         {
@@ -297,8 +291,7 @@ CItem * CItemShip::GetShipPlank(size_t index)
     // Check the current list of planks is valid
     for (const CUID& curUID : m_uidPlanks)
     {
-        const CItem * pItem = curUID.ItemFind();
-        if (pItem && Multi_IsPartOf(pItem))
+        if (const CItem *pItem = curUID.ItemFind(); pItem && Multi_IsPartOf(pItem))
             continue;
 
         // If an invalid plank uid was found, then wipe the whole list

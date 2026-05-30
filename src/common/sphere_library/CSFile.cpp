@@ -351,8 +351,7 @@ bool CSFile::_Write( const void * pData, int iLength )
 
 #ifdef _WIN32
 	DWORD dwWritten;
-	BOOL ret = WriteFile( _fileDescriptor, pData, (DWORD)iLength, &dwWritten, nullptr );
-	if ( ret == FALSE )
+    if (BOOL ret = WriteFile(_fileDescriptor, pData, (DWORD)iLength, &dwWritten, nullptr); ret == FALSE )
 	{
 		_NotifyIOError("CFile::Write");
 		return false;

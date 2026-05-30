@@ -29,8 +29,7 @@ void CItemCommCrystal::OnMoveFrom()
 {
     ADDTOCALLSTACK("CItemCommCrystal::OnMoveFrom");
     // Being removed from the top level.
-    CSector *pSector = GetTopSector();
-    if ( pSector )
+    if ( CSector *pSector = GetTopSector() )
         pSector->RemoveListenItem();
 }
 
@@ -57,8 +56,7 @@ void CItemCommCrystal::OnHear(lpctstr pszCmd, CChar *pSrc)
         CResourceLock s;
         if ( !pLink->ResourceLock(s) )
             continue;
-        TRIGRET_TYPE iRet = OnHearTrigger(s, pszCmd, pSrc, mode);
-        if ( iRet == TRIGRET_ENDIF || iRet == TRIGRET_RET_FALSE )
+        if (TRIGRET_TYPE iRet = OnHearTrigger(s, pszCmd, pSrc, mode); iRet == TRIGRET_ENDIF || iRet == TRIGRET_RET_FALSE )
             continue;
         break;
     }
@@ -71,8 +69,7 @@ void CItemCommCrystal::OnHear(lpctstr pszCmd, CChar *pSrc)
     {
         // I am linked to something ?
         // Transfer the sound.
-        CItem *pItem = m_uidLink.ItemFind();
-        if ( pItem && pItem->IsType(IT_COMM_CRYSTAL) )
+        if (CItem *pItem = m_uidLink.ItemFind(); pItem && pItem->IsType(IT_COMM_CRYSTAL) )
             pItem->Speak(pszCmd);
     }
     else if (m_Speech.size() <= 0 )

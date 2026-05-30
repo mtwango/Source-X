@@ -196,8 +196,7 @@ int Sphere_InitServer( int argc, char *argv[] )
     //	load auto-complete dictionary // TODO: might as well be removed...?
 	EXC_SET_BLOCK("auto-complete");
 	{
-		CSFileText dict;
-		if ( dict.Open(SPHERE_FILE ".dic", OF_READ|OF_TEXT|OF_DEFAULTMODE) )
+        if (CSFileText dict; dict.Open(SPHERE_FILE ".dic", OF_READ|OF_TEXT|OF_DEFAULTMODE) )
 		{
 			tchar * pszTemp = Str_GetTemp();
 			size_t count = 0;
@@ -355,8 +354,7 @@ int main( int argc, char * argv[] )
     static constexpr lpctstr m_sClassName = "main";
     EXC_TRY("MAIN");
 
-    const int atexit_handler_result = std::atexit(atexit_handler); // Handler will be called
-    if (atexit_handler_result != 0)
+    if (const int atexit_handler_result = std::atexit(atexit_handler); atexit_handler_result != 0)
     {
         g_Log.Event(LOGL_CRIT, "atexit handler registration failed.\n");
         goto exit_server;
@@ -427,8 +425,7 @@ int main( int argc, char * argv[] )
         //  an instance of CNetworkInput nad CNetworkOutput, which support working in a multi threaded way (declarations and definitions in network_multithreaded.h/.cpp)
 		g_NetworkManager.start();
 
-        const bool fShouldCoreRunInSeparateThread = (g_Cfg.m_iFreezeRestartTime != 0);
-        if (fShouldCoreRunInSeparateThread)
+        if (g_Cfg.m_iFreezeRestartTime != 0)
         {
             // Core runs on a separate OS thread.
             g_Main.start();

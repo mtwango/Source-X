@@ -251,11 +251,10 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 		case '\0':
 			return 0;
 	}
-    INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE) FindTableHeadSorted( ptcRefArgs, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1 );
-	if ( iIntrinsic >= 0 )
+    if (INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(ptcRefArgs, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
+        iIntrinsic >= 0 )
 	{
-		size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]);
-        if ( strchr("( ", ptcRefArgs[iLen]) )
+        if (size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]); strchr("( ", ptcRefArgs[iLen]) )
 		{
             ptcRefArgs += (iLen + 1);
             tchar * ptcRefArgsNext;
@@ -345,8 +344,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 						else
 						{
 							tCmd = ppCmd[1];
-							realtype dBase = MakeFloatMath( tCmd );
-							if ( dBase <= 0 )
+                            if (realtype dBase = MakeFloatMath(tCmd); dBase <= 0 )
 							{
 								DEBUG_ERR(( "Float_MakeFloatMath: (%f)Log(%f) is %s\n", dBase, dArgument, (!dBase) ? "infinite" : "undefined" ));
 								iCount = 0;
@@ -381,9 +379,8 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 
                     if ( *ptcRefArgs )
 					{
-                        realtype dTosquare = MakeFloatMath(ptcRefArgs);
 
-						if (dTosquare >= 0)
+                        if (realtype dTosquare = MakeFloatMath(ptcRefArgs); dTosquare >= 0)
 						{
 							++iCount;
 							rResult = sqrt(dTosquare);
@@ -634,8 +631,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 						cparg1 = ppCmd[0];
 						cparg2 = ppCmd[1];
 						const realtype a1 = GetSingle(cparg1);
-						const realtype a2 = GetSingle(cparg2);
-						if ( a1 < a2 )
+                        if (const realtype a2 = GetSingle(cparg2); a1 < a2 )
 						{
 							cparg1 = ppCmd[2];
 							rResult = GetSingle(cparg1);

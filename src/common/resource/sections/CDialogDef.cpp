@@ -127,8 +127,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
     if ( index < 0 )
     {
         // TODO: This function check is already done in CObjBase::r_Verb... remove this?
-        const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey);
-        if (r_CanCall(uiFunctionIndex))
+        if (const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey); r_CanCall(uiFunctionIndex))
         {
             // RES_FUNCTION call
             CSString sVal;
@@ -406,8 +405,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
         case GUMPCTL_TOOLTIP:
         {
             tchar* pptcArgs[2];
-            const int iArgs = Str_ParseCmds(ptcArgs, pptcArgs, std::size(pptcArgs));
-            if (iArgs < 2)
+            if (const int iArgs = Str_ParseCmds(ptcArgs, pptcArgs, std::size(pptcArgs)); iArgs < 2)
                 return false;
 
             // The client expects this to be sent as a string in decimal notation. Ensure that.

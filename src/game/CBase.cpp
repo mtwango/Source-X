@@ -116,8 +116,7 @@ bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 	EXC_TRY("WriteVal");
 
 	bool fZero = false;
-	int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-	switch ( index )
+    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		//return as string or hex number or nullptr if not set
 		case OBC_CATEGORY:
@@ -304,12 +303,10 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
         }
     }
 
-    int i = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-
     //if (i != 0 && !g_Serv.IsLoadingGeneric())
     //    return false;   // shouldn't ever happen?
 
-	switch (i)
+	switch (FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
 	{
 		//Set as Strings
 		case OBC_ABILITYPRIMARY:

@@ -27,8 +27,7 @@ CNTService::CNTService()
 // Try to create the registry key containing the working directory for the application
 static void ExtractPath(LPTSTR szPath)
 {
-	TCHAR *pszPath = strrchr(szPath, '\\');
-	if ( pszPath )
+    if ( TCHAR *pszPath = strrchr(szPath, '\\') )
 		*pszPath = 0;
 }
 

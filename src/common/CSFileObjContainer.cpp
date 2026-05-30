@@ -174,9 +174,7 @@ bool CSFileObjContainer::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         if ( nNumber >= sFileList.size() )
             return false;
 
-        CSFileObj * pFile = sFileList.at(nNumber);
-
-        if ( pFile != nullptr )
+        if (CSFileObj *pFile = sFileList.at(nNumber); pFile != nullptr )
         {
             pRef = pFile;
             return true;
@@ -190,11 +188,8 @@ bool CSFileObjContainer::r_LoadVal( CScript & s )
 {
     ADDTOCALLSTACK("CSFileObjContainer::r_LoadVal");
     EXC_TRY("LoadVal");
-    lpctstr ptcKey = s.GetKey();
 
-    int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-
-    switch ( index )
+    switch (lpctstr ptcKey = s.GetKey(); FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case CFO_OBJECTPOOL:
             SetFilenumber(s.GetArgVal());
@@ -257,11 +252,9 @@ bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
             if ( nNumber >= sFileList.size() )
                 return false;
 
-            CSFileObj * pFile = sFileList[nNumber];
-            if ( pFile != nullptr )
+            if (CSFileObj *pFile = sFileList[nNumber]; pFile != nullptr )
             {
-                CScriptObj * pObj = pFile;
-                if (pObj != nullptr)
+                if (CScriptObj *pObj = pFile; pObj != nullptr)
                     return pObj->r_WriteVal(ptcKey, sVal, pSrc);
             }
         }
@@ -326,14 +319,11 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
     {
         if ( strchr( ptcKey, '.') ) // 0.blah format
         {
-            size_t nNumber = Exp_GetSTVal(ptcKey);
-            if ( nNumber < sFileList.size() )
+            if (size_t nNumber = Exp_GetSTVal(ptcKey); nNumber < sFileList.size() )
             {
-                CSFileObj * pFile = sFileList.at(nNumber);
-                if ( pFile != nullptr )
+                if (CSFileObj *pFile = sFileList.at(nNumber); pFile != nullptr )
                 {
-                    CScriptObj* pObj = pFile;
-                    if (pObj != nullptr)
+                    if (CScriptObj *pObj = pFile; pObj != nullptr)
                     {
                         SKIP_SEPARATORS(ptcKey);
                         CScript script(ptcKey, s.GetArgStr());

@@ -31,11 +31,9 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
 {
 
     const size_t len1 = strlen(str1);
-    const size_t len2 = strlen(str2);
-
-	/* In our context both strings should always have the same length
+    /* In our context both strings should always have the same length
 	 * because they will be hashed passwords. */
-	if (len1 != len2)
+	if (const size_t len2 = strlen(str2); len1 != len2)
 		return 1;
 
 	/* Force unsigned for bitwise operations. */
@@ -109,8 +107,7 @@ static int bcrypt_checkpw(const char *passwd, const char hash[BCRYPT_HASHSIZE])
 {
     char outhash[BCRYPT_HASHSIZE];
 
-	int ret = bcrypt_hashpw(passwd, hash, outhash);
-	if (ret != 0)
+    if (int ret = bcrypt_hashpw(passwd, hash, outhash); ret != 0)
 		return -1;
 
 	return timing_safe_strcmp(hash, outhash);

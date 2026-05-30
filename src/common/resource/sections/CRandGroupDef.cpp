@@ -132,8 +132,7 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
         case RGC_ID:
         case RGC_CONTAINER:
         {
-            size_t i = GetRandMemberIndex();
-            if ( i != sl::scont_bad_index() )
+            if (size_t i = GetRandMemberIndex(); i != sl::scont_bad_index() )
                 sVal.FormatHex(GetMemberID(i).GetResIndex());
             break;
         }
@@ -146,9 +145,8 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
                 sVal.FormatSTVal( GetRandMemberIndex(nullptr, false) );
             else
             {
-                CChar * pSend = CUID::CharFindFromUID(Exp_GetDWVal(ptcKey));
 
-                if ( pSend )
+                if ( CChar *pSend = CUID::CharFindFromUID(Exp_GetDWVal(ptcKey)) )
                     sVal.FormatSTVal( GetRandMemberIndex(pSend, false) );
                 else
                     return false;
@@ -245,12 +243,10 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, bool fTrigger ) cons
     int iTotalWeight = 0;
     for ( i = 0; i < iCount; ++i )
     {
-        CRegionResourceDef * pOreDef = dynamic_cast <CRegionResourceDef *>( g_Cfg.RegisteredResourceGetDef( m_Members[i].GetResourceID() ) );
         // If no regionresource, return just some random entry!
-        if (pOreDef != nullptr)
+        if (CRegionResourceDef *pOreDef = dynamic_cast<CRegionResourceDef *>(g_Cfg.RegisteredResourceGetDef(m_Members[i].GetResourceID())); pOreDef != nullptr)
         {
-            int rid = pOreDef->m_ReapItem;
-            if (rid != 0)
+            if (int rid = pOreDef->m_ReapItem; rid != 0)
             {
                 if (!pCharSrc->Skill_MakeItem((ITEMID_TYPE)(rid), CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT))
                     continue;

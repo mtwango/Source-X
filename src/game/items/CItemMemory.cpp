@@ -110,8 +110,7 @@ int CItemMemory::FixWeirdness()
 	}
 
     // Automatic transition from old to new spawn engine
-    dword dwFlags = GetHue();
-    if (dwFlags & MEMORY_LEGACY_ISPAWNED)
+    if (dword dwFlags = GetHue(); dwFlags & MEMORY_LEGACY_ISPAWNED)
     {
         CItem *pSpawnItem = m_uidLink.ItemFind();
         if (!pSpawnItem)

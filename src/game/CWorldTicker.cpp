@@ -1128,8 +1128,7 @@ void CWorldTicker::ProcessTimedObjects()
                     CObjBaseTemplate* pObjTop = pItem->GetTopLevelObj();
                     ASSERT(pObjTop);
 
-                    CChar* pChar = dynamic_cast<CChar*>(pObjTop);
-                    if (pChar)
+                    if (CChar *pChar = dynamic_cast<CChar *>(pObjTop))
                     {
                         fDelete = !pChar->OnTickEquip(pItem);
                         break;

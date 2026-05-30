@@ -97,8 +97,7 @@ bool cstr_to_num(
         // Auto-detect: '0' followed by hex digit → base 16; else base 10
         if (*str == '0' && str[1] != '\0' && str[1] != '.')
         {
-            const char next = str[1];
-            if ((next >= '0' && next <= '9') ||
+            if (const char next = str[1]; (next >= '0' && next <= '9') ||
                 (next >= 'A' && next <= 'F') ||
                 (next >= 'a' && next <= 'f'))
             {
@@ -332,8 +331,7 @@ bool cstr_to_num(
 std::optional<char> Str_ToI8 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     char val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -341,8 +339,7 @@ std::optional<char> Str_ToI8 (const tchar * ptcStr, uint base, size_t uiStopAtLe
 std::optional<uchar> Str_ToU8 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     uchar val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -350,8 +347,7 @@ std::optional<uchar> Str_ToU8 (const tchar * ptcStr, uint base, size_t uiStopAtL
 std::optional<short> Str_ToI16 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     short val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -359,8 +355,7 @@ std::optional<short> Str_ToI16 (const tchar * ptcStr, uint base, size_t uiStopAt
 std::optional<ushort> Str_ToU16 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     ushort val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -368,8 +363,7 @@ std::optional<ushort> Str_ToU16 (const tchar * ptcStr, uint base, size_t uiStopA
 std::optional<int> Str_ToI (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     int val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -377,8 +371,7 @@ std::optional<int> Str_ToI (const tchar * ptcStr, uint base, size_t uiStopAtLen,
 std::optional<uint> Str_ToU(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     uint val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -386,8 +379,7 @@ std::optional<uint> Str_ToU(const tchar * ptcStr, uint base, size_t uiStopAtLen,
 std::optional<llong> Str_ToLL(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     llong val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -395,8 +387,7 @@ std::optional<llong> Str_ToLL(const tchar * ptcStr, uint base, size_t uiStopAtLe
 std::optional<ullong> Str_ToULL(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
 {
     ullong val = 0;
-    const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars);
-    if (!fSuccess)
+    if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
         return std::nullopt;
     return val;
 }
@@ -571,8 +562,7 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
             const int iDigits = str2int_detail::hex_digits_from_width(u, width_nibbles);
 
             // Required: '0' prefix + digits + NUL.
-            const size_t need = static_cast<size_t>(iDigits) + 2;
-            if (uiBufLength < need)
+            if (const size_t need = static_cast<size_t>(iDigits) + 2; uiBufLength < need)
             {
 #ifdef _DEBUG
                 g_Log.EventWarn("Str_FromInt_Fast[hex]: insufficient buffer (need %" PRIuSIZE_T ", have %" PRIuSIZE_T ").\n", need, uiBufLength);
@@ -584,8 +574,7 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
             // Right-shift on unsigned is well-defined and zero-filling on the left.
             ptcOutBuf[0] = '0';
             size_t uiPos = 1;
-            int iShift = (iDigits - 1) * 4; // start at the most significant non-zero nibble
-            for (; iShift >= 0; iShift -= 4)
+            for (int iShift = (iDigits - 1) * 4; iShift >= 0; iShift -= 4)
                 ptcOutBuf[uiPos++] = str2int_detail::hexdig_lower(static_cast<uint32_t>((u >> iShift) & 0xFull));
             ptcOutBuf[uiPos] = '\0';
             return ptcOutBuf;
@@ -648,8 +637,7 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
             }
 
             // Buffer need: optional '-' + digits + NUL.
-            const size_t uiNeed = (fNeg ? 1 : 0) + uiPos + 1;
-            if (uiBufLength < uiNeed)
+            if (const size_t uiNeed = (fNeg ? 1 : 0) + uiPos + 1; uiBufLength < uiNeed)
             {
 #ifdef _DEBUG
                 g_Log.EventWarn("Str_FromInt_Fast[base=10]: insufficient buffer (need %" PRIuSIZE_T ", have %" PRIuSIZE_T ").\n", uiNeed, uiBufLength);
@@ -702,8 +690,7 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
             }
             while (uiMagnitude);
 
-            const size_t uiNeed = (fNeg ? 1 : 0) + n + 1;
-            if (uiBufLength < uiNeed)
+            if (const size_t uiNeed = (fNeg ? 1 : 0) + n + 1; uiBufLength < uiNeed)
             {
 #ifdef _DEBUG
                 g_Log.EventWarn("Str_FromInt_Fast[base=%u]: insufficient buffer (need %" PRIuSIZE_T ", have %" PRIuSIZE_T ").\n", uiBase, uiNeed, uiBufLength);
@@ -1182,9 +1169,9 @@ tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t st
     if (str_len == 0 || substr_len == 0)
         return nullptr;
 
-    tchar c, sc;
-    if ((c = *substr++) != '\0')
+    if (tchar c; (c = *substr++) != '\0')
     {
+        tchar sc;
         do
         {
             do
@@ -1237,10 +1224,9 @@ int Str_GetBare(tchar * ptcOut, const tchar *ptcSrc, size_t uiMaxOutSize, const 
     ptcStripList = ptcStripList ? ptcStripList : "{|}~";
 
     tchar* out          = ptcOut;
-    tchar* const outEnd = ptcOut + (uiMaxOutSize - 1);
 
     // Process each char until SRC ends or output buffer is full
-    for (; *ptcSrc && out < outEnd; ++ptcSrc)
+    for (tchar *const outEnd = ptcOut + (uiMaxOutSize - 1); *ptcSrc && out < outEnd; ++ptcSrc)
     {
         const uchar ch = static_cast<uchar>(*ptcSrc);
 
@@ -1321,8 +1307,7 @@ void Str_MakeUnFiltered(tchar * pStrOut, const tchar * pStrIn, int iSizeMax) noe
 {
     int len = (int)strlen(pStrIn);
     int iIn = 0;
-    int iOut = 0;
-    for (; iOut < iSizeMax && iIn <= len; ++iIn, ++iOut)
+    for (int iOut = 0; iOut < iSizeMax && iIn <= len; ++iIn, ++iOut)
     {
         tchar ch = pStrIn[iIn];
         switch (ch)
@@ -1692,11 +1677,9 @@ int Str_IndexOf(tchar * pStr1, tchar * pStr2, int offset) noexcept
 
     for (int i = offset; i < len; ++i)
     {
-        tchar c = pStr1[i];
-        if (c == firstChar)
+        if (tchar c = pStr1[i]; c == firstChar)
         {
-            int rem = len - i;
-            if (rem >= slen)
+            if (int rem = len - i; rem >= slen)
             {
                 int j = i;
                 int k = 0;
@@ -1908,8 +1891,7 @@ tchar * Str_UnQuote(tchar * pStr) noexcept
 {
     GETNONWHITESPACE(pStr);
 
-    tchar ch = *pStr;
-    if ((ch == '"') || (ch == '\''))
+    if (tchar ch = *pStr; (ch == '"') || (ch == '\''))
         ++pStr;
 
     for (tchar *pEnd = pStr + strlen(pStr) - 1; pEnd >= pStr; --pEnd)
@@ -1928,8 +1910,7 @@ int Str_RegExMatch(const tchar * pPattern, const tchar * pText, tchar * lastErro
     try
     {
         CRegexp expressionformatch(pPattern, NO_FLAG);
-        MatchResult result = expressionformatch.Match(pText);
-        if (result.IsMatched())
+        if (MatchResult result = expressionformatch.Match(pText); result.IsMatched())
             return 1;
 
         return 0;
@@ -2091,8 +2072,7 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, int delimiter, FILE *fp) noexcep
         int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                ssize_t diff = ptr - *buf;
-                if (diff != 0) {
+                if (ssize_t diff = ptr - *buf; diff != 0) {
                     *ptr = '\0';
                     return diff;
                 }
@@ -2128,8 +2108,7 @@ ssize_t fReadUntilDelimiter_StaticBuf(char *buf, const size_t bufsiz, const int 
         const int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                ssize_t diff = ptr - buf;
-                if (diff != 0) {
+                if (ssize_t diff = ptr - buf; diff != 0) {
                     *ptr = '\0';
                     return diff;
                 }

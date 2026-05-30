@@ -260,8 +260,8 @@ bool CCharBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 			break;
         case CBC_RANGE:
         {
-            const uchar iRangeH = GetRangeH(), iRangeL = GetRangeL();
-            if ( iRangeL == 0 )
+            const uchar iRangeH = GetRangeH();
+            if (const uchar iRangeL = GetRangeL(); iRangeL == 0 )
                 sVal.Format( "%hhd", iRangeH );
             else
                 sVal.Format( "%hhd,%hhd", iRangeH, iRangeL );

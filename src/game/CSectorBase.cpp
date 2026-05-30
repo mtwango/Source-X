@@ -58,8 +58,7 @@ void CCharsActiveList::AddCharActive( CChar * pChar )
 	ASSERT( pChar );
 	// ASSERT( pChar->m_pt.IsValid());
 
-	CSObjCont* pParent = pChar->GetParent();
-	if (pParent != this)
+    if (CSObjCont *pParent = pChar->GetParent(); pParent != this)
 	{
 		InsertContentTail(pChar); // this also removes the Char from the old sector
 		if (pChar->IsClientActive())
@@ -103,8 +102,7 @@ void CItemsList::AddItemToSector( CItem * pItem )
 	ASSERT( pItem );
     //DEBUG_ASSERT(nullptr != dynamic_cast<const CItem*>(pItem));
 
-	CSObjCont* pParent = pItem->GetParent();
-	if (pParent != this)
+    if (CSObjCont *pParent = pItem->GetParent(); pParent != this)
 	{
 #ifdef _DEBUG
         if (!pParent)
@@ -307,8 +305,7 @@ CRegion * CSectorBase::GetRegion( const CPointBase & pt, dword dwType ) const
 		ASSERT( ridRegion.IsValidUID());
 		if ( ridRegion.IsUIDItem())
 		{
-			const CItemShip * pShipItem = dynamic_cast <CItemShip *>(ridRegion.ItemFindFromResource());
-			if (pShipItem)
+            if (dynamic_cast<CItemShip *>(ridRegion.ItemFindFromResource()))
 			{
 				if (!(dwType & REGION_TYPE_SHIP))
 					continue;
@@ -350,8 +347,7 @@ size_t CSectorBase::GetRegions( const CPointBase & pt, dword dwType, CRegionLink
 		ASSERT(ridRegion.IsValidUID());
 		if (ridRegion.IsUIDItem())
 		{
-			const CItemShip * pShipItem = dynamic_cast <const CItemShip *>(ridRegion.ItemFindFromResource());
-			if (pShipItem)
+            if (dynamic_cast<const CItemShip *>(ridRegion.ItemFindFromResource()))
 			{
 				if (!(dwType & REGION_TYPE_SHIP))
 					continue;
@@ -463,8 +459,7 @@ bool CSectorBase::AddTeleport( CTeleport * pTeleport )
 	// NOTE: can't be 2 teleports from the same place !
 	// ASSERT( Teleport is actually in this sector !
 
-    const size_t i = m_Teleports.FindKey( pTeleport->GetPointSortIndex());
-	if ( i != sl::scont_bad_index() )
+    if (const size_t i = m_Teleports.FindKey(pTeleport->GetPointSortIndex()); i != sl::scont_bad_index() )
 	{
 		DEBUG_ERR(( "Conflicting teleport %s!\n", pTeleport->WriteUsed() ));
 		return false;

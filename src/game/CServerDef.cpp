@@ -96,8 +96,7 @@ size_t CServerDef::StatGet(SERV_STAT_TYPE i) const
 			if ( m_GetProcessMemoryInfo )
 			{
 				EXC_SET_BLOCK("open process");
-				HANDLE hProcess = GetCurrentProcess();
-				if ( hProcess )
+                if ( HANDLE hProcess = GetCurrentProcess() )
 				{
 					ASSERT( hProcess == (HANDLE)-1 );
 					EXC_SET_BLOCK("get memory info");
@@ -169,8 +168,7 @@ void CServerDef::SetName( lpctstr pszName )
 
 	// No HTML tags using <> either.
 	tchar szName[ 2*MAX_SERVER_NAME_SIZE ];
-	const int len = Str_GetBare( szName, pszName, sizeof(szName), "<>/\"\\" );
-	if ( len <= 0 )
+    if (const int len = Str_GetBare(szName, pszName, sizeof(szName), "<>/\"\\"); len <= 0 )
 		return;
 
 	// allow just basic chars. No spaces, only numbers, letters and underbar.
@@ -311,9 +309,8 @@ bool CServerDef::r_LoadVal( CScript & s )
 		case SC_ACCAPP:
 		case SC_ACCAPPS:
         {
-            lpctstr ptcArg = s.GetArgStr();
-			// Treat it as a value or a string.
-			if ( IsDigit( ptcArg[0] ))
+            // Treat it as a value or a string.
+			if (lpctstr ptcArg = s.GetArgStr(); IsDigit(ptcArg[0]))
             {
 				m_eAccApp = static_cast<ACCAPP_TYPE>(s.GetArgVal());
             }
@@ -506,8 +503,7 @@ bool CServerDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 	default:
         if (!fNoCallChildren)
 	    {
-            const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey);
-            if (r_CanCall(uiFunctionIndex))
+            if (const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey); r_CanCall(uiFunctionIndex))
             {
                 // RES_FUNCTION call
 			    lpctstr pszArgs = strchr(ptcKey, ' ');

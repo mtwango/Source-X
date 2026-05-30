@@ -258,9 +258,8 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && g_Cfg.m_iCombatParryingEra & PARRYERA_SEFORMULA )   // Samurai Empire formula
 	{
 		const int iBushido = pChar->Skill_GetBase(SKILL_BUSHIDO);
-		int iChanceSE = 0, iChanceLegacy = 0;
 
-		if (fCanShield && pChar->IsStatFlag(STATF_HASSHIELD))	// parry using shield
+        if (fCanShield && pChar->IsStatFlag(STATF_HASSHIELD))	// parry using shield
 		{
 			pItemParry = pChar->LayerFind(LAYER_HAND2);
 			iParryChance = (iParrying - iBushido) / 40;
@@ -271,8 +270,10 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 		}
 		else if (pChar->m_uidWeapon.IsItem())		// parry using weapon
 		{
-			CItem* pTempItemParry = pChar->m_uidWeapon.ItemFind();
-			if (pTempItemParry != nullptr && fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1))
+            int iChanceSE = 0;
+            int iChanceLegacy = 0;
+            if (CItem *pTempItemParry = pChar->m_uidWeapon.ItemFind();
+                pTempItemParry != nullptr && fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1))
 			{
 				pItemParry = pTempItemParry;
 
@@ -311,8 +312,8 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 		}
 		else if (pChar->m_uidWeapon.IsItem())		// parry using weapon
 		{
-			CItem* pTempItemParry = pChar->m_uidWeapon.ItemFind();
-			if (pTempItemParry != nullptr && ((fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1)) ||
+            if (CItem *pTempItemParry = pChar->m_uidWeapon.ItemFind();
+                pTempItemParry != nullptr && ((fCanOneHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND1)) ||
 				(fCanTwoHanded && (pTempItemParry->GetEquipLayer() == LAYER_HAND2))))
 			{
 				pItemParry = pTempItemParry;
@@ -331,8 +332,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 	if (iParryChance < 0)
 		return 0;
 
-	int iDex = pChar->Stat_GetAdjusted(STAT_DEX);
-	if (iDex < 80)
+    if (int iDex = pChar->Stat_GetAdjusted(STAT_DEX); iDex < 80)
 	{
 		const float fDexMod = (80 - iDex) / 100.0f;
 		iParryChance = static_cast<int>(static_cast<float>(iParryChance) * (1.0f - fDexMod));
@@ -537,8 +537,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	bool fScroll = false;
 	if (pObj != pCharCaster)
 	{
-		const CItem* pItem = dynamic_cast <const CItem*> (pObj);
-		if (pItem)
+        if (const CItem *pItem = dynamic_cast<const CItem *>(pObj))
 		{
 			const IT_TYPE iType = pItem->GetType();
 			if (iType == IT_WAND)
@@ -574,12 +573,10 @@ size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpell
 		const CResourceQtyArray* pReagents = &(pSpell->m_Reags);
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-		const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
-		if ( g_Rand.GetVal(100) >= iLowerReagentCost)
+        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); g_Rand.GetVal(100) >= iLowerReagentCost)
 		{
 			CContainer* pCont = pCharCaster;
-			const size_t iMissing = pCont->ResourceConsumePart(pReagents, 1, 100, fTest);
-			if (iMissing != sl::scont_bad_index())
+            if (const size_t iMissing = pCont->ResourceConsumePart(pReagents, 1, 100, fTest); iMissing != sl::scont_bad_index())
 				return iMissing;
 		}
 	}
@@ -599,8 +596,7 @@ ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef*
 
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-		const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); //Also used for reducing Tithing points.
-		if (g_Rand.GetVal(100) >= iLowerReagentCost)
+        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); g_Rand.GetVal(100) >= iLowerReagentCost)
 			return pSpell->m_wTithingUse; //Default amount of Tithing points consumed.
 	}
 	return 0; //No tithing points consumed.
@@ -619,8 +615,7 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, int iCureLevel, 
 	int iCureChance = 0, iPoisonLevel = pPoison->m_itSpell.m_spelllevel;
 
 	//Override the Cure Poison Chance.
-	const CVarDefCont* pTagStorage = pPoison->GetKey("OVERRIDE.CUREPOISONCHANCE", true);
-	if (pTagStorage)
+    if (const CVarDefCont *pTagStorage = pPoison->GetKey("OVERRIDE.CUREPOISONCHANCE", true))
 	{
 		iCureChance = (int)pTagStorage->GetValNum();
 		return (g_Rand.GetVal(100) <= iCureChance);

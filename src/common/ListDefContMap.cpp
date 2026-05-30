@@ -145,9 +145,8 @@ CListDefContElem* CListDefCont::GetAt(size_t nIndex) const
 bool CListDefCont::SetNumAt(size_t nIndex, int64 iVal)
 {
     ADDTOCALLSTACK("CListDefCont::SetNumAt");
-	CListDefContElem* pListElem = GetAt(nIndex);
 
-	if ( !pListElem )
+    if (CListDefContElem *pListElem = GetAt(nIndex); !pListElem )
 		return false;
 
 	CListDefContElem* pListNewElem = new CListDefContNum(m_Key.GetBuffer(), iVal);
@@ -163,9 +162,8 @@ bool CListDefCont::SetNumAt(size_t nIndex, int64 iVal)
 bool CListDefCont::SetStrAt(size_t nIndex, lpctstr pszVal)
 {
     ADDTOCALLSTACK("CListDefCont::SetStrAt");
-	CListDefContElem* pListElem = GetAt(nIndex);
 
-	if ( !pListElem )
+    if (CListDefContElem *pListElem = GetAt(nIndex); !pListElem )
 		return false;
 
 	CListDefContElem* pListNewElem = new CListDefContStr(m_Key.GetBuffer(), pszVal);
@@ -288,13 +286,11 @@ void CListDefCont::DeleteAtIterator(const DefList::iterator &it, const bool fEra
 
     if (pListBase)
     {
-        CListDefContNum* pListNum = dynamic_cast<CListDefContNum*>(pListBase);
-        if (pListNum)
+        if (CListDefContNum *pListNum = dynamic_cast<CListDefContNum *>(pListBase))
             delete pListNum;
         else
         {
-            CListDefContStr* pListStr = dynamic_cast<CListDefContStr*>(pListBase);
-            if (pListStr)
+            if (CListDefContStr *pListStr = dynamic_cast<CListDefContStr *>(pListBase))
                 delete pListStr;
         }
     }
@@ -336,8 +332,7 @@ static bool compare_insensitive (const CListDefContElem * firstelem, const CList
     ASSERT(firstelem);
     ASSERT(secondelem);
     const CListDefContNum *pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
-    const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum*>(secondelem);
-	if (pFirst && pSecond)
+    if (const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
 	{
 		const int64 iFirst = pFirst->GetValNum();
         const int64 iSecond = pSecond->GetValNum();
@@ -365,8 +360,7 @@ static bool compare_sensitive (const CListDefContElem * firstelem, const CListDe
     ASSERT(firstelem);
     ASSERT(secondelem);
     const CListDefContNum *pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
-    const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum*>(secondelem);
-    if (pFirst && pSecond)
+    if (const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
     {
         const int64 iFirst = pFirst->GetValNum();
         const int64 iSecond = pSecond->GetValNum();
@@ -466,9 +460,8 @@ void CListDefCont::PrintElements(CSString& strElements) const
 
     for ( const CListDefContElem *pListElem : m_listElements)
     {
-		const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem);
 
-		if ( pListElemStr )
+        if ( const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
 		{
 			strElements += "\"";
 			strElements += pListElemStr->GetValStr();
@@ -512,9 +505,8 @@ void CListDefCont::r_WriteSave( CScript& s ) const
 
     for ( const CListDefContElem *pListElem : m_listElements)
 	{
-		const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem);
 
-		if ( pListElemStr )
+        if ( const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
 		{
 			strElement.Format("\"%s\"", pListElemStr->GetValStr());
 			s.WriteKeyStr("ELEM", strElement.GetBuffer());
@@ -586,9 +578,8 @@ CListDefCont * CListDefMap::GetAtKey( lpctstr at )
     ADDTOCALLSTACK("CListDefMap::GetAtKey");
 
 	CListDefCont pListBase(at);
-	DefSet::const_iterator i = m_Container.find(&pListBase);
 
-	if ( i != m_Container.end() )
+    if (DefSet::const_iterator i = m_Container.find(&pListBase); i != m_Container.end() )
 		return (*i);
 
     return nullptr;
@@ -685,9 +676,8 @@ CListDefCont* CListDefMap::GetKey( lpctstr ptcKey ) const
 	if ( ptcKey && *ptcKey )
 	{
 		CListDefCont pListBase(ptcKey);
-		DefSet::const_iterator i = m_Container.find(&pListBase);
 
-		if ( i != m_Container.end() )
+        if (DefSet::const_iterator i = m_Container.find(&pListBase); i != m_Container.end() )
 			pReturn = (*i);
 	}
 
@@ -896,9 +886,7 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
                         return pListBase->AddElementStr(ptcArg);
                     }
 
-                    CListDefContElem *pListElem = pListBase->GetAt(nIndex);
-
-                    if (!pListElem)
+                    if (CListDefContElem *pListElem = pListBase->GetAt(nIndex); !pListElem)
                         return false;
 
                     if (fIsNum)
@@ -910,9 +898,8 @@ bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
 			else if ( ptcArg && *ptcArg )
 			{
 				// LIST.<list_name>.<element index> -> set value
-				CListDefContElem* pListElem = pListBase->GetAt(nIndex);
 
-				if ( !pListElem )
+                if (CListDefContElem *pListElem = pListBase->GetAt(nIndex); !pListElem )
 					return false;
 
                 if ( IsStrNumeric(ptcArg) )
@@ -992,13 +979,11 @@ bool CListDefMap::r_Write( CTextConsole *pSrc, lpctstr pszString, CSString& strV
 	if ( IsSimpleNumberString(ppCmds[1]) )
 	{
 		nStartIndex = Exp_GetVal(ppCmds[1]);
-		CListDefContElem *pListElem = pListBase->GetAt(nStartIndex);
-		if ( pListElem )
+        if ( CListDefContElem *pListElem = pListBase->GetAt(nStartIndex) )
 		{
 			if ( !(*(ppCmds[2])) )
 			{
-				CListDefContStr *pListElemStr = dynamic_cast<CListDefContStr*>(pListElem);
-				if ( pListElemStr )
+                if ( CListDefContStr *pListElemStr = dynamic_cast<CListDefContStr *>(pListElem) )
 					strVal.Format("\"%s\"", pListElemStr->GetValStr());
 				else
 					strVal = pListElem->GetValStr();
@@ -1021,9 +1006,8 @@ bool CListDefMap::r_Write( CTextConsole *pSrc, lpctstr pszString, CSString& strV
 	if ( !strnicmp(s.GetKey(), "findelem", 8) )
 	{
 		bool fQuoted = false;
-		lpctstr ptcArg = s.GetArgStr(&fQuoted);
 
-		if (( fQuoted ) || (! IsSimpleNumberString(ptcArg) ))
+        if (lpctstr ptcArg = s.GetArgStr(&fQuoted); ( fQuoted ) || (! IsSimpleNumberString(ptcArg) ))
 			strVal.Format("%d", pListBase->FindValStr(ptcArg, nStartIndex));
 		else
 			strVal.Format("%d", pListBase->FindValNum(Exp_Get64Val(ptcArg), nStartIndex));

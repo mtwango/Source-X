@@ -65,8 +65,7 @@ bool CUOInstall::FindInstall()
 
 	if ( lRet == ERROR_SUCCESS && dwType == REG_SZ )
 	{
-		tchar * pSlash = strrchr( szValue, '\\' );	// get rid of the client.exe part of the name
-		if ( pSlash ) * pSlash = '\0';
+        if ( tchar *pSlash = strrchr(szValue, '\\') ) * pSlash = '\0';
 		m_sExePath = szValue;
 	}
 	else
@@ -111,8 +110,7 @@ void CUOInstall::DetectMulVersions()
 	// we can't use multi.mul length because it varies and multi.idx is always 98184 bytes, the best option
 	// so far seems to be to check the size of the first entry to see if its length is divisible by the new
 	// format length (risky if the first entry is custom and happens to be be divisible by both lengths)
-	CUOIndexRec index;
-	if (ReadMulIndex( VERFILE_MULTIIDX, VERFILE_MULTI, 0x00, index) && (index.GetBlockLength() % sizeof(CUOMultiItemRec_HS)) == 0)
+    if (CUOIndexRec index; ReadMulIndex( VERFILE_MULTIIDX, VERFILE_MULTI, 0x00, index) && (index.GetBlockLength() % sizeof(CUOMultiItemRec_HS)) == 0)
 		m_FileFormat[VERFILE_MULTIIDX] = VERFORMAT_HIGHSEAS;
 }
 
@@ -209,8 +207,7 @@ bool CUOInstall::OpenFile( VERFILE_TYPE i )
 	if ( pFile->IsFileOpen())
 		return true;
 
-    lpctstr ptcFilePath = pFile->GetFilePath();
-	if ( !ptcFilePath || !strlen(ptcFilePath) )
+    if (lpctstr ptcFilePath = pFile->GetFilePath(); !ptcFilePath || !strlen(ptcFilePath) )
 	{
 		if ( pFile->Open(pFile->GetFilePath(), OF_READ|OF_SHARE_DENY_WRITE) )
 			return true;
@@ -523,9 +520,8 @@ void CUOInstall::CloseFiles()
 bool CUOInstall::ReadMulIndex(CSFile &file, dword id, CUOIndexRec &Index)
 {
 	ADDTOCALLSTACK("CUOInstall::ReadMulIndex");
-	int iOffset = (int)(id * sizeof(CUOIndexRec));
 
-	if ( file.Seek(iOffset, SEEK_SET) != iOffset )
+    if (int iOffset = (int)(id * sizeof(CUOIndexRec)); file.Seek(iOffset, SEEK_SET) != iOffset )
 		return false;
 
 	if ( (uint)file.Read(&Index, sizeof(CUOIndexRec)) != sizeof(CUOIndexRec) )
@@ -540,8 +536,7 @@ bool CUOInstall::ReadMulData(CSFile &file, const CUOIndexRec &Index, void * pDat
 	if ( (uint)file.Seek(Index.GetFileOffset(), SEEK_SET) != Index.GetFileOffset() )
 		return false;
 
-	dword dwLength = Index.GetBlockLength();
-	if ( (uint)file.Read(pData, dwLength) != dwLength )
+    if (dword dwLength = Index.GetBlockLength(); (uint)file.Read(pData, dwLength) != dwLength )
 		return false;
 
 	return true;

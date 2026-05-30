@@ -66,9 +66,8 @@ void CCItemDamageable::OnTickStatsUpdate()
     {
         return;
     }
-    const int64 iCurtime = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
-    if (_iTimeLastUpdate + g_Cfg._iItemHitpointsUpdate < iCurtime)
+    if (const int64 iCurtime = CWorldGameTime::GetCurrentTime().GetTimeRaw(); _iTimeLastUpdate + g_Cfg._iItemHitpointsUpdate < iCurtime)
     {
         CItem *pItem = GetLink();
         const CPointMap pt = pItem->GetTopPoint();

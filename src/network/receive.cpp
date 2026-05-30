@@ -136,8 +136,7 @@ bool PacketCreate::onReceive(CNetState* net)
 	// validate race against resdisp
     {
         const CAccount *pAccount = net->getClient()->GetAccount();
-        const RESDISPLAY_VERSION resdisp = pAccount ? pAccount->GetResDisp() : RDS_T2A;
-        if (resdisp < RDS_ML) // prior to ML, only human
+        if (const RESDISPLAY_VERSION resdisp = pAccount ? pAccount->GetResDisp() : RDS_T2A; resdisp < RDS_ML) // prior to ML, only human
         {
             if (rtRace >= RACETYPE_ELF)
                 rtRace = RACETYPE_HUMAN;
@@ -175,8 +174,8 @@ bool PacketCreate::doCreate(CNetState* net, lpctstr charname, bool fFemale, RACE
 	}
 
 	// make sure they don't have an idling character
-	const CChar* pCharLast = account->m_uidLastChar.CharFind();
-	if (pCharLast != nullptr && account->IsMyAccountChar(pCharLast) && account->GetPrivLevel() <= PLEVEL_GM && !pCharLast->IsDisconnected() )
+    if (const CChar *pCharLast = account->m_uidLastChar.CharFind();
+        pCharLast != nullptr && account->IsMyAccountChar(pCharLast) && account->GetPrivLevel() <= PLEVEL_GM && !pCharLast->IsDisconnected() )
 	{
 		client->addIdleWarning(PacketWarningMessage::CharacterInWorld);
 		client->addLoginErr(PacketLoginError::CharIdle);
@@ -185,8 +184,7 @@ bool PacketCreate::doCreate(CNetState* net, lpctstr charname, bool fFemale, RACE
 
 	// make sure they don't already have too many characters
 	byte iMaxChars = account->GetMaxChars();
-	uint iQtyChars = (uint)account->m_Chars.GetCharCount();
-	if (iQtyChars >= iMaxChars)
+    if (uint iQtyChars = (uint)account->m_Chars.GetCharCount(); iQtyChars >= iMaxChars)
 	{
 		client->SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_MAXCHARS), (int)(iQtyChars));
 		if (client->GetPrivLevel() < PLEVEL_Seer)
@@ -499,8 +497,7 @@ bool PacketTextCommand::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	word packetLength = readInt16();
-	if ((packetLength < 5) || (packetLength > MAX_EXTCMD_ARG_LEN + 4))
+    if (word packetLength = readInt16(); (packetLength < 5) || (packetLength > MAX_EXTCMD_ARG_LEN + 4))
 		return false;
 
 	EXTCMD_TYPE type = static_cast<EXTCMD_TYPE>(readByte());
@@ -552,8 +549,7 @@ bool PacketItemEquipReq::onReceive(CNetState* net)
     bool fSuccess = false;
 
     // Check if player is sending wrong / forged layer.
-    const LAYER_TYPE itemRealLayer = target->CanEquipLayer(item, LAYER_QTY, target, true);
-    if (itemLayer != itemRealLayer)
+    if (const LAYER_TYPE itemRealLayer = target->CanEquipLayer(item, LAYER_QTY, target, true); itemLayer != itemRealLayer)
     {
 #ifdef _DEBUG
         g_Log.EventDebug("Player trying to equip item to invalid layer (sent: %d, should be %d)\n", itemLayer, itemRealLayer);
@@ -627,8 +623,7 @@ bool PacketDeathStatus::onReceive(CNetState* net)
 	if (ghost == nullptr)
 		return false;
 
-    Mode mode = (Mode)readByte();
-	if (mode != Dead)
+    if (Mode mode = (Mode)readByte(); mode != Dead)
 	{
 		// Play as a ghost.
 		client->SysMessage("You are a ghost");
@@ -738,8 +733,7 @@ bool PacketVendorBuyReq::onReceive(CNetState* net)
 
 	word packetLength = readInt16();
 	CUID vendorSerial(readInt32());
-	byte flags = readByte();
-	if (flags == 0)
+    if (byte flags = readByte(); flags == 0)
 		return true;
 
 	CChar* vendor = vendorSerial.CharFind();
@@ -760,11 +754,9 @@ bool PacketVendorBuyReq::onReceive(CNetState* net)
 	uint itemCount = minimum(uiCountFromPacket, g_Cfg.m_iContainerMaxItems);
 
 	// check buying speed
-	const CVarDefCont* vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME");
-	if (vardef != nullptr)
+    if (const CVarDefCont *vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME"); vardef != nullptr)
 	{
-		const int64 allowsell = vardef->GetValNum() + (itemCount * 3LL);
-		if (CWorldGameTime::GetCurrentTime().GetTimeRaw() < allowsell)
+        if (const int64 allowsell = vardef->GetValNum() + (itemCount * 3LL); CWorldGameTime::GetCurrentTime().GetTimeRaw() < allowsell)
 		{
 			client->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_BUYFAST));
 			return true;
@@ -1182,8 +1174,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-	word packetlen = readInt16();
-    if (packetlen > 300)
+    if (word packetlen = readInt16(); packetlen > 300)
         return false;
 	BBOARDF_TYPE action = static_cast<BBOARDF_TYPE>(readByte());
 	CUID boardSerial(readInt32());
@@ -1229,8 +1220,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 				return true;
 			}
 
-			size_t uiContCount = board->GetContentCount();
-			if (uiContCount > 32)
+            if (size_t uiContCount = board->GetContentCount(); uiContCount > 32)
 			{
 				// roll a message off
 				CItem *pMsg = static_cast<CItem*>(board->GetContentIndex(uiContCount - 1));
@@ -1387,8 +1377,7 @@ bool PacketMenuChoice::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	const CChar* character = client->GetChar();
-	if (character == nullptr)
+    if (const CChar *character = client->GetChar(); character == nullptr)
 		return false;
 
 	CUID serial(readInt32());
@@ -1915,11 +1904,9 @@ bool PacketVendorSellReq::onReceive(CNetState* net)
     }
 
     // check selling speed
-	const CVarDefCont* vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME");
-	if (vardef != nullptr)
+    if (const CVarDefCont *vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME"); vardef != nullptr)
 	{
-		int64 allowsell = vardef->GetValNum() + ((itemCount * 3LL) * MSECS_PER_TENTH);
-		if (CWorldGameTime::GetCurrentTime() < allowsell)
+        if (int64 allowsell = vardef->GetValNum() + ((itemCount * 3LL) * MSECS_PER_TENTH); CWorldGameTime::GetCurrentTime() < allowsell)
 		{
 			client->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_SELLFAST));
 			return true;
@@ -1997,9 +1984,8 @@ bool PacketTipReq::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketTipReq::onReceive");
 
 	word index = readInt16();	// current tip shown to the client
-	bool forward = readBool();	// 0=previous, 1=next
 
-	if (forward)
+    if (readBool())
 		index++;
 	else
 		index--;
@@ -2209,8 +2195,8 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 		}
         if (context == CLIMODE_DIALOG_FACESELECTION)
         {
-            dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
-            if ((button >= ITEMID_FACE_1) && (button <= maxID))
+            if (dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
+                (button >= ITEMID_FACE_1) && (button <= maxID))
             {
                 CItem *pFace = character->LayerFind(LAYER_FACE);
                 if (pFace)
@@ -2659,8 +2645,7 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-	PARTYMSG_TYPE code = static_cast<PARTYMSG_TYPE>(readByte());
-	switch (code)
+    switch (PARTYMSG_TYPE code = static_cast<PARTYMSG_TYPE>(readByte()))
 	{
 		case PARTYMSG_Add:
 			// request to add a new member
@@ -2973,8 +2958,7 @@ bool PacketAosTooltipInfo::onReceive(CNetState* net)
     if (client->GetResDisp() < RDS_AOS || !IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
         return true;
 
-    CObjBase * object = CUID(readInt32()).ObjFind();
-	if (object != nullptr && character->CanSee(object))
+    if (CObjBase *object = CUID(readInt32()).ObjFind(); object != nullptr && character->CanSee(object))
 		client->addAOSTooltip(object, true);
 
 	return true;
@@ -3307,8 +3291,7 @@ bool PacketTargetedSkill::onReceive(CNetState* net)
     }
 
     const CUID uidTarget(dwTargetUID);
-    CObjBase * pTarget = uidTarget.ObjFind();
-    if (pTarget)
+    if (CObjBase *pTarget = uidTarget.ObjFind())
     {
         CClient* pClient = net->getClient();
         ASSERT(pClient);
@@ -3378,8 +3361,7 @@ bool PacketGargoyleFly::onReceive(CNetState* net)
 		client->addBuff(BI_GARGOYLEFLY, 1112193, 1112567);
 
 		// float player up to the hover Z
-		CPointMap ptHover = CWorldMap::FindItemTypeNearby(character->GetTopPoint(), IT_HOVEROVER, 0);
-		if ( ptHover.IsValidPoint() )
+        if (CPointMap ptHover = CWorldMap::FindItemTypeNearby(character->GetTopPoint(), IT_HOVEROVER, 0); ptHover.IsValidPoint() )
 			character->MoveTo(ptHover);
 	}
 
@@ -3434,11 +3416,10 @@ bool PacketWheelBoatMove::onReceive(CNetState* net)
 	//skip(1);
 	byte bMovementType = readByte(); //(0 = Stop Movement, 1 = One Tile Movement, 2 = Normal Movement) ***These speeds are NOT the same as 0xF6 packet
 
-	CRegionWorld *area = character->m_pArea;
-	if (area && area->IsFlag(REGION_FLAG_SHIP))
+    if (CRegionWorld *area = character->m_pArea; area && area->IsFlag(REGION_FLAG_SHIP))
 	{
-		CItemShip *pShipItem = dynamic_cast<CItemShip *>(area->GetResourceID().ItemFindFromResource());
-		if (pShipItem && (pShipItem->m_itShip.m_Pilot == character->GetUID()))
+        if (CItemShip *pShipItem = dynamic_cast<CItemShip *>(area->GetResourceID().ItemFindFromResource());
+            pShipItem && (pShipItem->m_itShip.m_Pilot == character->GetUID()))
 		{
 			//direction of movement = moving - ship_face
 			//	moving = read from packet
@@ -3611,8 +3592,7 @@ bool PacketAOSTooltipReq::onReceive(CNetState* net)
 			continue;
 
         bool bShop = false;
-        const CItem* pSearchObjItem = dynamic_cast<const CItem*>(object);
-        if (pSearchObjItem)
+        if (const CItem *pSearchObjItem = dynamic_cast<const CItem *>(object))
         {
             // Check if this item is shown from a shop gump: for shop items we need to always send the tooltip!
             const CObjBase* pSearchObj;
@@ -3623,8 +3603,7 @@ bool PacketAOSTooltipReq::onReceive(CNetState* net)
                 if (!pSearchObjItem)
                     break;
 
-                LAYER_TYPE objContItemLayer = pSearchObjItem->GetEquipLayer();
-                if (objContItemLayer >= 26 && objContItemLayer <= 28)
+                if (LAYER_TYPE objContItemLayer = pSearchObjItem->GetEquipLayer(); objContItemLayer >= 26 && objContItemLayer <= 28)
                 {
                     // If this container is equipped in the shop layers, it's a shop item
                     bShop = true;
@@ -3672,8 +3651,7 @@ bool PacketEncodedCommand::onReceive(CNetState* net)
 	word packetLength = readInt16();
 	if (packetLength > 1000)
 		return false;
-	CUID serial(readInt32());
-	if (character->GetUID() != serial)
+    if (CUID serial(readInt32()); character->GetUID() != serial)
 		return false;
 
 	EXTAOS_TYPE type = static_cast<EXTAOS_TYPE>(readInt16());
@@ -4286,8 +4264,7 @@ bool PacketBugReport::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketBugReport::onReceive");
 
-	word packetLength = readInt16(); // packet length
-	if (packetLength < 10)
+    if (word packetLength = readInt16(); packetLength < 10)
 		return false;
 
 	tchar language[4];
@@ -4318,8 +4295,7 @@ bool PacketClientType::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketClientType::onReceive");
 
-	word packetLength = readInt16(); // packet length
-	if (packetLength < 9)
+    if (word packetLength = readInt16(); packetLength < 9)
 		return false;
 
 	skip(2); // ..count?
@@ -4372,8 +4348,7 @@ bool PacketUseHotbar::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	CChar* character = client->GetChar();
-	if (character == nullptr)
+    if (CChar *character = client->GetChar(); character == nullptr)
 		return false;
 
 	skip(2); // 1
@@ -4509,8 +4484,7 @@ bool PacketMovementReqNew::onReceive(CNetState* net)
 	CClient *client = net->getClient();
 	ASSERT(client);
 
-	word packetlen = readInt16();
-    if (getLength() != packetlen)
+    if (word packetlen = readInt16(); getLength() != packetlen)
         return false;   // It's not a valid PacketMovementReqNew, maybe it's a Krrios or Injection packet?
 
 	byte steps = readByte();
@@ -4520,8 +4494,7 @@ bool PacketMovementReqNew::onReceive(CNetState* net)
 		skip(8);	//int64 iTime2 = readInt64();
 		byte sequence = readByte();
 		byte direction = readByte();
-		dword mode = readInt32();	// 1 = walk, 2 = run
-		if ( mode == 2 )
+        if (dword mode = readInt32(); mode == 2 )
 			direction |= DIR_MASK_RUNNING;
 
 		// The client send these values, but they're not really needed

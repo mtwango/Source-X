@@ -37,16 +37,14 @@ size_t CResourceQty::WriteNameSingle( tchar * pszArgs, size_t uiBufLen, int iQty
     ADDTOCALLSTACK("CResourceQty::WriteNameSingle");
     if ( GetResType() == RES_ITEMDEF )
     {
-        const CItemBase * pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(m_rid.GetResIndex()));
         //DEBUG_ERR(("pItemBase 0x%x  m_rid 0%x  m_rid.GetResIndex() 0%x\n",pItemBase,m_rid,m_rid.GetResIndex()));
-        if ( pItemBase )
+        if ( const CItemBase *pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(m_rid.GetResIndex())) )
         {
             lpctstr ptcSrc = pItemBase->GetNamePluralize(pItemBase->GetTypeName(),(( iQty > 1 )));
             return Str_CopyLimitNull(pszArgs, ptcSrc, uiBufLen);
         }
     }
-    auto pResourceDef = static_cast<const CScriptObj *>(g_Cfg.RegisteredResourceGetDef(m_rid));
-    if ( pResourceDef != nullptr )
+    if (auto pResourceDef = static_cast<const CScriptObj *>(g_Cfg.RegisteredResourceGetDef(m_rid)); pResourceDef != nullptr )
         return Str_CopyLimitNull(pszArgs, pResourceDef->GetName(), uiBufLen);
 
     return Str_CopyLimitNull(pszArgs, g_Cfg.ResourceGetName(m_rid), uiBufLen);
@@ -124,8 +122,7 @@ size_t CResourceQtyArray::FindResourceType( RES_TYPE type ) const
     // BadIndex = fail
     for ( size_t i = 0, iQty = size(); i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetResourceID();
-        if ( type == ridtest.GetResType() )
+        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); type == ridtest.GetResType() )
             return i;
     }
     return sl::scont_bad_index();
@@ -138,8 +135,7 @@ size_t CResourceQtyArray::FindResourceID( const CResourceID& rid ) const
     // BadIndex = fail
     for ( size_t i = 0, iQty = size(); i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetResourceID();
-        if ( rid == ridtest )
+        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); rid == ridtest )
             return i;
     }
     return sl::scont_bad_index();
@@ -152,8 +148,7 @@ size_t CResourceQtyArray::FindResourceMatch( const CObjBase * pObj ) const
     // Use to find intersection with this pOBj raw material and BaseResource creation elements.
     for ( size_t i = 0, iQty = size(); i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetResourceID();
-        if ( pObj->IsResourceMatch( ridtest, 0 ))
+        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); pObj->IsResourceMatch( ridtest, 0 ))
             return i;
     }
     return sl::scont_bad_index();
@@ -169,9 +164,8 @@ bool CResourceQtyArray::IsResourceMatchAll( const CChar * pChar ) const
 
     for ( size_t i = 0, iQty = size(); i < iQty; ++i )
     {
-        const CResourceID& ridtest = (*this)[i].GetResourceID();
 
-        if ( ! pChar->IsResourceMatch( ridtest, (uint)((*this)[i].GetResQty()) ))
+        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); ! pChar->IsResourceMatch( ridtest, (uint)((*this)[i].GetResQty()) ))
             return false;
     }
 
@@ -208,8 +202,7 @@ size_t CResourceQtyArray::Load(lpctstr pszCmds)
             if ( res.GetResourceID().IsValidUID())
             {
                 // Replace any previous refs to this same entry ?
-                size_t i = FindResourceID( res.GetResourceID() );
-                if ( i != sl::scont_bad_index() )
+                if (size_t i = FindResourceID(res.GetResourceID()); i != sl::scont_bad_index() )
                 {
                     operator[](i) = std::move(res);
                 }

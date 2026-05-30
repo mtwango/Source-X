@@ -105,15 +105,13 @@ bool CCharNPC::r_LoadVal( CChar * pChar, CScript &s )
 			return( m_Speech.r_LoadVal( s, RES_SPEECH ));
 		case CNC_VENDCAP:
 		{
-			CItemContainer * pBank = pChar->GetBank();
-			if ( pBank )
+            if ( CItemContainer *pBank = pChar->GetBank() )
 				pBank->m_itEqBankBox.m_Check_Restock = s.GetArgVal();
 		}
 		break;
 		case CNC_VENDGOLD:
 		{
-			CItemContainer * pBank = pChar->GetBank();
-			if ( pBank )
+            if ( CItemContainer *pBank = pChar->GetBank() )
 				pBank->m_itEqBankBox.m_Check_Amount = s.GetArgVal();
 		}
 		break;
@@ -190,15 +188,13 @@ bool CCharNPC::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 			break;
 		case CNC_VENDCAP:
 		{
-			CItemContainer * pBank = pChar->GetBank();
-			if ( pBank )
+            if ( CItemContainer *pBank = pChar->GetBank() )
 				sVal.FormatVal( pBank->m_itEqBankBox.m_Check_Restock );
 		}
 		break;
 		case CNC_VENDGOLD:
 		{
-			CItemContainer * pBank = pChar->GetBank();
-			if ( pBank )
+            if ( CItemContainer *pBank = pChar->GetBank() )
 				sVal.FormatVal( pBank->m_itEqBankBox.m_Check_Amount );
 		}
 		break;
@@ -255,8 +251,7 @@ bool CCharNPC::IsVendor() const
 
 int CCharNPC::GetNpcAiFlags( const CChar *pChar ) const
 {
-	CVarDefCont *pVar = pChar->GetKey("OVERRIDE.NPCAI", true );
-	if (pVar != nullptr)
+    if (CVarDefCont *pVar = pChar->GetKey("OVERRIDE.NPCAI", true); pVar != nullptr)
 		return (int)(pVar->GetValNum());
 	return g_Cfg.m_iNpcAi;
 }
@@ -274,8 +269,7 @@ void CChar::NPC_LoadScript( bool fRestock )
 
 	CCharBase * pCharDef = Char_GetDef();
 
-    CChar * pChar = this->GetChar();
-    if (pChar != nullptr)
+    if (CChar *pChar = this->GetChar(); pChar != nullptr)
     {
 	    // 1) CHARDEF trigger
 	    if ( m_pPlayer == nullptr ) //	CHARDEF triggers (based on body type)

@@ -102,8 +102,7 @@ void CPartyDef::AddStatsUpdate( CChar *pChar, PacketSend *pPacket )
 
 	for ( size_t i = 0; i < iQty; ++i )
 	{
-		CChar *pCharNow = m_Chars.GetChar(i).CharFind();
-		if ( pCharNow && pCharNow != pChar )
+        if (CChar *pCharNow = m_Chars.GetChar(i).CharFind(); pCharNow && pCharNow != pChar )
 		{
 			if ( pCharNow->IsClientActive() && pCharNow->CanSee(pChar) )
 				pPacket->send(pCharNow->GetClientActive());
@@ -119,8 +118,7 @@ void CPartyDef::SysMessageAll( lpctstr pText )
 	size_t iQty = m_Chars.GetCharCount();
 	for ( size_t i = 0; i < iQty; i++ )
 	{
-		CChar *pChar = m_Chars.GetChar(i).CharFind();
-	    if (pChar != nullptr)
+        if (CChar *pChar = m_Chars.GetChar(i).CharFind(); pChar != nullptr)
 	    {
 		    pChar->SysMessage(pText);
 	    }
@@ -315,8 +313,7 @@ bool CPartyDef::RemoveMember(const CUID& uidRemove, const CUID &uidCommand, cons
 	if (fDisband && uidRemove == uidMaster)
 		return Disband(uidMaster);
 
-	CChar *pSrc = uidCommand.CharFind();
-	if (pSrc && IsTrigUsed(TRIGGER_PARTYREMOVE))
+    if (CChar *pSrc = uidCommand.CharFind(); pSrc && IsTrigUsed(TRIGGER_PARTYREMOVE))
 	{
         if (pCharRemove->OnTrigger(CTRIG_PartyRemove, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc) == TRIGRET_RET_TRUE)
 			return false;
@@ -384,8 +381,7 @@ bool CPartyDef::Disband(const CUID &uidMaster)
 	if ( GetMaster() != uidMaster )
 		return false;
 
-	CChar *pMaster = GetMaster().CharFind();
-	if ( pMaster && IsTrigUsed(TRIGGER_PARTYDISBAND) )
+    if (CChar *pMaster = GetMaster().CharFind(); pMaster && IsTrigUsed(TRIGGER_PARTYDISBAND) )
 	{
         if ( pMaster->OnTrigger(CTRIG_PartyDisband, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pMaster) == TRIGRET_RET_TRUE )
 			return false;
@@ -428,8 +424,7 @@ bool CPartyDef::DeclineEvent(const CChar *pCharDecline, const CUID &uidInviter)	
 	if ( !pCharInviter || !pCharDecline || uidInviter == pCharDecline->GetUID() )
 		return false;
 
-	CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE");
-	if ( !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharDecline->GetUID() )
+    if (CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE"); !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharDecline->GetUID() )
 		return false;
 
 	pCharInviter->DeleteKey("PARTY_LASTINVITE");
@@ -457,8 +452,8 @@ bool CPartyDef::AcceptEvent(CChar *pCharAccept, const CUID &uidInviter, const bo
 	CPartyDef *pParty = pCharInviter->m_pParty;
 	if ( !bForced )
 	{
-		CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE");
-		if ( !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharAccept->GetUID() )
+        if (CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE");
+            !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharAccept->GetUID() )
 			return false;
 
 		pCharInviter->DeleteKey("PARTY_LASTINVITE");
@@ -554,8 +549,7 @@ bool CPartyDef::r_GetRef( lpctstr &ptcKey, CScriptObj *&pRef )
 	if ( !strnicmp("MASTER.", ptcKey, 7) )
 	{
 		ptcKey += 7;
-		CChar *pMaster = GetMaster().CharFind();
-		if ( pMaster )
+        if ( CChar *pMaster = GetMaster().CharFind() )
 		{
 			pRef = pMaster;
 			return true;
@@ -569,8 +563,7 @@ bool CPartyDef::r_GetRef( lpctstr &ptcKey, CScriptObj *&pRef )
 		if ( !m_Chars.IsValidIndex(nNumber) )
 			return false;
 
-		CChar *pMember = m_Chars.GetChar(nNumber).CharFind();
-		if ( pMember )
+        if ( CChar *pMember = m_Chars.GetChar(nNumber).CharFind() )
 		{
 			pRef = pMember;
 			return true;
@@ -585,8 +578,7 @@ bool CPartyDef::r_LoadVal( CScript &s )
 	EXC_TRY("LoadVal");
 	lpctstr ptcKey = s.GetKey();
 
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-	switch ( index )
+    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case PDC_SPEECHFILTER:
 		{
@@ -595,9 +587,8 @@ bool CPartyDef::r_LoadVal( CScript &s )
 			else
 			{
 				lpctstr ptcArg = s.GetArgStr();
-				CResourceLink *m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg));
 
-				if ( !m_pTestEvent )
+                if (CResourceLink *m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg)); !m_pTestEvent )
 					return false;
 
 				this->m_pSpeechFunction.Format("%s", ptcArg);
@@ -634,8 +625,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 	ADDTOCALLSTACK("CPartyDef::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-	CScriptObj *pRef;
-	if ( r_GetRef(ptcKey, pRef) )
+    if (CScriptObj *pRef; r_GetRef(ptcKey, pRef) )
 	{
 		if ( pRef == nullptr )		// good command but bad link.
 		{
@@ -644,8 +634,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 		}
 		if ( ptcKey[0] == '\0' )	// we where just testing the ref.
 		{
-			CObjBase *pObj = dynamic_cast<CObjBase*>(pRef);
-			if ( pObj )
+            if ( CObjBase *pObj = dynamic_cast<CObjBase *>(pRef) )
 				sVal.FormatHex(pObj->GetUID());
 			else
                 sVal.SetValTrue();
@@ -751,8 +740,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 	ASSERT(pSrc);
 
 	lpctstr ptcKey = s.GetKey();
-	CScriptObj *pRef;
-	if ( r_GetRef(ptcKey, pRef) )
+    if (CScriptObj *pRef; r_GetRef(ptcKey, pRef) )
 	{
 		if ( ptcKey[0] )
 		{
@@ -764,8 +752,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 		}
 	}
 
-	int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
-	switch ( iIndex )
+    switch ( int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
 	{
 		case PDV_ADDMEMBER:
 		case PDV_ADDMEMBERFORCED:
@@ -802,8 +789,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 		case PDV_REMOVEMEMBER:
 		{
 			CUID toRemove;
-			lpctstr ptcArg = s.GetArgStr();
-			if ( *ptcArg == '@' )
+            if (lpctstr ptcArg = s.GetArgStr(); *ptcArg == '@' )
 			{
 				++ptcArg;
 				const size_t nMember = Exp_GetSTVal(ptcArg);
@@ -824,8 +810,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 		case PDV_SETMASTER:
 		{
 			CUID newMaster;
-			lpctstr ptcArg = s.GetArgStr();
-			if ( *ptcArg == '@' )
+            if (lpctstr ptcArg = s.GetArgStr(); *ptcArg == '@' )
 			{
 				++ptcArg;
 				const size_t nMember = Exp_GetSTVal(ptcArg);
@@ -887,8 +872,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 
 			if ( toSysmessage.IsValidUID() )
 			{
-			    CChar *pSend = toSysmessage.CharFind();
-			    if (pSend != nullptr)
+                if (CChar *pSend = toSysmessage.CharFind(); pSend != nullptr)
 			    {
 				    pSend->SysMessage(ptcArg);
 			    }

@@ -18,8 +18,7 @@ int CEventLog::VEvent(dword dwMask, lpctstr pszFormat, ConsoleTextColor iColor, 
         return 0;
 
 	tchar* pszTemp = Str_GetTemp();
-    size_t len = vsnprintf(pszTemp, (Str_TempLength() - 1), pszFormat, args);
-    if (! len)
+    if (size_t len = vsnprintf(pszTemp, (Str_TempLength() - 1), pszFormat, args); ! len)
         Str_CopyLimitNull(pszTemp, pszFormat, (Str_TempLength() - 1));
 
     // This get rids of exploits done sending 0x0C to the log subsytem.
@@ -202,10 +201,9 @@ bool CLog::_OpenLog( lpctstr pszBaseDirName )	// name set previously.
 	tchar *pszTemp = Str_GetTemp();
 	snprintf(pszTemp, Str_TempLength(), SPHERE_FILE "%d-%02d-%02d.log",
 		m_dateStamp.GetYear(), m_dateStamp.GetMonth(), m_dateStamp.GetDay());
-	CSString sFileName = GetMergedFileName(m_sBaseDir, pszTemp);
 
-	// Use the OF_READWRITE to append to an existing file.
-	if ( CSFileText::_Open( sFileName.GetBuffer(), OF_SHARE_DENY_NONE|OF_READWRITE|OF_TEXT ) )
+    // Use the OF_READWRITE to append to an existing file.
+	if (CSString sFileName = GetMergedFileName(m_sBaseDir, pszTemp); CSFileText::_Open( sFileName.GetBuffer(), OF_SHARE_DENY_NONE|OF_READWRITE|OF_TEXT ) )
 	{
 		setvbuf(_pStream, nullptr, _IONBF, 0);
 		return true;
@@ -372,8 +370,7 @@ void CLog::CatchEvent( const CSError * pErr, lpctstr pszCatchContext, ... )
 		if ( pErr != nullptr )
 		{
 			eSeverity = pErr->m_eSeverity;
-			const CAssert * pAssertErr = dynamic_cast<const CAssert*>(pErr);
-			if (pAssertErr)
+            if (const CAssert *pAssertErr = dynamic_cast<const CAssert *>(pErr))
 				pAssertErr->GetErrorMessage(szMsg, sizeof(szMsg));
 			else
 				pErr->GetErrorMessage(szMsg, sizeof(szMsg));

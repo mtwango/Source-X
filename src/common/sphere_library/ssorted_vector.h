@@ -159,8 +159,7 @@ namespace sl
             while (_lo < _size)
             {
                 const size_t _mid = _lo + ((_size - _lo) >> 1);
-                const int _ret = predicate(_dataptr[_mid], value);
-                if (_ret < 0)
+                if (const int _ret = predicate(_dataptr[_mid], value); _ret < 0)
                 {
                     _lo = _mid + 1;
                 }

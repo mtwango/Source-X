@@ -322,8 +322,7 @@ void CCSpawn::GenerateItem()
         return;
     }
 
-    const uint16 iAmountPile = (uint16)(minimum(UINT16_MAX, _iPile));
-    if (iAmountPile > 1)
+    if (const uint16 iAmountPile = minimum(UINT16_MAX, _iPile); iAmountPile > 1)
     {
         const CItemBase *pItemDef = pItem->Item_GetDef();
         ASSERT(pItemDef);
@@ -482,13 +481,11 @@ CResourceIDBase CCSpawn::GetCharRid()
     }
 
     rid = pDef->GetResourceID();
-    RES_TYPE iRidType = rid.GetResType();
-    if (iRidType == RES_SPAWN)
+    if (RES_TYPE iRidType = rid.GetResType(); iRidType == RES_SPAWN)
     {
         auto pSpawnGroup = dynamic_cast<const CRandGroupDef*>(pDef);
         ASSERT(pSpawnGroup);
-        size_t i = pSpawnGroup->GetRandMemberIndex();
-        if (i != sl::scont_bad_index())
+        if (size_t i = pSpawnGroup->GetRandMemberIndex(); i != sl::scont_bad_index())
         {
             rid = pSpawnGroup->GetMemberID(i);
         }
@@ -531,15 +528,12 @@ void CCSpawn::DelObj(const CUID& uid)
     pSpawnItem->m_CanMask |= CAN_O_NOSLEEP; //Avoid the spawn point to sleep until job is finish
 
 
-	CObjBase* pSpawnedObj = uid.ObjFind();
-	if (pSpawnedObj && !pSpawnedObj->IsDeleted())
+    if (CObjBase *pSpawnedObj = uid.ObjFind(); pSpawnedObj && !pSpawnedObj->IsDeleted())
 	{
 		pSpawnedObj->SetSpawn(nullptr);
-		const IT_TYPE iSpawnType = pSpawnItem->GetType();
-		if ((iSpawnType == IT_SPAWN_CHAR) || (iSpawnType == IT_SPAWN_CHAMPION))
+        if (const IT_TYPE iSpawnType = pSpawnItem->GetType(); (iSpawnType == IT_SPAWN_CHAR) || (iSpawnType == IT_SPAWN_CHAMPION))
 		{
-			CChar* pSpawnedChar = dynamic_cast<CChar*>(pSpawnedObj);
-			if (pSpawnedChar)
+            if (CChar *pSpawnedChar = dynamic_cast<CChar *>(pSpawnedObj))
 				pSpawnedChar->StatFlag_Clear(STATF_SPAWNED);
 		}
 	}
@@ -605,8 +599,7 @@ void CCSpawn::AddObj(const CUID& uid)
         if (fIsSpawnChar)
         {
             // IT_SPAWN_CHAR and IT_SPAWN_CHAMPION can only spawn NPCs.
-            const CChar *pChar = uid.CharFind();
-            if (!pChar || !pChar->m_pNPC)
+            if (const CChar *pChar = uid.CharFind(); !pChar || !pChar->m_pNPC)
                 return;
         }
         else if (pSpawnItem->IsType(IT_SPAWN_ITEM) && !uid.ItemFind())
@@ -617,8 +610,7 @@ void CCSpawn::AddObj(const CUID& uid)
 
         CObjBase *pSpawnedObj = uid.ObjFind();
         ASSERT(pSpawnedObj);
-        CCSpawn *pPrevSpawn = pSpawnedObj->GetSpawn();
-        if (pPrevSpawn)
+        if (CCSpawn *pPrevSpawn = pSpawnedObj->GetSpawn())
         {
             if (pPrevSpawn == this)	    // obj already linked to this spawn
                 return;
@@ -709,8 +701,7 @@ void CCSpawn::KillChildren()
 {
     ADDTOCALLSTACK("CCSpawn::KillChildren");
 
-    CItem* pSpawnItem = static_cast<CItem*>(GetLink());
-    if (pSpawnItem->IsValidUID())
+    if (CItem *pSpawnItem = GetLink(); pSpawnItem->IsValidUID())
         pSpawnItem->m_CanMask |= CAN_O_NOSLEEP;
 
     if (_uidList.empty())
@@ -728,8 +719,7 @@ void CCSpawn::KillChildren()
             continue;
         }
 
-        CChar *pChar = dynamic_cast<CChar*>(pObj);
-        if (pChar)
+        if (CChar *pChar = dynamic_cast<CChar *>(pObj))
         {
 #ifdef _DEBUG
             auto parent = pChar->GetParent();
@@ -742,8 +732,7 @@ void CCSpawn::KillChildren()
             continue;
         }
 
-        CItem *pItem = dynamic_cast<CItem*>(pObj);
-        if (pItem)
+        if (CItem *pItem = dynamic_cast<CItem *>(pObj))
         {
 #ifdef _DEBUG
             auto parent = pItem->GetParent();
@@ -779,9 +768,8 @@ const CCharBase *CCSpawn::SetTrackID()
     }
 
     const CCharBase *pCharDef = nullptr;
-    const CResourceID& rid = _idSpawn;
 
-    if (rid.GetResType() == RES_CHARDEF)
+    if (const CResourceID &rid = _idSpawn; rid.GetResType() == RES_CHARDEF)
     {
         CREID_TYPE id = (CREID_TYPE)(rid.GetResIndex());
         pCharDef = CCharBase::FindCharBase(id);
@@ -967,8 +955,7 @@ bool CCSpawn::r_LoadVal(CScript & s)
                     {
                         // it should be a spawn group.
                         CResourceIDBase ridTemp(RES_SPAWN, iRidIndex);
-                        CResourceDef *pDef = g_Cfg.RegisteredResourceGetDef(ridTemp);
-                        if (pDef)
+                        if (g_Cfg.RegisteredResourceGetDef(ridTemp))
                         {
                             _idSpawn = ridTemp;
                         }
@@ -998,8 +985,7 @@ bool CCSpawn::r_LoadVal(CScript & s)
                     {
                         // try a template
                         CResourceIDBase ridTemp(RES_TEMPLATE, iRidIndex);
-                        CResourceDef *pDef = g_Cfg.RegisteredResourceGetDef(ridTemp);
-                        if (pDef)
+                        if (g_Cfg.RegisteredResourceGetDef(ridTemp))
                         {
                             _idSpawn = ridTemp;
                         }
@@ -1060,9 +1046,9 @@ bool CCSpawn::r_LoadVal(CScript & s)
             tchar *pszTemp = Str_GetTemp();
             Str_CopyLimitNull(pszTemp, s.GetArgStr(), Str_TempLength());
             GETNONWHITESPACE(pszTemp);
-            size_t iArgs = 0;
             if (IsDigit(pszTemp[0]) || pszTemp[0] == '-')
             {
+                size_t iArgs = 0;
                 tchar * ppVal[3];
                 iArgs = Str_ParseCmds(pszTemp, ppVal, std::size(ppVal), " ,\t");
                 switch (iArgs)
@@ -1106,13 +1092,11 @@ void CCSpawn::r_Write(CScript & s)
         }
     }
 
-    uint16 uiAmount = GetAmount();
-    if (uiAmount != 1)
+    if (uint16 uiAmount = GetAmount(); uiAmount != 1)
     {
         s.WriteKeyVal("AMOUNT", uiAmount);
     }
-    uint16 uiPile = GetPile();
-    if ((uiPile > 1) && (pItem->GetType() == IT_SPAWN_ITEM))
+    if (uint16 uiPile = GetPile(); (uiPile > 1) && (pItem->GetType() == IT_SPAWN_ITEM))
     {
         s.WriteKeyVal("PILE", uiPile);
     }
@@ -1129,8 +1113,7 @@ void CCSpawn::r_Write(CScript & s)
     {
         if (!uid.IsValidUID())
             continue;
-        const CObjBase *pObj = uid.ObjFind();
-        if (pObj)
+        if (uid.ObjFind())
         {
             s.WriteKeyHex("ADDOBJ", uid.GetObjUID());
         }
@@ -1185,8 +1168,7 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
             }
             if (pItem->IsType(IT_SPAWN_ITEM))
             {
-                CItem *pSpawnedItem = _uidList[objIndex].ItemFind();
-                if (pSpawnedItem)
+                if (CItem *pSpawnedItem = _uidList[objIndex].ItemFind())
                 {
                     pRef = pSpawnedItem;
                     return true;
@@ -1194,8 +1176,7 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
             }
             else if (pItem->IsType(IT_SPAWN_CHAR) || pItem->IsType(IT_SPAWN_CHAMPION))
             {
-                CChar *pSpawnedChar = _uidList[objIndex].CharFind();
-                if (pSpawnedChar)
+                if (CChar *pSpawnedChar = _uidList[objIndex].CharFind())
                 {
                     pRef = pSpawnedChar;
                     return true;

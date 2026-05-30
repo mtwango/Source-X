@@ -37,8 +37,7 @@ bool CDataBase::Connect(const char *user, const char *password, const char *base
 	m_fConnected = false;
 
 	// Starting with MariaDB 10.6.2+ the format for mysql_get_client_version* changed to report the version of the client library instead of the server version.
-	unsigned long ver = mysql_get_client_version();
-	if ( ver < MIN_MARIADB_VERSION_ALLOW )
+    if (unsigned long ver = mysql_get_client_version(); ver < MIN_MARIADB_VERSION_ALLOW )
 	{
 		g_Log.Event(LOGM_NOCONTEXT|LOGL_ERROR, "Your MariaDB client library is too old (version %lu). Minimal allowed version is %d. MySQL support disabled.\n", ver, MIN_MARIADB_VERSION_ALLOW);
 		g_Cfg.m_fMySql = false;
@@ -50,8 +49,7 @@ bool CDataBase::Connect(const char *user, const char *password, const char *base
 		return false;
 
 	int portnum = 0;
-	const char *port = nullptr;
-	if ( (port = strchr(host, ':')) != nullptr )
+    if (const char *port = nullptr; (port = strchr(host, ':')) != nullptr )
 	{
 		char *pcTemp = Str_GetTemp();
 		Str_CopyLimitNull(pcTemp, host, Str_TempLength());
@@ -198,8 +196,7 @@ bool CDataBase::exec(const char *query)
 		{
 			// even though we don't want (or expect) any result data, we must retrieve
 			// is anyway otherwise we will lose our connection to the server
-            MYSQL_RES* res = mysql_store_result(_myData->ptr);
-			if (res != nullptr)
+            if (MYSQL_RES *res = mysql_store_result(_myData->ptr); res != nullptr)
 				mysql_free_result(res);
 
 			return true;
@@ -266,8 +263,7 @@ bool CDataBase::_OnTick()
 		if ( isConnected() )	//	currently connected - just check that the link is alive
 		{
 			SimpleThreadLock lock(m_connectionMutex);
-            const int iPingRet = mysql_ping(_myData->ptr);
-			if ( iPingRet )
+            if ( const int iPingRet = mysql_ping(_myData->ptr) )
 			{
 				g_Log.EventError("MariaDB server link has been lost (error code: %d). Trying to reattach to it.\n", iPingRet);
 				Close();
@@ -390,8 +386,7 @@ bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, b
 		return true;
 	}
 
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-	switch ( index )
+    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case DBO_AEXECUTE:
 		case DBO_AQUERY:
@@ -469,8 +464,7 @@ bool CDataBase::r_Verb(CScript & s, CTextConsole * pSrc)
 	if (!g_Cfg.m_fMySql)
 		return true;
 
-	int index = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
-	switch ( index )
+    switch ( FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
 	{
 		case DBOV_CLOSE:
 			if ( isConnected() )

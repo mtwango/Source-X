@@ -182,12 +182,10 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 	//    0 = base price
 	// +100 = increase price by 100% (vendor selling to player?)
 
-	CItemBase* pItemDef;
-	llong llPrice = 0;
+    llong llPrice = 0;
 
 	//Check if there is an override value first
-	const CVarDefCont* pVarDef = GetKey("OVERRIDE.VALUE", true);
-	if (pVarDef)
+    if (const CVarDefCont *pVarDef = GetKey("OVERRIDE.VALUE", true))
 		llPrice = pVarDef->GetValNum();
 	else
 	{
@@ -199,8 +197,9 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 
 	if ( llPrice <= 0 )	// No price/overrride.value set, we use the value of item.
 	{
+        CItemBase *pItemDef;
 
-		if ( IsType(IT_DEED) )
+        if ( IsType(IT_DEED) )
 		{
 			// Deeds just represent the item they are deeding.
 			pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(m_itDeed.m_Type)));
@@ -249,9 +248,7 @@ bool CItemVendable::IsValidNPCSaleItem() const
 	// This item is in an NPC's vendor box.
 	// Is it a valid item that NPC's should be selling ?
 
-	CItemBase * pItemDef = Item_GetDef();
-
-	if ( m_price <= 0 && pItemDef->GetMakeValue(0) <= 0 )
+    if (CItemBase *pItemDef = Item_GetDef(); m_price <= 0 && pItemDef->GetMakeValue(0) <= 0 )
 	{
 		DEBUG_ERR(( "Vendor uid=0%x selling unpriced item %s='%s'\n", (dword)(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
 		return false;

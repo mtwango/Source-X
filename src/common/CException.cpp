@@ -152,8 +152,7 @@ bool CSError::GetErrorMessage( lptstr lpszError, uint uiMaxError ) const
 	{
 		// return the message defined by the system for the error code
 		tchar szCode[ 1024 ];
-		int nChars = GetSystemErrorMessage( m_hError, szCode, sizeof(szCode) );
-		if ( nChars )
+        if ( GetSystemErrorMessage(m_hError, szCode, sizeof(szCode)) )
 		{
 			if ( m_hError & 0x80000000 )
 				snprintf( lpszError, uiMaxError, "Error Pri=%d, Code=0x%x(%s), Desc='%s'", m_eSeverity, m_hError, szCode, m_pszDescription );

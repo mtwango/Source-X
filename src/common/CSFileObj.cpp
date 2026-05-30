@@ -152,9 +152,7 @@ bool CSFileObj::r_LoadVal( CScript & s )
         return false;
     }
 
-    int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-
-    switch ( index )
+    switch ( int index = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
     {
         case FO_WRITE:
         case FO_WRITECHR:
@@ -249,9 +247,7 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
         return true;
     }
 
-    int index = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-
-    switch ( index )
+    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
     {
         case FO_FILEEXIST:
         {
@@ -410,10 +406,9 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
             while ( uiLinelen > 0 )
             {
                 --uiLinelen;
-                char iChar = psReadBuf[uiLinelen];
                 // iChar needs to be converted to unsigned for the use with isgraph because, if it's a valid UTF-8 but invalid ASCII char, it means that its value is > 127
                 //  which is a quantity that will be represented as a negative number in a signed char. Passing a number < -1 to isgraph makes a debug assertion to fail.
-                if ( isgraph((uchar)iChar) || (iChar == 0x20) || (iChar == '\t') )
+                if (char iChar = psReadBuf[uiLinelen]; isgraph((uchar)iChar) || (iChar == 0x20) || (iChar == '\t') )
                 {
                     ++uiLinelen;
                     psReadBuf[uiLinelen] = '\0';

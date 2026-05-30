@@ -484,12 +484,10 @@ bool CScript::_Open( lpctstr ptcFilename, uint uiFlags )
 		_SetFilePath(ptcFilename);
 	}
 
-	lpctstr ptcTitle = _GetFileTitle();
-	if ( !ptcTitle || (ptcTitle[0] == '\0') )
+    if (lpctstr ptcTitle = _GetFileTitle(); !ptcTitle || (ptcTitle[0] == '\0') )
 		return false;
 
-	lpctstr ptcExt = GetFilesExt(ptcFilename);
-	if ( !ptcExt )
+    if (lpctstr ptcExt = GetFilesExt(ptcFilename); !ptcExt )
 	{
         tchar ptcTemp[SPHERE_MAX_PATH];
         const size_t uiCopied = Str_CopyLimit(ptcTemp, ptcFilename, sizeof(ptcTemp) - SPHERE_SCRIPT_EXT_LEN);
@@ -744,8 +742,7 @@ bool CScript::ReadKeyParse() // Read line from script
 	{
 		if ( *pszArgs == '"' )
 		{
-			tchar *	pQuote	= strchr( pszArgs+1, '"' );
-			if ( pQuote )
+            if ( tchar *pQuote = strchr(pszArgs + 1, '"') )
 			{
 				++pszArgs;
 				*pQuote	= '\0';

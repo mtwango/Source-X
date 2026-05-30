@@ -40,8 +40,7 @@ auto hostname_resolve_with_timeout_v4(std::string_view name, int timeout_millise
             hints.ai_flags    = AI_CANONNAME;
 
             addrinfo* res = nullptr;
-            const int rc = getaddrinfo(name.data(), nullptr, &hints, &res);
-            if (rc != 0 || !res)
+            if (const int rc = getaddrinfo(name.data(), nullptr, &hints, &res); rc != 0 || !res)
                 return rr; // empty => failure
 
             // Canonical name (like hostent->h_name)

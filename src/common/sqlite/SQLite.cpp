@@ -144,8 +144,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr( lpctstr strSQL )
 	for (; iPos<iCols; ++iPos)
 	{
         stdvtstring &curColRef = retTable->m_strlstCols[iPos];
-        lpctstr curStringPtr = retStrings[iPos];
-        if (curStringPtr)
+        if (lpctstr curStringPtr = retStrings[iPos])
             ConvertUTF8ToVString( curStringPtr, &curColRef );
 		else
             curColRef.emplace_back('\0');
@@ -159,8 +158,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr( lpctstr strSQL )
 		for (int iCol=0; iCol<iCols; ++iCol)
 		{
             stdvtstring &curColRef = curRowRef[iCol];
-            lpctstr curStringPtr = retStrings[iPos];
-            if (curStringPtr)
+            if (lpctstr curStringPtr = retStrings[iPos])
                 ConvertUTF8ToVString( curStringPtr, &curColRef );
 			else
                 curColRef.emplace_back('\0');
@@ -421,8 +419,7 @@ bool CSQLite::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, boo
 	ADDTOCALLSTACK("CSQLite::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
-	switch ( index )
+    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case LDBO_CONNECTED:
 			sVal.FormatVal(IsOpen());
@@ -458,8 +455,7 @@ bool CSQLite::r_Verb(CScript & s, CTextConsole * pSrc)
 	ADDTOCALLSTACK("CSQLite::r_Verb");
 	EXC_TRY("Verb");
 
-	int index = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
-	switch ( index )
+    switch (FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1))
 	{
 		case LDBOV_CLOSE:
             if ( _fInMemory )

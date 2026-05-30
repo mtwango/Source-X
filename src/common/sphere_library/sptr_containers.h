@@ -46,8 +46,7 @@ namespace sl
         }
 
         void remove_ptr(_Type* elem) {
-            const size_t uiFoundIndex = this->find_ptr(elem);
-            if (uiFoundIndex != scont_bad_index())
+            if (const size_t uiFoundIndex = this->find_ptr(elem); uiFoundIndex != scont_bad_index())
                 this->remove_index(uiFoundIndex);
         }
 
@@ -78,8 +77,7 @@ namespace sl
         }
 
         void remove_ptr(_Type* elem) {
-            const size_t uiFoundIndex = this->find(elem);
-            if (uiFoundIndex != scont_bad_index())
+            if (const size_t uiFoundIndex = this->find(elem); uiFoundIndex != scont_bad_index())
                 this->remove_index(uiFoundIndex);
         }
 

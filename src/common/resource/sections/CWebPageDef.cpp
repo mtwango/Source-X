@@ -185,8 +185,7 @@ bool CWebPageDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on 
 	sm_iListIndex = 0;
 	tchar *pszTmp2 = Str_GetTemp();
 
-	WV_TYPE iHeadKey = (WV_TYPE) FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
-	switch ( iHeadKey )
+    switch ( WV_TYPE iHeadKey = (WV_TYPE)FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
 	{
 		case WV_WEBPAGE:
 			{
@@ -377,8 +376,7 @@ bool CWebPageDef::WebPageUpdate( bool fNow, lpctstr pszDstName, CTextConsole * p
 			if ( pszFormat[0] != '\0' )
 			{
 				// Allow if/then logic ??? OnTriggerRun( CScript &s, TRIGRUN_SINGLE_EXEC, &FileOut )
-				CScript script( pszFormat );
-				if ( ! r_Verb( script, &FileOut ))
+                if (CScript script(pszFormat); !r_Verb(script, &FileOut))
 				{
 					DEBUG_ERR(( "Web page source format error '%s'\n", static_cast<lpctstr>(pszTmp) ));
 					continue;
@@ -422,8 +420,7 @@ void CWebPageDef::WebPageLog()
 	tchar *pszTemp = Str_GetTemp();
 	snprintf(pszTemp, Str_TempLength(), "%s%d%02d%02d%s", szName, datetime.GetYear()%100, datetime.GetMonth(), datetime.GetDay(), pszExt);
 
-	CSFileText FileTest;
-	if ( FileTest.Open(pszTemp, OF_READ|OF_TEXT) )
+    if (CSFileText FileTest; FileTest.Open(pszTemp, OF_READ|OF_TEXT) )
 		return;
 
 	// Copy it.
@@ -471,8 +468,7 @@ bool CWebPageDef::SetSourceFile( lpctstr pszName, CClient * pClient )
 
 	// attempt to set this to a source file.
 	// test if it exists.
-	size_t iLen = strlen( pszName );
-	if ( iLen <= 3 )
+    if (size_t iLen = strlen(pszName); iLen <= 3 )
 		return false;
 
 	lpctstr pszExt = CSFile::GetFilesExt( pszName );
@@ -573,8 +569,7 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 
 	if ( HasTrigger(WTRIG_Load))
 	{
-		CResourceLock s;
-		if ( ResourceLock(s))
+        if (CResourceLock s; ResourceLock(s))
 		{
             // Taking the script args by this way is allowed only because the web page is parsed by the main thread.
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
@@ -842,8 +837,7 @@ void CWebPageDef::ServPage( CClient * pClient, tchar * pszPage, CSTime * pdateIf
 	if ( iError == 404 )
 	{
 		const CResourceID ridjunk( RES_UNKNOWN, 1 );
-		CWebPageDef tmppage( ridjunk );
-		if ( tmppage.SetSourceFile( szPageName, pClient ))
+        if (CWebPageDef tmppage(ridjunk); tmppage.SetSourceFile( szPageName, pClient ))
 		{
 			if ( !tmppage.ServPageRequest(pClient, szPageName, pdateIfModifiedSince) )
 				return;

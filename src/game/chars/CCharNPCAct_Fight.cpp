@@ -26,8 +26,7 @@ bool CChar::NPC_FightArchery(CChar * pChar)
     int iMaxDist = 0;
 
     // determine how far we can shoot with this bow
-    CItem *pWeapon = m_uidWeapon.ItemFind();
-    if (pWeapon != nullptr)
+    if (CItem *pWeapon = m_uidWeapon.ItemFind(); pWeapon != nullptr)
     {
         iMinDist = GetRangeL();
         iMaxDist = GetRangeH();
@@ -153,8 +152,7 @@ CChar * CChar::NPC_FightFindBestTarget(const std::vector<CChar*>* pvExcludeList)
     }
 
     // New target not found, return the current target, if any
-    CChar *pTarget = m_Fight_Targ_UID.CharFind();
-    if (pTarget)
+    if (CChar *pTarget = m_Fight_Targ_UID.CharFind())
     {
         if (!pvExcludeList || (pvExcludeList->cend() == std::ranges::find(*pvExcludeList, pTarget)))
             return pTarget;
@@ -234,8 +232,7 @@ void CChar::NPC_Act_Fight()
             break;
         case TRIGRET_RET_DEFAULT: //(TRIGRET_TYPE)(2) :
         {
-            SKILL_TYPE iSkillforced = (SKILL_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("skill"));
-            if (iSkillforced)
+            if (SKILL_TYPE iSkillforced = (SKILL_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("skill")))
             {
                 SPELL_TYPE iSpellforced = (SPELL_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("spell"));
                 if (g_Cfg.IsSkillFlag(iSkillforced, SKF_MAGIC))
@@ -299,8 +296,7 @@ void CChar::NPC_Act_Fight()
         //check Range
         int iRangeMin = 2;
         int iRangeMax = 9;
-        const CVarDefCont * pRange = GetDefKey("THROWRANGE", true);
-        if (pRange)
+        if (const CVarDefCont *pRange = GetDefKey("THROWRANGE", true))
         {
             int iRangeTot = CBaseBaseDef::ConvertRangeStr(pRange->GetValStr());
             iRangeMin = RANGE_GET_LO(iRangeTot);
@@ -310,16 +306,14 @@ void CChar::NPC_Act_Fight()
         if (iDist >= iRangeMin && iDist <= iRangeMax && CanSeeLOS(pChar, LOS_NB_WINDOWS))//NPCs can throw through a window
         {
             const CVarDefCont * pRock = GetDefKey("THROWOBJ", true);
-            const CREID_TYPE iDispID = GetDispID();
-            if (iDispID == CREID_OGRE || iDispID == CREID_ETTIN || iDispID == CREID_CYCLOPS || pRock)
+            if (const CREID_TYPE iDispID = GetDispID(); iDispID == CREID_OGRE || iDispID == CREID_ETTIN || iDispID == CREID_CYCLOPS || pRock)
             {
                 ITEMID_TYPE id = ITEMID_NOTHING;
                 if (pRock)
                 {
                     lpctstr t_Str = pRock->GetValStr();
                     CResourceID rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
-                    ITEMID_TYPE obj = (ITEMID_TYPE)(rid.GetResIndex());
-                    if (ContentFind(CResourceID(RES_ITEMDEF, obj), 0, 2))
+                    if (ITEMID_TYPE obj = (ITEMID_TYPE)(rid.GetResIndex()); ContentFind(CResourceID(RES_ITEMDEF, obj), 0, 2))
                         id = ITEMID_NODRAW;
                 }
                 else
@@ -352,8 +346,7 @@ void CChar::NPC_Act_Fight()
     }
 
     // Move in for melee type combat.
-    int iRange = Fight_CalcRange(m_uidWeapon.ItemFind());
-    if (!NPC_Act_Follow(false, iRange, false))
+    if (int iRange = Fight_CalcRange(m_uidWeapon.ItemFind()); !NPC_Act_Follow(false, iRange, false))
     {
         // Enemy gone?
         m_Act_UID.InitUID();

@@ -93,10 +93,10 @@ bool CScriptObj::r_GetRefFull(lpctstr& ptcKey, CScriptObj*& pRef)
 	bool fRef = false;
 
 	// Special refs
-	CClient* pThisClient = nullptr;
-	if (CChar* pThisChar = dynamic_cast<CChar*>(this))
+    if (CChar* pThisChar = dynamic_cast<CChar*>(this))
 	{
-		// r_GetRef is a virtual method, but if the Client is attached to a Char, its r_GetRef won't be called,
+        CClient *pThisClient = nullptr;
+        // r_GetRef is a virtual method, but if the Client is attached to a Char, its r_GetRef won't be called,
 		//	since CClient doesn't inherit from CChar and the pointer to the attached Client is stored in the Char's Class.
 		// For Webpages or other stuff CClient::r_GetRef will be called, since it's a parent class.
 		pThisClient = pThisChar->GetClientActive();
@@ -123,8 +123,7 @@ bool CScriptObj::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	ADDTOCALLSTACK("CScriptObj::r_GetRef");
 	// A key name that just links to another object.
 
-    int index = FindTableHeadSorted(ptcKey, _ptcSRefKeys, std::size(_ptcSRefKeys) - 1);
-    switch (index)
+    switch (FindTableHeadSorted(ptcKey, _ptcSRefKeys, std::size(_ptcSRefKeys) - 1))
     {
         case SREF_SERV:
             if (ptcKey[4] != '.')
@@ -239,8 +238,7 @@ bool CScriptObj::r_Call( size_t uiFunctionIndex, CScriptTriggerArgsPtr const& pS
 
     CResourceNamedDef * pFunction = g_Cfg.m_Functions[uiFunctionIndex].get();
     ASSERT(pFunction);
-    CResourceLock sFunction;
-    if ( pFunction->ResourceLock(sFunction) )
+    if (CResourceLock sFunction; pFunction->ResourceLock(sFunction) )
     {
         CScriptProfiler::CScriptProfilerFunction *pFun = nullptr;
         TIME_PROFILE_INIT;
@@ -250,11 +248,10 @@ bool CScriptObj::r_Call( size_t uiFunctionIndex, CScriptTriggerArgsPtr const& pS
         if ( IsSetEF(EF_Script_Profiler) )
         {
             char *pName = Str_GetTemp();
-            char *pSpace;
 
             //	lowercase for speed, and strip arguments
             Str_CopyLimitNull(pName, pFunction->GetName(), Str_TempLength());
-            if ( (pSpace = strchr(pName, ' ')) != nullptr )
+            if (char *pSpace; (pSpace = strchr(pName, ' ')) != nullptr )
                 *pSpace = 0;
             _strlwr(pName);
 
@@ -398,8 +395,7 @@ static void StringFunction( int iFunc, lpctstr ptcKey, CSString &sVal )
 		++ptcKey;
 
 	tchar * ppCmd[4];
-	int iCount = Str_ParseCmds( const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ")" );
-	if ( iCount <= 0 )
+    if (int iCount = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ")"); iCount <= 0 )
 	{
 		DEBUG_ERR(( "Bad string function usage. missing )\n" ));
 		return;
@@ -505,8 +501,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 				return true;
 			}
 
-            const CObjBase * pRefObj = dynamic_cast<const CObjBase*>(pRef);
-			if (pRefObj)
+            if (const CObjBase *pRefObj = dynamic_cast<const CObjBase *>(pRef))
 				sVal.FormatHex( pRefObj->GetUID() );
 			else
 				sVal.FormatVal( 1 );
@@ -541,8 +536,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 		// <dSOMEVAL> same as <eval <SOMEVAL>> to get dec from the val
 		if (( *ptcKey == 'd' ) || ( *ptcKey == 'D' ))
 		{
-            lpctstr ptcArg = ptcKey + 1;
-            if ( r_WriteVal(ptcArg, sVal, pSrc) )
+            if (lpctstr ptcArg = ptcKey + 1; r_WriteVal(ptcArg, sVal, pSrc) )
 			{
                 if ( *sVal != '-' )
                     sVal.FormatLLVal(Str_ToLL(sVal.GetBuffer()).value_or(0));
@@ -552,8 +546,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
         // <hSOMEVAL> same as <HVAL <SOMEVAL>> to get hex from the val
         else if ((*ptcKey == 'h') || (*ptcKey == 'H'))
         {
-            lpctstr ptcArg = ptcKey + 1;
-            if (r_WriteVal(ptcArg, sVal, pSrc))
+            if (lpctstr ptcArg = ptcKey + 1; r_WriteVal(ptcArg, sVal, pSrc))
             {
                 if (*sVal != '-')
                     sVal.FormatLLHex(Str_ToLL(sVal.GetBuffer()).value_or(0));
@@ -661,8 +654,7 @@ badcmd:
             return true;
         case SSC_LIST:
         {
-            auto gReader = g_ExprGlobals.mtEngineLockedReader();
-            if (! gReader->m_ListGlobals.r_Write(pSrc, ptcKey, sVal))
+            if (auto gReader = g_ExprGlobals.mtEngineLockedReader(); ! gReader->m_ListGlobals.r_Write(pSrc, ptcKey, sVal))
                 sVal = "-1";
         }
             return true;
@@ -672,8 +664,7 @@ badcmd:
 		case SSC_DEF:
         {
             auto gReader = g_ExprGlobals.mtEngineLockedReader();
-            const CVarDefCont * pVar = gReader->m_VarDefs.GetKey(ptcKey);
-            if ( pVar )
+            if ( const CVarDefCont *pVar = gReader->m_VarDefs.GetKey(ptcKey) )
                 sVal = pVar->GetValStr();
             else if ( fZero )
                 sVal.SetValFalse();
@@ -685,8 +676,7 @@ badcmd:
         case SSC_RESDEF:
         {
             auto gReader = g_ExprGlobals.mtEngineLockedReader();
-            const CVarDefCont * pVar = gReader->m_VarResDefs.GetKey(ptcKey);
-            if ( pVar )
+            if ( const CVarDefCont *pVar = gReader->m_VarResDefs.GetKey(ptcKey) )
                 sVal = pVar->GetValStr();
             else if ( fZero )
                 sVal.SetValFalse();
@@ -812,8 +802,7 @@ badcmd:
 				else if ( iPos > iLen )
 					iPos	= iLen;
 
-				lpctstr pszPos = strchr( ptcKey + iPos, ch );
-				if ( !pszPos )
+                if (lpctstr pszPos = strchr(ptcKey + iPos, ch); !pszPos )
 					sVal.FormatVal( -1 );
 				else
 					sVal.FormatVal((int)( pszPos - ptcKey ) );
@@ -822,8 +811,7 @@ badcmd:
         case SSC_StrSub:
         {
             tchar * ppArgs[3];
-            int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs));
-            if ( iQty < 3 )
+            if (int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs)); iQty < 3 )
                 return false;
 
             int64 iPos = Exp_GetVal( ppArgs[0] );
@@ -844,8 +832,7 @@ badcmd:
             }
             int64 iLen = strlen(ppArgs[2]);
 
-			const bool fBackwards = (iPos < 0);
-			if (fBackwards)
+            if (iPos < 0)
 				iPos = iLen - iCnt;
 
 			if ((iPos > iLen) || (iPos < 0))
@@ -917,8 +904,7 @@ badcmd:
 		case SSC_ASCPAD:
 			{
 				tchar * ppArgs[2];
-				int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs));
-				if ( iQty < 2 )
+                if (int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs)); iQty < 2 )
 					return false;
 
 				int64	iPad = Exp_GetVal( ppArgs[0] );
@@ -956,8 +942,7 @@ badcmd:
 				tchar	*buf = Str_GetTemp();
 				tchar	*Arg_ppCmd[10];		// limit to 9 arguments
 				Str_CopyLimitNull(buf, ptcKey, Str_TempLength());
-				int iQty = Str_ParseCmds(buf, Arg_ppCmd, std::size(Arg_ppCmd));
-				if ( iQty < 1 )
+                if (int iQty = Str_ParseCmds(buf, Arg_ppCmd, std::size(Arg_ppCmd)); iQty < 1 )
 					return false;
 
 				bool bWait = (index == SSC_SYSCMD);
@@ -1002,8 +987,7 @@ badcmd:
         case SSC_StrToken:
         {
             tchar *ppArgs[3];
-            int iQty = Str_ParseCmdsAdv(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs), ",");
-            if ( iQty < 3 )
+            if (int iQty = Str_ParseCmdsAdv(const_cast<tchar *>(ptcKey), ppArgs, std::size(ppArgs), ","); iQty < 3 )
                 return false;
 
             tchar *iSep = Str_UnQuote(ppArgs[2]); //New function, trim (") and (') chars directly.
@@ -1069,8 +1053,7 @@ badcmd:
 					tchar *ppCmd[255];
 					tchar * z = Str_GetTemp();
 					Str_CopyLimitNull(z, p, Str_TempLength());
-					const int count = Str_ParseCmds(z, ppCmd, std::size(ppCmd), separators);
-					if (count > 0)
+                    if (const int count = Str_ParseCmds(z, ppCmd, std::size(ppCmd), separators); count > 0)
 					{
 						sVal.Add(ppCmd[0]);
 						for (int i = 1; i < count; ++i)
@@ -1095,8 +1078,7 @@ badcmd:
         case SSC_BCRYPTHASH:
         {
             tchar * ppCmd[3];
-            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, std::size(ppCmd), ", ");
-            if ( iQty < 3 )
+            if (int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ", "); iQty < 3 )
                 return false;
 
             std::optional<int> iconv;
@@ -1118,8 +1100,7 @@ badcmd:
         case SSC_BCRYPTVALIDATE:
         {
             tchar * ppCmd[2];
-            int iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppCmd, std::size(ppCmd), ", ");
-            if ( iQty < 2 )
+            if (int iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ", "); iQty < 2 )
                 return false;
 
             bool fValidated = CBCrypt::ValidateBCrypt(ppCmd[0], ppCmd[1]);
@@ -1213,9 +1194,8 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 	EXC_TRY("Verb-Ref");
 
 	CScriptObj * pRef = nullptr;
-	bool fRef = r_GetRefFull(ptcKey, pRef);
 
-	if (fRef)
+    if (r_GetRefFull(ptcKey, pRef))
 	{
 		if (pRef == this)
 		{
@@ -1249,8 +1229,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
                 // Dirty fix:
                 // If the REF is an ACCOUNT, it does special checks with the SRC to compare the PrivLevel to allow read/write its values.
                 //	If i'm running in a trigger, so in a script, get the max privileges and change the SRC.
-                CObjBase *pThisObj = dynamic_cast<CObjBase *>(this);
-                if (pThisObj)
+                if (CObjBase *pThisObj = dynamic_cast<CObjBase *>(this))
                 {
                     if (pThisObj->IsRunningTrigger())
                     {
@@ -1292,8 +1271,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 		return true;
 	}
 
-	int index = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
-	switch (index)
+    switch (FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1))
 	{
 		case SSV_OBJ:
 			g_World.m_uidObj.SetObjUID(s.GetArgVal());
@@ -1324,13 +1302,11 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				if (this != &g_Serv)
 				{
-					CChar *pChar = dynamic_cast <CChar *>(this);
-					if ( pChar )
+                    if ( CChar *pChar = dynamic_cast<CChar *>(this) )
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-						CClient *pClient = dynamic_cast <CClient *> (this);
-						if ( pClient && pClient->GetChar() )
+                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1340,8 +1316,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 		case SSV_NEWITEM:	// just add an item but don't put it anyplace yet..
 			{
 				tchar * ppCmd[4];
-				int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ",");
-				if ( iQty <= 0 )
+                if (int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ","); iQty <= 0 )
 					return false;
 
 				CItem *pItem = CItem::CreateHeader(ppCmd[0], nullptr, false, pSrc->GetChar());
@@ -1359,9 +1334,8 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 				if ( ppCmd[2] )
 				{
 					CUID uidEquipper(Exp_GetVal(ppCmd[2]));
-					const bool fTriggerEquip = (ppCmd[3] != nullptr) ? (Exp_GetVal(ppCmd[3]) != 0) : false;
 
-					if (!fTriggerEquip || uidEquipper.IsItem())
+                    if (const bool fTriggerEquip = (ppCmd[3] != nullptr) ? (Exp_GetVal(ppCmd[3]) != 0) : false; !fTriggerEquip || uidEquipper.IsItem())
 					{
 						pItem->LoadSetContainer(uidEquipper, LAYER_NONE);
 					}
@@ -1369,8 +1343,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 					{
 						if ( fTriggerEquip )
 						{
-							CChar * pCharEquipper = uidEquipper.CharFind();
-							if ( pCharEquipper != nullptr )
+                            if (CChar *pCharEquipper = uidEquipper.CharFind(); pCharEquipper != nullptr )
 								pCharEquipper->ItemEquip(pItem);
 						}
 					}
@@ -1380,13 +1353,11 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				if ( this != &g_Serv )
 				{
-					CChar *pChar = dynamic_cast <CChar *> (this);
-					if ( pChar )
+                    if ( CChar *pChar = dynamic_cast<CChar *>(this) )
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-						CClient *pClient = dynamic_cast <CClient *> (this);
-						if ( pClient && pClient->GetChar() )
+                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1415,8 +1386,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-                        CClient *pClient = dynamic_cast<CClient *>(this);
-						if ( pClient && pClient->GetChar() )
+                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1425,8 +1395,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
         case SSV_NEWSUMMON:
 	        {
 	            tchar * ppCmd[2];
-	            int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ",");
-	            if (iQty <= 0)
+                if (int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ","); iQty <= 0)
 	                return false;
 
 	            CREID_TYPE id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, ppCmd[0]));
@@ -1448,19 +1417,16 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 	                    pCharSrc->m_Act_UID = g_World.m_uidNew;
 	                else
 	                {
-                        CClient *pClient = dynamic_cast<CClient *>(this);
-	                    if (pClient && pClient->GetChar())
+                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar())
 	                        pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 	                }
 	            }
 
 	            pChar->OnSpellEffect(SPELL_Summon, pCharSrc, pChar->Skill_GetAdjusted(SKILL_MAGERY), nullptr, false);
 	            g_World.m_uidNew.SetObjUID(pChar->GetUID());
-	            llong iDuration = Exp_GetVal(ppCmd[1]);
-	            if (iDuration)
+                if (llong iDuration = Exp_GetVal(ppCmd[1]))
 	            {
-	                CItem * pItemRune = pChar->LayerFind(LAYER_SPELL_Summon);
-	                if (pItemRune)
+                    if (CItem *pItemRune = pChar->LayerFind(LAYER_SPELL_Summon))
 	                    pItemRune->SetTimeout(iDuration * MSECS_PER_SEC);
 	            }
 	        }
@@ -1577,8 +1543,7 @@ bool CScriptObj::Execute_FullTrigger(CScript& s, CScriptTriggerArgsPtr const& pS
         if (!iconv.has_value())
             return false;
 
-		CChar* pCharFound = CUID::CharFindFromUID(*iconv);
-		if (pCharFound)
+        if (CChar *pCharFound = CUID::CharFindFromUID(*iconv))
 			pRef = pCharFound;
 	}
 
@@ -1975,8 +1940,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 		else
 			iDist = g_Cfg.m_iMapViewSize;
 
-		CObjBaseTemplate* pObj = dynamic_cast <CObjBaseTemplate*>(this);
-		if (pObj == nullptr)
+        if (CObjBaseTemplate *pObj = dynamic_cast<CObjBaseTemplate *>(this); pObj == nullptr)
 		{
 			iType = 0;
 			DEBUG_ERR(("FOR Loop trigger on non-world object '%s'\n", GetName()));
@@ -2143,8 +2107,8 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 			char funcname[1024];
 			Str_CopyLimitNull(funcname, ptcArgs, sizeof(funcname));
 
-            TRIGRET_TYPE iRet = CWorldTimedFunctions::Loop(funcname, LoopsMade, StartContext, s, pScriptArgs, pSrc, pResult);
-			if ((iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
+            if (TRIGRET_TYPE iRet = CWorldTimedFunctions::Loop(funcname, LoopsMade, StartContext, s, pScriptArgs, pSrc, pResult);
+                (iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
 				return iRet;
 		}
 	}
@@ -2159,8 +2123,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 	if (EndContext.m_iOffset <= StartContext.m_iOffset)
 	{
 		// just skip to the end.
-        TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
-		if (iRet != TRIGRET_ENDIF)
+        if (TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF)
 			return iRet;
 	}
 	else
@@ -2173,9 +2136,8 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCharSpecial(CScript& s, SK_TYPE iCmd, C
 {
 	ADDTOCALLSTACK("CScriptObj::OnTriggerLoopForCharSpecial");
 	TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
-	CChar* pCharThis = dynamic_cast <CChar*> (this);
 
-	if (pCharThis)
+    if (CChar *pCharThis = dynamic_cast<CChar *>(this))
 	{
 		if (s.HasArgs())
 		{
@@ -2212,9 +2174,8 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 	if (s.HasArgs())
 	{
 		tchar* ppArgs[2];
-		int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), " \t,");
 
-		if (iArgQty > 1)
+        if (int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), " \t,"); iArgQty > 1)
 		{
 			TemporaryString tsOrigValue;
 			tchar* ptcOrigValue = tsOrigValue.buffer();
@@ -2224,11 +2185,9 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
             CScriptExprContext context = {._pScriptObjI = this};
             expr_parser.ParseScriptText(ptcOrigValue, context, pScriptArgs, pSrc, 0);
 
-			CUID pCurUid(Exp_GetDWVal(ptcOrigValue));
-			if (pCurUid.IsValidUID())
+            if (CUID pCurUid(Exp_GetDWVal(ptcOrigValue)); pCurUid.IsValidUID())
 			{
-				CObjBase* pObj = pCurUid.ObjFind();
-				if (pObj && pObj->IsContainer())
+                if (CObjBase *pObj = pCurUid.ObjFind(); pObj && pObj->IsContainer())
 				{
 					CContainer* pContThis = dynamic_cast<CContainer*>(pObj);
 					ASSERT(pContThis);
@@ -2664,8 +2623,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerRunVal( CScript &s, TRIGRUN_TYPE trigrun, CScr
 
     OnTriggerRun( s, trigrun, pScriptArgs, pSrc, &sVal );
 
-	lpctstr pszVal = sVal.GetBuffer();
-	if ( pszVal && *pszVal )
+    if (lpctstr pszVal = sVal.GetBuffer(); pszVal && *pszVal )
 		tr = static_cast<TRIGRET_TYPE>(Exp_GetVal(pszVal));
 
 	return tr;

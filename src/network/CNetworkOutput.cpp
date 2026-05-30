@@ -512,8 +512,7 @@ size_t CNetworkOutput::sendData(CNetState* state, const byte* data, size_t lengt
 #endif
 	{
 		// send via standard api
-		int sent = state->m_socket.Send(data, (int)length);
-		if (sent > 0)
+        if (int sent = state->m_socket.Send(data, (int)length); sent > 0)
 			result = (size_t)(sent);
 		else
 			result = 0;
@@ -632,8 +631,7 @@ void CNetworkOutput::QueuePacketTransaction(PacketTransaction* transaction)
 	ASSERT(priority >= PacketSend::PRI_IDLE && priority < PacketSend::PRI_QTY);
 
 	// limit by max number of packets in queue
-	size_t maxQueueSize = NETWORK_MAXQUEUESIZE;
-	if (maxQueueSize > 0)
+    if (size_t maxQueueSize = NETWORK_MAXQUEUESIZE; maxQueueSize > 0)
 	{
 		while ((priority > PacketSend::PRI_IDLE) && (state->m_outgoing.queue[priority].size() >= maxQueueSize))
 		{
@@ -645,7 +643,6 @@ void CNetworkOutput::QueuePacketTransaction(PacketTransaction* transaction)
 	state->m_outgoing.queue[priority].push(transaction);
 
 	// notify thread
-	CNetworkThread* thread = state->getParentThread();
-	if (thread != nullptr && thread->getPriority() == ThreadPriority::Disabled)
+    if (CNetworkThread *thread = state->getParentThread(); thread != nullptr && thread->getPriority() == ThreadPriority::Disabled)
 		thread->awaken();
 }

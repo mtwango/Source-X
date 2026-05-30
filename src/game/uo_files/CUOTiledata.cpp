@@ -24,8 +24,7 @@ static ITEMID_TYPE GetMaxTiledataItem()
     dword dwEntrySize = 0;							// size of tiledata entry
     dword dwOffset = 0;								// offset to tiledata items
 
-    VERFILE_FORMAT format = g_Install.GetMulFormat(VERFILE_TILEDATA);
-    switch (format)
+    switch (g_Install.GetMulFormat(VERFILE_TILEDATA))
     {
         case VERFORMAT_HIGHSEAS: // high seas format (CUOItemTypeRec_HS)
             dwEntrySize = sizeof(CUOItemTypeRec_HS);

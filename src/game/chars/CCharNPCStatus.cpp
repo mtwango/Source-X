@@ -356,8 +356,7 @@ int CChar::NPC_GetVendorMarkup() const
 		return static_cast<int>(pVar->GetValNum());
 
 	// Use chardef value
-	CCharBase *pCharDef = Char_GetDef();
-	if ( pCharDef )
+    if ( CCharBase *pCharDef = Char_GetDef() )
 		pVar = pCharDef->m_TagDefs.GetKey("VENDORMARKUP");
 	if ( pVar )
 		return static_cast<int>(pVar->GetValNum());
@@ -644,13 +643,11 @@ int CChar::NPC_WantThisItem( CItem * pItem ) const
 
 	CCharBase * pCharDef = Char_GetDef();
 	ASSERT(pCharDef != nullptr);
-	size_t iRet = pCharDef->m_Desires.FindResourceMatch(pItem);
-	if ( iRet != sl::scont_bad_index() )
+    if (size_t iRet = pCharDef->m_Desires.FindResourceMatch(pItem); iRet != sl::scont_bad_index() )
 		return (int)(pCharDef->m_Desires[iRet].GetResQty());
 
 	// I'm hungry and this is food ?
-	int iFoodLevel = Food_GetLevelPercent();
-	if ( Food_CanEat(pItem) && iFoodLevel < 100 )
+    if (int iFoodLevel = Food_GetLevelPercent(); Food_CanEat(pItem) && iFoodLevel < 100 )
 		return 100 - iFoodLevel;
 
 	if ( NPC_IsVendor() )
@@ -660,8 +657,8 @@ int CChar::NPC_WantThisItem( CItem * pItem ) const
 			return 100;
 
 		// Is it something I would buy?
-		CItemVendable * pItemSell = NPC_FindVendableItem(dynamic_cast<CItemVendable *>(pItem), const_cast<CChar *>(this)->GetBank(LAYER_VENDOR_BUYS), const_cast<CChar *>(this)->GetBank(LAYER_VENDOR_STOCK));
-		if ( pItemSell )
+        if ( CItemVendable *pItemSell = NPC_FindVendableItem(dynamic_cast<CItemVendable *>(pItem), const_cast<CChar *>(this)->GetBank(LAYER_VENDOR_BUYS),
+                const_cast<CChar *>(this)->GetBank(LAYER_VENDOR_STOCK)) )
 			return pItemSell->GetVendorPrice(0, true);
 	}
 
@@ -728,8 +725,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 	int iHostility = 0;
 
 	// if it is a pet - register it the same as it's master.
-	CChar * pCharOwn = pCharTarg->GetOwner();
-	if ( pCharOwn != nullptr && pCharOwn != this )
+    if (CChar *pCharOwn = pCharTarg->GetOwner(); pCharOwn != nullptr && pCharOwn != this )
 	{
 		static int sm_iReentrant = 0;
         if (sm_iReentrant > 16)
@@ -826,8 +822,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 	}
 
 	// I have been attacked/angered by this creature before ?
-	CItemMemory * pMemory = Memory_FindObjTypes( pCharTarg, MEMORY_FIGHT|MEMORY_HARMEDBY|MEMORY_IRRITATEDBY|MEMORY_SAWCRIME|MEMORY_AGGREIVED );
-	if ( pMemory )
+    if ( Memory_FindObjTypes(pCharTarg, MEMORY_FIGHT | MEMORY_HARMEDBY | MEMORY_IRRITATEDBY | MEMORY_SAWCRIME | MEMORY_AGGREIVED) )
 	{
 		iHostility += 50;
         if (pCharTarg->m_pNPC && (pCharTarg->m_pNPC->m_Brain == NPCBRAIN_BERSERK))

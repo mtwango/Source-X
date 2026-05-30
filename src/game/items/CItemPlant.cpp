@@ -40,9 +40,8 @@ bool CItem::Plant_Use(CChar *pChar)
     {
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iGrowID, iFruitID, iFruitIDOverride, nullptr);
-        TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceTest, pScriptArgs, pChar);
 
-        if (iRet == TRIGRET_RET_TRUE)
+        if (TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceTest, pScriptArgs, pChar); iRet == TRIGRET_RET_TRUE)
             return true;
 
         iGrowID = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_iN1));
@@ -186,8 +185,7 @@ void CItem::Plant_CropReset()
 	}
 
 	const CItemBase *pItemDef = Item_GetDef();
-	ITEMID_TYPE iResetID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridReset.GetResIndex();
-	if ( iResetID != ITEMID_NOTHING )
+    if (ITEMID_TYPE iResetID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridReset.GetResIndex(); iResetID != ITEMID_NOTHING )
 		Plant_SetID(iResetID);
 
 	Plant_SetTimer();

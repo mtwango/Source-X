@@ -37,8 +37,7 @@ void CNetworkManager::createNetworkThreads(size_t count)
 
     // limit the number of threads to avoid stupid values, the maximum is calculated
     // to allow a maximum of 32 clients per thread at full load
-    size_t maxThreads = maximum((FD_SETSIZE / 32), 1);
-    if (count > maxThreads)
+    if (size_t maxThreads = maximum((FD_SETSIZE / 32), 1); count > maxThreads)
     {
         count = maxThreads;
         g_Log.Event(LOGL_WARN | LOGM_INIT, "Too many network threads requested. Reducing number to %" PRIuSIZE_T ".\n", count);
@@ -429,12 +428,10 @@ void CNetworkManager::tick()
             continue;
 
         // If the client hasn't completed login for a definite amount of time, disconnect it...
-        const CClient* pClient = state->getClient();
-        if (!pClient || (pClient->GetConnectType() == CONNECT_UNK))
+        if (const CClient *pClient = state->getClient(); !pClient || (pClient->GetConnectType() == CONNECT_UNK))
         {
             const int64 iTimeSinceConnectionMs = iCurSysTimeMs - state->m_iConnectionTimeMs;
-            const int64 iTimeoutIncompleteConnectionMs = g_Cfg._iTimeoutIncompleteConnectionMs;
-            if (iTimeSinceConnectionMs > iTimeoutIncompleteConnectionMs)
+            if (const int64 iTimeoutIncompleteConnectionMs = g_Cfg._iTimeoutIncompleteConnectionMs; iTimeSinceConnectionMs > iTimeoutIncompleteConnectionMs)
             {
                 EXC_SET_BLOCK("mark closed for timeout");
                 g_Log.Event(LOGM_CLIENTS_LOG | LOGL_WARN, // LOGM_NOCONTEXT
@@ -478,8 +475,7 @@ void CNetworkManager::tick()
                 if (state->needsFlush() == false)
                 {
                     DEBUGNETWORK(("%x:Flushing data for client.\n", state->id()));
-                    CNetworkThread* thread = state->getParentThread();
-                    if (thread != nullptr)
+                    if (CNetworkThread *thread = state->getParentThread(); thread != nullptr)
                         thread->flush(state);
                 }
                 continue;
@@ -563,8 +559,7 @@ size_t CNetworkManager::flush(CNetState* state)
     // flush data for a single client
     ADDTOCALLSTACK("CNetworkManager::flush");
     ASSERT(state != nullptr);
-    CNetworkThread* thread = state->getParentThread();
-    if (thread != nullptr)
+    if (CNetworkThread *thread = state->getParentThread(); thread != nullptr)
         return thread->flush(state);
 
     return 0;

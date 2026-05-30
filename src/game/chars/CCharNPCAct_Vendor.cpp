@@ -47,11 +47,9 @@ bool CChar::NPC_Vendor_Restock(bool fForce, bool fFillStock)
     if ( !fForce && (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pNPC->m_timeRestock) >= 0))
 	{
         bRestockNow = true; // restock timeout has expired, make it restock again (unless it's declared to do not restock in the bellow lines).
-		CRegionWorld *region = GetRegion();
-		if( region != nullptr )
+        if (CRegionWorld *region = GetRegion(); region != nullptr )
 		{
-			CVarDefCont *vardef = region->m_TagDefs.GetKey("RestockVendors");
-			if( vardef != nullptr )
+            if (CVarDefCont *vardef = region->m_TagDefs.GetKey("RestockVendors"); vardef != nullptr )
 				iRestockDelay = vardef->GetValNum() * MSECS_PER_TENTH;  // backwards: it was working on tenths in scripts before, keep it like that and update it to seconds.
 			if ( region->m_TagDefs.GetKey("NoRestock") != nullptr )
 				bRestockNow = false;
@@ -189,11 +187,9 @@ bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
 	int iCount = 0;
 	for (CSObjContRec* pObjRec : pStableContainer->GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if (pItem->IsType(IT_FIGURINE))
+        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_FIGURINE))
 		{
-            CChar* pPet = pCharPlayer->Use_Figurine(pItem, true);
-			if (!pPet)
+            if (CChar *pPet = pCharPlayer->Use_Figurine(pItem, true); !pPet)
 			{
 				tchar *pszTemp = Str_GetTemp();
 				snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_STABLEMASTER_CLAIM_FOLLOWER), pItem->GetName());
@@ -295,8 +291,7 @@ bool CChar::NPC_OnTrainPay(CChar *pCharSrc, CItemMemory *pMemory, CItem * pGold)
 	// Can't ask for more gold than the maximum amount of the gold stack i am giving to the npc
 
 	// Consume as much money as we can train for.
-    const word wGoldAmount = pGold->GetAmount();
-	if (wGoldAmount < wTrainCost )
+    if (const word wGoldAmount = pGold->GetAmount(); wGoldAmount < wTrainCost )
 	{
 		int iDiffPercent = IMulDiv(wTrainCost, 100, pGold->GetAmount());
 		uiTrainVal = (ushort)IMulDiv(uiTrainVal,100,iDiffPercent);
@@ -313,8 +308,7 @@ bool CChar::NPC_OnTrainPay(CChar *pCharSrc, CItemMemory *pMemory, CItem * pGold)
 		pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_NONE;
 
 		// Give change back.
-		CItem *pGoldChange = pGold->UnStackSplit( wTrainCost, pCharSrc );
-        if (pGoldChange)
+        if (CItem *pGoldChange = pGold->UnStackSplit(wTrainCost, pCharSrc))
             pGoldChange->MoveNearObj(pCharSrc, 1);
 	}
 	GetPackSafe()->ContentAdd( pGold );	// take my cash.
@@ -401,8 +395,7 @@ bool CChar::NPC_OnTrainHear( CChar * pCharSrc, lpctstr pszCmd )
 
 		snprintf(tsMsg.buffer(), tsMsg.capacity(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_TRAINER_PRICE), iTrainCost, pSkillKey);
 		Speak(tsMsg);
-		CItemMemory * pMemory = Memory_AddObjTypes( pCharSrc, MEMORY_SPEAK );
-		if ( pMemory )
+        if ( CItemMemory *pMemory = Memory_AddObjTypes(pCharSrc, MEMORY_SPEAK) )
 		{
 			pMemory->m_itEqMemory.m_Action = NPC_MEM_ACT_SPEAK_TRAIN;
 			pMemory->m_itEqMemory.m_Skill = (word)(i);
@@ -421,8 +414,7 @@ bool CChar::NPC_OnTrainHear( CChar * pCharSrc, lpctstr pszCmd )
 		if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 			continue;
 
-		const int iDiff = NPC_GetTrainMax(pCharSrc, (SKILL_TYPE)i) - pCharSrc->Skill_GetBase((SKILL_TYPE)i);
-		if ( iDiff <= 0 )
+        if (const int iDiff = NPC_GetTrainMax(pCharSrc, (SKILL_TYPE)i) - pCharSrc->Skill_GetBase((SKILL_TYPE)i); iDiff <= 0 )
 			continue;
 
 		if ( iCount > 6 )

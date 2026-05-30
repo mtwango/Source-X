@@ -60,8 +60,7 @@ bool CItemMessage::r_LoadVal(CScript &s)
         {
             case CIC_AUTHOR:
             {
-                tchar* ptcArg = s.GetArgStr();
-                if (ptcArg[0] != '0')
+                if (tchar *ptcArg = s.GetArgStr(); ptcArg[0] != '0')
                     m_sAuthor = ptcArg;
             }
                 return true;

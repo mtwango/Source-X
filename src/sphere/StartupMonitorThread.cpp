@@ -33,8 +33,7 @@ void StartupMonitorThread::tick()
 void StartupMonitorThread::renameAsMonitor()
 {
     // Debugging.
-    AbstractThread * pThread = ThreadHolder::current();
-    if (pThread != this)
+    if (AbstractThread *pThread = ThreadHolder::current(); pThread != this)
     {
         g_Log.EventWarn("renameAsMonitor called, but current Sphere context is %s; refusing rename.\n",
             pThread ? pThread->getName() : "<none>");

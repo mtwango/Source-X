@@ -29,8 +29,7 @@ void CChar::OnNoticeCrime( CChar * pCriminal, CChar * pCharMark )
 
 	if (pCharMark)
 	{
-		const NOTO_TYPE iNoto = pCharMark->Noto_GetFlag(pCriminal);
-		if (iNoto == NOTO_CRIMINAL || iNoto == NOTO_EVIL)
+        if (const NOTO_TYPE iNoto = pCharMark->Noto_GetFlag(pCriminal); iNoto == NOTO_CRIMINAL || iNoto == NOTO_EVIL)
 			return;
 	}
 
@@ -144,9 +143,8 @@ bool CChar::CheckCrimeSeen( SKILL_TYPE SkillToSee, CChar * pCharMark, const CObj
                 pScriptArgs->m_iN1 = SkillToSee;
                 pScriptArgs->m_iN2 = pItem ? (dword)pItem->GetUID() : 0;    // here i can modify pItem via scripts, so it isn't really const
                 pScriptArgs->m_pO1 = pCharMark;
-                TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_SeeSnoop, pScriptArgs, this);
 
-				if (iRet == TRIGRET_RET_TRUE)
+                if (TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_SeeSnoop, pScriptArgs, this); iRet == TRIGRET_RET_TRUE)
 					continue;
 			}
 
@@ -362,8 +360,7 @@ bool CChar::OnAttackedBy(CChar * pCharSrc, bool fCommandPet, bool fShouldReveal)
 		if (IsClientActive())	// I decide if this is a crime.
 		{
             OnNoticeCrime(pCharSrc, this);
-            CChar* pCharMark = pCharSrc->IsStatFlag(STATF_PET) ? pCharSrc->NPC_PetGetOwner() : nullptr;
-            if (pCharMark != nullptr)
+            if (CChar *pCharMark = pCharSrc->IsStatFlag(STATF_PET) ? pCharSrc->NPC_PetGetOwner() : nullptr; pCharMark != nullptr)
                 OnNoticeCrime(pCharMark, this);
 		}
 		else
@@ -670,8 +667,7 @@ effect_bounce:
 				}
 				if (pSrc->m_pNPC)
 				{
-					const CChar* pOwner = pSrc->NPC_PetGetOwnerRecursive();
-					if (pOwner && pOwner->m_pPlayer)	// pet attacking player
+                    if (const CChar *pOwner = pSrc->NPC_PetGetOwnerRecursive(); pOwner && pOwner->m_pPlayer)	// pet attacking player
 						goto effect_bounce;
 				}
 			}
@@ -686,15 +682,14 @@ effect_bounce:
 	// Apply Necromancy cursed effects
 	if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 	{
-		CItem * pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen);
-		if ( pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
+        if (CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen); pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 		{
 			iDmg += iDmg / 4;
 			pEvilOmen->Delete();
 		}
 
-		CItem * pBloodOath = LayerFind(LAYER_SPELL_Blood_Oath);
-		if ( pBloodOath && pBloodOath->m_uidLink == pSrc->GetUID() && !(uiType & DAMAGE_FIXED) && !g_Cfg.GetSpellDef(SPELL_Blood_Oath)->IsSpellType(SPELLFLAG_SCRIPTED))	// if DAMAGE_FIXED is set we are already receiving a reflected damage, so we must stop here to avoid an infinite loop.
+        if (CItem *pBloodOath = LayerFind(LAYER_SPELL_Blood_Oath);
+            pBloodOath && pBloodOath->m_uidLink == pSrc->GetUID() && !(uiType & DAMAGE_FIXED) && !g_Cfg.GetSpellDef(SPELL_Blood_Oath)->IsSpellType(SPELLFLAG_SCRIPTED))	// if DAMAGE_FIXED is set we are already receiving a reflected damage, so we must stop here to avoid an infinite loop.
 		{
 			iDmg += iDmg / 10;
 			pSrc->OnTakeDamage(iDmg * (100 - pBloodOath->m_itSpell.m_spelllevel) / 100, this, DAMAGE_MAGIC|DAMAGE_FIXED,0,0,0,0,0,SPELL_Blood_Oath);
@@ -784,8 +779,8 @@ effect_bounce:
             }
         }
 
-        int iItemDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageChance"));
-        if ( (iItemDamageChance > g_Rand.GetVal(100)) && !Can(CAN_C_NONHUMANOID) )
+        if (int iItemDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageChance"));
+            (iItemDamageChance > g_Rand.GetVal(100)) && !Can(CAN_C_NONHUMANOID) )
         {
             if ( pItemHit )
                 pItemHit->OnTakeDamage(iDmg, pSrc, uiType);
@@ -801,13 +796,11 @@ effect_bounce:
 
         if (!pSpellDef || (pSpellDef && !pSpellDef->IsSpellType(SPELLFLAG_NOUNPARALYZE))) // Block spells with SPELLFLAG_NOUNPARALYZE flag, unparalyze the target.
         {
-            CItem* pParalyze = LayerFind(LAYER_SPELL_Paralyze);
-            if (pParalyze)
+            if (CItem *pParalyze = LayerFind(LAYER_SPELL_Paralyze))
                 pParalyze->Delete();
         }
 
-		CItem * pStuck = LayerFind(LAYER_FLAG_Stuck);
-		if ( pStuck )
+        if ( CItem *pStuck = LayerFind(LAYER_FLAG_Stuck) )
 			pStuck->Delete();
 
 		if ( IsStatFlag(STATF_FREEZE) )
@@ -831,14 +824,12 @@ effect_bounce:
 			pSrcWeapon = pSrc->m_uidWeapon.ItemFind();	//  force a weapon find.
 		}
 
-        const CFactionDef *pMyFaction = GetFaction();
-        if (pMyFaction && !pMyFaction->IsNone())
+        if (const CFactionDef *pMyFaction = GetFaction(); pMyFaction && !pMyFaction->IsNone())
         {
             int iDmgBonusPercent = 0;
             if (pSrcWeapon)
             {
-                const CFactionDef *pSrcSlayer = pSrcWeapon->GetSlayer();
-                if (pSrcSlayer && !pSrcSlayer->IsNone())
+                if (const CFactionDef *pSrcSlayer = pSrcWeapon->GetSlayer(); pSrcSlayer && !pSrcSlayer->IsNone())
                 {
                     if (m_pNPC) // I'm an NPC attacked (Should the attacker be a player to get the bonus?).
                     {
@@ -852,11 +843,9 @@ effect_bounce:
             }
             if (iDmgBonusPercent == 0) // Couldn't find a weapon, a Slayer flag or a suitable flag for the target...
             {
-                const CItem *pSrcTalisman = pSrc->LayerFind(LAYER_TALISMAN); // then lets try with a Talisman
-                if (pSrcTalisman)
+                if (const CItem *pSrcTalisman = pSrc->LayerFind(LAYER_TALISMAN))
                 {
-                    const CFactionDef *pSrcSlayer = pSrcTalisman->GetSlayer();
-                    if (pSrcSlayer && !pSrcSlayer->IsNone())
+                    if (const CFactionDef *pSrcSlayer = pSrcTalisman->GetSlayer(); pSrcSlayer && !pSrcSlayer->IsNone())
                     {
                         if (m_pNPC) // I'm an NPC attacked (Should the attacker be a player to get the bonus?).
                         {
@@ -889,11 +878,9 @@ effect_bounce:
 		if ( iDisturbChance && fElemental && !pSpellDef->IsSpellType(SPELLFLAG_SCRIPTED) ) //If Protection spell has SPELLFLAG_SCRIPTED don't make this check.
 		{
 			// Protection spell can cancel the disturb
-			CItem *pProtectionSpell = LayerFind(LAYER_SPELL_Protection);
-			if ( pProtectionSpell )
+            if ( CItem *pProtectionSpell = LayerFind(LAYER_SPELL_Protection) )
 			{
-				const int iChance = pProtectionSpell->m_itSpell.m_spelllevel;
-				if ( iChance > g_Rand.GetVal(1000) )
+                if (const int iChance = pProtectionSpell->m_itSpell.m_spelllevel; iChance > g_Rand.GetVal(1000) )
 					iDisturbChance = 0;
 			}
 		}
@@ -950,9 +937,8 @@ effect_bounce:
 			{
 				if (GetTopDist3D(pSrc) <= 2)
 				{
-					CItem* pReactive = LayerFind(LAYER_SPELL_Reactive);
 
-                    if (pReactive)
+                    if (CItem *pReactive = LayerFind(LAYER_SPELL_Reactive))
                     {
                         int iReactiveDamage = (iDmg * pReactive->m_itSpell.m_PolyStr) / 100;
                         int iReactiveRefDam = iReactiveDamage;
@@ -1011,9 +997,8 @@ effect_bounce:
             // Preventing recurrent reflection with DAMAGE_REACTIVE.
             if (!(uiType & DAMAGE_REACTIVE))
             {
-                int iReflectPhysical = (ushort)std::min(GetPropNum(pCCPChar, PROPCH_REFLECTPHYSICALDAM, pBaseCCPChar),250); //Capped to 250
 
-                if (iReflectPhysical)
+                if (int iReflectPhysical = (ushort)std::min(GetPropNum(pCCPChar, PROPCH_REFLECTPHYSICALDAM, pBaseCCPChar), 250))
                 {
                     int iReflectPhysicalDam = (iDmg * iReflectPhysical) / 100;
                     pSrc->OnTakeDamage(iReflectPhysicalDam, this, (DAMAGE_TYPE)(DAMAGE_FIXED | DAMAGE_REACTIVE), iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
@@ -1040,8 +1025,8 @@ effect_bounce:
 			pSrc->m_pClient->addShowDamage( iDmg, (dword)(GetUID()) );
 		else
 		{
-			CChar * pSrcOwner = pSrc->GetOwner();
-			if ( pSrcOwner != nullptr && pSrcOwner != this ) //If my pet damages somebody display the pop-up damage unless it's damaging me because i already received the pop-up damage on before.
+            if (CChar *pSrcOwner = pSrc->GetOwner();
+                pSrcOwner != nullptr && pSrcOwner != this ) //If my pet damages somebody display the pop-up damage unless it's damaging me because i already received the pop-up damage on before.
 			{
 				if ( pSrcOwner->IsClientActive() )
 					pSrcOwner->m_pClient->addShowDamage( iDmg, (dword)(GetUID()) );
@@ -1139,15 +1124,13 @@ DAMAGE_TYPE CChar::Fight_GetWeaponDamType(const CItem* pWeapon) const
     DAMAGE_TYPE iDmgType = DAMAGE_HIT_BLUNT;
     if ( pWeapon )
     {
-        const CVarDefCont *pDamTypeOverride = pWeapon->GetKey("OVERRIDE.DAMAGETYPE", true);
-        if ( pDamTypeOverride )
+        if ( const CVarDefCont *pDamTypeOverride = pWeapon->GetKey("OVERRIDE.DAMAGETYPE", true) )
         {
             iDmgType = (DAMAGE_TYPE)(pDamTypeOverride->GetValNum());
         }
         else
         {
-            CItemBase *pWeaponDef = pWeapon->Item_GetDef();
-            switch ( pWeaponDef->GetType() )
+            switch (CItemBase *pWeaponDef = pWeapon->Item_GetDef(); pWeaponDef->GetType() )
             {
                 case IT_WEAPON_SWORD:
                 case IT_WEAPON_AXE:
@@ -1222,8 +1205,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 		// Horrific Beast (necro spell) changes char base damage to 5-15
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
 		{
-			CItem * pPoly = LayerFind(LAYER_SPELL_Polymorph);
-			if (pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
+            if (CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
 			{
 				iDmgMin += pPoly->m_itSpell.m_PolyStr;
 				iDmgMax += pPoly->m_itSpell.m_PolyDex;
@@ -1246,8 +1228,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 		// Horrific Beast (necro spell) add +25% Damage Increase
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
 		{
-			CItem * pPoly = LayerFind(LAYER_SPELL_Polymorph);
-			if (pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
+            if (CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
 				iDmgBonus += 25;
 		}
 
@@ -1363,8 +1344,8 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
     if ( !pChar || !Attacker_Delete(pChar, fForced, ATTACKER_CLEAR_FORCED) )
 		return false;
 
-	CItemMemory* pMemoryFight = Memory_FindObj(pChar->GetUID());
-	if ( pMemoryFight && ( pMemoryFight->IsMemoryTypes(MEMORY_FIGHT) || pMemoryFight->IsMemoryTypes(MEMORY_IRRITATEDBY) ) )
+    if (CItemMemory *pMemoryFight = Memory_FindObj(pChar->GetUID());
+        pMemoryFight && ( pMemoryFight->IsMemoryTypes(MEMORY_FIGHT) || pMemoryFight->IsMemoryTypes(MEMORY_IRRITATEDBY) ) )
 		pMemoryFight->Delete();
 
 	// Go to my next target.
@@ -1707,16 +1688,14 @@ WAR_SWING_TYPE CChar::Fight_CanHit(CChar * pCharSrc, bool fSwingNoRange)
         (IsSetCombatFlags(COMBAT_ANIM_HIT_SMOOTH) && (m_atFight.m_iWarSwingState == WAR_SWING_SWINGING)) ||
         (!IsSetCombatFlags(COMBAT_ANIM_HIT_SMOOTH) && (m_atFight.m_iWarSwingState == WAR_SWING_READY)))
     {
-        int dist = GetTopDist3D(pCharSrc);
-        if (dist > GetVisualRange())
+        if (int dist = GetTopDist3D(pCharSrc); dist > GetVisualRange())
         {
             if (!IsSetCombatFlags(COMBAT_STAYINRANGE))
                 return WAR_SWING_SWINGING; //Keep loading the hit or keep it loaded and ready.
 
             return WAR_SWING_INVALID;
         }
-        word wLOSFlags = (g_Cfg.IsSkillFlag( Skill_GetActive(), SKF_RANGED )) ? LOS_NB_WINDOWS : 0;
-        if (!CanSeeLOS(pCharSrc, wLOSFlags, true))
+        if (word wLOSFlags = (g_Cfg.IsSkillFlag(Skill_GetActive(), SKF_RANGED)) ? LOS_NB_WINDOWS : 0; !CanSeeLOS(pCharSrc, wLOSFlags, true))
             return WAR_SWING_SWINGING;
     }
 
@@ -1809,8 +1788,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
         }
 	}
 
-	WAR_SWING_TYPE iHitCheck = Fight_CanHit(pCharTarg, fSwingNoRange);
-	if (iHitCheck != WAR_SWING_READY)
+    if (WAR_SWING_TYPE iHitCheck = Fight_CanHit(pCharTarg, fSwingNoRange); iHitCheck != WAR_SWING_READY)
 		return iHitCheck;
 
 	// Guards should remove conjured NPCs
@@ -1823,16 +1801,15 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
     // Fix of the bounce back effect with dir update for clients to be able to run in combat easily
     if ( IsClientActive() && IsSetCombatFlags(COMBAT_FACECOMBAT) )
     {
-        DIR_TYPE dirOpponent = GetDir(pCharTarg, m_dirFace);
-        if ( (dirOpponent != m_dirFace) && (dirOpponent != GetDirTurn(m_dirFace, -1)) && (dirOpponent != GetDirTurn(m_dirFace, 1)) )
+        if (DIR_TYPE dirOpponent = GetDir(pCharTarg, m_dirFace);
+            (dirOpponent != m_dirFace) && (dirOpponent != GetDirTurn(m_dirFace, -1)) && (dirOpponent != GetDirTurn(m_dirFace, 1)) )
             return WAR_SWING_READY;
     }
 
-    const WAR_SWING_TYPE iStageToSuspend = (IsSetCombatFlags(COMBAT_PREHIT) ? WAR_SWING_SWINGING : WAR_SWING_EQUIPPING);
-    if ( IsSetCombatFlags(COMBAT_FIRSTHIT_INSTANT) && (!m_atFight.m_iSwingIgnoreLastHitTag) && (m_atFight.m_iWarSwingState == iStageToSuspend) )
+    if (const WAR_SWING_TYPE iStageToSuspend = (IsSetCombatFlags(COMBAT_PREHIT) ? WAR_SWING_SWINGING : WAR_SWING_EQUIPPING);
+        IsSetCombatFlags(COMBAT_FIRSTHIT_INSTANT) && (!m_atFight.m_iSwingIgnoreLastHitTag) && (m_atFight.m_iWarSwingState == iStageToSuspend) )
     {
-        const int64 iTimeDiff = ((CWorldGameTime::GetCurrentTime().GetTimeRaw() / MSECS_PER_TENTH) - GetKeyNum("LastHit"));
-        if (iTimeDiff < 0)
+        if (const int64 iTimeDiff = ((CWorldGameTime::GetCurrentTime().GetTimeRaw() / MSECS_PER_TENTH) - GetKeyNum("LastHit")); iTimeDiff < 0)
         {
             return iStageToSuspend;
         }
@@ -1860,9 +1837,8 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 
         if ( pWeapon )
         {
-            const CResourceID ridAmmo(pWeapon->Weapon_GetRangedAmmoRes());
 
-			if (ridAmmo.IsValidUID() && ridAmmo.GetObjUID() > 0 )
+            if (const CResourceID ridAmmo(pWeapon->Weapon_GetRangedAmmoRes()); ridAmmo.IsValidUID() && ridAmmo.GetObjUID() > 0 )
             {
                 pAmmo = pWeapon->Weapon_FindRangedAmmo(ridAmmo);
                 if ( !pAmmo && m_pPlayer )
@@ -1908,8 +1884,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
             const WAR_SWING_TYPE swingTypeHold = fSwingNoRange ? m_atFight.m_iWarSwingState : WAR_SWING_READY;
 
 		    int	iMinDist = pWeapon ? pWeapon->GetRangeL() : 0;
-		    int	iMaxDist = Fight_CalcRange(pWeapon);
-		    if ( (dist < iMinDist) || (dist > iMaxDist) )
+            if (int iMaxDist = Fight_CalcRange(pWeapon); (dist < iMinDist) || (dist > iMaxDist) )
 		    {
 			    if ( !IsSetCombatFlags(COMBAT_STAYINRANGE) || (m_atFight.m_iWarSwingState != WAR_SWING_SWINGING) )
 				    return swingTypeHold;
@@ -1958,8 +1933,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 		if (fSwingNoRange) // We don't want the animation to display if we are outside of range.
 		{
 			int	iMinDist = pWeapon ? pWeapon->GetRangeL() : 0;
-			int	iMaxDist = Fight_CalcRange(pWeapon);
-			if (dist <  iMinDist || dist > iMaxDist)
+            if (int iMaxDist = Fight_CalcRange(pWeapon); dist <  iMinDist || dist > iMaxDist)
 				return WAR_SWING_READY;
 		}
 		m_atFight.m_iWarSwingState = WAR_SWING_SWINGING;
@@ -2077,11 +2051,11 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 	// We hit
 	// Calculate the damage and check for parrying
 	int	iDmg = Fight_CalcDamage(pWeapon);
-	int iParryReduction = 100;
 
-	if ( !(iDmgType & DAMAGE_GOD) )
+    if ( !(iDmgType & DAMAGE_GOD) )
 	{
-		CItem* pItemHit = nullptr;
+        int iParryReduction = 100;
+        CItem * pItemHit = nullptr;
 		SKILL_TYPE ParrySkill = SKILL_PARRYING;
 		const CSkillDef* pSkillDef = g_Cfg.GetSkillDef(ParrySkill);
 		int iParryChance = g_Cfg.Calc_CombatChanceToParry(pCharTarg, pItemHit);
@@ -2127,8 +2101,8 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 			if (g_Cfg.m_iFeatureSE & FEATURE_SE_NINJASAM && g_Cfg.m_iCombatParryingEra & PARRYERA_SEFORMULA && !pCharTarg->IsStatFlag(STATF_HASSHIELD))
 				pCharTarg->Skill_Experience(SKILL_BUSHIDO, iParryChance);
 
-            int iParryDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemParryDamageChance"));
-			if ( pItemHit && (iParryDamageChance > g_Rand.GetVal(100)) )
+            if (int iParryDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemParryDamageChance"));
+                pItemHit && (iParryDamageChance > g_Rand.GetVal(100)) )
 				pItemHit->OnTakeDamage(1, this, iDmgType);
 
 			//Effect(EFFECT_OBJ, ITEMID_FX_GLOW, this, 10, 16);		// moved to scripts (@UseQuick on Parrying skill)
@@ -2237,8 +2211,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 		}
 
 		// Check if the weapon will be damaged
-        int iDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageChance"));
-		if ( iDamageChance > g_Rand.GetVal(100) )
+        if (int iDamageChance = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageChance")); iDamageChance > g_Rand.GetVal(100) )
 			pWeapon->OnTakeDamage(iDmg, pCharTarg);
 	}
 	else if ( m_pNPC )
@@ -2246,8 +2219,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 		// Base poisoning for NPCs
 		if ( !IsSetCombatFlags(COMBAT_NOPOISONHIT) && 50 >= g_Rand.GetVal(100) )
 		{
-			int iPoisoningSkill = Skill_GetBase(SKILL_POISONING);
-			if ( iPoisoningSkill )
+            if ( int iPoisoningSkill = Skill_GetBase(SKILL_POISONING) )
 				pCharTarg->SetPoison(g_Rand.GetVal(iPoisoningSkill), g_Rand.GetVal(iPoisoningSkill / 50), this);
 		}
 	}
@@ -2281,8 +2253,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
             fMakeLeechSound = true;
 		}
 
-		ushort uiHitManaLeech = (ushort)GetPropNum(pCCPChar, PROPCH_HITLEECHMANA, pBaseCCPChar);
-		if ( uiHitManaLeech )
+        if ( ushort uiHitManaLeech = (ushort)GetPropNum(pCCPChar, PROPCH_HITLEECHMANA, pBaseCCPChar) )
 		{
 			uiHitManaLeech = (ushort)(g_Rand.GetVal2(0, (iDmg * uiHitManaLeech * 40) / 10000));	// leech 0% ~ 40% of damage value
 			UpdateStatVal(STAT_INT, uiHitManaLeech);
@@ -2298,8 +2269,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 		ushort uiManaDrain = 0;
 		if ( g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B )
 		{
-			CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph);
-			if ( pPoly && pPoly->m_itSpell.m_spell == SPELL_Wraith_Form )
+            if (CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Wraith_Form )
 				uiManaDrain += 5 + (15 * Skill_GetBase(SKILL_SPIRITSPEAK) / 1000);
 		}
 		if ( GetPropNum(pCCPChar, PROPCH_HITMANADRAIN, pBaseCCPChar) > g_Rand.GetVal(100) )
@@ -2325,8 +2295,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
             if (GetPropNum(pCCPChar, PROPCH_HITAREAPHYSICAL, pBaseCCPChar) > g_Rand.GetVal(100))
                 pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_HIT_BLUNT, 100, 0, 0, 0, 0, static_cast<HUE_TYPE>(0x32), static_cast<SOUND_TYPE>(0x10E));
 
-            bool fElemental = IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE);
-            if (fElemental)
+            if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE))
 	        {
 
 		        if (GetPropNum(pCCPChar, PROPCH_HITAREAFIRE, pBaseCCPChar) > g_Rand.GetVal(100))

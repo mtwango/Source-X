@@ -82,8 +82,7 @@ bool CCharPlayer::SetSkillClass( CChar * pChar, const CResourceID &rid )
 		return true;
 
 	// Remove any previous skillclass from the Events block.
-	size_t i = pChar->m_OEvents.FindResourceType(RES_SKILLCLASS);
-	if ( i != sl::scont_bad_index() )
+    if (size_t i = pChar->m_OEvents.FindResourceType(RES_SKILLCLASS); i != sl::scont_bad_index() )
 		pChar->m_OEvents.erase(pChar->m_OEvents.begin() + i);
 
 	m_SkillClass.SetRef(pLink);
@@ -194,8 +193,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
         ptcKey += fIsGuild ? 5 : 4;
         if (*ptcKey == 0)
         {
-            CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-            if (pMyGuild)
+            if (CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN))
                 sVal.FormatHex(pMyGuild->GetUID());
             else
                 sVal.SetValFalse();
@@ -204,8 +202,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
         if (*ptcKey == '.')
         {
             ptcKey += 1;
-            CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-            if (pMyGuild)
+            if (CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN))
                 return pMyGuild->r_WriteVal(ptcKey, sVal, pChar);
         }
         return false;
@@ -353,17 +350,14 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 	ADDTOCALLSTACK("CCharPlayer::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	lpctstr ptcKey = s.GetKey();
-
-	if ( ( !strnicmp(ptcKey, "GUILD", 5) ) || ( !strnicmp(ptcKey, "TOWN", 4) ) )
+    if (lpctstr ptcKey = s.GetKey(); ( !strnicmp(ptcKey, "GUILD", 5) ) || ( !strnicmp(ptcKey, "TOWN", 4) ) )
 	{
 		bool bIsGuild = !strnicmp(ptcKey, "GUILD", 5);
 		ptcKey += bIsGuild ? 5 : 4;
 		if ( *ptcKey == '.' )
 		{
 			ptcKey += 1;
-			CItemStone *pMyGuild = pChar->Guild_Find(bIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-			if ( pMyGuild )
+            if ( CItemStone *pMyGuild = pChar->Guild_Find(bIsGuild ? MEMORY_GUILD : MEMORY_TOWN) )
                 return pMyGuild->r_SetVal(ptcKey, s.GetArgRaw());
 		}
 		return false;
@@ -390,8 +384,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 		}
 		case CPC_DELHOUSE:
 		{
-			dword dwUID = s.GetArgDWVal();
-			if (dwUID == UID_UNUSED)
+            if (dword dwUID = s.GetArgDWVal(); dwUID == UID_UNUSED)
 			{
 				GetMultiStorage()->ClearHouses();
 			}
@@ -419,8 +412,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 		}
 		case CPC_DELSHIP:
 		{
-			dword dwUID = s.GetArgDWVal();
-			if (dwUID == UINT_MAX)
+            if (dword dwUID = s.GetArgDWVal(); dwUID == UINT_MAX)
 			{
 				GetMultiStorage()->ClearShips();
 			}
@@ -659,8 +651,7 @@ bool CChar::Player_OnVerb( CScript &s, CTextConsole * pSrc )
 			if ( *ptcKey == '.' )
 			{
 				ptcKey += 1;
-				CItemStone *pMyGuild = Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN);
-                if ( pMyGuild )
+                if ( CItemStone *pMyGuild = Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN) )
                 {
 					CScript script(ptcKey, s.GetArgRaw());
 					script.CopyParseState(s);

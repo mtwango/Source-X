@@ -177,8 +177,7 @@ bool CScriptTriggerArgs::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         if (*pszTemp && IsDigit(*pszTemp))
         {
             char *pEnd;
-            ushort number = (ushort)strtol(pszTemp, &pEnd, 10);
-            if (number > 0) // Can only use 1 to 65535 as REFs
+            if (ushort number = (ushort)strtol(pszTemp, &pEnd, 10); number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
                 // Make sure REFx or REFx.KEY is being used
@@ -255,8 +254,7 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
         if (*pszTemp && IsDigit(*pszTemp))
         {
             char *pEnd;
-            ushort number = (ushort)(strtol(pszTemp, &pEnd, 10));
-            if (number > 0) // Can only use 1 to 65535 as REFs
+            if (ushort number = (ushort)(strtol(pszTemp, &pEnd, 10)); number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
                 if (!*pszTemp) // setting REFx to a new object
@@ -294,8 +292,7 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
         else
         {
             ++ptcKey;
-            CObjBase *pObj = CUID::ObjFindFromUID(Exp_GetSingle(ptcKey));
-            if (!pObj)
+            if (CObjBase *pObj = CUID::ObjFindFromUID(Exp_GetSingle(ptcKey)); !pObj)
                 m_pO1 = nullptr; // no pObj = cleaning argo
             else
                 m_pO1 = pObj;
@@ -325,8 +322,7 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
             return true;
         case AGC_O:
         {
-            lpctstr pszTemp = s.GetKey() + strlen(sm_szLoadKeys[AGC_O]);
-            if ( *pszTemp == '.' )
+            if (lpctstr pszTemp = s.GetKey() + strlen(sm_szLoadKeys[AGC_O]); *pszTemp == '.' )
             {
                 ++pszTemp;
                 if (!m_pO1)
@@ -383,8 +379,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
     if ( IsSetEF( EF_Intrinsic_Locals ) )
     {
         EXC_SET_BLOCK("intrinsic");
-        CVarDefCont * pVar = m_VarsLocal.GetKey( ptcKey );
-        if ( pVar )
+        if (CVarDefCont *pVar = m_VarsLocal.GetKey(ptcKey))
         {
             sVal = pVar->GetValStr();
             return true;
@@ -456,8 +451,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
                     if ((*s == '"') && fQuotes)
                     {
                         fQuotes          = false;
-                        lptstr ptcArgEnd = strpbrk(s + 1, "\",");
-                        if (ptcArgEnd > s)
+                        if (lptstr ptcArgEnd = strpbrk(s + 1, "\","); ptcArgEnd > s)
                         {
                             *(ptcArgEnd - 1) = '\0';
                         }
@@ -525,8 +519,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
     }
 
     EXC_SET_BLOCK("generic");
-    int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
-    switch (index)
+    switch (FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case AGC_N:
         case AGC_N1:
@@ -540,8 +533,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
             break;
         case AGC_O:
         {
-            CObjBase *pObj = dynamic_cast <CObjBase*> (m_pO1);
-            if ( pObj )
+            if ( CObjBase *pObj = dynamic_cast<CObjBase *>(m_pO1) )
                 sVal.FormatHex(pObj->GetUID());
             else
                 sVal.SetValFalse();

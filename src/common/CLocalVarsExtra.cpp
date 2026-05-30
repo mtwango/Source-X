@@ -39,8 +39,7 @@ bool CLocalFloatVars::Insert( const char* VarName, const char* VarValue, bool fF
 	if (!VarValue || !VarName)
 		return false;
 
-	MapType::const_iterator i = m_VarMap.find(VarName);
-	if ( i != m_VarMap.end() && !fForceSet)
+    if (MapType::const_iterator i = m_VarMap.find(VarName); i != m_VarMap.end() && !fForceSet)
 		return false;
 
 	SKIP_ARGSEP(VarValue);
@@ -108,8 +107,7 @@ bool CLocalObjMap::Insert( ushort Number, CObjBase * pObj, bool fForceSet )
 	if ( !Number )
 		return false;
 
-	ObjMap::const_iterator i = m_ObjMap.find(Number);
-	if ( i != m_ObjMap.end() && !fForceSet )
+    if (ObjMap::const_iterator i = m_ObjMap.find(Number); i != m_ObjMap.end() && !fForceSet )
 		return false;
 
 	m_ObjMap[Number] = pObj;

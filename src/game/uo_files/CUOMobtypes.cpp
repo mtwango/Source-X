@@ -17,9 +17,8 @@ void CUOMobTypes::Load()
     g_Log.Event(LOGM_INIT, "Caching mobtypes.txt...\n");
 
     _vMobTypesEntries.clear();
-    CSFileText csvMobTypes;
 
-    if (g_Install.OpenFile(csvMobTypes, "mobtypes.txt", (word)(OF_READ | OF_TEXT | OF_DEFAULTMODE)))
+    if (CSFileText csvMobTypes; g_Install.OpenFile(csvMobTypes, "mobtypes.txt", (word)(OF_READ | OF_TEXT | OF_DEFAULTMODE)))
     {
         _vMobTypesEntries.resize(CREID_QTY);
         for (size_t i = 0; i < _vMobTypesEntries.size(); ++i)
@@ -49,8 +48,7 @@ void CUOMobTypes::Load()
 
                 //Split the string
                 tchar* pptcSplitArray[4]; // Bigger on purpose, put possible trailing garbage in the fourth element to keep clean the third.
-                const int iQty = Str_ParseCmds(ptcTemp, pptcSplitArray, std::size(pptcSplitArray), " \t#");
-                if (iQty < 3)
+                if (const int iQty = Str_ParseCmds(ptcTemp, pptcSplitArray, std::size(pptcSplitArray), " \t#"); iQty < 3)
                 {
                     g_Log.EventError("Mobtypes.txt: not enough parameters on line %" PRIuSIZE_T " \n", uiLineCount);
                     continue;
@@ -65,8 +63,7 @@ void CUOMobTypes::Load()
                 }
                 const uint uiAnimIndex = *iconv;
 
-                const std::string_view sType(pptcSplitArray[1]);
-                if (sType == "MONSTER")
+                if (const std::string_view sType(pptcSplitArray[1]); sType == "MONSTER")
                     mobTypesRow.m_uiType = MOBTE_MONSTER;
                 else if (sType == "SEA_MONSTER")
                     mobTypesRow.m_uiType = MOBTE_SEA_MONSTER;

@@ -62,8 +62,7 @@ bool CChar::TeleportToObj( int iType, tchar * pszArgs )
 		{
 			case 0:
 			{
-				MATCH_TYPE match = Str_Match(pszArgs, pObj->GetName());
-				if (match != MATCH_VALID)
+                if (MATCH_TYPE match = Str_Match(pszArgs, pObj->GetName()); match != MATCH_VALID)
 					continue;
 			}
 			break;
@@ -79,8 +78,7 @@ bool CChar::TeleportToObj( int iType, tchar * pszArgs )
 			{
 				if (!pObj->IsItem())
 					continue;
-				const CItem* pItem = static_cast<CItem*>(pObj);
-				if (!pItem->IsType((IT_TYPE)iArg))
+                if (const CItem *pItem = static_cast<CItem *>(pObj); !pItem->IsType((IT_TYPE)iArg))
 					continue;
 			}
 			break;
@@ -88,8 +86,7 @@ bool CChar::TeleportToObj( int iType, tchar * pszArgs )
 			{
 				if (!pObj->IsChar())
 					continue;
-				const CChar* pChar = static_cast<CChar*>(pObj);
-				if (pChar->GetID() != iArg)
+                if (const CChar *pChar = static_cast<CChar *>(pObj); pChar->GetID() != iArg)
 					continue;
 			}
 			break;
@@ -97,8 +94,7 @@ bool CChar::TeleportToObj( int iType, tchar * pszArgs )
 			{
 				if (!pObj->IsItem())
 					continue;
-				const CItem* pItem = static_cast<CItem*>(pObj);
-				if (pItem->GetID() != iArg)
+                if (const CItem *pItem = static_cast<CItem *>(pObj); pItem->GetID() != iArg)
 					continue;
 			}
 			break;
@@ -372,8 +368,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 				break;
 			case IT_EQ_MEMORY_OBJ:
 			{
-				CItemMemory *pMemory = dynamic_cast<CItemMemory *>( pItem );
-				if (pMemory != nullptr)
+                if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
 					Memory_UpdateFlags(pMemory);
 				break;
 			}
@@ -491,8 +486,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
         case IT_EQ_MEMORY_OBJ:
         {
             // Clear the associated flags.
-            CItemMemory *pMemory = dynamic_cast<CItemMemory*>(pItem);
-            if (pMemory != nullptr)
+            if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
                 Memory_UpdateClearTypes(pMemory, 0xFFFF);
             break;
         }
@@ -506,9 +500,9 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
     // Start of CCPropsItemEquippable props
     CCPropsChar *pCCPChar = GetComponentProps<CCPropsChar>();
     CCPropsItemEquippable *pItemCCPItemEquippable = pItem->GetComponentProps<CCPropsItemEquippable>();
-    const CCPropsItemEquippable *pItemBaseCCPItemEquippable = pItemBase->GetComponentProps<CCPropsItemEquippable>();
 
-    if (pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
+    if (const CCPropsItemEquippable *pItemBaseCCPItemEquippable = pItemBase->GetComponentProps<CCPropsItemEquippable>();
+        pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
     {
         // Leave the stat bonuses signed, since they can be used also as a malus (negative sign)
         Stat_AddMod(STAT_STR,       - pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
@@ -549,8 +543,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 
         if (pItem->IsTypeWeapon())
         {
-            CItem * pCursedMemory = LayerFind(LAYER_SPELL_Curse_Weapon);	// Remove the cursed state from SPELL_Curse_Weapon.
-            if (pCursedMemory)
+            if (CItem *pCursedMemory = LayerFind(LAYER_SPELL_Curse_Weapon))
                 pItem->ModPropNum(pItemCCPItemEquippable, PROPIEQUIP_HITLEECHLIFE, - pCursedMemory->m_itSpell.m_spelllevel, pItemBaseCCPItemEquippable);
         }
     }
@@ -567,8 +560,7 @@ void CChar::DropAll(CItemContainer * pCorpse, uint64 uiAttr)
 	if ( IsStatFlag( STATF_CONJURED ))
 		return;	// drop nothing.
 
-	CItemContainer * pPack = GetPack();
-	if ( pPack != nullptr )
+    if (CItemContainer *pPack = GetPack(); pPack != nullptr )
 	{
 		if ( pCorpse == nullptr )
 		{
@@ -810,8 +802,7 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 
 	if (fTranslate || IsStatFlag(STATF_ONHORSE))
 	{
-		CItem * pWeapon = m_uidWeapon.ItemFind();
-		if (pWeapon != nullptr && action == ANIM_ATTACK_WEAPON)
+        if (CItem *pWeapon = m_uidWeapon.ItemFind(); pWeapon != nullptr && action == ANIM_ATTACK_WEAPON)
 		{
 			// action depends on weapon type (skill) and 2 Hand type.
 			LAYER_TYPE layer = pWeapon->Item_GetDef()->GetEquipLayer();
@@ -923,9 +914,8 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
             //Check mobtypes.txt to get the anim type
             if (fUseMobTypes)
             {
-                const CUOMobTypesEntry *pMobtEntry = g_Install.m_mobtypes.GetEntry(dispID);
 
-                if (pMobtEntry->m_uiType == MOBTE_QTY)
+                if (const CUOMobTypesEntry *pMobtEntry = g_Install.m_mobtypes.GetEntry(dispID); pMobtEntry->m_uiType == MOBTE_QTY)
                 {
                     // Invalid entry, fall back to old method.
                     fUseMobTypes = false;
@@ -2297,8 +2287,8 @@ bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , by
 
 	if (IsPlayableCharacter())		//Perform these checks only for Gargoyles or in Enhanced Client
 	{
-		CItem * pWeapon = m_uidWeapon.ItemFind();
-		if (pWeapon &&
+        if (CItem *pWeapon = m_uidWeapon.ItemFind();
+            pWeapon &&
             ( (action == ANIM_ATTACK_WEAPON) || (action == ANIM_ATTACK_BOW) || (action == ANIM_ATTACK_XBOW) || (action == ANIM_HORSE_SLAP) ||
               (action == ANIM_HORSE_ATTACK) || (action == ANIM_HORSE_ATTACK_BOW) || (action == ANIM_HORSE_ATTACK_XBOW)
             ) )
@@ -2443,8 +2433,7 @@ bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , by
 		if (!pClient->CanSee(this))
 			continue;
 
-		CNetState* state = pClient->GetNetState();
-		if (state->isClientEnhanced() || state->isClientKR())
+        if (CNetState *state = pClient->GetNetState(); state->isClientEnhanced() || state->isClientKR())
 			cmdnew->send(pClient);
 		else if (IsGargoyle() && state->isClientVersionNumber(MINCLIVER_NEWMOBILEANIM))
 			cmdnew->send(pClient);
@@ -2655,8 +2644,7 @@ void CChar::SoundChar( CRESND_TYPE type )
 	// Am i hitting with a weapon?
 	if ( type == CRESND_HIT )
 	{
-		CItem * pWeapon = m_uidWeapon.ItemFind();
-		if ( pWeapon != nullptr )
+        if (CItem *pWeapon = m_uidWeapon.ItemFind(); pWeapon != nullptr )
 		{
 			//The Weapon_GetSoundHit() method below check if the ranged weapon equipped has the AMMOSOUNDHIT property.
 			id = pWeapon->Weapon_GetSoundHit();
@@ -2868,8 +2856,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 	        return -1;
 	    }
 
-		CItem *pItemCont = dynamic_cast<CItem*>(pItemParent);
-		if ( pItemCont != nullptr )
+        if (CItem *pItemCont = dynamic_cast<CItem *>(pItemParent); pItemCont != nullptr )
 		{
             const CPointMap& ptTop = GetTopPoint();
 			// Don't allow taking items from the bank unless we opened it here
@@ -2880,15 +2867,14 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 			if ( pCharTop != nullptr )
 			{
                 CItemContainer* pBank = pCharTop->GetBank();
-				bool fItemContIsInsideBankBox = pBank->IsItemInside( pItemCont );
-				if ( fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
+                if (bool fItemContIsInsideBankBox = pBank->IsItemInside(pItemCont); fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
 					return -1;
 			}
 
 			// protect from snoop - disallow picking from not opened containers
 			bool fIsInOpenedContainer = false;
-			CClient::OpenedContainerMap_t::iterator itContainerFound = client->m_openedContainers.find( pItemCont->GetUID().GetPrivateUID() );
-			if ( itContainerFound != client->m_openedContainers.end() )
+            if (CClient::OpenedContainerMap_t::iterator itContainerFound = client->m_openedContainers.find(pItemCont->GetUID().GetPrivateUID());
+                itContainerFound != client->m_openedContainers.end() )
 			{
 				const dword dwTopContainerUID = itContainerFound->second.first.first;
 				const dword dwTopMostContainerUID = itContainerFound->second.first.second;
@@ -2912,8 +2898,8 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 					}
 					else
 					{
-						CItem * pItemTop = dynamic_cast<CItem *>(pObjTop);
-						if ( pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
+                        if (CItem *pItemTop = dynamic_cast<CItem *>(pObjTop);
+                            pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
 						{
                             fIsInOpenedContainer = true;
 						}
@@ -2939,8 +2925,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		return -1;
 	}
 
-	CItemCorpse * pCorpse = dynamic_cast<CItemCorpse *>(pObjTop);
-	if (pCorpse)
+    if (CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(pObjTop))
 	{
 		if (pCorpse->m_uidLink == GetUID())
 		{
@@ -2964,8 +2949,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 
 	if (g_Cfg.m_iDragWeightMax > 0)
 	{
-		int iItemWeight = pItem->GetWeight(amount);
-		if ((GetWeightLoadPercent(GetTotalWeight() + iItemWeight)) > g_Cfg.m_iDragWeightMax)
+        if (int iItemWeight = pItem->GetWeight(amount); (GetWeightLoadPercent(GetTotalWeight() + iItemWeight)) > g_Cfg.m_iDragWeightMax)
 		{
 			SysMessageDefault(DEFMSG_MSG_HEAVY);
 			if ((pCharTop == this) && (pItem->GetParent() == GetPack()))
@@ -3010,8 +2994,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		if ( IsPriv(PRIV_ALLMOVE|PRIV_GM) ) ;
 		else if ( pItem->IsAttr(ATTR_STATIC|ATTR_MOVE_NEVER) || pItem->IsType(IT_SPELL) )
 			return -1;
-		CCSpawn* pSpawn = pItem->GetSpawn();
-		if (pSpawn)
+        if (CCSpawn *pSpawn = pItem->GetSpawn())
 			pSpawn->DelObj(pItem->GetUID());
 	}
 
@@ -3026,8 +3009,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		}
 		if (( trigger == ITRIG_PICKUP_PACK ) && (( IsTrigUsed(TRIGGER_PICKUP_SELF) ) || ( IsTrigUsed(TRIGGER_ITEMPICKUP_SELF) )))
 		{
-			CItem * pContItem = dynamic_cast <CItem*> ( pItem->GetContainer() );
-			if ( pContItem )
+            if ( CItem *pContItem = dynamic_cast<CItem *>(pItem->GetContainer()) )
 			{
                 CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(pItem);
@@ -3095,8 +3077,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 
 	// Pick it up.
 	pItem->SetDecayTime(-1);	// Kill any decay timer.
-	CCSpawn * pSpawn = GetSpawn();
-	if (pSpawn)
+    if (CCSpawn *pSpawn = GetSpawn())
 		pSpawn->DelObj(pItem->GetUID());
 	LayerAdd( pItem, LAYER_DRAGGING );
 
@@ -3147,8 +3128,8 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
             if (ret == TRIGRET_RET_TRUE)
 			{
 				fCanAddToPack = false;
-				const CItem* pCont = dynamic_cast<const CItem*>(pItem->GetContainer());
-				if (pCont == nullptr || pPrevCont == pCont) //In the same cont, but unable to go there
+                if (const CItem *pCont = dynamic_cast<const CItem *>(pItem->GetContainer());
+                    pCont == nullptr || pPrevCont == pCont) //In the same cont, but unable to go there
 					fDropOnGround = true;
 				else //we changed the cont in the script
 				{
@@ -3206,8 +3187,7 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
 
 			// Warning: here we ignore the read-onlyness of CSString's buffer only because we know that CPointMap constructor won't write past the end, but only replace some characters with '\0'. It's not worth it to build another string just for that.
             tchar* ptcArgs = const_cast<tchar*>(pScriptArgs->m_s1.GetBuffer());
-			const CPointMap ptDropNew(ptcArgs);
-            if (!ptDropNew.IsValidPoint())
+            if (const CPointMap ptDropNew(ptcArgs); !ptDropNew.IsValidPoint())
                 g_Log.EventError("Trying to override item drop P with an invalid P. Using the original one.\n");
             else
                 ptDrop = ptDropNew;
@@ -3277,8 +3257,7 @@ bool CChar::ItemDrop( CItem * pItem, const CPointMap & pt )
 				{
 					break;
 				}
-				const char iStackZ = pStack->GetTopZ();
-				if (iStackZ < pt.m_z || iStackZ > iStackMaxZ )
+                if (const char iStackZ = pStack->GetTopZ(); iStackZ < pt.m_z || iStackZ > iStackMaxZ )
 					continue;
 
 				const short iStackHeight = pStack->GetHeight();
@@ -3295,8 +3274,8 @@ bool CChar::ItemDrop( CItem * pItem, const CPointMap & pt )
 	}
 
 	// Does this item have a flipped version?
-	CItemBase * pItemDef = pItem->Item_GetDef();
-	if (( g_Cfg.m_fFlipDroppedItems && pItem->Can(CAN_I_FLIP)) && pItem->IsMovableType() && !pItemDef->IsStackableType())
+    if (CItemBase *pItemDef = pItem->Item_GetDef();
+        ( g_Cfg.m_fFlipDroppedItems && pItem->Can(CAN_I_FLIP)) && pItem->IsMovableType() && !pItemDef->IsStackableType())
 		pItem->SetDispID( pItemDef->GetNextFlipID( pItem->GetDispID()));
 
 	return pItem->MoveToCheck( pt, this );
@@ -3388,11 +3367,9 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
     if (CItemBase::IsVisibleLayer(layer))	// visible layer ?
     {
         SOUND_TYPE iSound = 0x57;
-        CVarDefCont * pVar = GetDefKey("EQUIPSOUND", true);
-        if ( pVar )
+        if ( CVarDefCont *pVar = GetDefKey("EQUIPSOUND", true) )
         {
-            int64 iVal = pVar->GetValNum();
-            if ( iVal )
+            if ( int64 iVal = pVar->GetValNum() )
                 iSound = (SOUND_TYPE)iVal;
         }
         Sound(iSound);
@@ -3407,9 +3384,8 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
     // Start of CCPropsItemEquippable props
 	CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
 	CCPropsItemEquippable* pItemCCPItemEquippable = pItem->GetComponentProps<CCPropsItemEquippable>();
-	const CCPropsItemEquippable* pItemBaseCCPItemEquippable = pItemBase->GetComponentProps<CCPropsItemEquippable>();
 
-    if (pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
+    if (const CCPropsItemEquippable *pItemBaseCCPItemEquippable = pItemBase->GetComponentProps<CCPropsItemEquippable>(); pItemCCPItemEquippable || pItemBaseCCPItemEquippable)
     {
         // Leave the stat bonuses signed, since they can be used also as a malus (negative sign)
         Stat_AddMod(STAT_STR,       + pItem->GetPropNum(pItemCCPItemEquippable, PROPIEQUIP_BONUSSTR, pItemBaseCCPItemEquippable));
@@ -3451,8 +3427,7 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
         if (pItem->IsTypeWeapon())
         {
             //Necromancy Curse weapon
-            CItem * pCursedMemory = LayerFind(LAYER_SPELL_Curse_Weapon);	// Remove the cursed state from SPELL_Curse_Weapon.
-            if (pCursedMemory)
+            if (CItem *pCursedMemory = LayerFind(LAYER_SPELL_Curse_Weapon))
                 pItem->ModPropNum(pItemCCPItemEquippable, PROPIEQUIP_HITLEECHLIFE, + pCursedMemory->m_itSpell.m_spelllevel, pItemBaseCCPItemEquippable);
         }
     }
@@ -3477,8 +3452,7 @@ void CChar::EatAnim(CItem* pItem, ushort uiQty)
 	if ( !IsStatFlag(STATF_ONHORSE) )
 		UpdateAnimate(ANIM_EAT);
 
-    EMOTEFLAGS_TYPE eFlag = (IsPlayer() ? EMOTEF_HIDE_EAT_PLAYER : EMOTEF_HIDE_EAT_NPC);
-    if (!IsSetEmoteFlag(eFlag))
+    if (EMOTEFLAGS_TYPE eFlag = (IsPlayer() ? EMOTEF_HIDE_EAT_PLAYER : EMOTEF_HIDE_EAT_NPC); !IsSetEmoteFlag(eFlag))
     {
         tchar* pszMsg = Str_GetTemp();
         snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_EATSOME), pItem->GetName());
@@ -3731,12 +3705,10 @@ CItem* CChar::Horse_ValidateMountItem(CItem *pMountItem) const
 
     if (pMountItem->IsType(IT_EQ_HORSE))	// It's a mount item
     {
-        const CChar* pRider = dynamic_cast<const CChar*>(pMountItem->GetTopLevelObj());
-        if (pRider)
+        if (const CChar *pRider = dynamic_cast<const CChar *>(pMountItem->GetTopLevelObj()))
         {
             ASSERT(pRider == pMountItem->m_uidLink.CharFind());
-            const CItem* pOwnerMountItem = pRider->LayerFind(LAYER_HORSE);
-            if (pOwnerMountItem && (pOwnerMountItem == pMountItem))
+            if (const CItem *pOwnerMountItem = pRider->LayerFind(LAYER_HORSE); pOwnerMountItem && (pOwnerMountItem == pMountItem))
                 return pMountItem;
         }
     }
@@ -3795,8 +3767,7 @@ CItem* CChar::Horse_GetValidMountItem()
 	if (pMountItem && !pMountItem->IsType(IT_EQ_HORSE))
 		return nullptr;
 
-	const CChar* pOwner = NPC_PetGetOwner();
-	if (!pMountItem && pOwner)
+    if (const CChar *pOwner = NPC_PetGetOwner(); !pMountItem && pOwner)
 	{
 		// Invalid ACTARG1 (which should hold the UID of the mount item).
 		// Let's try to find and check owner's mount item equipped in LAYER_HORSE.
@@ -3811,8 +3782,7 @@ CItem* CChar::Horse_GetValidMountItem()
 			}
 			else
 			{
-				const CChar* pLinkedChar = pMountItem->m_uidLink.CharFind();
-				if (pLinkedChar && pLinkedChar->IsStatFlag(STATF_RIDDEN))
+                if (const CChar *pLinkedChar = pMountItem->m_uidLink.CharFind(); pLinkedChar && pLinkedChar->IsStatFlag(STATF_RIDDEN))
 				{
 					// Owner has a mount item linked to another, valid mount, so don't touch that
 					iFailureCode = 2;
@@ -3837,8 +3807,7 @@ CItem* CChar::Horse_GetValidMountItem()
 
         if (pRider && pRider->IsStatFlag(STATF_ONHORSE))
         {
-            CItem* pRiderMountItem = pRider->LayerFind(LAYER_HORSE);
-            if (pRiderMountItem)
+            if (CItem *pRiderMountItem = pRider->LayerFind(LAYER_HORSE))
             {
                 if (pRider && (pRider != pOwner))
                 {
@@ -3872,8 +3841,7 @@ CItem* CChar::Horse_GetValidMountItem()
                     }
                     else if (pMountItem->IsType(IT_FIGURINE) || pMountItem->IsType(IT_EQ_HORSE))
                     {
-						const CChar* pLinkedChar = pMountItem->m_uidLink.CharFind();
-						if (pLinkedChar && pLinkedChar->IsStatFlag(STATF_RIDDEN))
+                        if (const CChar *pLinkedChar = pMountItem->m_uidLink.CharFind(); pLinkedChar && pLinkedChar->IsStatFlag(STATF_RIDDEN))
 						{
 							// Owner has a mount item linked to another, valid mount, so don't touch that
 							iFailureCode = 7;
@@ -4080,8 +4048,7 @@ bool CChar::Horse_UnMount()
 
     if (pMountItem->GetIDCommon() == ITEMID_SHIP_PILOT)
 	{
-		CItem *pShip = pMountItem->m_uidLink.ItemFind();
-        if (pShip)
+        if (CItem *pShip = pMountItem->m_uidLink.ItemFind())
 		    pShip->m_itShip.m_Pilot.InitUID();
 
 		SysMessageDefault(DEFMSG_SHIP_PILOT_OFF);
@@ -4137,8 +4104,7 @@ bool CChar::OnTickEquip( CItem * pItem )
 					break;
 				case IT_EQ_MEMORY_OBJ:
 				{
-					CItemMemory *pMemory = dynamic_cast<CItemMemory*>( pItem );
-					if (pMemory)
+                    if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem))
 						return Memory_OnTick(pMemory);
 
 					return false;
@@ -4234,8 +4200,7 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 	// Release if paralyzed ?
 	if ( !pSpellDef->IsSpellType(SPELLFLAG_NOUNPARALYZE) )
 	{
-		CItem *pParalyze = LayerFind(LAYER_SPELL_Paralyze);
-		if ( pParalyze )
+        if ( CItem *pParalyze = LayerFind(LAYER_SPELL_Paralyze) )
 			pParalyze->Delete();
 	}
 
@@ -4255,8 +4220,7 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 		// Get the poison level
 		int iPoisonLevel = 0;
 
-		int iDist = GetDist(pCharSrc);
-		if (iDist <= g_Cfg.m_iMapViewSizeMax)
+        if (int iDist = GetDist(pCharSrc); iDist <= g_Cfg.m_iMapViewSizeMax)
 		{
 			if (iSkill >= 1000)		//Lethal-Deadly
 				iPoisonLevel = 3 + !static_cast<bool>(g_Rand.GetVal(10));
@@ -4287,8 +4251,7 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 
 		if (IsAosFlagEnabled(FEATURE_AOS_UPDATE_B))
 		{
-			CItem* pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen);
-			if (pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
+            if (CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen); pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 			{
 				++pPoison->m_itSpell.m_spelllevel;	// Effect 2: next poison will have one additional level of poison, this makes sense only with MAGICF_OSIFORMULAS enabled.
 				pEvilOmen->Delete();
@@ -4296,8 +4259,7 @@ bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
 		}
 	}
 
-	CClient *pClient = GetClientActive();
-	if ( pClient && IsSetOF(OF_Buffs) )
+    if (CClient *pClient = GetClientActive(); pClient && IsSetOF(OF_Buffs) )
 	{
 		pClient->removeBuff(BI_POISON);
 		pClient->addBuff(BI_POISON, 1017383, 1070722, (word)(pPoison->m_itSpell.m_spellcharges));
@@ -4377,8 +4339,7 @@ CChar::DeathRequestResult CChar::Death()
 	{
 		if (Skill_GetActive() == NPCACT_RIDDEN)
 		{
-			CChar* pCRider = Horse_GetMountChar();
-			if (pCRider)
+            if (CChar *pCRider = Horse_GetMountChar())
 				pCRider->Horse_UnMount();
 		}
 	}
@@ -4388,8 +4349,7 @@ CChar::DeathRequestResult CChar::Death()
 		CItem* pItem = static_cast<CItem*>(pObjRec);
 		if ( pItem->IsType(IT_EQ_TRADE_WINDOW) )
 		{
-			CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-			if ( pCont )
+            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
 			{
 				pCont->Trade_Delete();
 				continue;
@@ -4530,8 +4490,7 @@ CChar::DeathRequestResult CChar::Death()
 		SetID( (CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, pszGhostName )) );
 		LayerAdd( CItem::CreateScript( ITEMID_DEATHSHROUD, this ) );
 
-        CClient * pClient = GetClientActive();
-		if ( pClient )
+        if ( CClient *pClient = GetClientActive() )
 		{
             if (g_Cfg.m_iPacketDeathAnimation)
             {
@@ -4550,8 +4509,7 @@ CChar::DeathRequestResult CChar::Death()
             pClient->addMapWaypoint(pCorpse, MAPWAYPOINT_Corpse);		// add corpse map waypoint on enhanced clients
             pClient->addTargetCancel();	// cancel target if player death
 
-            CItem *pPack = LayerFind(LAYER_PACK);
-            if ( pPack )
+            if ( CItem *pPack = LayerFind(LAYER_PACK) )
             {
                 pPack->RemoveFromView();
                 pPack->Update();
@@ -4595,8 +4553,7 @@ bool CChar::OnFreezeCheck() const
 
 		if ( g_Cfg.IsSkillFlag(m_Act_SkillCurrent, SKF_MAGIC) )		// casting magic spells
 		{
-			const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell);
-			if ( pSpellDef )
+            if ( const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell) )
 			{
 				if ( IsSetMagicFlags(MAGICF_FREEZEONCAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOFREEZEONCAST) )
 					return true;
@@ -4780,8 +4737,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
     // Special check, if the client is in house design mode.
     if (!IsPriv(PRIV_GM))
     {
-        CClient *pClient = GetClientActive();
-        if (pClient && pClient->m_pHouseDesign)
+        if (CClient *pClient = GetClientActive(); pClient && pClient->m_pHouseDesign)
         {
             if (pClient->m_pHouseDesign->GetDesignArea().IsInside2d(ptDst))
             {
@@ -4858,8 +4814,7 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheck
 				iWeightLoadPercent += (pVal ? (int)pVal->GetValNum() : g_Cfg.m_iStamRunningPenalty);
 			}
 
-			const int iChanceForStamLoss = Calc_GetSCurve(iWeightLoadPercent - (pVal ? (int)(pVal->GetValNum()) : g_Cfg.m_iStaminaLossAtWeight), 10);
-			if (iChanceForStamLoss > g_Rand.GetValFast(1000))
+            if (const int iChanceForStamLoss = Calc_GetSCurve(iWeightLoadPercent - (pVal ? (int)(pVal->GetValNum()) : g_Cfg.m_iStaminaLossAtWeight), 10); iChanceForStamLoss > g_Rand.GetValFast(1000))
 			{
 
 				pVal = GetKey("OVERRIDE.STAMINAWALKINGPENALTY", true);
@@ -4923,13 +4878,11 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 	ADDTOCALLSTACK("CChar::CheckLocationEffects");
     // This can also be called from char periodic ticks (not classic timer).
 
-    thread_local uint _uiRecursingStep = 0;
     thread_local uint _uiRecursingItemStep = 0;
     static constexpr uint _kuiRecursingStepLimit = 20;
     static constexpr uint _kuiRecursingItemStepLimit = 20;
 
-	CClient *pClient = GetClientActive();
-	if ( pClient && pClient->m_pHouseDesign )
+    if (CClient *pClient = GetClientActive(); pClient && pClient->m_pHouseDesign )
 	{
 		// Stepping on items doesn't trigger anything whilst in design mode
 		if ( pClient->m_pHouseDesign->GetDesignArea().IsInside2d(GetTopPoint()) )
@@ -4940,8 +4893,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 
     if (!fStanding)
     {
-        SKILL_TYPE iSkillActive = Skill_GetActive();
-        if (g_Cfg.IsSkillFlag(iSkillActive, SKF_IMMOBILE))
+        if (SKILL_TYPE iSkillActive = Skill_GetActive(); g_Cfg.IsSkillFlag(iSkillActive, SKF_IMMOBILE))
         {
             Skill_Fail(false);
         }
@@ -4952,7 +4904,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
             _SetTimeoutD(1);
         }
 
-        if (_uiRecursingStep >= _kuiRecursingStepLimit)
+        if (thread_local uint _uiRecursingStep = 0; _uiRecursingStep >= _kuiRecursingStepLimit)
         {
             g_Log.EventError("Calling recursively @STEP for more than %u times. Skipping trigger call.\n", _kuiRecursingStepLimit);
         }
@@ -4967,8 +4919,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                     return TRIGRET_RET_FALSE;
                 }
 
-                CRegion *pRoom = GetTopPoint().GetRegion(REGION_TYPE_ROOM);
-                if (pRoom && pRoom->OnRegionTrigger(this, RTRIG_STEP) == TRIGRET_RET_TRUE)
+                if (CRegion *pRoom = GetTopPoint().GetRegion(REGION_TYPE_ROOM); pRoom && pRoom->OnRegionTrigger(this, RTRIG_STEP) == TRIGRET_RET_TRUE)
                 {
                     _uiRecursingStep -= 1;
                     return TRIGRET_RET_FALSE;
@@ -5034,8 +4985,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                 if (IsStatFlag(STATF_FLY))
                     iSkillLevel /= 2;
 
-                int iDmg = OnTakeDamage(g_Cfg.GetSpellEffect(SPELL_Fire_Field, iSkillLevel), nullptr, DAMAGE_FIRE | DAMAGE_GENERAL, 0, 100, 0, 0, 0);
-                if (iDmg > 0)
+                if (int iDmg = OnTakeDamage(g_Cfg.GetSpellEffect(SPELL_Fire_Field, iSkillLevel), nullptr, DAMAGE_FIRE | DAMAGE_GENERAL, 0, 100, 0, 0, 0); iDmg > 0)
                 {
                     Sound(0x15f); // fire noise
                     if (m_pNPC && fStanding)
@@ -5070,8 +5020,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
             case IT_TRAP:
             case IT_TRAP_ACTIVE:
             {
-                int iDmg = OnTakeDamage(pItem->Use_Trap(), nullptr, DAMAGE_HIT_BLUNT | DAMAGE_GENERAL);
-                if ((iDmg > 0) && m_pNPC && fStanding)
+                if (int iDmg = OnTakeDamage(pItem->Use_Trap(), nullptr, DAMAGE_HIT_BLUNT | DAMAGE_GENERAL); (iDmg > 0) && m_pNPC && fStanding)
                 {
                     m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
                     NPC_WalkToPoint(true); // run away from the threat
@@ -5133,15 +5082,13 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 		if ( m_pNPC->m_Brain == NPCBRAIN_GUARD )
 		{
 			// Guards won't gate into unguarded areas.
-			auto pArea = dynamic_cast<const CRegionWorld*>(pTeleport->_ptDst.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA));
-			if ( !pArea || (!pArea->IsGuarded() && !IsSetOF(OF_GuardOutsideGuardedArea)) )
+            if (auto pArea = dynamic_cast<const CRegionWorld *>(pTeleport->_ptDst.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA)); !pArea || (!pArea->IsGuarded() && !IsSetOF(OF_GuardOutsideGuardedArea)) )
 				return TRIGRET_RET_FALSE;
 		}
 		if ( Noto_IsCriminal() )
 		{
 			// wont teleport to guarded areas.
-			auto pArea = dynamic_cast<const CRegionWorld*>(pTeleport->_ptDst.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA));
-			if ( !pArea || pArea->IsGuarded() )
+            if (auto pArea = dynamic_cast<const CRegionWorld *>(pTeleport->_ptDst.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA)); !pArea || pArea->IsGuarded() )
 				return TRIGRET_RET_FALSE;
 		}
 	}
@@ -5347,8 +5294,7 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 	if ( !pt.IsValidPoint() )
 		return false;
 
-	CClient *pClient = GetClientActive();
-	if ( m_pPlayer && !pClient )	// moving a logged out client ! This happens on startup and when moving on a ship and when moving around disconnected characters by other means.
+    if (CClient *pClient = GetClientActive(); m_pPlayer && !pClient )	// moving a logged out client ! This happens on startup and when moving on a ship and when moving around disconnected characters by other means.
 	{
 		CSector *pSector = pt.GetSector();
 		if ( !pSector )
@@ -5363,12 +5309,10 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 	}
 
 	// Did we step into a new region ?
-	CRegionWorld * pAreaNew = dynamic_cast<CRegionWorld *>(pt.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA));
-	if ( !MoveToRegion(pAreaNew, fAllowReject) )
+    if (CRegionWorld *pAreaNew = dynamic_cast<CRegionWorld *>(pt.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA)); !MoveToRegion(pAreaNew, fAllowReject) )
 		return false;
 
-	CRegion * pRoomNew = pt.GetRegion(REGION_TYPE_ROOM);
-	if ( !MoveToRoom(pRoomNew, fAllowReject) )
+    if (CRegion *pRoomNew = pt.GetRegion(REGION_TYPE_ROOM); !MoveToRoom(pRoomNew, fAllowReject) )
 		return false;
 
 	const CPointMap ptOld(GetTopPoint());
@@ -5436,8 +5380,7 @@ bool CChar::MoveToValidSpot(DIR_TYPE dir, int iDist, int iDistStart, bool fFromS
 		if ( pt.IsValidPoint() )
 		{
 			// Don't allow boarding of other ships (they may be locked)
-			CRegion * pRegionBase = pt.GetRegion( REGION_TYPE_SHIP);
-			if ( pRegionBase)
+            if ( pt.GetRegion(REGION_TYPE_SHIP))
 			{
 				pt.Move( dir );
 				continue;
@@ -5527,8 +5470,7 @@ bool CChar::SetPrivLevel(CTextConsole * pSrc, lpctstr pszFlags)
 
 		UnEquipAllItems();
 
-		CItem *pItem = CItem::CreateScript(ITEMID_GM_ROBE, this);
-		if ( pItem )
+        if ( CItem *pItem = CItem::CreateScript(ITEMID_GM_ROBE, this) )
 		{
 			pItem->SetAttr(ATTR_MOVE_NEVER|ATTR_NEWBIE|ATTR_MAGIC);
 			pItem->SetHue((HUE_TYPE)((PrivLevel >= PLEVEL_GM) ? HUE_RED : HUE_BLUE_NAVY));	// since sept/2014 OSI changed 'Counselor' plevel to 'Advisor', using GM Robe color 05f
@@ -5569,8 +5511,7 @@ void CChar::SetTriggerActive(lpctstr trig)
         _sRunningTrigger.Clear();
         return;
     }
-	const int iAction = FindTableSorted( trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1 );
-    if (iAction != -1)
+    if (const int iAction = FindTableSorted(trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1); iAction != -1)
     {
         _iRunningTriggerId = (short)iAction;
         _sRunningTrigger = sm_szTrigName[iAction];
@@ -5614,11 +5555,10 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
     {
 		tchar ptcCharTrigName[TRIGGER_NAME_MAX_LEN] = "@CHAR";
 		Str_ConcatLimitNull(ptcCharTrigName + 5, pszTrigName + 1, TRIGGER_NAME_MAX_LEN - 5);
-        const CTRIG_TYPE iCharAction = (CTRIG_TYPE)FindTableSorted(ptcCharTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1);
-        if ((iCharAction > XTRIG_UNKNOWN) && IsTrigUsed(ptcCharTrigName))
+        if (const CTRIG_TYPE iCharAction = (CTRIG_TYPE)FindTableSorted(ptcCharTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1);
+            (iCharAction > XTRIG_UNKNOWN) && IsTrigUsed(ptcCharTrigName))
         {
-            CChar* pChar = pSrc->GetChar();
-            if (pChar != nullptr && this != pChar)
+            if (CChar *pChar = pSrc->GetChar(); pChar != nullptr && this != pChar)
             {
                 EXC_SET_BLOCK("chardef");
                 const CUID uidOldAct = pChar->m_Act_UID;
@@ -5780,8 +5720,7 @@ void CChar::OnTickStatusUpdate()
 		GetClientActive()->UpdateStats();
 
 	const int64 iTimeCur = CWorldGameTime::GetCurrentTime().GetTimeRaw();
-	const int64 iTimeDiff = iTimeCur - _iTimeLastHitsUpdate;
-	if ( g_Cfg.m_iHitsUpdateRate && ( iTimeDiff >= g_Cfg.m_iHitsUpdateRate ) )
+    if (const int64 iTimeDiff = iTimeCur - _iTimeLastHitsUpdate; g_Cfg.m_iHitsUpdateRate && ( iTimeDiff >= g_Cfg.m_iHitsUpdateRate ) )
 	{
 		if ( m_fStatusUpdate & SU_UPDATE_HITS )
 		{
@@ -5836,8 +5775,7 @@ void CChar::OnTickFood(ushort uiVal, int HitsHungerLoss)
 
 	char *pszMsg = Str_GetTemp();
 	snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_FOOD_LVL_LOOKS), pszMsgLevel);
-	CItem *pMountItem = Horse_GetValidMountItem();
-	if ( pMountItem )
+    if ( CItem *pMountItem = Horse_GetValidMountItem() )
 		pMountItem->Emote(pszMsg);
 	else
 		Emote(pszMsg);
@@ -5899,10 +5837,9 @@ bool CChar::IsTickableEvenIfDisconnected() const
     }
 
     // Skip the following checks at startup stage, because the mount item or rider might have not been created yet.
-    const bool fShouldCheck = !g_Serv.IsStartupLoadingScripts();
 
     // For some reason, shrunken NPCs historically have been put in the "ridden" state.
-    if (fRidden && fShouldCheck)
+    if (const bool fShouldCheck = !g_Serv.IsStartupLoadingScripts(); fRidden && fShouldCheck)
     {
         const CItem *pLinkedItem = m_atRidden.m_uidFigurine.ItemFind(); // CUID::ItemFindFromUID(m_atRidden.m_uidFigurine.GetPrivateUID());
         if (!pLinkedItem)
@@ -5912,8 +5849,7 @@ bool CChar::IsTickableEvenIfDisconnected() const
             return false;
         }
 
-        const CChar *pRider = !pLinkedItem ? nullptr : pLinkedItem->m_uidLink.CharFind();
-        if (pRider && pLinkedItem->IsType(IT_EQ_HORSE))
+        if (const CChar *pRider = !pLinkedItem ? nullptr : pLinkedItem->m_uidLink.CharFind(); pRider && pLinkedItem->IsType(IT_EQ_HORSE))
         {
             // The linked item is a mount item.
             // I am actually riding this NPC/mount.  Its disconnected "body" should continue to tick.
@@ -5921,8 +5857,7 @@ bool CChar::IsTickableEvenIfDisconnected() const
             if (!IsStatFlag(STATF_PET))
             {
                 // GMs can ride untamed chars. They will be assigned the PET flag later on.
-                const bool fIsGm = pRider && pRider->IsPriv(PRIV_GM);
-                if (!fIsGm)
+                if (const bool fIsGm = pRider && pRider->IsPriv(PRIV_GM); !fIsGm)
                     g_Log.EventError("Char name='%s' UID=0%" PRIx32 " is ridden but isn't a pet?\n",
                                      GetName(), GetUID().GetObjUID());
             }
@@ -6061,8 +5996,7 @@ bool CChar::_OnTick()
 	* take in mind that return will prevent this char's stats updates,
 	*  attacker, notoriety, death status, etc from happening.
 	*/
-	const CCRET_TYPE iCompRet = CEntity::_OnTick();
-	if (iCompRet != CCRET_CONTINUE) // if return != CCRET_TRUE
+    if (const CCRET_TYPE iCompRet = CEntity::_OnTick(); iCompRet != CCRET_CONTINUE) // if return != CCRET_TRUE
 	{
 		return iCompRet;    // Stop here
 	}

@@ -103,8 +103,7 @@ SKILL_TYPE CChar::Skill_GetMagicBest()
 			continue;
 
 		SKILL_TYPE test = (SKILL_TYPE)i;
-		ushort uiVal = Skill_GetBase(test);
-		if (uiVal > value)
+        if (ushort uiVal = Skill_GetBase(test); uiVal > value)
 		{
 			skill = test;
 			value = uiVal;
@@ -263,8 +262,7 @@ ushort CChar::Skill_GetMax( SKILL_TYPE skill, bool ignoreLock ) const
 		if ( !ignoreLock )
 		{
 			const ushort uiSkillLevel = Skill_GetBase(skill);
-			const SKILLLOCK_TYPE sklock = m_pPlayer->Skill_GetLock(skill);
-			if (sklock == SKILLLOCK_DOWN)
+            if (const SKILLLOCK_TYPE sklock = m_pPlayer->Skill_GetLock(skill); sklock == SKILLLOCK_DOWN)
 			{
 				uiSkillMax = uiSkillLevel;
 			}
@@ -303,8 +301,7 @@ uint CChar::Skill_GetSum() const
 uint CChar::Skill_GetSumMax() const
 {
     ADDTOCALLSTACK("CChar::Skill_GetSumMax");
-	const CVarDefCont *pTagStorage = GetKey("OVERRIDE.SKILLSUM", true);
-	if (pTagStorage)
+    if (const CVarDefCont *pTagStorage = GetKey("OVERRIDE.SKILLSUM", true))
 		return (uint)pTagStorage->GetValNum();
 
 	const CSkillClassDef* pSkillClass = m_pPlayer->GetSkillClass();
@@ -400,8 +397,7 @@ void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
 	// no gain at all if it was WAY TOO easy
 	ushort uiSkillLevel = Skill_GetBase( skill );
 	const ushort uiSkillLevelFixed = (uiSkillLevel < 50) ? 50 : uiSkillLevel;
-	const int iGainRadius = pSkillDef->m_GainRadius;
-	if ((iGainRadius > 0) && ((iDifficulty + iGainRadius) < uiSkillLevelFixed))
+    if (const int iGainRadius = pSkillDef->m_GainRadius; (iGainRadius > 0) && ((iDifficulty + iGainRadius) < uiSkillLevelFixed))
 	{
 		if ( GetKeyNum("NOSKILLMSG") )
 			SysMessage( g_Cfg.GetDefaultMsg(DEFMSG_GAINRADIUS_NOT_MET) );
@@ -478,8 +474,7 @@ void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
 		if (uiStatSum > uiStatSumMax)	// stat cap already reached
 			break;
 
-		const ushort uiStatMax = Stat_GetLimit((STAT_TYPE)i);
-		if ( uiStatVal >= uiStatMax )
+        if (const ushort uiStatMax = Stat_GetLimit((STAT_TYPE)i); uiStatVal >= uiStatMax )
 			continue;	// nothing grows past this. (even for NPC's)
 
 		// You will tend toward these stat vals if you use this skill a lot
@@ -892,8 +887,7 @@ bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE sta
 	if ( !pItemDef )
 		return false;
 
-	CItem *pItemTarg = uidTarg.ItemFind();
-	if ( pItemTarg && (stage == SKTRIG_SELECT) )
+    if (CItem *pItemTarg = uidTarg.ItemFind(); pItemTarg && (stage == SKTRIG_SELECT) )
 	{
         if (pItemDef->m_SkillMake.ContainsResourceType(RES_TYPEDEF) || pItemDef->m_BaseResources.ContainsResourceType(RES_TYPEDEF)
             || pItemDef->m_SkillMake.ContainsResourceType(RES_ITEMDEF))
@@ -909,8 +903,7 @@ bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE sta
 	if ( fSkillOnly )
 		return true;
 
-	CItem *pItemDragging = LayerFind(LAYER_DRAGGING);
-	if ( pItemDragging )
+    if ( CItem *pItemDragging = LayerFind(LAYER_DRAGGING) )
 		ItemBounce(pItemDragging);
 
 	iReplicationQty = ResourceConsume(&(pItemDef->m_BaseResources), iReplicationQty, (stage != SKTRIG_SUCCESS));
@@ -922,15 +915,14 @@ bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE sta
 	{
 		// If fail only consume part of them.
 		int iConsumePercent = -1;
-		size_t i = pItemDef->m_SkillMake.FindResourceType(RES_SKILL);
-		if ( i != sl::scont_bad_index() )
+        if (size_t i = pItemDef->m_SkillMake.FindResourceType(RES_SKILL); i != sl::scont_bad_index() )
 		{
 			if (m_Act_Effect >= 0)
 				iConsumePercent = m_Act_Effect;
 			else
 			{
-				CSkillDef* pSkillDef = g_Cfg.GetSkillDef((SKILL_TYPE)(pItemDef->m_SkillMake[i].GetResIndex()));
-				if (pSkillDef && !pSkillDef->m_vcEffect.m_aiValues.empty())
+                if (CSkillDef *pSkillDef = g_Cfg.GetSkillDef((SKILL_TYPE)(pItemDef->m_SkillMake[i].GetResIndex()));
+                    pSkillDef && !pSkillDef->m_vcEffect.m_aiValues.empty())
 					iConsumePercent = pSkillDef->m_vcEffect.GetRandom();
 			}
 		}
@@ -1218,8 +1210,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 		if (pBaseDef->IsType(IT_GEM))
 		{
 			// bounce the gems out of this.
-			CItem* pGem = CItem::CreateScript(pBaseDef->GetID(), this);
-			if (pGem)
+            if (CItem *pGem = CItem::CreateScript(pBaseDef->GetID(), this))
 			{
 				pGem->SetAmount(iResourceQty);
 				ItemBounce(pGem);
@@ -1306,8 +1297,8 @@ bool CChar::Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax 
 	if ( pObjTop->IsChar() )
 	{
 		// Prevent tracking of hidden staff
-		const CChar * pChar = dynamic_cast<const CChar *>(pObjTop);
-		if ( pChar && pChar->IsStatFlag(STATF_INSUBSTANTIAL) && pChar->GetPrivLevel() > GetPrivLevel() )
+        if (const CChar *pChar = dynamic_cast<const CChar *>(pObjTop);
+            pChar && pChar->IsStatFlag(STATF_INSUBSTANTIAL) && pChar->GetPrivLevel() > GetPrivLevel() )
 			return false;
 	}
 
@@ -1396,8 +1387,7 @@ int CChar::Skill_Mining( SKTRIG_TYPE stage )
 	if ( stage == SKTRIG_FAIL )
 		return 0;
 
-	CItem *pTool = m_Act_Prv_UID.ItemFind();
-	if ( !pTool )
+    if (CItem *pTool = m_Act_Prv_UID.ItemFind(); !pTool )
 	{
 		SysMessageDefault(DEFMSG_MINING_TOOL);
 		return -SKTRIG_ABORT;
@@ -1409,8 +1399,7 @@ int CChar::Skill_Mining( SKTRIG_TYPE stage )
 		return -SKTRIG_QTY;
 	}
 
-    const CRegion *pArea = GetRegion();
-    if (pArea == nullptr || pArea->IsFlag(REGION_FLAG_NOMINING))
+    if (const CRegion *pArea = GetRegion(); pArea == nullptr || pArea->IsFlag(REGION_FLAG_NOMINING))
     {
         SysMessageDefault(DEFMSG_MINING_2);
         return -SKTRIG_QTY;
@@ -1500,8 +1489,7 @@ int CChar::Skill_Fishing( SKTRIG_TYPE stage )
 		return -SKTRIG_QTY;
 	}
 
-	CRegion *pRegion = GetTopPoint().GetRegion(REGION_TYPE_MULTI);		// are we in a house ?
-	if ( pRegion && !pRegion->IsFlag(REGION_FLAG_SHIP) )
+    if (CRegion *pRegion = GetTopPoint().GetRegion(REGION_TYPE_MULTI); pRegion && !pRegion->IsFlag(REGION_FLAG_SHIP) )
 	{
 		SysMessageDefault(DEFMSG_FISHING_3);
 		return -SKTRIG_QTY;
@@ -1555,8 +1543,7 @@ int CChar::Skill_Fishing( SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
-        CItem* pSplash = CItem::CreateBase(ITEMID_FX_SPLASH);
-        if (pSplash)
+        if (CItem *pSplash = CItem::CreateBase(ITEMID_FX_SPLASH))
         {
             pSplash->SetType(IT_WATER_WASH);
             pSplash->MoveToDecay(m_Act_p, 1 * MSECS_PER_SEC);
@@ -1734,8 +1721,7 @@ int CChar::Skill_DetectHidden( SKTRIG_TYPE stage )
 
 		// Check chance to reveal the target
 		int iSkillSrc = iSkill + g_Rand.GetVal(210) - 100;
-		int iSkillTarg = pChar->Skill_GetAdjusted(SKILL_HIDING) + g_Rand.GetVal(210) - 100;
-		if ( iSkillSrc < iSkillTarg )
+        if (int iSkillTarg = pChar->Skill_GetAdjusted(SKILL_HIDING) + g_Rand.GetVal(210) - 100; iSkillSrc < iSkillTarg )
 			continue;
 
 		pChar->Reveal();
@@ -1806,8 +1792,7 @@ int CChar::Skill_Peacemaking( SKTRIG_TYPE stage )
 			CItem * pInstrument = nullptr;
 			if (m_atBard.m_dwInstrumentUID != 0)
 			{
-				CObjBase * pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID);
-				if (pObj && pObj->IsItem())
+                if (CObjBase *pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID); pObj && pObj->IsItem())
 				{
 					pInstrument = static_cast<CItem*>(pObj);
 					if (pInstrument->GetType() != IT_MUSICAL)
@@ -1919,8 +1904,7 @@ int CChar::Skill_Enticement( SKTRIG_TYPE stage )
 			CItem * pInstrument = nullptr;
 			if (m_atBard.m_dwInstrumentUID != 0)
 			{
-				CObjBase * pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID);
-				if (pObj && pObj->IsItem())
+                if (CObjBase *pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID); pObj && pObj->IsItem())
 				{
 					pInstrument = static_cast<CItem*>(pObj);
 					if (pInstrument->GetType() != IT_MUSICAL)
@@ -1932,8 +1916,7 @@ int CChar::Skill_Enticement( SKTRIG_TYPE stage )
 			}
 
 			// Basic skill check.
-			CChar* pAct = m_Act_UID.CharFind();
-			if (!pAct)
+            if (CChar *pAct = m_Act_UID.CharFind(); !pAct)
 			{
 				g_Log.EventError("Act empty in skill Enticement, trigger @Start.\n");
 				return -SKTRIG_ABORT;
@@ -2035,8 +2018,7 @@ int CChar::Skill_Provocation(SKTRIG_TYPE stage)
 			CItem * pInstrument = nullptr;
 			if (m_atBard.m_dwInstrumentUID != 0)
 			{
-				CObjBase * pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID);
-				if (pObj && pObj->IsItem())
+                if (CObjBase *pObj = CUID::ObjFindFromUID(m_atBard.m_dwInstrumentUID); pObj && pObj->IsItem())
 				{
 					pInstrument = static_cast<CItem*>(pObj);
 					if (pInstrument->GetType() != IT_MUSICAL)
@@ -2327,8 +2309,7 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 
 		if (IsSetOF(OF_PetSlots))
 		{
-            short iFollowerSlots = pChar->GetFollowerSlots();
-            if (!FollowersUpdate(pChar, iFollowerSlots, true))
+            if (short iFollowerSlots = pChar->GetFollowerSlots(); !FollowersUpdate(pChar, iFollowerSlots, true))
 			{
 				SysMessageDefault(DEFMSG_PETSLOTS_TRY_TAMING);
 				return -SKTRIG_QTY;
@@ -2842,8 +2823,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 	CItem * pBloodyBandage = CItem::CreateScript(g_Rand.GetVal(2) ? ITEMID_BANDAGES_BLOODY1 : ITEMID_BANDAGES_BLOODY2, this );
 	ItemBounce(pBloodyBandage);
 
-	const CSkillDef * pSkillDef = g_Cfg.GetSkillDef(Skill_GetActive());
-	if (pSkillDef == nullptr)
+    if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(Skill_GetActive()); pSkillDef == nullptr)
 		return -SKTRIG_QTY;
 
 	if (pCorpse || pChar->IsStatFlag(STATF_DEAD))
@@ -3396,13 +3376,10 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 	// AOS damage types (used by COMBAT_ELEMENTAL_ENGINE)
 	int iDmgPhysical = 0, iDmgFire = 0, iDmgCold = 0, iDmgPoison = 0, iDmgEnergy = 0;
 
-	CVarDefCont * pDam = GetDefKey("THROWDAM",true);
-
-	if ( pDam )
+    if ( CVarDefCont *pDam = GetDefKey("THROWDAM", true) )
 	{
 		int64 DVal[2];
-		size_t iQty = Str_ParseCmds( const_cast<tchar *>(pDam->GetValStr()), DVal, std::size(DVal));
-		switch(iQty)
+        switch (Str_ParseCmds(const_cast<tchar *>(pDam->GetValStr()), DVal, std::size(DVal)))
 		{
 			case 1:
 				iDamage = (int)(DVal[0]);
@@ -3413,8 +3390,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 		}
 	}
 	/*Set  the damage type if THROWDAMTYPE is set*/
-	CVarDefCont  * pDamType = GetDefKey("THROWDAMTYPE", true);
-	if (pDamType)
+    if (CVarDefCont *pDamType = GetDefKey("THROWDAMTYPE", true))
 	{
 		iDmgType = (DAMAGE_TYPE)pDamType->GetValNum();
 		if (iDmgType & DAMAGE_FIRE)
@@ -3430,8 +3406,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 		iDmgType |= DAMAGE_THROWN;
 	}
 
-	CVarDefCont * pRock = GetDefKey("THROWOBJ",true);
-    if ( pRock )
+    if ( CVarDefCont *pRock = GetDefKey("THROWOBJ", true) )
 	{
 		lpctstr t_Str = pRock->GetValStr();
 		CResourceID rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
@@ -3457,8 +3432,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 
 	if ( id != ITEMID_NOTHING )
 	{
-		CItem *pItemRock = CItem::CreateScript(id, this);
-		if ( pItemRock )
+        if ( CItem *pItemRock = CItem::CreateScript(id, this) )
 		{
 			pItemRock->SetAttr(ATTR_DECAY);
 			pItemRock->MoveToCheck(m_Act_p, this);
@@ -3492,8 +3466,7 @@ int CChar::Skill_Act_Training( SKTRIG_TYPE stage )
 
 	if ( m_Act_Prv_UID == m_uidWeapon )
 	{
-		CItem *pItem = m_Act_UID.ItemFind();
-		if ( pItem )
+        if ( CItem *pItem = m_Act_UID.ItemFind() )
 		{
 			switch ( pItem->GetType() )
 			{
@@ -3612,8 +3585,7 @@ int CChar::Skill_Stroke()
 
     if (skill == SKILL_FISHING)
     {
-        CItem* pSplash = CItem::CreateBase(ITEMID_FX_SPLASH);
-        if (pSplash)
+        if (CItem *pSplash = CItem::CreateBase(ITEMID_FX_SPLASH))
         {
             pSplash->SetType(IT_WATER_WASH);
             pSplash->MoveToDecay(m_Act_p, 1 * MSECS_PER_SEC);
@@ -3859,12 +3831,10 @@ TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScrip
 
 	TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
 
-	CSkillDef *pSkillDef = g_Cfg.GetSkillDef(skill);
-	if ( pSkillDef && pSkillDef->HasTrigger(stage) )
+    if (CSkillDef *pSkillDef = g_Cfg.GetSkillDef(skill); pSkillDef && pSkillDef->HasTrigger(stage) )
 	{
 		// RES_SKILL
-		CResourceLock s;
-		if ( pSkillDef->ResourceLock(s) )
+        if (CResourceLock s; pSkillDef->ResourceLock(s) )
             iRet = OnTriggerScript(s, CSkillDef::sm_szTrigName[stage], pScriptArgs, this);
 	}
 
@@ -4140,8 +4110,7 @@ int CChar::Skill_Snooping(SKTRIG_TYPE stage)
 
 	if (stage == SKTRIG_START)
 	{
-		PLEVEL_TYPE plevel = GetPrivLevel();
-		if (plevel < pCharMark->GetPrivLevel())
+        if (PLEVEL_TYPE plevel = GetPrivLevel(); plevel < pCharMark->GetPrivLevel())
 		{
 			SysMessageDefault(DEFMSG_SNOOPING_CANT);
 			return -SKTRIG_QTY;
@@ -4211,18 +4180,15 @@ int CChar::Skill_Stealing(SKTRIG_TYPE stage)
 	}
 
 	// Special cases.
-	CContainer * pContainer = dynamic_cast <CContainer *> (pItem->GetContainer());
-	if (pContainer)
+    if (CContainer *pContainer = dynamic_cast<CContainer *>(pItem->GetContainer()))
 	{
-		CItemCorpse * pCorpse = dynamic_cast <CItemCorpse *> (pContainer);
-		if (pCorpse)
+        if (dynamic_cast<CItemCorpse *>(pContainer))
 		{
 			SysMessageDefault(DEFMSG_STEALING_CORPSE);
 			return -SKTRIG_ABORT;
 		}
 	}
-	CItem * pCItem = dynamic_cast <CItem *> (pItem->GetContainer());
-	if (pCItem)
+    if (CItem *pCItem = dynamic_cast<CItem *>(pItem->GetContainer()))
 	{
 		if (pCItem->GetType() == IT_GAME_BOARD)
 		{
@@ -4235,8 +4201,7 @@ int CChar::Skill_Stealing(SKTRIG_TYPE stage)
 			return -SKTRIG_ABORT;
 		}
 	}
-	CItemCorpse * pCorpse = dynamic_cast <CItemCorpse *> (pItem);
-	if (pCorpse)
+    if (dynamic_cast<CItemCorpse *>(pItem))
 	{
 		SysMessageDefault(DEFMSG_STEALING_CORPSE);
 		return -SKTRIG_ABORT;
@@ -4315,8 +4280,7 @@ int CChar::Skill_Stealing(SKTRIG_TYPE stage)
 	if ((stage == SKTRIG_SUCCESS) || fGround)
 	{
 		pItem->ClrAttr(ATTR_OWNED);	// Now it's mine
-		CItemContainer * pPack = GetPack();
-		if (pItem->GetParent() != pPack && pPack)
+        if (CItemContainer *pPack = GetPack(); pItem->GetParent() != pPack && pPack)
 		{
 			pItem->RemoveFromView();
 			// Put in my invention.
@@ -4352,10 +4316,8 @@ int CChar::Skill_Focus(STAT_TYPE stat)
 	if (g_Cfg.IsSkillFlag(SKILL_FOCUS, SKF_SCRIPTED))
 		return -SKTRIG_QTY;
 
-	ushort iFocusValue = Skill_GetAdjusted(SKILL_FOCUS);
-
-	//By giving the character skill focus value as difficulty, the chance to succeed is always around 50%
-	if (Skill_UseQuick(SKILL_FOCUS, iFocusValue/10))
+    //By giving the character skill focus value as difficulty, the chance to succeed is always around 50%
+	if (ushort iFocusValue = Skill_GetAdjusted(SKILL_FOCUS); Skill_UseQuick(SKILL_FOCUS, iFocusValue/10))
 	{
 		ushort uiGain = 0;
 		switch (stat)
@@ -4485,8 +4447,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
 		}
 		if ( fGatherSkill )
 		{
-			CItem* pResBit = CWorldMap::CheckNaturalResource(m_Act_p, (IT_TYPE)(m_atResource.m_ridType.GetResIndex()), true, this);
-			if (pResBit)
+            if (CItem *pResBit = CWorldMap::CheckNaturalResource(m_Act_p, (IT_TYPE)(m_atResource.m_ridType.GetResIndex()), true, this))
 				m_Act_UID = pResBit->GetUID();
 
 			m_atResource.m_dwBounceItem = 1;

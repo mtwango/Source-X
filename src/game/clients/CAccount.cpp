@@ -146,8 +146,7 @@ bool CAccounts::Account_SaveAll()
 
 	for ( size_t i = 0; i < m_Accounts.size(); ++i )
 	{
-		CAccount * pAccount = Account_Get(i);
-		if ( pAccount )
+        if ( CAccount *pAccount = Account_Get(i) )
 			pAccount->r_Write(s);
 	}
 
@@ -162,8 +161,7 @@ CAccount * CAccounts::Account_FindChat( lpctstr pszChatName )
 	ADDTOCALLSTACK("CAccounts::Account_FindChat");
 	for ( size_t i = 0; i < m_Accounts.size(); i++ )
 	{
-		CAccount * pAccount = Account_Get(i);
-		if ( pAccount != nullptr && pAccount->m_sChatName.CompareNoCase(pszChatName) == 0 )
+        if (CAccount *pAccount = Account_Get(i); pAccount != nullptr && pAccount->m_sChatName.CompareNoCase(pszChatName) == 0 )
 			return pAccount;
 	}
 	return nullptr;
@@ -177,8 +175,7 @@ CAccount * CAccounts::Account_Find( lpctstr pszName )
 	if ( !CAccount::NameStrip(szName, pszName) )
 		return nullptr;
 
-	size_t i = m_Accounts.FindKey(szName);
-	if ( i != sl::scont_bad_index() )
+    if (size_t i = m_Accounts.FindKey(szName); i != sl::scont_bad_index() )
 		return Account_Get(i);
 
 	return nullptr;
@@ -188,8 +185,7 @@ CAccount * CAccounts::Account_FindCreate( lpctstr pszName, bool fAutoCreate )
 {
 	ADDTOCALLSTACK("CAccounts::Account_FindCreate");
 
-	CAccount * pAccount = Account_Find(pszName);
-	if ( pAccount )
+    if ( CAccount *pAccount = Account_Find(pszName) )
 		return pAccount;
 
 	if ( fAutoCreate )	// Create if not found.
@@ -376,9 +372,8 @@ bool CAccounts::Cmd_ListUnused(CTextConsole * pSrc, lpctstr pszDays, lpctstr psz
 
 	if ( pszVerb && ! strcmpi(pszVerb, "DELETE") )
 	{
-		size_t iDeleted = iCountOrig - Account_GetCount();
 
-		if ( iDeleted < iCount )
+        if (size_t iDeleted = iCountOrig - Account_GetCount(); iDeleted < iCount )
 			pSrc->SysMessagef("%" PRIuSIZE_T " deleted, %" PRIuSIZE_T " cleared of characters (must try to delete again)\n",
 				iDeleted, iCount - iDeleted );
 		else if ( iDeleted > 0 )
@@ -530,9 +525,7 @@ bool CAccount::NameStrip( tchar * pszNameOut, lpctstr pszNameInp )
 {
 	ADDTOCALLSTACK("CAccount::NameStrip");
 
-	size_t iLen = Str_GetBare(pszNameOut, pszNameInp, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR);
-
-	if ( iLen <= 0 )
+    if (size_t iLen = Str_GetBare(pszNameOut, pszNameInp, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR); iLen <= 0 )
 		return false;
 	// Check for newline characters.
 	if ( strchr(pszNameOut, 0x0A) || strchr(pszNameOut, 0x0C) || strchr(pszNameOut, 0x0D) )
@@ -606,8 +599,7 @@ CAccount::CAccount( lpctstr pszName, bool fGuest )
 void CAccount::DeleteChars()
 {
 	ADDTOCALLSTACK("CAccount::DeleteChars");
-	CClient * pClient = FindClient();
-	if ( pClient != nullptr )
+    if (CClient *pClient = FindClient(); pClient != nullptr )
 	{	// we have no choice but to kick them.
 		pClient->GetNetState()->markReadClosed();
 	}
@@ -618,8 +610,7 @@ void CAccount::DeleteChars()
 		size_t i = m_Chars.GetCharCount();
 		while (i > 0)
 		{
-			CChar * pChar = m_Chars.GetChar(--i).CharFind();
-			if (pChar != nullptr)
+            if (CChar *pChar = m_Chars.GetChar(--i).CharFind(); pChar != nullptr)
 			{
 				pChar->Delete(true);
 				//pChar->ClearPlayer(); //Already include in ~CChar() when char is delete
@@ -728,8 +719,7 @@ size_t CAccount::AttachChar( CChar * pChar )
 	size_t i = m_Chars.AttachChar( pChar );
 	if ( i != sl::scont_bad_index() )
 	{
-		size_t iQty = m_Chars.GetCharCount();
-		if ( iQty > MAX_CHARS_PER_ACCT )
+        if (size_t iQty = m_Chars.GetCharCount(); iQty > MAX_CHARS_PER_ACCT )
 		{
 			g_Log.Event( LOGM_ACCOUNTS|LOGL_ERROR, "Account '%s' has %" PRIuSIZE_T " characters\n", GetName(), iQty );
 		}
@@ -849,8 +839,7 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 	dword dwCurrentIP = csaPeerName.GetAddrIP();
 	int64 timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
-	BlockLocalTime_t::iterator itData = m_BlockIP.find(dwCurrentIP);
-	if ( itData != m_BlockIP.end() )
+    if (BlockLocalTime_t::iterator itData = m_BlockIP.find(dwCurrentIP); itData != m_BlockIP.end() )
 	{
 		BlockLocalTimePair_t itResult = itData->second;
 		auto &[m_First, m_Last, m_vcDelay] = itResult.first;
@@ -918,8 +907,7 @@ void CAccount::ClearPasswordTries(bool bAll)
 	llong timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 	for ( BlockLocalTime_t::iterator itData = m_BlockIP.begin(), end = m_BlockIP.end(); itData != end; )
 	{
-		auto [fst, snd] = itData->second;
-		if ( (timeCurrent - fst.m_Last) > g_Cfg.m_iClientLoginTempBan )
+        if (auto [fst, snd] = itData->second; (timeCurrent - fst.m_Last) > g_Cfg.m_iClientLoginTempBan )
 		{
 			itData = m_BlockIP.erase(itData);
 			end = m_BlockIP.end();
@@ -1197,8 +1185,7 @@ bool CAccount::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	{
 		// How many chars.
 		ptcKey += 5;
-		size_t i = Exp_GetSTVal(ptcKey);
-		if ( m_Chars.IsValidIndex(i) )
+        if (size_t i = Exp_GetSTVal(ptcKey); m_Chars.IsValidIndex(i) )
 		{
 			pRef = m_Chars.GetChar(i).CharFind();
 		}
@@ -1702,8 +1689,7 @@ bool CAccount::r_Verb( CScript &s, CTextConsole * pSrc )
 		case AV_KICK:
 			// if they are online right now then kick them!
 			{
-				CClient * pClient = FindClient();
-				if ( pClient )
+                if ( CClient *pClient = FindClient() )
 				{
 					pClient->addKick( pSrc, i == AV_BLOCK );
 				}

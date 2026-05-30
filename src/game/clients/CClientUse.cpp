@@ -33,8 +33,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 	{
 		if ( !fScript )
 		{
-			CItemContainer *pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent());
-			if ( pContainer )
+            if ( CItemContainer *pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent()) )
 			{
 				// protect from ,snoop - disallow picking from not opened containers
 				CItemContainer* pTopContainer = dynamic_cast<CItemContainer*>(pItem->GetTopContainer());
@@ -50,8 +49,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 				}
 				else
 				{
-					auto itContainerFound = m_openedContainers.find(pContainer->GetUID().GetPrivateUID());
-					if ( itContainerFound != m_openedContainers.cend() )
+                    if (auto itContainerFound = m_openedContainers.find(pContainer->GetUID().GetPrivateUID()); itContainerFound != m_openedContainers.cend() )
 					{
 						dword dwTopContainerUID = ((itContainerFound->second).first).first;
 						dword dwTopMostContainerUID = ((itContainerFound->second).first).second;
@@ -72,8 +70,8 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 							}
 							else
 							{
-								const CItem *pItemTop = static_cast<const CItem *>(pObjTop);
-								if ( pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == m_pChar->GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
+                                if (const CItem *pItemTop = static_cast<const CItem *>(pObjTop);
+                                    pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == m_pChar->GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
 									isInOpenedContainer = true;
 								else if ( ptOpenedContainerPosition.GetDist(pObjTop->GetTopPoint()) <= 3 )
 									isInOpenedContainer = true;
@@ -147,8 +145,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 	{
 		case IT_TRACKER:
 		{
-			DIR_TYPE dir = static_cast<DIR_TYPE>(DIR_QTY + 1); // invalid value.
-			if ( !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
+            if (DIR_TYPE dir = static_cast<DIR_TYPE>(DIR_QTY + 1); !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
 			{
 				if ( pItem->m_uidLink.IsValidUID() )
 					SysMessageDefault(DEFMSG_TRACKING_UNABLE);
@@ -222,8 +219,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 
             if (pItem->GetType() == IT_CORPSE)
             {
-                CItemCorpse *pCorpseItem = static_cast<CItemCorpse *>(pPack);
-                if ( m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
+                if (CItemCorpse *pCorpseItem = static_cast<CItemCorpse *>(pPack); m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
                     SysMessageDefault(DEFMSG_LOOT_CRIMINAL_ACT);
             }
 
@@ -335,8 +331,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 		{
 			if (m_net->isClientVersionNumber(MINCLIVER_HS))
 			{
-				CItemShip* pShip = dynamic_cast<CItemShip*>(pItem->m_uidLink.ItemFind());
-				if (pShip)
+                if (CItemShip *pShip = dynamic_cast<CItemShip *>(pItem->m_uidLink.ItemFind()))
 				{
 					if (m_pChar->ContentFindKeyFor(pItem) || pShip->GetOwner() == m_pChar->GetUID())
 						pShip->SetPilot(m_pChar);
@@ -622,8 +617,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
 
 		if ( !pItem->IsType(IT_EQ_MEMORY_OBJ) )
 		{
-			HUE_TYPE wHue = pItem->GetHue();
-			if ( wHue != 0 )
+            if (HUE_TYPE wHue = pItem->GetHue(); wHue != 0 )
 			{
 				wHue = (wHue == 1 ? 0x7FF : wHue - 1);
 				item[count].m_color = wHue;
@@ -657,14 +651,12 @@ bool CClient::Skill_Menu(SKILL_TYPE skill, lpctstr skillmenu, ITEMID_TYPE itemus
 	}
 
 	lpctstr SkillUsed = g_Cfg.GetSkillKey(skill);
-	CResourceID ridDialog = g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu);
-	if (ridDialog.IsValidUID())
+    if (CResourceID ridDialog = g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu); ridDialog.IsValidUID())
 	{
 		return Dialog_Setup(CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu), 0, m_pChar, SkillUsed);
 	}
 
-    CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu);
-    if (ridMenu.IsValidUID())
+    if (CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu); ridMenu.IsValidUID())
     {
         return Cmd_Skill_Menu(ridMenu);
     }
@@ -891,8 +883,7 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, int iSelect, CMenuIte
 		{
             CScriptExprContext scpContext{._pScriptObjI = m_pChar};
             CExpression::GetExprParser().ParseScriptText(s.GetArgRaw(), scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
-			CResourceQtyArray skills(s.GetArgStr());
-			if ( !skills.IsResourceMatchAll(m_pChar) )
+            if (CResourceQtyArray skills(s.GetArgStr()); !skills.IsResourceMatchAll(m_pChar) )
 			{
                 fSkipNeedCleanup = true;
 			}
@@ -914,8 +905,8 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, int iSelect, CMenuIte
 		if ( iOnCount == iSelect )
 		{
 			// Execute command from script
-            TRIGRET_TYPE tRet = m_pChar->OnTriggerRunVal(s, TRIGRUN_SINGLE_EXEC, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
-			if ( tRet != TRIGRET_RET_DEFAULT )
+            if (TRIGRET_TYPE tRet = m_pChar->OnTriggerRunVal(s, TRIGRUN_SINGLE_EXEC, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
+                tRet != TRIGRET_RET_DEFAULT )
 				return (tRet == TRIGRET_RET_TRUE) ? 0 : 1;
 
 			++iShowCount;	// we are good. but continue til the end
@@ -1263,8 +1254,7 @@ bool CClient::Cmd_Skill_Smith( CItem *pIngots )
 	}
 
 	// Must have smith hammer equipped
-	CItem *pSmithHammer = m_pChar->LayerFind(LAYER_HAND1);
-	if ( !pSmithHammer || !pSmithHammer->IsType(IT_WEAPON_MACE_SMITH) )
+    if (CItem *pSmithHammer = m_pChar->LayerFind(LAYER_HAND1); !pSmithHammer || !pSmithHammer->IsType(IT_WEAPON_MACE_SMITH) )
 	{
 		SysMessageDefault(DEFMSG_SMITHING_HAMMER);
 		return false;
@@ -1294,8 +1284,7 @@ bool CClient::Cmd_Skill_Inscription()
 
 	ASSERT(m_pChar);
 
-	CItem *pBlankScroll = m_pChar->ContentFind(CResourceID(RES_TYPEDEF, IT_SCROLL_BLANK));
-	if ( !pBlankScroll )
+    if (CItem *pBlankScroll = m_pChar->ContentFind(CResourceID(RES_TYPEDEF, IT_SCROLL_BLANK)); !pBlankScroll )
 	{
 		SysMessageDefault(DEFMSG_INSCRIPTION_FAIL);
 		return false;
@@ -1346,8 +1335,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		if ( !pItemPartner )
 			continue;
 
-		CChar *pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent());
-		if ( pCharPartner != pChar )
+        if (CChar *pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent()); pCharPartner != pChar )
 			continue;
 
 		if ( pItem )
@@ -1359,8 +1347,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
                 if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs1, this) == TRIGRET_RET_TRUE )
 					return false;
 			}
-			CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItemCont);
-			if ( pCont )
+            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItemCont) )
 				pCont->ContentAdd(pItem);
 		}
 		return true;

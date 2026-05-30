@@ -48,8 +48,7 @@ void CEntity::SubscribeComponent(CComponent * pComponent)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::SubscribeComponent");
     const COMP_TYPE compType = pComponent->GetType();
-    const auto [fst, snd] = _lComponents.try_emplace(compType, pComponent);
-    if (snd == false)
+    if (const auto [fst, snd] = _lComponents.try_emplace(compType, pComponent); snd == false)
     {
         delete pComponent;
         ASSERT(false);  // This should never happen
@@ -190,8 +189,7 @@ void CEntity::Copy(const CEntity *target)
     {
         CComponent *pTarget = it->second;    // the CComponent to copy from
         ASSERT(pTarget);
-        CComponent *pCopy = GetComponent(pTarget->GetType());    // the CComponent to copy to.
-        if (pCopy)
+        if (CComponent *pCopy = GetComponent(pTarget->GetType()))
         {
             pCopy->Copy(pTarget);
         }
@@ -208,8 +206,7 @@ CCRET_TYPE CEntity::_OnTick()
     {
         CComponent *pComponent = it->second;
         ASSERT(pComponent);
-        CCRET_TYPE iRet = pComponent->OnTickComponent();
-        if (iRet != CCRET_CONTINUE)
+        if (CCRET_TYPE iRet = pComponent->OnTickComponent(); iRet != CCRET_CONTINUE)
         {
             return iRet;    // Stop the loop and return whatever return is needed.
         }

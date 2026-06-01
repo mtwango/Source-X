@@ -149,7 +149,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
         return false;
     }
 
-    int iSpellCount = m_pNPC->Spells_GetCount();
+    uchar iSpellCount = static_cast<uchar>(m_pNPC->Spells_GetCount());
     CItem * pWand = LayerFind(LAYER_HAND1);		//Try to get a working wand.
     CObjBase * pTarg = pChar;
     if (pWand)
@@ -192,7 +192,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     }
 
     // We have the total count of spells inside iSpellCount, so we use 'iRandSpell' to store a rand representing the spell that will be cast.
-    int iRandSpell = g_Rand.GetVal2(0, iSpellCount - 1); //Spells are being stored using a vector, so it's assumed to be zero-based.
+    uchar iRandSpell = static_cast<uchar>(g_Rand.GetVal2(0, iSpellCount - 1)); //Spells are being stored using a vector, so it's assumed to be zero-based.
     bool bSpellSuccess = false, bWandUse = false, bIgnoreAITargetChoice = false;
     int iHealThreshold = g_Cfg.m_iNPCHealthreshold;
 

@@ -28,7 +28,7 @@ enum TRIGRUN_TYPE
 	TRIGRUN_SECTION_FALSE,	// Just ignore this whole section.
 	TRIGRUN_SINGLE_EXEC,	// Execute just this line or blocked segment. (first line already read!)
 	TRIGRUN_SINGLE_TRUE,	// Execute just this line or blocked segment.
-	TRIGRUN_SINGLE_FALSE	// ignore just this line or blocked segment.
+	TRIGRUN_SINGLE_FALSE,	// ignore just this line or blocked segment.
 };
 
 enum TRIGRET_TYPE	// trigger script returns.
@@ -36,14 +36,14 @@ enum TRIGRET_TYPE	// trigger script returns.
     TRIGRET_RET_ABORTED = INT32_MIN,
 	TRIGRET_RET_FALSE = 0,	// default return. (script might not have been handled)
 	TRIGRET_RET_TRUE = 1,
-	TRIGRET_RET_DEFAULT,	// we just came to the end of the script.
-    TRIGRET_ENDIF,
-	TRIGRET_ELSE,
-	TRIGRET_ELSEIF,
-	TRIGRET_RET_HALFBAKED,
-	TRIGRET_BREAK,
-	TRIGRET_CONTINUE,
-	TRIGRET_QTY
+	TRIGRET_RET_DEFAULT = 2,	// we just came to the end of the script.
+    TRIGRET_ENDIF = 3,
+	TRIGRET_ELSE = 4,
+	TRIGRET_ELSEIF = 5,
+	TRIGRET_RET_HALFBAKED = 6,
+	TRIGRET_BREAK = 7,
+	TRIGRET_CONTINUE = 8,
+	TRIGRET_QTY = 9,
 };
 
 

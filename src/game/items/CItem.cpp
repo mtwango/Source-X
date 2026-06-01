@@ -4089,28 +4089,28 @@ CObjBase * CItem::GetContainer() const noexcept {
 
 const CItem* CItem::GetTopContainer() const
 {
-	//Get the top container
+	// Get the top container.
 	const CItem* pItem = this;
 	while (const CObjBase * pCont = pItem->GetContainer())
 	{
 		if (pCont->IsChar())
 			break;
 		ASSERT(pCont->IsItem());
-		pItem = static_cast<const CItem *>(pItem->GetContainer());
+		pItem = dynamic_cast<const CItem *>(pCont);
 	}
 	return (pItem == this) ? nullptr : pItem;
 }
 
 CItem* CItem::GetTopContainer()
 {
-	//Get the top container
+	// Get the top container.
 	CItem* pItem = this;
 	while (CObjBase* pCont = pItem->GetContainer())
 	{
 		if (pCont->IsChar())
 			break;
 		ASSERT(pCont->IsItem());
-		pItem = static_cast<CItem*>(pItem->GetContainer());
+		pItem = dynamic_cast<CItem *>(pCont);
 	}
 	return (pItem == this) ? nullptr : pItem;
 }

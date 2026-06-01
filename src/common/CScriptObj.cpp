@@ -1947,67 +1947,74 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 		}
 		else
 		{
-			CObjBaseTemplate* pObjTop = pObj->GetTopLevelObj();
-			CPointMap pt = pObjTop->GetTopPoint();
-			if (iType & 1)		// FORITEM, FOROBJ
-			{
-				auto AreaItems = CWorldSearchHolder::GetInstance(pt, iDist);
-				for (;;)
-				{
-					++LoopsMade;
-					if (g_Cfg.m_iMaxLoopTimes && (LoopsMade >= g_Cfg.m_iMaxLoopTimes))
-						goto toomanyloops;
+            if (CObjBaseTemplate *pObjTop = pObj->GetTopLevelObj(); pObjTop == nullptr)
+		    {
+		        iType = 0;
+		        DEBUG_ERR(("FOR Loop trigger on object '%s' without top-level object\n", GetName()));
+		    }
+		    else
+		    {
+		        CPointMap pt = pObjTop->GetTopPoint();
+			    if (iType & 1)		// FORITEM, FOROBJ
+			    {
+				    auto AreaItems = CWorldSearchHolder::GetInstance(pt, iDist);
+				    for (;;)
+				    {
+					    ++LoopsMade;
+					    if (g_Cfg.m_iMaxLoopTimes && (LoopsMade >= g_Cfg.m_iMaxLoopTimes))
+						    goto toomanyloops;
 
-					CItem* pItem = AreaItems->GetItem();
-					if (pItem == nullptr)
-						break;
-                    TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
-					if (iRet == TRIGRET_BREAK)
-					{
-						EndContext = StartContext;
-						break;
-					}
-					if ((iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
-						return(iRet);
-					if (iRet == TRIGRET_CONTINUE)
-						EndContext = StartContext;
-					else
-						EndContext = s.GetContext();
-					s.SeekContext(StartContext);
-				}
-			}
-			if (iType & 2)		// FORCHAR, FOROBJ
-			{
-				auto AreaChars = CWorldSearchHolder::GetInstance(pt, iDist);
-				AreaChars->SetAllShow((iType & 0x20) ? true : false);
-				for (;;)
-				{
-					++LoopsMade;
-					if (g_Cfg.m_iMaxLoopTimes && (LoopsMade >= g_Cfg.m_iMaxLoopTimes))
-						goto toomanyloops;
+					    CItem* pItem = AreaItems->GetItem();
+					    if (pItem == nullptr)
+						    break;
+                        TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
+					    if (iRet == TRIGRET_BREAK)
+					    {
+						    EndContext = StartContext;
+						    break;
+					    }
+					    if ((iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
+						    return(iRet);
+					    if (iRet == TRIGRET_CONTINUE)
+						    EndContext = StartContext;
+					    else
+						    EndContext = s.GetContext();
+					    s.SeekContext(StartContext);
+				    }
+			    }
+			    if (iType & 2)		// FORCHAR, FOROBJ
+			    {
+				    auto AreaChars = CWorldSearchHolder::GetInstance(pt, iDist);
+				    AreaChars->SetAllShow((iType & 0x20) ? true : false);
+				    for (;;)
+				    {
+					    ++LoopsMade;
+					    if (g_Cfg.m_iMaxLoopTimes && (LoopsMade >= g_Cfg.m_iMaxLoopTimes))
+						    goto toomanyloops;
 
-					CChar* pChar = AreaChars->GetChar();
-					if (pChar == nullptr)
-						break;
-					if ((iType & 0x10) && (!pChar->IsClientActive()))	// FORCLIENTS
-						continue;
-					if ((iType & 0x20) && (pChar->m_pPlayer == nullptr))	// FORPLAYERS
-						continue;
-                    TRIGRET_TYPE iRet = pChar->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
-					if (iRet == TRIGRET_BREAK)
-					{
-						EndContext = StartContext;
-						break;
-					}
-					if ((iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
-						return(iRet);
-					if (iRet == TRIGRET_CONTINUE)
-						EndContext = StartContext;
-					else
-						EndContext = s.GetContext();
-					s.SeekContext(StartContext);
-				}
-			}
+					    CChar* pChar = AreaChars->GetChar();
+					    if (pChar == nullptr)
+						    break;
+					    if ((iType & 0x10) && (!pChar->IsClientActive()))	// FORCLIENTS
+						    continue;
+					    if ((iType & 0x20) && (pChar->m_pPlayer == nullptr))	// FORPLAYERS
+						    continue;
+                        TRIGRET_TYPE iRet = pChar->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
+					    if (iRet == TRIGRET_BREAK)
+					    {
+						    EndContext = StartContext;
+						    break;
+					    }
+					    if ((iRet != TRIGRET_ENDIF) && (iRet != TRIGRET_CONTINUE))
+						    return(iRet);
+					    if (iRet == TRIGRET_CONTINUE)
+						    EndContext = StartContext;
+					    else
+						    EndContext = s.GetContext();
+					    s.SeekContext(StartContext);
+				    }
+			    }
+		    }
 		}
 	}
 

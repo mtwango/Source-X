@@ -59,11 +59,11 @@ void CWorldTickingList::ClearTickingLists() // static
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vTimedObjsTimeouts.MT_CMUTEX);
 #endif
         for (auto &cont = g_World._Ticker._vTimedObjsTimeouts; auto &val : cont | std::views::values) {
-            DEBUG_ASSERT(elem.second->_fIsInWorldTickAddList == false);
+            DEBUG_ASSERT(val->_fIsInWorldTickAddList == false);
             val->_fIsInWorldTickList = false;
         }
         for (auto &cont = g_World._Ticker._vTimedObjsTimeoutsAddReq; auto &val : cont | std::views::values) {
-            DEBUG_ASSERT(elem.second->_fIsInWorldTickList == false);
+            DEBUG_ASSERT(val->_fIsInWorldTickList == false);
             val->_fIsInWorldTickAddList = false;
         }
 #ifdef _DEBUG

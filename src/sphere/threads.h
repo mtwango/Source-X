@@ -284,7 +284,7 @@ public:
     AbstractThread * getThreadAt(size_t at) noexcept;
     size_t getActiveThreads() noexcept { return static_cast<size_t>(m_threadCount); }
 
-    void markThreadStarted(AbstractThread* pThr) CANTHROW;
+    void markThreadStarted(const AbstractThread * pThr) CANTHROW;
 
     // Helper to mark servClosing and set flags.
     void markThreadsClosing() CANTHROW;

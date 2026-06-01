@@ -1202,7 +1202,7 @@ public:
 class PacketGumpValueInput : public PacketSend
 {
 public:
-	PacketGumpValueInput(const CClient* target, bool cancel, INPVAL_STYLE style, dword maxLength, lpctstr text, lpctstr caption, CObjBase* object);
+	PacketGumpValueInput(const CClient* target, bool cancel, INPVAL_STYLE style, dword maxLength, lpctstr text, lpctstr caption, const CObjBase * object);
 };
 
 /***************************************************************************
@@ -1228,7 +1228,7 @@ public:
 class PacketDeath : public PacketSend
 {
 public:
-	PacketDeath(CChar* dead, CItemCorpse* corpse, bool fFrontFall);
+	PacketDeath(const CChar * dead, const CItemCorpse * corpse, bool fFrontFall);
 };
 
 /***************************************************************************
@@ -1242,7 +1242,7 @@ public:
 class PacketGumpDialog : public PacketSend
 {
 public:
-	PacketGumpDialog(int x, int y, CObjBase* object, dword context);
+	PacketGumpDialog(int x, int y, const CObjBase * object, dword context);
 	void writeControls(const CClient* target, std::vector<CSString> const* controls, std::vector<CSString> const* texts);
 
 protected:
@@ -1813,7 +1813,7 @@ public:
 	PacketHouseDesign(const PacketHouseDesign* other);
     ~PacketHouseDesign() override;
 
-	bool writePlaneData(int plane, int itemCount, byte* data, int dataSize);
+	bool writePlaneData(int plane, int itemCount, const byte * data, int dataSize);
 	bool writeStairData(ITEMID_TYPE id, int x, int y, int z);
 	void flushStairData();
 	void finalise();
@@ -1852,7 +1852,7 @@ public:
 class PacketBuff : public PacketSend
 {
 public:
-	PacketBuff(const CClient* target, BUFF_ICONS iconId, dword clilocOne, dword clilocTwo, word durationSeconds, lpctstr* args, uint argCount); // add buff
+	PacketBuff(const CClient* target, BUFF_ICONS iconId, dword clilocOne, dword clilocTwo, word durationSeconds, const lpctstr * args, uint argCount); // add buff
 	PacketBuff(const CClient* target, BUFF_ICONS iconId); // remove buff
 
     bool canSendTo(const CNetState* state) const override { return CanSendTo(state); }
@@ -1882,7 +1882,7 @@ public:
 class PacketWaypointAdd : public PacketSend
 {
 public:
-    PacketWaypointAdd(const CClient *target, CObjBase *object, MAPWAYPOINT_TYPE type);
+    PacketWaypointAdd(const CClient *target, const CObjBase *object, MAPWAYPOINT_TYPE type);
 
     bool canSendTo(const CNetState *state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState *state);
@@ -1898,7 +1898,7 @@ public:
 class PacketWaypointRemove : public PacketSend
 {
 public:
-    PacketWaypointRemove(const CClient *target, CObjBase *object);
+    PacketWaypointRemove(const CClient *target, const CObjBase *object);
 
     bool canSendTo(const CNetState *state) const override { return CanSendTo(state); }
     static bool CanSendTo(const CNetState *state);

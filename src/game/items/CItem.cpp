@@ -5965,7 +5965,7 @@ bool CItem::IsResourceMatch( const CResourceID& rid, dword dwArg ) const
 
 		ITEMID_TYPE itemid = pItemDef->GetID();
 
-        switch ( ITEMID_TYPE index = (ITEMID_TYPE)(rid.GetResIndex()) )
+        switch ( (ITEMID_TYPE)(rid.GetResIndex()) )
 		{
 			case ITEMID_LOG_1:		// boards can be used as logs (but logs can't be used as boards)
 			{

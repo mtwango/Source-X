@@ -340,7 +340,7 @@ AbstractThread * ThreadHolder::current() noexcept // static
 }
 
 // Record that thread has started.
-void ThreadHolder::markThreadStarted(AbstractThread* pThr) CANTHROW
+void ThreadHolder::markThreadStarted(const AbstractThread * pThr) CANTHROW
 {
     const int id = pThr->m_threadHolderId;
     SphereThreadData& threadData = m_threads.at(id);

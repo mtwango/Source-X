@@ -45,7 +45,7 @@ namespace sl
             return (base_type::cend() != this->find_ptr(elem));
         }
 
-        void remove_ptr(_Type* elem) {
+        void remove_ptr(const _Type * elem) {
             if (const size_t uiFoundIndex = this->find_ptr(elem); uiFoundIndex != scont_bad_index())
                 this->remove_index(uiFoundIndex);
         }

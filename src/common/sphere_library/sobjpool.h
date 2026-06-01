@@ -59,7 +59,7 @@ public:
         ObjectPool* m_pool;
         std::optional<index_t> m_index; // Engaged if pooled
 
-        void operator()(PooledObject_t* ptr) const
+        void operator()(const PooledObject_t * ptr) const
         {
             if (m_pool)
             {
@@ -228,7 +228,7 @@ public:
         TSObjectPool* m_pool;
         std::optional<index_t> m_index; // Engaged if pooled
 
-        void operator()(PooledObject_t* ptr) const
+        void operator()(const PooledObject_t * ptr) const
         {
             if (m_pool)
             {

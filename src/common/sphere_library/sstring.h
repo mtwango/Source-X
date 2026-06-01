@@ -332,7 +332,7 @@ bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize =
 * @param offset position where to start the search.
 * @return -1 for a bad offset or if string if not found, otherwise the position of the substring in string.
 */
-int Str_IndexOf(tchar * pStr1, tchar * pStr2, int offset = 0) noexcept;
+int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, int offset = 0) noexcept;
 
 /**
 * @brief check if a string matches a pattern.
@@ -368,11 +368,11 @@ class UTF8MBSTR
 public:
     UTF8MBSTR();
     UTF8MBSTR(const tchar * lpStr);
-    UTF8MBSTR(UTF8MBSTR& lpStr);
+    UTF8MBSTR(const UTF8MBSTR & lpStr);
     virtual ~UTF8MBSTR();
 
     void operator =(const tchar * lpStr);
-    void operator =(UTF8MBSTR& lpStr) noexcept;
+    void operator =(const UTF8MBSTR & lpStr) noexcept;
     operator char* () noexcept
     {
         return m_strUTF8_MultiByte.data();

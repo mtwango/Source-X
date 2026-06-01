@@ -129,7 +129,7 @@ bool CRegionResourceDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConso
     return false;
 }
 
-CRegionResourceDef::CRegionResourceDef( CResourceID rid ) :
+CRegionResourceDef::CRegionResourceDef(const CResourceID &rid ) :
     CResourceLink( rid )
 {
     // set defaults first.

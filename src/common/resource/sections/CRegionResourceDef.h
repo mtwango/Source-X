@@ -47,7 +47,7 @@ public:
     CValueCurveDef m_vcSkill;         // Skill levels required to mine this.
     CValueCurveDef m_vcRegenerateTime;// tenth of seconds once found how long to regen this type.
 
-    explicit CRegionResourceDef( CResourceID rid );
+    explicit CRegionResourceDef(const CResourceID &rid );
     ~CRegionResourceDef() override;
 
 private:

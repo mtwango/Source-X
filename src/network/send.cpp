@@ -3494,7 +3494,7 @@ PacketAttack::PacketAttack(const CClient* target, const CUID &serial) : PacketSe
  *
  *
  ***************************************************************************/
-PacketGumpValueInput::PacketGumpValueInput(const CClient* target, bool cancel, INPVAL_STYLE style, dword maxLength, lpctstr text, lpctstr caption, CObjBase* object) : PacketSend(XCMD_GumpInpVal, 21, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
+PacketGumpValueInput::PacketGumpValueInput(const CClient* target, bool cancel, const INPVAL_STYLE style, dword maxLength, lpctstr text, const lpctstr caption, const CObjBase * object) : PacketSend(XCMD_GumpInpVal, 21, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
 {
 	ADDTOCALLSTACK("PacketGumpValueInput::PacketGumpValueInput");
 
@@ -3593,7 +3593,7 @@ PacketMessageUNICODE::PacketMessageUNICODE(const CClient* target, const nachar *
  *
  *
  ***************************************************************************/
-PacketDeath::PacketDeath(CChar* dead, CItemCorpse* corpse, bool fFrontFall) : PacketSend(XCMD_CharDeath, 13, PRI_NORMAL)
+PacketDeath::PacketDeath(const CChar * dead, const CItemCorpse * corpse, const bool fFrontFall) : PacketSend(XCMD_CharDeath, 13, PRI_NORMAL)
 {
 	//UnreferencedParameter(fFrontFall);
 	ADDTOCALLSTACK("PacketDeath::PacketDeath");
@@ -3612,7 +3612,7 @@ PacketDeath::PacketDeath(CChar* dead, CItemCorpse* corpse, bool fFrontFall) : Pa
  *
  *
  ***************************************************************************/
-PacketGumpDialog::PacketGumpDialog(int x, int y, CObjBase* object, dword context) : PacketSend(XCMD_GumpDialog, 24, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
+PacketGumpDialog::PacketGumpDialog(int x, int y, const CObjBase * object, const dword context) : PacketSend(XCMD_GumpDialog, 24, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
 {
 	ADDTOCALLSTACK("PacketGumpDialog::PacketGumpDialog");
 
@@ -4864,7 +4864,7 @@ PacketHouseDesign::~PacketHouseDesign()
 	}
 }
 
-bool PacketHouseDesign::writePlaneData(int plane, int itemCount, byte* data, int dataSize)
+bool PacketHouseDesign::writePlaneData(int plane, int itemCount, const byte * data, const int dataSize)
 {
 	ADDTOCALLSTACK("PacketHouseDesign::writePlaneData");
 
@@ -5032,7 +5032,7 @@ bool PacketPropertyListVersion::CanSendTo(const CNetState* state) // static
  *
  *
  ***************************************************************************/
-PacketBuff::PacketBuff(const CClient* target, const BUFF_ICONS iconId, const dword clilocOne, const dword clilocTwo, const word durationSeconds, lpctstr* args, uint argCount) : PacketSend(XCMD_BuffPacket, 72, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
+PacketBuff::PacketBuff(const CClient* target, const BUFF_ICONS iconId, const dword clilocOne, const dword clilocTwo, const word durationSeconds, const lpctstr * args, const uint argCount) : PacketSend(XCMD_BuffPacket, 72, g_Cfg.m_fUsePacketPriorities? PRI_LOW : PRI_NORMAL)
 {
 	ADDTOCALLSTACK("PacketBuff::PacketBuff");
 	// At date of 04/2015 RUOSI seems to have a different structure than the one we have with one more argument and different order... however this one seems to keep working: http://ruosi.org/packetguide/index.xml#serverDF
@@ -5144,7 +5144,7 @@ PacketKREncryption::PacketKREncryption(const CClient* target) : PacketSend(XCMD_
 *
 *
 ***************************************************************************/
-PacketWaypointAdd::PacketWaypointAdd(const CClient *target, CObjBase *object, MAPWAYPOINT_TYPE type) : PacketSend(XCMD_WaypointShow, 25, g_Cfg.m_fUsePacketPriorities ? PRI_LOW : PRI_NORMAL)
+PacketWaypointAdd::PacketWaypointAdd(const CClient *target, const CObjBase *object, MAPWAYPOINT_TYPE type) : PacketSend(XCMD_WaypointShow, 25, g_Cfg.m_fUsePacketPriorities ? PRI_LOW : PRI_NORMAL)
 {
     ADDTOCALLSTACK("PacketWaypointAdd::PacketWaypointAdd");
 
@@ -5183,7 +5183,7 @@ bool PacketWaypointAdd::CanSendTo(const CNetState *state) // static
 *
 *
 ***************************************************************************/
-PacketWaypointRemove::PacketWaypointRemove(const CClient *target, CObjBase *object) : PacketSend(XCMD_WaypointHide, 5, g_Cfg.m_fUsePacketPriorities ? PRI_LOW : PRI_NORMAL)
+PacketWaypointRemove::PacketWaypointRemove(const CClient *target, const CObjBase *object) : PacketSend(XCMD_WaypointHide, 5, g_Cfg.m_fUsePacketPriorities ? PRI_LOW : PRI_NORMAL)
 {
     ADDTOCALLSTACK("PacketWaypointRemove::PacketWaypointRemove");
 

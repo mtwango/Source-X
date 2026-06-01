@@ -1660,7 +1660,7 @@ bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize) 
     return (*p != '\0');
 }
 
-int Str_IndexOf(tchar * pStr1, tchar * pStr2, int offset) noexcept
+int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, int offset) noexcept
 {
     if (offset < 0)
         return -1;
@@ -1947,7 +1947,7 @@ UTF8MBSTR::UTF8MBSTR(const tchar * lpStr)
     operator=(lpStr);
 }
 
-UTF8MBSTR::UTF8MBSTR(UTF8MBSTR& lpStr)
+UTF8MBSTR::UTF8MBSTR(const UTF8MBSTR & lpStr)
 {
     m_strUTF8_MultiByte = lpStr.m_strUTF8_MultiByte;
 }
@@ -1962,7 +1962,7 @@ void UTF8MBSTR::operator =(const tchar * lpStr)
         m_strUTF8_MultiByte.clear();
 }
 
-void UTF8MBSTR::operator =(UTF8MBSTR& lpStr) noexcept
+void UTF8MBSTR::operator =(const UTF8MBSTR & lpStr) noexcept
 {
     m_strUTF8_MultiByte = lpStr.m_strUTF8_MultiByte;
 }

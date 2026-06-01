@@ -15,7 +15,7 @@ MaxEmptyLinesToKeep: 2
 InsertNewlineAtEOF: true
 
 # Alignment settings
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: false
 AlignConsecutiveAssignments: true
 AlignConsecutiveDeclarations: false
 #AlignConsecutiveTableGenDefinitionColons:
@@ -30,7 +30,7 @@ DerivePointerAlignment: false
 PointerAlignment: Right
 
 # Single-line statements settings
-AllowShortBlocksOnASingleLine: false
+AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
@@ -63,7 +63,7 @@ Cpp11BracedListStyle: false
 AlwaysBreakAfterDefinitionReturnType: None  # Keep return type on the same line if possible
 AlwaysBreakAfterReturnType: None  # Default value
 AlwaysBreakBeforeMultilineStrings: true
-AlwaysBreakTemplateDeclarations: true
+BreakTemplateDeclarations: Yes
 BreakAfterAttributes: Always
 BreakBeforeBinaryOperators: None  # Default value: No line break before binary operators
 BreakBeforeConceptDeclarations: Always
@@ -114,7 +114,7 @@ ShortNamespaceLines: 2
 
 # Miscellaneous settings
 SeparateDefinitionBlocks: Always
-ReflowComments: false
+ReflowComments: IndentOnly
 
 # Include order
 #IncludeBlocks: Regroup

@@ -136,7 +136,7 @@ bool CChar::CheckCorpseCrime( CItemCorpse *pCorpse, bool fLooting, bool fTest )
 	return false;
 }
 
-CItemCorpse *CChar::FindMyCorpse( bool ignoreLOS, int iRadius ) const
+CItemCorpse *CChar::FindMyCorpse( bool fIgnoreLOS, int iRadius ) const
 {
 	ADDTOCALLSTACK("CChar::FindMyCorpse");
 	// If they are standing on their own corpse then res the corpse !
@@ -155,7 +155,7 @@ CItemCorpse *CChar::FindMyCorpse( bool ignoreLOS, int iRadius ) const
 			continue;
 		if ( pCorpse->m_itCorpse.m_BaseID != _iPrev_id )	// not morphed type
 			continue;
-		if ( !ignoreLOS && !CanSeeLOS(pCorpse) )
+		if ( !fIgnoreLOS && !CanSeeLOS(pCorpse) )
 			continue;
 		return pCorpse;
 	}

@@ -68,7 +68,7 @@ public:
 	void AddItemToSector( CItem * pItem );
 
 protected:
-	void OnRemoveObj(CSObjContRec* pObRec) override;	// Override this = called when removed from list.
+	void OnRemoveObj(CSObjContRec* pObjRec) override;	// Override this = called when removed from list.
 };
 
 

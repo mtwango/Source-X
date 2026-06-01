@@ -180,11 +180,11 @@ public:
 	~CWorld() override;
 
 private:
-	bool LoadFile( lpctstr pszName, bool fError = true );
+	bool LoadFile( lpctstr pszLoadName, bool fError = true );
 	bool LoadWorld();
 
 	// WorldSave methods
-	static void GetBackupName(CSString& sArchive, lpctstr ptcBaseDir, tchar tcType, int iSaveCount);
+	static void GetBackupName(CSString& sArchive, lpctstr pszBaseDir, tchar chType, int iSaveCount);
 
 	bool SaveTry(bool fForceImmediate); // Save world state
 	bool SaveStage();
@@ -214,7 +214,7 @@ public:
 	void Restock();
 	void RespawnDeadNPCs();
 
-	static bool OpenScriptBackup(CScript& s, lpctstr pszBaseDir, lpctstr pszBaseName, int savecount);
+	static bool OpenScriptBackup(CScript& s, lpctstr pszBaseDir, lpctstr pszBaseName, int iSaveCount);
     bool CheckAvailableSpaceForSave(bool fStatics);
 	bool Save( bool fForceImmediate ); // Save world state
 	void SaveStatics();
@@ -222,9 +222,9 @@ public:
 	bool DumpAreas( CTextConsole * pSrc, lpctstr pszFilename );
 	void Close();
 
-	bool Export(lpctstr pszFilename, const CChar* pSrc, word iModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0);
-	bool Import(lpctstr pszFilename, const CChar* pSrc, word iModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0,
-                tchar* pszAgs1 = nullptr, tchar* pszAgs2 = nullptr);
+	bool Export(lpctstr pszFilename, const CChar* pSrc, word wModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0);
+	bool Import(lpctstr pszFilename, const CChar* pSrc, word wModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0,
+                tchar* pszArg1 = nullptr, tchar* pszArg2 = nullptr);
 
 	lpctstr GetName() const override {
 	    return "World";

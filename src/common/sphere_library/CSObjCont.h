@@ -220,9 +220,9 @@ size_t CSObjCont::GetContentCount() const noexcept
     return _Contents.size();
 }
 
-CSObjContRec* CSObjCont::GetContentIndex(size_t i) const noexcept
+CSObjContRec* CSObjCont::GetContentIndex(size_t index) const noexcept
 {
-    return _Contents[i];
+    return _Contents[index];
 }
 
 CSObjContRec* CSObjCont::GetContainerHead() const noexcept

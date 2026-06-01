@@ -37,8 +37,8 @@ private:    int _GetCurrentRow() const { return _iCurrentRow; }
 public:     int GetCurrentRow() const;
 
 private:
-    int _ReadRowContent(tchar ** ppOutput, int row, int columns = kuiMaxColumns);
-	bool _ReadRowContent(int row, CSVRowData& target);
+    int _ReadRowContent(tchar ** ppOutput, int rowIndex, int columns = kuiMaxColumns);
+	bool _ReadRowContent(int rowIndex, CSVRowData& target);
 
 	int _ReadNextRowContent(tchar ** ppOutput);
 	bool _ReadNextRowContent(CSVRowData& target);

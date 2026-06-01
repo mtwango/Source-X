@@ -28,7 +28,7 @@ extern struct CNTWindow : AbstractSphereThread, CSWindow, ConsoleInterface
     bool shouldExit() noexcept override;
     void tick() override;
 
-    bool NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLinel, int nCmdShow);
+    bool NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLine, int nCmdShow);
     void NTWindow_ExitServer();
     void NTWindow_DeleteIcon();
     bool NTWindow_OnTick(int iWaitmSec);
@@ -131,7 +131,7 @@ public:
     static LRESULT WINAPI WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     void List_Clear();
-    void List_AddSingle(COLORREF color, LPCTSTR pszText);
+    void List_AddSingle(COLORREF color, LPCTSTR ptcText);
     void List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs);
     void SetWindowTitle(LPCTSTR pText = nullptr);
 

@@ -170,7 +170,7 @@ bool CLog::IsLogged( dword dwMask ) const
 	return mask || lvl;
 }
 
-bool CLog::_OpenLog( lpctstr pszBaseDirName )	// name set previously.
+bool CLog::_OpenLog( lpctstr pszName )	// name set previously.
 {
 	ADDTOCALLSTACK("CLog::_OpenLog");
 
@@ -180,11 +180,11 @@ bool CLog::_OpenLog( lpctstr pszBaseDirName )	// name set previously.
 	if ( m_sBaseDir == nullptr )
 		return false;
 
-	if ( pszBaseDirName != nullptr )
+	if ( pszName != nullptr )
 	{
-		if ( pszBaseDirName[0] && pszBaseDirName[1] == '\0' )
+		if ( pszName[0] && pszName[1] == '\0' )
 		{
-			if ( *pszBaseDirName == '0' )
+			if ( *pszName == '0' )
 			{
 				_Close();
 				return false;
@@ -192,7 +192,7 @@ bool CLog::_OpenLog( lpctstr pszBaseDirName )	// name set previously.
 		}
 		else
         {
-			m_sBaseDir = pszBaseDirName;
+			m_sBaseDir = pszName;
         }
 	}
 
@@ -211,10 +211,10 @@ bool CLog::_OpenLog( lpctstr pszBaseDirName )	// name set previously.
 	return false;
 }
 
-bool CLog::OpenLog(lpctstr pszBaseDirName)	// name set previously.
+bool CLog::OpenLog(lpctstr pszName)	// name set previously.
 {
 	ADDTOCALLSTACK("CLog::OpenLog");
-	MT_UNIQUE_LOCK_RETURN(this, CLog::_OpenLog(pszBaseDirName));
+	MT_UNIQUE_LOCK_RETURN(this, CLog::_OpenLog(pszName));
 }
 
 int CLog::EventStr( dword dwMask, lpctstr pszMsg, ConsoleTextColor iLogColor) noexcept

@@ -726,6 +726,7 @@ public:
      * @brief   Loads resource section ([SKILL ], [SPELL ], [CHARDEF ]...).
      *
      * @param  pScript to be loaded.
+     * @param fInsertSorted sorting enabled.
      *
      * @return  true if it succeeds, false if it fails.
      */

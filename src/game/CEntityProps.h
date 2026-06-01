@@ -133,7 +133,7 @@ public:
     /**
     * @brief Copies contents of the components from the target
     */
-    void Copy(const CEntityProps *base);
+    void Copy(const CEntityProps *target);
 
     /**
     * @brief Copies contents of the components from the target

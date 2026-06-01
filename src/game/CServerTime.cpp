@@ -14,10 +14,10 @@ CServerTime CServerTime::operator-( int64 llTimeDiff ) const noexcept
 }
 
 
-lpctstr CServerTime::GetTimeMinDesc(int minutes) // static
+lpctstr CServerTime::GetTimeMinDesc(int iMinutes) // static
 {
-    const int minute = minutes % 60;
-    int hour = (minutes / 60) % 24;
+    const int minute = iMinutes % 60;
+    int hour = (iMinutes / 60) % 24;
 
     lpctstr pMinDif;
     if (minute < 15)

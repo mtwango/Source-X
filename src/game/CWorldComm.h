@@ -20,8 +20,8 @@ class CWorldComm
 public:
 	static const char* m_sClassName;
 
-	static void Speak(const CObjBaseTemplate* pSrc, lpctstr pText, HUE_TYPE wHue = HUE_TEXT_DEF, TALKMODE_TYPE mode = TALKMODE_SAY, FONT_TYPE font = FONT_BOLD);
-	static void SpeakUNICODE(const CObjBaseTemplate* pSrc, const nachar* pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang);
+	static void Speak(const CObjBaseTemplate* pSrc, lpctstr pszText, HUE_TYPE wHue = HUE_TEXT_DEF, TALKMODE_TYPE mode = TALKMODE_SAY, FONT_TYPE font = FONT_BOLD);
+	static void SpeakUNICODE(const CObjBaseTemplate* pSrc, const nachar* pwText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang);
 
 	static void Broadcast(lpctstr pMsg);
     static void Broadcastf(lpctstr pMsg, ...) SPHERE_PRINTFARGS(1, 2);

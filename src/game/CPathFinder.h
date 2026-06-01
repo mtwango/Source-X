@@ -88,7 +88,7 @@ protected:
     static int Heuristic(const CPathFinderPoint* Pt1, const CPathFinderPoint* Pt2) noexcept;
 
 	void Clear();
-	void GetAdjacentCells(const CPathFinderPoint* Point, std::deque<CPathFinderPoint*>& ChildrenRefList );
+	void GetAdjacentCells(const CPathFinderPoint* Point, std::deque<CPathFinderPoint*>& AdjacentCellsRefList );
 	void FillMap();	// prepares map with walkable statuses
 };
 

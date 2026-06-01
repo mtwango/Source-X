@@ -150,11 +150,11 @@ public:
 	lpctstr FindValNum( int64 iVal ) const;
 	lpctstr FindValStr( lpctstr pVal ) const;
 
-    CVarDefContNum* SetNumNew( lpctstr ptcKey, int64 iVal );
-    CVarDefContNum* SetNum( lpctstr ptcKey, int64 iVal, bool fDeleteZero = true, bool fWarnOverwrite = false );
-    CVarDefContNum* ModNum( lpctstr ptcKey, int64 iMod, bool fDeleteZero = true);
-    CVarDefContStr* SetStrNew( lpctstr ptcKey, lpctstr pszVal );
-    CVarDefCont* SetStr(lpctstr ptcKey, bool fQuoted, lpctstr ptcVal, bool fDeleteZero = true, bool fWarnOverwrite = false );
+    CVarDefContNum* SetNumNew( lpctstr pszName, int64 iVal );
+    CVarDefContNum* SetNum( lpctstr pszName, int64 iVal, bool fDeleteZero = true, bool fWarnOverwrite = false );
+    CVarDefContNum* ModNum( lpctstr pszName, int64 iMod, bool fDeleteZero = true);
+    CVarDefContStr* SetStrNew( lpctstr pszName, lpctstr pszVal );
+    CVarDefCont* SetStr(lpctstr pszName, bool fQuoted, lpctstr ptcVal, bool fDeleteZero = true, bool fWarnOverwrite = false );
 
 	CVarDefCont * GetAt( size_t at ) const;
 	CVarDefCont * GetKey( lpctstr ptcKey ) const;
@@ -163,17 +163,17 @@ public:
     inline CVarDefContStr * GetKeyDefStr( lpctstr ptcKey ) const;
 	lpctstr GetKeyStr( lpctstr ptcKey, bool fZero = false ) const;
     CVarDefCont * CheckParseKey( lpctstr pszArgs ) const;
-	CVarDefCont * GetParseKey_Advance( lpctstr & pArgs ) const;
+	CVarDefCont * GetParseKey_Advance( lpctstr & pszArgs ) const;
     inline CVarDefCont * GetParseKey( lpctstr pArgs ) const;
-    bool GetParseVal_Advance( lpctstr & pArgs, int64 * piVal ) const;
-    inline bool GetParseVal( lpctstr pArgs, int64 * plVal ) const;
+    bool GetParseVal_Advance( lpctstr & pszArgs, int64 * piVal ) const;
+    inline bool GetParseVal( lpctstr pArgs, int64 * piVal ) const;
 
 	void DumpKeys( CTextConsole * pSrc, lpctstr pszPrefix = nullptr ) const;
 	void ClearKeys(lpctstr mask = nullptr);
 	void DeleteKey( lpctstr key );
 
 	//bool r_LoadVal( CScript & s );
-	void r_WritePrefix( CScript & s, lpctstr pszPrefix = nullptr, lpctstr pszKeyExclude = nullptr ) const;
+	void r_WritePrefix( CScript & s, lpctstr ptcPrefix = nullptr, lpctstr ptcKeyExclude = nullptr ) const;
 
     // Iterators
     inline iterator begin();

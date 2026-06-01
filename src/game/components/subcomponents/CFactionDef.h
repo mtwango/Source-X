@@ -147,7 +147,7 @@ public:
 
     bool IsNone() const noexcept;
     Group GetGroup() const noexcept;
-    bool SetGroup (Group faction) noexcept;
+    bool SetGroup (Group group) noexcept;
     Species GetSpecies() const noexcept;
     bool SetSpecies(Species species) noexcept;
 

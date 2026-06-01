@@ -150,11 +150,11 @@ public:
 	* If the new length is lesser than the current length, only set a zero at the end of the string.
 	* If the new length is bigger than the current length, alloc memory for the string and copy.
 	* If DEBUG_STRINGS setted, update statistical information (reallocs count, total memory allocated).
-	* @param iLen new length of the string.
+	* @param iNewLength new length of the string.
 	* @param fPreciseSize If the length is bigger, should the size be the same?
 	* @return the new length of the CSString.
 	*/
-	int Resize(int iLen, bool fPreciseSize = false);
+	int Resize(int iNewLength, bool fPreciseSize = false);
 
 	/**
 	* @brief Get the length of the held string.
@@ -272,18 +272,18 @@ public:
 	* @brief Copy a string into the CSString.
 	* @see SetLength()
 	* @see strcpy()
-	* @param pStr string to copy.
+	* @param pszFormat string to copy.
 	*/
-	void Copy(lpctstr pStr);
+	void Copy(lpctstr pszFormat);
 
     /**
     * @brief Copy a string of known length into the CSString.
     * @see SetLength()
     * @see Str_CopyLimitNull()
-    * @param pStr string to copy.
+    * @param pszFormat string to copy.
     * @param iLen max number of chars (single-byte) to copy.
     */
-    void CopyLen(lpctstr pStr, int iLen);
+    void CopyLen(lpctstr pszFormat, int iLen);
 
 	/**
 	* @brief Changes the capitalization of CSString to upper.
@@ -319,7 +319,7 @@ public:
     * @param pStr formated string.
     * @param args list of values.
     */
-    void FormatV(lpctstr pStr, va_list args);
+    void FormatV(lpctstr pszFormat, va_list args);
 
     /**
     * @brief Print a llong value into the string (hex format).

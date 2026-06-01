@@ -93,7 +93,7 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
 
 	void SetRect( int left, int top, int right, int bottom, int map ) noexcept;
 
-	size_t Read( lpctstr pVal );
+	size_t Read( lpctstr pszVal );
 	tchar * Write( tchar * ptcBuffer, uint uiBufferLen ) const;
 	lpctstr Write() const;
 };

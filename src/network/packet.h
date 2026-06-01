@@ -173,7 +173,7 @@ public:
 
 	virtual bool onSend(const CClient* client);
 	virtual void onSent(CClient* client);
-	virtual bool canSendTo(const CNetState* client) const;
+	virtual bool canSendTo(const CNetState* state) const;
 
 	friend class CNetworkOutput;
 	friend class SimplePacketTransaction;

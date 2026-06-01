@@ -279,7 +279,7 @@ public:
 
     // Slow-path registry ops
     void push(AbstractThread *pAbstractThread) noexcept;
-    void remove(AbstractThread *thread) CANTHROW;
+    void remove(AbstractThread *pAbstractThread) CANTHROW;
 
     AbstractThread * getThreadAt(size_t at) noexcept;
     size_t getActiveThreads() noexcept { return static_cast<size_t>(m_threadCount); }

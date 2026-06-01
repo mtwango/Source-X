@@ -51,7 +51,7 @@ class CResourceRefArray : public std::vector<CResourceRef>
 public:
     static const char *m_sClassName;
     CResourceRefArray() = default;
-    size_t FindResourceType( RES_TYPE type ) const;
+    size_t FindResourceType( RES_TYPE restype ) const;
     size_t FindResourceID( const CResourceID & rid ) const;
     size_t FindResourceName( RES_TYPE restype, lpctstr ptcKey ) const;
 

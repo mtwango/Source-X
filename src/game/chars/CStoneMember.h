@@ -68,7 +68,7 @@ class CStoneMember : public CSObjListRec, public CScriptObj	// Members for vario
 
 public:
 	static const char *m_sClassName;
-	CStoneMember(CItemStone* pStone, CUID uid, STONEPRIV_TYPE iType, lpctstr pTitle = "", CUID loyaluidLink = CUID(UID_PLAIN_CLEAR), bool fArg1 = false, bool fArg2 = false, int nAccountGold = 0);
+	CStoneMember(CItemStone* pStone, CUID uid, STONEPRIV_TYPE iType, lpctstr pTitle = "", CUID loyaluidLink = CUID(UID_PLAIN_CLEAR), bool fVal1 = false, bool fVal2 = false, int nAccountGold = 0);
 	~CStoneMember() override;
 
     CStoneMember(const CStoneMember& copy) = delete;
@@ -105,7 +105,7 @@ public:
 	lpctstr GetTitle() const;
 	void SetTitle( lpctstr pTitle );
 	CUID GetLoyalToUID() const;
-	bool SetLoyalTo( const CChar * pChar);
+	bool SetLoyalTo( const CChar * pCharLoyal);
 	int GetAccountGold() const;
 	void SetAccountGold( int iGold );
 
@@ -116,7 +116,7 @@ public:
 
     lpctstr GetName() const override { return m_sClassName; }
     bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
-    bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
     bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
     bool r_LoadVal( CScript & s ) override;
 };

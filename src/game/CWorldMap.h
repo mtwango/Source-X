@@ -41,8 +41,8 @@ public:
     static int GetFloorAverageHeight(int iPoint1, int iPoint2, int iAverage);
     static int GetAreaAverageHeight(int iTop, int iLeft, int iBottom, int iRight);
 
-	static CItemTypeDef* GetTerrainItemTypeDef(dword dwIndex);
-	static IT_TYPE		 GetTerrainItemType(dword dwIndex);
+	static CItemTypeDef* GetTerrainItemTypeDef(dword dwTerrainIndex);
+	static IT_TYPE		 GetTerrainItemType(dword dwTerrainIndex);
 
 
 	// Height checks

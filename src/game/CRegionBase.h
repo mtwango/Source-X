@@ -35,7 +35,7 @@ public:
 	bool IsOverlapped( const CRectMap & rect ) const noexcept;
 	bool IsInside( const CRectMap & rect ) const;
 
-	bool IsInside( const CRegionBase * pRegionIsSmaller ) const;
+	bool IsInside( const CRegionBase * pRegionTest ) const;
 	bool IsOverlapped( const CRegionBase * pRegionTest ) const;
 	bool IsEqualRegion( const CRegionBase * pRegionTest ) const;
 

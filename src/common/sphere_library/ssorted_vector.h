@@ -26,10 +26,10 @@ namespace sl
         private:
             const _Comp _comparatorObj;
 
-            size_t lower_element(size_t mySize, const _Type *dataptr, _Type const& value) const noexcept;
+            size_t lower_element(size_t _size, const _Type *dataptr, _Type const& value) const noexcept;
 
             template <class _ValType, class _Pred>
-            size_t binary_search_predicate(size_t mySize, _ValType const& value, _Pred&& predicate) const noexcept;
+            size_t binary_search_predicate(size_t _size, _ValType const& value, _Pred&& predicate) const noexcept;
 
         public:
             sorted_vector() : _comparatorObj() {}

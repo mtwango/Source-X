@@ -170,11 +170,11 @@ struct CValueCurveDef
     *
     * @brief   Gets a random linear value.
     *
-    * @param   iPercent    Zero-based index of the percent.
+    * @param   iSkillPercent    Zero-based index of the percent.
     *
     * @return  The random linear.
     */
-    int GetRandomLinear( int iPercent ) const;
+    int GetRandomLinear( int iSkillPercent ) const;
 
     CValueCurveDef() noexcept = default;
     ~CValueCurveDef() noexcept = default;

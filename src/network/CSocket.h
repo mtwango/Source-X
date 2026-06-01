@@ -155,7 +155,7 @@ public:
 	int GetIOCtlSocketFlags( void );
 #endif
 
-	int SetNonBlocking(bool bEnable = true);
+	int SetNonBlocking(bool fEnable = true);
 	void Close();
 
 	static void CloseSocket( SOCKET hClose );

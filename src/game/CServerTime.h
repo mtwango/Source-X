@@ -28,7 +28,7 @@ struct CServerTime
     inline CServerTime(int64 iTimeInMilliseconds) noexcept;
 
     inline void Init() noexcept;
-    inline void InitTime(int64 iTimeBase) noexcept;
+    inline void InitTime(int64 llTimeBase) noexcept;
     inline bool IsTimeValid() const noexcept;
 
 	/*
@@ -36,8 +36,8 @@ struct CServerTime
 	*/
 	inline int64 GetTimeRaw() const noexcept;
 
-	CServerTime operator+(int64 iTimeDiff) const noexcept;
-	CServerTime operator-(int64 iTimeDiff) const noexcept;
+	CServerTime operator+(int64 llTimeDiff) const noexcept;
+	CServerTime operator-(int64 llTimeDiff) const noexcept;
 	inline int64 operator-(const CServerTime& time) const noexcept;
 	inline bool operator==(const CServerTime& time) const noexcept;
 	inline bool operator!=(const CServerTime& time) const noexcept;

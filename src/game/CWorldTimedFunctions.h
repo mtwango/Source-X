@@ -24,6 +24,6 @@ public:
     static void Clear();
     static TRIGRET_TYPE Loop(lpctstr ptcCommand, int LoopsMade, CScriptLineContext StartContext,
         CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult);
-    static int64 IsTimer(const CUID& uid, lpctstr funcname);
+    static int64 IsTimer(const CUID& uid, lpctstr ptcCommand);
 };
 #endif // _INC_CWORLDTIMEDFUNCTIONS_H

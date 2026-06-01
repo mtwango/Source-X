@@ -38,7 +38,7 @@ protected:
 public:
 	static lpctstr GetResourceBlockName( RES_TYPE restype );
 
-    CResourceID ResourceGetID_EatStr( RES_TYPE restype, lpctstr &pszName, word wPage = 0, bool fCanFail = false );    // this moves forward (changes!) the ptcName pointer!
+    CResourceID ResourceGetID_EatStr( RES_TYPE restype, lpctstr &ptcName, word wPage = 0, bool fCanFail = false );    // this moves forward (changes!) the ptcName pointer!
 	CResourceID ResourceGetID( RES_TYPE restype, lpctstr ptcName, word wPage = 0, bool fCanFail = false);
 	CResourceID ResourceGetIDType( RES_TYPE restype, lpctstr pszName, word wPage = 0 );
 	int ResourceGetIndexType( RES_TYPE restype, lpctstr pszName, word wPage = 0 );

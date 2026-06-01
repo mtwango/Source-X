@@ -1954,7 +1954,7 @@ public:
 		TileData	= 0x0,
 		Character	= 0x1,
 		Multi		= 0x2,
-		Damageable	= 0x3
+		Damageable	= 0x3,
 	};
 
 	PacketItemWorldNew(const CClient* target, const CItem* item);
@@ -2026,13 +2026,13 @@ public:
 		FriendAddTarg = 0x76,		// client -> server
 		StatusToggle = 0x8A,		// client -> server
 		Connect = 0xB9,		// client <- server
-		MessageSend = 0xC6		// client -> server
+		MessageSend = 0xC6,		// client -> server
 	};
 	enum Stanza
 	{
 		Presence = 0x0,
 		Message = 0x1,
-		InfoQuery = 0x2
+		InfoQuery = 0x2,
 	};
 
 	PacketGlobalChat(const CClient* target, byte unknown, byte action, byte stanza, lpctstr xml);

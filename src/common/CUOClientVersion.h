@@ -42,7 +42,7 @@ struct CUOClientVersion
     {}
 
     CUOClientVersion(dword uiClientVersionNumber) noexcept;
-    CUOClientVersion(lpctstr ptcVersionString, bool fEnhancedClient = false) noexcept;
+    CUOClientVersion(lpctstr ptcVersion, bool fEnhancedClient = false) noexcept;
 
     /*  Operators. */
     bool operator ==(CUOClientVersion const& other) const noexcept;

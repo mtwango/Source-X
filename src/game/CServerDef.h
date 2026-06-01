@@ -90,7 +90,7 @@ public:
 	int64 GetTimeSinceLastValid() const;
 
     bool r_LoadVal( CScript & s ) override;
-    bool r_WriteVal( lpctstr pKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 
 	bool IsConnected() const noexcept;
 

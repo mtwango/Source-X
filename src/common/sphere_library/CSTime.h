@@ -93,7 +93,7 @@ public:
 	lpctstr FormatGmt(lpctstr pszFormat) const;
 
 	// non CTime operations.
-	bool Read(tchar* pVal);
+	bool Read(tchar* pszVal);
 	void Init() noexcept;
 	bool IsTimeValid() const noexcept;
 	int GetDaysTotal() const noexcept;

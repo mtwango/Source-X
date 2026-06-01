@@ -453,9 +453,9 @@ void CNTService::CmdMainStart()
 //
 /////////////////////////////////////////////////////////////////////////////////////
 #ifdef MSVC_COMPILER
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nCmdShow)
+int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
 #else
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #endif
 {
 	UnreferencedParameter(hPrevInstance);
@@ -512,7 +512,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     if (!g_Cfg.m_fUseNTService ||	// since there is no way to detect how did we start, use config for that
         Sphere_GetOSInfo()->dwPlatformId != VER_PLATFORM_WIN32_NT) // We are running Win9x - So we are not an NT service.
     {
-        g_NTWindow._NTWInitParams = {hInstance, lpCmdLine, nCmdShow};
+        g_NTWindow._NTWInitParams = {hInstance, lpCmdLine, nShowCmd};
         g_NTWindow.start();
 
         int iRet = Sphere_MainEntryPoint(argc, argv);

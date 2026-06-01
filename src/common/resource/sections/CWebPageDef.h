@@ -101,11 +101,11 @@ public:
     /**
     * @brief   Query if the requested page exists..
     *
-    * @param   IsMatchPage The is match page.
+    * @param   pszMatch The is match page.
     *
     * @return  true if match, false if not.
     */
-    bool IsMatch(lpctstr IsMatchPage) const;
+    bool IsMatch(lpctstr pszMatch) const;
 
     /**
     * @brief   Sets source file to be given.
@@ -122,12 +122,12 @@ public:
     *
     * @param [in,out]  pClient     If non-null, the client.
     * @param   pszURLArgs          The URL arguments.
-    * @param [in,out]  pPostData   If non-null, information describing the post.
+    * @param [in,out]  pContentData   If non-null, information describing the post.
     * @param   uiContentLength     Length of the content.
     *
     * @return  true if it succeeds, false if it fails.
     */
-    bool ServPagePost(CClient * pClient, lpctstr pszURLArgs, tchar * pPostData, size_t uiContentLength);
+    bool ServPagePost(CClient * pClient, lpctstr pszURLArgs, tchar * pContentData, size_t uiContentLength);
 
     bool r_LoadVal(CScript & s) override;
     bool r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
@@ -158,7 +158,7 @@ public:
     */
     static void ServPage(CClient * pClient, tchar * pszPage, CSTime * pDateLastMod);
 
-    explicit CWebPageDef(const CResourceID &id);
+    explicit CWebPageDef(const CResourceID &rid);
     ~CWebPageDef() override = default;
 
     CWebPageDef(const CWebPageDef& copy) = delete;

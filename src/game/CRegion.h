@@ -73,7 +73,7 @@ public:
     CVarDefMap				m_TagDefs;		// attach extra tags here.
 	CVarDefMap				m_BaseDefs;		// New Variable storage system
 
-	TRIGRET_TYPE OnRegionTrigger( CTextConsole * pChar, RTRIG_TYPE trig );
+	TRIGRET_TYPE OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction );
 
 	lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
 	{
@@ -124,7 +124,7 @@ public:
 	void r_WriteBase( CScript & s );
 
 	bool r_LoadVal( CScript & s ) override;
-	bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 	virtual void r_WriteBody( CScript & s, lpctstr pszPrefix );
 	virtual void r_WriteModified( CScript & s );
 	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
@@ -182,7 +182,7 @@ public:
 
 	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
 	bool r_LoadVal( CScript & s ) override;
-    bool r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
+    bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false) override;
     void r_WriteBody( CScript &s, lpctstr pszPrefix ) override;
     void r_WriteModified( CScript &s ) override;
     void r_Write( CScript & s ) override;

@@ -153,10 +153,10 @@ tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t st
 
 /**
 * @brief Give the article and space to a word. For example, for "boot" will return "a ".
-* @param pszWords word to add the article.
+* @param pszWord word to add the article.
 * @return string with the article and a space.
 */
-const tchar * Str_GetArticleAndSpace(lpctstr_restrict pszWords) noexcept;
+const tchar * Str_GetArticleAndSpace(lpctstr_restrict pszWord) noexcept;
 
 /**
 * @brief Filter specific characters from a string.
@@ -268,49 +268,49 @@ int StrncpyCharBytesWritten(int iBytesToWrite, size_t uiBufSize, bool fPrintErro
 
 /**
 * @brief Look for a string in a table.
-* @param pFind string we are looking for.
-* @param ppTable table where we are looking for the string.
+* @param ptcFind string we are looking for.
+* @param pptcTable table where we are looking for the string.
 * @param iCount max iterations.
 * @return the index of string if success, -1 otherwise.
 */
-int FindTable(const tchar * pFind, const tchar * const * ppTable, int iCount) noexcept;
+int FindTable(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept;
 
 /**
 * @brief Look for a string in a table (binary search).
-* @param pFind string we are looking for.
-* @param ppTable table where we are looking for the string.
+* @param ptcFind string we are looking for.
+* @param pptcTable table where we are looking for the string.
 * @param iCount max iterations.
 * @return the index of string if success, -1 otherwise.
 */
-int FindTableSorted(const tchar * pFind, const tchar * const * ppTable, int iCount) noexcept;
+int FindTableSorted(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept;
 
 /**
 * @brief Look for a string header in a CAssocReg table (uses Str_CmpHeadI to compare instead of strcmpi).
-* @param pFind string we are looking for.
-* @param ppTable table where we are looking for the string.
+* @param pszFind string we are looking for.
+* @param ppszTable table where we are looking for the string.
 * @param iCount max iterations.
 * @param uiElemSize size of elements of the table.
 * @return the index of string if success, -1 otherwise.
 */
-int FindCAssocRegTableHeadSorted(const tchar * pFind, const tchar * const* ppTable, int iCount, size_t uiElemSize) noexcept;
+int FindCAssocRegTableHeadSorted(const tchar * pszFind, const tchar * const* ppszTable, int iCount, size_t uiElemSize) noexcept;
 
 /**
 * @brief Look for a string header in a table (uses Str_CmpHeadI to compare instead of strcmpi).
-* @param pFind string we are looking for.
-* @param ppTable table where we are looking for the string.
+* @param ptcFind string we are looking for.
+* @param pptcTable table where we are looking for the string.
 * @param iCount max iterations.
 * @return the index of string if success, -1 otherwise.
 */
-int FindTableHead(const tchar * pFind, const tchar * const * ppTable, int iCount) noexcept;
+int FindTableHead(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept;
 
 /**
 * @brief Look for a string header in a table (binary search, uses Str_CmpHeadI to compare instead of strcmpi).
-* @param pFind string we are looking for.
-* @param ppTable table where we are looking for the string.
+* @param ptcFind string we are looking for.
+* @param pptcTable table where we are looking for the string.
 * @param iCount max iterations.
 * @return the index of string if success, -1 otherwise.
 */
-int FindTableHeadSorted(const tchar * pFind, const tchar * const * ppTable, int iCount) noexcept;
+int FindTableHeadSorted(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept;
 
 /**
 * @param pszIn string to check.
@@ -321,6 +321,7 @@ bool Str_Untrusted_InvalidTermination(const tchar * pszIn, size_t uiMaxAcceptabl
 
 /**
 * @param pszIn string to check.
+* @param uiMaxAcceptableSize maximal size.
 * @return false if string match "[a-zA-Z0-9_- \'\.]+", true otherwise.
 */
 bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize = 100 /* arbitrary */) noexcept;

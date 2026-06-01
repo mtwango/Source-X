@@ -1107,14 +1107,14 @@ size_t strlen_mb(const char* ptr)
 }
 */
 
-size_t Str_UTF8CharCount(const char* strInUTF8MB) noexcept
+size_t Str_UTF8CharCount(const char* pStr) noexcept
 {
     size_t len; // number of characters in the string
 #ifdef MSVC_RUNTIME
-    mbstowcs_s(&len, nullptr, 0, strInUTF8MB, 0); // includes null terminator
+    mbstowcs_s(&len, nullptr, 0, pStr, 0); // includes null terminator
     len -= 1;
 #else
-    len = mbstowcs(nullptr, strInUTF8MB, 0); // not including null terminator
+    len = mbstowcs(nullptr, pStr, 0); // not including null terminator
 #endif
     return len;
 }
@@ -1127,28 +1127,28 @@ size_t Str_UTF8CharCount(const char* strInUTF8MB) noexcept
 * If retval >= siz, truncation occurs.
 */
 // Adapted from: OpenBSD: strlcpy.c,v 1.11 2006/05/05 15:27:38
-size_t Str_ConcatLimitNull(tchar *dst, const tchar *src, size_t siz) noexcept
+size_t Str_ConcatLimitNull(tchar *pDst, const tchar *pSrc, size_t uiMaxSize) noexcept
 {
-    if (siz == 0)
+    if (uiMaxSize == 0)
         return 0;
 
-    tchar *d = dst;
-    size_t n = siz;
+    tchar *d = pDst;
+    size_t n = uiMaxSize;
 
     /* Find the end of dst and adjust bytes left but don't go past end */
     while ((n-- != 0) && (*d != '\0'))
     {
         ++d;
     }
-    size_t dlen = d - dst;
-    n = siz - dlen;
+    size_t dlen = d - pDst;
+    n = uiMaxSize - dlen;
 
     if (n == 0)
     {
-        return (dlen + strlen(src));
+        return (dlen + strlen(pSrc));
     }
 
-    const tchar *s = src;
+    const tchar *s = pSrc;
     while (*s != '\0')
     {
         if (n != 1)
@@ -1161,7 +1161,7 @@ size_t Str_ConcatLimitNull(tchar *dst, const tchar *src, size_t siz) noexcept
     }
     *d = '\0';
 
-    return (dlen + (s - src));	/* count does not include '\0' */
+    return (dlen + (s - pSrc));	/* count does not include '\0' */
 }
 
 tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t str_len, size_t substr_len) noexcept

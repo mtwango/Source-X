@@ -72,8 +72,8 @@ lpctstr const CSkillDef::sm_szLoadKeys[SKC_QTY+1] =
     nullptr
 };
 
-CSkillDef::CSkillDef( SKILL_TYPE skill ) :
-    CResourceLink( CResourceID( RES_SKILL, skill ))
+CSkillDef::CSkillDef( SKILL_TYPE iSkill ) :
+    CResourceLink( CResourceID( RES_SKILL, iSkill ))
 {
     m_StatPercent	= 0;
     m_GainRadius	= 0;

@@ -64,7 +64,7 @@ struct CElementDef
 	int GetValLength() const;
 
 	bool GetValStr( const void * pBase, CSString & sVal ) const;
-	bool SetValStr( void * pBase, lpctstr pszVal ) const;
+	bool SetValStr( void * pBase, lpctstr ptcVal ) const;
 };
 
 struct CAssocReg	// associate members of some class/structure with entries in the registry.

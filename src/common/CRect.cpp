@@ -212,10 +212,10 @@ size_t CRect::Read( lpctstr pszVal )
 	return i;
 }
 
-tchar * CRect::Write( tchar * pBuffer, uint uiBufferLen) const
+tchar * CRect::Write( tchar * ptcBuffer, uint uiBufferLen) const
 {
-    snprintf(pBuffer, uiBufferLen, "%d,%d,%d,%d,%d", m_left, m_top, m_right, m_bottom, m_map);
-    return pBuffer;
+    snprintf(ptcBuffer, uiBufferLen, "%d,%d,%d,%d,%d", m_left, m_top, m_right, m_bottom, m_map);
+    return ptcBuffer;
 }
 
 lpctstr CRect::Write() const

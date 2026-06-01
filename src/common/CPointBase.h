@@ -86,7 +86,7 @@ public:
 
 	void Set( const CPointBase & pt ) noexcept;
 	void Set( short x, short y, char z = 0, uchar map = 0 ) noexcept;
-	int Read( tchar * pVal );
+	int Read( tchar * pszVal );
 
 	tchar * WriteUsed( tchar * ptcBuffer, size_t uiBufferLen ) const noexcept;
 	lpctstr WriteUsed() const noexcept;

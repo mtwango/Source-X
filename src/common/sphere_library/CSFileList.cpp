@@ -52,12 +52,12 @@ bool CSFileList::ReadFileInfo( lpctstr pszFilePath, time_t & dwDateChange, dword
 	return true;
 }
 
-int CSFileList::ReadDir( lpctstr pszFileDir, bool bShowError )
+int CSFileList::ReadDir( lpctstr pszFilePath, bool bShowError )
 {
 	ADDTOCALLSTACK("CSFileList::ReadDir");
 	// NOTE: It seems NOT to like the trailing \ alone
 	tchar szFileDir[SPHERE_MAX_PATH];
-	size_t len = Str_CopyLen(szFileDir, pszFileDir);
+	size_t len = Str_CopyLen(szFileDir, pszFilePath);
 #ifdef _WIN32
 	if ( len > 0 )
 	{

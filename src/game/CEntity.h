@@ -117,7 +117,7 @@ public:
     /**
     * @brief Copies contents of the components from the target
     */
-    void Copy(const CEntity *base);
+    void Copy(const CEntity *target);
 
     /**
     * @brief Calls _OnTick on all components.

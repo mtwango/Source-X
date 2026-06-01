@@ -599,10 +599,8 @@ void AbstractThread::run()
     setThreadName(getName());
     m_uiState = eRunningState::Running;
 
-    for (;;)
+    while (!shouldExit())
     {
-        if (shouldExit())
-            break;
 
         bool gotException = false;
 

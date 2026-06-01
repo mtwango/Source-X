@@ -1786,11 +1786,9 @@ MATCH_TYPE Str_Match(const tchar * pPattern, const tchar * pText) noexcept
                     return MATCH_PATTERN;
 
                 bool fMemberMatch = false;       // have I matched the [..] construct?
-                for (;;)
+                while (*pPattern != ']')
                 {
                     // if end of construct then fLoop is done
-                    if (*pPattern == ']')
-                        break;
 
                     // matching a '!', '^', '-', '\' or a ']'
                     if (*pPattern == '\\')

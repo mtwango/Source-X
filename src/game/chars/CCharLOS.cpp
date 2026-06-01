@@ -161,33 +161,26 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 	nPz = ptSrc.m_z;
 
 	std::vector<CPointMap> path;
-	for (;;)
+	while (BETWEENPOINT(nPx, ptDst.m_x, ptSrc.m_x) && BETWEENPOINT(nPy, ptDst.m_y, ptSrc.m_y) && BETWEENPOINT(nPz, ptDst.m_z, ptSrc.m_z))
 	{
-		if ( BETWEENPOINT(nPx, ptDst.m_x, ptSrc.m_x) && BETWEENPOINT(nPy, ptDst.m_y, ptSrc.m_y) && BETWEENPOINT(nPz, ptDst.m_z, ptSrc.m_z) )
-		{
-			dx = (int)APPROX(nPx);
-			dy = (int)APPROX(nPy);
-			dz = (int)APPROX(nPz);
-
-			// Add point to vector
-			if ( !path.empty() )
-			{
-                if (const CPointMap &ptEnd = path.back(); ptEnd.m_x != dx || ptEnd.m_y != dy || ptEnd.m_z != dz )
-					path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
-			}
-			else
-			{
-				path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
-			}
-			WARNLOS(("PATH X:%d Y:%d Z:%d\n", dx, dy, dz));
-
-			nPx += dFactorX;
-			nPy += dFactorY;
-			nPz += dFactorZ;
-		}
-		else
-			break;
-	}
+        dx = (int)APPROX(nPx);
+        dy = (int)APPROX(nPy);
+        dz = (int)APPROX(nPz);
+        // Add point to vector
+        if (!path.empty())
+        {
+            if (const CPointMap &ptEnd = path.back(); ptEnd.m_x != dx || ptEnd.m_y != dy || ptEnd.m_z != dz)
+                path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
+        }
+        else
+        {
+            path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
+        }
+        WARNLOS(("PATH X:%d Y:%d Z:%d\n", dx, dy, dz));
+        nPx += dFactorX;
+        nPy += dFactorY;
+        nPz += dFactorZ;
+    }
 
 	if ( !path.empty() )
 	{

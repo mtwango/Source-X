@@ -1656,7 +1656,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 
 		case CLIMODE_TARG_SKILL_MAGERY:
 		{
-            if (const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_tmSkillMagery.m_iSpell))
+            if (g_Cfg.GetSpellDef(m_tmSkillMagery.m_iSpell))
 			{
                 CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(m_tmSkillMagery.m_iSpell, 0, 0, m_Targ_Prv_UID.ObjFind());
@@ -1835,7 +1835,7 @@ bool CClient::addTargetItems( CLIMODE_TYPE targmode, ITEMID_TYPE id, HUE_TYPE co
 		if ( pItemDef->IsType(IT_STONE_GUILD) )
 		{
 			// Check if they are already in a guild first
-            if (CItemStone *pStone = m_pChar->Guild_Find(MEMORY_GUILD))
+            if (m_pChar->Guild_Find(MEMORY_GUILD))
 			{
 				addSysMessage( g_Cfg.GetDefaultMsg(DEFMSG_GUILD_ALREADY_MEMBER) );
 				return false;

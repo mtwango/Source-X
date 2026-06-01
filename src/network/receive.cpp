@@ -3291,7 +3291,7 @@ bool PacketTargetedSkill::onReceive(CNetState* net)
     }
 
     const CUID uidTarget(dwTargetUID);
-    if (CObjBase *pTarget = uidTarget.ObjFind())
+    if (uidTarget.ObjFind())
     {
         CClient* pClient = net->getClient();
         ASSERT(pClient);

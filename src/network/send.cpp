@@ -185,7 +185,7 @@ PacketObjectStatus::PacketObjectStatus(const CClient* target, CObjBase* object) 
 		}
 		else
 		{
-            if (const CItem *objectItem = object->IsItem() ? static_cast<const CItem *>(object) : nullptr)
+            if (object->IsItem() ? static_cast<const CItem *>(object) : nullptr)
             {
                 if (CCItemDamageable *pItem = static_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
                 {

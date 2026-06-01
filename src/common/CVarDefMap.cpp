@@ -324,8 +324,6 @@ CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNumNew");
 	CVarDefContNum * pVarNum = new CVarDefContNum( pszName, iVal );
-	if ( !pVarNum )
-		return nullptr;
 
     if (iterator res = m_Container.emplace(static_cast<CVarDefCont *>(pVarNum)); res != m_Container.end() )
 		return pVarNum;
@@ -428,8 +426,6 @@ CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStrNew");
 	CVarDefContStr * pVarStr = new CVarDefContStr( pszName, pszVal );
-	if ( !pVarStr )
-		return nullptr;
 
     if (iterator res = m_Container.emplace(static_cast<CVarDefCont *>(pVarStr)); res != m_Container.end() )
 		return pVarStr;

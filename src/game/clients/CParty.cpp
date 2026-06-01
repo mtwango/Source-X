@@ -489,7 +489,6 @@ bool CPartyDef::AcceptEvent(CChar *pCharAccept, const CUID &uidInviter, const bo
 	{
 		// Create the party now.
 		pParty = new CPartyDef(pCharInviter, pCharAccept);
-		ASSERT(pParty);
 		g_World.m_Parties.emplace_front(std::unique_ptr<CPartyDef>(pParty));
 		if (bSendMessages)
 			pCharInviter->SysMessage(pszMsg);

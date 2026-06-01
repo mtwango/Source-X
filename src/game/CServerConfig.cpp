@@ -5106,7 +5106,6 @@ bool CServerConfig::Load( bool fResync )
 	{
 		// must have at least 1 skill class.
 		CSkillClassDef * pSkillClass = new CSkillClassDef( CResourceID( RES_SKILLCLASS ));
-		ASSERT(pSkillClass);
         m_ResHash.AddSortKey( CResourceID( RES_SKILLCLASS, 0 ), pSkillClass );
 	}
 

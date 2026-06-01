@@ -31,8 +31,6 @@ SKILL_TYPE CChar::Skill_GetBest( uint iRank ) const
 		iRank = 0;
 
 	dword * pdwSkills = new dword [(size_t)iRank + 1]();
-	ASSERT(pdwSkills);
-
 	dword dwSkillTmp;
     for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{

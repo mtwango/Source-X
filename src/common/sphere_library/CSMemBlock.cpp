@@ -27,7 +27,6 @@ byte * CSMemBlock::AllocBase( size_t uiSize )  // Static
 {
     ASSERT(uiSize > 0);
     byte * pData = new byte[ uiSize ]; //();
-    ASSERT( pData != nullptr );
     return( pData );
 }
 

@@ -92,11 +92,6 @@ void AbstractString::ensureLengthHeap(size_t newLength)
 		m_realLength = newLength + newLength / 5;
 		char* newBuf = new char[m_realLength + 1];
 
-		if (newBuf == nullptr)
-		{
-			throw CSError(LOGL_FATAL, 0, "Run out of memory while allocating memory for string");
-		}
-
 	    // Protection from use after freeing newBuf.
         const char *oldBuf = m_buf;
 		if (oldBuf != nullptr)
@@ -334,9 +329,6 @@ void TemporaryString::resize(size_t newLength)
 
         m_realLength = newLength + newLength / 5;
         char* newBuf = new char[m_realLength + 1];
-        if (newBuf == nullptr)
-            throw CSError(LOGL_FATAL, 0, "Run out of memory while allocating memory for string");
-
         Str_CopyLimitNull(newBuf, m_buf, m_length);
         newBuf[m_length] = '\0';
 

@@ -506,7 +506,7 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 
-	CResourceLink * pBaseLink = static_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
+	CResourceLink * pBaseLink = dynamic_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
 	ASSERT(pBaseLink);
 	CCharBase * pBase = dynamic_cast <CCharBase *> (pBaseLink);
 	if ( pBase )
@@ -514,7 +514,6 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
 
 	// create a new base.
 	pBase = new CCharBase(baseID);
-	ASSERT(pBase);
 	pBase->CResourceLink::CopyTransfer(pBaseLink);
 
 	// replace existing one

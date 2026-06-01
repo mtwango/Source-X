@@ -436,9 +436,6 @@ CListDefCont* CListDefCont::CopySelf()
         return nullptr;
 
     CListDefCont* pNewList = new CListDefCont(m_Key.GetBuffer());
-	if ( !pNewList )
-        return nullptr;
-
     for (const CListDefContElem *pElem : m_listElements)
     {
         pNewList->m_listElements.push_back(pElem->CopySelf());

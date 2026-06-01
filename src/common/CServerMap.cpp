@@ -380,7 +380,6 @@ void CServerStaticsBlock::LoadStatics( dword ulBlockIndex, int map )
 		m_iStatics = (uint)(index.GetBlockLength()/sizeof(CUOStaticItemRec));
 		ASSERT(m_iStatics);
 		m_pStatics = new CUOStaticItemRec[m_iStatics];
-		ASSERT(m_pStatics);
 		if ( ! g_Install.ReadMulData(g_Install.m_Statics[g_MapList.GetMapFileNum(map)], index, m_pStatics) )
 		{
 			throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CServerMapBlock: Read Statics");
@@ -618,7 +617,6 @@ size_t CUOMulti::Load(MULTI_TYPE id)
 	case VERFORMAT_HIGHSEAS: // high seas multi format (CUOMultiItemRec_HS)
 		m_iItemQty = (uint)(Index.GetBlockLength() / sizeof(CUOMultiItemRec_HS));
 		m_pItems = new CUOMultiItemRec_HS[m_iItemQty];
-		ASSERT(m_pItems);
 
 		ASSERT((sizeof(m_pItems[0]) * m_iItemQty) >= Index.GetBlockLength());
 		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, m_pItems))
@@ -629,7 +627,6 @@ size_t CUOMulti::Load(MULTI_TYPE id)
 	default:
 		m_iItemQty = (uint)(Index.GetBlockLength() / sizeof(CUOMultiItemRec));
 		m_pItems = new CUOMultiItemRec_HS[m_iItemQty];
-		ASSERT(m_pItems);
 
 		CUOMultiItemRec* pItems = new CUOMultiItemRec[m_iItemQty];
 		ASSERT((sizeof(pItems[0]) * m_iItemQty) >= Index.GetBlockLength());

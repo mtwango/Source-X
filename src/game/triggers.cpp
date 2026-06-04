@@ -24,21 +24,21 @@ struct TRIGGER_T_ID
 static std::vector<TRIGGER_T_ID> sm_vTriggersId;
 
 
-bool IsTrigUsed(E_TRIGGERS id)
+bool IsTrigUsed(const E_TRIGGERS id)
 {
-    if ( g_Serv.IsLoadingGeneric() == true)
+    if ( g_Serv.IsLoadingGeneric())
         return false;
 
-    return (( (uint)id < sm_vTriggersId.size() ) && sm_vTriggersId[id].m_used );
+    return static_cast<uint>(id) < sm_vTriggersId.size() && sm_vTriggersId[id].m_used;
 }
 
 bool IsTrigUsed(const char *name)
 {
-    if ( g_Serv.IsLoadingGeneric() == true)
+    if ( g_Serv.IsLoadingGeneric())
         return false;
 
     if (const int index = FindTableSorted(name, kOrderedTrigsNames, std::size(kOrderedTrigsNames)); index >= 0)
-        return IsTrigUsed((E_TRIGGERS)index);
+        return IsTrigUsed(static_cast<E_TRIGGERS>(index));
 
     return true; //Must return true for custom triggers
 }
@@ -65,9 +65,9 @@ void TriglistClear()
     }
 }
 
-void TriglistAdd(E_TRIGGERS id)
+void TriglistAdd(const E_TRIGGERS id)
 {
-    if (sm_vTriggersId.size() )
+    if (!sm_vTriggersId.empty() )
         ++ sm_vTriggersId[id].m_used;
 }
 

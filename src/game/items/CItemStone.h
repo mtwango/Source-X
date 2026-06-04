@@ -9,7 +9,6 @@
 #include "../chars/CStoneMember.h"
 #include "CItem.h"
 
-
 enum STONEDISP_TYPE	// Hard coded Menus
 {
 	STONEDISP_NONE = 0,
@@ -51,7 +50,7 @@ class CItemStone : public CItem, public CSObjList
     int16 _iMaxShips;
     int16 _iMaxHouses;
 
-	void SetTownName();
+	void SetTownName() const;
 	bool SetName( lpctstr pszName ) override;
 	bool MoveTo(const CPointMap& pt, bool bForceFix = false) override;
 
@@ -71,23 +70,23 @@ public:
     CItemStone(const CItemStone& copy) = delete;
     CItemStone& operator=(const CItemStone& other) = delete;
 	CStoneMember * AddRecruit(const CChar * pChar, STONEPRIV_TYPE iPriv, bool bFull = false);
-    CMultiStorage *GetMultiStorage();
+    CMultiStorage *GetMultiStorage() const;
 
 	// War
 private:
-	void TheyDeclarePeace(const CItemStone * pEnemyStone, bool fForcePeace );
+	void TheyDeclarePeace(const CItemStone * pEnemyStone, bool fForcePeace ) const;
 	bool WeDeclareWar(CItemStone * pEnemyStone);
-	void WeDeclarePeace(const CUID &uidEnemy, bool fForcePeace = false);
-	void AnnounceWar( const CItemStone * pEnemyStone, bool fWeDeclare, bool fWar );
+	void WeDeclarePeace(const CUID &uid, bool fForcePeace = false) const;
+	void AnnounceWar( const CItemStone * pEnemyStone, bool fWeDeclare, bool fWar ) const;
 public:
 	bool IsAtWarWith( const CItemStone * pStone ) const;
 	bool IsAlliedWith( const CItemStone * pStone ) const;
 
-	bool CheckValidMember(const CStoneMember * pMember);
+	bool CheckValidMember(const CStoneMember * pMember) const;
 	int FixWeirdness() override;
 
 	void r_Write( CScript & s ) override;
-	bool r_WriteVal( lpctstr ptcKey, CSString & s, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
+	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 	bool r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef ) override;
 	bool r_LoadVal( CScript & s ) override;
 	bool r_Verb( CScript & s, CTextConsole * pSrc ) override; // Execute command from script
@@ -107,6 +106,5 @@ public:
 	lpctstr GetAbbrev() const;
 	void SetAbbrev( lpctstr pAbbrev );
 };
-
 
 #endif // _INC_CITEMSTONE_H

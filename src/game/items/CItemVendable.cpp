@@ -1,10 +1,9 @@
 
-//#include "../../common/CException.h" // included in the precompiled header
 #include "CItemVendable.h"
 
-CItemVendable::CItemVendable( ITEMID_TYPE id, CItemBase * pDef ) :
+CItemVendable::CItemVendable(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
-    CItem( id, pDef )
+    CItem( id, pItemDef )
 {
 	// Constructor
 	m_price = 0;
@@ -24,11 +23,11 @@ CItemVendable::~CItemVendable()
 void CItemVendable::DupeCopy( const CObjBase * pItemObj )
 {
 	ADDTOCALLSTACK("CItemVendable::DupeCopy");
-    auto pItem = dynamic_cast<const CItem*>(pItemObj);
+    const auto pItem = dynamic_cast<const CItem*>(pItemObj);
     ASSERT(pItem);
 	CItem::DupeCopy( pItem );
 
-    const auto pVendItem = dynamic_cast <const CItemVendable *>(pItem);
+    const auto *const pVendItem = dynamic_cast <const CItemVendable *>(pItem);
 	if ( pVendItem == nullptr )
 		return;
 
@@ -40,17 +39,17 @@ enum IVC_TYPE
 {
 	IVC_PRICE,
 	IVC_QUALITY,
-	IVC_QTY
+	IVC_QTY,
 };
 
 lpctstr const CItemVendable::sm_szLoadKeys[IVC_QTY+1] =
 {
 	"PRICE",
 	"QUALITY",
-	nullptr
+	nullptr,
 };
 
-bool CItemVendable::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemVendable::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CItemVendable::r_WriteVal");
@@ -64,7 +63,7 @@ bool CItemVendable::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSr
 		sVal.FormatVal( GetQuality());
 		return true;
 	default:
-		return (fNoCallParent ? false : CItem::r_WriteVal( ptcKey, sVal, pSrc ));
+		return fNoCallParent ? false : CItem::r_WriteVal(ptcKey, sVal, pSrc);
 	}
 	EXC_CATCH;
 
@@ -108,7 +107,7 @@ void CItemVendable::r_Write(CScript &s)
 		s.WriteKeyVal( "PRICE", m_price );
 }
 
-void CItemVendable::Restock( bool fSellToPlayers )
+void CItemVendable::Restock(const bool fSellToPlayers )
 {
 	ADDTOCALLSTACK("CItemVendable::Restock");
 	// This is on a non-pet vendor.
@@ -139,7 +138,7 @@ void CItemVendable::Restock( bool fSellToPlayers )
 	}
 }
 
-void CItemVendable::SetPlayerVendorPrice( dword lPrice )
+void CItemVendable::SetPlayerVendorPrice(const dword lPrice )
 {
 	ADDTOCALLSTACK("CItemVendable::SetPlayerVendorPrice");
 	// This can only be inside a vendor container.
@@ -151,7 +150,7 @@ word CItemVendable::GetQuality() const
 	return m_quality;
 }
 
-void CItemVendable::SetQuality(word quality)
+void CItemVendable::SetQuality(const word quality)
 {
 	m_quality = quality;
 }
@@ -163,7 +162,7 @@ dword CItemVendable::GetBasePrice() const
 	return m_price;
 }
 
-dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
+dword CItemVendable::GetVendorPrice(const int iConvertFactor , const bool forselling )
 {
 	ADDTOCALLSTACK("CItemVendable::GetVendorPrice");
 	// forselling = 0 Player is buying from a vendor.
@@ -186,8 +185,10 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 
 	//Check if there is an override value first
     if (const CVarDefCont *pVarDef = GetKey("OVERRIDE.VALUE", true))
+    {
 		llPrice = pVarDef->GetValNum();
-	else
+	}
+    else
 	{
 		if (!forselling) //When selling an item, you never check the price to avoid exploit
 		{
@@ -202,7 +203,7 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
         if ( IsType(IT_DEED) )
 		{
 			// Deeds just represent the item they are deeding.
-			pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(m_itDeed.m_Type)));
+			pItemDef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(ResGetIndex(m_itDeed.m_Type)));
 			if ( !pItemDef )
 				return 1;
 		}
@@ -216,7 +217,7 @@ dword CItemVendable::GetVendorPrice( int iConvertFactor , bool forselling )
 	if ( llPrice > UINT32_MAX )
 		return UINT32_MAX;
 
-    return (dword)llPrice;
+    return static_cast<dword>(llPrice);
 }
 
 bool CItemVendable::IsValidSaleItem( bool fBuyFromVendor ) const
@@ -250,13 +251,13 @@ bool CItemVendable::IsValidNPCSaleItem() const
 
     if (CItemBase *pItemDef = Item_GetDef(); m_price <= 0 && pItemDef->GetMakeValue(0) <= 0 )
 	{
-		DEBUG_ERR(( "Vendor uid=0%x selling unpriced item %s='%s'\n", (dword)(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
+		DEBUG_ERR(( "Vendor uid=0%x selling unpriced item %s='%s'\n", static_cast<dword>(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
 		return false;
 	}
 
 	if ( !IsValidSaleItem(true) )
 	{
-		DEBUG_ERR(( "Vendor uid=0%x selling bad item %s='%s'\n", (dword)(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
+		DEBUG_ERR(( "Vendor uid=0%x selling bad item %s='%s'\n", static_cast<dword>(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
 		return false;
 	}
 

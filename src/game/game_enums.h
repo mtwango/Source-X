@@ -28,7 +28,6 @@ enum RESDISPLAY_VERSION : char
 	RDS_QTY,
 };
 
-
 //////////////////////////////////////////////////////////////////////////
 // Combat
 
@@ -141,7 +140,6 @@ enum CLIMODE_TYPE	// What mode is the client to server connection in ? (waiting 
 
     CLIMODE_TARG_QTY = 0x2d6,
 };
-
 
 //////////////////////////////////////////////////////////////////////////
 // Buff Icons

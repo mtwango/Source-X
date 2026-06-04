@@ -8,7 +8,6 @@
 
 #include "CItemMulti.h"
 
-
 class CItemShip : public CItemMulti
 {
 // IT_SHIP
@@ -42,6 +41,5 @@ public:
     CItem * GetShipPlank(size_t index);
     //CItemBaseMulti::ShipSpeed GetShipSpeed();
 };
-
 
 #endif // _INC_CITEMSHIP_H

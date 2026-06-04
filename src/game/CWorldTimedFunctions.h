@@ -8,7 +8,6 @@
 
 #include "../common/CScriptContexts.h"
 #include "../common/CScriptObj.h"
-#include "../common/CUID.h"
 
 class CTimedFunction;
 class CScript;

@@ -2,8 +2,6 @@
 // CItemShip.cpp
 //
 
-//#include "../../common/CException.h" // included in the precompiled header
-//#include "../../common/CExpression.h" // included in the precompiled header
 #include "../chars/CChar.h"
 #include "../CServer.h"
 #include "../CWorldSearch.h"
@@ -12,7 +10,6 @@
 #include "CItem.h"
 
 /////////////////////////////////////////////////////////////////////////////
-
 
 CItemShip::CItemShip(ITEMID_TYPE id, CItemBase * pItemDef) :
     CTimedObject(PROFILE_SHIPS),
@@ -29,7 +26,7 @@ CItemShip::~CItemShip()
 }
 */
 
-bool CItem::Ship_Plank(bool fOpen)
+bool CItem::Ship_Plank(const bool fOpen)
 {
     ADDTOCALLSTACK("CItem::Plank");
     // IT_PLANK to IT_SHIP_SIDE and IT_SHIP_SIDE_LOCKED
@@ -51,13 +48,13 @@ bool CItem::Ship_Plank(bool fOpen)
             return true;
     }
 
-    IT_TYPE oldType = GetType();
+    const IT_TYPE oldType = GetType();
     SetID(idState);
 
     if (IsType(IT_SHIP_PLANK) && (oldType == IT_SHIP_SIDE || oldType == IT_SHIP_SIDE_LOCKED))
     {
         // Save the original Type of the plank if it used to be a ship side
-        m_itShipPlank.m_wSideType = (word)oldType;
+        m_itShipPlank.m_wSideType = static_cast<word>(oldType);
         if ( !_IsTimerSet() )
         {
             _SetTimeoutS(5); // autoclose the plank
@@ -69,7 +66,7 @@ bool CItem::Ship_Plank(bool fOpen)
         // Restore the type of the ship side
         if (m_itShipPlank.m_wSideType == IT_SHIP_SIDE || m_itShipPlank.m_wSideType == IT_SHIP_SIDE_LOCKED)
         {
-            SetType((IT_TYPE)(m_itShipPlank.m_wSideType));
+            SetType(static_cast<IT_TYPE>(m_itShipPlank.m_wSideType));
             if (_IsTimerSet())
                 SetTimeout(-1);  //We clear the timer otherwise the plank item will be removed if it is closed before the timer expires.
             ClrAttr(ATTR_DECAY); //We remove the ATTR_DECAY flag or the plank will disappear on next save.
@@ -100,7 +97,7 @@ bool CItemShip::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
     if (!strnicmp(ptcKey, "PLANK.", 6))
     {
         ptcKey += 6;
-        size_t i = Exp_GetSTVal(ptcKey);
+        const size_t i = Exp_GetSTVal(ptcKey);
         SKIP_SEPARATORS(ptcKey);
         pRef = GetShipPlank(i);
         return true;
@@ -112,7 +109,6 @@ bool CItemShip::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
 bool CItemShip::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command from script
 {
     return CItemMulti::r_Verb(s, pSrc);
-
 }
 
 void CItemShip::r_Write(CScript & s)
@@ -134,7 +130,7 @@ enum IMCS_TYPE : int
     IMCS_HATCH,
     IMCS_PLANK,
     IMCS_TILLER,
-    IMCS_QTY
+    IMCS_QTY,
 };
 
 lpctstr const CItemShip::sm_szLoadKeys[IMCS_QTY + 1] = // static
@@ -142,10 +138,10 @@ lpctstr const CItemShip::sm_szLoadKeys[IMCS_QTY + 1] = // static
     "HATCH",
     "PLANK",
     "TILLER",
-    nullptr
+    nullptr,
 };
 
-bool CItemShip::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemShip::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemShip::r_WriteVal");
@@ -156,7 +152,7 @@ bool CItemShip::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc,
         case IMCS_HATCH:
         {
             //ptcKey += 5;
-            if (CItem *pItemHold = GetShipHold())
+            if (CItem const * pItemHold = GetShipHold())
                 sVal.FormatHex(pItemHold->GetUID());
             else
                 sVal.SetValFalse();
@@ -233,7 +229,7 @@ bool CItemShip::r_LoadVal(CScript & s)
 int CItemShip::FixWeirdness()
 {
     ADDTOCALLSTACK("CItemShip::FixWeirdness");
-    int iResultCode = CItemMulti::FixWeirdness();
+    const int iResultCode = CItemMulti::FixWeirdness();
     if (iResultCode)
     {
         return iResultCode;
@@ -269,7 +265,7 @@ CItemContainer * CItemShip::GetShipHold()
         m_uidHold = pItem->GetUID();
     }
 
-    const auto pItemHold = dynamic_cast<CItemContainer *>(pItem);
+    auto *const pItemHold = dynamic_cast<CItemContainer *>(pItem);
     if (!pItemHold)
         return nullptr;
 
@@ -285,7 +281,7 @@ size_t CItemShip::GetShipPlankCount()
     return m_uidPlanks.size();
 }
 
-CItem * CItemShip::GetShipPlank(size_t index)
+CItem * CItemShip::GetShipPlank(const size_t index)
 {
     ADDTOCALLSTACK("CItemShip::GetShipPlank");
     // Check the current list of planks is valid

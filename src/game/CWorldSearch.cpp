@@ -1,4 +1,3 @@
-//#include "../common/CException.h" // included in the precompiled header
 #include "../common/CLog.h"
 #include "../game/chars/CChar.h"
 #include "../game/items/CItem.h"
@@ -7,7 +6,6 @@
 #include <array>
 
 static constexpr size_t kuiContainerScaleFactor = 2;
-
 
 // This was done before we added ObjectPool class.
 class CWorldSearchHolderImpl

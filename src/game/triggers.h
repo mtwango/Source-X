@@ -6,7 +6,6 @@
 #ifndef _INC_TRIGGERS_H
 #define _INC_TRIGGERS_H
 
-
 //	Triggers list
 
 #define TRIGGER_NAME_MAX_LEN    48
@@ -26,6 +25,5 @@ void TriglistAdd(E_TRIGGERS id);
 void TriglistAdd(const char *name);
 void Triglist(int &total, int &used);
 void TriglistPrint();
-
 
 #endif // _INC_TRIGGERS_H

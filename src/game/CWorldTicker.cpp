@@ -1,5 +1,4 @@
 #include "../common/sphere_library/scontainer_ops.h"
-//#include "../common/CException.h" // included in the precompiled header
 #include "../sphere/threads.h"
 #include "../sphere/ProfileTask.h"
 #include "chars/CChar.h"
@@ -22,7 +21,6 @@
 //#define CHAR_PERIODIC_COUNTER
 //#define STATUS_UPDATES_COUNTER
 */
-
 
 template <typename TPair, typename T>
 static void UnsortedVecDifference(
@@ -102,7 +100,6 @@ static void UnsortedVecDifference(
 
     vecMain.swap(vecElemBuffer);
 }
-
 
 template <typename TPair, typename T>
 static void SortedVecRemoveAddQueued(
@@ -620,7 +617,8 @@ bool CWorldTicker::AddCharTicking(CChar* pChar, bool fNeedsLock)
 
     const ProfileTask timersTask(PROFILE_TIMERS);
 
-    int64 iTickNext, iTickOld;
+    int64 iTickNext;
+    int64 iTickOld;
     bool fTickPending;
     UnreferencedParameter(fNeedsLock);
 #if MT_ENGINES
@@ -1011,7 +1009,7 @@ void CWorldTicker::ProcessTimedObjects()
                     _vTimedObjsTimeouts.size(), _vTimedObjsTimeoutsEraseReq.size(), _vTimedObjsTimeoutsAddReq.size());
 #endif
 
-            for (auto &val : _vTimedObjsTimeoutsAddReq | std::views::values)
+            for (const auto &val : _vTimedObjsTimeoutsAddReq | std::views::values)
             {
                 ASSERT(val->_fIsInWorldTickAddList == true);
                 val->_fIsInWorldTickAddList = false;
@@ -1051,7 +1049,7 @@ void CWorldTicker::ProcessTimedObjects()
                 //if (pTimedObj->_GetTimeoutRaw() > _iCurTickStartTime)
                 //    continue;
 
-                if (auto pObjBase = dynamic_cast<const CObjBase*>(pTimedObj))
+                if (const auto *pObjBase = dynamic_cast<const CObjBase*>(pTimedObj))
                 {
                     if (pObjBase->_IsBeingDeleted())
                         continue;
@@ -1099,7 +1097,7 @@ void CWorldTicker::ProcessTimedObjects()
 
     for (CTimedObject* pTimedObj : _vTimedObjsTimeoutsBuffer)    // Loop through all msecs stored, unless we passed the timestamp.
     {
-        auto ptcSubDesc = "Generic";
+        const auto *ptcSubDesc = "Generic";
 
         EXC_TRYSUB("Tick");
         EXC_SETSUB_BLOCK("Elapsed");
@@ -1120,7 +1118,7 @@ void CWorldTicker::ProcessTimedObjects()
         {
             case PROFILE_ITEMS:
             {
-                const auto pItem = dynamic_cast<CItem*>(pTimedObj);
+                auto *const pItem = dynamic_cast<CItem*>(pTimedObj);
                 ASSERT(pItem);
                 if (pItem->IsItemEquipped())
                 {
@@ -1128,7 +1126,7 @@ void CWorldTicker::ProcessTimedObjects()
                     CObjBaseTemplate* pObjTop = pItem->GetTopLevelObj();
                     ASSERT(pObjTop);
 
-                    if (const auto pChar = dynamic_cast<CChar *>(pObjTop))
+                    if (auto *const pChar = dynamic_cast<CChar *>(pObjTop))
                     {
                         fDelete = !pChar->OnTickEquip(pItem);
                         break;
@@ -1141,15 +1139,14 @@ void CWorldTicker::ProcessTimedObjects()
                 {
                     ptcSubDesc = "Item";
                 }
-                fDelete = (pItem->_OnTick() == false);
-                break;
+                fDelete = !pItem->_OnTick();
             }
             break;
 
             case PROFILE_CHARS:
             {
                 ptcSubDesc = "Char";
-                const auto pChar = dynamic_cast<CChar*>(pTimedObj);
+                auto *const pChar = dynamic_cast<CChar*>(pTimedObj);
                 ASSERT(pChar);
                 fDelete = !pChar->_OnTick();
                 if (!fDelete && pChar->m_pNPC && !pTimedObj->_IsTimerSet())
@@ -1200,7 +1197,7 @@ void CWorldTicker::ProcessTimedObjects()
         if (fDelete)
         {
             EXC_SETSUB_BLOCK("Delete");
-            const auto pObjBase = dynamic_cast<CObjBase*>(pTimedObj);
+            auto *const pObjBase = dynamic_cast<CObjBase*>(pTimedObj);
             ASSERT(pObjBase); // Only CObjBase-derived objects have the Delete method, and should be Delete-d.
             pObjBase->Delete();
         }
@@ -1280,9 +1277,7 @@ void CWorldTicker::ProcessCharPeriodicTicks()
             _vIndexMiscBuffer.clear();
             size_t uiProgressive = 0;
 
-            for (auto it = _vPeriodicCharsTicks.begin(), itEnd = _vPeriodicCharsTicks.end();
-                (it != itEnd) && (_iCurTickStartTime > it->first);
-                ++it, ++uiProgressive)
+            for (auto it = _vPeriodicCharsTicks.begin(), itEnd = _vPeriodicCharsTicks.end(); it != itEnd && _iCurTickStartTime > it->first; ++it, ++uiProgressive)
             {
                 ASSERT(it->first != 0);
                 CChar* pChar = it->second;
@@ -1345,7 +1340,6 @@ void CWorldTicker::ProcessCharPeriodicTicks()
 
     _vPeriodicCharsTicksBuffer.clear();
 }
-
 
 // Check timeouts and do ticks
 void CWorldTicker::Tick()

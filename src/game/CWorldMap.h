@@ -14,25 +14,19 @@
 
 class CObjBase;
 
-
 class CWorldMap
 {
 public:
 	static const char* m_sClassName;
 
 	// Natural resources
-
 	static CItem* CheckNaturalResource(const CPointMap& pt, IT_TYPE iType, bool fTest = true, CChar* pCharSrc = nullptr);
 
-
 	// Sectors
-
 	static CSector* GetSectorByIndex(int map, int index) noexcept;	// gets sector # from one map
 	static CSector* GetSectorByCoordsUnchecked(int map, short x, short y) noexcept;
 
-
 	// Map blocks (for caching) and terrain
-
 	static const CServerMapBlock* GetMapBlock(const CPointMap& pt);
 	static const CUOMapMeter* GetMapMeter(const CPointMap& pt); // Height of MAP0.MUL at given coordinates
 
@@ -44,9 +38,7 @@ public:
 	static CItemTypeDef* GetTerrainItemTypeDef(dword dwTerrainIndex);
 	static IT_TYPE		 GetTerrainItemType(dword dwTerrainIndex);
 
-
 	// Height checks
-
 	static void GetHeightPoint2(const CPointMap & pt, CServerMapBlockingState & block, bool fHouseCheck = false );
 	static char GetHeightPoint2(const CPointMap & pt, uint64 & uiBlockFlags, bool fHouseCheck = false); // Height of player who walked to X/Y/OLDZ
 
@@ -55,15 +47,12 @@ public:
 
 	static void GetFixPoint( const CPointMap & pt, CServerMapBlockingState & block);
 
-
 	// Object position-based search
-
 	static CPointMap FindItemTypeNearby( const CPointMap & pt, IT_TYPE iType, int iDistance = 0, bool fCheckMulti = false, bool fLimitZ = false );
 	static bool IsItemTypeNear( const CPointMap & pt, IT_TYPE iType, int iDistance, bool fCheckMulti );
 
 	static CPointMap FindTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int iDistance = 0 );
 	static bool IsTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int iDistance = 0 );
 };
-
 
 #endif // _INC_CWORLDMAP_H

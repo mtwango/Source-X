@@ -8,7 +8,6 @@
 #include "CTimedFunctionHandler.h"
 #include "CTimedObject.h"
 
-
 class CObjBase;
 class CChar;
 class CWorldClock;

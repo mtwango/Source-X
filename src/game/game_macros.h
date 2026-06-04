@@ -14,7 +14,6 @@
 #define IsAosFlagEnabled( value )	( g_Cfg.m_iFeatureAOS & (value) )
 #define IsResClient( value )		( GetAccount()->GetResDisp() >= (value) )
 
-
 /*  Numeric macros  */
 // In this case macros are more handy than enums
 
@@ -50,7 +49,6 @@
 #define FEATURE_EXTRA_SHADOWGUARD	0x10	// 0x200000 feature (unlock TOL shadowguard items on house design)
 #define FEATURE_EXTRA_ROLEPLAYFACES	0x20	// 0x002000 feature (unlock extra roleplay face styles on character creation) - enhanced clients only
 
-
 //--Damage
 #define DAMAGE_GOD			0x0001	// Nothing can block this.
 #define DAMAGE_HIT_BLUNT	0x0002	// Physical hit of some sort.
@@ -72,7 +70,6 @@
 #define DAMAGE_REACTIVE     0x80000 // Damage reflected by Reactive Armor spell.
 
 typedef uint32_t DAMAGE_TYPE;		// describe a type of damage.
-
 
 //--Spellflags
 #define SPELLFLAG_DIR_ANIM			    0x0000001	// Evoke type cast or directed. (animation)

@@ -25,7 +25,6 @@ class CSector;
 class CChar;
 class CItem;
 
-
 // Search for dynamic objects on a specified zone
 class CWorldSearch
 {
@@ -33,7 +32,7 @@ class CWorldSearch
     {
         None = 0,
         Items,
-        Chars
+        Chars,
     };
 
     int _iDist;                 // How far from the point are we interested in

@@ -4,7 +4,7 @@
 #include "CWorldTicker.h"
 #include <ranges>
 
-void CWorldTickingList::AddObjSingle(int64 iTimeout, CTimedObject* pObj, bool fForce) // static
+void CWorldTickingList::AddObjSingle(const int64 iTimeout, CTimedObject* pObj, const bool fForce) // static
 {
     //The lock on pObj should already be acquired by CTimedObject::SetTimeout
     g_World._Ticker.AddTimedObject(iTimeout, pObj, fForce);
@@ -21,12 +21,12 @@ auto CWorldTickingList::IsTimeoutRegistered(const CTimedObject* pTimedObject) ->
     return g_World._Ticker.IsTimeoutRegistered(pTimedObject);
 }
 
-void CWorldTickingList::AddCharPeriodic(CChar* pChar, bool fNeedsLock) // static
+void CWorldTickingList::AddCharPeriodic(CChar* pChar, const bool fNeedsLock) // static
 {
     g_World._Ticker.AddCharTicking(pChar, fNeedsLock);
 }
 
-bool CWorldTickingList::DelCharPeriodic(CChar* pChar, bool fNeedsLock) // static
+bool CWorldTickingList::DelCharPeriodic(CChar* pChar, const bool fNeedsLock) // static
 {
     return g_World._Ticker.DelCharTicking(pChar, fNeedsLock);
 }
@@ -36,12 +36,12 @@ auto CWorldTickingList::IsCharPeriodicTickRegistered(const CChar* pChar) -> std:
     return g_World._Ticker.IsCharPeriodicTickRegistered(pChar);
 }
 
-void CWorldTickingList::AddObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
+void CWorldTickingList::AddObjStatusUpdate(CObjBase* pObj, const bool fNeedsLock) // static
 {
     g_World._Ticker.AddObjStatusUpdate(pObj, fNeedsLock);
 }
 
-bool CWorldTickingList::DelObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
+bool CWorldTickingList::DelObjStatusUpdate(CObjBase* pObj, const bool fNeedsLock) // static
 {
     return g_World._Ticker.DelObjStatusUpdate(pObj, fNeedsLock);
 }
@@ -58,16 +58,16 @@ void CWorldTickingList::ClearTickingLists() // static
 #if MT_ENGINES
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vTimedObjsTimeouts.MT_CMUTEX);
 #endif
-        for (auto &cont = g_World._Ticker._vTimedObjsTimeouts; auto &val : cont | std::views::values) {
+        for (const auto & cont = g_World._Ticker._vTimedObjsTimeouts; const auto &val : cont | std::views::values) {
             DEBUG_ASSERT(val->_fIsInWorldTickAddList == false);
             val->_fIsInWorldTickList = false;
         }
-        for (auto &cont = g_World._Ticker._vTimedObjsTimeoutsAddReq; auto &val : cont | std::views::values) {
+        for (const auto & cont = g_World._Ticker._vTimedObjsTimeoutsAddReq; const auto &val : cont | std::views::values) {
             DEBUG_ASSERT(val->_fIsInWorldTickList == false);
             val->_fIsInWorldTickAddList = false;
         }
 #ifdef _DEBUG
-        for (auto& cont = g_World._Ticker._vTimedObjsTimeoutsEraseReq; auto& elem : cont) {
+        for (const auto & cont = g_World._Ticker._vTimedObjsTimeoutsEraseReq; const auto& elem : cont) {
             DEBUG_ASSERT(elem->_fIsInWorldTickList == false);
             DEBUG_ASSERT(elem->_fIsInWorldTickAddList == false);
         }
@@ -80,14 +80,14 @@ void CWorldTickingList::ClearTickingLists() // static
 #if MT_ENGINES
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vPeriodicCharsTicks.MT_CMUTEX);
 #endif
-        for (auto &cont = g_World._Ticker._vPeriodicCharsTicks; auto &val : cont | std::views::values) {
+        for (const auto & cont = g_World._Ticker._vPeriodicCharsTicks; const auto &val : cont | std::views::values) {
             val->_iTimePeriodicTick = 0;
         }
-        for (auto &cont = g_World._Ticker._vPeriodicCharsAddRequests; auto &val : cont | std::views::values) {
+        for (const auto & cont = g_World._Ticker._vPeriodicCharsAddRequests; const auto &val : cont | std::views::values) {
             val->_iTimePeriodicTick = 0;
         }
 #ifdef _DEBUG
-        for (auto& cont = g_World._Ticker._vPeriodicCharsEraseRequests; auto& elem : cont) {
+        for (const auto & cont = g_World._Ticker._vPeriodicCharsEraseRequests; const auto& elem : cont) {
             DEBUG_ASSERT(elem->_iTimePeriodicTick == 0);
         }
 #endif
@@ -101,14 +101,14 @@ void CWorldTickingList::ClearTickingLists() // static
         std::unique_lock<std::shared_mutex> lock(g_World._Ticker._vObjStatusUpdates.MT_CMUTEX);
 #endif
 
-        for (auto& cont = g_World._Ticker._vObjStatusUpdates; auto& elem : cont) {
+        for (const auto & cont = g_World._Ticker._vObjStatusUpdates; const auto& elem : cont) {
             elem->_fIsInStatusUpdatesList = false;
         }
-        for (auto& cont = g_World._Ticker._vObjStatusUpdatesAddRequests; auto& elem : cont) {
+        for (const auto & cont = g_World._Ticker._vObjStatusUpdatesAddRequests; const auto& elem : cont) {
             elem->_fIsInStatusUpdatesAddList = false;
         }
 #ifdef _DEBUG
-        for (auto& cont = g_World._Ticker._vObjStatusUpdatesEraseRequests; auto& elem : cont) {
+        for (const auto & cont = g_World._Ticker._vObjStatusUpdatesEraseRequests; const auto& elem : cont) {
             DEBUG_ASSERT(elem->_fIsInStatusUpdatesList == false);
             DEBUG_ASSERT(elem->_fIsInStatusUpdatesAddList == false);
         }

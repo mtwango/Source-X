@@ -6,7 +6,6 @@
 #endif
 
 #if defined(_WIN32) && !defined(pid_t)
-    //#include <timeapi.h>    // for timeBeginPeriod
 	#define pid_t int
 #endif
 
@@ -16,8 +15,6 @@
 
 #include "../common/CLog.h"
 #include "../common/CScriptParserBufs.h"
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "../common/CUOInstall.h"
 #include "../network/CNetworkManager.h"
 #include "../network/PingServer.h"
@@ -156,7 +153,7 @@ static bool WritePidFile(int iMode = 0)
     pidFile = fopen(fileName, "w");
     if (pidFile)
     {
-        pid_t spherepid = STDFUNC_GETPID();
+        pid_t const spherepid = STDFUNC_GETPID();
         fprintf(pidFile, "%d\n", spherepid);
         fclose(pidFile);
         return true;
@@ -165,7 +162,7 @@ static bool WritePidFile(int iMode = 0)
     return false;
 }
 
-int Sphere_InitServer( int argc, char *argv[] )
+int Sphere_InitServer(const int argc, char *argv[] )
 {
 	constexpr auto m_sClassName = "SphereInit";
     EXC_TRY("Init Server");
@@ -278,7 +275,7 @@ void Sphere_ExitServer()
 	g_World.Close();
 
 	lpctstr ptcReason;
-	int iExitFlag = g_Serv.GetExitFlag();
+	int const iExitFlag = g_Serv.GetExitFlag();
 	switch ( iExitFlag )
 	{
 		case -10:	ptcReason = "Unexpected error occurred";			break;
@@ -342,7 +339,7 @@ static int DocTestMain()
 #endif
 
 #ifdef _WIN32
-int Sphere_MainEntryPoint( int argc, char *argv[] )
+int Sphere_MainEntryPoint(const int argc, char *argv[] )
 #else
 int main( int argc, char * argv[] )
 #endif
@@ -438,7 +435,7 @@ int main( int argc, char * argv[] )
         {
             // Inline core on the bootstrap thread: release the startup context and bind g_Main.
             g_StartupMonitor.detachFromCurrentThread();
-            AbstractThread::ThreadBindingScope bind(g_Main, "T_Main");
+            AbstractThread::ThreadBindingScope const bind(g_Main, "T_Main");
             while (!g_Serv.GetExitFlag())
                 g_Main.tick();
         }
@@ -463,6 +460,5 @@ exit_server:
 
 	return -1;
 }
-
 
 #include "../tables/classnames.tbl"

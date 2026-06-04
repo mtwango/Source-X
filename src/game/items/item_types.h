@@ -224,8 +224,7 @@ enum IT_TYPE : int32_t		// double click type action.
 	IT_ARMOR_BONE = 305,	// 305 = t_armor_bone
 
 	IT_QTY = 306,
-	IT_TRIGGER = 1000	// custom triggers starts from here
+	IT_TRIGGER = 1000,	// custom triggers starts from here
 };
-
 
 #endif // _INC_ITEMTYPES_H

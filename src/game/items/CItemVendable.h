@@ -8,7 +8,6 @@
 
 #include "CItem.h"
 
-
 class CItemVendable : public CItem
 {
 	// Any item that can be sold and has value.
@@ -27,20 +26,19 @@ public:
 	word GetQuality() const;
 	void SetQuality( word quality = 0 );
 
-	void SetPlayerVendorPrice( dword dwVal );
+	void SetPlayerVendorPrice( dword lPrice );
 	dword GetBasePrice() const;
 	dword GetVendorPrice( int iConvertFactor , bool forselling);
 
 	bool IsValidSaleItem( bool fBuyFromVendor ) const;
 	bool IsValidNPCSaleItem() const;
 
-	void DupeCopy( const CObjBase * pItem ) override;  // overriding CItem::DupeCopy
+	void DupeCopy( const CObjBase * pItemObj ) override;  // overriding CItem::DupeCopy
 
 	void Restock( bool fSellToPlayers );
 	void r_Write( CScript & s ) override;
 	bool r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
 	bool r_LoadVal( CScript & s ) override;
 };
-
 
 #endif // _INC_CITEMVENDABLE_H

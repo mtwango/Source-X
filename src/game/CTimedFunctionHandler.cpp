@@ -6,9 +6,7 @@
 #include "CWorld.h"
 #include "CTimedFunctionHandler.h"
 
-
 #define TF_TICK_MAGIC_NUMBER		99
-
 
 CTimedFunctionHandler::CTimedFunctionHandler() :
 	_strLoadBufferCommand(CTimedFunction::kuiCommandSize, '\0'),
@@ -16,12 +14,12 @@ CTimedFunctionHandler::CTimedFunctionHandler() :
 {
 }
 
-int64 CTimedFunctionHandler::IsTimer(const CUID& uid, lpctstr ptcCommand) const
+int64 CTimedFunctionHandler::IsTimer(const CUID& uid, const lpctstr ptcCommand) const
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::IsTimer");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); (tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (const auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			return tfObj->GetTimerAdjusted();
 		}
@@ -29,24 +27,24 @@ int64 CTimedFunctionHandler::IsTimer(const CUID& uid, lpctstr ptcCommand) const
 	return 0;
 }
 
-void CTimedFunctionHandler::ClearUID( const CUID& uid )
+void CTimedFunctionHandler::ClearUID( const CUID& uid ) const
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::Erase");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj->GetUID() == uid)
+        if (auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj->GetUID() == uid)
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
 	}
 }
 
-void CTimedFunctionHandler::Stop(const CUID& uid, lpctstr ptcCommand)
+void CTimedFunctionHandler::Stop(const CUID& uid, const lpctstr ptcCommand) const
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::Stop");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
 	{
-        if (auto tfObj = dynamic_cast<CTimedFunction *>(obj); (tfObj->GetUID() == uid) && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (auto *tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
@@ -60,8 +58,8 @@ void CTimedFunctionHandler::Clear()
     _timedFunctions.ClearContainer(false);
 }
 
-TRIGRET_TYPE CTimedFunctionHandler::Loop(lpctstr ptcCommand, int iLoopsMade, CScriptLineContext StartContext,
-    CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult)
+TRIGRET_TYPE CTimedFunctionHandler::Loop(const lpctstr ptcCommand, int iLoopsMade, const CScriptLineContext StartContext,
+    CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult) const
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::Loop");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
@@ -73,7 +71,7 @@ TRIGRET_TYPE CTimedFunctionHandler::Loop(lpctstr ptcCommand, int iLoopsMade, CSc
 			return TRIGRET_ENDIF;
 		}
 
-        if (auto tfObj = static_cast<CTimedFunction *>(obj); !strcmpi(tfObj->GetCommand(), ptcCommand))
+        if (const auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); !strcmpi(tfObj->GetCommand(), ptcCommand))
 		{
 			CObjBase* pObj = tfObj->GetUID().ObjFind();
 			if (!pObj)
@@ -82,7 +80,7 @@ TRIGRET_TYPE CTimedFunctionHandler::Loop(lpctstr ptcCommand, int iLoopsMade, CSc
 				break;
 			}
 
-            TRIGRET_TYPE iRet = pObj->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
+            const TRIGRET_TYPE iRet = pObj->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
 
 			if (iRet == TRIGRET_BREAK)
 			{
@@ -151,7 +149,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 		// The "tick" value was used on the old 56* timerf ticking system. It always was a positive number.
 		//  Now X replaces this value in the save files to TF_TICK_MAGIC_NUMBER, so that we know that it comes from a X save file.
 		//  We need that info because on X we save the timeout in milliseconds, on 0.56 it was stored in tenths of second.
-        const int tick = (int)std::strtol(ppVal[0], nullptr, 10);
+        const int tick = static_cast<int>(std::strtol(ppVal[0], nullptr, 10));
 		if (errno == ERANGE)
 		{
 			g_Log.Event(LOGM_INIT | LOGL_ERROR, "Invalid TimerFNumbers in %sdata.scp. Invalid legacy tick (first value=%s).\n", SPHERE_FILE, ppVal[0]);
@@ -166,7 +164,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
             errno = oldErrno;
             return -1;
         }
-		const uint uid = (uint)uidTest;
+		const uint uid = static_cast<uint>(uidTest);
 
         errno = 0;
 		int64 elapsed = std::strtoll(ppVal[2], nullptr, 10);
@@ -191,12 +189,12 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 	return 0;
 }
 
-void CTimedFunctionHandler::r_Write( CScript & s )
+void CTimedFunctionHandler::r_Write( CScript & s ) const
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::r_Write");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
 	{
-        auto tfObj = static_cast<CTimedFunction*>(obj);
+        const auto *const tfObj = dynamic_cast<CTimedFunction*>(obj);
         ASSERT(tfObj);
         if (const CUID &uid = tfObj->GetUID(); uid.IsValidUID())
 		{

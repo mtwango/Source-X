@@ -10,10 +10,8 @@
 #include "CItem.h"
 #include <map>
 
-
 #define MAX_MULTI_LIST_OBJS 128
 #define MAX_MULTI_CONTENT 1024
-
 
 enum HOUSE_TYPE
 {
@@ -84,7 +82,7 @@ protected:
     /**
     * @brief Removes the region created by this multi and updates inside char's region
     */
-    void MultiUnRealizeRegion();
+    void MultiUnRealizeRegion() const;
     /**
     * @brief Creates a new region for this multi and update the world with it.
     */
@@ -295,12 +293,12 @@ public:
     * @brief Ejects a char from inside the house to the House Sign.
     * @param uidChar the char.
     */
-    void Eject(const CUID& uidChar);
+    void Eject(const CUID& uidChar) const;
     /**
     * @brief Ejects all chars from this house
     * @param uidChar this char will not be ejected (eg: the owner kicking all people)
     */
-    void EjectAll(const CUID &uidChar = CUID());
+    void EjectAll(const CUID &uidChar = CUID()) const;
     ///@}
 
 
@@ -315,16 +313,16 @@ public:
     * @param  fDupeOnBank creates a copy on the bank if true.
     * @return the Key.
     */
-    CItem *GenerateKey(const CUID& uidTarget, bool fDupeOnBank = false);
+    CItem *GenerateKey(const CUID& uidTarget, bool fDupeOnBank = false) const;
     /**
     * @brief Removes all the keys of this house from the given char.
     * @param uidTarget the char.
     */
-    void RemoveKeys(const CUID& uidTarget);
+    void RemoveKeys(const CUID& uidTarget) const;
     /**
     * @brief Calls RemoveKeys(player_uid) on all players with access to this house.
     */
-    void RemoveAllKeys();
+    void RemoveAllKeys() const;
 
     // Misc
     /**
@@ -575,7 +573,7 @@ public:
     * @brief Returns the total vendors.
     * @return the count.
     */
-    size_t GetVendorCount();
+    size_t GetVendorCount() const;
 
 protected:
     /**
@@ -583,7 +581,7 @@ protected:
     * @param pComponent the component
     * @param fIsAddon true if the component is an addon.
     */
-    void OnComponentCreate(CItem * pComponent, bool fIsAddon);
+    void OnComponentCreate(CItem * pComponent, bool fIsAddon) const;
 
 public:
     static const char *m_sClassName;
@@ -695,9 +693,9 @@ public:
     void DelMulti(const CUID& uidMulti);
     /**
     * @brief Gets the priv
-    * @param pMulti the multi to retrieve my privs.
+    * @param uidMulti the multi to retrieve my privs.
     */
-    HOUSE_PRIV GetPriv(const CUID& pMulti);
+    HOUSE_PRIV GetPriv(const CUID& uidMulti);
 
     /**
     * @brief Adds a house multi.
@@ -777,12 +775,12 @@ public:
     * adds with MultiCount.
     * @return the count.
     */
-    int16 GetShipCountTotal();
+    int16 GetShipCountTotal() const;
     /**
     * @brief The real count of ships.
     * @return the count.
     */
-    int16 GetShipCountReal();
+    int16 GetShipCountReal() const;
     /**
     * @brief Gets the ship at the given position.
     * @param iPos the position.

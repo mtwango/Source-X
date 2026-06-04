@@ -123,7 +123,7 @@ public:
     bool operator != (dword index) const noexcept {
 		return (GetObjUID() != index);
 	}
-    bool operator == (dword index) const noexcept {
+    bool operator == (const dword index) const noexcept {
 		return (GetObjUID() == index);
 	}
 	CUID& operator = (const CUID&) noexcept = default;

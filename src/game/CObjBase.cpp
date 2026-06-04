@@ -146,7 +146,7 @@ CObjBase::~CObjBase()
     if (CCSpawn *pSpawn = GetSpawn())    // If I was created from a Spawn
     {
         const CItem * pSpawnLink = pSpawn->GetLink();
-        if (const auto pChampion = static_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
+        if (auto *const pChampion = dynamic_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
         {
             pChampion->DelObj(GetUID());
         }
@@ -231,13 +231,13 @@ void CObjBase::DeletePrepare()
         _uiInternalStateFlags |= SF_TOPLEVEL;
 }
 
-void CObjBase::DeleteCleanup(bool fForce)
+void CObjBase::DeleteCleanup(const bool fForce)
 {
 	ADDTOCALLSTACK("CObjBase::DeleteCleanup");
 	_uiInternalStateFlags |= SF_DELETING;
 
+    CWorldTimedFunctions::ClearUID(GetUID());
 	CEntity::Delete(fForce);
-	CWorldTimedFunctions::ClearUID(GetUID());
 }
 
 bool CObjBase::Delete(bool fForce)

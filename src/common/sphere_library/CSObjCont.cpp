@@ -38,7 +38,7 @@ CSObjCont::~CSObjCont()
 
 // CSObjCont:: Modifiers.
 
-void CSObjCont::ClearContainer(bool fClosingWorld) noexcept
+void CSObjCont::ClearContainer(const bool fClosingWorld) noexcept
 {
 	if (_Contents.empty())
 		return;

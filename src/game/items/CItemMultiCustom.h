@@ -9,7 +9,6 @@
 #include "../uo_files/CUOMultiItemRec.h"
 #include "CItemMulti.h"
 
-
 class PacketHouseDesign;
 
 class CItemMultiCustom : public CItemMulti
@@ -99,9 +98,9 @@ public:
     void AddStairs(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z = INT8_MIN);
     void AddRoof(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z);
     void RemoveItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z);
-    bool RemoveStairs(CMultiComponent * pStairComponent);
+    bool RemoveStairs(const CMultiComponent * pStairComponent);
     void RemoveRoof(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z);
-    void SendVersionTo(CClient * pClientSrc) const;
+    void SendVersionTo(const CClient * pClientSrc) const;
     void SendStructureTo(CClient * pClientSrc);
     void BackupStructure();
     void RestoreStructure(CClient * pClientSrc = nullptr);
@@ -125,6 +124,5 @@ public:
         return &m_designMain;
     }
 };
-
 
 #endif // _INC_CITEMMULTICUSTOM_H

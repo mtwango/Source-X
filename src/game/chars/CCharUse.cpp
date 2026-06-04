@@ -89,7 +89,7 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 			continue;
 		}
 
-	    ITEMID_TYPE id = (ITEMID_TYPE)(rid.GetResIndex());
+        const auto id = static_cast<ITEMID_TYPE>(rid.GetResIndex());
 	    if (id == ITEMID_NOTHING)
 	    {
             g_Log.EventError("Corpse 0%" PRIx32 " (%s) has invalid resource in resource list\n",
@@ -127,8 +127,8 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 			break;*/
 
 		tchar* pszTmp = Str_GetTemp();
-		snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", (int)i);
-        ITEMID_TYPE id = (ITEMID_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum(pszTmp));
+		snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", static_cast<int>(i));
+        const auto id = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum(pszTmp))));
 		if (id == ITEMID_NOTHING)
 		{
 		    g_Log.EventError("Corpse 0%" PRIx32 " (%s) has invalid resource in resource list\n",
@@ -569,7 +569,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
 	}
 
 	// If there is a different ammo type on the butte, it must be removed first
-	ITEMID_TYPE ButteAmmoID = (ITEMID_TYPE)pButte->m_itArcheryButte.m_ridAmmoType.GetResIndex();
+    const auto ButteAmmoID = static_cast<ITEMID_TYPE>(pButte->m_itArcheryButte.m_ridAmmoType.GetResIndex());
 	ITEMID_TYPE WeaponAmmoID = ITEMID_NOTHING;
 	if ( pAmmo )
 	{
@@ -1001,9 +1001,9 @@ void CChar::Use_Drink( CItem * pItem )
 	}
 
 	const CItemBase *pItemDef = pItem->Item_GetDef();
-	ITEMID_TYPE idbottle = (ITEMID_TYPE)pItemDef->m_ttDrink.m_ridEmpty.GetResIndex();
+    auto idbottle = static_cast<ITEMID_TYPE>(pItemDef->m_ttDrink.m_ridEmpty.GetResIndex());
     dword dwDelay = (pItemDef->m_ttDrink.m_ridDelay ? pItemDef->m_ttDrink.m_ridDelay: (pItem->IsType(IT_BOOZE) ? 1500u : 15u)) * 10; //Minimum should be 1 as if we set 0, it makes effect cooldown infinite.
-    word wConsume = (word)1;
+    word wConsume = 1;
     word wBottleAmount = wConsume;
 
     if (IsTrigUsed(TRIGGER_DRINK))
@@ -1492,7 +1492,7 @@ bool CChar::Use_Seed( CItem * pSeed, CPointMap * pPoint )
 	}
 
 	const CItemBase *pItemDef = pSeed->Item_GetDef();
-	ITEMID_TYPE idReset = (ITEMID_TYPE)pItemDef->m_ttFruit.m_ridReset.GetResIndex();
+    const auto idReset = static_cast<ITEMID_TYPE>(pItemDef->m_ttFruit.m_ridReset.GetResIndex());
 	if ( idReset == 0 )
 	{
 		SysMessageDefault(DEFMSG_MSG_SEED_NOGOOD);
@@ -1982,7 +1982,7 @@ bool CChar::Use_Obj( CObjBase * pObj, bool fTestTouch, bool fScript  )
 	if ( IsClientActive() )
 		return GetClientActive()->Event_DoubleClick(pObj->GetUID(), false, fTestTouch, fScript);
 
-    CItem *pItem = dynamic_cast<CItem*>(pObj);
+    const auto pItem = dynamic_cast<CItem*>(pObj);
     if (!pItem)
         return false;
 
@@ -2014,8 +2014,8 @@ bool CChar::ItemEquipArmor( bool fForce )
 
 	for (CSObjContRec* pObjRec : *pPack)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		int iScore = pItem->Armor_GetDefense();
+        const auto pItem = static_cast<CItem*>(pObjRec);
+        const int iScore = pItem->Armor_GetDefense();
 		if ( !iScore )	// might not be armor
 			continue;
 
@@ -2060,8 +2060,8 @@ bool CChar::ItemEquipWeapon( bool fForce )
 
 	for (CSObjContRec* pObjRec : *pPack)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-        if (int iWeaponScore = NPC_GetWeaponUseScore(pItem); iWeaponScore > iWeaponScoreMax )
+        const auto pItem = static_cast<CItem*>(pObjRec);
+        if (const int iWeaponScore = NPC_GetWeaponUseScore(pItem); iWeaponScore > iWeaponScoreMax )
 		{
 			iWeaponScoreMax = iWeaponScore;
 			pBestWeapon = pItem;

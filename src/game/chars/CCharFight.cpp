@@ -434,7 +434,7 @@ int CChar::CalcArmorDefense() const
 
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		int iDefense = pItem->Armor_GetDefense();
 		if ( !iDefense && !pItem->IsType(IT_SPELL) )
 			continue;
@@ -763,9 +763,9 @@ effect_bounce:
             if ( OnTrigger( CTRIG_GetHit, pScriptArgs, pSrc ) == TRIGRET_RET_TRUE )
                 return 0;
             iDmg = (int)(pScriptArgs->m_iN1);
-            uiType = (DAMAGE_TYPE)(pScriptArgs->m_iN2);
+            uiType = static_cast<DAMAGE_TYPE>(pScriptArgs->m_iN2);
 
-            LAYER_TYPE iHitLayer = (LAYER_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageLayer"));
+            auto iHitLayer = static_cast<LAYER_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("ItemDamageLayer"));
             pItemHit = LayerFind(iHitLayer);
             if (pItemHit)
             {
@@ -1190,8 +1190,8 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 
 	int iDmgMin = 0;
 	int iDmgMax = 0;
-	STAT_TYPE iStatBonus = (STAT_TYPE)GetPropNum(COMP_PROPS_CHAR, PROPCH_COMBATBONUSSTAT, true);
-	int iStatBonusPercent = (int)GetPropNum(COMP_PROPS_CHAR, PROPCH_COMBATBONUSPERCENT, true);
+    auto iStatBonus = static_cast<STAT_TYPE>(GetPropNum(COMP_PROPS_CHAR, PROPCH_COMBATBONUSSTAT, true));
+	int iStatBonusPercent = GetPropNum(COMP_PROPS_CHAR, PROPCH_COMBATBONUSPERCENT, true);
 	if ( pWeapon != nullptr )
 	{
 		iDmgMin = pWeapon->Weapon_GetAttack(false);

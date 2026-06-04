@@ -180,7 +180,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
     //DEBUG_ERR(("GetSingle  ptcRefArgs %s\n",ptcRefArgs));
     GETNONWHITESPACE( ptcRefArgs );
     const size_t uiArgsCopySize = strlen(ptcRefArgs) + 1;
-    char * ptcRefArgsCopy = new char[uiArgsCopySize];
+    auto ptcRefArgsCopy = new char[uiArgsCopySize];
     Str_CopyLimitNull(ptcRefArgsCopy, ptcRefArgs, uiArgsCopySize);
 	/*bool IsNum = true; // Old Ellessar's code without support for negative numbers
     for( char ch = tolower(*ptcRefArgs); ch; ch = tolower(*(++ptcRefArgs)) )
@@ -251,7 +251,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 		case '\0':
 			return 0;
 	}
-    if (INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(ptcRefArgs, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
+    if (auto iIntrinsic = static_cast<INTRINSIC_TYPE>(FindTableHeadSorted(ptcRefArgs, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1));
         iIntrinsic >= 0 )
 	{
         if (size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]); strchr("( ", ptcRefArgs[iLen]) )

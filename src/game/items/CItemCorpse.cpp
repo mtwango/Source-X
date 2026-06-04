@@ -25,7 +25,7 @@ CItemCorpse::~CItemCorpse()
 }
 */
 
-bool CItemCorpse::IsCorpseResurrectable(CChar * pCharHealer, CChar * pCharGhost) const
+bool CItemCorpse::IsCorpseResurrectable(const CChar * pCharHealer, const CChar * pCharGhost) const
 {
 	if (!IsType(IT_CORPSE))
 	{
@@ -110,7 +110,7 @@ int CItemCorpse::GetWeight(word amount) const
 }
 
 
-bool CChar::CheckCorpseCrime( CItemCorpse *pCorpse, bool fLooting, bool fTest )
+bool CChar::CheckCorpseCrime(const CItemCorpse *pCorpse, const bool fLooting, const bool fTest )
 {
 	ADDTOCALLSTACK("CChar::CheckCorpseCrime");
 	// fLooting = looting as apposed to carving.
@@ -150,8 +150,8 @@ CItemCorpse *CChar::FindMyCorpse( bool fIgnoreLOS, int iRadius ) const
 			continue;
         if (pItem->m_TagDefs.GetKeyNum("NOREJOIN")) // The owner should not rejoin this body even if resurrected on top of it.
             continue;
-		CItemCorpse *pCorpse = dynamic_cast<CItemCorpse*>(pItem);
-		if ( !pCorpse || (pCorpse->m_uidLink != GetUID()) )
+        auto *const pCorpse = dynamic_cast<CItemCorpse*>(pItem);
+		if ( !pCorpse || pCorpse->m_uidLink != GetUID() )
 			continue;
 		if ( pCorpse->m_itCorpse.m_BaseID != _iPrev_id )	// not morphed type
 			continue;
@@ -177,7 +177,7 @@ CItemCorpse * CChar::MakeCorpse( bool fFrontFall )
 		return nullptr;
 	}
 
-	CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(CItem::CreateScript(ITEMID_CORPSE, this));
+    auto *const pCorpse = dynamic_cast<CItemCorpse *>(CItem::CreateScript(ITEMID_CORPSE, this));
 	if (pCorpse == nullptr)	// weird internal error
 		return nullptr;
 
@@ -243,7 +243,7 @@ bool CChar::RaiseCorpse( CItemCorpse * pCorpse )
         //Looping 2x to equip items first then send rest to pack
 		for ( CSObjContRec *pObjRec : pCorpse->GetIterationSafeContReverse() )
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 			if ( pItem->IsType(IT_HAIR) || pItem->IsType(IT_BEARD) )	// hair on corpse was copied!
 				continue;
 
@@ -252,7 +252,7 @@ bool CChar::RaiseCorpse( CItemCorpse * pCorpse )
 		}
         for (CSObjContRec* pObjRec : pCorpse->GetIterationSafeContReverse())
         {
-            CItem* pItem = static_cast<CItem*>(pObjRec);
+            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
             if (pItem->IsType(IT_HAIR) || pItem->IsType(IT_BEARD))	// hair on corpse was copied!
                 continue;
 

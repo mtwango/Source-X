@@ -39,7 +39,7 @@ private:
 
     bool processData(CNetState* state, Packet* buffer);                 // process received data
     bool processUnknownClientData(CNetState* state, Packet* buffer);    // process data from an unknown client type
-    bool processOtherClientData(CNetState* state, Packet* buffer);      // process data from a non-game client
+    bool processOtherClientData(const CNetState * state, Packet* buffer);      // process data from a non-game client
     bool processGameClientData(CNetState* state, Packet* buffer);       // process data from a game client
 };
 

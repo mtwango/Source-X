@@ -213,7 +213,7 @@ lpctstr CItemBase::GetName() const
 	return GetNamePluralize( GetTypeName(), false );
 }
 
-tchar * CItemBase::GetNamePluralize( lpctstr pszNameBase, bool fPluralize )	// static
+tchar * CItemBase::GetNamePluralize(const lpctstr pszNameBase, const bool fPluralize )	// static
 {
 	ADDTOCALLSTACK("CItemBase::GetNamePluralize");
 	tchar * pszName = Str_GetTemp();
@@ -252,23 +252,23 @@ tchar * CItemBase::GetNamePluralize( lpctstr pszNameBase, bool fPluralize )	// s
 	return pszName;
 }
 
-CREID_TYPE CItemBase::FindCharTrack( ITEMID_TYPE trackID )	// static
+CREID_TYPE CItemBase::FindCharTrack(const ITEMID_TYPE trackID )	// static
 {
 	ADDTOCALLSTACK("CItemBase::FindCharTrack");
 	// For figurines. convert to a creature.
 	// IT_EQ_HORSE
 	// IT_FIGURINE
 
-	CItemBase * pItemDef = FindItemBase( trackID );
+    const CItemBase * pItemDef = FindItemBase( trackID );
 	if ( pItemDef == nullptr )
 		return CREID_INVALID;
 	if ( ! pItemDef->IsType(IT_EQ_HORSE) && ! pItemDef->IsType(IT_FIGURINE) )
 		return CREID_INVALID;
 
-	return (CREID_TYPE)(pItemDef->m_ttFigurine.m_idChar.GetResIndex());
+	return static_cast<CREID_TYPE>(pItemDef->m_ttFigurine.m_idChar.GetResIndex());
 }
 
-bool CItemBase::IsTypeArmor( IT_TYPE type ) noexcept // static
+bool CItemBase::IsTypeArmor(const IT_TYPE type ) noexcept // static
 {
 	switch( type )
 	{
@@ -284,7 +284,7 @@ bool CItemBase::IsTypeArmor( IT_TYPE type ) noexcept // static
 	return false;
 }
 
-bool CItemBase::IsTypeWeapon( IT_TYPE type ) noexcept // static
+bool CItemBase::IsTypeWeapon(const IT_TYPE type ) noexcept // static
 {
 	// NOTE: a wand can be a weapon.
 	switch( type )
@@ -815,7 +815,7 @@ height_t CItemBase::GetItemHeight( ITEMID_TYPE id, uint64 *uiBlockFlags ) // sta
 	{
 		CResourceDef * pBaseStub = g_Cfg.m_ResHash.GetBarePtrAt( rid, index );
 		ASSERT(pBaseStub);
-        if ( CItemBase *pBase = dynamic_cast<CItemBase *>(pBaseStub) )
+        if (const auto *pBase = dynamic_cast<CItemBase *>(pBaseStub) )
 		{
 			*uiBlockFlags = pBase->m_Can & CAN_I_MOVEMASK;
 			return pBase->GetHeight();
@@ -1055,7 +1055,7 @@ enum IBC_TYPE
 	#define ADD(a,b) IBC_##a,
 	#include "../../tables/CItemBase_props.tbl"
 	#undef ADD
-	IBC_QTY
+	IBC_QTY,
 };
 
 lpctstr const CItemBase::sm_szLoadKeys[IBC_QTY+1] =
@@ -1063,7 +1063,7 @@ lpctstr const CItemBase::sm_szLoadKeys[IBC_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../../tables/CItemBase_props.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
@@ -1137,7 +1137,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 		{
 			if (!IsType(IT_SHIP))
 				return false;
-			CItemBaseMulti * pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+            auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 			ASSERT(pItemMulti);
 			sVal.FormatVal(pItemMulti->m_SpeedMode);
 		}
@@ -1147,7 +1147,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 			if (!IsType(IT_SHIP))
 				return false;
 			ptcKey += 9;
-			CItemBaseMulti * pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+            const auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 			ASSERT(pItemMulti);
 
 			if (*ptcKey == '.')
@@ -1174,7 +1174,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
             {
                 return false;
             }
-            const CItemBaseMulti * pItemMulti = dynamic_cast<const CItemBaseMulti*>(this);
+            const auto *const pItemMulti = dynamic_cast<const CItemBaseMulti*>(this);
             ASSERT(pItemMulti);
             sVal.FormatU8Val(pItemMulti->_iMultiCount);
         }break;
@@ -1473,9 +1473,9 @@ bool CItemBase::r_LoadVal( CScript &s )
 		{
 			if (!IsType(IT_SHIP))
 				return false;
-			CItemBaseMulti *pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+            auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 			ASSERT(pItemMulti);
-            ShipMovementSpeed speed = (ShipMovementSpeed)s.GetArgBVal();
+            auto speed = static_cast<ShipMovementSpeed>(s.GetArgBVal());
 			if (speed > SMS_FAST)
 				speed = SMS_FAST;
 			else if (speed < SMS_NORMAL)
@@ -1488,7 +1488,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			if (*ptcKey == '.')
 			{
 				++ptcKey;
-				CItemBaseMulti *pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+                auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 				ASSERT(pItemMulti);
 
 				if (!strnicmp(ptcKey, "TILES", 5))
@@ -1518,7 +1518,7 @@ bool CItemBase::r_LoadVal( CScript &s )
             {
                 return false;
             }
-            CItemBaseMulti * pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+            auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 			ASSERT(pItemMulti);
             pItemMulti->_iMultiCount = s.GetArgU8Val();
         }
@@ -1543,7 +1543,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                 m_flip_id.reserve(iArgQty);
 				for ( int i = 0; i < iArgQty; ++i )
 				{
-					ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, ppArgs[i] ));
+                    auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, ppArgs[i]));
 					if ( ! IsValidDispID( id ))
 						continue;
 					if ( IsSameDispID(id))
@@ -1660,8 +1660,8 @@ bool CItemBase::r_LoadVal( CScript &s )
                     return false;
                 }
 
-                ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
-                CItemBase * pItemDef = FindItemBase( id );	// make sure the base is loaded.
+                auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
+                CItemBase  const* pItemDef = FindItemBase( id );	// make sure the base is loaded.
                 if ( ! pItemDef )
                 {
                     g_Log.EventError( "Setting unknown base ID=0%x for base type %s\n", id, GetResourceName());
@@ -1820,7 +1820,7 @@ CItemBase * CItemBase::MakeDupeReplacement( CItemBase * pBase, ITEMID_TYPE idmas
 		pBaseNew->m_flip_id.emplace_back(id);
 
 	// create the dupe stub.
-	CItemBaseDupe * pBaseDupe = new CItemBaseDupe( id, pBaseNew );
+    const auto pBaseDupe = new CItemBaseDupe( id, pBaseNew );
     CUOItemTypeRec_HS tiledata = {};
 	if ( GetItemData( id, &tiledata ) )
 	{
@@ -1864,7 +1864,7 @@ CItemBase * CItemBaseMulti::MakeMultiRegion( CItemBase * pBase, CScript & s ) //
 		return pBase;
 	}
 
-	CItemBaseMulti * pMultiBase = dynamic_cast <CItemBaseMulti *>(pBase);
+    auto pMultiBase = dynamic_cast <CItemBaseMulti *>(pBase);
 	if ( pMultiBase == nullptr )
 	{
 		if ( pBase->GetRefInstances() > 0 )
@@ -2263,23 +2263,23 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 	if ( id <= ITEMID_NOTHING )
 		return nullptr;
 
-	CResourceID rid = CResourceID( RES_ITEMDEF, id );
-	size_t index = g_Cfg.m_ResHash.FindKey(rid);
+    const auto rid = CResourceID( RES_ITEMDEF, id );
+    const size_t index = g_Cfg.m_ResHash.FindKey(rid);
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 
 	CResourceDef * pBaseStub = g_Cfg.m_ResHash.GetBarePtrAt( rid, index );
 	ASSERT(pBaseStub);
 
-	CItemBase * pBase = dynamic_cast <CItemBase *>(pBaseStub);
+    auto *pBase = dynamic_cast <CItemBase *>(pBaseStub);
 	if ( pBase )
 		return pBase;	// already loaded all base info.
 
-    if (const CItemBaseDupe *pBaseDupe = dynamic_cast<const CItemBaseDupe *>(pBaseStub))
+    if (const auto *const pBaseDupe = dynamic_cast<const CItemBaseDupe *>(pBaseStub))
 		return pBaseDupe->GetItemDef();	// this is just a dupeitem
 
     // The rid was added to the ResourceHash, but it's not linked yet to a CItemBase (we do it on the first request).
-	CResourceLink * pBaseLink = dynamic_cast <CResourceLink *>(pBaseStub);
+    auto *const pBaseLink = dynamic_cast<CResourceLink *>(pBaseStub);
 	ASSERT(pBaseLink);
 
 	pBase = new CItemBase( id );
@@ -2356,14 +2356,14 @@ CItemBaseDupe::CItemBaseDupe(ITEMID_TYPE id, CItemBase* pMasterItem) :
 	ASSERT(pMasterItem->GetResourceID().GetResIndex() != id);
 }
 
-CItemBaseDupe * CItemBaseDupe::GetDupeRef( ITEMID_TYPE id ) // static
+CItemBaseDupe * CItemBaseDupe::GetDupeRef(const ITEMID_TYPE id ) // static
 {
 	ADDTOCALLSTACK("CItemBaseDupe::GetDupeRef");
 	if ( id <= 0 )
 		return nullptr;
 
-	CResourceID rid = CResourceID( RES_ITEMDEF, id );
-	size_t index = g_Cfg.m_ResHash.FindKey(rid);
+    const auto rid = CResourceID( RES_ITEMDEF, id );
+    const size_t index = g_Cfg.m_ResHash.FindKey(rid);
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 
@@ -2372,7 +2372,7 @@ CItemBaseDupe * CItemBaseDupe::GetDupeRef( ITEMID_TYPE id ) // static
     if ( dynamic_cast<CItemBase *>(pBaseStub) )
 		return nullptr; //We want to return Dupeitem, not Baseitem
 
-    if ( CItemBaseDupe *pBaseDupe = dynamic_cast<CItemBaseDupe *>(pBaseStub) )
+    if (auto *const pBaseDupe = dynamic_cast<CItemBaseDupe *>(pBaseStub) )
 		return pBaseDupe;	// this is just a dupeitem
 
 	return nullptr; //we suspect item is loaded
@@ -2388,7 +2388,7 @@ CItemBase* CItemBaseDupe::GetItemDef() const
 {
 	CResourceLink* pLink = m_MasterItem.GetRef();
 	ASSERT(pLink);
-	CItemBase* pItemDef = dynamic_cast <CItemBase*>(pLink);
+    auto *const pItemDef = dynamic_cast <CItemBase*>(pLink);
 	ASSERT(pItemDef);
 	return pItemDef;
 }

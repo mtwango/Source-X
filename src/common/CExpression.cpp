@@ -816,7 +816,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
     {
         // Symbol or intrinsinc function ?
 
-        if (INTRINSIC_TYPE iIntrinsic = (INTRINSIC_TYPE)FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1);
+        if (auto iIntrinsic = static_cast<INTRINSIC_TYPE>(FindTableHeadSorted(refStrExpr, sm_IntrinsicFunctions, std::size(sm_IntrinsicFunctions) - 1));
             iIntrinsic >= 0)
         {
             if (size_t iLen = strlen(sm_IntrinsicFunctions[iIntrinsic]); strchr("( ", refStrExpr[iLen]))
@@ -2147,7 +2147,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
 }
 
 bool CExpression::EvaluateConditionalSingle(
-    CScriptSubExprState& refSubExprState, CScriptExprContext& refExprContext,
+    const CScriptSubExprState & refSubExprState, CScriptExprContext& refExprContext,
     CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
     ADDTOCALLSTACK("CExpression::EvaluateConditionalSingle");

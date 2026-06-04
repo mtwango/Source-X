@@ -73,7 +73,7 @@ static void dword_q_sort(dword *numbers, dword left, dword right)
         dword_q_sort(numbers, pivot+1, right);
 }
 
-static void defragSphere(char *path)
+static void defragSphere(const char *path)
 {
     ASSERT(path != nullptr);
 
@@ -95,7 +95,7 @@ static void defragSphere(char *path)
     constexpr dword MAX_UID = 40'000'000U; // limit to 40mln of objects, takes 40mln*4bytes ~= 160mb
 
     dword dwIdxUID = 0;
-    dword* puids = (dword*)calloc(MAX_UID, sizeof(dword));
+    const auto puids = static_cast<dword*>(calloc(MAX_UID, sizeof(dword)));
     for ( uint i = 0; i < 3; ++i )
     {
         Str_CopyLimitNull(path_buf, path, sizeof(path_buf));
@@ -1367,7 +1367,7 @@ PLEVEL_TYPE CServer::GetPrivLevel() const
 	return PLEVEL_Owner;
 }
 
-void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
+void CServer::ProfileDump(const CTextConsole * pSrc, const bool bDump )
 {
 	ADDTOCALLSTACK("CServer::ProfileDump");
 	if ( !pSrc )
@@ -1424,8 +1424,8 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
 
 		for (int i = 0; i < PROFILE_QTY; ++i)
 		{
-            const PROFILE_TYPE iProfile = (PROFILE_TYPE)i;
-			if (profile.IsEnabled(iProfile) == false)
+            const auto iProfile = static_cast<PROFILE_TYPE>(i);
+			if (!profile.IsEnabled(iProfile))
 				continue;
 
             if (pSrc != this)
@@ -2290,7 +2290,7 @@ log_cont:
 
 //*********************************************************
 
-extern void defragSphere(char *);
+extern void defragSphere(const char *);
 
 
 bool CServer::CommandLinePreLoad( int argc, tchar * argv[] )
@@ -2394,8 +2394,8 @@ bool CServer::CommandLinePostLoad( int argc, tchar * argv[] )
 			case 'D':
 				// dump all the defines to a file.
 				{
-                    static constexpr char const * out_defs      = "defs.txt";
-                    static constexpr char const * out_resdefs   = "resdefs.txt";
+                    static constexpr auto out_defs      = "defs.txt";
+                    static constexpr auto out_resdefs   = "resdefs.txt";
 
                     CSFileText FileDefs;
                     if ( ! FileDefs.Open( out_defs, OF_WRITE|OF_TEXT ))
@@ -2709,7 +2709,7 @@ bool CServer::Load()
 	g_Log.Event(LOGM_INIT, "Compiled at %s (%s)\n\n", __DATE__, __TIME__);
 #endif
 #ifdef _NIGHTLYBUILD
-	static lpctstr pszNightlyMsg = "\r\n"
+	static auto pszNightlyMsg = "\r\n"
 		"-----------------------------------------------------------------\r\n"
 		"This is a nightly build of SphereServer. This build is to be used for testing and/or bug reporting ONLY.\r\n"
 		"DO NOT run this build on a live shard unless you know what you are doing!\r\n"

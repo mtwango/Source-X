@@ -201,7 +201,7 @@ bool CCItemDamageable::r_Verb(CScript & s, CTextConsole * pSrc)
 void CCItemDamageable::Copy(const CComponent * target)
 {
     ADDTOCALLSTACK("CCItemDamageable::Copy");
-    const CCItemDamageable *pTarget = static_cast<const CCItemDamageable*>(target);
+    const auto pTarget = static_cast<const CCItemDamageable*>(target);
     if (!pTarget)
     {
         return;

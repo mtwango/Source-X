@@ -260,7 +260,7 @@ class ThreadHolder
     ~ThreadHolder() noexcept = default;
 
 public:
-    static constexpr lpctstr m_sClassName = "ThreadHolder";
+    static constexpr auto m_sClassName = "ThreadHolder";
     static constexpr int m_kiInvalidThreadID = -1;
 
     // Singleton instance for slow-path ops

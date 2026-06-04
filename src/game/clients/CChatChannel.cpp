@@ -303,7 +303,7 @@ void CChatChannel::KickMember(CChatChanMember* pByMember, CChatChanMember* pMemb
     ADDTOCALLSTACK("CChatChannel::KickMember");
     ASSERT(pMember);
 
-    lpctstr pszByName = "SYSTEM";
+    auto pszByName = "SYSTEM";
     if (pByMember) // If nullptr, then an ADMIN or a GM did it
     {
         pszByName = pByMember->GetChatName();

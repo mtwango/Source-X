@@ -125,7 +125,7 @@ void CSObjCont::OnRemoveObj(CSObjContRec* pObjRec)	// Override this --> called w
 
 	pObjRec->m_pParent = nullptr;	// We are now unlinked.
 
-	iterator itObjRec = std::find(begin(), end(), pObjRec);
+    auto const itObjRec = std::find(begin(), end(), pObjRec);
     if (itObjRec == end())
         return;
 

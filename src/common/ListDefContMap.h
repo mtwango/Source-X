@@ -207,7 +207,7 @@ public:
 	void ClearKeys(lpctstr mask = nullptr);
 	void DeleteKey( lpctstr key );
 
-    bool r_LoadVal( lpctstr ptcKey, CScript & s ) NONVIRTUAL;
+    bool r_LoadVal( lpctstr ptcKey, const CScript & s ) NONVIRTUAL;
     bool r_Write( CTextConsole *pSrc, lpctstr pszString, CSString& strVal ) const NONVIRTUAL;
     void r_WriteSave( CScript& s ) const NONVIRTUAL;
 };

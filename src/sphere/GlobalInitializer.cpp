@@ -61,7 +61,7 @@ GlobalInitializer::GlobalInitializer()
 
     //--- Pre-startup sanity checks
 
-    constexpr const char* m_sClassName = "GlobalInitializer";
+    constexpr auto m_sClassName = "GlobalInitializer";
     EXC_TRY("Pre-startup Init");
 
     static_assert(MAX_BUFFER >= sizeof(CCommand));

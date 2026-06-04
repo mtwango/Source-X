@@ -866,7 +866,7 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
     }
 
     ASSERT(uiLen <= sizeof(CEvent));
-    std::unique_ptr<CEvent> bincopy = std::make_unique<CEvent>();		// in buffer. (from client)
+    const auto bincopy = std::make_unique<CEvent>();		// in buffer. (from client)
     memcpy(bincopy->m_Raw, pEvent->m_Raw, uiLen);
 	if (!m_Crypt.Decrypt( pEvent->m_Raw, bincopy->m_Raw, MAX_BUFFER, uiLen ))
     {

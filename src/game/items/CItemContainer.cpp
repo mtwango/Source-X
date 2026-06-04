@@ -120,7 +120,7 @@ bool CItemContainer::IsItemInTrade() const
 	// recursively get the item that is at "top" level.
 	if ( IsType(IT_EQ_TRADE_WINDOW) )
 		return true;
-    if (CItemContainer *pItemCont = dynamic_cast<CItemContainer *>(GetContainer()))
+    if (CItemContainer  const * pItemCont = dynamic_cast<CItemContainer *>(GetContainer()))
 		return pItemCont->IsItemInTrade();
 	return false;
 }
@@ -129,14 +129,14 @@ void CItemContainer::Trade_Status( bool bCheck )
 {
 	ADDTOCALLSTACK("CItemContainer::Trade_Status");
 	// Update trade status check boxes to both sides.
-	CItemContainer *pPartner = dynamic_cast<CItemContainer*>(m_uidLink.ItemFind());
+    const auto pPartner = dynamic_cast<CItemContainer*>(m_uidLink.ItemFind());
 	if ( !pPartner )
 		return;
 
-	CChar *pChar1 = dynamic_cast<CChar *>(GetParent());
+    const auto pChar1 = dynamic_cast<CChar *>(GetParent());
 	if ( !pChar1 || !pChar1->IsClientActive() )
 		return;
-	CChar *pChar2 = dynamic_cast<CChar *>(pPartner->GetParent());
+    const auto pChar2 = dynamic_cast<CChar *>(pPartner->GetParent());
 	if ( !pChar2 || !pChar2->IsClientActive() )
 		return;
 
@@ -166,7 +166,7 @@ void CItemContainer::Trade_Status( bool bCheck )
 		ushort i = 1;
 		for (CSObjContRec* pObjRec : *pPartner)
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            const auto pItem = static_cast<CItem*>(pObjRec);
             pScriptArgsPlayer1->m_VarObjs.Insert(i, pItem, true);
 			++i;
 		}
@@ -175,7 +175,7 @@ void CItemContainer::Trade_Status( bool bCheck )
 		i = 1;
 		for (CSObjContRec * pObjRec : *this)
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            const auto pItem = static_cast<CItem*>(pObjRec);
             pScriptArgsPlayer2->m_VarObjs.Insert(i, pItem, true);
 			++i;
 		}
@@ -191,13 +191,13 @@ void CItemContainer::Trade_Status( bool bCheck )
 	// Transfer items
 	for (CSObjContRec* pObjRec : pPartner->GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		pChar1->ItemBounce(pItem, g_Cfg.m_iBounceMessage);
 	}
 
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		pChar2->ItemBounce(pItem, g_Cfg.m_iBounceMessage);
 	}
 
@@ -252,13 +252,13 @@ void CItemContainer::Trade_UpdateGold( dword platinum, dword gold )
 {
 	ADDTOCALLSTACK("CItemContainer::Trade_UpdateGold");
 	// Update trade gold/platinum values on TOL clients
-	CItemContainer *pPartner = dynamic_cast<CItemContainer*>(m_uidLink.ItemFind());
+    const auto pPartner = dynamic_cast<CItemContainer*>(m_uidLink.ItemFind());
 	if ( !pPartner )
 		return;
-	CChar *pChar1 = dynamic_cast<CChar *>(GetParent());
+    const auto pChar1 = dynamic_cast<CChar *>(GetParent());
 	if ( !pChar1 || !pChar1->IsClientActive() )
 		return;
-	CChar *pChar2 = dynamic_cast<CChar *>(pPartner->GetParent());
+    const auto pChar2 = dynamic_cast<CChar *>(pPartner->GetParent());
 	if ( !pChar2 || !pChar2->IsClientActive() )
 		return;
 
@@ -292,7 +292,7 @@ bool CItemContainer::Trade_Delete()
 	ASSERT(IsType(IT_EQ_TRADE_WINDOW));
 
 
-	CChar *pChar = dynamic_cast<CChar *>(GetParent());
+    const auto pChar = dynamic_cast<CChar *>(GetParent());
 	if ( !pChar )
 		return false;
 
@@ -307,12 +307,12 @@ bool CItemContainer::Trade_Delete()
 	// Drop items back in my pack.
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		pChar->ItemBounce(pItem, g_Cfg.m_iBounceMessage);
 	}
 
 	// Kill my trading partner.
-	CItemContainer *pPartner = dynamic_cast<CItemContainer *>(m_uidLink.ItemFind());
+    const auto pPartner = dynamic_cast<CItemContainer *>(m_uidLink.ItemFind());
 	if ( !pPartner )
 		return false;
 
@@ -321,9 +321,9 @@ bool CItemContainer::Trade_Delete()
         CScriptTriggerArgsPtr pScriptArgsPlayer1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgsPlayer1->Init(pChar);
 
-        if (CChar *pChar2 = dynamic_cast<CChar *>(pPartner->GetParent()))
+        if (const auto pChar2 = dynamic_cast<CChar *>(pPartner->GetParent()))
 	    {
-            CScriptTriggerArgsPtr pScriptArgsPlayer2 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgsPlayer2 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgsPlayer2->Init(pChar2);
 
             pChar->OnTrigger(CTRIG_TradeClose, pScriptArgsPlayer1,  pChar);
@@ -360,7 +360,7 @@ void CItemContainer::OnWeightChange( int iChange )
 		return;
 
 	// Propagate the weight change up the stack if there is one.
-	CContainer *pCont = dynamic_cast<CContainer *>(GetParent());
+    const auto pCont = dynamic_cast<CContainer *>(GetParent());
 	if ( !pCont )
 		return;	// on ground.
 	pCont->OnWeightChange(iChange);
@@ -571,7 +571,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 			{
 				// Can't be put into any sort of a container.
 				// delete all it's pieces.
-				CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
+                const auto pCont = dynamic_cast<CItemContainer *>(pItem);
 				ASSERT(pCont);
 				pCont->ClearContainer(false);
 				break;
@@ -623,7 +623,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 		{
 			for (CSObjContRec* pObjRec : *this)
 			{
-				CItem* pTry = static_cast<CItem*>(pObjRec);
+                const auto pTry = static_cast<CItem*>(pObjRec);
 				pt = pTry->GetContainedPoint();
 				if ( pItem->Stack(pTry) )
 				{
@@ -648,7 +648,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 		bool fGridCellUsed[UCHAR_MAX + 1] {false};
 		for (const CSObjContRec* pObjRec : *this)
 		{
-			const CItem* pTry = static_cast<const CItem*>(pObjRec);
+            const auto pTry = static_cast<const CItem*>(pObjRec);
 			const auto idxGridTest = pTry->GetContainedGridIndex();
 
 			static_assert(sizeof(idxGridTest) == sizeof(uchar));
@@ -690,7 +690,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 				break;
 			}*/
 			{
-				CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem);
+                const auto pItemVend = dynamic_cast<CItemVendable *>(pItem);
 				if ( !pItemVend )
 				{
 					g_Log.Event(LOGL_WARN, "Vendor: deleting non-vendable item %s uid=0%x, vendor: %s, uid=0%x\n", pItem->GetResourceName(), pItem->GetUID().GetObjUID(), GetContainer()->GetName(), GetContainer()->GetUID().GetObjUID());
@@ -790,7 +790,7 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 {
 	ADDTOCALLSTACK("CItemContainer::OnRemoveObj");
 	// remove this object from the container list.
-	CItem *pItem = static_cast<CItem *>(pObjRec);
+    const auto pItem = static_cast<CItem *>(pObjRec);
 	ASSERT(pItem);
 	if ( IsType(IT_EQ_TRADE_WINDOW) )
 	{
@@ -799,7 +799,7 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 	}
 	if ( IsType(IT_EQ_VENDOR_BOX) && IsItemEquipped() )	// vendor boxes should ALWAYS be equipped !
 	{
-        if ( CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem) )
+        if (const auto pItemVend = dynamic_cast<CItemVendable *>(pItem) )
 			pItemVend->SetPlayerVendorPrice(0);
 	}
 	CContainer::OnRemoveObj(pObjRec);
@@ -835,13 +835,13 @@ void CItemContainer::DupeCopy( const CObjBase *pItemObj )
 
 	CItemVendable::DupeCopy(pItem);
 
-	const CItemContainer *pContItem = dynamic_cast<const CItemContainer *>(pItem);
+    const auto pContItem = dynamic_cast<const CItemContainer *>(pItem);
 	if ( !pContItem )
 		return;
 
 	for (const CSObjContRec* pObjRec : *pContItem)
 	{
-		const CItem* pContent = static_cast<const CItem*>(pObjRec);
+        const auto pContent = static_cast<const CItem*>(pObjRec);
 		ContentAdd(CreateDupeItem(pContent), pContent->GetContainedPoint());
 	}
 }
@@ -903,7 +903,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 	int iMaxWeight = m_ModMaxWeight;
 	if (GetContainedLayer() == LAYER_PACK && g_Cfg.m_iBackpackOverload > -1)
 	{
-		CChar* pCharContainerOwner = static_cast<CChar*>(GetContainer()); // Owner of the container
+        const auto pCharContainerOwner = static_cast<CChar*>(GetContainer()); // Owner of the container
 		iMaxWeight += (g_Cfg.Calc_MaxCarryWeight(pCharContainerOwner) + g_Cfg.m_iBackpackOverload);
 	}
 	if (iMaxWeight > 0 && (GetTotalWeight() + pItem->GetWeight() > iMaxWeight))
@@ -938,7 +938,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 				// Check if the item dropped in the bank is a container. If it is
 				// we need to calculate the number of items in that too.
 				size_t iItemsInContainer = 0;
-                if ( const CItemContainer *pContItem = dynamic_cast<const CItemContainer *>(pItem) )
+                if (const auto pContItem = dynamic_cast<const CItemContainer *>(pItem) )
 					iItemsInContainer = pContItem->ContentCountAll();
 
 				// Check the total number of items in the bankbox and the ev.
@@ -1034,7 +1034,7 @@ void CItemContainer::Restock()
 	if ( IsItemEquipped() )
 	{
 		// Part of a vendor.
-        if (CChar *pChar = dynamic_cast<CChar *>(GetParent()); pChar && !pChar->IsStatFlag(STATF_PET) )
+        if (const auto pChar = dynamic_cast<CChar *>(GetParent()); pChar && !pChar->IsStatFlag(STATF_PET) )
 		{
 			switch ( GetEquipLayer() )
 			{
@@ -1043,8 +1043,8 @@ void CItemContainer::Restock()
 				{
 					for (CSObjContRec* pObjRec : *this)
 					{
-						CItem* pItem = static_cast<CItem*>(pObjRec);
-                        if ( CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem) )
+                        const auto pItem = static_cast<CItem*>(pObjRec);
+                        if (const auto pVendItem = dynamic_cast<CItemVendable *>(pItem) )
 							pVendItem->Restock(true);
 					}
 				}
@@ -1061,8 +1061,8 @@ void CItemContainer::Restock()
 					// Reset what we will buy from players.
 					for (CSObjContRec* pObjRec : *this)
 					{
-						CItem* pItem = static_cast<CItem*>(pObjRec);
-                        if ( CItemVendable *pVendItem = dynamic_cast<CItemVendable *>(pItem) )
+                        const auto pItem = static_cast<CItem*>(pObjRec);
+                        if (const auto pVendItem = dynamic_cast<CItemVendable *>(pItem) )
 							pVendItem->Restock(false);
 					}
 				}
@@ -1083,7 +1083,7 @@ void CItemContainer::Restock()
 	}
 }
 
-void CItemContainer::OnOpenEvent( CChar *pCharOpener, const CObjBaseTemplate *pObjTop )
+void CItemContainer::OnOpenEvent(const CChar *pCharOpener, const CObjBaseTemplate *pObjTop )
 {
 	ADDTOCALLSTACK("CItemContainer::OnOpenEvent");
 	// The container is being opened. Explode ? etc ?
@@ -1093,7 +1093,7 @@ void CItemContainer::OnOpenEvent( CChar *pCharOpener, const CObjBaseTemplate *pO
 
 	if ( IsType(IT_EQ_BANK_BOX) || IsType(IT_EQ_VENDOR_BOX) )
 	{
-		const CChar *pCharTop = dynamic_cast<const CChar *>(pObjTop);
+        const auto pCharTop = dynamic_cast<const CChar *>(pObjTop);
 		if ( !pCharTop )
 			return;
 
@@ -1333,9 +1333,9 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 			if ( s.HasArgs() )
 			{
 				// 1 based pages.
-                if (size_t index = s.GetArgVal(); index > 0 && index <= GetContentCount() )
+                if (const size_t index = s.GetArgVal(); index > 0 && index <= GetContentCount() )
 				{
-					CItem *pItem = static_cast<CItem*>(GetContentIndex(index - 1));
+                    const auto pItem = static_cast<CItem*>(GetContentIndex(index - 1));
 					ASSERT(pItem);
 					pItem->Delete();
 					return true;

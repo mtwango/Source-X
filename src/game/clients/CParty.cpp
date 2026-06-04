@@ -59,7 +59,7 @@ size_t CPartyDef::DetachChar( CChar *pChar )
 	return i;
 }
 
-bool CPartyDef::SetMaster( CChar *pNewMaster )
+bool CPartyDef::SetMaster(const CChar *pNewMaster )
 {
 	if ( !pNewMaster )
 		return false;
@@ -93,7 +93,7 @@ bool CPartyDef::GetLootFlag( const CChar *pChar )
 }
 
 // ---------------------------------------------------------
-void CPartyDef::AddStatsUpdate( CChar *pChar, PacketSend *pPacket )
+void CPartyDef::AddStatsUpdate(const CChar *pChar, PacketSend *pPacket )
 {
 	ADDTOCALLSTACK("CPartyDef::AddStatsUpdate");
 	size_t iQty = m_Chars.GetCharCount();
@@ -515,7 +515,7 @@ enum PDV_TYPE
 	#define ADD(a,b) PDV_##a,
 	#include "../../tables/CParty_functions.tbl"
 	#undef ADD
-	PDV_QTY
+	PDV_QTY,
 };
 
 lpctstr const CPartyDef::sm_szVerbKeys[PDV_QTY+1] =
@@ -523,7 +523,7 @@ lpctstr const CPartyDef::sm_szVerbKeys[PDV_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../../tables/CParty_functions.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 enum PDC_TYPE
@@ -585,9 +585,9 @@ bool CPartyDef::r_LoadVal( CScript &s )
 				this->m_pSpeechFunction.Clear();
 			else
 			{
-				lpctstr ptcArg = s.GetArgStr();
+                const lpctstr ptcArg = s.GetArgStr();
 
-                if (CResourceLink *m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg)); !m_pTestEvent )
+                if (const auto m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg)); !m_pTestEvent )
 					return false;
 
 				this->m_pSpeechFunction.Format("%s", ptcArg);
@@ -633,7 +633,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 		}
 		if ( ptcKey[0] == '\0' )	// we where just testing the ref.
 		{
-            if ( CObjBase *pObj = dynamic_cast<CObjBase *>(pRef) )
+            if (const auto pObj = dynamic_cast<CObjBase *>(pRef) )
 				sVal.FormatHex(pObj->GetUID());
 			else
                 sVal.SetValTrue();

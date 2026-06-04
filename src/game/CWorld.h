@@ -219,7 +219,7 @@ public:
 	bool Save( bool fForceImmediate ); // Save world state
 	void SaveStatics();
 	bool LoadAll();
-	bool DumpAreas( CTextConsole * pSrc, lpctstr pszFilename );
+	bool DumpAreas(const CTextConsole * pSrc, lpctstr pszFilename );
 	void Close();
 
 	bool Export(lpctstr pszFilename, const CChar* pSrc, word wModeFlags = IMPFLAGS_ITEMS, int iDist = INT16_MAX, short dx = 0, short dy = 0);

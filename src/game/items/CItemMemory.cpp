@@ -102,7 +102,7 @@ int CItemMemory::FixWeirdness()
 		return iResultCode;	// get rid of it.
 	}
 
-	CChar *pChar = dynamic_cast<CChar*>(GetParent());
+    const CChar *pChar = dynamic_cast<CChar*>(GetParent());
 	if ( !pChar )
 	{
 		iResultCode = 0x4223;
@@ -119,7 +119,7 @@ int CItemMemory::FixWeirdness()
             return iResultCode;
         }
 
-        CCSpawn *pSpawn = static_cast<CCSpawn*>(pSpawnItem->GetComponent(COMP_SPAWN));
+        const auto pSpawn = static_cast<CCSpawn*>(pSpawnItem->GetComponent(COMP_SPAWN));
         ASSERT(pSpawn);
         if (pSpawn)
         {

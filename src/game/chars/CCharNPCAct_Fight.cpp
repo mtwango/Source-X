@@ -232,9 +232,9 @@ void CChar::NPC_Act_Fight()
             break;
         case TRIGRET_RET_DEFAULT: //(TRIGRET_TYPE)(2) :
         {
-            if (SKILL_TYPE iSkillforced = (SKILL_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("skill")))
+            if (const auto iSkillforced = static_cast<SKILL_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("skill")))))
             {
-                SPELL_TYPE iSpellforced = (SPELL_TYPE)ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("spell"));
+                const auto iSpellforced = static_cast<SPELL_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("spell"))));
                 if (g_Cfg.IsSkillFlag(iSkillforced, SKF_MAGIC))
                 {
                     m_atMagery.m_iSpell = iSpellforced;
@@ -311,9 +311,9 @@ void CChar::NPC_Act_Fight()
                 ITEMID_TYPE id = ITEMID_NOTHING;
                 if (pRock)
                 {
-                    lpctstr t_Str = pRock->GetValStr();
-                    CResourceID rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
-                    if (ITEMID_TYPE obj = (ITEMID_TYPE)(rid.GetResIndex()); ContentFind(CResourceID(RES_ITEMDEF, obj), 0, 2))
+                    const lpctstr t_Str = pRock->GetValStr();
+                    CResourceID const rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
+                    if (const auto obj = static_cast<ITEMID_TYPE>(rid.GetResIndex()); ContentFind(CResourceID(RES_ITEMDEF, obj), 0, 2))
                         id = ITEMID_NODRAW;
                 }
                 else

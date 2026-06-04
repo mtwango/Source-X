@@ -153,7 +153,7 @@ bool CCPropsChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iV
     {
         case PROPCH_NIGHTSIGHT:
         {
-            CChar * pChar = dynamic_cast <CChar*>(pLinkedObj);
+            const auto pChar = dynamic_cast <CChar*>(pLinkedObj);
             pChar->StatFlag_Mod( STATF_NIGHTSIGHT, (iVal > 0));
             if ( pChar->IsClientActive() )
                 pChar->GetClientActive()->addLight();
@@ -175,7 +175,7 @@ bool CCPropsChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iV
             // Maybe too a cliver check to not send update if not needed.
             if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE) || g_Cfg.m_fDisplayElementalResistance)
             {
-                CChar * pChar = dynamic_cast <CChar*>(pLinkedObj);
+                CChar const* pChar = dynamic_cast <CChar*>(pLinkedObj);
                 pChar->UpdateStatsFlag();
             }
             break;
@@ -194,7 +194,7 @@ bool CCPropsChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iV
         case PROPCH_LOWERREAGENTCOST:
         case PROPCH_LOWERMANACOST:
         {
-            CChar * pChar = dynamic_cast <CChar*>(pLinkedObj);
+            CChar const* pChar = dynamic_cast <CChar*>(pLinkedObj);
             pChar->UpdateStatsFlag();
             break;
         }
@@ -293,7 +293,7 @@ void CCPropsChar::r_Write(CScript & s)
 void CCPropsChar::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsChar::Copy");
-    const CCPropsChar *pTarget = dynamic_cast<const CCPropsChar*>(target);
+    const auto pTarget = dynamic_cast<const CCPropsChar*>(target);
     if (!pTarget)
         return;
 

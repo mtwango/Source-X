@@ -371,7 +371,7 @@ void CNTWindow::SetWindowTitle(LPCTSTR pText)
     _fNewWindowTitle = true;
 }
 
-bool CNTWindow::RegisterClass(char *className)	// static
+bool CNTWindow::RegisterClass(const char *className)	// static
 {
 	WNDCLASS wc = {};
 
@@ -498,7 +498,7 @@ LRESULT CNTWindow::OnUserTrayNotify( WPARAM wID, LPARAM lEvent )
 	return 0;	// not handled.
 }
 
-void CNTWindow::OnUserPostMessage( COLORREF color, CSString * psMsg )
+void CNTWindow::OnUserPostMessage(const COLORREF color, const CSString * psMsg )
 {
 	// WM_USER_POST_MSG
 	if ( psMsg )
@@ -518,9 +518,9 @@ void CNTWindow::OnSize( WPARAM nType, int cx, int cy )
 	{
 		if ( ! m_iHeightInput )
 		{
-			HFONT hFont = (HFONT)SendMessage(WM_GETFONT);
+            auto *hFont = reinterpret_cast<HFONT>(SendMessage(WM_GETFONT));
 			if ( !hFont )
-				hFont = (HFONT)GetStockObject(SYSTEM_FONT);
+				hFont = static_cast<HFONT>(GetStockObject(SYSTEM_FONT));
 			ASSERT(hFont);
 
 			LOGFONT logfont;
@@ -696,13 +696,13 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 	{
 	case EN_LINK:
 		{
-        if (ENLINK *pLink = (ENLINK *)(pnmh); pLink->msg == WM_LBUTTONDOWN )
+        if (ENLINK  const *pLink = reinterpret_cast<ENLINK *>(pnmh); pLink->msg == WM_LBUTTONDOWN )
 				return 1;
 			break;
 		}
 	case EN_MSGFILTER:
 		{
-			MSGFILTER	*pMsg = (MSGFILTER *)pnmh;
+			MSGFILTER const *pMsg = reinterpret_cast<MSGFILTER *>(pnmh);
 			ASSERT(pMsg);
 
 			switch ( pMsg->msg )

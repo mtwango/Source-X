@@ -13,7 +13,7 @@
 static int Sphere_OnTick()
 {
     // Give the world (CMainTask) a single tick. RETURN: 0 = everything is fine.
-    constexpr const char *m_sClassName = "SphereTick";
+    constexpr auto m_sClassName = "SphereTick";
     EXC_TRY("Tick");
 #ifdef _WIN32
     EXC_SET_BLOCK("service");

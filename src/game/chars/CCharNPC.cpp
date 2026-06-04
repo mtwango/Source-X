@@ -8,13 +8,12 @@
 #include "../triggers.h"
 #include "CCharNPC.h"
 
-
 lpctstr const CCharNPC::sm_szLoadKeys[CNC_QTY+1] =
 {
 #define ADD(a,b) b,
 #include "../../tables/CCharNpc_props.tbl"
 #undef ADD
-	nullptr
+	nullptr,
 };
 
 void CChar::ClearNPC()
@@ -296,8 +295,8 @@ void CChar::NPC_CreateTrigger()
 	CCharBase *pCharDef = Char_GetDef();
 
 	TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
-	lpctstr pszTrigName = "@Create";
-	CTRIG_TYPE iAction = (CTRIG_TYPE)FindTableSorted(pszTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1);
+    auto pszTrigName = "@Create";
+    auto iAction = static_cast<CTRIG_TYPE>(FindTableSorted(pszTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1));
 
 	// 2) TEVENTS
 	for (size_t i = 0; i < pCharDef->m_TEvents.size(); ++i)

@@ -62,14 +62,14 @@ void CClient::resendBuffs() const
 
 	for (const CSObjContRec* pObjRec : *pChar)
 	{
-		const CItem* pItem = dynamic_cast<const CItem*>(pObjRec);
+        const auto pItem = dynamic_cast<const CItem*>(pObjRec);
 		if (pItem == nullptr || !pItem->IsType(IT_SPELL))
 			continue;
 
 		wStatEffect = pItem->m_itSpell.m_spelllevel;
-        int64 iTimerEffectSigned = pItem->GetTimerSAdjusted();
-		wTimerEffect = (word)(maximum(iTimerEffectSigned, 0));
-        SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pItem->m_itSpell.m_spell));
+        const int64 iTimerEffectSigned = pItem->GetTimerSAdjusted();
+		wTimerEffect = static_cast<word>((maximum(iTimerEffectSigned, 0)));
+        const auto spell = static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itSpell.m_spell));
         const CSpellDef* pSpellDef = g_Cfg.GetSpellDef(spell);
 
 	    if (pSpellDef == nullptr)
@@ -370,7 +370,7 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 	// send corpse clothing
 	if ( !IsPriv(PRIV_DEBUG) && (fCorpse && CCharBase::IsPlayableID(pItem->GetCorpseType())) )	// cloths on corpse
 	{
-        if ( const CItemCorpse *pCorpse = static_cast<const CItemCorpse *>(pItem) )
+        if (const auto pCorpse = static_cast<const CItemCorpse *>(pItem) )
 		{
 			addContainerContents( pCorpse, false, true );	// send all corpse items
 			addContainerContents( pCorpse, true, true );	// equip proper items on corpse
@@ -383,7 +383,7 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 	if ( (pItem->IsType(IT_MULTI_CUSTOM)) && m_pChar->CanSee(pItem) )
 	{
 		// send house design version
-		const CItemMultiCustom *pItemMulti = dynamic_cast<const CItemMultiCustom *>(pItem);
+        const auto pItemMulti = dynamic_cast<const CItemMultiCustom *>(pItem);
         ASSERT(pItemMulti);
         pItemMulti->SendVersionTo(this);
 	}
@@ -394,7 +394,7 @@ void CClient::addItem_Equipped( const CItem * pItem )
 	ADDTOCALLSTACK("CClient::addItem_Equipped");
 	ASSERT(pItem);
 	// Equip a single item on a CChar.
-	CChar * pChar = dynamic_cast <CChar*> (pItem->GetParent());
+    const auto pChar = dynamic_cast <CChar*> (pItem->GetParent());
 	ASSERT( pChar != nullptr );
 
 	if ( ! m_pChar->CanSeeItem( pItem ) && m_pChar != pChar )
@@ -409,7 +409,7 @@ void CClient::addItem_InContainer( const CItem * pItem )
 {
 	ADDTOCALLSTACK("CClient::addItem_InContainer");
 	ASSERT(pItem);
-    if (CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem->GetParent()); pCont == nullptr )
+    if (const auto pCont = dynamic_cast<CItemContainer *>(pItem->GetParent()); pCont == nullptr )
 		return;
 
 	new PacketItemContainer(this, pItem);
@@ -1223,7 +1223,7 @@ void CClient::addItemName( CItem * pItem )
 	tchar szName[ MAX_ITEM_NAME_SIZE * 2 ];
 	size_t len = Str_CopyLimitNull( szName, pszNameFull, std::size(szName));
 
-    if (const CContainer *pCont = dynamic_cast<const CContainer *>(pItem); pCont != nullptr )
+    if (const auto pCont = dynamic_cast<const CContainer *>(pItem); pCont != nullptr )
 	{
 		// ??? Corpses show hair as an item !!
 		len += snprintf( szName+len, sizeof(szName) - len,
@@ -1241,10 +1241,10 @@ void CClient::addItemName( CItem * pItem )
 	}
 
 	// Show the priced value
-	CItemContainer * pMyCont = dynamic_cast <CItemContainer *>( pItem->GetParent());
+    const auto pMyCont = dynamic_cast <CItemContainer *>( pItem->GetParent());
 	if ( pMyCont != nullptr && pMyCont->IsType(IT_EQ_VENDOR_BOX))
 	{
-        if ( const CItemVendable *pVendItem = dynamic_cast<const CItemVendable *>(pItem) )
+        if (const auto pVendItem = dynamic_cast<const CItemVendable *>(pItem) )
 		{
 			len += snprintf( szName+len, sizeof(szName) - len, " (%u gp)", pVendItem->GetBasePrice());
 		}
@@ -1252,11 +1252,11 @@ void CClient::addItemName( CItem * pItem )
 
 	HUE_TYPE wHue = HUE_TEXT_DEF;
     if (const CVarDefCont *sVal = pItem->GetKey("NAME.HUE", true))
-		wHue = (HUE_TYPE)(sVal->GetValNum());
+		wHue = static_cast<HUE_TYPE>(sVal->GetValNum());
 
-    if ( const CItemCorpse *pCorpseItem = dynamic_cast<const CItemCorpse *>(pItem) )
+    if (const auto pCorpseItem = dynamic_cast<const CItemCorpse *>(pItem) )
 	{
-        if ( CChar *pCharCorpse = pCorpseItem->m_uidLink.CharFind() )
+        if (const CChar *pCharCorpse = pCorpseItem->m_uidLink.CharFind() )
 		{
 			wHue = pCharCorpse->Noto_GetHue( m_pChar, true );
 		}
@@ -1531,7 +1531,7 @@ bool CClient::addBookOpen( CItem * pBook ) const
 	{
 		// User written book.
 
-        if (CItemMessage *pMsgItem = dynamic_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
+        if (const auto pMsgItem = dynamic_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
             wPagesNow = pMsgItem->GetPageCount(); // for some reason we must send them now
 	}
 
@@ -1796,7 +1796,7 @@ void CClient::addTargetDeed( const CItem * pDeed )
 	// Place an item from a deed. preview all the stuff
 
 	ASSERT( m_Targ_UID == pDeed->GetUID());
-	ITEMID_TYPE iddef = (ITEMID_TYPE)(ResGetIndex(pDeed->m_itDeed.m_Type));
+    const auto iddef = static_cast<ITEMID_TYPE>(ResGetIndex(pDeed->m_itDeed.m_Type));
 	m_tmUseItem.m_pParent = pDeed->GetParent();	// Cheat Verify.
 	addTargetItems( CLIMODE_TARG_USE_ITEM, iddef, pDeed->GetHue() );
 }
@@ -1962,7 +1962,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
         if ( pItem->IsTypeMulti() )		// incoming multi on radar view
 		{
             const DIR_TYPE dirFace = pItem->GetDir(pCharThis);
-            const CItemMulti* pMulti = dynamic_cast<const CItemMulti*>(pItem);
+            const auto pMulti = dynamic_cast<const CItemMulti*>(pItem);
 
             // This looks like the only way to make this thing work. Even if i send the worldobj packet with the commented code, the client
             //  will ignore it (and SpyUO 2 doesn't show that packet ?! it only shows packets that actually result in the generation of a world item, how weird)
@@ -2398,13 +2398,13 @@ bool CClient::addShopMenuBuy( CChar * pVendor )
 
 	// Send item list and then price list first for layer 26, then for 27.
 	new PacketItemContents(this, pContainer, true, false);
-	PacketVendorBuyList *buyList = new PacketVendorBuyList();
-	size_t buyListCount = buyList->fillBuyData(pContainer, pVendor->NPC_GetVendorMarkup());
+    const auto buyList = new PacketVendorBuyList();
+    const size_t buyListCount = buyList->fillBuyData(pContainer, pVendor->NPC_GetVendorMarkup());
 	buyList->push(this);
 
 	new PacketItemContents(this, pContainerExtra, true, false);
-	PacketVendorBuyList *buyListExtra = new PacketVendorBuyList();
-	size_t buyListExtraCount = buyListExtra->fillBuyData(pContainerExtra, pVendor->NPC_GetVendorMarkup());
+    const auto buyListExtra = new PacketVendorBuyList();
+    const size_t buyListExtraCount = buyListExtra->fillBuyData(pContainerExtra, pVendor->NPC_GetVendorMarkup());
 	buyListExtra->push(this);
 
 	if (!buyListCount && !buyListExtraCount)
@@ -2552,7 +2552,7 @@ bool CClient::addBBoardMessage( const CItemContainer * pBoard, BBOARDF_TYPE flag
 	ADDTOCALLSTACK("CClient::addBBoardMessage");
 	ASSERT(pBoard);
 
-	CItemMessage *pMsgItem = dynamic_cast<CItemMessage *>(uidMsg.ItemFind());
+    const auto pMsgItem = dynamic_cast<CItemMessage *>(uidMsg.ItemFind());
 	if (pMsgItem == nullptr || !pBoard->IsItemInside( pMsgItem ))
 		return false;
 
@@ -2724,7 +2724,7 @@ void CClient::addKRToolbar( bool bEnable )
 void CClient::SendPacket( tchar * ptcKey )
 {
 	ADDTOCALLSTACK("CClient::SendPacket");
-	PacketSend* packet = new PacketSend(0, 0, PacketSend::PRI_NORMAL);
+    const auto packet = new PacketSend(0, 0, PacketSend::PRI_NORMAL);
 	packet->seek();
 
 	while ( *ptcKey )

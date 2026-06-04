@@ -25,7 +25,7 @@ void CSectorList::Init()
 	if ( _fInitialized )	//	disable changes on-a-fly
 		return;
 
-	// Initialize sector data for every map plane    
+	// Initialize sector data for every map plane.
     TemporaryString ts;
 	TemporaryString tsConcat;
 

@@ -368,7 +368,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 				break;
 			case IT_EQ_MEMORY_OBJ:
 			{
-                if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
+                if (const auto pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
 					Memory_UpdateFlags(pMemory);
 				break;
 			}
@@ -396,9 +396,9 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 
     ASSERT(pObRec);
     ASSERT(dynamic_cast<const CItem*>(pObRec));
-	CItem * pItem = static_cast <CItem*>(pObRec);
+    const auto pItem = static_cast <CItem*>(pObRec);
 
-	LAYER_TYPE layer = pItem->GetEquipLayer();
+    const LAYER_TYPE layer = pItem->GetEquipLayer();
 	if (( IsTrigUsed(TRIGGER_UNEQUIP) ) || ( IsTrigUsed(TRIGGER_ITEMUNEQUIP) ))
 	{
 		if ( layer != LAYER_DRAGGING && ! g_Serv.IsLoadingGeneric())
@@ -486,7 +486,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
         case IT_EQ_MEMORY_OBJ:
         {
             // Clear the associated flags.
-            if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
+            if (const auto pMemory = dynamic_cast<CItemMemory *>(pItem); pMemory != nullptr)
                 Memory_UpdateClearTypes(pMemory, 0xFFFF);
             break;
         }
@@ -594,7 +594,7 @@ void CChar::UnEquipAllItems( CItemContainer * pDest, bool fLeaveHands )
 		if (pObjRec->GetParent() != this)
 			continue;
 
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		LAYER_TYPE layer = pItem->GetEquipLayer();
 
 		switch ( layer )
@@ -669,7 +669,7 @@ void CChar::UpdateDrag( CItem * pItem, CObjBase * pCont, CPointMap * pt )
 	if ( !pCont && !pt && pItem->GetTopLevelObj() == this )		// doesn't work for ground objects
 		return;
 
-	PacketDragAnimation* cmd = new PacketDragAnimation(this, pItem, pCont, pt);
+    const auto cmd = new PacketDragAnimation(this, pItem, pCont, pt);
 	UpdateCanSee(cmd, m_pClient);
 }
 
@@ -2279,11 +2279,11 @@ bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , by
 	if (action < 0 || action >= ANIM_QTY)
 		return false;
 
-	ANIM_TYPE_NEW subaction = (ANIM_TYPE_NEW)(-1);
+    auto subaction = static_cast<ANIM_TYPE_NEW>(-1);
 	byte variation = 0;		//Seems to have some effect for humans/elfs vs gargoyles
 	if (fTranslate)
 		action = GenerateAnimate(action, true, fBackward);
-	ANIM_TYPE_NEW action1 = (ANIM_TYPE_NEW)(action);
+    auto action1 = static_cast<ANIM_TYPE_NEW>(action);
 
 	if (IsPlayableCharacter())		//Perform these checks only for Gargoyles or in Enhanced Client
 	{
@@ -2424,8 +2424,8 @@ bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , by
 	//  On 2D/CC clients it can play Gargoyle animations, on Enhanced Client it can play some Gargoyle anims.
 	//	On 2D/CC clients (even recent, Stygian Abyss ones) it supports the animation "timing"/delay, on Enhanced Client it has a fixed delay.
 
-	PacketActionBasic* cmdnew = new PacketActionBasic(this, action1, subaction, variation);
-	PacketAction* cmd = new PacketAction(this, action, 1, fBackward, iFrameDelay, iAnimLen);
+    const auto cmdnew = new PacketActionBasic(this, action1, subaction, variation);
+    const auto cmd = new PacketAction(this, action, 1, fBackward, iFrameDelay, iAnimLen);
 
 	ClientIterator it;
 	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
@@ -2846,7 +2846,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		return -1;
 
 	CObjBaseTemplate * pObjTop = pItem->GetTopLevelObj();
-    CChar* pCharTop = dynamic_cast<CChar*>(pObjTop);
+    const auto pCharTop = dynamic_cast<CChar*>(pObjTop);
 
 	if( IsClientActive() )
 	{
@@ -2856,7 +2856,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 	        return -1;
 	    }
 
-        if (CItem *pItemCont = dynamic_cast<CItem *>(pItemParent); pItemCont != nullptr )
+        if (const auto pItemCont = dynamic_cast<CItem *>(pItemParent); pItemCont != nullptr )
 		{
             const CPointMap& ptTop = GetTopPoint();
 			// Don't allow taking items from the bank unless we opened it here
@@ -2873,7 +2873,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 
 			// protect from snoop - disallow picking from not opened containers
 			bool fIsInOpenedContainer = false;
-            if (CClient::OpenedContainerMap_t::iterator itContainerFound = client->m_openedContainers.find(pItemCont->GetUID().GetPrivateUID());
+            if (const auto itContainerFound = client->m_openedContainers.find(pItemCont->GetUID().GetPrivateUID());
                 itContainerFound != client->m_openedContainers.end() )
 			{
 				const dword dwTopContainerUID = itContainerFound->second.first.first;
@@ -2898,7 +2898,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 					}
 					else
 					{
-                        if (CItem *pItemTop = dynamic_cast<CItem *>(pObjTop);
+                        if (const auto pItemTop = dynamic_cast<CItem *>(pObjTop);
                             pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
 						{
                             fIsInOpenedContainer = true;
@@ -2925,7 +2925,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		return -1;
 	}
 
-    if (CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(pObjTop))
+    if (const auto pCorpse = dynamic_cast<CItemCorpse *>(pObjTop))
 	{
 		if (pCorpse->m_uidLink == GetUID())
 		{
@@ -3009,7 +3009,7 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 		}
 		if (( trigger == ITRIG_PICKUP_PACK ) && (( IsTrigUsed(TRIGGER_PICKUP_SELF) ) || ( IsTrigUsed(TRIGGER_ITEMPICKUP_SELF) )))
 		{
-            if ( CItem *pContItem = dynamic_cast<CItem *>(pItem->GetContainer()) )
+            if (const auto pContItem = dynamic_cast<CItem *>(pItem->GetContainer()) )
 			{
                 CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(pItem);
@@ -3128,7 +3128,7 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
             if (ret == TRIGRET_RET_TRUE)
 			{
 				fCanAddToPack = false;
-                if (const CItem *pCont = dynamic_cast<const CItem *>(pItem->GetContainer());
+                if (const auto pCont = dynamic_cast<const CItem *>(pItem->GetContainer());
                     pCont == nullptr || pPrevCont == pCont) //In the same cont, but unable to go there
 					fDropOnGround = true;
 				else //we changed the cont in the script
@@ -3186,7 +3186,7 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
             iDecayTime = pScriptArgs->m_iN1 * MSECS_PER_TENTH;
 
 			// Warning: here we ignore the read-onlyness of CSString's buffer only because we know that CPointMap constructor won't write past the end, but only replace some characters with '\0'. It's not worth it to build another string just for that.
-            tchar* ptcArgs = const_cast<tchar*>(pScriptArgs->m_s1.GetBuffer());
+            const auto ptcArgs = const_cast<tchar*>(pScriptArgs->m_s1.GetBuffer());
             if (const CPointMap ptDropNew(ptcArgs); !ptDropNew.IsValidPoint())
                 g_Log.EventError("Trying to override item drop P with an invalid P. Using the original one.\n");
             else
@@ -3705,7 +3705,7 @@ CItem* CChar::Horse_ValidateMountItem(CItem *pMountItem) const
 
     if (pMountItem->IsType(IT_EQ_HORSE))	// It's a mount item
     {
-        if (const CChar *pRider = dynamic_cast<const CChar *>(pMountItem->GetTopLevelObj()))
+        if (const auto pRider = dynamic_cast<const CChar *>(pMountItem->GetTopLevelObj()))
         {
             ASSERT(pRider == pMountItem->m_uidLink.CharFind());
             if (const CItem *pOwnerMountItem = pRider->LayerFind(LAYER_HORSE); pOwnerMountItem && (pOwnerMountItem == pMountItem))
@@ -4104,7 +4104,7 @@ bool CChar::OnTickEquip( CItem * pItem )
 					break;
 				case IT_EQ_MEMORY_OBJ:
 				{
-                    if (CItemMemory *pMemory = dynamic_cast<CItemMemory *>(pItem))
+                    if (const auto pMemory = dynamic_cast<CItemMemory *>(pItem))
 						return Memory_OnTick(pMemory);
 
 					return false;
@@ -4346,10 +4346,10 @@ CChar::DeathRequestResult CChar::Death()
 	// Look through memories of who I was fighting (make sure they knew they where fighting me)
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 		if ( pItem->IsType(IT_EQ_TRADE_WINDOW) )
 		{
-            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
+            if (const auto pCont = dynamic_cast<CItemContainer *>(pItem) )
 			{
 				pCont->Trade_Delete();
 				continue;
@@ -5142,7 +5142,7 @@ bool CChar::MoveToRegion( CRegionWorld * pNewArea, bool fAllowReject )
 		{
 			if ( pNewArea->IsFlag(REGION_FLAG_ANNOUNCE) && !pNewArea->IsInside2d( GetTopPoint()) )	// new area.
 			{
-				CVarDefContStr * pVarStr = dynamic_cast <CVarDefContStr *>( pNewArea->m_TagDefs.GetKey("ANNOUNCEMENT"));
+                const auto pVarStr = dynamic_cast <CVarDefContStr *>( pNewArea->m_TagDefs.GetKey("ANNOUNCEMENT"));
 				SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_REGION_ENTER), (pVarStr != nullptr) ? pVarStr->GetValStr() : pNewArea->GetName());
 			}
 
@@ -5155,12 +5155,12 @@ bool CChar::MoveToRegion( CRegionWorld * pNewArea, bool fAllowReject )
 				{
 					if ( pNewArea->IsGuarded() )	// now under the protection
 					{
-						CVarDefContStr *pVarStr = dynamic_cast<CVarDefContStr *>(pNewArea->m_TagDefs.GetKey("GUARDOWNER"));
+                        const auto pVarStr = dynamic_cast<CVarDefContStr *>(pNewArea->m_TagDefs.GetKey("GUARDOWNER"));
 						SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_REGION_GUARDS_1), (pVarStr != nullptr) ? pVarStr->GetValStr() : g_Cfg.GetDefaultMsg(DEFMSG_MSG_REGION_GUARD_ART));
 					}
 					else							// have left the protection
 					{
-						CVarDefContStr *pVarStr = dynamic_cast<CVarDefContStr *>(m_pArea->m_TagDefs.GetKey("GUARDOWNER"));
+                        const auto pVarStr = dynamic_cast<CVarDefContStr *>(m_pArea->m_TagDefs.GetKey("GUARDOWNER"));
 						SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_REGION_GUARDS_2), (pVarStr != nullptr) ? pVarStr->GetValStr() : g_Cfg.GetDefaultMsg(DEFMSG_MSG_REGION_GUARD_ART));
 					}
 				}
@@ -5309,7 +5309,7 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 	}
 
 	// Did we step into a new region ?
-    if (CRegionWorld *pAreaNew = dynamic_cast<CRegionWorld *>(pt.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA)); !MoveToRegion(pAreaNew, fAllowReject) )
+    if (const auto pAreaNew = dynamic_cast<CRegionWorld *>(pt.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA)); !MoveToRegion(pAreaNew, fAllowReject) )
 		return false;
 
     if (CRegion *pRoomNew = pt.GetRegion(REGION_TYPE_ROOM); !MoveToRoom(pRoomNew, fAllowReject) )
@@ -5544,7 +5544,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
     ASSERT(pCharDef);
 
     SetTriggerActive( pszTrigName );
-    const CTRIG_TYPE iAction = (CTRIG_TYPE)_iRunningTriggerId;
+    const auto iAction = static_cast<CTRIG_TYPE>(_iRunningTriggerId);
     // Attach some trigger to the cchar. (PC or NPC)
     // RETURN: true = block further action.
     TRIGRET_TYPE iRet = TRIGRET_RET_ABORTED;
@@ -5555,7 +5555,7 @@ TRIGRET_TYPE CChar::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const&
     {
 		tchar ptcCharTrigName[TRIGGER_NAME_MAX_LEN] = "@CHAR";
 		Str_ConcatLimitNull(ptcCharTrigName + 5, pszTrigName + 1, TRIGGER_NAME_MAX_LEN - 5);
-        if (const CTRIG_TYPE iCharAction = (CTRIG_TYPE)FindTableSorted(ptcCharTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1);
+        if (const auto iCharAction = static_cast<CTRIG_TYPE>(FindTableSorted(ptcCharTrigName, sm_szTrigName, std::size(sm_szTrigName) - 1));
             (iCharAction > XTRIG_UNKNOWN) && IsTrigUsed(ptcCharTrigName))
         {
             if (CChar *pChar = pSrc->GetChar(); pChar != nullptr && this != pChar)
@@ -5724,7 +5724,7 @@ void CChar::OnTickStatusUpdate()
 	{
 		if ( m_fStatusUpdate & SU_UPDATE_HITS )
 		{
-			PacketHealthUpdate *cmd = new PacketHealthUpdate(this, false);
+            const auto cmd = new PacketHealthUpdate(this, false);
 			UpdateCanSee(cmd, m_pClient);		// send hits update to all nearby clients
 			m_fStatusUpdate &= ~SU_UPDATE_HITS;
 		}

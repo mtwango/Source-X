@@ -387,7 +387,7 @@ void CServerStaticsBlock::LoadStatics( dword ulBlockIndex, int map )
 	}
 }
 
-void CServerStaticsBlock::LoadStatics( uint uiCount, CUOStaticItemRec * pStatics )
+void CServerStaticsBlock::LoadStatics(const uint uiCount, const CUOStaticItemRec * pStatics )
 {
 	ADDTOCALLSTACK("CServerStaticsBlock::LoadStatics2");
 	// Load statics information directly (normally from difs)
@@ -625,10 +625,10 @@ size_t CUOMulti::Load(MULTI_TYPE id)
 
 	case VERFORMAT_ORIGINAL: // old format (CUOMultiItemRec)
 	default:
-		m_iItemQty = (uint)(Index.GetBlockLength() / sizeof(CUOMultiItemRec));
+		m_iItemQty = static_cast<uint>(Index.GetBlockLength() / sizeof(CUOMultiItemRec));
 		m_pItems = new CUOMultiItemRec_HS[m_iItemQty];
 
-		CUOMultiItemRec* pItems = new CUOMultiItemRec[m_iItemQty];
+        const auto pItems = new CUOMultiItemRec[m_iItemQty];
 		ASSERT((sizeof(pItems[0]) * m_iItemQty) >= Index.GetBlockLength());
 		if (!g_Install.ReadMulData(VERFILE_MULTI, Index, pItems))
 		{
@@ -717,8 +717,8 @@ void CServerMapDiffCollection::LoadMapDiffs()
 					if ( pMapDiffBlock->m_pTerrainBlock )
 						delete pMapDiffBlock->m_pTerrainBlock;
 
-					CUOMapBlock * pTerrain = new CUOMapBlock();
-					if ( (uint)pFileMapdif->Seek( dwOffset ) != dwOffset )
+                    auto *const pTerrain = new CUOMapBlock();
+					if ( static_cast<uint>(pFileMapdif->Seek(dwOffset)) != dwOffset )
 					{
 						g_Log.EventError("Reading mapdif%d.mul FAILED.\n", map);
 						delete pTerrain;

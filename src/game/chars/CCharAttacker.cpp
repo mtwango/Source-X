@@ -269,7 +269,7 @@ int CChar::Attacker_GetID(const CChar * pChar) const
     if (m_lastAttackers.empty())
         return -1;
     int count = 0;
-    for (std::vector<LastAttackers>::const_iterator it = m_lastAttackers.begin(), end = m_lastAttackers.end(); it != end; ++it)
+    for (auto it = m_lastAttackers.begin(), end = m_lastAttackers.end(); it != end; ++it)
     {
         const CUID uid(it->charUID);
         if (!uid.IsValidUID())
@@ -351,7 +351,7 @@ bool CChar::Attacker_Delete(int attackerIndex, bool fForced, ATTACKER_CLEAR_TYPE
     if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
         return false;
 
-    std::vector<LastAttackers>::iterator it = m_lastAttackers.begin() + attackerIndex;
+    auto it = m_lastAttackers.begin() + attackerIndex;
     return Attacker_Delete(it, fForced, type);
 }
 

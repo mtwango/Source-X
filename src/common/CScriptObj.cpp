@@ -76,7 +76,7 @@ bool CScriptObj::IsValidRef(const CScriptObj* pRef) noexcept // static
 	bool fValid = false;
 	if (pRef)
 	{
-		const CObjBase* pRefObj = dynamic_cast<const CObjBase*>(pRef);
+        const auto pRefObj = dynamic_cast<const CObjBase*>(pRef);
 		fValid = (pRefObj == nullptr) ? true : pRefObj->IsValidUID();
 	}
 	return fValid;
@@ -93,7 +93,7 @@ bool CScriptObj::r_GetRefFull(lpctstr& ptcKey, CScriptObj*& pRef)
 	bool fRef = false;
 
 	// Special refs
-    if (CChar* pThisChar = dynamic_cast<CChar*>(this))
+    if (const auto *const pThisChar = dynamic_cast<CChar*>(this))
 	{
         CClient *pThisClient = nullptr;
         // r_GetRef is a virtual method, but if the Client is attached to a Char, its r_GetRef won't be called,
@@ -472,7 +472,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 			sVal.FormatHex( 0x08000 );
 		else if ( dynamic_cast<CClient*>(pTmpRef) )
 			sVal.FormatHex( 0x10000 );
-		else if ( CObjBase *pObj = dynamic_cast<CObjBase*>(pTmpRef) )
+		else if (auto pObj = dynamic_cast<CObjBase*>(pTmpRef) )
 		{
 			if ( dynamic_cast<CChar*>(pObj) )
 				sVal.FormatHex( 0x40000 );
@@ -501,7 +501,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 				return true;
 			}
 
-            if (const CObjBase *pRefObj = dynamic_cast<const CObjBase *>(pRef))
+            if (const auto *pRefObj = dynamic_cast<const CObjBase *>(pRef))
 				sVal.FormatHex( pRefObj->GetUID() );
 			else
 				sVal.FormatVal( 1 );
@@ -633,8 +633,8 @@ badcmd:
 			}
 			if ( !*ptcKey )
 			{
-                CObjBase *pObj = dynamic_cast <CObjBase*> (pRef);	// if it can be converted .
-				sVal.FormatHex( pObj ? (dword) pObj->GetUID() : 0 );
+                auto pObj = dynamic_cast <CObjBase*> (pRef);	// if it can be converted .
+				sVal.FormatHex( pObj ? static_cast<dword>(pObj->GetUID()) : 0 );
 				return true;
 			}
 			return pRef->r_WriteVal( ptcKey, sVal, pSrc );
@@ -1229,7 +1229,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
                 // Dirty fix:
                 // If the REF is an ACCOUNT, it does special checks with the SRC to compare the PrivLevel to allow read/write its values.
                 //	If i'm running in a trigger, so in a script, get the max privileges and change the SRC.
-                if (CObjBase *pThisObj = dynamic_cast<CObjBase *>(this))
+                if (auto pThisObj = dynamic_cast<CObjBase *>(this))
                 {
                     if (pThisObj->IsRunningTrigger())
                     {
@@ -1302,11 +1302,11 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				if (this != &g_Serv)
 				{
-                    if ( CChar *pChar = dynamic_cast<CChar *>(this) )
+                    if (auto pChar = dynamic_cast<CChar *>(this) )
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
+                        if (auto pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1353,11 +1353,11 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				if ( this != &g_Serv )
 				{
-                    if ( CChar *pChar = dynamic_cast<CChar *>(this) )
+                    if (auto pChar = dynamic_cast<CChar *>(this) )
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
+                        if (auto pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1366,7 +1366,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 		case SSV_NEWNPC:
 			{
-				CREID_TYPE id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgRaw()));
+                auto id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgRaw()));
 				CChar * pChar = CChar::CreateNPC(id);
 				if ( !pChar )
 				{
@@ -1386,7 +1386,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 						pChar->m_Act_UID = g_World.m_uidNew;
 					else
 					{
-                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
+                        if (auto pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar() )
 							pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 					}
 				}
@@ -1398,7 +1398,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
                 if (int iQty = Str_ParseCmds(s.GetArgRaw(), ppCmd, std::size(ppCmd), ","); iQty <= 0)
 	                return false;
 
-	            CREID_TYPE id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, ppCmd[0]));
+                auto id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, ppCmd[0]));
 	            CChar * pChar = CChar::CreateNPC(id);
 	            CChar * pCharSrc = nullptr;
 	            if (!pChar)
@@ -1417,7 +1417,7 @@ bool CScriptObj::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 	                    pCharSrc->m_Act_UID = g_World.m_uidNew;
 	                else
 	                {
-                        if (CClient *pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar())
+                        if (auto pClient = dynamic_cast<CClient *>(this); pClient && pClient->GetChar())
 	                        pClient->GetChar()->m_Act_UID = g_World.m_uidNew;
 	                }
 	            }
@@ -1467,14 +1467,14 @@ bool CScriptObj::r_Load( CScript & s )
 	return true;
 }
 
-bool CScriptObj::Execute_Call(CScript& s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
+bool CScriptObj::Execute_Call(const CScript & s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
 	ADDTOCALLSTACK("CScriptObj::Execute_Call");
 	bool fRes = false;
 
 	CSString sVal;
 	tchar* argRaw = s.GetArgRaw();
-	CScriptObj* pRef = this;
+    auto pRef = this;
 
 	// Parse object references, src.* is not parsed
 	// by r_GetRef so do it manually
@@ -1526,7 +1526,7 @@ bool CScriptObj::Execute_Call(CScript& s, CScriptTriggerArgsPtr const& pScriptAr
 	return fRes;
 }
 
-bool CScriptObj::Execute_FullTrigger(CScript& s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
+bool CScriptObj::Execute_FullTrigger(const CScript & s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
 	ADDTOCALLSTACK("CScriptObj::Execute_FullTrigger");
 	bool fRes = false;
@@ -1534,9 +1534,9 @@ bool CScriptObj::Execute_FullTrigger(CScript& s, CScriptTriggerArgsPtr const& pS
 	tchar* piCmd[7];
 	tchar* ptcTmp = Str_GetTemp();
 	Str_CopyLimitNull(ptcTmp, s.GetArgRaw(), Str_TempLength());
-	int iArgQty = Str_ParseCmds(ptcTmp, piCmd, std::size(piCmd), " ,\t");
+    const int iArgQty = Str_ParseCmds(ptcTmp, piCmd, std::size(piCmd), " ,\t");
 
-	CScriptObj* pRef = this;
+    auto pRef = this;
 	if (iArgQty == 2)
 	{
         std::optional<dword> iconv = Str_ToU(piCmd[1]);
@@ -1940,7 +1940,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 		else
 			iDist = g_Cfg.m_iMapViewSize;
 
-        if (CObjBaseTemplate *pObj = dynamic_cast<CObjBaseTemplate *>(this); pObj == nullptr)
+        if (auto pObj = dynamic_cast<CObjBaseTemplate *>(this); pObj == nullptr)
 		{
 			iType = 0;
 			DEBUG_ERR(("FOR Loop trigger on non-world object '%s'\n", GetName()));
@@ -2144,7 +2144,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCharSpecial(CScript& s, SK_TYPE iCmd, C
 	ADDTOCALLSTACK("CScriptObj::OnTriggerLoopForCharSpecial");
 	TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
 
-    if (CChar *pCharThis = dynamic_cast<CChar *>(this))
+    if (const auto pCharThis = dynamic_cast<CChar *>(this))
 	{
 		if (s.HasArgs())
 		{
@@ -2196,7 +2196,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 			{
                 if (CObjBase *pObj = pCurUid.ObjFind(); pObj && pObj->IsContainer())
 				{
-					CContainer* pContThis = dynamic_cast<CContainer*>(pObj);
+                    const auto pContThis = dynamic_cast<CContainer*>(pObj);
 					ASSERT(pContThis);
 
 					CScriptLineContext StartContext = s.GetContext();
@@ -2235,8 +2235,8 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, SK_TYPE iCmd, C
     ADDTOCALLSTACK("CScriptObj::OnTriggerLoopForContSpecial");
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
 
-    CObjBase* pObjCont = dynamic_cast <CObjBase*> (this);
-    CContainer* pCont = dynamic_cast <CContainer*> (this);
+    const auto pObjCont = dynamic_cast <CObjBase*> (this);
+    const auto pCont = dynamic_cast <CContainer*> (this);
     if (!pObjCont || !pCont)
     {
         g_Log.EventError("FORCONT[id/type] called on non-container object '%s'.\n", GetName());
@@ -2350,7 +2350,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerRun( CScript &s, TRIGRUN_TYPE trigrun, CScript
 			break;
 
 jump_in:
-		SK_TYPE iCmd = (SK_TYPE) FindTableSorted( s.GetKey(), sm_szScriptKeys, std::size(sm_szScriptKeys) - 1 );
+        auto iCmd = static_cast<SK_TYPE>(FindTableSorted(s.GetKey(), sm_szScriptKeys, std::size(sm_szScriptKeys) - 1));
 		TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
 
 		switch ( iCmd )

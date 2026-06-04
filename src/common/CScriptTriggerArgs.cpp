@@ -67,7 +67,7 @@ void CScriptTriggerArgs::Init( lpctstr pszStr )
 
     // Warning: here we ignore the read-onlyness of CSString's buffer only because we know we won't write past the end, but only replace some characters with '\0'.
     // It's not worth it to build another string just for that.
-    lptstr ptcParse = const_cast<lptstr>(m_s1_buf_vec.GetBuffer());
+    auto *ptcParse = const_cast<lptstr>(m_s1_buf_vec.GetBuffer());
     for (; *ptcParse != '\0'; ++ptcParse)
     {
         if (*ptcParse == '"')
@@ -414,9 +414,9 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
             // Warning: here we ignore the read-onlyness of CSString's buffer only because we know we won't write past the end, but only replace some characters with '\0'.
             // It's not worth it to build another string just for that.
             lpctstr ptcArg = m_s1_buf_vec.GetBuffer();
-            tchar *s       = const_cast<tchar *>(ptcArg);
+            auto *s = const_cast<tchar *>(ptcArg);
 
-            bool fQuotes     = false;
+            bool fQuotes = false;
             bool fInerQuotes = false;
             while (*s)
             {
@@ -533,7 +533,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
             break;
         case AGC_O:
         {
-            if ( CObjBase *pObj = dynamic_cast<CObjBase *>(m_pO1) )
+            if (const auto pObj = dynamic_cast<CObjBase *>(m_pO1) )
                 sVal.FormatHex(pObj->GetUID());
             else
                 sVal.SetValFalse();

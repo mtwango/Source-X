@@ -21,7 +21,7 @@ static void CALLBACK SendCompleted_Winsock(DWORD dwError, DWORD cbTransferred, L
 	UnreferencedParameter(dwFlags);
 	ADDTOCALLSTACK("SendCompleted_Winsock");
 
-	CNetState* state = static_cast<CNetState*>(lpOverlapped->hEvent);
+    const auto state = static_cast<CNetState*>(lpOverlapped->hEvent);
 	if (state == nullptr)
 	{
 		DEBUGNETWORK(("Async i/o operation (Winsock) completed without client context.\n"));

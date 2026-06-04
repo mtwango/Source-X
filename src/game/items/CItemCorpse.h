@@ -23,7 +23,7 @@ public:
     CItemCorpse(const CItemCorpse& copy) = delete;
     CItemCorpse& operator=(const CItemCorpse& other) = delete;
 
-	bool IsCorpseResurrectable(CChar* pCharHealer, CChar* pCharGhost) const;
+	bool IsCorpseResurrectable(const CChar * pCharHealer, const CChar * pCharGhost) const;
 	CChar * IsCorpseSleeping() const;
     int GetWeight(word amount = 0) const override;
 };

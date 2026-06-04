@@ -100,8 +100,8 @@ NOTO_TYPE CChar::Noto_GetFlag(const CChar * pCharViewer, bool fAllowIncog, bool 
 {
 	ADDTOCALLSTACK("CChar::Noto_GetFlag");
     // TODO: CONST-CORRECTNESS!
-	CChar * pThis = const_cast<CChar*>(this);
-	CChar * pTarget = const_cast<CChar*>(pCharViewer);
+    auto pThis = const_cast<CChar*>(this);
+    const auto pTarget = const_cast<CChar*>(pCharViewer);
 	NOTO_TYPE iNoto = NOTO_INVALID;
 	NOTO_TYPE iColor = NOTO_INVALID;
 
@@ -648,7 +648,7 @@ void CChar::NotoSave_Add( CChar * pChar, NOTO_TYPE value, NOTO_TYPE color  )
     const CUID& uid(pChar->GetUID());
 	if  ( !m_notoSaves.empty() )	// Checking if I already have him in the list, only if there 's any list.
 	{
-		for (std::vector<NotoSaves>::iterator it = m_notoSaves.begin(), end = m_notoSaves.end(); it != end; ++it)
+		for (auto it = m_notoSaves.begin(), end = m_notoSaves.end(); it != end; ++it)
 		{
             if (NotoSaves &refNoto = *it; refNoto.charUID == uid.GetObjUID() )
 			{
@@ -725,7 +725,7 @@ void CChar::NotoSave_CheckTimeout()
         std::vector<CChar*> vToResend;
 
         EXC_TRY("Loop");
-		for (std::vector<NotoSaves>::iterator it = m_notoSaves.begin(); it != m_notoSaves.end();)
+		for (auto it = m_notoSaves.begin(); it != m_notoSaves.end();)
 		{
 			NotoSaves & refNoto = *it;
             ++refNoto.time;
@@ -795,7 +795,7 @@ bool CChar::NotoSave_Delete( CChar * pChar )
 		return false;
 	if ( !m_notoSaves.empty() )
 	{
-		for (std::vector<NotoSaves>::iterator it = m_notoSaves.begin(), end = m_notoSaves.end(); it != end; ++it)
+		for (auto it = m_notoSaves.begin(), end = m_notoSaves.end(); it != end; ++it)
 		{
 			if (it->charUID == pChar->GetUID().GetObjUID() )
 			{

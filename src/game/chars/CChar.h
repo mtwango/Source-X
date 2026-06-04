@@ -1203,7 +1203,7 @@ public:
     void Jail( CTextConsole * pSrc, bool fSet, int iCell );
 	bool SetPoison( int iSkill, int iHits, CChar * pCharSrc );
 	bool SetPoisonCure( bool fExtra );
-	bool CheckCorpseCrime( CItemCorpse *pCorpse, bool fLooting, bool fTest );
+	bool CheckCorpseCrime(const CItemCorpse *pCorpse, bool fLooting, bool fTest );
 	CItemCorpse * FindMyCorpse( bool fIgnoreLOS = false, int iRadius = 2) const;
 	CItemCorpse * MakeCorpse( bool fFrontFall );
     bool RaiseCorpse( CItemCorpse * pCorpse );
@@ -1372,7 +1372,7 @@ public:
     bool NPC_Vendor_Restock(bool fForce = false, bool fFillStock = false);
 	int NPC_GetVendorMarkup() const;
 
-	void NPC_OnPetCommand( bool fSuccess, CChar * pMaster );
+	void NPC_OnPetCommand( bool fSuccess, const CChar * pMaster );
 	bool NPC_OnHearPetCmd( lpctstr pszCmd, CChar * pSrc, bool fAllPets = false );
 	bool NPC_OnHearPetCmdTarg( int iCmd, CChar * pSrc, CObjBase * pObj, const CPointMap & pt, lpctstr pszArgs );
 	size_t NPC_OnHearName( lpctstr pszText ) const;

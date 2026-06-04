@@ -142,7 +142,7 @@ lpctstr CVarDefMap::FindValStr( lpctstr pVal ) const
 	{
 		ASSERT( pVarBase );
 
-		const CVarDefContStr * pVarStr = dynamic_cast <const CVarDefContStr *>( pVarBase );
+        const auto pVarStr = dynamic_cast <const CVarDefContStr *>( pVarBase );
 		if ( pVarStr == nullptr )
 			continue;
 
@@ -159,7 +159,7 @@ lpctstr CVarDefMap::FindValNum( int64 iVal ) const
     for (const CVarDefCont* pVarBase : m_Container)
 	{
 		ASSERT( pVarBase );
-		const CVarDefContNum * pVarNum = dynamic_cast <const CVarDefContNum *>( pVarBase );
+        const auto pVarNum = dynamic_cast <const CVarDefContNum *>( pVarBase );
 		if ( pVarNum == nullptr )
 			continue;
 
@@ -198,13 +198,13 @@ void CVarDefMap::DeleteAt( size_t at )
 
     if ( pVarBase )
     {
-        if ( CVarDefContNum *pVarNum = dynamic_cast<CVarDefContNum *>(pVarBase) )
+        if (const auto pVarNum = dynamic_cast<CVarDefContNum *>(pVarBase) )
         {
             delete pVarNum;
         }
         else
         {
-            if ( CVarDefContStr *pVarStr = dynamic_cast<CVarDefContStr *>(pVarBase) )
+            if (const auto pVarStr = dynamic_cast<CVarDefContStr *>(pVarBase) )
                 delete pVarStr;
         }
     }
@@ -227,7 +227,7 @@ void CVarDefMap::DeleteKey( lpctstr key )
 void CVarDefMap::Clear()
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::Clear");
-	iterator it = m_Container.begin();
+    auto it = m_Container.begin();
 	while ( it != m_Container.end() )
 	{
 		delete (*it);	// This calls the appropriate destructors, from derived to base class, because the destructors are virtual.
@@ -323,9 +323,9 @@ void CVarDefMap::Reserve(size_t uiSize)
 CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNumNew");
-	CVarDefContNum * pVarNum = new CVarDefContNum( pszName, iVal );
+    const auto pVarNum = new CVarDefContNum( pszName, iVal );
 
-    if (iterator res = m_Container.emplace(static_cast<CVarDefCont *>(pVarNum)); res != m_Container.end() )
+    if (const auto res = m_Container.emplace(static_cast<CVarDefCont *>(pVarNum)); res != m_Container.end() )
 		return pVarNum;
 
     delete pVarNum;
@@ -335,7 +335,7 @@ CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
 CVarDefContNum* CVarDefMap::SetNumOverride( lpctstr ptcKey, int64 iVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNumOverride");
-    if (CVarDefContNum *pKeyNum = dynamic_cast<CVarDefContNum *>(GetKey(ptcKey)))
+    if (const auto pKeyNum = dynamic_cast<CVarDefContNum *>(GetKey(ptcKey)))
     {
         pKeyNum->SetValNum(iVal);
         return pKeyNum;
@@ -350,7 +350,7 @@ CVarDefContNum* CVarDefMap::ModNum(lpctstr pszName, int64 iMod, bool fDeleteZero
     ASSERT(pszName);
     if (CVarDefCont *pVarDef = GetKey(pszName))
     {
-        if (CVarDefContNum *pVarDefNum = dynamic_cast<CVarDefContNum *>(pVarDef))
+        if (auto *const pVarDefNum = dynamic_cast<CVarDefContNum *>(pVarDef))
         {
             const int64 iNewVal = pVarDefNum->GetValNum() + iMod;
             if ((iNewVal == 0) && fDeleteZero)
@@ -390,7 +390,7 @@ CVarDefContNum* CVarDefMap::SetNum( lpctstr pszName, int64 iVal, bool fDeleteZer
 	if ( !pVarBase )
 		return SetNumNew( pszName, iVal );
 
-	CVarDefContNum * pVarNum = dynamic_cast <CVarDefContNum *>( pVarBase );
+    auto *const pVarNum = dynamic_cast <CVarDefContNum *>( pVarBase );
     const bool fResync = g_Serv.IsResyncing();
     bool fShouldWarn = fWarnOverwrite && g_Serv.IsStartupLoadingScripts();
     if ( pVarNum )
@@ -425,9 +425,9 @@ CVarDefContNum* CVarDefMap::SetNum( lpctstr pszName, int64 iVal, bool fDeleteZer
 CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStrNew");
-	CVarDefContStr * pVarStr = new CVarDefContStr( pszName, pszVal );
+    auto *const pVarStr = new CVarDefContStr( pszName, pszVal );
 
-    if (iterator res = m_Container.emplace(static_cast<CVarDefCont *>(pVarStr)); res != m_Container.end() )
+    if (const auto res = m_Container.emplace(static_cast<CVarDefCont *>(pVarStr)); res != m_Container.end() )
 		return pVarStr;
 
     delete pVarStr;
@@ -437,7 +437,7 @@ CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
 CVarDefContStr* CVarDefMap::SetStrOverride( lpctstr ptcKey, lpctstr pszVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStrOverride");
-    if (CVarDefContStr *pKeyStr = dynamic_cast<CVarDefContStr *>(GetKey(ptcKey)))
+    if (auto *const pKeyStr = dynamic_cast<CVarDefContStr *>(GetKey(ptcKey)))
     {
         pKeyStr->SetValStr(pszVal);
         return pKeyStr;
@@ -480,7 +480,7 @@ CVarDefCont* CVarDefMap::SetStr( lpctstr pszName, bool fQuoted, lpctstr ptcVal, 
 	if ( !pVarBase )
         return SetStrNew( pszName, ptcVal );
 
-	CVarDefContStr * pVarStr = dynamic_cast <CVarDefContStr *>( pVarBase );
+    auto *const pVarStr = dynamic_cast <CVarDefContStr *>( pVarBase );
     const bool fResync = g_Serv.IsResyncing();
     bool fShouldWarn = fWarnOverwrite && g_Serv.IsStartupLoadingScripts();
     if ( pVarStr )
@@ -614,7 +614,7 @@ void CVarDefMap::ClearKeys(lpctstr mask)
 		sMask.MakeLower();
 
         size_t i = 0;
-		iterator it = m_Container.begin();
+        auto it = m_Container.begin();
 		while ( it != m_Container.end() )
 		{
             CVarDefCont *pVarBase = (*it);
@@ -682,9 +682,9 @@ void CVarDefMap::r_WritePrefix( CScript & s, lpctstr ptcPrefix, lpctstr ptcKeyEx
 		if ( fHasExclude && !strcmpi(ptcKeyExclude, ptcKey))
 			continue;
 
-        const CVarDefContNum * pVarNum = dynamic_cast<const CVarDefContNum*>(pVar);
+        const auto *const pVarNum = dynamic_cast<const CVarDefContNum*>(pVar);
         _WritePrefix(ptcKey);
-        lpctstr ptcVal = pVar->GetValStr();
+        const lpctstr ptcVal = pVar->GetValStr();
         if (pVarNum)
         {
             s.WriteKeyStr(ts.buffer(), ptcVal);

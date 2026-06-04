@@ -35,8 +35,8 @@ bool CItem::Ship_Plank(bool fOpen)
     // IT_PLANK to IT_SHIP_SIDE and IT_SHIP_SIDE_LOCKED
     // This item is the ships plank.
 
-    CItemBase * pItemDef = Item_GetDef();
-    ITEMID_TYPE idState = (ITEMID_TYPE)pItemDef->m_ttShipPlank.m_ridState.GetResIndex();
+    const CItemBase * pItemDef = Item_GetDef();
+    const auto idState = static_cast<ITEMID_TYPE>(pItemDef->m_ttShipPlank.m_ridState.GetResIndex());
     if (!idState)
         return false;
 
@@ -194,8 +194,8 @@ bool CItemShip::r_LoadVal(CScript & s)
 {
     ADDTOCALLSTACK("CItemShip::r_LoadVal");
     EXC_TRY("LoadVal");
-    lpctstr	ptcKey = s.GetKey();
-    if (IMCS_TYPE index = (IMCS_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1); index >= 0 && g_Serv.IsLoadingGeneric())
+    const lpctstr	ptcKey = s.GetKey();
+    if (const auto index = static_cast<IMCS_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1)); index >= 0 && g_Serv.IsLoadingGeneric())
     {
         switch (index)
         {
@@ -269,7 +269,7 @@ CItemContainer * CItemShip::GetShipHold()
         m_uidHold = pItem->GetUID();
     }
 
-    CItemContainer * pItemHold = dynamic_cast<CItemContainer *>(pItem);
+    const auto pItemHold = dynamic_cast<CItemContainer *>(pItem);
     if (!pItemHold)
         return nullptr;
 

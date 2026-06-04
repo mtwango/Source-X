@@ -151,7 +151,7 @@ bool CListDefCont::SetNumAt(size_t nIndex, int64 iVal)
 
 	CListDefContElem* pListNewElem = new CListDefContNum(m_Key.GetBuffer(), iVal);
 
-    DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
     std::advance(it, nIndex);
     DeleteAtIterator(it, false);
     *it = pListNewElem;
@@ -168,7 +168,7 @@ bool CListDefCont::SetStrAt(size_t nIndex, lpctstr pszVal)
 
 	CListDefContElem* pListNewElem = new CListDefContStr(m_Key.GetBuffer(), pszVal);
 
-    DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
     std::advance(it, nIndex);
     DeleteAtIterator(it, false);
     *it = pListNewElem;
@@ -205,7 +205,8 @@ int CListDefCont::FindValStr( lpctstr pVal, size_t nStartIndex /* = 0 */ ) const
 	if ( !pVal || !(*pVal) )
 		return -1;
 
-	DefList::const_iterator it = m_listElements.begin(), itEnd = m_listElements.end();
+    auto it = m_listElements.begin();
+    const auto itEnd = m_listElements.end();
     if (nStartIndex)
         std::advance(it, nStartIndex);
 
@@ -214,12 +215,12 @@ int CListDefCont::FindValStr( lpctstr pVal, size_t nStartIndex /* = 0 */ ) const
 		const CListDefContElem * pListBase = (*it);
 		ASSERT( pListBase );
 
-		const CListDefContStr * pListStr = dynamic_cast <const CListDefContStr *>( pListBase );
+        const auto pListStr = dynamic_cast <const CListDefContStr *>( pListBase );
 		if ( pListStr == nullptr )
 			continue;
 
 		if ( ! strcmpi( pVal, pListStr->GetValStr()))
-			return (int)(nIndex);
+			return static_cast<int>(nIndex);
 	}
 
 	return -1;
@@ -229,21 +230,22 @@ int CListDefCont::FindValNum( int64 iVal, size_t nStartIndex /* = 0 */ ) const
 {
     ADDTOCALLSTACK("CListDefCont::FindValNum");
 
-    DefList::const_iterator it = m_listElements.begin(), itEnd = m_listElements.end();
+    auto it = m_listElements.begin();
+    const auto itEnd = m_listElements.end();
     if (nStartIndex)
         std::advance(it, nStartIndex);
 
     for ( size_t nIndex = nStartIndex; it != itEnd; ++it, ++nIndex )
 	{
-		const CListDefContElem * pListBase = (*it);
+		const CListDefContElem * pListBase = *it;
 		ASSERT( pListBase );
 
-		const CListDefContNum * pListNum = dynamic_cast <const CListDefContNum *>( pListBase );
+        const auto *const pListNum = dynamic_cast <const CListDefContNum *>( pListBase );
 		if ( pListNum == nullptr )
 			continue;
 
 		if ( pListNum->GetValNum() == iVal )
-			return (int)(nIndex);
+			return static_cast<int>(nIndex);
 	}
 
 	return -1;
@@ -286,11 +288,11 @@ void CListDefCont::DeleteAtIterator(const DefList::iterator &it, const bool fEra
 
     if (pListBase)
     {
-        if (CListDefContNum *pListNum = dynamic_cast<CListDefContNum *>(pListBase))
+        if (const auto pListNum = dynamic_cast<CListDefContNum *>(pListBase))
             delete pListNum;
         else
         {
-            if (CListDefContStr *pListStr = dynamic_cast<CListDefContStr *>(pListBase))
+            if (const auto pListStr = dynamic_cast<CListDefContStr *>(pListBase))
                 delete pListStr;
         }
     }
@@ -302,7 +304,7 @@ bool CListDefCont::RemoveElement(size_t nIndex)
 	if ( nIndex >= m_listElements.size() )
 		return false;
 
-	DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
     std::advance(it, nIndex);
 
     if (it == m_listElements.end())
@@ -318,7 +320,7 @@ void CListDefCont::RemoveAll()
 	if ( m_listElements.empty() )
 		return;
 
-	DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
 
 	while ( it != m_listElements.end() )
 	{
@@ -331,8 +333,8 @@ static bool compare_insensitive (const CListDefContElem * firstelem, const CList
 {
     ASSERT(firstelem);
     ASSERT(secondelem);
-    const CListDefContNum *pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
-    if (const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
+    const auto pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
+    if (const auto pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
 	{
 		const int64 iFirst = pFirst->GetValNum();
         const int64 iSecond = pSecond->GetValNum();
@@ -359,8 +361,8 @@ static bool compare_sensitive (const CListDefContElem * firstelem, const CListDe
 {
     ASSERT(firstelem);
     ASSERT(secondelem);
-    const CListDefContNum *pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
-    if (const CListDefContNum *pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
+    const auto pFirst = dynamic_cast<const CListDefContNum*>(firstelem);
+    if (const auto pSecond = dynamic_cast<const CListDefContNum *>(secondelem); pFirst && pSecond)
     {
         const int64 iFirst = pFirst->GetValNum();
         const int64 iSecond = pSecond->GetValNum();
@@ -403,7 +405,7 @@ bool CListDefCont::InsertElementNum(size_t nIndex, int64 iVal)
 	if ( nIndex >= m_listElements.size() )
 		return false;
 
-	DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
     std::advance(it, nIndex);
     if (it == m_listElements.end())
         return false;
@@ -420,7 +422,7 @@ bool CListDefCont::InsertElementStr(size_t nIndex, lpctstr ptcKey)
 	if ( nIndex >= m_listElements.size() )
 		return false;
 
-    DefList::iterator it = m_listElements.begin();
+    auto it = m_listElements.begin();
     std::advance(it, nIndex);
     if (it == m_listElements.end())
         return false;
@@ -435,7 +437,7 @@ CListDefCont* CListDefCont::CopySelf()
     if (m_listElements.empty())
         return nullptr;
 
-    CListDefCont* pNewList = new CListDefCont(m_Key.GetBuffer());
+    const auto pNewList = new CListDefCont(m_Key.GetBuffer());
     for (const CListDefContElem *pElem : m_listElements)
     {
         pNewList->m_listElements.push_back(pElem->CopySelf());
@@ -458,7 +460,7 @@ void CListDefCont::PrintElements(CSString& strElements) const
     for ( const CListDefContElem *pListElem : m_listElements)
     {
 
-        if ( const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
+        if (const auto pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
 		{
 			strElements += "\"";
 			strElements += pListElemStr->GetValStr();
@@ -503,7 +505,7 @@ void CListDefCont::r_WriteSave( CScript& s ) const
     for ( const CListDefContElem *pListElem : m_listElements)
 	{
 
-        if ( const CListDefContStr *pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
+        if (const auto pListElemStr = dynamic_cast<const CListDefContStr *>(pListElem) )
 		{
 			strElement.Format("\"%s\"", pListElemStr->GetValStr());
 			s.WriteKeyStr("ELEM", strElement.GetBuffer());
@@ -561,7 +563,7 @@ CListDefCont * CListDefMap::GetAt( size_t at )
 	if ( at > m_Container.size() )
 		return nullptr;
 
-	DefSet::const_iterator i = m_Container.begin();
+    auto i = m_Container.begin();
 	std::advance(i, at);
 
 	if ( i != m_Container.end() )
@@ -576,8 +578,8 @@ CListDefCont * CListDefMap::GetAtKey( lpctstr at )
 
 	CListDefCont pListBase(at);
 
-    if (DefSet::const_iterator i = m_Container.find(&pListBase); i != m_Container.end() )
-		return (*i);
+    if (const auto i = m_Container.find(&pListBase); i != m_Container.end() )
+		return *i;
 
     return nullptr;
 }
@@ -589,7 +591,7 @@ void CListDefMap::DeleteAt( size_t at )
 	if ( at > m_Container.size() )
 		return;
 
-	DefSet::iterator i = m_Container.begin();
+    auto i = m_Container.begin();
     std::advance(i, at);
 	DeleteAtIterator(i);
 }
@@ -599,7 +601,7 @@ void CListDefMap::DeleteAtKey( lpctstr at )
     ADDTOCALLSTACK("CListDefMap::DeleteAtKey");
 
 	CListDefCont pListBase(at);
-	DefSet::iterator i = m_Container.find(&pListBase);
+    const auto i = m_Container.find(&pListBase);
 
 	DeleteAtIterator(i);
 }
@@ -631,7 +633,7 @@ void CListDefMap::Empty()
 {
 	ADDTOCALLSTACK("CListDefMap::Empty");
 
-	DefSet::iterator i = m_Container.begin();
+    auto i = m_Container.begin();
 	CListDefCont * pListBase = nullptr;
 
 	while ( i != m_Container.end() )
@@ -658,7 +660,7 @@ void CListDefMap::Copy( const CListDefMap * pArray )
 	if ( pArray->GetCount() <= 0 )
 		return;
 
-	for ( DefSet::const_iterator it = pArray->m_Container.begin(), itEnd = pArray->m_Container.end(); it != itEnd; ++it )
+	for (auto it = pArray->m_Container.begin(), itEnd = pArray->m_Container.end(); it != itEnd; ++it )
 	{
 		m_Container.insert( (*it)->CopySelf() );
 	}
@@ -674,8 +676,8 @@ CListDefCont* CListDefMap::GetKey( lpctstr ptcKey ) const
 	{
 		CListDefCont pListBase(ptcKey);
 
-        if (DefSet::const_iterator i = m_Container.find(&pListBase); i != m_Container.end() )
-			pReturn = (*i);
+        if (auto const i = m_Container.find(&pListBase); i != m_Container.end() )
+			pReturn = *i;
 	}
 
 	return pReturn;
@@ -722,7 +724,7 @@ void CListDefMap::ClearKeys(lpctstr mask)
 		CSString sMask(mask);
 		sMask.MakeLower();
 
-		DefSet::iterator i = m_Container.begin();
+        auto i = m_Container.begin();
 		CListDefCont * pListBase = nullptr;
 
 		while ( i != m_Container.end() )
@@ -746,7 +748,7 @@ void CListDefMap::ClearKeys(lpctstr mask)
 	}
 }
 
-bool CListDefMap::r_LoadVal( lpctstr ptcKey, CScript & s )
+bool CListDefMap::r_LoadVal( lpctstr ptcKey, const CScript & s )
 {
     ADDTOCALLSTACK("CListDefMap::r_LoadVal");
 	tchar* ppCmds[3];
@@ -978,9 +980,9 @@ bool CListDefMap::r_Write( CTextConsole *pSrc, lpctstr pszString, CSString& strV
 		nStartIndex = Exp_GetVal(ppCmds[1]);
         if ( CListDefContElem *pListElem = pListBase->GetAt(nStartIndex) )
 		{
-			if ( !(*(ppCmds[2])) )
+			if ( !*ppCmds[2] )
 			{
-                if ( CListDefContStr *pListElemStr = dynamic_cast<CListDefContStr *>(pListElem) )
+                if (const auto pListElemStr = dynamic_cast<CListDefContStr *>(pListElem) )
 					strVal.Format("\"%s\"", pListElemStr->GetValStr());
 				else
 					strVal = pListElem->GetValStr();

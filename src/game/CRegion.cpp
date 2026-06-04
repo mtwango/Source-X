@@ -300,7 +300,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 	ADDTOCALLSTACK("CRegion::r_WriteVal");
 	EXC_TRY("WriteVal");
 	bool fZero = false;
-	RC_TYPE index = (RC_TYPE) FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const auto index = static_cast<RC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
 	if ( index < 0 )
 	{
 		return (fNoCallParent ? false : CScriptObj::r_WriteVal( ptcKey, sVal, pSrc ));
@@ -516,7 +516,7 @@ bool CRegion::r_LoadVal( CScript & s )
         }
     }
 
-	RC_TYPE index = (RC_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const auto index = static_cast<RC_TYPE>(FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
 	if ( index < 0 )
 		return false;
 
@@ -962,7 +962,7 @@ bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 				if ( ptcKey[6] && ptcKey[6] != '.' )
 					return false;
 
-				CRegionWorld * pRegionTemp = dynamic_cast <CRegionWorld*>(m_pt.GetRegion( REGION_TYPE_AREA ));
+                const auto pRegionTemp = dynamic_cast <CRegionWorld*>(m_pt.GetRegion( REGION_TYPE_AREA ));
 
 				if ( !ptcKey[6] )
 				{

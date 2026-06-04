@@ -8,7 +8,7 @@ CComponentProps::~CComponentProps() noexcept = default;
 bool CComponentProps::BaseCont_GetPropertyNum(const BaseContNum_t* container, PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyNum");
-    if (BaseContNum_t::const_iterator it = container->find(iPropIndex); it != container->end())
+    if (const auto it = container->find(iPropIndex); it != container->end())
     {
         *piOutVal = it->second;
         return true;
@@ -20,9 +20,9 @@ bool CComponentProps::BaseCont_GetPropertyNum(const BaseContNum_t* container, Pr
 bool CComponentProps::BaseCont_GetPropertyStr(const BaseContStr_t* container, PropertyIndex_t iPropIndex, CSString *psOutVal, bool fZero) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyStr");
-    if (BaseContStr_t::const_iterator it = container->find(iPropIndex); it != container->end())
+    if (const auto it = container->find(iPropIndex); it != container->end())
     {
-        lpctstr val = it->second.GetBuffer();
+        const lpctstr val = it->second.GetBuffer();
         ASSERT(val);
         if (val[0] == '\0')
         {

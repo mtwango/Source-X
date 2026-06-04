@@ -37,8 +37,8 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
 		return 1;
 
 	/* Force unsigned for bitwise operations. */
-	const unsigned char *u1 = (const unsigned char *)str1;
-	const unsigned char *u2 = (const unsigned char *)str2;
+    const auto *const u1 = reinterpret_cast<const unsigned char *>(str1);
+    const auto *const u2 = reinterpret_cast<const unsigned char *>(str2);
 
 	int ret = 0;
 	for (size_t i = 0; i < len1; ++i)
@@ -47,7 +47,7 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
 	return ret;
 }
 
-/*
+/**
  * This function expects a work factor between 4 and 31 and a char array to
  * store the resulting generated salt. The char array should typically have
  * BCRYPT_HASHSIZE bytes at least. If the provided work factor is not in the
@@ -55,7 +55,6 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
  *
  * The return value is zero if the salt could be correctly generated and
  * nonzero otherwise.
- *
  */
 static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHSIZE])
 {
@@ -69,8 +68,8 @@ static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHS
     input = dist(rng);
 
 	/* Generate salt. */
-	int workf = (factor < 4 || factor > 31) ? 12 : factor;
-	char *aux = crypt_gensalt_rn(prefix, workf, reinterpret_cast<const char *>(&input), RANDBYTES, salt, BCRYPT_HASHSIZE);
+	int const workf = (factor < 4 || factor > 31) ? 12 : factor;
+	char const * aux = crypt_gensalt_rn(prefix, workf, reinterpret_cast<const char *>(&input), RANDBYTES, salt, BCRYPT_HASHSIZE);
 	return (aux == nullptr)?5:0;
 #undef RANDBYTES
 }

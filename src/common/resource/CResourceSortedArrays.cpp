@@ -26,8 +26,8 @@ int CSStringSortArray::CompareKey( tchar* pszID1, tchar* pszID2, bool fNoSpaces 
 void CSStringSortArray::AddSortString( lpctstr pszText )
 {
     ASSERT(pszText);
-    size_t len = strlen( pszText );
-    tchar * pNew = new tchar [ len + 1 ];
+    const size_t len = strlen( pszText );
+    const auto pNew = new tchar [ len + 1 ];
     Str_CopyLimitNull( pNew, pszText, len + 1 );
     AddSortKey( pNew, pNew );
 }

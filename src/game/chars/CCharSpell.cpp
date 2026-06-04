@@ -85,7 +85,7 @@ void CChar::Spell_Dispel(int iLevel)
 
 	for (size_t i = 0; i < GetContentCount();)
 	{
-		CItem* pItem = static_cast<CItem*>(GetContentIndex(i));
+        const auto pItem = static_cast<CItem*>(GetContentIndex(i));
 		bool fIncrease = true;
 		if (iLevel <= 100 && pItem->IsAttr(ATTR_MOVE_NEVER))
 		{
@@ -551,7 +551,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 	if ( !pSpell || !pSpell->IsTypeSpellable() || pSpell->IsType(IT_WAND) )
 		return;
 
-	SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pSpell->m_itSpell.m_spell));
+    const auto spell = static_cast<SPELL_TYPE>(ResGetIndex(pSpell->m_itSpell.m_spell));
 	const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
 	if ( !spell || !pSpellDef )
 		return;
@@ -971,7 +971,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 	if ( !pSpell || !pSpell->IsTypeSpellable() || pSpell->IsType(IT_WAND) )
 		return;
 
-	SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pSpell->m_itSpell.m_spell));
+    auto spell = static_cast<SPELL_TYPE>(ResGetIndex(pSpell->m_itSpell.m_spell));
 	const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
 	if ( !spell || !pSpellDef )
 		return;
@@ -1772,7 +1772,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 
 	ASSERT(pItem);
 
-	SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pItem->m_itSpell.m_spell));
+    const auto spell = static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itSpell.m_spell));
 	const CSpellDef* pSpellDef = g_Cfg.GetSpellDef(spell);
 	if (!pSpellDef)
 		return false;
@@ -2083,7 +2083,7 @@ CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEff
 	// Check if there's any previous effect to clear before apply the new effect
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pSpellPrev = static_cast<CItem*>(pObjRec);
+        const auto pSpellPrev = static_cast<CItem*>(pObjRec);
 		if ( layer != pSpellPrev->GetEquipLayer() )
 			continue;
 
@@ -2439,7 +2439,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bo
 	if ( !pSrc->IsChar() )// Looking for non-character sources
 	{
 		// Cast spell using magic items (wand/scroll)
-		CItem * pItem = dynamic_cast <CItem*> (pSrc);
+        const auto pItem = dynamic_cast <CItem*> (pSrc);
 		if ( !pItem )
 			return false;
 
@@ -2635,7 +2635,7 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 			break;
 		case SPELL_Animate_Dead:	//This is the Sphere custom spell, not the necromancy one.
 		{
-			CItemCorpse* pCorpse = dynamic_cast <CItemCorpse*> (m_Act_UID.ObjFind());
+            const auto pCorpse = dynamic_cast <CItemCorpse*> (m_Act_UID.ObjFind());
 			if (pCorpse == nullptr)
 			{
 				SysMessageDefault(DEFMSG_SPELL_ANIMDEAD_NC);
@@ -2762,9 +2762,9 @@ bool CChar::Spell_TargCheck()
 
 		if (pObj->IsChar())
 		{
-			CChar* pChar = static_cast<CChar *>(pObj);
-			bool fIsTargetDead = pChar->IsStatFlag(STATF_DEAD);
-			bool fCanSpellTargetDead = pSpellDef->IsSpellType(SPELLFLAG_TARG_DEAD);
+            const auto pChar = static_cast<CChar *>(pObj);
+            const bool fIsTargetDead = pChar->IsStatFlag(STATF_DEAD);
+            const bool fCanSpellTargetDead = pSpellDef->IsSpellType(SPELLFLAG_TARG_DEAD);
 			if (fIsTargetDead && !fCanSpellTargetDead) // If target is dead and the spell cannot target a ghost, abort the spell.
 			{
 				SysMessageDefault(DEFMSG_SPELL_TARG_DEAD);
@@ -2920,7 +2920,7 @@ bool CChar::Spell_CastDone()
 	if (pObjSrc && !pObjSrc->IsChar())
 	{
 		// Get the strength of the item. IT_SCROLL or IT_WAND
-		CItem * pItem = dynamic_cast <CItem*>(pObjSrc);
+        const auto pItem = dynamic_cast <CItem*>(pObjSrc);
 		if (pItem == nullptr)
 			return false;
 		if (!pItem->m_itWeapon.m_spelllevel)
@@ -3150,7 +3150,7 @@ bool CChar::Spell_CastDone()
 
 			case SPELL_Telekin:	// Act as DClick on the object.
 			{
-                if (CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(pObj->GetTopLevelObj()); pCorpse && pCorpse->m_uidLink != GetUID())
+                if (const auto pCorpse = dynamic_cast<CItemCorpse *>(pObj->GetTopLevelObj()); pCorpse && pCorpse->m_uidLink != GetUID())
 				{
 					CheckCorpseCrime(pCorpse, true, false);
 					Reveal();
@@ -3171,7 +3171,7 @@ bool CChar::Spell_CastDone()
 
 			case SPELL_Dispel_Field:
 			{
-				CItem * pItem = dynamic_cast <CItem*> (pObj);
+                const auto pItem = dynamic_cast <CItem*> (pObj);
 				if (pItem == nullptr || pItem->IsAttr(ATTR_MOVE_NEVER) || !pItem->IsType(IT_SPELL))
 				{
 					SysMessageDefault(DEFMSG_SPELL_DISPELLF_WT);
@@ -3184,7 +3184,7 @@ bool CChar::Spell_CastDone()
 			case SPELL_Mind_Blast:
 				if (pObj->IsChar())
 				{
-					CChar * pChar = dynamic_cast <CChar*> (pObj);
+                    auto pChar = dynamic_cast <CChar*> (pObj);
 					ASSERT(pChar);
 					int iDiff = (Stat_GetAdjusted(STAT_INT) - pChar->Stat_GetAdjusted(STAT_INT)) / 2;
 					if (iDiff < 0)
@@ -3241,7 +3241,7 @@ bool CChar::Spell_CastDone()
 
 			case SPELL_Animate_Dead:
 			{
-				CItemCorpse* pCorpse = dynamic_cast <CItemCorpse*> (pObj); //This is probably redundant.
+                const auto pCorpse = dynamic_cast <CItemCorpse*> (pObj); //This is probably redundant.
                 if (pCorpse == nullptr)
                 {
                     SysMessageDefault(DEFMSG_SPELL_ANIMDEAD_NC);
@@ -3272,7 +3272,7 @@ bool CChar::Spell_CastDone()
 
 			case SPELL_Bone_Armor:
 			{
-				CItemCorpse * pCorpse = dynamic_cast <CItemCorpse*> (pObj);
+                const auto pCorpse = dynamic_cast <CItemCorpse*> (pObj);
 				if (pCorpse == nullptr)
 				{
 					SysMessage("That is not a corpse!");
@@ -3327,7 +3327,7 @@ bool CChar::Spell_CastDone()
 
 	if ( g_Cfg.m_fHelpingCriminalsIsACrime && pSpellDef->IsSpellType(SPELLFLAG_GOOD) && pObj != nullptr && pObj->IsChar() && pObj != this )
 	{
-		CChar * pChar = dynamic_cast <CChar*> ( pObj );
+        const auto pChar = dynamic_cast <CChar*> ( pObj );
 		ASSERT( pChar );
 		switch ( pChar->Noto_GetFlag( this, false ))
 		{
@@ -3775,11 +3775,11 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	}
 
     spell = (SPELL_TYPE)(pScriptArgs->m_iN1);
-    iSkillLevel = (int)(pScriptArgs->m_iN2);		// remember that effect/duration is calculated before triggers
-    DAMAGE_TYPE iDmgType = (DAMAGE_TYPE)(ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("DamageType")));
-    ITEMID_TYPE iEffectID = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("CreateObject1")));
+    iSkillLevel = static_cast<int>(pScriptArgs->m_iN2);		// remember that effect/duration is calculated before triggers
+    DAMAGE_TYPE iDmgType = ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("DamageType")));
+    auto iEffectID = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("CreateObject1"))));
     fExplode = pScriptArgs->m_VarsLocal.GetKeyNum("EffectExplode") > 0;
-    iSound = (SOUND_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("Sound"));
+    iSound = static_cast<SOUND_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("Sound"));
     iEffect = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("Effect"));
     uiResist = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Resist"));
     iDuration = (int)(pScriptArgs->m_VarsLocal.GetKeyNum("Duration"));

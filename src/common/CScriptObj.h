@@ -131,8 +131,8 @@ private:
     TRIGRET_TYPE OnTriggerLoopForContSpecial(CScript& s, SK_TYPE iCmd, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc, CSString* pResult);
 
 	// Special statements
-    bool Execute_Call(CScript& s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
-    bool Execute_FullTrigger(CScript& s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
+    bool Execute_Call(const CScript & s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
+    bool Execute_FullTrigger(const CScript & s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
 
 
 // Utilities

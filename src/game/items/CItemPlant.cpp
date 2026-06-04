@@ -29,8 +29,8 @@ bool CItem::Plant_Use(CChar *pChar)
 
 	const CItemBase* pItemDef = Item_GetDef();
 
-	ITEMID_TYPE iGrowID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridGrow.GetResIndex();
-    ITEMID_TYPE iFruitID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridFruit.GetResIndex();
+    auto iGrowID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridGrow.GetResIndex());
+    auto iFruitID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridFruit.GetResIndex());
     ITEMID_TYPE iFruitIDOverride = ITEMID_NOTHING;
     if (!Can(CAN_I_SCRIPTEDMORE))
         iFruitIDOverride = (ITEMID_TYPE)m_itCrop.m_ridFruitOverride.GetResIndex();
@@ -122,7 +122,7 @@ bool CItem::Plant_OnTick()
 	}
 
 	const CItemBase *pItemDef = Item_GetDef();
-	ITEMID_TYPE iGrowID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridGrow.GetResIndex();
+    const auto iGrowID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridGrow.GetResIndex());
 
 	if ( iGrowID == RES_INDEX_MASK ) // if TDATA2 == -1
 	{
@@ -167,7 +167,7 @@ bool CItem::Plant_OnTick()
 
 bool CItem::Plant_SetID(ITEMID_TYPE id)
 {
-    bool iRet = SetID(id);
+    const bool iRet = SetID(id);
     OnTrigger(ITRIG_Create, CScriptParserBufs::GetCScriptTriggerArgsPtr(), &g_Serv);
     return iRet;
 }
@@ -185,7 +185,7 @@ void CItem::Plant_CropReset()
 	}
 
 	const CItemBase *pItemDef = Item_GetDef();
-    if (ITEMID_TYPE iResetID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridReset.GetResIndex(); iResetID != ITEMID_NOTHING )
+    if (auto const iResetID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridReset.GetResIndex()); iResetID != ITEMID_NOTHING )
 		Plant_SetID(iResetID);
 
 	Plant_SetTimer();

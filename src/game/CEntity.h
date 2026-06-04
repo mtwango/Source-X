@@ -44,7 +44,7 @@ public:
     *
     * @param pComponent the CComponent to unsuscribe.
     */
-    void UnsubscribeComponent(CComponent *pComponent);
+    void UnsubscribeComponent(const CComponent *pComponent);
 
     /**
     * @brief Checks if a CComponent is actually suscribed.

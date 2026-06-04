@@ -28,7 +28,7 @@ void CItemVendable::DupeCopy( const CObjBase * pItemObj )
     ASSERT(pItem);
 	CItem::DupeCopy( pItem );
 
-	const CItemVendable * pVendItem = dynamic_cast <const CItemVendable *>(pItem);
+    const auto pVendItem = dynamic_cast <const CItemVendable *>(pItem);
 	if ( pVendItem == nullptr )
 		return;
 

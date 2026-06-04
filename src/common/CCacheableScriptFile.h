@@ -50,7 +50,7 @@ public:
     tchar * ReadString(tchar *pBuffer, int sizemax) override;
 
 protected:
-    void _dupeFrom(CCacheableScriptFile *other);
+    void _dupeFrom(const CCacheableScriptFile *other);
     void dupeFrom(CCacheableScriptFile *other);
 
     bool _HasCache() const;

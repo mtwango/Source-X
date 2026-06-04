@@ -188,7 +188,7 @@ PacketObjectStatus::PacketObjectStatus(const CClient* target, CObjBase* object) 
 		    const CItem *objectItem = object->IsItem() ? dynamic_cast<const CItem *>(object) : nullptr;
             if (objectItem)
             {
-                if (CCItemDamageable *pItem = dynamic_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
+                if (const auto pItem = dynamic_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
                 {
                     const ushort tmpMaxHits = pItem->GetMaxHits();
                     iHitsCurrent = static_cast<word>((pItem->GetCurHits() * 100) / maximum(tmpMaxHits, 1));
@@ -675,9 +675,9 @@ PacketMessageASCII::PacketMessageASCII(const CClient* target, lpctstr pszText, c
 	}
 	else
 	{
-		const CChar* sourceCharacter = dynamic_cast<const CChar*>(source);
+        const auto sourceCharacter = dynamic_cast<const CChar*>(source);
 		ASSERT(sourceCharacter);
-		writeInt16((word)(sourceCharacter->GetDispID()));
+		writeInt16(static_cast<word>(sourceCharacter->GetDispID()));
 	}
 
 	writeByte((byte)(mode));
@@ -1258,7 +1258,7 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 
 		if ( fIsShop )
 		{
-            if (const CItemVendable *vendorItem = dynamic_cast<const CItemVendable *>(item);
+            if (const auto vendorItem = dynamic_cast<const CItemVendable *>(item);
                 vendorItem == nullptr || vendorItem->GetAmount() == 0 || vendorItem->IsType(IT_GOLD) )
 				continue;
 
@@ -1278,7 +1278,7 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 
 		if ( fFilterLayers )
 		{
-            if (const LAYER_TYPE layer = (LAYER_TYPE)(item->GetContainedLayer()); (layer > LAYER_NONE) && (layer < LAYER_HORSE))
+            if (const auto layer = static_cast<LAYER_TYPE>(item->GetContainedLayer()); (layer > LAYER_NONE) && (layer < LAYER_HORSE))
 			{
 				switch (layer)	// don't put these on a corpse.
 				{
@@ -1395,7 +1395,7 @@ PacketItemContents::PacketItemContents(const CClient* target, const CItemContain
 
 	for (const CSObjContRec* pObjRec : *spellbook)
 	{
-		const CItem* item = static_cast<const CItem*>(pObjRec);
+        const auto item = static_cast<const CItem*>(pObjRec);
 		if (item->IsType(IT_SCROLL) == false)
 			continue;
 
@@ -1717,7 +1717,7 @@ void PacketBookPageContent::addPage(const CItem* book, word page)
 	else
 	{
 		// user written book pages
-        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
+        if (const auto message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			if (page > 0 && page <= message->GetPageCount())
 			{
@@ -1794,9 +1794,9 @@ PacketAddTarget::PacketAddTarget(const CClient* target, TargetType type, dword c
 		return;
 
 	word x = 0, y = 0, z = 0;
-    if (CItemBaseMulti *pMultiDef = static_cast<CItemBaseMulti *>(pItemDef); pMultiDef && CItemBase::IsID_Multi(id))
+    if (const auto pMultiDef = static_cast<CItemBaseMulti *>(pItemDef); pMultiDef && CItemBase::IsID_Multi(id))
 	{
-		x = (word)(pMultiDef->m_Offset.m_dx != 0 ? (pMultiDef->m_rect.m_left + pMultiDef->m_Offset.m_dx) : 0);
+		x = static_cast<word>(pMultiDef->m_Offset.m_dx != 0 ? (pMultiDef->m_rect.m_left + pMultiDef->m_Offset.m_dx) : 0);
 		y = (word)(pMultiDef->m_rect.m_bottom + pMultiDef->m_Offset.m_dy);
 		z = (word)(pMultiDef->m_Offset.m_dz);
 	}
@@ -2318,8 +2318,8 @@ uint PacketVendorBuyList::fillBuyData(const CItemContainer* container, int iConv
 	// Classic Client wants the prices sent with order a->z, Enhanced Client with order a->z.
 	for (CSObjContRec* pObjRec : *container)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		CItemVendable* vendorItem = static_cast<CItemVendable *>(pItem);
+        const auto pItem = static_cast<CItem*>(pObjRec);
+        const auto vendorItem = static_cast<CItemVendable *>(pItem);
 		if (vendorItem == nullptr || vendorItem->GetAmount() == 0)
 			continue;
 
@@ -2464,8 +2464,8 @@ PacketCharacter::PacketCharacter(CClient* target, const CChar* character) : Pack
 
 		for (CSObjContRec* pObjRec : *character)
 		{
-			CItem* item = static_cast<CItem*>(pObjRec);
-			LAYER_TYPE layer = item->GetEquipLayer();
+            const auto item = static_cast<CItem*>(pObjRec);
+            const LAYER_TYPE layer = item->GetEquipLayer();
 			if (CItemBase::IsVisibleLayer(layer) == false)	// sanity check for layer value, ensure we don't get out of bounds in isLayerSent array
 				continue;
 			if (viewer->CanSeeItem(item) == false && viewer != character)
@@ -2731,11 +2731,11 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
 
 	for (CSObjContRec* pObjRec : *corpse)
 	{
-		CItem* item = dynamic_cast<CItem*>(pObjRec);
+        const auto item = dynamic_cast<CItem*>(pObjRec);
 		if (item == nullptr || (item->IsAttr(ATTR_INVIS) && !viewer->CanSee(item)))
 			continue;
 
-		LAYER_TYPE layer = (LAYER_TYPE)(item->GetContainedLayer());
+        const auto layer = static_cast<LAYER_TYPE>(item->GetContainedLayer());
 		ASSERT(layer < LAYER_HORSE);
 		switch (layer) // don't put these on a corpse.
 		{
@@ -2930,7 +2930,7 @@ PacketDisplayBook::PacketDisplayBook(const CClient* target, CItem* book) : Packe
 	else
 	{
 		// user written book
-        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
+        if (const auto message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			isWritable = message->IsBookWritable();
 			pages = isWritable ? MAX_BOOK_PAGES : (int)message->GetPageCount();
@@ -2965,14 +2965,14 @@ PacketShowDyeWindow::PacketShowDyeWindow(const CClient* target, const CObjBase* 
 	ITEMID_TYPE id;
 	if (object->IsItem())
 	{
-		const CItem* item = dynamic_cast<const CItem*>(object);
+        const auto item = dynamic_cast<const CItem*>(object);
 		ASSERT(item);
 		id = item->GetDispID();
 	}
 	else
 	{
 		// get the item equiv for the creature
-		const CChar* character = dynamic_cast<const CChar*>(object);
+        const auto character = dynamic_cast<const CChar*>(object);
 		ASSERT(character);
 		id = character->Char_GetDef()->m_trackID;
 	}
@@ -3071,7 +3071,7 @@ uint PacketVendorSellList::fillSellList(CClient* target, const CItemContainer* c
 
 		for (CSObjContRec* pObjRec : *container)
 		{
-			CItem* item = static_cast<CItem*>(pObjRec);
+            const auto item = static_cast<CItem*>(pObjRec);
 
 			container = dynamic_cast<CItemContainer*>(item);
 			if (container != nullptr && !container->IsContainerEmpty())
@@ -3081,7 +3081,7 @@ uint PacketVendorSellList::fillSellList(CClient* target, const CItemContainer* c
 			}
 			else
 			{
-                if (CItemVendable *vendItem = dynamic_cast<CItemVendable *>(item); vendItem != nullptr)
+                if (const auto vendItem = dynamic_cast<CItemVendable *>(item); vendItem != nullptr)
 				{
                     if (CItemVendable *vendSell = CChar::NPC_FindVendableItem(vendItem, stock1, stock2); vendSell != nullptr)
 					{
@@ -3566,9 +3566,9 @@ PacketMessageUNICODE::PacketMessageUNICODE(const CClient* target, const nachar *
 	}
 	else
 	{
-		const CChar* sourceCharacter = dynamic_cast<const CChar*>(source);
+        const auto sourceCharacter = dynamic_cast<const CChar*>(source);
 		ASSERT(sourceCharacter);
-		writeInt16((word)(sourceCharacter->GetDispID()));
+		writeInt16(static_cast<word>(sourceCharacter->GetDispID()));
 	}
 
 	writeByte((byte)(mode));
@@ -3653,7 +3653,7 @@ void PacketGumpDialog::writeCompressedControls(std::vector<CSString> const* cont
             controlLength += (uint)ctrl.GetLength() + 2; // String terminator not needed.
         }
 
-		char* toCompress = new char[controlLength];
+        const auto toCompress = new char[controlLength];
 		uint controlLengthCurrent = 0;
 		for (CSString const& ctrl : *controls)
         {
@@ -3666,9 +3666,9 @@ void PacketGumpDialog::writeCompressedControls(std::vector<CSString> const* cont
 		ASSERT(controlLengthCurrent == controlLength);
 
 		zlib::uLong compressLength = zlib::compressBound(controlLengthCurrent);
-		byte* compressBuffer = new byte[compressLength];
+        const auto compressBuffer = new byte[compressLength];
 
-		int error = zlib::compress2(compressBuffer, &compressLength, (byte*)toCompress, controlLengthCurrent, Z_DEFAULT_COMPRESSION);
+        const int error = zlib::compress2(compressBuffer, &compressLength, reinterpret_cast<byte *>(toCompress), controlLengthCurrent, Z_DEFAULT_COMPRESSION);
 		delete[] toCompress;
 
 		if (error != Z_OK || compressLength <= 0)
@@ -3704,9 +3704,9 @@ void PacketGumpDialog::writeCompressedControls(std::vector<CSString> const* cont
 		uint textsLength = getPosition() - textsPosition;
 
 		zlib::uLong compressLength = zlib::compressBound(textsLength);
-		byte* compressBuffer = new byte[compressLength];
+        const auto compressBuffer = new byte[compressLength];
 
-        if (int error = zlib::compress2(compressBuffer, &compressLength, &m_buffer[textsPosition], textsLength, Z_DEFAULT_COMPRESSION);
+        if (const int error = zlib::compress2(compressBuffer, &compressLength, &m_buffer[textsPosition], textsLength, Z_DEFAULT_COMPRESSION);
             error != Z_OK || compressLength <= 0)
 		{
 			delete[] compressBuffer;
@@ -4552,9 +4552,9 @@ PacketMessageLocalised::PacketMessageLocalised(const CClient* target, int cliloc
 	}
 	else
 	{
-		const CChar* sourceCharacter = dynamic_cast<const CChar*>(source);
+        const auto sourceCharacter = dynamic_cast<const CChar*>(source);
 		ASSERT(sourceCharacter);
-		writeInt16((word)(sourceCharacter->GetDispID()));
+		writeInt16(static_cast<word>(sourceCharacter->GetDispID()));
 	}
 
 	writeByte((byte)(mode));
@@ -4613,9 +4613,9 @@ PacketMessageLocalisedEx::PacketMessageLocalisedEx(const CClient* target, int cl
 	}
 	else
 	{
-		const CChar* sourceCharacter = dynamic_cast<const CChar*>(source);
+        const auto sourceCharacter = dynamic_cast<const CChar*>(source);
 		ASSERT(sourceCharacter);
-		writeInt16((word)(sourceCharacter->GetDispID()));
+		writeInt16(static_cast<word>(sourceCharacter->GetDispID()));
 	}
 
 	writeByte((byte)(mode));
@@ -4701,7 +4701,7 @@ PacketDisplayBookNew::PacketDisplayBookNew(const CClient* target, CItem* book) :
 	else
 	{
 		// user written book
-        if (const CItemMessage *message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
+        if (const auto message = dynamic_cast<const CItemMessage *>(book); message != nullptr)
 		{
 			isWritable = message->IsBookWritable();
 			pages = isWritable ? MAX_BOOK_PAGES : (int)message->GetPageCount();
@@ -4871,9 +4871,9 @@ bool PacketHouseDesign::writePlaneData(int plane, int itemCount, const byte * da
 
 	// compress data
 	zlib::uLong compressLength = zlib::compressBound(dataSize);
-	byte* compressBuffer = new byte[compressLength];
+    const auto compressBuffer = new byte[compressLength];
 
-    if (int error = zlib::compress2(compressBuffer, &compressLength, data, dataSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
+    if (const int error = zlib::compress2(compressBuffer, &compressLength, data, dataSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
 	{
 		// an error occured with this floor, but we should be able to continue to the next without problems
 		delete[] compressBuffer;
@@ -4931,9 +4931,9 @@ void PacketHouseDesign::flushStairData()
 
 	// compress data
 	zlib::uLong compressLength = zlib::compressBound(stairSize);
-	byte* compressBuffer = new byte[compressLength];
+    const auto compressBuffer = new byte[compressLength];
 
-    if (int error = zlib::compress2(compressBuffer, &compressLength, (byte *)m_stairBuffer, stairSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
+    if (const int error = zlib::compress2(compressBuffer, &compressLength, reinterpret_cast<byte *>(m_stairBuffer), stairSize, Z_DEFAULT_COMPRESSION); error != Z_OK )
 	{
 		// an error occured with this block, but we should be able to continue to the next without problems
 		delete[] compressBuffer;
@@ -5460,9 +5460,9 @@ PacketContainer::PacketContainer(const CClient* target, CObjBase** objects, uint
 	{
         if (CObjBase *object = objects[i]; object->IsItem())
 		{
-			CItem* item = static_cast<CItem*>(object);
+            const auto item = static_cast<CItem*>(object);
 			ds source = ds::TileData;
-			dword uid = item->GetUID();
+            const dword uid = item->GetUID();
 			word amount = item->GetAmount();
 			ITEMID_TYPE id = item->GetDispID();
 			const CPointMap& p = item->GetTopPoint();
@@ -5497,9 +5497,9 @@ PacketContainer::PacketContainer(const CClient* target, CObjBase** objects, uint
 		}
 		else
 		{
-			CChar* mobile = static_cast<CChar*>(object);
-			ds source = ds::Character;
-			dword uid = mobile->GetUID();
+            const CChar * mobile = static_cast<CChar*>(object);
+            const ds source = ds::Character;
+            const dword uid = mobile->GetUID();
 			CREID_TYPE id = mobile->GetDispID();
 			CPointMap p = mobile->GetTopPoint();
 			byte dir = (byte)(mobile->m_dirFace);

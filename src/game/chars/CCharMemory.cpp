@@ -20,7 +20,7 @@ CItemStone * CChar::Guild_Find( MEMORY_TYPE MemType ) const
 	CItemMemory * pMyGMem = Memory_FindTypes((word)(MemType));
 	if ( ! pMyGMem )
 		return nullptr;
-	CItemStone * pMyStone = dynamic_cast <CItemStone*>( pMyGMem->m_uidLink.ItemFind());
+    const auto pMyStone = dynamic_cast <CItemStone*>( pMyGMem->m_uidLink.ItemFind());
 	if ( pMyStone == nullptr )
 	{
 		// Some sort of mislink ! fix it.
@@ -198,7 +198,7 @@ CItemMemory * CChar::Memory_CreateObj(const CUID& uid, word MemTypes )
 {
 	ADDTOCALLSTACK("CChar::Memory_CreateObj");
 
-	CItemMemory * pMemory = dynamic_cast <CItemMemory *>(CItem::CreateBase( ITEMID_MEMORY ));
+    const auto pMemory = dynamic_cast <CItemMemory *>(CItem::CreateBase( ITEMID_MEMORY ));
 	if ( pMemory == nullptr )
 		return nullptr;
 
@@ -224,10 +224,10 @@ void CChar::Memory_ClearTypes( word MemTypes )
 	ADDTOCALLSTACK("CChar::Memory_ClearTypes(type)");
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( !pItem->IsMemoryTypes(MemTypes) )
 			continue;
-		CItemMemory * pMemory = dynamic_cast <CItemMemory *>(pItem);
+        auto *const pMemory = dynamic_cast <CItemMemory *>(pItem);
 		if ( !pMemory )
 			continue;
 		Memory_ClearTypes(pMemory, MemTypes);
@@ -240,7 +240,7 @@ CItemMemory * CChar::Memory_FindObj( const CUID& uid ) const
 	ADDTOCALLSTACK("CChar::Memory_FindObj(UID)");
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( !pItem->IsType(IT_EQ_MEMORY_OBJ) )
 			continue;
 		if ( pItem->m_uidLink != uid )
@@ -268,7 +268,7 @@ CItemMemory * CChar::Memory_FindTypes( word MemTypes ) const
 
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( !pItem->IsMemoryTypes(MemTypes) )
 			continue;
 		return dynamic_cast<CItemMemory *>(pItem);
@@ -308,7 +308,7 @@ TRIGRET_TYPE CChar::OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr 
 	{
 		for (CSObjContRec* pObjRec : GetIterationSafeCont())
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 			if ( !pItem->IsMemoryTypes(wMemType) )
 				continue;
             TRIGRET_TYPE iRet = pItem->OnTriggerRun( s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult );

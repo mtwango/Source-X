@@ -25,7 +25,7 @@ CItemMulti::CItemMulti(ITEMID_TYPE id, CItemBase * pItemDef, bool fTurnable) :  
     CItem(id, pItemDef),
     CCMultiMovable(fTurnable)
 {
-    CItemBaseMulti * pItemBase = static_cast<CItemBaseMulti*>(Base_GetDef());
+    const auto pItemBase = static_cast<CItemBaseMulti*>(Base_GetDef());
     _shipSpeed.period = pItemBase->_shipSpeed.period;
     _shipSpeed.tiles = pItemBase->_shipSpeed.tiles;
     _eSpeedMode = pItemBase->m_SpeedMode;
@@ -545,7 +545,7 @@ bool CItemMulti::MoveTo(const CPointMap& pt, bool fForceFix) // Put item on the 
     if (IsType(IT_MULTI_ADDON)) // Addons doesn't have region, don't try to realize it.
     {
         const CPointMap& ptTop = GetTopPoint();
-        CRegionWorld *pRegion = dynamic_cast<CRegionWorld*>(ptTop.GetRegion(REGION_TYPE_HOUSE));
+        auto pRegion = dynamic_cast<CRegionWorld*>(ptTop.GetRegion(REGION_TYPE_HOUSE));
         if (!pRegion)
         {
             pRegion = dynamic_cast<CRegionWorld*>(ptTop.GetRegion(REGION_TYPE_AREA));
@@ -704,7 +704,7 @@ void CItemMulti::SetGuild(const CUID& uidGuild)
 {
     ADDTOCALLSTACK("CItemMulti::SetGuild");
 
-    CItemStone *pGuildStone = static_cast<CItemStone*>(GetGuildStone().ItemFind());
+    auto pGuildStone = static_cast<CItemStone*>(GetGuildStone().ItemFind());
     _uidGuild.InitUID();
     if (pGuildStone)  // Old Guild may not exist, was it removed...?
     {
@@ -1135,7 +1135,7 @@ void CItemMulti::RemoveKeys(const CUID& uidTarget)
     {
         for (CSObjContRec* pObjRec : pTargPack->GetIterationSafeCont())
         {
-            if (CItem *pItemKey = static_cast<CItem *>(pObjRec); pItemKey->m_uidLink == uidHouse)
+            if (const auto pItemKey = static_cast<CItem *>(pObjRec); pItemKey->m_uidLink == uidHouse)
             {
                 pItemKey->Delete();
             }
@@ -1195,14 +1195,14 @@ void CItemMulti::Redeed(const bool fDisplayMsg, bool fMoveToBank, const CUID &ui
     ASSERT(pDeed);
 
     tchar *pszName = Str_GetTemp();
-    const CItemBaseMulti * pItemBase = static_cast<const CItemBaseMulti*>(Base_GetDef());
+    const auto pItemBase = static_cast<const CItemBaseMulti*>(Base_GetDef());
     snprintf(pszName, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_DEED_NAME), pItemBase->GetName());
     pDeed->SetName(pszName);
 
     bool fIsAddon = IsType(IT_MULTI_ADDON);
     if (fIsAddon)
     {
-        if (CItemMulti *pMulti = static_cast<CItemMulti *>(m_uidLink.ItemFind()))
+        if (const auto pMulti = static_cast<CItemMulti *>(m_uidLink.ItemFind()))
         {
             pMulti->DeleteAddon(GetUID());
         }
@@ -1292,8 +1292,8 @@ void CItemMulti::Redeed(const bool fDisplayMsg, bool fMoveToBank, const CUID &ui
 void CItemMulti::SetMovingCrate(const CUID& uidCrate)
 {
     ADDTOCALLSTACK("CItemMulti::SetMovingCrate");
-    CItemContainer *pCurrentCrate = static_cast<CItemContainer*>(GetMovingCrate(false).ItemFind());
-    CItemContainer *pNewCrate = static_cast<CItemContainer*>(uidCrate.ItemFind());
+    const auto pCurrentCrate = static_cast<CItemContainer*>(GetMovingCrate(false).ItemFind());
+    const auto pNewCrate = static_cast<CItemContainer*>(uidCrate.ItemFind());
 
     if (!uidCrate.IsValidUID() || !pNewCrate)
     {
@@ -1323,7 +1323,7 @@ CUID CItemMulti::GetMovingCrate(bool fCreate)
     {
         return CUID();
     }
-    CItemContainer *pCrate = static_cast<CItemContainer*>(CreateBase(ITEMID_CRATE1));
+    const auto pCrate = static_cast<CItemContainer*>(CreateBase(ITEMID_CRATE1));
     ASSERT(pCrate);
     const CUID& uidCrate = pCrate->GetUID();
     CPointMap pt = GetTopPoint();
@@ -1337,7 +1337,7 @@ CUID CItemMulti::GetMovingCrate(bool fCreate)
 void CItemMulti::TransferAllItemsToMovingCrate(TRANSFER_TYPE iType)
 {
     ADDTOCALLSTACK("CItemMulti::TransferAllItemsToMovingCrate");
-    CItemContainer *pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    const auto pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
     ASSERT(pCrate);
     //Transfer Types
     const bool fTransferAddons = ((iType & TRANSFER_ADDONS) || (iType & TRANSFER_ALL));
@@ -1431,7 +1431,7 @@ void CItemMulti::TransferLockdownsToMovingCrate()
     {
         return;
     }
-    CItemContainer *pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    const auto pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
     if (!pCrate)
     {
         return;
@@ -1456,14 +1456,14 @@ void CItemMulti::TransferSecuredToMovingCrate()
     {
         return;
     }
-    CItemContainer *pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    const auto pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
     if (!pCrate)
     {
         return;
     }
     for (size_t i = 0; i < _lSecureContainers.size(); ++i)
     {
-        if (CItemContainer *pItem = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))  // Move all valid items.
+        if (const auto pItem = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))  // Move all valid items.
         {
             pItem->r_ExecSingle("EVENTS -ei_house_secure");
             pCrate->ContentAdd(pItem);
@@ -1481,14 +1481,14 @@ void CItemMulti::RedeedAddons()
     {
         return;
     }
-    if (CItemContainer *pCrate = static_cast<CItemContainer *>(GetMovingCrate(true).ItemFind()); !pCrate)
+    if (auto *const pCrate = static_cast<CItemContainer *>(GetMovingCrate(true).ItemFind()); !pCrate)
     {
         return;
     }
     std::vector<CUID> vAddons = _lAddons;
     for (size_t i = 0; i < vAddons.size(); ++i)
     {
-        if (CItemMulti *pAddon = static_cast<CItemMulti *>(vAddons[i].ItemFind()))  // Move all valid items.
+        if (const auto pAddon = dynamic_cast<CItemMulti *>(vAddons[i].ItemFind()))  // Move all valid items.
         {
             pAddon->Redeed(false, false);
         }
@@ -1500,7 +1500,7 @@ void CItemMulti::RedeedAddons()
 void CItemMulti::TransferMovingCrateToBank()
 {
     ADDTOCALLSTACK("CItemMulti::TransferMovingCrateToBank");
-    CItemContainer *pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(false).ItemFind());
+    auto *const pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(false).ItemFind());
     if (CChar *pOwner = GetOwner().CharFind(); pCrate && pOwner)
     {
         if (!pCrate->IsContainerEmpty())
@@ -1527,7 +1527,7 @@ void CItemMulti::AddAddon(const CUID& uidAddon)
     {
         return;
     }
-    CItemMulti *pAddon = static_cast<CItemMulti*>(uidAddon.ItemFind());
+    const auto pAddon = dynamic_cast<CItemMulti*>(uidAddon.ItemFind());
     if (!pAddon)
     {
         return;
@@ -1816,7 +1816,7 @@ void CItemMulti::Secure(const CUID& uidContainer)
     {
         return;
     }
-    CItemContainer *pContainer = static_cast<CItemContainer*>(uidContainer.ItemFind());
+    const auto pContainer = static_cast<CItemContainer*>(uidContainer.ItemFind());
     ASSERT(pContainer);
     if (!g_Serv.IsLoadingGeneric())
     {
@@ -1844,7 +1844,7 @@ void CItemMulti::Release(const CUID& uidContainer, bool fRemoveFromList)
     }
 
     // remove container from secure
-    CItemContainer *pContainer = static_cast<CItemContainer*>(uidContainer.ItemFind());
+    const auto pContainer = static_cast<CItemContainer*>(uidContainer.ItemFind());
     if (!pContainer)
     {
         return;
@@ -1880,7 +1880,7 @@ int16 CItemMulti::GetSecuredItemsCount() const
     size_t iCount = 0;
     for (size_t i = 0; i < _lSecureContainers.size(); ++i)
     {
-        if (CItemContainer *pContainer = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))
+        if (const auto pContainer = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))
         {
             iCount += pContainer->GetContentCount();
         }
@@ -2030,7 +2030,7 @@ bool CItemMulti::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
             SKIP_SEPARATORS(ptcKey);
             if (_lAddons.size() > idx)
             {
-                if (CItemMulti *pAddon = static_cast<CItemMulti *>(_lAddons[idx].ItemFind()))
+                if (const auto pAddon = static_cast<CItemMulti *>(_lAddons[idx].ItemFind()))
                 {
                     pRef = pAddon;
                     return true;
@@ -2141,7 +2141,7 @@ bool CItemMulti::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
             {
                 if (CItem *pItem = _lSecureContainers[idx].ItemFind())
                 {
-                    CItemContainer *pCont = static_cast<CItemContainer*>(pItem);
+                    const auto pCont = static_cast<CItemContainer*>(pItem);
                     pRef = pCont;
                     return true;
                 }
@@ -2369,7 +2369,7 @@ bool CItemMulti::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command fro
             }
             else
             {
-                const CUID uidRelease = (CUID)s.GetArgDWVal();
+                const auto uidRelease = static_cast<CUID>(s.GetArgDWVal());
                 Release(uidRelease, true);
             }
             break;
@@ -2714,7 +2714,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
         }
         case SHL_GUILD:
         {
-            CItemStone *pGuild = static_cast<CItemStone*>(GetGuildStone().ItemFind());
+            const auto pGuild = static_cast<CItemStone*>(GetGuildStone().ItemFind());
             if (!IsStrEmpty(ptcKey))
             {
                 if (pGuild)
@@ -2816,7 +2816,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
             }
             else if (!IsStrEmpty(ptcKey) && _uidMovingCrate.IsValidUID())    // If there's an already existing Moving Crate and args len is greater than 1, it should have a keyword to send to the crate.
             {
-                CItemContainer *pCrate = static_cast<CItemContainer*>(_uidMovingCrate.ItemFind());
+                const auto pCrate = static_cast<CItemContainer*>(_uidMovingCrate.ItemFind());
                 ASSERT(pCrate); // Removed crates should init _uidMovingCrate's uid?
                 return pCrate->r_WriteVal(ptcKey, sVal, pSrc);
             }
@@ -3039,7 +3039,7 @@ bool CItemMulti::r_LoadVal(CScript & s)
             ptcKey += 5;
             if (*ptcKey == '.')
             {
-                if (CItemStone *pGuild = static_cast<CItemStone *>(GetGuildStone().ItemFind()))
+                if (const auto pGuild = static_cast<CItemStone *>(GetGuildStone().ItemFind()))
                 {
                     return pGuild->r_LoadVal(s);
                 }
@@ -3164,7 +3164,7 @@ void CItemMulti::DupeCopy(const CObjBase * pItemObj)
     CItem::DupeCopy(pItem);
 }
 
-CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed)
+CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPointMap & pt, const CItem *pDeed)
 {
     if (!pChar || !pChar->m_pPlayer)
     {
@@ -3175,7 +3175,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
     const bool fShip = pItemDef->IsType(IT_SHIP);    // must be in water.
 
     // pMultiDef can be nullptr, because we can also add simple items with a deed, not only multis.
-    const CItemBaseMulti* pMultiDef = dynamic_cast <const CItemBaseMulti*> (pItemDef);
+    const auto pMultiDef = dynamic_cast <const CItemBaseMulti*> (pItemDef);
 
     /*
     * First thing to do is to check if the character creating the multi is allowed to have it
@@ -3372,7 +3372,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
     pItemNew->SetHue(pDeed->GetHue());
     pItemNew->MoveToUpdate(pt);
 
-    if (CItemMulti *pMultiItem = dynamic_cast<CItemMulti *>(pItemNew))
+    if (const auto pMultiItem = dynamic_cast<CItemMulti *>(pItemNew))
     {
         pMultiItem->Multi_Setup(pChar, UID_PLAIN_CLEAR);
     }
@@ -3380,7 +3380,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
     if (pItemDef->IsType(IT_STONE_GUILD))
     {
         // Now name the guild
-        CItemStone * pStone = dynamic_cast <CItemStone*>(pItemNew);
+        const auto pStone = dynamic_cast <CItemStone*>(pItemNew);
         ASSERT(pStone);
         pStone->AddRecruit(pChar, STONEPRIV_MASTER);
         if (CClient* pClient = pChar->GetClientActive())
@@ -3452,7 +3452,7 @@ CMultiStorage::~CMultiStorage()
     for (const auto &key : _lHouses | std::views::keys)
     {
         const CUID& uid = key;
-        CItemMulti *pMulti = static_cast<CItemMulti*>(uid.ItemFind());
+        const auto pMulti = static_cast<CItemMulti*>(uid.ItemFind());
         if (!pMulti)
             continue;
 
@@ -3469,7 +3469,7 @@ CMultiStorage::~CMultiStorage()
     for (const auto &key : _lShips | std::views::keys)
     {
         const CUID& uid = key;
-        CItemShip *pShip = static_cast<CItemShip*>(uid.ItemFind());
+        const auto pShip = static_cast<CItemShip*>(uid.ItemFind());
         if (!pShip)
             continue;
 
@@ -3519,7 +3519,7 @@ void CMultiStorage::AddMulti(const CUID& uidMulti, HOUSE_PRIV ePriv)
 
 void CMultiStorage::DelMulti(const CUID& uidMulti)
 {
-    CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidMulti.ItemFind());
+    const auto pMulti = dynamic_cast<CItemMulti*>(uidMulti.ItemFind());
     if (pMulti == nullptr)
     {
         return;
@@ -3597,7 +3597,7 @@ void CMultiStorage::DelHouse(const CUID& uidHouse)
 
     if (_lHouses.contains(uidHouse))
     {
-        CItemMulti *pMulti = dynamic_cast<CItemMulti*>(uidHouse.ItemFind());
+        const auto pMulti = dynamic_cast<CItemMulti*>(uidHouse.ItemFind());
         if (pMulti == nullptr)
         {
             return;
@@ -3690,7 +3690,7 @@ int16 CMultiStorage::GetHousePos(const CUID& uidHouse) const
         return -1;
     }
     int16 i = 0;
-    for (MultiOwnedCont::const_iterator it = _lHouses.begin(); it != _lHouses.end(); ++it)
+    for (auto it = _lHouses.begin(); it != _lHouses.end(); ++it)
     {
         if (it->first == uidHouse)
         {
@@ -3711,9 +3711,9 @@ int16 CMultiStorage::GetHouseCountReal() const
     return (int16)_lHouses.size();
 }
 
-CUID CMultiStorage::GetHouseAt(int16 iPos) const
+CUID CMultiStorage::GetHouseAt(const int16 iPos) const
 {
-    MultiOwnedCont::const_iterator it = _lHouses.begin();
+    auto it = _lHouses.begin();
     std::advance(it, iPos);
     return it->first;
 }
@@ -3723,7 +3723,7 @@ void CMultiStorage::ClearHouses()
     _lHouses.clear();
 }
 
-void CMultiStorage::r_Write(CScript & s) const
+void CMultiStorage::r_Write(const CScript & s) const
 {
     ADDTOCALLSTACK("CMultiStorage::r_Write");
     UnreferencedParameter(s);
@@ -3780,7 +3780,7 @@ void CMultiStorage::DelShip(const CUID& uidShip)
 
     if (_lShips.contains(uidShip))
     {
-        CItemMulti* pMulti = dynamic_cast<CItemMulti*>(uidShip.ItemFind());
+        const auto pMulti = dynamic_cast<CItemMulti*>(uidShip.ItemFind());
         if (pMulti == nullptr)
         {
             return;
@@ -3856,7 +3856,7 @@ int16 CMultiStorage::GetShipPos(const CUID& uidShip)
         return -1;
     }
     int16 i = 0;
-    for (MultiOwnedCont::iterator it = _lShips.begin(); it != _lShips.end(); ++it)
+    for (auto it = _lShips.begin(); it != _lShips.end(); ++it)
     {
         if (it->first == uidShip)
         {

@@ -64,7 +64,7 @@ public:
 	CUID GetMaster();
 
 	// Refresh status for party members
-	void AddStatsUpdate( CChar * pChar, PacketSend * pPacket );
+	void AddStatsUpdate(const CChar * pChar, PacketSend * pPacket );
 	// List sending wrappers
 	bool SendRemoveList( CChar * pCharRemove, bool bFor );
 	bool SendAddList( CChar * pCharDest );
@@ -95,7 +95,7 @@ public:
 	void AcceptMember( CChar * pChar );
 	void SetLootFlag( CChar * pChar, bool fSet );
 	bool GetLootFlag( const CChar * pChar );
-	bool SetMaster( CChar * pChar );
+	bool SetMaster(const CChar * pChar );
 
 	// -------------------------------
 

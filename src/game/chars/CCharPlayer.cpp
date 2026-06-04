@@ -77,7 +77,7 @@ bool CCharPlayer::SetSkillClass( CChar * pChar, const CResourceID &rid )
 	if ( !pDef )
 		return false;
 
-	CSkillClassDef* pLink = static_cast <CSkillClassDef*>(pDef);
+    const auto pLink = static_cast <CSkillClassDef*>(pDef);
 	if ( pLink == GetSkillClass() )
 		return true;
 

@@ -216,7 +216,7 @@ bool CStoneMember::r_LoadVal( CScript & s ) // Load an item Script
 	ADDTOCALLSTACK("CStoneMember::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const auto iIndex = static_cast<STMM_TYPE>(FindTableSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ));
 
 	if ( GetLinkUID().IsChar() )
 	{
@@ -288,7 +288,7 @@ bool CStoneMember::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 	ADDTOCALLSTACK("CStoneMember::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-	STMM_TYPE iIndex = (STMM_TYPE) FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const auto iIndex = static_cast<STMM_TYPE>(FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ));
 
 	if ( GetLinkUID().IsChar() )
 	{
@@ -424,7 +424,7 @@ CStoneMember::~CStoneMember()
 	if ( m_iPriv == STONEPRIV_ENEMY )
 	{
 		// same as declaring peace.
-        if (CItemStone *pStoneEnemy = dynamic_cast<CItemStone *>(GetLinkUID().ItemFind()); pStoneEnemy != nullptr )
+        if (auto *const pStoneEnemy = dynamic_cast<CItemStone *>(GetLinkUID().ItemFind()); pStoneEnemy != nullptr )
 		{
 			pStoneEnemy->TheyDeclarePeace( pStone, true );
 		}

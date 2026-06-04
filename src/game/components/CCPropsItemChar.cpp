@@ -113,8 +113,8 @@ bool CCPropsItemChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_
         {
             if (iVal != iOldVal)
             {
-                const CItem* pItemLink = static_cast<const CItem*>(pLinkedObj);
-                if (CContainer *pCont = dynamic_cast<CContainer *>(pItemLink->GetParent()))
+                const auto pItemLink = static_cast<const CItem*>(pLinkedObj);
+                if (const auto pCont = dynamic_cast<CContainer *>(pItemLink->GetParent()))
                 {
                     ASSERT(pItemLink->IsItemEquipped() || pItemLink->IsItemInContainer());
                     pCont->OnWeightChange(pItemLink->GetWeight() - iOldVal);
@@ -201,7 +201,7 @@ void CCPropsItemChar::r_Write(CScript & s)
 void CCPropsItemChar::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemChar::Copy");
-    const CCPropsItemChar *pTarget = dynamic_cast<const CCPropsItemChar*>(target);
+    const auto pTarget = dynamic_cast<const CCPropsItemChar*>(target);
     if (!pTarget)
         return;
 

@@ -43,7 +43,7 @@ void CCharsActiveList::OnRemoveObj(CSObjContRec* pObjRec )
 	// Override this = called when removed from group.
 	CSObjCont::OnRemoveObj(pObjRec);
 
-	CChar* pChar = static_cast<CChar*>(pObjRec);
+    const auto pChar = static_cast<CChar*>(pObjRec);
 	if (pChar->IsClientType())
 	{
 		--m_iClients;
@@ -81,7 +81,7 @@ void CItemsList::OnRemoveObj(CSObjContRec* pObjRec)
     DEBUG_ASSERT(nullptr != dynamic_cast<const CItem*>(pObjRec));
 
 	// Item is picked up off the ground. (may be put right back down though)
-	CItem * pItem = static_cast<CItem*>(pObjRec);
+    const auto pItem = static_cast<CItem*>(pObjRec);
 
     // IT_MULTI, IT_SHIP and IT_COMM_CRYSTAL
     pItem->OnMoveFrom();

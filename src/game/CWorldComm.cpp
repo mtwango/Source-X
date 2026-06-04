@@ -27,7 +27,7 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, lpctstr pszText, HUE_TYPE
 	{
 		if ( pSrc->IsChar() )
 		{
-            const CChar *pSrcChar = dynamic_cast<const CChar *>(pSrc);
+            const auto pSrcChar = dynamic_cast<const CChar *>(pSrc);
 			ASSERT(pSrcChar);
 
 			// Are they dead? Garble the text. unless we have SpiritSpeak

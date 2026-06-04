@@ -258,7 +258,8 @@ public:
 private:
     // Arguments inside conditional statements: IF, ELIF, ELSEIF
     [[nodiscard]]
-    bool EvaluateConditionalSingle(CScriptSubExprState& refSubExprState, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
+    bool EvaluateConditionalSingle(
+        const CScriptSubExprState & refSubExprState, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
 
     [[nodiscard]]
     bool EvaluateConditionalQval(lpctstr ptcKey, CSString& refStrVal, CScriptExprContext& refContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);

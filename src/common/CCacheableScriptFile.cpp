@@ -281,7 +281,7 @@ tchar * CCacheableScriptFile::ReadString(tchar *pBuffer, int sizemax)
     MT_UNIQUE_LOCK_RETURN(this, CCacheableScriptFile::_ReadString(pBuffer, sizemax));
 }
 
-void CCacheableScriptFile::_dupeFrom(CCacheableScriptFile *other)
+void CCacheableScriptFile::_dupeFrom(const CCacheableScriptFile *other)
 {
     if ( _useDefaultFile() )
         return;

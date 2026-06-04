@@ -177,7 +177,7 @@ void Packet::resize(uint newsize)
 	ASSERT(newsize > 0);
 	if ( newsize > m_bufferSize )		// increase buffer, copying the contents
 	{
-		byte* buffer = new byte[newsize];
+        const auto buffer = new byte[newsize];
 		if (m_buffer != nullptr)
 		{
 			memcpy(buffer, m_buffer, m_bufferSize);
@@ -464,7 +464,7 @@ void Packet::writeStringUTF16(const char* value, bool terminate)
 
 	ASSERT(value != nullptr);
 
-	wchar * buffer = reinterpret_cast<wchar *>(Str_GetTemp());
+    const auto buffer = reinterpret_cast<wchar *>(Str_GetTemp());
 	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
 
 	writeStringNETUTF16(buffer, terminate);
@@ -496,7 +496,7 @@ void Packet::writeStringFixedUTF16(const char* value, uint size, bool terminate)
 
 	ASSERT(value != nullptr);
 
-	wchar * buffer = reinterpret_cast<wchar *>(Str_GetTemp());
+    const auto buffer = reinterpret_cast<wchar *>(Str_GetTemp());
 	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
 
 	writeStringFixedNETUTF16(buffer, size, terminate);
@@ -578,8 +578,8 @@ void Packet::writeStringNETUTF16(const char* value, bool terminate)
 
 	ASSERT(value != nullptr);
 
-	wchar* buffer = reinterpret_cast<wchar *>(Str_GetTemp());
-	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
+    const auto buffer = reinterpret_cast<wchar *>(Str_GetTemp());
+	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, static_cast<int>(strlen(value)));
 
 	writeStringUTF16(buffer, terminate);
 #endif
@@ -610,8 +610,8 @@ void Packet::writeStringFixedNETUTF16(const char* value, uint size, bool termina
 
 	ASSERT(value != nullptr);
 
-	wchar* buffer = reinterpret_cast<wchar *>(Str_GetTemp());
-	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
+    auto *const buffer = reinterpret_cast<wchar *>(Str_GetTemp());
+	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, static_cast<int>(strlen(value)));
 
 	writeStringFixedUTF16(buffer, size, terminate);
 #endif
@@ -823,9 +823,9 @@ void Packet::readStringASCII(wchar* buffer, uint length, bool includeNull)
 	delete[] bufferReal;
 #else
 
-	char* bufferReal = new char[(size_t)length + 1]();
+    const auto bufferReal = new char[static_cast<size_t>(length) + 1]();
 	readStringASCII(bufferReal, length, includeNull);
-	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), (int)(length), bufferReal, (int)(length));
+	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), static_cast<int>(length), bufferReal, static_cast<int>(length));
 	delete[] bufferReal;
 
 	// need to flip byte order to convert NETUTF16 to UTF16 UNICODE
@@ -877,9 +877,9 @@ void Packet::readStringUTF16(char* buffer, uint bufferSize, uint length, bool in
 	delete[] bufferReal;
 #else
 
-	wchar* bufferReal = new wchar[(size_t)length + 1];
+    const auto bufferReal = new wchar[static_cast<size_t>(length) + 1];
 	readStringNETUTF16(bufferReal, length, includeNull);
-	CvtNETUTF16ToSystem(buffer, (int)(bufferSize), reinterpret_cast<nachar*>(bufferReal), (int)(length) + 1);
+	CvtNETUTF16ToSystem(buffer, static_cast<int>(bufferSize), reinterpret_cast<nachar*>(bufferReal), static_cast<int>(length) + 1);
 	delete[] bufferReal;
 #endif
 }
@@ -923,9 +923,9 @@ void Packet::readStringNETUTF16(char* buffer, uint bufferSize, uint length, bool
 	delete[] bufferReal;
 #else
 
-	wchar* bufferReal = new wchar[(size_t)length + 1];
+    auto *const bufferReal = new wchar[static_cast<size_t>(length) + 1];
 	readStringUTF16(bufferReal, length, includeNull);
-	CvtNETUTF16ToSystem(buffer, (int)(bufferSize), reinterpret_cast<nachar*>(bufferReal), (int)(length) + 1);
+	CvtNETUTF16ToSystem(buffer, static_cast<int>(bufferSize), reinterpret_cast<nachar*>(bufferReal), static_cast<int>(length) + 1);
 	delete[] bufferReal;
 #endif
 }
@@ -959,9 +959,9 @@ uint Packet::readStringNullASCII(wchar* buffer, uint maxlength)
 	delete[] bufferReal;
 #else
 
-	char* bufferReal = new char[(size_t)maxlength + 1];
+    auto *const bufferReal = new char[static_cast<size_t>(maxlength) + 1];
 	readStringNullASCII(bufferReal, maxlength);
-	int length = CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), (int)(maxlength), bufferReal, (int)(maxlength) + 1);
+    const int length = CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), static_cast<int>(maxlength), bufferReal, static_cast<int>(maxlength) + 1);
 	delete[] bufferReal;
 
 	// need to flip byte order to convert NETUTF16 to UTF16 UNICODE
@@ -1007,9 +1007,9 @@ uint Packet::readStringNullUTF16(char* buffer, uint bufferSize, uint maxlength)
 	delete[] bufferReal;
 #else
 
-	wchar* bufferReal = new wchar[(size_t)maxlength + 1];
+    auto *bufferReal = new wchar[static_cast<size_t>(maxlength) + 1];
 	readStringNullNETUTF16(bufferReal, maxlength);
-	int length = CvtNETUTF16ToSystem(buffer, (int)(bufferSize), reinterpret_cast<nachar*>(bufferReal), (int)(maxlength) + 1);
+    const int length = CvtNETUTF16ToSystem(buffer, static_cast<int>(bufferSize), reinterpret_cast<nachar*>(bufferReal), static_cast<int>(maxlength) + 1);
 	delete[] bufferReal;
 #endif
 
@@ -1047,9 +1047,9 @@ uint Packet::readStringNullNETUTF16(char* buffer, uint bufferSize, uint maxlengt
 	delete[] bufferReal;
 #else
 
-	wchar* bufferReal = new wchar[(size_t)maxlength + 1];
+    auto *const bufferReal = new wchar[static_cast<size_t>(maxlength) + 1];
 	readStringNullUTF16(bufferReal, maxlength);
-	int length = CvtNETUTF16ToSystem(buffer, (int)(bufferSize), reinterpret_cast<nachar*>(bufferReal), (int)(maxlength) + 1);
+    const int length = CvtNETUTF16ToSystem(buffer, static_cast<int>(bufferSize), reinterpret_cast<nachar*>(bufferReal), static_cast<int>(maxlength) + 1);
 	delete[] bufferReal;
 #endif
 
@@ -1357,7 +1357,7 @@ SimplePacketTransaction::~SimplePacketTransaction()
  ***************************************************************************/
 ExtendedPacketTransaction::~ExtendedPacketTransaction()
 {
-	for (std::list<PacketSend*>::iterator it = m_packets.begin(), end = m_packets.end(); it != end; ++it)
+	for (auto it = m_packets.begin(), end = m_packets.end(); it != end; ++it)
 		delete *it;
 
 	m_packets.clear();

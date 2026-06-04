@@ -71,7 +71,7 @@ public:
     *
     * @param pCCProp the CComponentProps to unsuscribe.
     */
-    void UnsubscribeComponentProps(CComponentProps *pCCProp);
+    void UnsubscribeComponentProps(const CComponentProps *pCCProp);
 
     /**
     * @brief Gets a pointer to the given CComponent type.

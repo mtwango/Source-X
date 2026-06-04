@@ -392,7 +392,7 @@ bool CCharBase::r_LoadVal( CScript & s )
 			break;
 		case CBC_ICON:
 			{
-				ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+                const auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
 				if ( (id < 0) || (id >= ITEMID_MULTI) )
 					return false;
 				m_trackID = id;
@@ -506,9 +506,9 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 
-	CResourceLink * pBaseLink = dynamic_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
+    const auto pBaseLink = dynamic_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
 	ASSERT(pBaseLink);
-	CCharBase * pBase = dynamic_cast <CCharBase *> (pBaseLink);
+    auto pBase = dynamic_cast <CCharBase *> (pBaseLink);
 	if ( pBase )
 		return pBase;	// already loaded.
 

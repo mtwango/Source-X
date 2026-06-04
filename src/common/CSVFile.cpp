@@ -41,7 +41,7 @@ bool CSVFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
 	_iCurrentRow = 0;
 
 	// remove all empty lines so that we just have data rows stored
-	for (std::vector<std::string>::iterator i = _fileContent->begin(); i != _fileContent->end(); )
+	for (auto i = _fileContent->begin(); i != _fileContent->end(); )
 	{
 		lpctstr pszLine = i->c_str();
 		GETNONWHITESPACE(pszLine);

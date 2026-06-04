@@ -44,8 +44,8 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, int iMaxDist
 		if ( dir % 2 && !IsSetEF(EF_NoDiagonalCheckLOS) )	// test only diagonal dirs
 		{
 			CPointMap ptTest(ptSrc);
-			DIR_TYPE dirTest1 = (DIR_TYPE)(dir - 1);	// get 1st ortogonal
-			DIR_TYPE dirTest2 = (DIR_TYPE)(dir + 1);	// get 2nd ortogonal
+            const auto dirTest1 = static_cast<DIR_TYPE>(dir - 1);	// get 1st ortogonal
+            auto dirTest2 = static_cast<DIR_TYPE>(dir + 1);	// get 2nd ortogonal
 			if ( dirTest2 == DIR_QTY )		// roll over
 				dirTest2 = DIR_N;
 
@@ -663,9 +663,9 @@ bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, word wFlags, bool bCombatCh
 	if ( (m_pPlayer && (g_Cfg.m_iAdvancedLos & ADVANCEDLOS_PLAYER)) || (m_pNPC && (g_Cfg.m_iAdvancedLos & ADVANCEDLOS_NPC)) )
 	{
 		CPointMap pt = pObj->GetTopPoint();
-        if ( const CChar *pChar = dynamic_cast<const CChar *>(pObj) )
+        if (const auto pChar = dynamic_cast<const CChar *>(pObj) )
 		{
-			short iTotalZ = pt.m_z + pChar->GetHeightMount(true);
+            const short iTotalZ = pt.m_z + pChar->GetHeightMount(true);
 			pt.m_z = (char)minimum(iTotalZ, UO_SIZE_Z);
 		}
 		return CanSeeLOS_New(pt, nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);

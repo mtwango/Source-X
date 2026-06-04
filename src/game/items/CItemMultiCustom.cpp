@@ -107,8 +107,8 @@ void CItemMultiCustom::BeginCustomize(CClient* pClientSrc, bool continueCustomiz
     }
 
     // client will silently close all open dialogs and let the server think they're still open, so we need to update opened gump counts here
-    CDialogDef* pDlg = nullptr;
-    for (CClient::OpenedGumpsMap_t::iterator it = pClientSrc->m_mapOpenedGumps.begin(), end = pClientSrc->m_mapOpenedGumps.end(); it != end; ++it)
+    const CDialogDef * pDlg = nullptr;
+    for (auto it = pClientSrc->m_mapOpenedGumps.begin(), end = pClientSrc->m_mapOpenedGumps.end(); it != end; ++it)
     {
         // the client leaves 'nodispose' dialogs open
         pDlg = dynamic_cast<CDialogDef*>(g_Cfg.RegisteredResourceGetDef(CResourceID(RES_DIALOG, it->first)));
@@ -533,8 +533,8 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         }
     }
 
-    CMultiComponent * pComponent = new CMultiComponent;
-    pComponent->m_item.m_wTileID = (word)(id);
+    auto pComponent = new CMultiComponent;
+    pComponent->m_item.m_wTileID = static_cast<word>(id);
     pComponent->m_item.m_dx = x;
     pComponent->m_item.m_dy = y;
     pComponent->m_item.m_dz = z;
@@ -547,7 +547,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
 
     if (!g_Serv.IsLoadingGeneric()) // quick fix, change it to execute only on customize mode
     {
-        CItemContainer *pMovingCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+        const auto pMovingCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
         ASSERT(pMovingCrate);
         std::vector<CUID> vListLocks;
         GetLockdownsAt(x, y, z, vListLocks);
@@ -571,7 +571,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
         {
             for (const CUID& uid : vListLocks)
             {
-                if (CItemContainer *pCont = static_cast<CItemContainer *>(uid.ItemFind()))
+                if (const auto pCont = static_cast<CItemContainer *>(uid.ItemFind()))
                 {
                     Release(uid, true);
                     pMovingCrate->ContentAdd(pCont);
@@ -923,7 +923,7 @@ void CItemMultiCustom::SendStructureTo(CClient * pClientSrc)
         pDesign->m_iDataRevision = 0;
     }
 
-    PacketHouseDesign* cmd = new PacketHouseDesign(this, pDesign->m_iRevision);
+    const auto cmd = new PacketHouseDesign(this, pDesign->m_iRevision);
 
     if (!pDesign->m_vectorComponents.empty())
     {
@@ -1269,7 +1269,7 @@ void CItemMultiCustom::CopyDesign(CDesignDetails * designFrom, CDesignDetails * 
     designTo->m_vectorComponents.clear();
     for (auto i = designFrom->m_vectorComponents.begin(); i != designFrom->m_vectorComponents.end(); ++i)
     {
-        CMultiComponent *pComponent = new CMultiComponent;
+        auto pComponent = new CMultiComponent;
         *pComponent = **i;
 
         designTo->m_vectorComponents.push_back(pComponent);
@@ -1303,9 +1303,9 @@ void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<C
     const int16 iFixedX = GetTopPoint().m_x + dx;
     const int16 iFixedY = GetTopPoint().m_y + dy;
     const int8 iFloor = CalculateLevel(GetTopPoint().m_z + dz);  // get the Diff Z from the Multi's Z
-    for (std::vector<CUID>::iterator it = _lLockDowns.begin(); it != _lLockDowns.end(); ++it)
+    for (auto it = _lLockDowns.begin(); it != _lLockDowns.end(); ++it)
     {
-        CItem *pItem = it->ItemFind();
+        const CItem *pItem = it->ItemFind();
         if (pItem == nullptr)
         {
             return;
@@ -1327,11 +1327,11 @@ void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUI
         return;
     }
     short iFixedX = GetTopPoint().m_x + dx;
-    short iFixedY = GetTopPoint().m_y + dy;
-    char iFloor = CalculateLevel(GetTopPoint().m_z + dz);  // get the Diff Z from the Multi's Z
-    for (std::vector<CUID>::iterator it = _lSecureContainers.begin(); it != _lSecureContainers.end(); ++it)
+    const short iFixedY = GetTopPoint().m_y + dy;
+    const char iFloor = CalculateLevel(GetTopPoint().m_z + dz);  // get the Diff Z from the Multi's Z
+    for (auto it = _lSecureContainers.begin(); it != _lSecureContainers.end(); ++it)
     {
-        CItemContainer *pCont = static_cast<CItemContainer*>(it->ItemFind());
+        const auto pCont = static_cast<CItemContainer*>(it->ItemFind());
         if (pCont == nullptr)
         {
             return;
@@ -1357,9 +1357,9 @@ int8 CItemMultiCustom::CalculateLevel(int8 z)
 void CItemMultiCustom::ClearFloor(int8 iFloor)
 {
     int8 iBaseZ = GetTopPoint().m_z + (iFloor * 20) + 6;
-    int16 iMaxZ = iBaseZ + 19;
-    int16 iMinZ = iBaseZ;
-    CItemContainer *pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    const int16 iMaxZ = iBaseZ + 19;
+    const int16 iMinZ = iBaseZ;
+    const auto pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
     if (pCrate == nullptr)
     {
         return;
@@ -1372,7 +1372,7 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid(_lSecureContainers[i]);
-            CItemContainer *pCont = dynamic_cast<CItemContainer*>(uid.ItemFind());
+            const auto pCont = dynamic_cast<CItemContainer*>(uid.ItemFind());
             if (pCont == nullptr)
             {
                 break;
@@ -1412,7 +1412,7 @@ void CItemMultiCustom::ClearFloor(int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid = _lLockDowns[i];
-            CItemMulti *pAddon = dynamic_cast<CItemMulti*>(uid.ItemFind());
+            const auto pAddon = dynamic_cast<CItemMulti*>(uid.ItemFind());
             if (pAddon == nullptr)
             {
                 break;
@@ -1572,7 +1572,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
             if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ","); iQty != 4)
                 return false;
 
-            ITEMID_TYPE id = (ITEMID_TYPE)(Exp_GetVal(ppArgs[0]));
+            const auto id = static_cast<ITEMID_TYPE>((Exp_GetVal(ppArgs[0])));
             if (id <= 0)
                 return false;
 
@@ -1984,7 +1984,7 @@ bool CItemMultiCustom::LoadValidItems()
                     g_Log.EventWarn("Invalid number in file '%s', row=%d. Skipping.\n", sm_szItemFiles[i][0], curCSV.GetCurrentRow());
                     continue;
                 }
-                ITEMID_TYPE itemid = (ITEMID_TYPE)*iconv;
+                auto itemid = static_cast<ITEMID_TYPE>(*iconv);
                 if (itemid <= 0 || itemid >= ITEMID_MULTI)
                     continue;
 
@@ -2028,7 +2028,7 @@ bool CItemMultiCustom::LoadValidItems()
     tchar* pszRowFull = Str_GetTemp();
     tchar* pszHeaderFull = Str_GetTemp();
     int iErrCode = 0;
-    for (CSVRowData::iterator itCsv = csvDataRow.begin(), end = csvDataRow.end(); itCsv != end; ++itCsv)
+    for (auto itCsv = csvDataRow.begin(), end = csvDataRow.end(); itCsv != end; ++itCsv)
     {
         if (Str_TempLength() < Str_ConcatLimitNull(pszHeaderFull, "\t", Str_TempLength()))
         {

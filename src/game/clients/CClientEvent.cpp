@@ -120,7 +120,7 @@ void CClient::Event_Item_Dye(const CUID &uid, HUE_TYPE wHue) // Rehue an item
 	{
 		if ( !pObj->IsChar() )
 		{
-            if (CItem *pItem = dynamic_cast<CItem *>(pObj);
+            if (const auto pItem = dynamic_cast<CItem *>(pObj);
                 pItem == nullptr || (( pObj->GetIDCommon() != 0xFAB ) && (!pItem->IsType(IT_DYE_VAT) || !IsSetOF(OF_DyeType))))
 				return;
 
@@ -167,7 +167,7 @@ void CClient::Event_Book_Title(const CUID &uid, const lpctstr pszTitle, const lp
 	if ( m_pChar == nullptr )
 		return;
 
-	CItemMessage * pBook = dynamic_cast <CItemMessage *> (uid.ItemFind());
+    const auto pBook = dynamic_cast <CItemMessage *> (uid.ItemFind());
     if (pBook == nullptr) {
 		return;
     }
@@ -218,7 +218,7 @@ void CClient::Event_Item_Pickup(const CUID &uid, const word amount) // Client gr
 
 	EXC_SET_BLOCK("Origin");
 	// Where is the item coming from ? (just in case we have to toss it back)
-	CObjBase * pObjParent = dynamic_cast <CObjBase *>(pItem->GetParent());
+    const auto pObjParent = dynamic_cast <CObjBase *>(pItem->GetParent());
 	m_Targ_Prv_UID = pObjParent ? pObjParent->GetUID() : CUID();
 	m_Targ_p = pItem->GetUnkPoint();
 
@@ -262,7 +262,7 @@ void CClient::Event_Item_Drop_Fail( CItem *pItem )
 	if ( !pItem || (pItem != m_pChar->LayerFind(LAYER_DRAGGING)) )
 		return;
 
-    if ( CItemContainer *pPrevCont = static_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()) )
+    if (const auto pPrevCont = static_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()) )
 	{
 		pPrevCont->ContentAdd(pItem, m_Targ_p);
 		return;
@@ -302,7 +302,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 	if (pItem->IsAttr(ATTR_QUESTITEM))
 	{
 		// These items can be dropped only on player backpack or trash can
-		CItem *pPack = dynamic_cast<CItem *>(pObjOn);
+        const auto pPack = dynamic_cast<CItem *>(pObjOn);
 		if (pPack && pPack->IsType(IT_TRASH_CAN))
 		{
 			addSound(pItem->GetDropSound(pObjOn));
@@ -326,7 +326,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 
 		if ( pObjOn->IsChar())	// Drop on a chars head.
 		{
-            if (CChar *pChar = dynamic_cast<CChar *>(pObjOn); pChar != m_pChar )
+            if (const auto pChar = dynamic_cast<CChar *>(pObjOn); pChar != m_pChar )
 			{
 				if ( ! Cmd_SecureTrade( pChar, pItem ))
 					Event_Item_Drop_Fail( pItem );
@@ -338,13 +338,13 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 		}
 
 		// On a container item ?
-		CItemContainer * pContItem = dynamic_cast <CItemContainer *>( pObjOn );
+        const auto pContItem = dynamic_cast <CItemContainer *>( pObjOn );
 
 		// Is the object on a person ? check the weight.
 		CObjBaseTemplate * pObjTop = pObjOn->GetTopLevelObj();
 		if (pObjTop != nullptr && pObjTop->IsChar())
 		{
-			CChar * pChar = dynamic_cast <CChar*>( pObjTop );
+            const auto pChar = dynamic_cast <CChar*>( pObjTop );
 			ASSERT(pChar);
 			if ( ! pChar->IsOwnedBy( m_pChar ) && !IsPriv(PRIV_GM))
 			{
@@ -385,7 +385,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 
 		if (pObjTop != nullptr && pObjTop->IsItem())
 		{
-            if (CItemContainer *pTopContainer = dynamic_cast<CItemContainer *>(pObjTop); pTopContainer && !pTopContainer->CanContainerHold(pItem, m_pChar))
+            if (const auto pTopContainer = dynamic_cast<CItemContainer *>(pObjTop); pTopContainer && !pTopContainer->CanContainerHold(pItem, m_pChar))
 			{
 				Event_Item_Drop_Fail(pItem);
 				return;
@@ -395,7 +395,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
         {
             if (pObjOn->IsItem() && pObjOn->IsContainer())
             {
-                CItemContainer* pAboveContainer = static_cast<CItemContainer*>(pObjOn);
+                auto pAboveContainer = static_cast<CItemContainer*>(pObjOn);
                 while (pAboveContainer) // do a recursive check.
                 {
                     if (!pAboveContainer->CanContainerHold(pItem, m_pChar))
@@ -403,7 +403,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
                         Event_Item_Drop_Fail(pItem);
                         return;
                     }
-                    CItemContainer* pNextContainer = static_cast<CItemContainer*>(static_cast<CItem*>(pObjOn)->GetTopContainer());
+                    const auto pNextContainer = static_cast<CItemContainer*>(static_cast<CItem*>(pObjOn)->GetTopContainer());
                     pAboveContainer = pNextContainer == pAboveContainer ? nullptr : pNextContainer;
                 }
             }
@@ -435,15 +435,15 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 		if ( pOldCont != pItem->GetContainer() )
 			return;
 
-		CItem * pItemOn = dynamic_cast <CItem*> ( pObjOn );
+        const auto pItemOn = dynamic_cast <CItem*> ( pObjOn );
         if (pItemOn && (IsTrigUsed(TRIGGER_DROPON_SELF) || IsTrigUsed(TRIGGER_ITEMDROPON_SELF)))
 		{
-            CItem* pPrevCont = dynamic_cast<CItem*>(pItem->GetContainer());
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const auto pPrevCont = dynamic_cast<CItem*>(pItem->GetContainer());
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_pO1 = pItem;
             if ( pItemOn->OnTrigger( ITRIG_DROPON_SELF, pScriptArgs, m_pChar ) == TRIGRET_RET_TRUE )
 			{
-                if (CItem *pCont = dynamic_cast<CItem *>(pItem->GetContainer()); pPrevCont == pCont)
+                if (const auto pCont = dynamic_cast<CItem *>(pItem->GetContainer()); pPrevCont == pCont)
 				    Event_Item_Drop_Fail( pItem );
 				return;
 			}
@@ -545,7 +545,7 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 	{
 		if ( pObjOn == nullptr || m_Targ_Prv_UID != pObjOn->GetUID())
 		{
-            if (CItemContainer *pGame = dynamic_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()); pGame != nullptr )
+            if (const auto pGame = dynamic_cast<CItemContainer *>(m_Targ_Prv_UID.ItemFind()); pGame != nullptr )
 			{
 				pGame->ContentAdd( pItem, m_Targ_p );
 			}
@@ -561,14 +561,14 @@ void CClient::Event_Item_Drop(const CUID &uidItem, CPointMap pt, const CUID &uid
 	{
 		// in pack or other CItemContainer.
 		m_pChar->UpdateDrag( pItem, pObjOn );
-		CItemContainer * pContOn = dynamic_cast <CItemContainer *>(pObjOn);
+        auto pContOn = dynamic_cast <CItemContainer *>(pObjOn);
 
 		if ( !pContOn )
 		{
 			if ( pObjOn->IsChar() )
 			{
 
-                if ( CChar *pChar = dynamic_cast<CChar *>(pObjOn) )
+                if (const auto pChar = dynamic_cast<CChar *>(pObjOn) )
 					pContOn = pChar->GetBank( LAYER_PACK );
 			}
 
@@ -858,7 +858,7 @@ bool CClient::Event_Walk( byte rawdir, byte sequence ) // Player moves
 	if ( !m_pChar )
 		return false;
 
-	DIR_TYPE dir = static_cast<DIR_TYPE>(rawdir & 0xF);
+    const auto dir = static_cast<DIR_TYPE>(rawdir & 0xF);
 	if ( dir >= DIR_QTY )
 	{
 		new PacketMovementRej(this, sequence);
@@ -1461,7 +1461,7 @@ void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, uint uiI
 
 	for (uint i = 0; i < uiItemCount; ++i)
 	{
-		CItemVendable * pItem = dynamic_cast <CItemVendable *> (items[i].m_serial.ItemFind());
+        const auto pItem = dynamic_cast <CItemVendable *> (items[i].m_serial.ItemFind());
 		if ( pItem == nullptr || pItem->IsValidSaleItem(true) == false )
 		{
 			Event_VendorSell_Cheater( 0x3 );
@@ -1872,7 +1872,7 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 	// Are we in a region that can hear ?
 	if ( m_pChar->m_pArea->GetResourceID().IsUIDItem() )
 	{
-        if ( CItemMulti *pItemMulti = dynamic_cast<CItemMulti *>(m_pChar->m_pArea->GetResourceID().ItemFindFromResource()) )
+        if (const auto pItemMulti = dynamic_cast<CItemMulti *>(m_pChar->m_pArea->GetResourceID().ItemFindFromResource()) )
 			pItemMulti->OnHearRegion(pszText, m_pChar);
 	}
 
@@ -1909,7 +1909,7 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 		{
 			for (CSObjContRec* pObjRec : pChar->GetIterationSafeCont())
 			{
-                if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->CanHear()) {
+                if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->CanHear()) {
                     pItem->OnHear(pszText, m_pChar);
                 }
 			}
@@ -2346,7 +2346,7 @@ bool CClient::Event_DoubleClick(const CUID &uid, const bool fMacro, const bool f
 	if ( pObj->IsItem() )
 		return Cmd_Use_Item(static_cast<CItem *>(pObj), fTestTouch, fScript);
 
-	CChar * pChar = static_cast<CChar *>(pObj);
+    const auto pChar = static_cast<CChar *>(pObj);
 	if ( IsTrigUsed(TRIGGER_DCLICK) || IsTrigUsed(TRIGGER_CHARDCLICK) )
 	{
         if ( pChar->OnTrigger(CTRIG_DClick, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar) == TRIGRET_RET_TRUE )
@@ -2489,7 +2489,7 @@ void CClient::Event_Target(dword context, CUID uid, CPointMap pt, byte flags, IT
 	{
 		if (uid.IsValidUID())
 		{
-            if (CChar *pTargetChar = dynamic_cast<CChar*>(pTarget))
+            if (const auto pTargetChar = dynamic_cast<CChar*>(pTarget))
             {
                 if (pTargetChar->Can(CAN_C_NONSELECTABLE))
                     return;
@@ -2866,7 +2866,7 @@ void CClient::Event_AOSPopupMenuSelect(dword uid, word EntryTag)	//do something 
 		if ((EntryTag >= POPUP_TRAINSKILL) && (EntryTag < POPUP_TRAINSKILL + g_Cfg.m_iMaxSkill))
 		{
 			tchar * pszMsg = Str_GetTemp();
-			SKILL_TYPE iSkill = (SKILL_TYPE)(EntryTag - POPUP_TRAINSKILL);
+            const auto iSkill = static_cast<SKILL_TYPE>(EntryTag - POPUP_TRAINSKILL);
 			snprintf(pszMsg, Str_TempLength(), "train %s", g_Cfg.GetSkillKey(iSkill));
 			pChar->NPC_OnHear(pszMsg, m_pChar);
 			return;
@@ -3069,8 +3069,8 @@ void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
 		case EXTCMD_CAST_BOOK:	// cast spell from book.
 		case EXTCMD_CAST_MACRO:	// macro spell.
 		{
-			SPELL_TYPE spell = (SPELL_TYPE)(atoi(ppArgs[0]));
-			CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
+            const auto spell = static_cast<SPELL_TYPE>(atoi(ppArgs[0]));
+            const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
 			if ( !pSpellDef )
 				return;
 

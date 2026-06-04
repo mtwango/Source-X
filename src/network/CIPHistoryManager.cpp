@@ -76,7 +76,7 @@ void IPHistoryManager::tick()
     if (decayTTL)
         m_lastDecayTime = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
-    for (IPHistoryList::iterator it = m_ips.begin(), end = m_ips.end(); it != end; ++it)
+    for (auto it = m_ips.begin(), end = m_ips.end(); it != end; ++it)
     {
         if (it->m_fBlocked)
         {
@@ -113,7 +113,7 @@ HistoryIP& IPHistoryManager::getHistoryForIP(const CSocketAddressIP& ip) noexcep
     // get history for an ip
 
     // find existing entry
-    for (IPHistoryList::iterator it = m_ips.begin(), end = m_ips.end(); it != end; ++it)
+    for (auto it = m_ips.begin(), end = m_ips.end(); it != end; ++it)
     {
         if (it->m_ip == ip)
             return *it;

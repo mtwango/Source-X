@@ -145,8 +145,8 @@ CObjBase::~CObjBase()
 	EXC_TRY("Cleanup in destructor");
     if (CCSpawn *pSpawn = GetSpawn())    // If I was created from a Spawn
     {
-		CItem* pSpawnLink = pSpawn->GetLink();
-        if (CCChampion* pChampion = static_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
+        const CItem * pSpawnLink = pSpawn->GetLink();
+        if (const auto pChampion = static_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
         {
             pChampion->DelObj(GetUID());
         }
@@ -306,11 +306,11 @@ void CObjBase::TimeoutRecursiveResync(int64 iDelta)
 		_SetTimeout(_GetTimerAdjusted() + iDelta);
 	}
 
-	if (CContainer* pCont = dynamic_cast<CContainer*>(this))
+	if (const auto pCont = dynamic_cast<CContainer*>(this))
 	{
 		for (CSObjContRec* pObjRec : pCont->GetIterationSafeContReverse())
 		{
-			CObjBase* pObj = dynamic_cast<CObjBase*>(pObjRec);
+            const auto pObj = dynamic_cast<CObjBase*>(pObjRec);
 			ASSERT(pObj);
 			pObj->TimeoutRecursiveResync(iDelta);
 		}
@@ -565,7 +565,7 @@ void CObjBase::Effect(
         // This effect must be used only on client chars (and send it only to this client)
         if (IsChar())
         {
-            if (const CChar *pChar = static_cast<const CChar *>(this); pChar->IsClientActive())
+            if (const auto pChar = static_cast<const CChar *>(this); pChar->IsClientActive())
             {
                 pChar->GetClientActive()->addEffect(motion, id, pChar, nullptr);
             }
@@ -599,7 +599,7 @@ void CObjBase::EffectLocation(EFFECT_TYPE motion, ITEMID_TYPE id, const CPointMa
         // This effect must be used only on client chars (and send it only to this client)
         if (IsChar())
         {
-            if (const CChar *pChar = static_cast<const CChar *>(this); pChar->IsClientActive())
+            if (const auto pChar = static_cast<const CChar *>(this); pChar->IsClientActive())
             {
                 pChar->GetClientActive()->addEffect(motion, id, nullptr, nullptr);
             }
@@ -632,7 +632,7 @@ void CObjBase::Emote(lpctstr pText, CClient * pClientExclude, bool fForcePossess
 	// "*You see NAME blah*" or "*You blah*"
 	// fPosessive = "*You see NAME's blah*" or "*Your blah*"
 
-	CObjBase *pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
+    const auto pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
 	if ( !pObjTop )
 		return;
 
@@ -673,9 +673,9 @@ void CObjBase::Emote(lpctstr pText, CClient * pClientExclude, bool fForcePossess
 void CObjBase::EmoteObj(lpctstr pText)
 {
 	ADDTOCALLSTACK("CObjBase::EmoteObj");
-	//This is function that only send an emote to a affacted character.
+	// This is function that only send an emote to a affacted character.
 
-	CObjBase *pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
+    const auto pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
 	if ( !pObjTop )
 		return;
 
@@ -699,7 +699,7 @@ void CObjBase::Emote2(lpctstr pText, lpctstr pText1, CClient * pClientExclude, b
 	// "*You see NAME blah*" or "*You blah*"
 	// fPosessive = "*You see NAME's blah*" or "*Your blah*"
 
-	CObjBase *pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
+    const auto pObjTop = static_cast<CObjBase*>(GetTopLevelObj());
 	if ( !pObjTop )
 		return;
 
@@ -788,7 +788,7 @@ bool CObjBase::MoveNear(CPointMap pt, ushort iSteps )
 	if ( IsChar() )
 	{
 		// Don't move to an position that we can't walk to
-		CChar *pChar = static_cast<CChar *>(this);
+        auto pChar = static_cast<CChar *>(this);
 		ASSERT(pChar);
 
 		pChar->m_zClimbHeight = 0;
@@ -1044,7 +1044,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 			{
 				if ( IsChar() )
 				{
-					const CChar * pChar = static_cast<const CChar*>(this);
+                    auto pChar = static_cast<const CChar*>(this);
 					sVal.FormatVal( pChar->m_defense );
 					break;
 				}
@@ -1152,7 +1152,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 			}
 		case OC_CTAGCOUNT:
 			{
-            if (CChar *pChar = dynamic_cast<CChar *>(this); !pChar )
+            if (auto pChar = dynamic_cast<CChar *>(this); !pChar )
 					sVal.FormatVal( 0 );
 				else
 					sVal.FormatSTVal( pChar->IsClientActive() ? (pChar->GetClientActive()->m_TagDefs.GetCount()) : 0 );
@@ -1160,7 +1160,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 			break;
 		case OC_TEXTF:
 			{
-				tchar * key = const_cast<tchar*>(ptcKey);
+                auto key = const_cast<tchar*>(ptcKey);
 				key += 5;
 				tchar * ptcArg[4];
 				int iArgQty = Str_ParseCmds(key, ptcArg, std::size(ptcArg));
@@ -1215,7 +1215,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 
 							if ( uiDialogIndex <= ourMap.size() )
 							{
-								CClient::OpenedGumpsMap_t::const_iterator itGumpFound = std::next(ourMap.begin(), uiDialogIndex);
+                                auto itGumpFound = std::next(ourMap.begin(), uiDialogIndex);
 
 								if ( !strnicmp(ptcKey, "ID", 2) )
 								{
@@ -1245,7 +1245,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 				GETNONWHITESPACE( ptcKey );
 				CObjBase * pObj = pSrc->GetChar();
 
-				CObjBase * pThis = this;
+                auto pThis = this;
 				if ( !IsTopLevel() )
 					pThis = dynamic_cast <CObjBase*>( GetTopLevelObj() );
 				if ( !pThis )
@@ -1285,7 +1285,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 
 				CObjBase * pObj = pSrc->GetChar();
 
-				CObjBase * pThis = this;
+                auto pThis = this;
 				if (!IsTopLevel())
 					pThis = dynamic_cast <CObjBase*>(GetTopLevelObj());
 				if (!pThis)
@@ -1323,7 +1323,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
             SKIP_SEPARATORS(ptcKey);
             GETNONWHITESPACE(ptcKey);
 
-            COMPPROPS_TYPE id = static_cast<COMPPROPS_TYPE>(Exp_GetVal(ptcKey));
+            auto id = static_cast<COMPPROPS_TYPE>(Exp_GetVal(ptcKey));
             bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
             sVal.FormatVal(static_cast<int>(fRes));
             break;
@@ -1406,7 +1406,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 			break;
 		case OC_ISPLAYER:
 			{
-            if ( CChar *pChar = dynamic_cast<CChar *>(this) )
+            if (auto pChar = dynamic_cast<CChar *>(this) )
 					sVal.FormatVal( (pChar->m_pPlayer == nullptr) ? 0 : 1 );
 				else
 					sVal.FormatVal( 0 );
@@ -1422,7 +1422,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 				ptcKey += 12;
 				SKIP_SEPARATORS( ptcKey );
 				GETNONWHITESPACE( ptcKey );
-				CChar * pCharToCheck = dynamic_cast<CChar*>(this);
+                auto pCharToCheck = dynamic_cast<CChar*>(this);
 
                 if ( CClient *pClientToCheck = (pCharToCheck && pCharToCheck->IsClientActive()) ? (pCharToCheck->GetClientActive()) : nullptr )
 				{
@@ -1468,7 +1468,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
                 pItem = CUID::ItemFindFromUID(Exp_GetDWVal(ptcKey));
 				if (pItem == nullptr)
 				{
-					ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcArg).GetResIndex());
+                    auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcArg).GetResIndex());
                     if (const CItemBase *pItemDef = CItemBase::FindItemBase(id); pItemDef != nullptr )
 					{
 						sVal.FormatVal( CItemBase::IsTypeArmor( pItemDef->GetType() ) );
@@ -1506,7 +1506,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 				pItem = CUID::ItemFindFromUID(Exp_GetDWVal(ptcKey));
 				if ( pItem == nullptr )
 				{
-					ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcArg).GetResIndex());
+                    auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetID(RES_ITEMDEF, ptcArg).GetResIndex());
                     if (const CItemBase *pItemDef = CItemBase::FindItemBase(id); pItemDef != nullptr)
 					{
 						sVal.FormatVal( CItemBase::IsTypeWeapon( pItemDef->GetType() ) );
@@ -1622,7 +1622,7 @@ bool CObjBase::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
 		{
 			if ( !this->IsItem() )
 				return false;
-			CItem * pItem = static_cast<CItem*>(this);
+            auto pItem = static_cast<CItem*>(this);
 			sVal.FormatVal( pItem->GetSpeed() );
 		}	break;
 		case OC_TIMESTAMP:
@@ -1830,7 +1830,7 @@ bool CObjBase::r_LoadVal( CScript & s )
                 m_defenseRange = (word)(piVal[1]) - m_defenseBase;
             else
                 m_defenseRange = 0;
-            if (CChar *pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
+            if (const auto pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
                 pChar->UpdateStatsFlag();
             fResendTooltip = true;
             break;
@@ -1844,7 +1844,7 @@ bool CObjBase::r_LoadVal( CScript & s )
                 m_attackRange = (word)(piVal[1]) - m_attackBase;
             else
                 m_attackRange = 0;
-            if (CChar *pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
+            if (const auto pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
                 pChar->UpdateStatsFlag();
             fResendTooltip = true;
         }
@@ -1858,8 +1858,8 @@ bool CObjBase::r_LoadVal( CScript & s )
             m_CanMask = s.GetArgULLVal();
             if (IsItem())
             {
-                CItem* pItem = static_cast<CItem*>(this);
-                if (CCItemDamageable *pItemDmg = static_cast<CCItemDamageable *>(GetComponent(COMP_ITEMDAMAGEABLE));
+                const auto pItem = static_cast<CItem*>(this);
+                if (const auto pItemDmg = static_cast<CCItemDamageable *>(GetComponent(COMP_ITEMDAMAGEABLE));
                     !pItemDmg && CCItemDamageable::CanSubscribe(pItem))
                 {
                     SubscribeComponent(new CCItemDamageable(pItem));
@@ -1879,7 +1879,7 @@ bool CObjBase::r_LoadVal( CScript & s )
         case OC_MODMAXWEIGHT:
         {
             m_ModMaxWeight = s.GetArgVal();
-            if (CChar *pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
+            if (const auto pChar = dynamic_cast<CChar *>(GetTopLevelObj()))
                 pChar->UpdateStatsFlag();
             fResendTooltip = true;
         }
@@ -1928,9 +1928,9 @@ bool CObjBase::r_LoadVal( CScript & s )
 		case OC_MODAC:
 			{
 				m_ModAr = s.GetArgVal();
-                if ( CChar *pChar = dynamic_cast<CChar *>(GetTopLevelObj()) )
+                if (const auto pChar = dynamic_cast<CChar *>(GetTopLevelObj()) )
 				{
-					pChar->m_defense = (word)(pChar->CalcArmorDefense());
+					pChar->m_defense = static_cast<word>(pChar->CalcArmorDefense());
 					pChar->UpdateStatsFlag();
 				}
                 fResendTooltip = true;
@@ -1948,7 +1948,7 @@ bool CObjBase::r_LoadVal( CScript & s )
 		{
 			if (!IsItem())
 				return false;
-			CItem * pItem = static_cast<CItem*>(this);
+            auto pItem = static_cast<CItem*>(this);
 			pItem->m_speed = s.GetArgBVal();
 			fResendTooltip = true;
 			break;
@@ -2213,8 +2213,8 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 					pCharSrc = dynamic_cast<CChar*>(pObj);
 				}
 
-				CChar *pChar = dynamic_cast<CChar *>(this);
-				CItem *pItem = dynamic_cast<CItem *>(this);
+                auto pChar = dynamic_cast<CChar *>(this);
+                auto pItem = dynamic_cast<CItem *>(this);
 				if (pChar)
 				{
 					pChar->OnTakeDamage((int)(piCmd[0]),
@@ -2694,8 +2694,8 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 						Str_ParseCmds( s.GetArgStr(), ppArg, std::size(ppArg), "," );
 						if ( !IsStrNumeric( ppArg[1] ))
 							DEBUG_ERR(("Invalid argument in Target Multi\n"));
-						ITEMID_TYPE itemid = (ITEMID_TYPE)(Exp_GetVal(ppArg[1]));
-                        HUE_TYPE color = (HUE_TYPE)(Exp_GetVal(ppArg[2]));
+                        auto itemid = static_cast<ITEMID_TYPE>((Exp_GetVal(ppArg[1])));
+                        HUE_TYPE color = static_cast<HUE_TYPE>((Exp_GetVal(ppArg[2])));
 						pClientSrc->addTargetFunctionMulti( ppArg[0], itemid, color, fAllowGround );
 					}
 					else
@@ -2709,8 +2709,8 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
                         Str_ParseCmds(s.GetArgStr(), ppArg, std::size(ppArg), ",");
 						if ( !IsStrNumeric(ppArg[0]))
 							DEBUG_ERR(("Invalid argument in Target Multi\n"));
-						ITEMID_TYPE itemid = (ITEMID_TYPE)(Exp_GetVal(ppArg[0]));
-                        HUE_TYPE color = (HUE_TYPE)(Exp_GetVal(ppArg[1]));
+                        auto itemid = static_cast<ITEMID_TYPE>((Exp_GetVal(ppArg[0])));
+                        HUE_TYPE color = static_cast<HUE_TYPE>((Exp_GetVal(ppArg[1])));
 						pClientSrc->addTargetItems( CLIMODE_TARG_USE_ITEM, itemid, color, fAllowGround );
 					}
 					else
@@ -2968,7 +2968,7 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 				if (!pObj)
 					return false;
 
-				CChar* pChar = static_cast <CChar*> (this);
+                auto pChar = static_cast <CChar*> (this);
 				return pChar->Use_Obj(pObj, true, true);
 			}
 
@@ -3007,9 +3007,9 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 			}
 			else if ( IsTopLevel())
 			{
-				if (CChar* pChar = dynamic_cast <CChar*>(this))
+				if (auto pChar = dynamic_cast <CChar*>(this))
 					SetTopZ(pChar->GetFixZ(GetTopPoint()));
-				else if (CItem* pItem = dynamic_cast <CItem*>(this))
+				else if (auto pItem = dynamic_cast <CItem*>(this))
 					SetTopZ(pItem->GetFixZ(GetTopPoint()));
 				else
 				{
@@ -3079,9 +3079,9 @@ void CObjBase::ResendOnEquip( bool fAllClients )
 	if ( IsDisconnected())
 		return;	// not in the world.
 
-	CObjBaseTemplate * pObjTop = GetTopLevelObj();
-	CItem * pItem = dynamic_cast<CItem*>(this);
-	CChar * pChar = nullptr;
+    const CObjBaseTemplate * pObjTop = GetTopLevelObj();
+    const auto pItem = dynamic_cast<CItem*>(this);
+    const CChar * pChar = nullptr;
 
 	ClientIterator it;
 	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
@@ -3334,9 +3334,9 @@ CCSpawn * CObjBase::GetSpawn()
 {
     if (_uidSpawn.IsValidUID())
     {
-        if (CItem *pItem = _uidSpawn.ItemFind())
+        if (const CItem *pItem = _uidSpawn.ItemFind())
         {
-            if (CCSpawn *pSpawn = static_cast<CCSpawn *>(pItem->GetComponent(COMP_SPAWN)))
+            if (const auto pSpawn = static_cast<CCSpawn *>(pItem->GetComponent(COMP_SPAWN)))
                 return pSpawn;
         }
         _uidSpawn.InitUID();    // for some reason there is an UID assigned but not related to a CItem or CCSpawn, clear it.
@@ -3525,7 +3525,7 @@ void CObjBase::ModDefNum(lpctstr ptcKey, int64 iMod, bool fBaseDef, bool fZero )
         m_BaseDefs.SetNum(ptcKey, iMod, fZero);
         return;
     }
-    CVarDefContNum* pVarNum = dynamic_cast<CVarDefContNum*>(pVar);
+    const auto pVarNum = dynamic_cast<CVarDefContNum*>(pVar);
     if (!pVarNum)
     {
         // Actually there's a def with that name, but it's a CVarDefContStr, so we need to clear that and create a new CVarDefContNum

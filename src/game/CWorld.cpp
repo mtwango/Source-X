@@ -198,7 +198,7 @@ static lpctstr GetReasonForGarbageCode(int iCode = -1) noexcept
 	return pStr;
 }
 
-static void ReportGarbageCollection(CObjBase * pObj, int iResultCode)
+static void ReportGarbageCollection(const CObjBase * pObj, const int iResultCode)
 {
 	ASSERT(pObj != nullptr);
 
@@ -362,7 +362,7 @@ setcount:
 		const size_t uiOldArraySize = _uiUIDObjArraySize;
 		_uiUIDObjArraySize = static_cast<size_t>((dwIndex + 0x1000u) & ~0xFFFu);
 
-		CObjBase** pNewBlock = (CObjBase**)realloc(_ppUIDObjArray, _uiUIDObjArraySize * sizeof(CObjBase*));
+        const auto pNewBlock = static_cast<CObjBase **>(realloc(_ppUIDObjArray, _uiUIDObjArraySize * sizeof(CObjBase *)));
 		if (pNewBlock == nullptr)
 		{
 			throw CSError(LOGL_FATAL, 0, "Not enough memory to store new UIDs!.\n");
@@ -503,7 +503,7 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 		// is it a real error ?
 		if ( pObj->IsItem())
 		{
-            if (CItem *pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
+            if (const auto pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
 			{
                 ReportGarbageCollection(pObj, iResultCode);
 				pObj->Delete();
@@ -515,7 +515,7 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 
 		if ( iResultCode == 0x1203 || iResultCode == 0x1103 )
 		{
-            if ( CChar *pChar = dynamic_cast<CChar *>(pObj) )
+            if (const auto pChar = dynamic_cast<CChar *>(pObj) )
 				pChar->Skill_Start( NPCACT_RIDDEN );
 		}
 		else
@@ -551,7 +551,7 @@ void CWorldThread::GarbageCollection_NewObjs()
                 m_ObjDelete.erase(itObjDel);
             }
 
-			CObjBase * pObj = dynamic_cast<CObjBase*>(m_ObjNew.GetContentIndex(i));
+            const auto pObj = dynamic_cast<CObjBase*>(m_ObjNew.GetContentIndex(i));
 			if (pObj == nullptr)
 				continue;
 
@@ -1156,7 +1156,7 @@ bool CWorld::Save( bool fForceImmediate ) // Save world state
 	ADDTOCALLSTACK("CWorld::Save");
 
 	bool fSaved = false;
-    CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+    const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
 	try
 	{
 		if (!CheckAvailableSpaceForSave(false))
@@ -1253,7 +1253,7 @@ void CWorld::SaveStatics()
 
 				for (CSObjContRec* pObjRec : pSector->m_Items)
 				{
-					CItem* pItem = static_cast<CItem*>(pObjRec);
+                    const auto pItem = static_cast<CItem*>(pObjRec);
                     if (pItem->IsTypeMulti())
 						continue;
 					if ( !pItem->IsAttr(ATTR_STATIC) )
@@ -1675,7 +1675,7 @@ void CWorld::Restock()
 			if ( pResDef == nullptr || ( pResDef->GetResType() != RES_ITEMDEF ))
 				continue;
 
-            if (CItemBase *pBase = dynamic_cast<CItemBase *>(pResDef); pBase != nullptr )
+            if (const auto pBase = dynamic_cast<CItemBase *>(pResDef); pBase != nullptr )
 				pBase->Restock();
 		}
 	}

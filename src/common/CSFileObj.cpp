@@ -256,7 +256,7 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
             if ( !ptcKey || !strlen(ptcKey) )
                 return false;
 
-            CSFile * pFileTest = new CSFile();
+            auto *const pFileTest = new CSFile();
             sVal.FormatVal(pFileTest->Open(ptcKey));
 
             delete pFileTest;
@@ -269,7 +269,7 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
             if ( !ptcKey || !strlen(ptcKey) )
                 return false;
 
-            CSFileText * sFileLine = new CSFileText();
+            auto *const sFileLine = new CSFileText();
             if ( !sFileLine->Open(ptcKey, OF_READ|OF_TEXT) )
             {
                 delete sFileLine;

@@ -86,7 +86,7 @@ public:
     {
         return FindResourceType(type) != sl::scont_bad_index();
     }
-    bool ContainsResourceMatch( CObjBase * pObj ) const
+    bool ContainsResourceMatch(const CObjBase * pObj ) const
     {
         return FindResourceMatch(pObj) != sl::scont_bad_index();
     }

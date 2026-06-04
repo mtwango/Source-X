@@ -19,7 +19,7 @@ bool CClient::Dialog_Setup( CLIMODE_TYPE mode, const CResourceID& rid, int iPage
 		return false;
 
 	CResourceDef * pRes = g_Cfg.RegisteredResourceGetDef( rid );
-    CDialogDef * pDlg = dynamic_cast <CDialogDef*>(pRes);
+    const auto pDlg = dynamic_cast <CDialogDef*>(pRes);
 	if ( !pRes || !pDlg )
 	{
 		DEBUG_ERR(("Invalid RES_DIALOG.\n"));
@@ -53,8 +53,7 @@ bool CClient::Dialog_Setup( CLIMODE_TYPE mode, const CResourceID& rid, int iPage
 void CClient::addGumpInputVal( bool fCancel, INPVAL_STYLE style,
 	dword iMaxLength,
 	lpctstr pszText1,
-	lpctstr pszText2,
-	CObjBase * pObj )
+	lpctstr pszText2, const CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CClient::addGumpInputVal");
 	// CLIMODE_INPVAL
@@ -99,7 +98,7 @@ CClient::addGumpDialog( CLIMODE_TYPE mode, std::vector<CSString> const* vsContro
 		context_mode = dwRid;
 	}
 
-	PacketGumpDialog* cmd = new PacketGumpDialog(x, y, pObj, context_mode);
+    const auto cmd = new PacketGumpDialog(x, y, pObj, context_mode);
 	cmd->writeControls(this, vsControls, vsText);
 	cmd->push(this);
 

@@ -537,7 +537,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	bool fScroll = false;
 	if (pObj != pCharCaster)
 	{
-        if (const CItem *pItem = dynamic_cast<const CItem *>(pObj))
+        if (const auto pItem = dynamic_cast<const CItem *>(pObj))
 		{
 			const IT_TYPE iType = pItem->GetType();
 			if (iType == IT_WAND)

@@ -130,7 +130,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr( lpctstr strSQL )
 
 	sqlite3_free(errmsg);
 
-	SQLiteTable * retTable = new SQLiteTable();
+    auto *retTable = new SQLiteTable();
 
 	if (iRows>0)
         retTable->m_iPos=0;

@@ -175,7 +175,7 @@ void CItemMessage::DupeCopy(const CObjBase *pItemObj)
 
     CItemVendable::DupeCopy(pItem);
 
-    const CItemMessage *pMsgItem = dynamic_cast<const CItemMessage *>(pItem);
+    const auto pMsgItem = dynamic_cast<const CItemMessage *>(pItem);
     if ( pMsgItem == nullptr )
         return;
 

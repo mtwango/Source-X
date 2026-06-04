@@ -206,7 +206,7 @@ void CNetState::init(SOCKET socket, CSocketAddress addr)
     m_iConnectionTimeMs = CSTime::GetMonotonicSysTimeMilli();
 
     g_Serv.StatInc(SERV_STAT_CLIENTS);
-    CClient* client = new CClient(this);
+    const auto client = new CClient(this);
     m_client = client;
 
 #ifdef _LIBEV
@@ -339,7 +339,7 @@ bool CNetState::hasPendingData() const
     return false;
 }
 
-bool CNetState::canReceive(PacketSend* packet) const
+bool CNetState::canReceive(const PacketSend * packet) const
 {
     if (isInUse() == false || m_socket.IsOpen() == false || packet == nullptr)
         return false;

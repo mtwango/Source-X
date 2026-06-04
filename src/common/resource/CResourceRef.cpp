@@ -101,7 +101,7 @@ bool CResourceRefArray::r_LoadVal( CScript & s, RES_TYPE restype )
             pResourceLink = dynamic_cast<CResourceLink *>( g_Cfg.RegisteredResourceGetDefByName( restype, pszCmd ));
             if (pResourceLink)
             {
-                const iterator pos = std::find(begin(), end(), pResourceLink);
+                const auto pos = std::find(begin(), end(), pResourceLink);
                 const bool fFound = (end() != pos);
                 if (fRet && !fFound)
                     fRet = false;
@@ -189,7 +189,7 @@ size_t CResourceRefArray::FindResourceName( RES_TYPE restype, lpctstr ptcKey ) c
 {
     ADDTOCALLSTACK("CResourceRefArray::FindResourceName");
     // Is this resource already in the list ?
-    CResourceLink * pResourceLink = dynamic_cast <CResourceLink *>( g_Cfg.RegisteredResourceGetDefByName( restype, ptcKey ));
+    const CResourceLink * pResourceLink = dynamic_cast <CResourceLink *>( g_Cfg.RegisteredResourceGetDefByName( restype, ptcKey ));
     if ( pResourceLink == nullptr )
         return sl::scont_bad_index();
     return FindResourceID(pResourceLink->GetResourceID());
@@ -215,7 +215,7 @@ bool CResourceRefArray::ContainsResourceID( const CResourceID & rid ) const
 {
     return FindResourceID(rid) != sl::scont_bad_index();
 }
-bool CResourceRefArray::ContainsResourceName( RES_TYPE restype, lpctstr & ptcKey ) const
+bool CResourceRefArray::ContainsResourceName(const RES_TYPE restype, const lpctstr & ptcKey ) const
 {
     return FindResourceName(restype, ptcKey) != sl::scont_bad_index();
 }

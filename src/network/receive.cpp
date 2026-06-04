@@ -201,8 +201,8 @@ bool PacketCreate::doCreate(const CNetState * net, lpctstr charname, bool fFemal
 	TRIGRET_TYPE tr = TRIGRET_RET_DEFAULT;
 
     // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-    //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-    CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+    // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
     // RW
     pScriptArgs->m_iN1 = uiFlags;
     pScriptArgs->m_iN2 = prProf;
@@ -303,8 +303,8 @@ bool PacketSpeakReq::onReceive(CNetState* net)
 		return false;
 
 	uint packetLength = readInt16();
-	TALKMODE_TYPE mode = (TALKMODE_TYPE)(readByte());
-	HUE_TYPE hue = readInt16();
+    const auto mode = static_cast<TALKMODE_TYPE>(readByte());
+    const HUE_TYPE hue = readInt16();
 	skip(2); // font
 
 	if (packetLength < getPosition())
@@ -500,7 +500,7 @@ bool PacketTextCommand::onReceive(CNetState* net)
     if (word packetLength = readInt16(); (packetLength < 5) || (packetLength > MAX_EXTCMD_ARG_LEN + 4))
 		return false;
 
-	EXTCMD_TYPE type = static_cast<EXTCMD_TYPE>(readByte());
+    const auto type = static_cast<EXTCMD_TYPE>(readByte());
 	tchar name[MAX_TALK_BUFFER];
 	readStringNullASCII(name, MAX_TALK_BUFFER-1);
 
@@ -527,9 +527,9 @@ bool PacketItemEquipReq::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	CUID itemSerial(readInt32());
-	LAYER_TYPE itemLayer = static_cast<LAYER_TYPE>(readByte());
-	CUID targetSerial(readInt32());
+    const CUID itemSerial(readInt32());
+    auto itemLayer = static_cast<LAYER_TYPE>(readByte());
+    const CUID targetSerial(readInt32());
 
 	CChar* source = client->GetChar();
 	if (source == nullptr)
@@ -623,7 +623,7 @@ bool PacketDeathStatus::onReceive(CNetState* net)
 	if (ghost == nullptr)
 		return false;
 
-    if (Mode mode = (Mode)readByte(); mode != Dead)
+    if (const auto mode = static_cast<Mode>(readByte()); mode != Dead)
 	{
 		// Play as a ghost.
 		client->SysMessage("You are a ghost");
@@ -695,8 +695,8 @@ bool PacketSkillLockChange::onReceive(CNetState* net)
 	while (len > 0)
 	{
 		// set next lock
-		SKILL_TYPE index = (SKILL_TYPE)readInt16();
-		SKILLLOCK_TYPE state = static_cast<SKILLLOCK_TYPE>(readByte());
+        const auto index = static_cast<SKILL_TYPE>(readInt16());
+        const auto state = static_cast<SKILLLOCK_TYPE>(readByte());
 		len -= 3;
 
 		if (index <= SKILL_NONE || index >= SKILL_QTY ||
@@ -844,10 +844,10 @@ bool PacketMapEdit::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketMapEdit::onReceive");
 
-	CUID mapSerial(readInt32());
-	MAPCMD_TYPE action = static_cast<MAPCMD_TYPE>(readByte());
-	byte pin = readByte();
-	word x = readInt16();
+    const CUID mapSerial(readInt32());
+    const auto action = static_cast<MAPCMD_TYPE>(readByte());
+    const byte pin = readByte();
+    const word x = readInt16();
 	word y = readInt16();
 
 	CClient* client = net->getClient();
@@ -856,7 +856,7 @@ bool PacketMapEdit::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-	CItemMap* map = dynamic_cast<CItemMap*>(mapSerial.ItemFind());
+    const auto map = dynamic_cast<CItemMap*>(mapSerial.ItemFind());
 	if (map == nullptr || character->CanTouch(map) == false) // sanity check
 	{
 		client->SysMessage("You can't reach it");
@@ -1006,7 +1006,7 @@ bool PacketBookPageEdit::onReceive(CNetState* net)
 	}
 
 	// trying to write to the book
-	CItemMessage* text = dynamic_cast<CItemMessage*>( book );
+    const auto text = dynamic_cast<CItemMessage*>( book );
 	if (text == nullptr || !book->IsBookWritable())
 		return true;
 
@@ -1084,8 +1084,8 @@ bool PacketTarget::onReceive(CNetState* net)
 	word x = readInt16();
 	word y = readInt16();
 	skip(1);
-	byte z = readByte();
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt16());
+    const byte z = readByte();
+    const auto id = static_cast<ITEMID_TYPE>(readInt16());
 
 	client->Event_Target(context, targetSerial, CPointMap(x, y, z, character->GetTopMap()), flags, id);
 	return true;
@@ -1114,11 +1114,11 @@ bool PacketSecureTradeReq::onReceive(CNetState* net)
 		return false;
 
 	skip(2); // length
-	SECURE_TRADE_TYPE action = static_cast<SECURE_TRADE_TYPE>(readByte());
-	CUID containerSerial(readInt32());
-	bool fCheck = readInt32();
+    const auto action = static_cast<SECURE_TRADE_TYPE>(readByte());
+    const CUID containerSerial(readInt32());
+    const bool fCheck = readInt32();
 
-	CItemContainer* container = dynamic_cast<CItemContainer*>( containerSerial.ItemFind() );
+    const auto container = dynamic_cast<CItemContainer*>( containerSerial.ItemFind() );
 	if (container == nullptr)
 		return true;
     if (character != container->GetParent())
@@ -1174,13 +1174,13 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-    if (word packetlen = readInt16(); packetlen > 300)
+    if (const word packetlen = readInt16(); packetlen > 300)
         return false;
-	BBOARDF_TYPE action = static_cast<BBOARDF_TYPE>(readByte());
-	CUID boardSerial(readInt32());
-	CUID messageSerial(readInt32());
+    const auto action = static_cast<BBOARDF_TYPE>(readByte());
+    const CUID boardSerial(readInt32());
+    const CUID messageSerial(readInt32());
 
-	CItemContainer* board = dynamic_cast<CItemContainer*>( boardSerial.ItemFind() );
+    const auto board = dynamic_cast<CItemContainer*>( boardSerial.ItemFind() );
 	if (board == nullptr || !character->CanSee(board))
 	{
 		client->addObjectRemoveCantSee(boardSerial, "the board");
@@ -1223,7 +1223,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
             if (size_t uiContCount = board->GetContentCount(); uiContCount > 32)
 			{
 				// roll a message off
-				CItem *pMsg = static_cast<CItem*>(board->GetContentIndex(uiContCount - 1));
+                const auto pMsg = static_cast<CItem*>(board->GetContentIndex(uiContCount - 1));
 				ASSERT(pMsg);
 				pMsg->Delete();
 			}
@@ -1235,7 +1235,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 				return true;
 
 			// if
-			CItemMessage* newMessage = dynamic_cast<CItemMessage*>( CItem::CreateBase(ITEMID_BBOARD_MSG) );
+            const auto newMessage = dynamic_cast<CItemMessage*>( CItem::CreateBase(ITEMID_BBOARD_MSG) );
 			if (newMessage == nullptr)
 			{
 				DEBUG_ERR(("%x:BBoard can't create message item\n", net->id()));
@@ -1267,7 +1267,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 		case BBOARDF_DELETE:
 		{
 			// remove the message
-			CItemMessage* message = dynamic_cast<CItemMessage*>( messageSerial.ItemFind() );
+            const auto message = dynamic_cast<CItemMessage*>( messageSerial.ItemFind() );
 			if (message == nullptr || !board->IsItemInside(message))
 			{
 				client->SysMessageDefault(DEFMSG_ITEMUSE_BBOARD_COR);
@@ -1505,38 +1505,38 @@ bool PacketCreateNew::onReceive(CNetState* net)
 	tchar charname[MAX_NAME_SIZE];
 	readStringASCII(charname, MAX_NAME_SIZE);
 	skip(30);
-	PROFESSION_TYPE profession = static_cast<PROFESSION_TYPE>(readByte());
+    auto profession = static_cast<PROFESSION_TYPE>(readByte());
 	byte startloc = readByte();
 	byte sex = readByte();
 	byte race_raw = readByte();
 	if ( net->isClientKR() && (race_raw > 0) )	// SA client sends race packet one higher than KR
 		race_raw -= 1;
-	RACE_TYPE race = static_cast<RACE_TYPE>(race_raw);
+    auto race = static_cast<RACE_TYPE>(race_raw);
 	byte strength = readByte();
 	byte dexterity = readByte();
 	byte intelligence = readByte();
 	HUE_TYPE hue = readInt16();
 	skip(8);
-	SKILL_TYPE skill1 = (SKILL_TYPE)readByte();
+    auto skill1 = static_cast<SKILL_TYPE>(readByte());
 	byte skillval1 = readByte();
-	SKILL_TYPE skill2 = (SKILL_TYPE)readByte();
+    auto skill2 = static_cast<SKILL_TYPE>(readByte());
 	byte skillval2 = readByte();
-	SKILL_TYPE skill3 = (SKILL_TYPE)readByte();
+    auto skill3 = static_cast<SKILL_TYPE>(readByte());
 	byte skillval3 = readByte();
-	SKILL_TYPE skill4 = (SKILL_TYPE)readByte();
+    auto skill4 = static_cast<SKILL_TYPE>(readByte());
 	byte skillval4 = readByte();
 	skip(26);
 	HUE_TYPE hairhue = readInt16();
-	ITEMID_TYPE hairid = (ITEMID_TYPE)(readInt16());
+    auto hairid = static_cast<ITEMID_TYPE>(readInt16());
 	skip(6);
 	HUE_TYPE shirthue = readInt16();
-	ITEMID_TYPE shirtid = (ITEMID_TYPE)(readInt16());
+    auto shirtid = static_cast<ITEMID_TYPE>(readInt16());
 	skip(1);
 	HUE_TYPE facehue = readInt16();
-	ITEMID_TYPE faceid = (ITEMID_TYPE)(readInt16());
+    auto faceid = static_cast<ITEMID_TYPE>(readInt16());
 	skip(1);
 	HUE_TYPE beardhue = readInt16();
-	ITEMID_TYPE beardid = (ITEMID_TYPE)(readInt16());
+    auto beardid = static_cast<ITEMID_TYPE>(readInt16());
 
 	// This creation packet does not contain skills and values if
 	// a profession is selected, so here we must translate the selected profession -> skills
@@ -2095,9 +2095,9 @@ bool PacketSpeakReqUNICODE::onReceive(CNetState* net)
 		return false;
 
 	uint packetLength = readInt16();
-	TALKMODE_TYPE mode = static_cast<TALKMODE_TYPE>(readByte());
-	HUE_TYPE hue = readInt16();
-	FONT_TYPE font = (FONT_TYPE)(readInt16());
+    auto mode = static_cast<TALKMODE_TYPE>(readByte());
+    const HUE_TYPE hue = readInt16();
+    const auto font = static_cast<FONT_TYPE>(readInt16());
 	tchar language[4];
 	readStringASCII(language, std::size(language));
 
@@ -2236,7 +2236,7 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 #endif
 
 	// sanity check
-	CClient::OpenedGumpsMap_t::iterator itGumpFound = client->m_mapOpenedGumps.find(context);
+    const auto itGumpFound = client->m_mapOpenedGumps.find(context);
 	if ((itGumpFound == client->m_mapOpenedGumps.end()) || (itGumpFound->second <= 0))
 		return true;
 
@@ -2554,7 +2554,7 @@ bool PacketExtendedCommand::onReceive(CNetState* net)
     if (packetLength > 1000)
         return false;
 
-	EXTDATA_TYPE type = static_cast<EXTDATA_TYPE>(readInt16());
+    auto const type = static_cast<EXTDATA_TYPE>(readInt16());
 	seek();
 
 	Packet* handler = g_NetworkManager.getPacketManager().getExtendedHandler(type);
@@ -2645,7 +2645,7 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-    switch (PARTYMSG_TYPE code = static_cast<PARTYMSG_TYPE>(readByte()))
+    switch (auto const code = static_cast<PARTYMSG_TYPE>(readByte()))
 	{
 		case PARTYMSG_Add:
 			// request to add a new member
@@ -2676,9 +2676,9 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 			if (character->m_pParty == nullptr)
 				return false;
 
-			CUID serial(readInt32());
-			nachar * text = reinterpret_cast<nachar *>(Str_GetTemp());
-			int length = (int)readStringNullUTF16(reinterpret_cast<wchar *>(text), MAX_TALK_BUFFER);
+            const CUID serial(readInt32());
+            auto *text = reinterpret_cast<nachar *>(Str_GetTemp());
+            const int length = static_cast<int>(readStringNullUTF16(reinterpret_cast<wchar *>(text), MAX_TALK_BUFFER));
 			character->m_pParty->MessageEvent(serial, character->GetUID(), text, length);
 		} break;
 
@@ -2688,8 +2688,8 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 			if (character->m_pParty == nullptr)
 				return false;
 
-			nachar * text = reinterpret_cast<nachar *>(Str_GetTemp());
-			int length = (int)readStringNullUTF16(reinterpret_cast<wchar *>(text), MAX_TALK_BUFFER);
+            auto *const text = reinterpret_cast<nachar *>(Str_GetTemp());
+            const int length = static_cast<int>(readStringNullUTF16(reinterpret_cast<wchar *>(text), MAX_TALK_BUFFER));
 			character->m_pParty->MessageEvent(CUID(0), character->GetUID(), text, length);
 		} break;
 
@@ -2751,9 +2751,9 @@ bool PacketArrowClick::onReceive(CNetState* net)
 	if ( IsTrigUsed(TRIGGER_USERQUESTARROWCLICK) )
 	{
         // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-        //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-        CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+        const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
         pScriptArgs->m_iN1 = (fRightClick == true? 1 : 0);
 #ifdef _ALPHASPHERE
         pScriptArgs->m_iN2 = character->GetKeyNum("ARROWQUEST_X", true);
@@ -2897,7 +2897,7 @@ bool PacketAnimationReq::onReceive(CNetState* net)
 		128
 	};
 
-	ANIM_TYPE anim = static_cast<ANIM_TYPE>(readInt32());
+    const auto anim = static_cast<ANIM_TYPE>(readInt32());
 	bool ok = false;
 	for (uint i = 0; ok == false && i < std::size(validAnimations); i++)
 		ok = (anim == validAnimations[i]);
@@ -3044,8 +3044,8 @@ bool PacketChangeStatLock::onReceive(CNetState* net)
 	if (character == nullptr || character->m_pPlayer == nullptr)
 		return false;
 
-	byte code = readByte();
-	SKILLLOCK_TYPE state = static_cast<SKILLLOCK_TYPE>(readByte());
+    const byte code = readByte();
+    const auto state = static_cast<SKILLLOCK_TYPE>(readByte());
 
 	if (code >= STAT_BASE_QTY)
 		return false;
@@ -3099,7 +3099,7 @@ bool PacketSpellSelect::onReceive(CNetState* net)
 		return false;
 
 	skip(2); // unknown
-	SPELL_TYPE spell = (SPELL_TYPE)(readInt16());
+    const auto spell = static_cast<SPELL_TYPE>(readInt16());
 	if (!spell)
 		 return false;
 
@@ -3153,7 +3153,7 @@ bool PacketHouseDesignReq::onReceive(CNetState* net)
 	if (house == nullptr)
 		return true;
 
-	CItemMultiCustom* multi = dynamic_cast<CItemMultiCustom*>(house);
+    const auto multi = dynamic_cast<CItemMultiCustom*>(house);
 	if (multi == nullptr)
 		return true;
 
@@ -3246,9 +3246,9 @@ bool PacketBandageMacro::onReceive(CNetState* net)
 	client->m_Targ_UID = bandage->GetUID();
 
     // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-    //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-    CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+    const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
     pScriptArgs->m_iN1 = 1; // Signal we're from the macro
     if (bandage->OnTrigger( ITRIG_DCLICK, pScriptArgs, character) == TRIGRET_RET_TRUE)
 	{
@@ -3341,9 +3341,9 @@ bool PacketGargoyleFly::onReceive(CNetState* net)
 	if ( IsTrigUsed(TRIGGER_TOGGLEFLYING) )
 	{
         // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-        //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-        CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+        const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
         if ( character->OnTrigger(CTRIG_ToggleFlying, pScriptArgs, character) == TRIGRET_RET_TRUE )
 			return false;
 	}
@@ -3367,9 +3367,9 @@ bool PacketGargoyleFly::onReceive(CNetState* net)
 
 	// Sending this packet here instead of calling UpdateAnimate because of conversions, NANIM_TAKEOFF = 9 and the function
 	// is reading 9 from old ANIM_TYPE to know when the character is attacking and modifying its animation accordingly
-	PacketActionBasic *cmd = new PacketActionBasic(character, character->IsStatFlag(STATF_HOVERING) ? NANIM_TAKEOFF : NANIM_LANDING, static_cast<ANIM_TYPE_NEW>(0), (byte)(0));
+    const auto cmd = new PacketActionBasic(character, character->IsStatFlag(STATF_HOVERING) ? NANIM_TAKEOFF : NANIM_LANDING, static_cast<ANIM_TYPE_NEW>(0), (byte)(0));
 	ClientIterator it;
-	for ( CClient *pClient = it.next(); pClient != nullptr; pClient = it.next() )
+	for (const CClient *pClient = it.next(); pClient != nullptr; pClient = it.next() )
 	{
 		if ( !pClient->GetNetState()->isClientVersionNumber(MINCLIVER_NEWMOBILEANIM) )
 			continue;
@@ -3409,16 +3409,16 @@ bool PacketWheelBoatMove::onReceive(CNetState* net)
 
 	skip(4);
 	//dword serial = readInt32(); //player serial
-	//CUID from(serial &~ UID_F_RESOURCE); //do we need this? CNetState provides the player character
+	// CUID from(serial &~ UID_F_RESOURCE); //do we need this? CNetState provides the player character
 
-	DIR_TYPE facing = static_cast<DIR_TYPE>(readByte()); //new boat facing, yes client send it
-	DIR_TYPE moving = static_cast<DIR_TYPE>(readByte()); //the boat movement
+    const auto facing = static_cast<DIR_TYPE>(readByte()); // new boat facing, yes client send it
+    const auto moving = static_cast<DIR_TYPE>(readByte()); //the boat movement
 	//skip(1);
 	byte bMovementType = readByte(); //(0 = Stop Movement, 1 = One Tile Movement, 2 = Normal Movement) ***These speeds are NOT the same as 0xF6 packet
 
-    if (CRegionWorld *area = character->m_pArea; area && area->IsFlag(REGION_FLAG_SHIP))
+    if (const CRegionWorld *area = character->m_pArea; area && area->IsFlag(REGION_FLAG_SHIP))
 	{
-        if (CItemShip *pShipItem = dynamic_cast<CItemShip *>(area->GetResourceID().ItemFindFromResource());
+        if (const auto pShipItem = dynamic_cast<CItemShip *>(area->GetResourceID().ItemFindFromResource());
             pShipItem && (pShipItem->m_itShip.m_Pilot == character->GetUID()))
 		{
 			//direction of movement = moving - ship_face
@@ -3592,7 +3592,7 @@ bool PacketAOSTooltipReq::onReceive(CNetState* net)
 			continue;
 
         bool bShop = false;
-        if (const CItem *pSearchObjItem = dynamic_cast<const CItem *>(object))
+        if (auto pSearchObjItem = dynamic_cast<const CItem *>(object))
         {
             // Check if this item is shown from a shop gump: for shop items we need to always send the tooltip!
             const CObjBase* pSearchObj;
@@ -3654,7 +3654,7 @@ bool PacketEncodedCommand::onReceive(CNetState* net)
     if (CUID serial(readInt32()); character->GetUID() != serial)
 		return false;
 
-	EXTAOS_TYPE type = static_cast<EXTAOS_TYPE>(readInt16());
+    const auto type = static_cast<EXTAOS_TYPE>(readInt16());
 	seek();
 
 
@@ -3779,9 +3779,9 @@ bool PacketHouseDesignDestroyItem::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt32());
+    const auto id = static_cast<ITEMID_TYPE>(readInt32());
 	skip(1); // 0x00
-	word x = (word)(readInt32());
+    const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
 	word y = (word)(readInt32());
 	skip(1); // 0x00
@@ -3815,9 +3815,9 @@ bool PacketHouseDesignPlaceItem::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt32());
+    const auto id = static_cast<ITEMID_TYPE>(readInt32());
 	skip(1); // 0x00
-	word x = (word)(readInt32());
+    const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
 	word y = (word)(readInt32());
 
@@ -3876,9 +3876,9 @@ bool PacketHouseDesignPlaceStair::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt32() + ITEMID_MULTI);
+    const auto id = static_cast<ITEMID_TYPE>(readInt32() + ITEMID_MULTI);
 	skip(1); // 0x00
-	word x = (word)(readInt32());
+    const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
 	word y = (word)(readInt32());
 
@@ -3994,9 +3994,9 @@ bool PacketHouseDesignPlaceRoof::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt32());
+    const auto id = static_cast<ITEMID_TYPE>(readInt32());
 	skip(1); // 0x00
-	word x = (word)(readInt32());
+    const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
 	word y = (word)(readInt32());
 	skip(1); // 0x00
@@ -4030,9 +4030,9 @@ bool PacketHouseDesignDestroyRoof::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	ITEMID_TYPE id = (ITEMID_TYPE)(readInt32());
+    const auto id = static_cast<ITEMID_TYPE>(readInt32());
 	skip(1); // 0x00
-	word x = (word)(readInt32());
+    const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
 	word y = (word)(readInt32());
 	skip(1); // 0x00
@@ -4161,9 +4161,9 @@ bool PacketGuildButton::onReceive(CNetState* net)
 	if ( IsTrigUsed(TRIGGER_USERGUILDBUTTON) )
     {
         // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-        //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-        CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+        const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
         character->OnTrigger(CTRIG_UserGuildButton, pScriptArgs, character);
     }
 	return true;
@@ -4194,9 +4194,9 @@ bool PacketQuestButton::onReceive(CNetState* net)
 	if ( IsTrigUsed(TRIGGER_USERQUESTBUTTON) )
     {
         // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-        //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-        CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+        const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
         character->OnTrigger(CTRIG_UserQuestButton, pScriptArgs, character);
     }
     return true;
@@ -4270,7 +4270,7 @@ bool PacketBugReport::onReceive(CNetState* net)
 	tchar language[4];
 	readStringASCII(language, std::size(language));
 
-	BUGREPORT_TYPE type = static_cast<BUGREPORT_TYPE>(readInt16());
+    const auto type = static_cast<BUGREPORT_TYPE>(readInt16());
 
 	tchar text[MAX_TALK_BUFFER];
 	int textLength = (int)readStringNullNETUTF16(text, MAX_TALK_BUFFER, MAX_TALK_BUFFER-1);
@@ -4299,7 +4299,7 @@ bool PacketClientType::onReceive(CNetState* net)
 		return false;
 
 	skip(2); // ..count?
-	GAMECLIENT_TYPE type = static_cast<GAMECLIENT_TYPE>(readInt32());
+    const auto type = static_cast<GAMECLIENT_TYPE>(readInt32());
 
 	net->m_clientType = type;
 	return true;
@@ -4435,7 +4435,7 @@ bool PacketUnEquipItemMacro::onReceive(CNetState* net)
 
     for (byte i = 0; i < itemCount; i++)
 	{
-		LAYER_TYPE layer = static_cast<LAYER_TYPE>(readInt16());
+        const auto layer = static_cast<LAYER_TYPE>(readInt16());
 
 		CItem *item = character->LayerFind(layer);
 		if (item == nullptr)
@@ -4572,9 +4572,9 @@ bool PacketCrashReport::onReceive(CNetState* net)
 	tchar description[100];
 	readStringASCII(description, std::size(description));
 	skip(1); // zero
-	dword errorOffset = readInt32();
+    const dword errorOffset = readInt32();
 
-    lpctstr ptcAcctName = "none";
+    auto ptcAcctName = "none";
     const CClient *pClient = net->getClient();
     if (pClient)
     {
@@ -4619,11 +4619,11 @@ bool PacketCreateHS::onReceive(CNetState* net)
 	skip(9); // 4=pattern1, 4=pattern2, 1=kuoc
 	readStringASCII(charname, MAX_NAME_SIZE);
 	skip(2); // 0x00
-	dword flags = readInt32();
+    const dword flags = readInt32();
 	skip(8); // unk
-	PROFESSION_TYPE prof = static_cast<PROFESSION_TYPE>(readByte());
+    const auto prof = static_cast<PROFESSION_TYPE>(readByte());
 	skip(15); // 0x00
-	byte race_sex_flag = readByte();
+    const byte race_sex_flag = readByte();
 	byte strength = readByte();
 	byte dexterity = readByte();
 	byte intelligence = readByte();
@@ -4635,11 +4635,11 @@ bool PacketCreateHS::onReceive(CNetState* net)
 	skillval3 = readByte();
 	skill4 = (SKILL_TYPE)readByte();
 	skillval4 = readByte();
-	HUE_TYPE hue = readInt16();
-	ITEMID_TYPE hairid = (ITEMID_TYPE)(readInt16());
-	HUE_TYPE hairhue = readInt16();
-	ITEMID_TYPE beardid = (ITEMID_TYPE)(readInt16());
-	HUE_TYPE beardhue = readInt16();
+    const HUE_TYPE hue = readInt16();
+    const auto hairid = static_cast<ITEMID_TYPE>(readInt16());
+    const HUE_TYPE hairhue = readInt16();
+    const auto beardid = static_cast<ITEMID_TYPE>(readInt16());
+    const HUE_TYPE beardhue = readInt16();
 	skip(1); // shard index
 	byte startloc = readByte();
 	skip(8); // 4=slot, 4=ip
@@ -4755,9 +4755,9 @@ bool PacketUltimaStoreButton::onReceive(CNetState *net)
     if (IsTrigUsed(TRIGGER_USERULTIMASTOREBUTTON))
     {
         // Networking might be done in a different thread. Do not use the standard object pool, since it's thread unsafe.
-        //CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        // CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
-        CScriptTriggerArgsPtr pScriptArgs = std::make_shared<CScriptTriggerArgs>();
+        const auto pScriptArgs = std::make_shared<CScriptTriggerArgs>();
         character->OnTrigger(CTRIG_UserUltimaStoreButton, pScriptArgs, character);
     }
     return true;

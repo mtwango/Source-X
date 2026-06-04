@@ -237,7 +237,7 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
     if (!pAbstractThread)
         throw CSError(LOGL_FATAL, 0, "ThreadHolder::remove: thread == nullptr");
 
-    AbstractSphereThread* pSphereThread = dynamic_cast<AbstractSphereThread*>(pAbstractThread);
+    AbstractSphereThread const* pSphereThread = dynamic_cast<AbstractSphereThread*>(pAbstractThread);
 
 #ifdef _DEBUG
     threadid_t sysId = pSphereThread ? pSphereThread->m_threadSystemId : threadid_t{};
@@ -401,7 +401,7 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
 #if defined(_WIN32)
     // Prefer SetThreadDescription (Windows 10+) if available
     using SetThreadDescription_t = HRESULT (WINAPI *)(HANDLE, PCWSTR);
-    static SetThreadDescription_t pSetThreadDescription =
+    static auto pSetThreadDescription =
         reinterpret_cast<SetThreadDescription_t>(
             GetProcAddress(GetModuleHandleW(L"Kernel32.dll"), "SetThreadDescription"));
     if (pSetThreadDescription)
@@ -952,7 +952,7 @@ void AbstractSphereThread::printStackTrace() noexcept
         if (stackInfo[i].functionName == nullptr)
             break;
 
-        lpctstr extra = "";
+        auto extra = "";
         if (i == m_iStackUnwindingStackPos)
             extra = "<-- last tracked function call (stack unwinding detected here)";
         else if (i == m_iCaughtExceptionStackPos)

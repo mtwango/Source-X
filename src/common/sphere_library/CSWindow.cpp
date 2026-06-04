@@ -221,7 +221,7 @@ LRESULT WINAPI CSWindowBase::WndProc( HWND hWnd, UINT message, WPARAM wParam, LP
     CSWindowBase * pWnd;
     if ( message == WM_NCCREATE || message == WM_CREATE )
     {
-        LPCREATESTRUCT lpCreateStruct = (LPCREATESTRUCT)lParam;
+        const auto *const lpCreateStruct = (LPCREATESTRUCT)lParam;
         ASSERT(lpCreateStruct);
         pWnd = static_cast<CSWindowBase *>(lpCreateStruct->lpCreateParams);
         ASSERT( pWnd );
@@ -254,7 +254,7 @@ void CWinApp::InitInstance(LPCTSTR pszAppName, HINSTANCE hInstance, LPTSTR lpszC
         return;
     m_pszExeName = szFileName;
 
-    LPTSTR pszTmp = const_cast<LPTSTR>(strrchr(m_pszExeName, '\\'));	// Get title
+    auto *pszTmp = const_cast<LPTSTR>(strrchr(m_pszExeName, '\\'));	// Get title
     lstrcpy(szFileName, (pszTmp == nullptr) ? m_pszExeName : (pszTmp + 1));
     pszTmp = strrchr(szFileName, '.');	// Get extension.
     if (pszTmp != nullptr)

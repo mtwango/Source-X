@@ -53,7 +53,7 @@ public:
 	CServerStaticsBlock& operator=(const CServerStaticsBlock& other) = delete;
 
     void LoadStatics(dword dwBlockIndex, int map);
-    void LoadStatics(uint uiCount, CUOStaticItemRec * pStatics);
+    void LoadStatics(uint uiCount, const CUOStaticItemRec * pStatics);
 
     // These methods are called so frequently but in so few pieces of code that's very important to inline them
 	uint GetStaticQty() const {

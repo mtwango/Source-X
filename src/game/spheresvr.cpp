@@ -135,7 +135,7 @@ extern "C"
 
 static bool WritePidFile(int iMode = 0)
 {
-	lpctstr	fileName = SPHERE_FILE ".pid";
+    const auto *const fileName = SPHERE_FILE ".pid";
 	FILE* pidFile;
 
 	if (iMode == 1)		// delete
@@ -167,7 +167,7 @@ static bool WritePidFile(int iMode = 0)
 
 int Sphere_InitServer( int argc, char *argv[] )
 {
-	constexpr const char *m_sClassName = "SphereInit";
+	constexpr auto m_sClassName = "SphereInit";
     EXC_TRY("Init Server");
     GlobalInitializer::InitRuntimeDefaultValues();
 
@@ -351,7 +351,7 @@ int main( int argc, char * argv[] )
     return DocTestMain();
 #endif
 
-    static constexpr lpctstr m_sClassName = "main";
+    static constexpr auto m_sClassName = "main";
     EXC_TRY("MAIN");
 
     if (const int atexit_handler_result = std::atexit(atexit_handler); atexit_handler_result != 0)

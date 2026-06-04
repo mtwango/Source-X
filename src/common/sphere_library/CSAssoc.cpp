@@ -40,7 +40,7 @@ const int CElementDef::sm_Lengths[ELEM_QTY] =
 	sizeof(dword), // ELEM_MASK_DWORD,	// bits in a dword
 };
 
-bool CElementDef::SetValStr( void * pBase, lpctstr ptcVal ) const
+bool CElementDef::SetValStr(const void * pBase, lpctstr ptcVal ) const
 {
 	// Set the element value as a string.
 	uint64 qwVal = 0;

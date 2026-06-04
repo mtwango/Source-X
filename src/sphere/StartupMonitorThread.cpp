@@ -49,7 +49,7 @@ void StartupMonitorThread::renameAsMonitor()
 
 void StartupMonitorThread::runMonitorLoop()
 {
-    constexpr const char *m_sClassName = "SphereMonitor";
+    constexpr auto m_sClassName = "SphereMonitor";
 
     while (!g_Serv.GetExitFlag())
     {

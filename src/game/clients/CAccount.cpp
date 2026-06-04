@@ -835,9 +835,9 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 	int iAccountMaxTries = g_Cfg.m_iClientLoginMaxTries;
 	bool bReturn = true;
 	dword dwCurrentIP = csaPeerName.GetAddrIP();
-	int64 timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
+	int64 const timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
-    if (BlockLocalTime_t::iterator itData = m_BlockIP.find(dwCurrentIP); itData != m_BlockIP.end() )
+    if (auto const itData = m_BlockIP.find(dwCurrentIP); itData != m_BlockIP.end() )
 	{
 		BlockLocalTimePair_t itResult = itData->second;
 		auto &[m_First, m_Last, m_vcDelay] = itResult.first;
@@ -902,8 +902,8 @@ void CAccount::ClearPasswordTries(bool bAll)
 		return;
 	}
 
-	llong timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
-	for ( BlockLocalTime_t::iterator itData = m_BlockIP.begin(), end = m_BlockIP.end(); itData != end; )
+	llong const timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
+	for (auto itData = m_BlockIP.begin(), end = m_BlockIP.end(); itData != end; )
 	{
         if (auto [fst, snd] = itData->second; (timeCurrent - fst.m_Last) > g_Cfg.m_iClientLoginTempBan )
 		{
@@ -997,8 +997,8 @@ bool CAccount::SetPassword( lpctstr pszPassword, bool isMD5Hash )
 		return true;
 	}
 
-	size_t actualPasswordBufferSize = minimum(MAX_ACCOUNT_PASSWORD_ENTER, enteredPasswordLength) + 1;
-	char * actualPassword = new char[actualPasswordBufferSize];
+	size_t const actualPasswordBufferSize = minimum(MAX_ACCOUNT_PASSWORD_ENTER, enteredPasswordLength) + 1;
+    const auto actualPassword = new char[actualPasswordBufferSize];
 	Str_CopyLimitNull(actualPassword, pszPassword, actualPasswordBufferSize);
 
 	if ( useMD5 )

@@ -1605,7 +1605,7 @@ void CChar::NPC_Act_Looting()
 		return;
 	}
 
-	CItemCorpse * pCorpse = dynamic_cast<CItemCorpse *>(pItem);
+    const auto pCorpse = dynamic_cast<CItemCorpse *>(pItem);
 	if ( pCorpse && !pCorpse->IsContainerEmpty() )
 		pItem = static_cast<CItem*>( pCorpse->GetContentIndex(g_Rand.GetValFast( (int)pCorpse->GetContentCount() )) );
 
@@ -1774,7 +1774,7 @@ bool CChar::NPC_Act_Food()
 		for (CSObjContRec* pObjRec : *pPack)
 		{
             // I have some food personally, so no need to search for anything.
-			if (CItem *pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
+			if (const auto pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
 			{
 				if ( (uiEatAmount = Food_CanEat(pFood)) > 0 )
 				{
@@ -2434,7 +2434,7 @@ void CChar::NPC_Pathfinding()
 	//	proceed with the pathfinding
 	EXC_SET_BLOCK("filling the map");
     // The pathfinder class is big, it's better to store that on the heap, instead of on the stack.
-    std::unique_ptr<CPathFinder> path = std::make_unique<CPathFinder>(this, ptTarg);
+    const auto path = std::make_unique<CPathFinder>(this, ptTarg);
 
 	EXC_SET_BLOCK("searching the path");
 	if ( !path->FindPath() )
@@ -2488,7 +2488,7 @@ void CChar::NPC_Food()
 		for (CSObjContRec* pObjRec : *pPack)
 		{
             // I have some food personally, so no need to search for anything.
-			if (CItem *pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
+			if (const auto pFood = static_cast<CItem *>(pObjRec); pFood->IsType(IT_FOOD) )
 			{
 				if ( (uiEatAmount = Food_CanEat(pFood)) > 0 )
 				{
@@ -2585,7 +2585,7 @@ void CChar::NPC_Food()
 	if ( fSearchGrass )
 	{
 		const CCharBase *pCharDef = Char_GetDef();
-        const CResourceID rid = CResourceID(RES_TYPEDEF, IT_GRASS);
+        const auto rid = CResourceID(RES_TYPEDEF, IT_GRASS);
 
 		EXC_SET_BLOCK("searching grass");
 		if ( pCharDef->m_FoodType.ContainsResourceID(rid) ) // do I accept grass as food?

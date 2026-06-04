@@ -60,7 +60,7 @@ public:
     void r_Write( CScript & s, lpctstr ptcKey ) const;
 
     bool ContainsResourceID( const CResourceID & rid ) const;
-    bool ContainsResourceName( RES_TYPE restype, lpctstr & ptcKey ) const;
+    bool ContainsResourceName( RES_TYPE restype, const lpctstr & ptcKey ) const;
 };
 
 

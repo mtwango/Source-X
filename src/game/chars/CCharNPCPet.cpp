@@ -12,7 +12,7 @@
 #include "CChar.h"
 #include "CCharNPC.h"
 
-void CChar::NPC_OnPetCommand( bool fSuccess, CChar * pMaster )
+void CChar::NPC_OnPetCommand( bool fSuccess, const CChar * pMaster )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnPetCommand");
 	ASSERT(m_pNPC);
@@ -113,7 +113,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
         nullptr
 	};
 
-	PC_TYPE iCmd = (PC_TYPE)FindTableSorted(pszCmd, sm_Pet_table, std::size(sm_Pet_table) - 1);
+    auto iCmd = static_cast<PC_TYPE>(FindTableSorted(pszCmd, sm_Pet_table, std::size(sm_Pet_table) - 1));
 	if ( iCmd < 0 )
 	{
 		if ( !strnicmp(pszCmd, sm_Pet_table[PC_PRICE], 5) )
@@ -431,8 +431,8 @@ bool CChar::NPC_OnHearPetCmdTarg( int iCmd, CChar *pSrc, CObjBase *pObj, const C
 	}
 
     bool fSuccess = false;
-	CItem *pItemTarg = dynamic_cast<CItem *>(pObj);
-	CChar *pCharTarg = dynamic_cast<CChar *>(pObj);
+    const auto pItemTarg = dynamic_cast<CItem *>(pObj);
+    const auto pCharTarg = dynamic_cast<CChar *>(pObj);
 
 	switch ( iCmd )
 	{
@@ -572,7 +572,7 @@ void CChar::NPC_PetClearOwners()
 
 				for (CSObjContRec* pObjRec : pCont->GetIterationSafeCont())
 				{
-					CItem* pItem = static_cast<CItem*>(pObjRec);
+                    const auto pItem = static_cast<CItem*>(pObjRec);
 					pBankOwner->ContentAdd(pItem);
 				}
 			}
@@ -828,7 +828,7 @@ bool CChar::NPC_SetVendorPrice( CItem * pItem, int iPrice )
 		return false;
 	}
 
-	CItemVendable * pVendItem = dynamic_cast <CItemVendable *> (pItem);
+    const auto pVendItem = dynamic_cast <CItemVendable *> (pItem);
 	if ( pVendItem == nullptr )
 	{
 		Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_PET_CANTSELL ) );

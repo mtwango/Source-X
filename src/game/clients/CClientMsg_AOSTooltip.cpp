@@ -60,7 +60,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, bool fShop)
 	// (client doesn't expect us to) but only in the world
 	if (pObj->IsItem())
 	{
-        if (const CItem *pItem = static_cast<const CItem *>(pObj); !pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
+        if (const auto pItem = static_cast<const CItem *>(pObj); !pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
 		{
 			if ((!GetChar()->IsPriv(PRIV_GM)) && (!GetChar()->IsPriv(PRIV_ALLMOVE)))
 				return false;
@@ -441,7 +441,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_TRASH_CAN:
 		if (pItem->IsContainer())
 		{
-			const CContainer * pContainer = dynamic_cast <const CContainer *> (pItem);
+            const auto pContainer = dynamic_cast <const CContainer *> (pItem);
 			ASSERT(pContainer);
 			if ( g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE )
 			{
@@ -630,14 +630,14 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_SPAWN_CHAR:
 	{
 
-		CCSpawn* pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
+        const auto pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
 		if (!pSpawn)
             break;
         CResourceDef * pSpawnCharDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
 		lpctstr pszName = nullptr;
 		if (pSpawnCharDef)
 		{
-            if (CCharBase *pCharBase = dynamic_cast<CCharBase *>(pSpawnCharDef))
+            if (const auto pCharBase = dynamic_cast<CCharBase *>(pSpawnCharDef))
 				pszName = pCharBase->GetTradeName();
 			else
 				pszName = pSpawnCharDef->GetName();
@@ -661,7 +661,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 
 	case IT_SPAWN_ITEM:
 	{
-		CCSpawn* pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
+        const auto pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
         if (!pSpawn)
             break;
 		CResourceDef * pSpawnItemDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
@@ -689,7 +689,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	{
 		pItem->m_TooltipData.clear();
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1041429)); // a guildstone
-        if (const CItemStone *thisStone = static_cast<const CItemStone *>(pItem))
+        if (const auto thisStone = static_cast<const CItemStone *>(pItem))
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060802)); // Guild name: ~1_val~
 			if (thisStone->GetAbbrev()[0])

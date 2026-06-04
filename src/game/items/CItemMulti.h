@@ -146,7 +146,7 @@ public:
     * @param pDeed The deed used to create this multi.
     * @return the CItemMulti if the creation succeeded.
     */
-    static CItem *Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed);
+    static CItem *Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPointMap & pt, const CItem *pDeed);
 
 
     /** House Permissions
@@ -798,6 +798,6 @@ public:
     * @brief Writes the houses/ships on the worldsave.
     * @param s The datastream.
     */
-    void r_Write(CScript & s) const;
+    void r_Write(const CScript & s) const;
 };
 #endif // _INC_CITEMMULTI_H

@@ -105,7 +105,7 @@ public:
     void init(SOCKET socket, CSocketAddress addr);		// initialized socket
     bool isInUse(const CClient* client = nullptr) const volatile noexcept; // does this socket still belong to this/a client?
     bool hasPendingData() const;			// is there any data waiting to be sent?
-    bool canReceive(PacketSend* packet) const;	// can the state receive the given packet?
+    bool canReceive(const PacketSend * packet) const;	// can the state receive the given packet?
 
     void detectAsyncMode();
     void setAsyncMode(bool isAsync) volatile noexcept;   // set asynchronous mode

@@ -69,7 +69,7 @@ public:
     CSQLite     _hMdb;      // In-memory database (SQLite)
 
 private:
-	void ProfileDump( CTextConsole * pSrc, bool bDump = false );
+	void ProfileDump(const CTextConsole * pSrc, bool bDump = false );
 
 public:
 	CServer();

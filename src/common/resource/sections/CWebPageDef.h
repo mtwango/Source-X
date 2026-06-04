@@ -115,7 +115,7 @@ public:
     *
     * @return  true if it succeeds, false if it fails.
     */
-    bool SetSourceFile(lpctstr pszName, CClient * pClient);
+    bool SetSourceFile(lpctstr pszName, const CClient * pClient);
 
     /**
     * @brief   Translate scripted content.
@@ -156,7 +156,7 @@ public:
     * @param [in,out]  pszPage         If non-null, the page.
     * @param [in,out]  pDateLastMod    If non-null, the pdate last modifier.
     */
-    static void ServPage(CClient * pClient, tchar * pszPage, CSTime * pDateLastMod);
+    static void ServPage(CClient * pClient, const tchar * pszPage, CSTime * pDateLastMod);
 
     explicit CWebPageDef(const CResourceID &rid);
     ~CWebPageDef() override = default;

@@ -73,7 +73,7 @@ void CNetworkThread::dropInvalidStates()
     ADDTOCALLSTACK("CNetworkThread::dropInvalidStates");
     ASSERT(!isActive() || isCurrentThread());
 
-    for (NetworkStateList::iterator it = m_states.begin(); it != m_states.end(); )
+    for (auto it = m_states.begin(); it != m_states.end(); )
     {
         if (CNetState *state = *it; state->getParentThread() != this)
         {

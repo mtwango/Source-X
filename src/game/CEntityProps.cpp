@@ -31,7 +31,7 @@ void CEntityProps::ClearPropComponents()
     _lComponentProps.clear();
 }
 
-void CEntityProps::UnsubscribeComponentProps(CComponentProps *pComponent)
+void CEntityProps::UnsubscribeComponentProps(const CComponentProps *pComponent)
 {
     if (_lComponentProps.empty())
     {

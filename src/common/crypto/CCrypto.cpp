@@ -521,7 +521,7 @@ bool CCrypto::LoginCryptStart( dword dwIP, const byte * pEvent, uint inLen )
 	ASSERT(pEvent != nullptr);
 
     ASSERT(inLen <= MAX_BUFFER);
-    std::unique_ptr<byte[]> pRaw = std::make_unique<byte[]>(MAX_BUFFER);
+    const auto pRaw = std::make_unique<byte[]>(MAX_BUFFER);
     memcpy(pRaw.get(), pEvent, inLen);
 
 	m_seed = dwIP;
@@ -586,8 +586,8 @@ bool CCrypto::LoginCryptStart( dword dwIP, const byte * pEvent, uint inLen )
 			if ( isValid == true )
 			{
                 char pszAccountNameCheck[MAX_ACCOUNT_NAME_SIZE];
-				lpctstr sRawAccountName = reinterpret_cast<lpctstr>(pRaw.get() + 1 );
-				iAccountNameLen = (uint)Str_GetBare(pszAccountNameCheck, sRawAccountName, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR);
+                const auto sRawAccountName = reinterpret_cast<lpctstr>(pRaw.get() + 1 );
+				iAccountNameLen = static_cast<uint>(Str_GetBare(pszAccountNameCheck, sRawAccountName, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR));
 
 				// (matex) TODO: What for? We do not really need pszAccountNameCheck here do we?!
 				if (iAccountNameLen > 0)
@@ -621,7 +621,7 @@ bool CCrypto::GameCryptStart( dword dwIP, const byte * pEvent, uint inLen )
 	ASSERT( pEvent != nullptr );
 
     ASSERT(inLen <= MAX_BUFFER);
-    std::unique_ptr<byte[]> pRaw = std::make_unique<byte[]>(MAX_BUFFER);
+    const auto pRaw = std::make_unique<byte[]>(MAX_BUFFER);
 	memcpy( pRaw.get(), pEvent, inLen );
 
 	m_seed = dwIP;

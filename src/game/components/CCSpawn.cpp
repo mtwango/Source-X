@@ -168,7 +168,7 @@ const CResourceDef* CCSpawn::_FixDef()
             return pResDef_;
         };
 
-        CREID_TYPE idChar = (CREID_TYPE)iIndex;
+        const auto idChar = static_cast<CREID_TYPE>(iIndex);
         if (idChar >= SPAWNTYPE_START)
         {
             // try a spawn group.
@@ -215,7 +215,7 @@ const CResourceDef* CCSpawn::_FixDef()
             return pResDef_;
         };
 
-        ITEMID_TYPE idItem = (ITEMID_TYPE)iIndex;
+        const auto idItem = static_cast<ITEMID_TYPE>(iIndex);
         if (idItem >= ITEMID_TEMPLATE)
         {
             // try a template.
@@ -313,9 +313,9 @@ void CCSpawn::GenerateItem()
         {
             return;
         }
-        rid = CResourceIDBase(RES_ITEMDEF, (int)pScriptArgs->m_iN1);
+        rid = CResourceIDBase(RES_ITEMDEF, static_cast<int>(pScriptArgs->m_iN1));
     }
-    const ITEMID_TYPE id = (ITEMID_TYPE)(rid.GetResIndex());
+    const auto id = static_cast<ITEMID_TYPE>(rid.GetResIndex());
     CItem *pItem = CItem::CreateTemplate(id);
     if (!pItem)
     {
@@ -524,7 +524,7 @@ void CCSpawn::DelObj(const CUID& uid)
         return;
     }
 
-    CItem *pSpawnItem = static_cast<CItem*>(GetLink());
+    auto *const pSpawnItem = GetLink();
     pSpawnItem->m_CanMask |= CAN_O_NOSLEEP; //Avoid the spawn point to sleep until job is finish
 
 
@@ -533,7 +533,7 @@ void CCSpawn::DelObj(const CUID& uid)
 		pSpawnedObj->SetSpawn(nullptr);
         if (const IT_TYPE iSpawnType = pSpawnItem->GetType(); (iSpawnType == IT_SPAWN_CHAR) || (iSpawnType == IT_SPAWN_CHAMPION))
 		{
-            if (CChar *pSpawnedChar = dynamic_cast<CChar *>(pSpawnedObj))
+            if (const auto pSpawnedChar = dynamic_cast<CChar *>(pSpawnedObj))
 				pSpawnedChar->StatFlag_Clear(STATF_SPAWNED);
 		}
 	}
@@ -579,7 +579,7 @@ void CCSpawn::AddObj(const CUID& uid)
 
     const uint16 uiAmount = GetAmount();
     const uint16 uiMax = maximum(uiAmount, 1);
-    CItem *pSpawnItem = static_cast<CItem*>(GetLink());
+    const auto pSpawnItem = GetLink();
     if ((_uidList.size() >= uiMax) && !pSpawnItem->IsType(IT_SPAWN_CHAMPION))  // char/item spawns have a limit, champions may spawn a lot of npcs
     {
         return;
@@ -621,7 +621,7 @@ void CCSpawn::AddObj(const CUID& uid)
         pSpawnedObj->SetSpawn(this);
         if (fIsSpawnChar)
         {
-            CChar *pChar = static_cast<CChar*>(pSpawnedObj);
+            auto *const pChar = static_cast<CChar*>(pSpawnedObj);
             ASSERT(pChar->m_pNPC);
             pChar->StatFlag_Set(STATF_SPAWNED);
             pChar->m_ptHome = pSpawnItem->GetTopPoint();
@@ -710,7 +710,7 @@ void CCSpawn::KillChildren()
     }
 
     _fKillingChildren = true;
-    for (std::vector<CUID>::iterator it = _uidList.begin(), itEnd = _uidList.end(); it != itEnd; ++it)
+    for (auto it = _uidList.begin(), itEnd = _uidList.end(); it != itEnd; ++it)
     {
         CObjBase* pObj = it->ObjFind();
         if (!pObj)
@@ -719,7 +719,7 @@ void CCSpawn::KillChildren()
             continue;
         }
 
-        if (CChar *pChar = dynamic_cast<CChar *>(pObj))
+        if (auto *const pChar = dynamic_cast<CChar *>(pObj))
         {
 #ifdef _DEBUG
             auto parent = pChar->GetParent();
@@ -732,7 +732,7 @@ void CCSpawn::KillChildren()
             continue;
         }
 
-        if (CItem *pItem = dynamic_cast<CItem *>(pObj))
+        if (auto *const pItem = dynamic_cast<CItem *>(pObj))
         {
 #ifdef _DEBUG
             auto parent = pItem->GetParent();
@@ -754,7 +754,7 @@ const CCharBase *CCSpawn::SetTrackID()
 {
     ADDTOCALLSTACK("CCSpawn::SetTrackID");
 
-    CItem *pItem = static_cast<CItem*>(GetLink());
+    auto *const pItem = GetLink();
     pItem->SetAttr(ATTR_INVIS);	// Indicate to GM's that it is invis.
     if (pItem->GetHue() == 0)
     {
@@ -771,7 +771,7 @@ const CCharBase *CCSpawn::SetTrackID()
 
     if (const CResourceID &rid = _idSpawn; rid.GetResType() == RES_CHARDEF)
     {
-        CREID_TYPE id = (CREID_TYPE)(rid.GetResIndex());
+        const auto id = static_cast<CREID_TYPE>(rid.GetResIndex());
         pCharDef = CCharBase::FindCharBase(id);
     }
     pItem->SetDispID(pCharDef ? pCharDef->m_trackID : ITEMID_TRACK_WISP);	// They must want it to look like this.
@@ -1149,7 +1149,7 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
     }
 
 
-    CItem *pItem = static_cast<CItem*>(GetLink());
+    CItem const * pItem = GetLink();
 
     ptcKey += strlen(sm_szRefKeys[iCmd]);
     SKIP_SEPARATORS(ptcKey);
@@ -1217,7 +1217,7 @@ bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)
         return false;
     }
 
-    CItem *pItem = static_cast<CItem*>(GetLink());
+    auto *const pItem = GetLink();
     switch (iCmd)
     {
         case ISPV_DELOBJ:
@@ -1249,7 +1249,7 @@ bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)
 void CCSpawn::Copy(const CComponent * target)
 {
     ADDTOCALLSTACK("CCSpawn::Copy");
-    const CCSpawn *pTarget = dynamic_cast<const CCSpawn*>(target);
+    const auto *const pTarget = dynamic_cast<const CCSpawn*>(target);
     if (!pTarget)
     {
         return;

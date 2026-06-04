@@ -110,7 +110,7 @@ void CChatChanMember::ToggleIgnore(lpctstr pszName)
     }
     else
     {
-        CSString * name = new CSString(pszName);
+        const auto name = new CSString(pszName);
         m_IgnoredMembers.push_back(name);
         SendChatMsg(CHATMSG_NowIgnoring, pszName); // This message also takes the ignored person off the clients local list of channel members
     }

@@ -172,7 +172,7 @@ void CCPropsItemWeaponRanged::r_Write(CScript & s)
 void CCPropsItemWeaponRanged::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemWeaponRanged::Copy");
-    const CCPropsItemWeaponRanged *pTarget = dynamic_cast<const CCPropsItemWeaponRanged*>(target);
+    const auto pTarget = dynamic_cast<const CCPropsItemWeaponRanged*>(target);
     if (!pTarget)
     {
         return;

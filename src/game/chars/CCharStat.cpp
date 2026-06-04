@@ -777,7 +777,7 @@ void CChar::Stat_StrCheckEquip()
 {
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-        if (CItem *pItem = dynamic_cast<CItem *>(pObjRec); !CanEquipStr(pItem))
+        if (const auto pItem = dynamic_cast<CItem *>(pObjRec); !CanEquipStr(pItem))
 		{
 			SysMessagef("%s %s.", g_Cfg.GetDefaultMsg(DEFMSG_EQUIP_NOT_STRONG_ENOUGH), pItem->GetName());
 			ItemBounce(pItem, g_Cfg.m_iBounceMessage);

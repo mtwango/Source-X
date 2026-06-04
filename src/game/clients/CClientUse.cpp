@@ -33,10 +33,10 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 	{
 		if ( !fScript )
 		{
-            if ( CItemContainer *pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent()) )
+            if (const auto pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent()) )
 			{
 				// protect from ,snoop - disallow picking from not opened containers
-				CItemContainer* pTopContainer = dynamic_cast<CItemContainer*>(pItem->GetTopContainer());
+                const auto pTopContainer = dynamic_cast<CItemContainer*>(pItem->GetTopContainer());
 				bool isInOpenedContainer = false;
 				if ( pContainer->IsType(IT_EQ_TRADE_WINDOW) )
 				{
@@ -70,7 +70,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 							}
 							else
 							{
-                                if (const CItem *pItemTop = static_cast<const CItem *>(pObjTop);
+                                if (const auto pItemTop = static_cast<const CItem *>(pObjTop);
                                     pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == m_pChar->GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
 									isInOpenedContainer = true;
 								else if ( ptOpenedContainerPosition.GetDist(pObjTop->GetTopPoint()) <= 3 )
@@ -145,7 +145,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 	{
 		case IT_TRACKER:
 		{
-            if (DIR_TYPE dir = static_cast<DIR_TYPE>(DIR_QTY + 1); !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
+            if (auto dir = static_cast<DIR_TYPE>(DIR_QTY + 1); !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
 			{
 				if ( pItem->m_uidLink.IsValidUID() )
 					SysMessageDefault(DEFMSG_TRACKING_UNABLE);
@@ -209,7 +209,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 		case IT_CONTAINER:
 		case IT_TRASH_CAN:
 		{
-			CItemContainer *pPack = static_cast<CItemContainer *>(pItem);
+            const auto pPack = static_cast<CItemContainer *>(pItem);
 
 			if ( !m_pChar->Skill_Snoop_Check(pPack) )
 			{
@@ -219,7 +219,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 
             if (pItem->GetType() == IT_CORPSE)
             {
-                if (CItemCorpse *pCorpseItem = static_cast<CItemCorpse *>(pPack); m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
+                if (const auto pCorpseItem = static_cast<CItemCorpse *>(pPack); m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
                     SysMessageDefault(DEFMSG_LOOT_CRIMINAL_ACT);
             }
 
@@ -233,7 +233,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 				SysMessageDefault(DEFMSG_ITEMUSE_GAMEBOARD_FAIL);
 				return false;
 			}
-			CItemContainer *pBoard = static_cast<CItemContainer *>(pItem);
+            const auto pBoard = static_cast<CItemContainer *>(pItem);
 			ASSERT(pBoard);
 			pBoard->Game_Create();
 			addContainerSetup(pBoard);
@@ -331,7 +331,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 		{
 			if (m_net->isClientVersionNumber(MINCLIVER_HS))
 			{
-                if (CItemShip *pShip = dynamic_cast<CItemShip *>(pItem->m_uidLink.ItemFind()))
+                if (const auto pShip = dynamic_cast<CItemShip *>(pItem->m_uidLink.ItemFind()))
 				{
 					if (m_pChar->ContentFindKeyFor(pItem) || pShip->GetOwner() == m_pChar->GetUID())
 						pShip->SetPilot(m_pChar);
@@ -346,7 +346,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 		case IT_WAND:
 		case IT_SCROLL:
 		{
-			const SPELL_TYPE spell = (SPELL_TYPE)(ResGetIndex(pItem->m_itWeapon.m_spell));
+			const auto spell = static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itWeapon.m_spell));
 			const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(spell);
 			if ( !pSpellDef )
 				return false;
@@ -578,7 +578,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
 	if ( !pObj )
 		return;
 
-	CContainer *pContainer = dynamic_cast<CContainer *>(pObj);
+    const auto pContainer = dynamic_cast<CContainer *>(pObj);
 	if ( !pContainer )
 	{
 		addGumpDialogProps(pObj->GetUID());
@@ -607,7 +607,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
 	uint count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-		const CItem* pItem = static_cast<const CItem*>(pObjRec);
+        const auto pItem = static_cast<const CItem*>(pObjRec);
 		++count;
 		m_tmMenu.m_Item[count] = pItem->GetUID();
 		item[count].m_sText = pItem->GetName();
@@ -1327,7 +1327,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	// Check if the trade window is already open
 	for (CSObjContRec* pObjRec : m_pChar->GetIterationSafeContReverse())
 	{
-		CItem* pItemCont = static_cast<CItem*>(pObjRec);
+        const auto pItemCont = static_cast<CItem*>(pObjRec);
 		if ( !pItemCont->IsType(IT_EQ_TRADE_WINDOW) )
 			continue;
 
@@ -1335,7 +1335,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		if ( !pItemPartner )
 			continue;
 
-        if (CChar *pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent()); pCharPartner != pChar )
+        if (const auto pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent()); pCharPartner != pChar )
 			continue;
 
 		if ( pItem )
@@ -1347,7 +1347,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
                 if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs1, this) == TRIGRET_RET_TRUE )
 					return false;
 			}
-            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItemCont) )
+            if (const auto pCont = dynamic_cast<CItemContainer *>(pItemCont) )
 				pCont->ContentAdd(pItem);
 		}
 		return true;
@@ -1375,7 +1375,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	if ( !pItem1 )
 		return false;
 
-	CItemContainer *pCont1 = dynamic_cast<CItemContainer *>(pItem1);
+    const auto pCont1 = dynamic_cast<CItemContainer *>(pItem1);
 	if ( !pCont1 )
 	{
 		DEBUG_ERR(("Item 0%x must be a container type to enable player trading.\n", ITEMID_Bulletin1));
@@ -1383,7 +1383,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		return false;
 	}
 
-	CItemContainer *pCont2 = static_cast<CItemContainer *>(CItem::CreateBase(ITEMID_Bulletin1));
+    const auto pCont2 = static_cast<CItemContainer *>(CItem::CreateBase(ITEMID_Bulletin1));
 	ASSERT(pCont2);
 
 	pCont1->SetName("Trade Window");

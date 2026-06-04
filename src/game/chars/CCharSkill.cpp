@@ -30,7 +30,7 @@ SKILL_TYPE CChar::Skill_GetBest( uint iRank ) const
 	if ( iRank >= g_Cfg.m_iMaxSkill )
 		iRank = 0;
 
-	dword * pdwSkills = new dword [(size_t)iRank + 1]();
+    const auto pdwSkills = new dword [static_cast<size_t>(iRank) + 1]();
 	dword dwSkillTmp;
     for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
@@ -62,7 +62,7 @@ SKILL_TYPE CChar::Skill_GetMagicRandom(ushort uiVal)
 	int count = 0;
 	for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		SKILL_TYPE skill = (SKILL_TYPE)i;
+        const auto skill = static_cast<SKILL_TYPE>(i);
 		if (!g_Cfg.IsSkillFlag(skill, SKF_MAGIC))
 			continue;
 
@@ -100,8 +100,8 @@ SKILL_TYPE CChar::Skill_GetMagicBest()
 		if (!g_Cfg.IsSkillFlag(skill, SKF_MAGIC))
 			continue;
 
-		SKILL_TYPE test = (SKILL_TYPE)i;
-        if (ushort uiVal = Skill_GetBase(test); uiVal > value)
+        const auto test = static_cast<SKILL_TYPE>(i);
+        if (const ushort uiVal = Skill_GetBase(test); uiVal > value)
 		{
 			skill = test;
 			value = uiVal;
@@ -671,8 +671,8 @@ bool CChar::Skill_MakeItem_Success()
 
 	int quality = 0;
 	tchar *pszMsg = Str_GetTemp();
-	word iSkillLevel = Skill_GetBase(Skill_GetActive());				// primary skill value.
-	CItemVendable *pItemVend = dynamic_cast<CItemVendable *>(pItem);		// cast CItemVendable for setting quality and exp later
+    const word iSkillLevel = Skill_GetBase(Skill_GetActive());				// primary skill value.
+    const auto pItemVend = dynamic_cast<CItemVendable *>(pItem);		// cast CItemVendable for setting quality and exp later
 
 	if ( m_atCreate.m_dwAmount != 1 )
 	{
@@ -968,7 +968,7 @@ int CChar::Skill_NaturalResource_Setup( CItem * pResBit )
 	ASSERT(pResBit);
 
 	// Find the ore type located here based on color.
-    const CRegionResourceDef * pOreDef = dynamic_cast<const CRegionResourceDef *>(g_Cfg.RegisteredResourceGetDef(pResBit->m_itResource.m_ridRes));
+    const auto pOreDef = dynamic_cast<const CRegionResourceDef *>(g_Cfg.RegisteredResourceGetDef(pResBit->m_itResource.m_ridRes));
 	if ( pOreDef == nullptr )
 		return -1;
 
@@ -990,7 +990,7 @@ CItem * CChar::Skill_NaturalResource_Create( CItem * pResBit, SKILL_TYPE skill )
     if (!pResBit->m_itResource.m_ridRes.IsValidResource())
         return nullptr;
 
-    CRegionResourceDef * pOreDef = dynamic_cast<CRegionResourceDef *>(g_Cfg.RegisteredResourceGetDef(pResBit->m_itResource.m_ridRes));
+    const auto pOreDef = dynamic_cast<CRegionResourceDef *>(g_Cfg.RegisteredResourceGetDef(pResBit->m_itResource.m_ridRes));
 	if ( !pOreDef )
 		return nullptr;
 
@@ -1026,10 +1026,10 @@ CItem * CChar::Skill_NaturalResource_Create( CItem * pResBit, SKILL_TYPE skill )
 	if ( tRet == TRIGRET_RET_TRUE )
 		return nullptr;
 
-	//Creating the 'id' variable with the local given through->by the trigger(s) instead on top of method
-    ITEMID_TYPE id = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_VarsLocal.GetKeyNum("ResourceID")));
+	// Creating the 'id' variable with the local given through->by the trigger(s) instead on top of method
+    const auto id = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("ResourceID"))));
 
-    wAmount = pResBit->ConsumeAmount( (word)(pScriptArgs->m_iN1) );	// amount I used up.
+    wAmount = pResBit->ConsumeAmount( static_cast<word>(pScriptArgs->m_iN1) );	// amount I used up.
 	if ( wAmount <= 0 )
 		return nullptr;
 
@@ -1132,7 +1132,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 
 	if ( pOreDef->IsType( IT_ORE ))
 	{
-		ITEMID_TYPE idIngot = (ITEMID_TYPE)(ResGetIndex( pOreDef->m_ttOre.m_idIngot));
+        const auto idIngot = static_cast<ITEMID_TYPE>(ResGetIndex(pOreDef->m_ttOre.m_idIngot));
 		const CItemBase* pBaseDef = CItemBase::FindItemBase(idIngot); //Usually a lingot, but could be a gem also.
 		if (!pBaseDef)
 		{
@@ -1155,7 +1155,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 			if ( rid.GetResType() != RES_ITEMDEF )
 				continue;
 
-			ITEMID_TYPE id = (ITEMID_TYPE)(rid.GetResIndex());
+            const auto id = static_cast<ITEMID_TYPE>(rid.GetResIndex());
 			if (id == ITEMID_NOTHING)
 				break;
 
@@ -1265,7 +1265,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 	pItemOre->ConsumeAmount(pItemOre->GetAmount());
 
 	//Now we finally create the resources obtained from the smelting process.
-	for (std::vector<CItem*>::iterator ingot = ingots.begin(); ingot != ingots.end(); ++ingot)
+	for (auto ingot = ingots.begin(); ingot != ingots.end(); ++ingot)
 		ItemBounce((*ingot));
 
 	return true;
@@ -1295,7 +1295,7 @@ bool CChar::Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax 
 	if ( pObjTop->IsChar() )
 	{
 		// Prevent tracking of hidden staff
-        if (const CChar *pChar = dynamic_cast<const CChar *>(pObjTop);
+        if (const auto pChar = dynamic_cast<const CChar *>(pObjTop);
             pChar && pChar->IsStatFlag(STATF_INSUBSTANTIAL) && pChar->GetPrivLevel() > GetPrivLevel() )
 			return false;
 	}
@@ -2478,7 +2478,7 @@ int CChar::Skill_Hiding( SKTRIG_TYPE stage )
 		// Make sure I'm not carrying a light ?
 		for (const CSObjContRec* pObjRec : *this)
 		{
-			const CItem* pItem = static_cast<const CItem*>(pObjRec);
+            const auto pItem = static_cast<const CItem*>(pObjRec);
 			if ( !CItemBase::IsVisibleLayer( pItem->GetEquipLayer()))
 				continue;
 			if ( pItem->Can( CAN_I_LIGHT ))
@@ -2734,7 +2734,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 		return -SKTRIG_QTY;
 	}
 
-	CChar * pChar = dynamic_cast<CChar*>(pObj);
+    auto pChar = dynamic_cast<CChar*>(pObj);
     if (pChar && pChar->Can(CAN_C_NONSELECTABLE))
     {
         SysMessageDefault( DEFMSG_HEALING_NONCHAR );
@@ -3284,10 +3284,10 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 			iDamage = UINT16_MAX;
 	}
 
-	HUE_TYPE hue = (HUE_TYPE)(GetDefNum("BREATH.HUE", true));
-	ITEMID_TYPE id = (ITEMID_TYPE)(GetDefNum("BREATH.ANIM", true));
-	EFFECT_TYPE effect = static_cast<EFFECT_TYPE>(GetDefNum("BREATH.TYPE",true));
-	DAMAGE_TYPE iDmgType = (DAMAGE_TYPE)(GetDefNum("BREATH.DAMTYPE", true));
+    const HUE_TYPE hue = static_cast<HUE_TYPE>(GetDefNum("BREATH.HUE", true));
+    auto id = static_cast<ITEMID_TYPE>(GetDefNum("BREATH.ANIM", true));
+    auto effect = static_cast<EFFECT_TYPE>(GetDefNum("BREATH.TYPE",true));
+	DAMAGE_TYPE iDmgType = static_cast<DAMAGE_TYPE>(GetDefNum("BREATH.DAMTYPE", true));
 
 	/* AOS damage types (used by COMBAT_ELEMENTAL_ENGINE)*/
 	int iDmgPhysical = 0, iDmgFire = 0, iDmgCold = 0, iDmgPoison = 0, iDmgEnergy = 0;
@@ -4078,7 +4078,7 @@ int CChar::Skill_Snooping(SKTRIG_TYPE stage)
 		return 0;
 
 	// Assume the container is not locked.
-	CItemContainer * pCont = dynamic_cast <CItemContainer *>(m_Act_UID.ItemFind());
+    const auto pCont = dynamic_cast <CItemContainer *>(m_Act_UID.ItemFind());
 	if (pCont == nullptr)
 		return (-SKTRIG_QTY);
 
@@ -4178,7 +4178,7 @@ int CChar::Skill_Stealing(SKTRIG_TYPE stage)
 	}
 
 	// Special cases.
-    if (CContainer *pContainer = dynamic_cast<CContainer *>(pItem->GetContainer()))
+    if (const auto pContainer = dynamic_cast<CContainer *>(pItem->GetContainer()))
 	{
         if (dynamic_cast<CItemCorpse *>(pContainer))
 		{
@@ -4186,7 +4186,7 @@ int CChar::Skill_Stealing(SKTRIG_TYPE stage)
 			return -SKTRIG_ABORT;
 		}
 	}
-    if (CItem *pCItem = dynamic_cast<CItem *>(pItem->GetContainer()))
+    if (const auto pCItem = dynamic_cast<CItem *>(pItem->GetContainer()))
 	{
 		if (pCItem->GetType() == IT_GAME_BOARD)
 		{

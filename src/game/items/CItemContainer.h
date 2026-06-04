@@ -74,7 +74,7 @@ public:
      */
     CPointMap GetRandContainerLoc() const;
 
-	void OnOpenEvent( CChar * pCharOpener, const CObjBaseTemplate * pObjTop );
+	void OnOpenEvent(const CChar * pCharOpener, const CObjBaseTemplate * pObjTop );
 };
 
 

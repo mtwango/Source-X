@@ -135,7 +135,7 @@ void CImportFile::ImportFix()
 		{
 			if ( m_pCurSer->m_pObj->IsItem())
 			{
-				CItem * pItemCheck = dynamic_cast <CItem*>( m_pCurSer->m_pObj );
+                const auto pItemCheck = dynamic_cast <CItem*>( m_pCurSer->m_pObj );
 				ASSERT(pItemCheck);
 				pItemCheck->SetAttr(ATTR_MOVE_NEVER);
 
@@ -178,7 +178,7 @@ void CImportFile::ImportFix()
 		}
 
 		// Find it's container.
-		CImportSer* pSerCont = static_cast <CImportSer*> ( m_ListSer.GetContainerHead());
+        const CImportSer * pSerCont = static_cast <CImportSer*> ( m_ListSer.GetContainerHead());
 		CObjBase * pObjCont = nullptr;
 		for ( ; pSerCont != nullptr; pSerCont = static_cast <CImportSer*> ( pSerCont->GetNext()))
 		{
@@ -201,11 +201,11 @@ void CImportFile::ImportFix()
 		}
 
 		// Is it a dupe in the container or equipped ?
-		CContainer* pObjContBase = dynamic_cast<CContainer*>(pObjCont);
+        const auto pObjContBase = dynamic_cast<CContainer*>(pObjCont);
 		ASSERT(pObjCont);
 		for (CSObjContRec* pObjRec : *pObjContBase)
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            const CItem * pItem = static_cast<CItem*>(pObjRec);
 			if ( pItemTest == pItem )
 				continue;
 			if ( pItemTest->IsItemEquipped())
@@ -345,7 +345,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
             continue;
 
         // Parse the line.
-		tchar* pKey = const_cast<tchar*>(strchr(s.GetKey(), ' '));
+        auto pKey = const_cast<tchar*>(strchr(s.GetKey(), ' '));
 		lpctstr pArg = nullptr;
 
 		if (pKey != nullptr)
@@ -855,7 +855,7 @@ bool CWorld::Import( lpctstr pszFilename, const CChar * pSrc, word wModeFlags, i
 }
 
 
-bool CWorld::DumpAreas( CTextConsole * pSrc, lpctstr pszFilename )
+bool CWorld::DumpAreas(const CTextConsole * pSrc, lpctstr pszFilename )
 {
 	ADDTOCALLSTACK("CWorld::DumpAreas");
 	if ( pSrc == nullptr )

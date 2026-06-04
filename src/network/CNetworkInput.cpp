@@ -119,9 +119,9 @@ void CNetworkInput::receiveData()
             // todo: if possible, it would be useful to be able to perform that separation here,
             // but this is made difficult due to the variety of client types and encryptions that
             // may be connecting
-            uint length = (uint)received;
+            const uint length = static_cast<uint>(received);
 
-            Packet* packet = new Packet(buffer, length);
+            auto packet = new Packet(buffer, length);
             state->m_incoming.rawPackets.push(packet);
             buffer += length;
             received -= (int)(length);
@@ -441,7 +441,7 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
     return false;
 }
 
-bool CNetworkInput::processOtherClientData(CNetState* state, Packet* buffer)
+bool CNetworkInput::processOtherClientData(const CNetState * state, Packet* buffer)
 {
     // process data from a non-game client
     ADDTOCALLSTACK("CNetworkInput::processOtherClientData");
@@ -469,7 +469,7 @@ bool CNetworkInput::processOtherClientData(CNetState* state, Packet* buffer)
         EXC_SET_BLOCK("encryption setup");
         ASSERT(buffer->getRemainingLength() <= sizeof(CEvent));
 
-        std::unique_ptr<CEvent> evt = std::make_unique<CEvent>();
+        const auto evt = std::make_unique<CEvent>();
         memcpy(evt.get(), buffer->getRemainingData(), buffer->getRemainingLength());
 
         if (evt->Default.m_Cmd == XCMD_EncryptionReply && state->isClientKR())

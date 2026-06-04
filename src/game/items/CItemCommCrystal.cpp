@@ -118,7 +118,7 @@ void CItemCommCrystal::DupeCopy(const CObjBase *pItemObj)
 
     CItemVendable::DupeCopy(pItem);
 
-    const CItemCommCrystal *pItemCrystal = dynamic_cast<const CItemCommCrystal *>(pItem);
+    const auto pItemCrystal = dynamic_cast<const CItemCommCrystal *>(pItem);
     if ( !pItemCrystal )
         return;
 

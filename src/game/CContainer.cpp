@@ -22,7 +22,7 @@ void CContainer::_GoAwake()
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
         //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-		if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
+		if (const auto pItem = dynamic_cast<CItem *>(pObjRec); pItem->IsSleeping())
 			pItem->GoAwake();
 	}
 }
@@ -33,7 +33,7 @@ void CContainer::_GoSleep()
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
         //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-        if (CItem *pItem = static_cast<CItem *>(pObjRec); !pItem->_CanTick(true))
+        if (const auto pItem = dynamic_cast<CItem *>(pObjRec); !pItem->_CanTick(true))
 		{
             pItem->GoSleep();
 		}
@@ -60,7 +60,7 @@ void CContainer::ContentDelete(bool fForce)
 		EXC_TRY("Scheduling objects for deletion");
 
         ASSERT(pRec->GetParent() == this);
-        CItem* pItem = static_cast<CItem*>(pRec);
+        const auto pItem = dynamic_cast<CItem*>(pRec);
         pItem->Delete(fForce);
 
 		EXC_CATCH;
@@ -76,7 +76,7 @@ void CContainer::ContentNotifyDelete()
 	// trigger @Destroy on contained items
 	for (size_t i = 0; i < GetContentCount(); )
 	{
-		CItem* pItem = static_cast<CItem*>(GetContentIndex(i));
+        const auto pItem = dynamic_cast<CItem*>(GetContentIndex(i));
 		bool fIncreaseIndex = true;
 		if (!pItem->NotifyDelete())
 		{
@@ -115,11 +115,11 @@ int CContainer::FixWeight()
 
 	for ( CSObjContRec *pObjRec : *this )
 	{
-		CItemContainer *pCont = dynamic_cast<CItemContainer *>(pObjRec);
+        const auto pCont = dynamic_cast<CItemContainer *>(pObjRec);
 		if (!pCont)
 		{
 			//For every non-container item inside this container add its weight to it.
-            if (CItem *pItem = dynamic_cast<CItem *>(pObjRec))
+            if (CItem const* pItem = dynamic_cast<CItem *>(pObjRec))
 				m_totalweight += pItem->GetWeight();
 			continue;
 		}
@@ -186,7 +186,7 @@ void CContainer::OnRemoveObj(CSObjContRec *pObjRec )	// Override this = called w
 	// remove this object from the container list.
 	// Overload the RemoveAt for general lists to come here.
     DEBUG_ASSERT(dynamic_cast<const CItem *>(pObjRec));
-    CItem *pItem = static_cast<CItem *>(pObjRec);
+    const auto pItem = dynamic_cast<CItem *>(pObjRec);
 	ASSERT(pItem);
 
 	CSObjCont::OnRemoveObj(pItem);
@@ -206,7 +206,7 @@ void CContainer::r_WriteContent( CScript &s ) const
 	{
 		ASSERT(pObjRec->GetParent() == this);
 
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = dynamic_cast<CItem*>(pObjRec);
 		pItem->r_WriteSafe(s);
 	}
 }
@@ -221,14 +221,14 @@ CItem *CContainer::ContentFind(CResourceID const& rid, dword dwArg, int iDescend
 
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( pItem->IsResourceMatch(rid, dwArg) )
 			return pItem;
 
         if ( iDescendLevels <= 0 )
 			continue;
 
-        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
+        if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )
 		{
 			if ( !pCont->IsSearchable() )
 				continue;
@@ -249,7 +249,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 	{
 		for (CSObjContRec *pObjRec : GetIterationSafeContReverse())
 		{
-			CItem* pItem = static_cast<CItem*>(pObjRec);
+            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 			if ( pItem->IsResourceMatch(rid, dwArg) )
 			{
 				s.SeekContext(StartContext);
@@ -269,7 +269,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
             if ( iDescendLevels <= 0 )
 				continue;
 
-            if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )
+            if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )
 			{
 				if ( pCont->IsSearchable() )
 				{
@@ -288,8 +288,8 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
-		CScriptObj *pScript = dynamic_cast<CScriptObj *>(this);
-        if (TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
+        auto *const pScript = dynamic_cast<CScriptObj *>(this);
+        if (const TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -306,7 +306,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 	ADDTOCALLSTACK("CContainer::OnGenericContTriggerForLoop");
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		s.SeekContext(StartContext);
         TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
 		if (iRet == TRIGRET_BREAK || iRet == TRIGRET_RET_ABORTED)
@@ -323,7 +323,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 		if ( iDecendLevels <= 0 )
 			continue;
 
-        if (CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem); pCont && pCont->IsSearchable() )
+        if (const auto pCont = dynamic_cast<CItemContainer *>(pItem); pCont && pCont->IsSearchable() )
 		{
 			CContainer *pContBase = pCont;
             iRet = pContBase->OnGenericContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, iDecendLevels - 1);
@@ -337,8 +337,8 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
-		CScriptObj *pScript = dynamic_cast<CScriptObj *>(this);
-        if (TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
+        auto *const pScript = dynamic_cast<CScriptObj *>(this);
+        if (const TRIGRET_TYPE iRet = pScript->OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -377,7 +377,7 @@ int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, dword d
 
 	for (const CSObjContRec* pObjRec : *this)
 	{
-		const CItem* pItem = static_cast<const CItem*>(pObjRec);
+        const auto *const pItem = dynamic_cast<const CItem*>(pObjRec);
         if ( pItem->IsResourceMatch(rid, dwArg) )
         {
             const word wAmountMax = pItem->GetAmount();
@@ -387,7 +387,7 @@ int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, dword d
                 break;
         }
 
-        if ( const CItemContainer *pCont = dynamic_cast<const CItemContainer *>(pItem) )	// this is a sub-container.
+        if (const auto *const pCont = dynamic_cast<const CItemContainer *>(pItem) )	// this is a sub-container.
         {
             if ( rid == CResourceID(RES_TYPEDEF, IT_GOLD) )
             {
@@ -421,7 +421,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, dword dwArg 
 
 	for (size_t i = 0; i < GetContentCount();)
 	{
-		CItem* pItem = static_cast<CItem*>(GetContentIndex(i));
+        auto *const pItem = dynamic_cast<CItem*>(GetContentIndex(i));
 		ASSERT(pItem);
 		if ( pItem->IsResourceMatch(rid, dwArg) )
 		{
@@ -430,7 +430,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, dword dwArg 
 				break;
 		}
 
-        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
+        if (const auto pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
 		{
 			if ( rid == CResourceID(RES_TYPEDEF, IT_GOLD) )
 			{
@@ -472,13 +472,13 @@ void CContainer::ContentAttrMod( uint64 iAttr, bool fSet )
 	// Mark the attr
 	for (CSObjContRec* pObjRec : *this)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( fSet )
 			pItem->SetAttr(iAttr);
 		else
 			pItem->ClrAttr(iAttr);
 
-        if ( CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
+        if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
 			pCont->ContentAttrMod(iAttr, fSet);
 	}
 }
@@ -492,7 +492,7 @@ void CContainer::ContentsDump( const CPointMap &pt, uint64 iAttrLeave )
 
 	for (size_t i = 0; i < GetContentCount(); )
 	{
-		CItem* pItem = static_cast<CItem*>(GetContentIndex(i));
+        auto *const pItem = dynamic_cast<CItem*>(GetContentIndex(i));
 		if ( pItem->IsAttr(iAttrLeave) )	// hair and newbie stuff.
 		{
 			++i;
@@ -514,7 +514,7 @@ void CContainer::ContentsTransfer( CItemContainer *pCont, bool fNoNewbie )
 
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = dynamic_cast<CItem*>(pObjRec);
 		if ( fNoNewbie && pItem->IsAttr(ATTR_NEWBIE|ATTR_MOVE_NEVER|ATTR_CURSED2|ATTR_BLESSED2) )	// keep newbie stuff.
 			continue;
 		pCont->ContentAdd(pItem);	// add content
@@ -575,7 +575,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 		iReplicationQty = ResourceConsume(pResources, iReplicationQty, true);
 	}
 
-	CChar *pChar = dynamic_cast<CChar *>(this);
+    const auto *const pChar = dynamic_cast<CChar *>(this);
 	int iQtyMin = INT32_MAX;
 	for ( size_t i = 0; i < pResources->size(); ++i )
 	{
@@ -599,7 +599,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
             {
                 tchar *resOverride = Str_GetTemp();
                 snprintf(resOverride, Str_TempLength(), "matoverride_%s", g_Cfg.ResourceGetName(CResourceID(RES_ITEMDEF, rid.GetResIndex())));
-                if (CResourceID ridOverride = CResourceID(RES_ITEMDEF, (dword)pChar->m_TagDefs.GetKeyNum(resOverride)); ridOverride.GetResIndex() > 0)
+                if (auto ridOverride = CResourceID(RES_ITEMDEF, static_cast<dword>(pChar->m_TagDefs.GetKeyNum(resOverride))); ridOverride.GetResIndex() > 0)
                     rid = ridOverride;
             }
         }
@@ -625,8 +625,8 @@ size_t CContainer::ContentCountAll() const
 	for (const CSObjContRec* pObjRec : *this)
 	{
 		++ iTotal;
-		const CItem* pItem = static_cast<const CItem*>(pObjRec);
-		const CItemContainer *pCont = dynamic_cast<const CItemContainer *>(pItem);
+        const auto *const pItem = dynamic_cast<const CItem*>(pObjRec);
+        const auto *const pCont = dynamic_cast<const CItemContainer *>(pItem);
 		if ( !pCont )
 			continue;
 		//if ( !pCont->IsSearchable() )

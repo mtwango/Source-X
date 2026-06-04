@@ -253,7 +253,7 @@ lpctstr const CChar::sm_szTrigName[CTRIG_QTY+1] =	// static
 CChar * CChar::CreateBasic(CREID_TYPE baseID) // static
 {
 	ADDTOCALLSTACK("CChar::CreateBasic");
-    CChar *pChar = new CChar(baseID);
+    const auto pChar = new CChar(baseID);
 	return pChar;
 }
 
@@ -487,7 +487,7 @@ void CChar::ClientDetach()
 	// remove all trade windows.
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
-        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_EQ_TRADE_WINDOW) )
+        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_EQ_TRADE_WINDOW) )
 			pItem->Delete();
 	}
 	if ( !IsClientActive() )
@@ -496,7 +496,7 @@ void CChar::ClientDetach()
 	// If this char is on a IT_SHIP then we need to stop the ship !
 	if ( m_pArea && m_pArea->IsFlag( REGION_FLAG_SHIP ))
 	{
-        if ( CItemShip *pShipItem = dynamic_cast<CItemShip *>(m_pArea->GetResourceID().ItemFindFromResource()) )
+        if (const auto pShipItem = dynamic_cast<CItemShip *>(m_pArea->GetResourceID().ItemFindFromResource()) )
 			pShipItem->Stop();
 	}
 
@@ -1180,7 +1180,7 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 	// Begin copying items.
 	for ( int i = 0 ; i < LAYER_QTY; ++i)
 	{
-        LAYER_TYPE layer = (LAYER_TYPE)i;
+        const auto layer = static_cast<LAYER_TYPE>(i);
         if ( CItem *myLayer = LayerFind(layer) )
 			myLayer->Delete();
 
@@ -1195,9 +1195,9 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 			pItem->SetAttr(ATTR_NEWBIE);
 			if (pItem->IsType(IT_CONTAINER) )
 			{
-                for (CItemContainer *pContainer = dynamic_cast<CItemContainer *>(pItem); CSObjContRec * pObjRec : *pContainer)
+                for (const auto pContainer = dynamic_cast<CItemContainer *>(pItem); CSObjContRec * pObjRec : *pContainer)
 				{
-					CItem* pItemCont = static_cast<CItem*>(pObjRec);
+                    const auto pItemCont = static_cast<CItem*>(pObjRec);
 					pItemCont->SetAttr(ATTR_NEWBIE);
 
                     if (const CChar *pTest = CUID::CharFindFromUID(pItemCont->m_itNormal.m_more1); pTest && pTest == pChar)
@@ -2254,7 +2254,7 @@ enum CHC_TYPE : int
 	#define ADD(a,b) CHC_##a,
 	#include "../../tables/CChar_props.tbl"
 	#undef ADD
-	CHC_QTY
+	CHC_QTY,
 };
 
 lpctstr const CChar::sm_szLoadKeys[CHC_QTY+1] =
@@ -2262,7 +2262,7 @@ lpctstr const CChar::sm_szLoadKeys[CHC_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../../tables/CChar_props.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 bool CChar::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
@@ -2291,7 +2291,7 @@ bool CChar::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bo
     }
 
     EXC_SET_BLOCK("Keyword");
-	const CHC_TYPE iKeyNum = (CHC_TYPE) FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+	const auto iKeyNum = static_cast<CHC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
 	if ( iKeyNum < 0 )
 	{
 do_default:
@@ -2596,9 +2596,9 @@ do_default:
 
 				tchar * ppLevel_sep[100];
 				const CSString* pFameAt0 = g_Cfg.m_Fame[0];
-                const size_t uiLen = (size_t)pFameAt0->GetLength() + 1;
+                const size_t uiLen = static_cast<size_t>(pFameAt0->GetLength()) + 1;
 
-				tchar * pszFameAt0 = new tchar[uiLen];
+                auto pszFameAt0 = new tchar[uiLen];
 				Str_CopyLimitNull(pszFameAt0, pFameAt0->GetBuffer(), uiLen);
 
 				int iFame = GetFame();
@@ -2692,9 +2692,9 @@ do_default:
 
 				tchar * ppLevel_sep[100];
 				const CSString* pKarmaAt0 = g_Cfg.m_Karma[0];
-				const size_t uiLen = (size_t)pKarmaAt0->GetLength() + 1;
+				const size_t uiLen = static_cast<size_t>(pKarmaAt0->GetLength()) + 1;
 
-				tchar * pszKarmaAt0 = new tchar[uiLen];
+                auto pszKarmaAt0 = new tchar[uiLen];
 				Str_CopyLimitNull(pszKarmaAt0, pKarmaAt0->GetBuffer(), uiLen);
 
 				short iKarma = GetKarma();
@@ -2750,7 +2750,7 @@ do_default:
 					return false;
 
 				// Lookup the spell ID to ensure it's valid
-				SPELL_TYPE spell = (SPELL_TYPE)(g_Cfg.ResourceGetIndexType( RES_SPELL, ppArgs[0] ));
+                auto spell = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetIndexType(RES_SPELL, ppArgs[0]));
 				bool fCheckAntiMagic = true; // AntiMagic check is enabled by default
 
 				// Set AntiMagic check if second argument has been provided
@@ -2764,14 +2764,14 @@ do_default:
 			{
 				// use m_Act_UID ?
 				ptcKey += 7;
-				ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, ptcKey ));
+                auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, ptcKey));
 				sVal.FormatVal( Skill_MakeItem( id,	CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT ) );
 			}
 			return true;
 		case CHC_CANMAKESKILL:
 			{
 				ptcKey += 12;
-				ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, ptcKey ));
+                auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, ptcKey));
 				sVal.FormatVal( Skill_MakeItem( id,	CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT, true ) );
 			}
 			return true;
@@ -3397,7 +3397,7 @@ bool CChar::r_LoadVal( CScript & s )
         }
     }
 
-	CHC_TYPE iKeyNum = (CHC_TYPE) FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const auto iKeyNum = static_cast<CHC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
 	if ( iKeyNum < 0 )
 	{
 		if ( m_pPlayer )
@@ -3799,7 +3799,7 @@ bool CChar::r_LoadVal( CScript & s )
             }
 		case CHC_DIR:
 			{
-				DIR_TYPE dir = static_cast<DIR_TYPE>(s.GetArgVal());
+            auto dir = static_cast<DIR_TYPE>(s.GetArgVal());
 				if (dir <= DIR_INVALID || dir >= DIR_QTY)
 					dir = DIR_SE;
 				UpdateDir( dir );
@@ -3944,7 +3944,7 @@ bool CChar::r_LoadVal( CScript & s )
 			return SetNPCBrain((NPCBRAIN_TYPE)(s.GetArgVal()));
 		case CHC_OBODY:
 			{
-				CREID_TYPE id = (CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, s.GetArgStr()));
+                const auto id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 				if ( ! CCharBase::FindCharBase( id ) )
 				{
 					DEBUG_ERR(( "OBODY Invalid Char 0%x\n", id ));
@@ -4853,10 +4853,10 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			if ( pCharSrc != nullptr )
 			{
 				// Let's make a cage to put the player in
-				ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, "i_multi_cage" ));
+                auto id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, "i_multi_cage"));
 				if ( id < 0 )
 					return false;
-				CItemMulti * pItem = dynamic_cast <CItemMulti*>( CItem::CreateBase( id ));
+                auto pItem = dynamic_cast <CItemMulti*>( CItem::CreateBase( id ));
 				if ( pItem == nullptr )
 					return false;
 				CPointMap pt = pCharSrc->GetTopPoint();
@@ -4950,7 +4950,7 @@ bool CChar::OnTriggerSpeech( bool bIsPet, lpctstr pszText, CChar * pSrc, TALKMOD
 	{
         if ( CScriptObj *pDef = g_Cfg.RegisteredResourceGetDefByName(RES_SPEECH, pszName) )
 		{
-            if ( CResourceLink *pLink = dynamic_cast<CResourceLink *>(pDef) )
+            if (auto pLink = dynamic_cast<CResourceLink *>(pDef) )
 			{
                 if (CResourceLock s; pLink->ResourceLock(s) && pLink->HasTrigger(XTRIG_UNKNOWN) )
 				{
@@ -5190,7 +5190,7 @@ bool CChar::CanConsume(CItem* pItem, word iQty)
         iQty = iQty - iQtyMax;
     else if (pTopObj)
     {
-        if (CChar *pTopChar = dynamic_cast<CChar *>(pTopObj); pTopObj == pItem || (pTopChar && pTopChar != this))
+        if (const auto pTopChar = dynamic_cast<CChar *>(pTopObj); pTopObj == pItem || (pTopChar && pTopChar != this))
             iQty = iQty - iQtyMax;
     }
 

@@ -19,7 +19,7 @@ CNetworkManager::CNetworkManager()
 CNetworkManager::~CNetworkManager()
 {
     stop();
-    for (NetworkThreadList::iterator it = m_threads.begin(); it != m_threads.end(); )
+    for (auto it = m_threads.begin(); it != m_threads.end(); )
     {
         delete* it;
         it = m_threads.erase(it);
@@ -59,7 +59,7 @@ CNetworkThread* CNetworkManager::selectBestThread()
     DEBUGNETWORK(("Searching for a suitable thread to handle a new client..\n"));
 
     // search for quietest thread
-    for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+    for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
     {
         if ((*it)->getClientCount() < bestThreadSize)
         {
@@ -369,7 +369,7 @@ void CNetworkManager::start()
     if (isThreaded())
     {
         // Start/spawn network threads
-        for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+        for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         {
             // The thread structure (class) was created via createNetworkThreads, now spawn a new thread and do the work inside there.
             // The start method creates a thread with "runner" as main function thread. Runner calls Start, which calls onStart.
@@ -384,9 +384,9 @@ void CNetworkManager::start()
         // In the non-threaded configuration, T_Net #0 is just a worker object; its init()/tick()/processInput()/processOutput() run on the T_Main thread.
 
         // Initialise network threads (if g_Cfg._uiNetworkThreads is == 0 then we'll have only 1 CNetworkThread)
-        size_t ntCount = m_threads.size();
+        size_t const ntCount = m_threads.size();
         UnreferencedParameter(ntCount);
-        for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+        for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         {
             CNetworkThread* pThread = *it;
 
@@ -411,7 +411,7 @@ void CNetworkManager::start()
 void CNetworkManager::stop()
 {
     // terminate child threads
-    for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+    for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         (*it)->waitForClose();
 }
 
@@ -501,7 +501,7 @@ void CNetworkManager::tick()
     // tick child threads, if single-threaded mode (otherwise they will tick themselves)
     if (isThreaded() == false)
     {
-        for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+        for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         {
             if ((*it)->isActive() == false)
                 (*it)->tick();
@@ -527,7 +527,7 @@ void CNetworkManager::processAllInput()
     if (isInputThreaded() == false)	// Don't do this if the input is multi threaded, since the CNetworkThread ticks automatically by itself
     {
         // force each thread to process input (NOT THREADSAFE)
-        for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+        for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
             (*it)->processInput();
     }
 }
@@ -540,7 +540,7 @@ void CNetworkManager::processAllOutput()
     if (isOutputThreaded() == false) // Don't do this if the output is multi threaded, since the CNetworkThread ticks automatically by itself
     {
         // force each thread to process output (NOT THREADSAFE)
-        for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+        for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
             (*it)->processOutput();
     }
 }
@@ -550,7 +550,7 @@ void CNetworkManager::flushAllClients()
     // flush data for every client
     ADDTOCALLSTACK("CNetworkManager::flushAllClients");
 
-    for (NetworkThreadList::iterator it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
+    for (auto it = m_threads.begin(), end = m_threads.end(); it != end; ++it)
         (*it)->flushAllClients();
 }
 

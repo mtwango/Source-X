@@ -75,7 +75,7 @@ public:
 
 	// War
 private:
-	void TheyDeclarePeace( CItemStone* pEnemyStone, bool fForcePeace );
+	void TheyDeclarePeace(const CItemStone * pEnemyStone, bool fForcePeace );
 	bool WeDeclareWar(CItemStone * pEnemyStone);
 	void WeDeclarePeace(const CUID &uidEnemy, bool fForcePeace = false);
 	void AnnounceWar( const CItemStone * pEnemyStone, bool fWeDeclare, bool fWar );
@@ -83,7 +83,7 @@ public:
 	bool IsAtWarWith( const CItemStone * pStone ) const;
 	bool IsAlliedWith( const CItemStone * pStone ) const;
 
-	bool CheckValidMember(CStoneMember * pMember);
+	bool CheckValidMember(const CStoneMember * pMember);
 	int FixWeirdness() override;
 
 	void r_Write( CScript & s ) override;

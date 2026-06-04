@@ -588,19 +588,19 @@ int CSString::indexOf(const CSString& str, int offset) noexcept
 	if (offset >= len)
 		return -1;
 
-	int slen = str.GetLength();
+	int const slen = str.GetLength();
 	if (slen > len)
 		return -1;
 
-	tchar * str_value = new tchar[static_cast<size_t>(slen + 1)];
+    const auto str_value = new tchar[static_cast<size_t>(slen + 1)];
 	Str_CopyLimitNull(str_value, str.GetBuffer(), static_cast<size_t>(slen+1));
-	tchar firstChar = str_value[0];
+    const tchar firstChar = str_value[0];
 
 	for (int i = offset; i < len; ++i)
 	{
-        if (tchar c = m_pchData[i]; c == firstChar)
+        if (tchar const c = m_pchData[i]; c == firstChar)
 		{
-            if (int rem = len - i; rem >= slen)
+            if (int const rem = len - i; rem >= slen)
 			{
 				int j = i;
 				int k = 0;

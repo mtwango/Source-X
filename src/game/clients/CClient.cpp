@@ -409,7 +409,7 @@ bool CClient::CanSee( const CObjBaseTemplate * pObj ) const
 
 	if ( pObj->IsChar() )
 	{
-        if (const CChar *pChar = dynamic_cast<const CChar *>(pObj); pChar->IsDisconnected() )
+        if (const auto pChar = dynamic_cast<const CChar *>(pObj); pChar->IsDisconnected() )
         {
             if( !IsPriv(PRIV_ALLSHOW) )
                 return false;
@@ -437,7 +437,7 @@ bool CClient::CanHear( const CObjBaseTemplate * pSrc, TALKMODE_TYPE mode ) const
 		pSrc->IsChar() &&
 		( mode == TALKMODE_SAY || mode == TALKMODE_WHISPER || mode == TALKMODE_YELL ) ) // HEARALL works only for this talkmodes
 	{
-		const CChar * pCharSrc = dynamic_cast <const CChar*> ( pSrc );
+        const auto pCharSrc = dynamic_cast <const CChar*> ( pSrc );
 		ASSERT(pCharSrc);
 		if ( pCharSrc->IsClientActive() && (pCharSrc->GetPrivLevel() <= GetPrivLevel()) )
 			return true;
@@ -1074,7 +1074,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			break;
 		case CV_REMOVEBUFF:
 			{
-				BUFF_ICONS IconId = (BUFF_ICONS)s.GetArgVal();
+                auto IconId = static_cast<BUFF_ICONS>(s.GetArgVal());
 				if (IconId < BI_START || IconId > BI_QTY/* || IconId == 0x3EB || IconId == 0x3EC*/)
 				{
 					DEBUG_ERR(("Invalid RemoveBuff icon ID\n"));
@@ -1165,12 +1165,12 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			break;
 		case CV_CAST:
 			{
-				SPELL_TYPE spell = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetIndexType(RES_SPELL, s.GetArgStr()));
+                auto spell = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetIndexType(RES_SPELL, s.GetArgStr()));
 				const CSpellDef * pSpellDef = g_Cfg.GetSpellDef(spell);
 				if (pSpellDef == nullptr)
 					return true;
 
-				CObjBase * pObjSrc = dynamic_cast<CObjBase *>(pSrc);
+                auto pObjSrc = dynamic_cast<CObjBase *>(pSrc);
 
 				if ( IsSetMagicFlags( MAGICF_PRECAST ) && !pSpellDef->IsSpellType( SPELLFLAG_NOPRECAST ) )
 				{

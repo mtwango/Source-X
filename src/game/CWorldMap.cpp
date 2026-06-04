@@ -81,7 +81,7 @@ CItem * CWorldMap::CheckNaturalResource(const CPointMap & pt, IT_TYPE iType, boo
 	// RES_REGIONRESOURCE from RES_REGIONTYPE linked to RES_AREA
 
 	EXC_SET_BLOCK("get region");
-	const CRegionWorld* pRegion = dynamic_cast<const CRegionWorld*>( pt.GetRegion( REGION_TYPE_AREA ));
+    auto pRegion = dynamic_cast<const CRegionWorld*>( pt.GetRegion( REGION_TYPE_AREA ));
 	if ( !pRegion )
 		return nullptr;
 
@@ -194,7 +194,7 @@ CItemTypeDef* CWorldMap::GetTerrainItemTypeDef(dword dwTerrainIndex) // static
 	}
 	ASSERT(pRes);
 
-	CItemTypeDef* pItemTypeDef = dynamic_cast <CItemTypeDef*> (pRes);
+    const auto pItemTypeDef = dynamic_cast <CItemTypeDef*> (pRes);
 	ASSERT(pItemTypeDef);
 
 	return pItemTypeDef;
@@ -822,7 +822,7 @@ CPointMap CWorldMap::FindItemTypeNearby(const CPointMap & pt, IT_TYPE iType, int
                         const short y2 = ptTest.m_y - ptTop.m_y;
                         const short z2 = ptTest.m_z - ptTop.m_z;
 
-                        if (CItemMultiCustom* pItemMultiCustom = dynamic_cast<CItemMultiCustom*>(pRegionItem))
+                        if (auto pItemMultiCustom = dynamic_cast<CItemMultiCustom*>(pRegionItem))
                         {
                             CItemMultiCustom::CMultiComponent* pComponents[INT8_MAX];
                             size_t iItemQty = pItemMultiCustom->GetComponentsAt(x2, y2, (char)z2, pComponents, pItemMultiCustom->GetDesignMain());

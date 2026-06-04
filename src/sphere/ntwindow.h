@@ -119,7 +119,7 @@ private:
     void OnDestroy();
     void OnSetFocus(HWND hWndLoss);
     bool OnClose();
-    void OnUserPostMessage(COLORREF color, CSString * psMsg);
+    void OnUserPostMessage(COLORREF color, const CSString * psMsg);
     LRESULT OnUserTrayNotify(WPARAM wID, LPARAM lEvent);
     LRESULT OnNotify(int idCtrl, NMHDR * pnmh);
     void	SetLogFont(const char * pszFont);
@@ -127,7 +127,7 @@ private:
 public:
     bool OnCommand(word wNotifyCode, INT_PTR wID, HWND hwndCtl);
 
-    static bool RegisterClass(char *className);
+    static bool RegisterClass(const char *className);
     static LRESULT WINAPI WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
     void List_Clear();

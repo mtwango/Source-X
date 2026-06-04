@@ -187,9 +187,9 @@ bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
 	int iCount = 0;
 	for (CSObjContRec* pObjRec : pStableContainer->GetIterationSafeCont())
 	{
-        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_FIGURINE))
+        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsType(IT_FIGURINE))
 		{
-            if (CChar *pPet = pCharPlayer->Use_Figurine(pItem, true); !pPet)
+            if (const CChar *pPet = pCharPlayer->Use_Figurine(pItem, true); !pPet)
 			{
 				tchar *pszTemp = Str_GetTemp();
 				snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_NPC_STABLEMASTER_CLAIM_FOLLOWER), pItem->GetName());
@@ -269,7 +269,7 @@ bool CChar::NPC_OnTrainPay(CChar *pCharSrc, CItemMemory *pMemory, CItem * pGold)
 	ADDTOCALLSTACK("CChar::NPC_OnTrainPay");
 	ASSERT(m_pNPC);
 
-	SKILL_TYPE skill = (SKILL_TYPE)(pMemory->m_itEqMemory.m_Skill);
+    const auto skill = static_cast<SKILL_TYPE>(pMemory->m_itEqMemory.m_Skill);
 	if ( !IsSkillBase(skill) || !g_Cfg.m_SkillIndexDefs.valid_index(skill) )
 	{
 		Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_TRAINER_FORGOT));

@@ -185,12 +185,12 @@ bool CWebPageDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on 
 	sm_iListIndex = 0;
 	tchar *pszTmp2 = Str_GetTemp();
 
-    switch ( WV_TYPE iHeadKey = (WV_TYPE)FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
+    switch (const auto iHeadKey = static_cast<WV_TYPE>(FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1)) )
 	{
 		case WV_WEBPAGE:
 			{
 			// serv a web page to the pSrc
-				CClient * pClient = dynamic_cast <CClient *>(pSrc);
+                const auto pClient = dynamic_cast <CClient *>(pSrc);
 				if ( pClient == nullptr )
 					return false;
 				//return ServPage( pClient, s.GetArgStr(), nullptr );
@@ -445,7 +445,7 @@ lpctstr const CWebPageDef::sm_szPageExt[] =
     ".JSON",
 };
 
-bool CWebPageDef::SetSourceFile( lpctstr pszName, CClient * pClient )
+bool CWebPageDef::SetSourceFile( lpctstr pszName, const CClient * pClient )
 {
 	ADDTOCALLSTACK("CWebPageDef::SetSourceFile");
 	static constexpr WEBPAGE_TYPE sm_szPageExtType[] =
@@ -639,7 +639,7 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 
 	// Send the header first.
     static constexpr size_t uiWebDataBufSize = 8 * 1024;
-    std::unique_ptr<tchar[]> ptcWebDataBuf = std::make_unique<tchar[]>(uiWebDataBufSize);
+    auto ptcWebDataBuf = std::make_unique<tchar[]>(uiWebDataBufSize);
 	tchar* szTmp = ptcWebDataBuf.get();
 
 	int iLen = snprintf(szTmp, uiWebDataBufSize,
@@ -816,7 +816,7 @@ bool CWebPageDef::ServPagePost( CClient * pClient, lpctstr pszURLArgs, tchar * p
 	return false;
 }
 
-void CWebPageDef::ServPage( CClient * pClient, tchar * pszPage, CSTime * pdateIfModifiedSince )	// static
+void CWebPageDef::ServPage( CClient * pClient, const tchar * pszPage, CSTime * pdateIfModifiedSince )	// static
 {
 	ADDTOCALLSTACK("CWebPageDef::ServPage");
 	// make sure this is a valid format for the request.

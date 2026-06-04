@@ -236,7 +236,7 @@ void CCPropsItemEquippable::r_Write(CScript & s)
 void CCPropsItemEquippable::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::Copy");
-    const CCPropsItemEquippable *pTarget = dynamic_cast<const CCPropsItemEquippable*>(target);
+    const auto pTarget = dynamic_cast<const CCPropsItemEquippable*>(target);
     if (!pTarget)
     {
         return;
@@ -637,7 +637,7 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
         {
             case PROPIEQUIP_HITSPELL: // unimplemented
             {
-                SPELL_TYPE iSpellNumber = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetID(RES_SPELL, ptcVal, 0).GetResIndex());
+                const auto iSpellNumber = static_cast<SPELL_TYPE>(g_Cfg.ResourceGetID(RES_SPELL, ptcVal, 0).GetResIndex());
                 const CSpellDef * pSpellDef = g_Cfg.GetSpellDef(iSpellNumber);
                 if (!pSpellDef)
                     break;

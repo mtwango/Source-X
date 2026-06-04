@@ -370,7 +370,7 @@ void CLog::CatchEvent( const CSError * pErr, lpctstr pszCatchContext, ... )
 		if ( pErr != nullptr )
 		{
 			eSeverity = pErr->m_eSeverity;
-            if (const CAssert *pAssertErr = dynamic_cast<const CAssert *>(pErr))
+            if (const auto pAssertErr = dynamic_cast<const CAssert *>(pErr))
 				pAssertErr->GetErrorMessage(szMsg, sizeof(szMsg));
 			else
 				pErr->GetErrorMessage(szMsg, sizeof(szMsg));

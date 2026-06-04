@@ -192,8 +192,8 @@ bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
             SKIP_SEPARATORS(ptcKey);
             GETNONWHITESPACE(ptcKey);
 
-            COMPPROPS_TYPE id = (COMPPROPS_TYPE)Exp_GetVal(ptcKey);
-            bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
+            const auto id = static_cast<COMPPROPS_TYPE>(Exp_GetVal(ptcKey));
+            const bool fRes = (id < COMP_PROPS_QTY) && (nullptr != GetComponentProps(id));
             sVal.FormatVal(fRes);
             break;
         }

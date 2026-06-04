@@ -26,8 +26,8 @@ void CSMemBlock::Alloc( size_t uiSize )
 byte * CSMemBlock::AllocBase( size_t uiSize )  // Static
 {
     ASSERT(uiSize > 0);
-    byte * pData = new byte[ uiSize ]; //();
-    return( pData );
+    const auto pData = new byte[ uiSize ]; //();
+    return pData ;
 }
 
 void CSMemBlock::Free()

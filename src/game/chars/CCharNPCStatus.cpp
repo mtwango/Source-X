@@ -611,7 +611,7 @@ CItemVendable * CChar::NPC_FindVendableItem( CItemVendable * pVendItem, CItemCon
 	if ( pItemTest == nullptr )
 		return nullptr;
 
-	CItemVendable * pItemSell = dynamic_cast<CItemVendable *>(pItemTest);
+    const auto pItemSell = dynamic_cast<CItemVendable *>(pItemTest);
 	if ( pItemSell == nullptr )	// the item is not vendable
 		return nullptr;
 	if ( pVendItem->GetType() != pItemSell->GetType())	// sanity check

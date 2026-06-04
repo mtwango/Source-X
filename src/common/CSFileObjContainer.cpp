@@ -120,7 +120,7 @@ bool CSFileObjContainer::_OnTick()
     {
         iCurrentTick = 0;
 
-        for ( std::vector<CSFileObj *>::iterator i = sFileList.begin(); i != sFileList.end(); ++i )
+        for (auto i = sFileList.begin(); i != sFileList.end(); ++i )
         {
             if ( !(*i)->_OnTick() )
             {
@@ -151,7 +151,7 @@ bool CSFileObjContainer::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         ptcKey += 10;
 
         CSFileObj * pFirstUsed = nullptr;
-        for ( std::vector<CSFileObj *>::iterator i = sFileList.begin(); i != sFileList.end(); ++i )
+        for (auto i = sFileList.begin(); i != sFileList.end(); ++i )
         {
             if ( (*i)->IsInUse() )
             {
@@ -223,7 +223,7 @@ bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
         ptcKey += 10;
 
         CSFileObj * pFirstUsed = nullptr;
-        for ( std::vector<CSFileObj *>::iterator i = sFileList.begin(); i != sFileList.end(); ++i )
+        for (auto i = sFileList.begin(); i != sFileList.end(); ++i )
         {
             if ( (*i)->IsInUse() )
             {
@@ -298,7 +298,7 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
         ptcKey += 10;
 
         CSFileObj * pFirstUsed = nullptr;
-        for ( std::vector<CSFileObj *>::iterator i = sFileList.begin(); i != sFileList.end(); ++i )
+        for (auto i = sFileList.begin(); i != sFileList.end(); ++i )
         {
             if ( (*i)->IsInUse() )
             {

@@ -55,7 +55,7 @@ bool CCharNPC::Spells_DelAt(uchar index)
         return SPELL_NONE;
     if (auto [id] = m_spells[index]; id)
     {
-        std::vector<Spells>::iterator it = m_spells.begin() + index;
+        const auto it = m_spells.begin() + index;
         m_spells.erase(it);
         return true;
     }
@@ -101,7 +101,7 @@ void CChar::NPC_GetAllSpellbookSpells()		// Add all spells found on spellbooks t
     //	search for suitable book in hands first
     for (CSObjContRec* pObjRec : *this)
     {
-        if (CItem *pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
+        if (const auto pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
             NPC_AddSpellsFromBook(pBook);
     }
 
@@ -110,7 +110,7 @@ void CChar::NPC_GetAllSpellbookSpells()		// Add all spells found on spellbooks t
     {
         for (CSObjContRec* pObjRec : *pPack)
         {
-            if (CItem *pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
+            if (const auto pBook = static_cast<CItem *>(pObjRec); pBook->IsTypeSpellbook())
                 NPC_AddSpellsFromBook(pBook);
         }
     }
@@ -130,7 +130,7 @@ void CChar::NPC_AddSpellsFromBook(CItem * pBook)
 
     for (uint i = min; i <= max; ++i)
     {
-        if (SPELL_TYPE spell = (SPELL_TYPE)i; pBook->IsSpellInBook(spell))
+        if (const auto spell = static_cast<SPELL_TYPE>(i); pBook->IsSpellInBook(spell))
             m_pNPC->Spells_Add(spell);
     }
 }

@@ -280,13 +280,13 @@ private:
 
 	// GM stuff.
 	bool OnTarg_Obj_Set( CObjBase * pObj );
-	bool OnTarg_Obj_Info( CObjBase * pObj, const CPointMap & pt, ITEMID_TYPE id );
+	bool OnTarg_Obj_Info(const CObjBase * pObj, const CPointMap & pt, ITEMID_TYPE id );
 	bool OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, ITEMID_TYPE id );
 
 	bool OnTarg_UnExtract( CObjBase * pObj, const CPointMap & pt );
-	bool OnTarg_Stone_Recruit( CChar * pChar, bool bFull = false );
+	bool OnTarg_Stone_Recruit(const CChar * pChar, bool bFull = false );
 	bool OnTarg_Char_Add( CObjBase * pObj, const CPointMap & pt );
-	bool OnTarg_Item_Add( CObjBase * pObj, CPointMap & pt );
+	bool OnTarg_Item_Add(const CObjBase * pObj, CPointMap & pt );
 	bool OnTarg_Item_Link( CObjBase * pObj );
 	bool OnTarg_Tile( CObjBase * pObj, const CPointMap & pt );
 
@@ -294,7 +294,7 @@ private:
 	bool OnTarg_Use_Deed( CItem * pDeed, CPointMap &pt );
 	bool OnTarg_Use_Item( CObjBase * pObj, CPointMap & pt, ITEMID_TYPE id );
 	bool OnTarg_Party_Add( CChar * pChar );
-	bool OnTarg_GlobalChat_Add(CChar* pChar);
+	bool OnTarg_GlobalChat_Add(const CChar * pChar);
 	CItem* OnTarg_Use_Multi( const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed );
 
 	int OnSkill_AnimalLore(const CUID &uid, int iTestLevel, bool fTest );
@@ -307,9 +307,9 @@ private:
 
 	bool OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Skill_Herd_Dest( CObjBase * pObj, const CPointMap & pt );
-	bool OnTarg_Skill_Poison( CObjBase * pObj );
+	bool OnTarg_Skill_Poison(const CObjBase * pObj );
 	bool OnTarg_Skill_Provoke( CObjBase * pObj );
-	bool OnTarg_Skill( CObjBase * pObj );
+	bool OnTarg_Skill(const CObjBase * pObj );
 
 	bool OnTarg_Pet_Command( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Pet_Stable( CChar * pCharPet );
@@ -536,7 +536,7 @@ public:
 
 #define MAX_DIALOG_CONTROLTYPE_QTY  1000
 	void addGumpTextDisp( const CObjBase * pObj, GUMP_TYPE gump, lpctstr pszName, lpctstr pszText );
-	void addGumpInputVal( bool fcancel, INPVAL_STYLE style, dword dwmask, lpctstr ptext1, lpctstr ptext2, CObjBase * pObj );
+	void addGumpInputVal( bool fcancel, INPVAL_STYLE style, dword dwmask, lpctstr ptext1, lpctstr ptext2, const CObjBase * pObj );
 
 	void addItemMenu( CLIMODE_TYPE mode, const CMenuItem * item, uint count, CObjBase * pObj = nullptr );
 	void addGumpDialog( CLIMODE_TYPE mode, std::vector<CSString> const* vsControls, std::vector<CSString> const* vsText, int x, int y, CObjBase * pObj = nullptr, dword dwRid = 0 );

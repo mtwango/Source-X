@@ -783,7 +783,7 @@ public:
     lpctstr ResourceTypedGetName(const CResourceIDBase& rid, RES_TYPE iExpectedType, lptstr *ptcOutError );
 
 	// Print EF/OF Flags
-	void PrintEFOFFlags( bool bEF = true, bool bOF = true, CTextConsole *pSrc = nullptr );
+	void PrintEFOFFlags( bool bEF = true, bool bOF = true, const CTextConsole *pSrc = nullptr );
 
 	// ResDisp Flag
 	uint GetPacketFlag( bool bCharlist, RESDISPLAY_VERSION res = RDS_T2A, uchar chars = 5 );
@@ -1165,8 +1165,9 @@ typedef std::map<dword,dword> KRGumpsMap;
 	dword GetKRDialogMap(dword idKRDialog);
 	dword GetKRDialog(dword rid);
 
-	bool GenerateDefname(tchar *pObjectName, size_t iInputLength, lpctstr pPrefix, TemporaryString *pOutput, bool fCheckConflict = true, CVarDefMap* vDefnames = nullptr);
-	bool DumpUnscriptedItems(CTextConsole * pSrc, lpctstr pszFilename);
+	bool GenerateDefname(
+        const tchar *pObjectName, size_t iInputLength, lpctstr pPrefix, TemporaryString *pOutput, bool fCheckConflict = true, CVarDefMap* vDefnames = nullptr);
+	bool DumpUnscriptedItems(const CTextConsole * pSrc, lpctstr pszFilename);
 } g_Cfg;
 
 

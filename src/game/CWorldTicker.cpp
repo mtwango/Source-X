@@ -1099,7 +1099,7 @@ void CWorldTicker::ProcessTimedObjects()
 
     for (CTimedObject* pTimedObj : _vTimedObjsTimeoutsBuffer)    // Loop through all msecs stored, unless we passed the timestamp.
     {
-        lpctstr ptcSubDesc = "Generic";
+        auto ptcSubDesc = "Generic";
 
         EXC_TRYSUB("Tick");
         EXC_SETSUB_BLOCK("Elapsed");
@@ -1120,7 +1120,7 @@ void CWorldTicker::ProcessTimedObjects()
         {
             case PROFILE_ITEMS:
             {
-                CItem* pItem = dynamic_cast<CItem*>(pTimedObj);
+                const auto pItem = dynamic_cast<CItem*>(pTimedObj);
                 ASSERT(pItem);
                 if (pItem->IsItemEquipped())
                 {
@@ -1128,7 +1128,7 @@ void CWorldTicker::ProcessTimedObjects()
                     CObjBaseTemplate* pObjTop = pItem->GetTopLevelObj();
                     ASSERT(pObjTop);
 
-                    if (CChar *pChar = dynamic_cast<CChar *>(pObjTop))
+                    if (const auto pChar = dynamic_cast<CChar *>(pObjTop))
                     {
                         fDelete = !pChar->OnTickEquip(pItem);
                         break;
@@ -1149,7 +1149,7 @@ void CWorldTicker::ProcessTimedObjects()
             case PROFILE_CHARS:
             {
                 ptcSubDesc = "Char";
-                CChar* pChar = dynamic_cast<CChar*>(pTimedObj);
+                const auto pChar = dynamic_cast<CChar*>(pTimedObj);
                 ASSERT(pChar);
                 fDelete = !pChar->_OnTick();
                 if (!fDelete && pChar->m_pNPC && !pTimedObj->_IsTimerSet())
@@ -1200,7 +1200,7 @@ void CWorldTicker::ProcessTimedObjects()
         if (fDelete)
         {
             EXC_SETSUB_BLOCK("Delete");
-            CObjBase* pObjBase = dynamic_cast<CObjBase*>(pTimedObj);
+            const auto pObjBase = dynamic_cast<CObjBase*>(pTimedObj);
             ASSERT(pObjBase); // Only CObjBase-derived objects have the Delete method, and should be Delete-d.
             pObjBase->Delete();
         }

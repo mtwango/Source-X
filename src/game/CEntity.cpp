@@ -58,7 +58,7 @@ void CEntity::SubscribeComponent(CComponent * pComponent)
     //_List.container.shrink_to_fit();
 }
 
-void CEntity::UnsubscribeComponent(CComponent *pComponent)
+void CEntity::UnsubscribeComponent(const CComponent *pComponent)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::UnsubscribeComponent");
     if (_lComponents.empty())

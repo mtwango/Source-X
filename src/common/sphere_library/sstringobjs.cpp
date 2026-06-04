@@ -90,7 +90,7 @@ void AbstractString::ensureLengthHeap(size_t newLength)
 	{
 		// always grow with 20% extra space to decrease number of future grows
 		m_realLength = newLength + newLength / 5;
-		char* newBuf = new char[m_realLength + 1];
+        const auto newBuf = new char[m_realLength + 1];
 
 	    // Protection from use after freeing newBuf.
         const char *oldBuf = m_buf;
@@ -328,7 +328,7 @@ void TemporaryString::resize(size_t newLength)
         // 5. flag this string instance to use the heap (String::)
 
         m_realLength = newLength + newLength / 5;
-        char* newBuf = new char[m_realLength + 1];
+        auto *const newBuf = new char[m_realLength + 1];
         Str_CopyLimitNull(newBuf, m_buf, m_length);
         newBuf[m_length] = '\0';
 

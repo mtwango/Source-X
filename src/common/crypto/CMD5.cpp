@@ -45,7 +45,7 @@ static void byteReverse( uchar *buffer, uint longs ) noexcept
 void CMD5::private_update() noexcept
 {
     uint a, b, c, d;
-	uint *ptrInput = reinterpret_cast<uint *>( m_input );
+	uint const * ptrInput = reinterpret_cast<uint *>( m_input );
 
     a = m_buffer[0];
     b = m_buffer[1];
@@ -239,7 +239,7 @@ void CMD5::numericDigest( uchar *digest ) noexcept
 		return;
 		// throw std::exception( "Call to CMD5::digest() without finalized flag being set." );
 
-	uchar * buffer = reinterpret_cast<uchar *>( m_buffer );
+	uchar const * buffer = reinterpret_cast<uchar *>( m_buffer );
 
 	// 16 byte a 2 characters
 	for ( uint i = 0; i < 16; ++i )
@@ -256,7 +256,7 @@ void CMD5::digest( char *digest ) noexcept
 
 	digest[0] = 0;
 
-	uchar * buffer = reinterpret_cast<uchar *>( m_buffer );
+	uchar const * buffer = reinterpret_cast<uchar *>( m_buffer );
 
 	// 16 byte a 2 characters
     for( uint i = 0; i < 16; ++i )

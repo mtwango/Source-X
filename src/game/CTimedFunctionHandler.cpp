@@ -116,7 +116,7 @@ int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg
 	if (!ptcKeyword)
 		return -1;
 
-	static constexpr lpctstr ptcErrorPair = "Invalid TimerF in %sdata.scp. Each TimerFCall and TimerFNumbers pair must be in that order.\n";
+	static constexpr auto ptcErrorPair = "Invalid TimerF in %sdata.scp. Each TimerFCall and TimerFNumbers pair must be in that order.\n";
 	if (!strnicmp(ptcKeyword, "TimerFCall", 11))
 	{
 		if (_strLoadBufferCommand[0] != '\0')

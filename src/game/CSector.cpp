@@ -188,7 +188,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Active Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(true);
 		ASSERT(!pChar->IsDisconnected());
         if (!fCanTick)
@@ -198,7 +198,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Disconnected Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(true);
 		ASSERT(pChar->IsDisconnected());
 		if (!fCanTick)
@@ -208,7 +208,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Items");
 	for (CSObjContRec* pObjRec : m_Items)
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
         if (const bool fCanTick = pItem->_CanTick(true); !fCanTick)
             pItem->GoSleep();
     }
@@ -233,7 +233,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Active Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		const bool fSleeping = pChar->IsSleeping();
 		ASSERT(!pChar->IsDisconnected());
 		if (fSleeping)
@@ -243,7 +243,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Disconnected Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(false);
 		ASSERT(pChar->IsDisconnected());
         // If disconnected, they will only "partly" go awake: they will only have char periodic ticks.
@@ -254,7 +254,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Items");
 	for (CSObjContRec* pObjRec : m_Items)
 	{
-        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
+        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
         	pItem->GoAwake();
     }
 
@@ -478,21 +478,21 @@ void CSector::r_Write()
 	// Chars in the sector.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeCont())
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		pChar->r_WriteParity(pChar->m_pPlayer ? g_World.m_FilePlayers : g_World.m_FileWorld);
 	}
 
 	// Inactive Client Chars, ridden horses and dead NPCs (NOTE: Push inactive player chars out to the account files here?)
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect.GetIterationSafeCont())
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		pChar->r_WriteParity(pChar->m_pPlayer ? g_World.m_FilePlayers : g_World.m_FileWorld);
 	}
 
 	// Items on the ground.
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeCont())
 	{
-        if (CItem *pItem = static_cast<CItem *>(pObjRec); pItem->IsTypeMulti())
+        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsTypeMulti())
         {
             pItem->r_WriteSafe(g_World.m_FileMultis);
         }
@@ -516,7 +516,7 @@ bool CSector::v_AllChars( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeContReverse())
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -540,7 +540,7 @@ bool CSector::v_AllCharsIdle( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect.GetIterationSafeContReverse())
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -563,7 +563,7 @@ bool CSector::v_AllItems( CScript & s, CTextConsole * pSrc )
 	// Loop through all the items in the sector.
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
 
 		// Check that an item was returned and keep looking if not.
 		if (pItem == nullptr)
@@ -589,7 +589,7 @@ bool CSector::v_AllClients( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeContReverse())
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -780,7 +780,7 @@ void CSector::SetLightNow( bool fFlash )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsStatFlag( STATF_DEAD | STATF_NIGHTSIGHT ))
 			continue;
 
@@ -880,7 +880,7 @@ void CSector::SetWeather( WEATHER_TYPE w )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsClientActive())
 			pChar->GetClientActive()->addWeather( w );
 
@@ -901,7 +901,7 @@ void CSector::SetSeason( SEASON_TYPE season )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-		CChar* pChar = static_cast<CChar*>(pObjRec);
+        const auto pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsClientActive() )
 			pChar->GetClientActive()->addSeason(season);
 
@@ -956,7 +956,7 @@ void CSector::OnHearItem( CChar * pChar, lpctstr pszText )
 
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeContReverse())
 	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
         if (!pItem->CanHear())
             continue;
 
@@ -1144,7 +1144,7 @@ void CSector::RespawnDeadNPCs()
 	// Respawn dead NPCs
     for (const auto charsActive = m_Chars_Active.GetIterationSafeCont(); CSObjContRec *pObjRec : charsActive)
 	{
-        CChar* pChar = static_cast <CChar*>(pObjRec);
+        const auto pChar = static_cast <CChar*>(pObjRec);
 		if (!pChar->m_pNPC || !pChar->m_ptHome.IsValidPoint() || !pChar->IsStatFlag(STATF_DEAD))
 			continue;
 
@@ -1169,7 +1169,7 @@ void CSector::Restock()
     for (const auto charsActive = m_Chars_Active.GetIterationSafeCont();
         CSObjContRec *pObjRec : charsActive)
     {
-        if (CChar *pChar = static_cast<CChar *>(pObjRec); pChar->m_pNPC)
+        if (const auto pChar = static_cast<CChar *>(pObjRec); pChar->m_pNPC)
         {
             pChar->NPC_Vendor_Restock(true);
         }
@@ -1178,7 +1178,7 @@ void CSector::Restock()
     for (const auto items = m_Items.GetIterationSafeCont();
         CSObjContRec *pObjRec : items)
     {
-        CItem* pItem = static_cast<CItem*>(pObjRec);
+        const auto pItem = static_cast<CItem*>(pObjRec);
         if (CCSpawn *pSpawn = pItem->GetSpawn())
         {
             pSpawn->OnTickComponent();
@@ -1305,7 +1305,7 @@ bool CSector::_OnTick()
 	while (i > 0)
 	{
 		ASSERT(i <= m_Chars_Active.GetContentCount());
-		CChar* pChar = static_cast<CChar*>(m_Chars_Active.GetContentIndex(--i));
+        const auto pChar = static_cast<CChar*>(m_Chars_Active.GetContentIndex(--i));
 		EXC_TRYSUB("TickChar");
 
         ASSERT(pChar);

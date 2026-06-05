@@ -12,7 +12,7 @@
 #include "CChar.h"
 #include "CCharNPC.h"
 
-void CChar::NPC_OnPetCommand( bool fSuccess, const CChar * pMaster )
+void CChar::NPC_OnPetCommand(const bool fSuccess, const CChar * pMaster )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnPetCommand");
 	ASSERT(m_pNPC);
@@ -59,7 +59,7 @@ enum PC_TYPE
 	PC_QTY
 };
 
-bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
+bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, const bool fAllPets )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnHearPetCmd");
 	ASSERT(m_pNPC);
@@ -371,7 +371,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, bool fAllPets )
 	return true;
 }
 
-bool CChar::NPC_OnHearPetCmdTarg( int iCmd, CChar *pSrc, CObjBase *pObj, const CPointMap &pt, lpctstr pszArgs )
+bool CChar::NPC_OnHearPetCmdTarg(const int iCmd, CChar *pSrc, CObjBase *pObj, const CPointMap &pt, const lpctstr pszArgs )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnHearPetCmdTarg");
 	ASSERT(m_pNPC);
@@ -684,7 +684,7 @@ bool CChar::NPC_CheckHirelingStatus()
 	return true;
 }
 
-void CChar::NPC_OnHirePayMore( CItem * pGold, uint uiWage, bool fHire )
+void CChar::NPC_OnHirePayMore( CItem * pGold, const uint uiWage, const bool fHire )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnHirePayMore");
 	ASSERT(m_pNPC);
@@ -809,7 +809,7 @@ bool CChar::NPC_OnHireHear( CChar * pCharSrc )
 	return true;
 }
 
-bool CChar::NPC_SetVendorPrice( CItem * pItem, int iPrice )
+bool CChar::NPC_SetVendorPrice( CItem * pItem, const int iPrice )
 {
 	ADDTOCALLSTACK("CChar::NPC_SetVendorPrice");
 	ASSERT(m_pNPC);

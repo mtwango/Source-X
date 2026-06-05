@@ -112,7 +112,7 @@ bool CRandGroupDef::r_LoadVal( CScript &s )
     return false;
 }
 
-bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CRandGroupDef::r_WriteVal");
@@ -213,7 +213,7 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
     return false;
 }
 
-size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, bool fTrigger ) const
+size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger ) const
 {
     ADDTOCALLSTACK("CRandGroupDef::GetRandMemberIndex");
     size_t iCount = m_Members.size();

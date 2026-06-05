@@ -104,7 +104,7 @@ CSkillClassDef * CCharPlayer::GetSkillClass() const
 }
 
 // only players can have skill locks.
-SKILL_TYPE CCharPlayer::Skill_GetLockType( lpctstr ptcKey ) const
+SKILL_TYPE CCharPlayer::Skill_GetLockType(const lpctstr ptcKey ) const
 {
 	ADDTOCALLSTACK("CCharPlayer::Skill_GetLockType");
 
@@ -126,20 +126,20 @@ SKILL_TYPE CCharPlayer::Skill_GetLockType( lpctstr ptcKey ) const
 	return (SKILL_TYPE)i;
 }
 
-SKILLLOCK_TYPE CCharPlayer::Skill_GetLock( SKILL_TYPE skill ) const
+SKILLLOCK_TYPE CCharPlayer::Skill_GetLock(const SKILL_TYPE skill ) const
 {
-	ASSERT( (skill >= 0) && ((size_t)skill < ARRAY_COUNT(m_SkillLock)));
+	ASSERT( skill >= 0 && (static_cast<size_t>(skill) < ARRAY_COUNT(m_SkillLock)));
 	return static_cast<SKILLLOCK_TYPE>(m_SkillLock[skill]);
 }
 
-void CCharPlayer::Skill_SetLock( SKILL_TYPE skill, SKILLLOCK_TYPE state )
+void CCharPlayer::Skill_SetLock(const SKILL_TYPE skill, const SKILLLOCK_TYPE state )
 {
-	ASSERT( (skill >= 0) && ((uint)skill < ARRAY_COUNT(m_SkillLock)));
+	ASSERT( skill >= 0 && (static_cast<uint>(skill) < ARRAY_COUNT(m_SkillLock)));
 	m_SkillLock[skill] = (uchar)(state);
 }
 
 // only players can have stat locks.
-STAT_TYPE CCharPlayer::Stat_GetLockType( lpctstr ptcKey ) const
+STAT_TYPE CCharPlayer::Stat_GetLockType(const lpctstr ptcKey ) const
 {
 	ADDTOCALLSTACK("CCharPlayer::Stat_GetLockType");
 
@@ -161,15 +161,15 @@ STAT_TYPE CCharPlayer::Stat_GetLockType( lpctstr ptcKey ) const
 	return (STAT_TYPE)i;
 }
 
-SKILLLOCK_TYPE CCharPlayer::Stat_GetLock( STAT_TYPE stat ) const
+SKILLLOCK_TYPE CCharPlayer::Stat_GetLock(const STAT_TYPE stat ) const
 {
-	ASSERT( (stat >= 0) && ((uint)stat < ARRAY_COUNT(m_StatLock)));
-	return (SKILLLOCK_TYPE)m_StatLock[stat];
+	ASSERT( stat >= 0 && (static_cast<uint>(stat) < ARRAY_COUNT(m_StatLock)));
+	return static_cast<SKILLLOCK_TYPE>(m_StatLock[stat]);
 }
 
-void CCharPlayer::Stat_SetLock( STAT_TYPE stat, SKILLLOCK_TYPE state )
+void CCharPlayer::Stat_SetLock(const STAT_TYPE stat, const SKILLLOCK_TYPE state )
 {
-	ASSERT( (stat >= 0) && ((uint)stat < ARRAY_COUNT(m_StatLock)));
+	ASSERT( stat >= 0 && (static_cast<uint>(stat) < ARRAY_COUNT(m_StatLock)));
 	m_StatLock[stat] = (uchar)state;
 }
 

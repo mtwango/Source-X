@@ -33,7 +33,7 @@ bool CLocalFloatVars::Set( const char* VarName, const char* VarValue )
 	return Insert(VarName, VarValue, true);
 }
 
-bool CLocalFloatVars::Insert( const char* VarName, const char* VarValue, bool fForceSet)
+bool CLocalFloatVars::Insert( const char* VarName, const char* VarValue, const bool fForceSet)
 {
 	ADDTOCALLSTACK("CLocalFloatVars::Insert");
 	if (!VarValue || !VarName)
@@ -88,7 +88,7 @@ void CLocalFloatVars::Clear()
 
 //--
 
-CObjBase * CLocalObjMap::Get( ushort Number )
+CObjBase * CLocalObjMap::Get(const ushort Number )
 {
 	ADDTOCALLSTACK("CLocalObjMap::Get");
 	if ( !Number )
@@ -101,7 +101,7 @@ CObjBase * CLocalObjMap::Get( ushort Number )
 	return i->second;
 }
 
-bool CLocalObjMap::Insert( ushort Number, CObjBase * pObj, bool fForceSet )
+bool CLocalObjMap::Insert(const ushort Number, CObjBase * pObj, const bool fForceSet )
 {
 	ADDTOCALLSTACK("CLocalObjMap::Insert");
 	if ( !Number )

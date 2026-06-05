@@ -225,7 +225,7 @@ bool CDataBase::execf(char *fmt, ...)
 	return this->exec(tsBuf);
 }
 
-bool CDataBase::addQuery(bool isQuery, lpctstr theFunction, lpctstr theQuery)
+bool CDataBase::addQuery(const bool isQuery, const lpctstr theFunction, const lpctstr theQuery)
 {
 	if ( g_Cfg.m_Functions.ContainsKey( theFunction ) == false )
 	{
@@ -372,7 +372,7 @@ bool CDataBase::r_LoadVal(CScript & s)
 */
 }
 
-bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);

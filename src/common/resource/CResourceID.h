@@ -112,13 +112,13 @@ enum RES_TYPE	// all the script resource sections we know how to deal with !
 #define RES_INDEX_MASK	0xFFFFF	//  0xFFFFF = 20 bits.
 
 [[nodiscard]] constexpr
-dword ResGetType(dword dwObjUid) noexcept {
-    return ( (dwObjUid >> RES_TYPE_SHIFT) & RES_TYPE_MASK );
+dword ResGetType(const dword dwObjUid) noexcept {
+    return (dwObjUid >> RES_TYPE_SHIFT) & RES_TYPE_MASK;
 }
 
 [[nodiscard]] constexpr
-dword ResGetIndex(dword dwObjUid) noexcept {
-    return (dwObjUid & (dword)RES_INDEX_MASK);
+dword ResGetIndex(const dword dwObjUid) noexcept {
+    return dwObjUid & static_cast<dword>(RES_INDEX_MASK);
 }
 
 
@@ -198,16 +198,16 @@ struct CResourceID : CResourceIDBase     // It has the "page" part. Use it to ha
     CResourceID() : m_wPage(0)
     {}
     // Create an empty, valid CResourceID of a given type
-    explicit CResourceID(RES_TYPE restype) : CResourceIDBase(restype), m_wPage(0)
+    explicit CResourceID(const RES_TYPE restype) : CResourceIDBase(restype), m_wPage(0)
     {}
     explicit CResourceID(RES_TYPE, const CResourceIDBase&) = delete;
-    explicit CResourceID(RES_TYPE restype, int iIndex) : CResourceIDBase(restype, iIndex), m_wPage(0)
+    explicit CResourceID(const RES_TYPE restype, const int iIndex) : CResourceIDBase(restype, iIndex), m_wPage(0)
     {}
     explicit CResourceID(RES_TYPE, const CResourceIDBase&, word) = delete;
-    explicit CResourceID(RES_TYPE restype, int iIndex, word wPage) : CResourceIDBase(restype, iIndex), m_wPage(wPage)
+    explicit CResourceID(const RES_TYPE restype, const int iIndex, const word wPage) : CResourceIDBase(restype, iIndex), m_wPage(wPage)
     {}
     explicit CResourceID(const CResourceIDBase&, word) = delete;
-    explicit CResourceID(dword dwPrivateID, word wPage) : CResourceIDBase(dwPrivateID), m_wPage(wPage)
+    explicit CResourceID(const dword dwPrivateID, const word wPage) : CResourceIDBase(dwPrivateID), m_wPage(wPage)
     {}
 
     // copy constructor

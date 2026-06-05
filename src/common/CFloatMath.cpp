@@ -681,7 +681,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 	return 0;
 }
 
-realtype CFloatMath::GetRandVal( realtype dQty )
+realtype CFloatMath::GetRandVal(const realtype dQty )
 {
 	ADDTOCALLSTACK("CFloatMath::GetRandVal");
 	if ( dQty <= 0 )

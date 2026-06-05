@@ -61,7 +61,7 @@ public:
     void Emote(lpctstr pszBy, lpctstr pszMsg, CLanguageID lang = 0 );
     void WhoIs(lpctstr pszBy, lpctstr pszMember);
     void AddMember(CChatChanMember * pMember);
-    void SendMember(CChatChanMember* pMember, CChatChanMember* pToMember = nullptr);
+    void SendMember(const CChatChanMember * pMember, CChatChanMember* pToMember = nullptr);
     void KickMember( CChatChanMember *pByMember, CChatChanMember * pMember );
     void Broadcast(CHATMSG_TYPE iType, lpctstr pszName = nullptr, lpctstr pszText = nullptr, CLanguageID lang = 0, bool fOverride = false);
     void RemoveMember(CChatChanMember * pMember);

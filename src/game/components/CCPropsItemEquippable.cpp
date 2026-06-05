@@ -39,13 +39,13 @@ bool CCPropsItemEquippable::CanSubscribe(const CItem* pItem) noexcept // static
 }
 
 
-lpctstr CCPropsItemEquippable::GetPropertyName(PropertyIndex_t iPropIndex) const
+lpctstr CCPropsItemEquippable::GetPropertyName(const PropertyIndex_t iPropIndex) const
 {
     ASSERT(iPropIndex < PROPIEQUIP_QTY);
     return _ptcPropertyKeys[iPropIndex];
 }
 
-bool CCPropsItemEquippable::IsPropertyStr(PropertyIndex_t iPropIndex) const
+bool CCPropsItemEquippable::IsPropertyStr(const PropertyIndex_t iPropIndex) const
 {
     switch (iPropIndex)
     {
@@ -92,7 +92,7 @@ bool CCPropsItemEquippable::IgnoreElementalProperty(PropertyIndex_t iPropIndex) 
 }
 
 
-bool CCPropsItemEquippable::GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
+bool CCPropsItemEquippable::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
 {
     ADDTOCALLSTACK("CCPropsItemChar::GetPropertyNumPtr");
     ASSERT(!IsPropertyStr(iPropIndex));
@@ -117,14 +117,14 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(PropertyIndex_t iPropIndex, Proper
     return BaseCont_GetPropertyNum(&_mPropsNum, iPropIndex, piOutVal);
 }
 
-bool CCPropsItemEquippable::GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString* psOutVal, bool fZero) const
+bool CCPropsItemEquippable::GetPropertyStrPtr(const PropertyIndex_t iPropIndex, CSString* psOutVal, const bool fZero) const
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::GetPropertyStrPtr");
     ASSERT(IsPropertyStr(iPropIndex));
     return BaseCont_GetPropertyStr(&_mPropsStr, iPropIndex, psOutVal, fZero);
 }
 
-bool CCPropsItemEquippable::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemEquippable::SetPropertyNum(const PropertyIndex_t iPropIndex, const PropertyValNum_t iVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::SetPropertyNum");
     ASSERT(!IsPropertyStr(iPropIndex));
@@ -162,7 +162,7 @@ bool CCPropsItemEquippable::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyV
     return true;
 }
 
-bool CCPropsItemEquippable::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemEquippable::SetPropertyStr(const PropertyIndex_t iPropIndex, const lpctstr ptcVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::SetPropertyStr");
     ASSERT(ptcVal);
@@ -188,19 +188,19 @@ bool CCPropsItemEquippable::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr p
     return true;
 }
 
-void CCPropsItemEquippable::DeletePropertyNum(PropertyIndex_t iPropIndex)
+void CCPropsItemEquippable::DeletePropertyNum(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::DeletePropertyNum");
     _mPropsNum.erase(iPropIndex);
 }
 
-void CCPropsItemEquippable::DeletePropertyStr(PropertyIndex_t iPropIndex)
+void CCPropsItemEquippable::DeletePropertyStr(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::DeletePropertyStr");
     _mPropsStr.erase(iPropIndex);
 }
 
-bool CCPropsItemEquippable::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, PropertyIndex_t iPropIndex, bool fPropStr)
+bool CCPropsItemEquippable::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const PropertyIndex_t iPropIndex, const bool fPropStr)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::FindLoadPropVal");
     if (!fPropStr && (*s.GetArgRaw() == '\0'))
@@ -213,7 +213,7 @@ bool CCPropsItemEquippable::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, R
     return true;
 }
 
-bool CCPropsItemEquippable::FindWritePropVal(CSString & sVal, PropertyIndex_t iPropIndex, bool fPropStr) const
+bool CCPropsItemEquippable::FindWritePropVal(CSString & sVal, const PropertyIndex_t iPropIndex, const bool fPropStr) const
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::FindWritePropVal");
 

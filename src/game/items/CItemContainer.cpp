@@ -16,7 +16,7 @@
 //----------------------------------------------------
 // -CItemContainer
 
-CItemContainer::CItemContainer( ITEMID_TYPE id, CItemBase *pItemDef ) :
+CItemContainer::CItemContainer(const ITEMID_TYPE id, CItemBase *pItemDef ) :
     CTimedObject(PROFILE_ITEMS), CItemVendable( id, pItemDef )
 {
 }
@@ -96,7 +96,7 @@ bool CItemContainer::r_GetRef( lpctstr &ptcKey, CScriptObj *&pRef )
 	return CItemVendable::r_GetRef(ptcKey, pRef);
 }
 
-bool CItemContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CItemContainer::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CItemContainer::r_WriteVal");
@@ -125,7 +125,7 @@ bool CItemContainer::IsItemInTrade() const
 	return false;
 }
 
-void CItemContainer::Trade_Status( bool bCheck )
+void CItemContainer::Trade_Status(const bool bCheck )
 {
 	ADDTOCALLSTACK("CItemContainer::Trade_Status");
 	// Update trade status check boxes to both sides.
@@ -336,7 +336,7 @@ bool CItemContainer::Trade_Delete()
 	return pPartner->Delete();
 }
 
-int CItemContainer::GetWeight(word amount) const
+int CItemContainer::GetWeight(const word amount) const
 {	// true weight == container item + contents.
 	return( CItem::GetWeight(amount) + GetTotalWeight());
 }
@@ -731,7 +731,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
     // UpdatePropertyFlag for this item is called by CContainer::ContentAddPrivate -> CItemContainer::OnWeightChange
 }
 
-void CItemContainer::ContentAdd( CItem *pItem, bool bForceNoStack )
+void CItemContainer::ContentAdd( CItem *pItem, const bool bForceNoStack )
 {
 	ADDTOCALLSTACK("CItemContainer::ContentAdd");
 	if ( !pItem )

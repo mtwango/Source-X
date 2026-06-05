@@ -14,7 +14,7 @@
 //////////////////////////
 // CChar
 
-bool CChar::NPC_FightArchery(CChar * pChar)
+bool CChar::NPC_FightArchery(const CChar * pChar)
 {
     ADDTOCALLSTACK("CChar::NPC_FightArchery");
     ASSERT(m_pNPC);

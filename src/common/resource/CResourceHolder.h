@@ -43,7 +43,7 @@ public:
 	CResourceID ResourceGetIDType( RES_TYPE restype, lpctstr pszName, word wPage = 0 );
 	int ResourceGetIndexType( RES_TYPE restype, lpctstr pszName, word wPage = 0 );
 	bool ResourceLock( CResourceLock & s, const CResourceID& rid );
-	bool ResourceLock( CResourceLock & s, RES_TYPE restype, lpctstr pszName )
+	bool ResourceLock( CResourceLock & s, const RES_TYPE restype, const lpctstr pszName )
 	{
 		return ResourceLock(s, ResourceGetIDType(restype, pszName));
 	}

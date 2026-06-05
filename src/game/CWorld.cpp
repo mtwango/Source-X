@@ -25,7 +25,7 @@
 #include <sys/stat.h>
 
 
-static lpctstr GetReasonForGarbageCode(int iCode = -1) noexcept
+static lpctstr GetReasonForGarbageCode(const int iCode = -1) noexcept
 {
 	lpctstr pStr;
 	switch ( iCode )
@@ -297,7 +297,7 @@ dword CWorldThread::GetUIDCount() const
 	return (dword)_uiUIDObjArraySize;
 }
 
-CObjBase *CWorldThread::FindUID(dword dwIndex) const noexcept
+CObjBase *CWorldThread::FindUID(const dword dwIndex) const noexcept
 {
 	if ( !dwIndex || dwIndex >= GetUIDCount() )
 		return nullptr;
@@ -306,7 +306,7 @@ CObjBase *CWorldThread::FindUID(dword dwIndex) const noexcept
 	return _ppUIDObjArray[dwIndex];
 }
 
-void CWorldThread::FreeUID(dword dwIndex)
+void CWorldThread::FreeUID(const dword dwIndex)
 {
 	// Can't free up the UID til after the save !
 	_ppUIDObjArray[dwIndex] = IsSaving() ? UID_PLACE_HOLDER : nullptr;
@@ -445,7 +445,7 @@ bool CWorldThread::IsScheduledSpecialObjDeletion(const CSObjListRec* obj) const 
 	return (obj->GetParent() == &m_ObjSpecialDelete);
 }
 
-int CWorldThread::FixObjTry( CObjBase * pObj, dword dwUID )
+int CWorldThread::FixObjTry( CObjBase * pObj, const dword dwUID )
 {
 	ADDTOCALLSTACK_DEBUG("CWorldThread::FixObjTry");
 	// RETURN: 0 = success.
@@ -706,7 +706,7 @@ CWorld::~CWorld()
 ///////////////////////////////////////////////
 // Loading and Saving.
 
-void CWorld::GetBackupName( CSString & sArchive, lpctstr pszBaseDir, tchar chType, int iSaveCount ) // static
+void CWorld::GetBackupName( CSString & sArchive, const lpctstr pszBaseDir, const tchar chType, const int iSaveCount ) // static
 {
 	ADDTOCALLSTACK("CWorld::GetBackupName");
 	int iCount = iSaveCount;
@@ -724,7 +724,7 @@ void CWorld::GetBackupName( CSString & sArchive, lpctstr pszBaseDir, tchar chTyp
 		SPHERE_SCRIPT_EXT );
 }
 
-bool CWorld::OpenScriptBackup( CScript & s, lpctstr pszBaseDir, lpctstr pszBaseName, int iSaveCount ) // static
+bool CWorld::OpenScriptBackup( CScript & s, const lpctstr pszBaseDir, const lpctstr pszBaseName, const int iSaveCount ) // static
 {
 	ADDTOCALLSTACK("CWorld::OpenScriptBackup");
 	ASSERT(pszBaseName);
@@ -993,7 +993,7 @@ failedstage:
 	return fSuccess;
 }
 
-bool CWorld::SaveTry( bool fForceImmediate ) // Save world state
+bool CWorld::SaveTry(const bool fForceImmediate ) // Save world state
 {
 	ADDTOCALLSTACK("CWorld::SaveTry");
 	EXC_TRY("SaveTry");
@@ -1063,7 +1063,7 @@ bool CWorld::SaveTry( bool fForceImmediate ) // Save world state
 	return false;
 }
 
-bool CWorld::CheckAvailableSpaceForSave(bool fStatics)
+bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
 {
     //-- Do i have enough disk space to write the save file?
 
@@ -1093,7 +1093,7 @@ bool CWorld::CheckAvailableSpaceForSave(bool fStatics)
     // Calculate the previous save file size
     bool fSizeErr = false;
     ullong uiPreviousSaveSize = 0;
-    auto CalcPrevSavesSize = [=, &fSizeErr, &uiPreviousSaveSize](lpctstr ptcSaveName) -> void
+    auto CalcPrevSavesSize = [=, &fSizeErr, &uiPreviousSaveSize](const lpctstr ptcSaveName) -> void
     {
         struct stat st;
         if (CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
@@ -1285,7 +1285,7 @@ void CWorld::SaveStatics()
 
 /////////////////////////////////////////////////////////////////////
 
-bool CWorld::LoadFile( lpctstr pszLoadName, bool fError ) // Load world from script
+bool CWorld::LoadFile(const lpctstr pszLoadName, const bool fError ) // Load world from script
 {
     ADDTOCALLSTACK("CWorld::LoadFile");
     EXC_TRY("LoadFile");
@@ -1550,7 +1550,7 @@ lpctstr const CWorld::sm_szLoadKeys[WC_QTY+1] =	// static
 	nullptr
 };
 
-bool CWorld::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CWorld::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);

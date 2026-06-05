@@ -57,7 +57,7 @@ CServerTime::CServerTime() noexcept
 {
     Init();
 }
-CServerTime::CServerTime(int64 iTimeInMilliseconds) noexcept
+CServerTime::CServerTime(const int64 iTimeInMilliseconds) noexcept
 {
     InitTime(iTimeInMilliseconds);
 }
@@ -72,7 +72,7 @@ void CServerTime::Init() noexcept
     m_llPrivateTime = 0;
 }
 
-void CServerTime::InitTime(int64 llTimeBase) noexcept
+void CServerTime::InitTime(const int64 llTimeBase) noexcept
 {
     m_llPrivateTime = (llTimeBase < 0) ? 0 : llTimeBase;
 }

@@ -649,12 +649,12 @@ lptstr CSString::GetBuffer() noexcept
 }
 */
 
-tchar CSString::operator[](int nIndex) const
+tchar CSString::operator[](const int nIndex) const
 {
 	return GetAt(nIndex);
 }
 
-tchar& CSString::operator[](int nIndex)
+tchar& CSString::operator[](const int nIndex)
 {
 	return ReferenceAt(nIndex);
 }

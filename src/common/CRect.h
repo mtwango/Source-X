@@ -58,13 +58,13 @@ struct CRect		// Basic rectangle, similar to _WIN32 RECT (May not be on the map)
 	void OffsetRect( int x, int y );
 	void UnionPoint( int x, int y );
 
-    constexpr bool IsInsideX( int x ) const noexcept
+    constexpr bool IsInsideX(const int x ) const noexcept
 	{	// non-inclusive
-		return( x >= m_left && x < m_right );
+		return x >= m_left && x < m_right;
 	}
-    constexpr bool IsInsideY( int y ) const noexcept
+    constexpr bool IsInsideY(const int y ) const noexcept
 	{	// non-inclusive
-		return( y >= m_top && y < m_bottom );
+		return y >= m_top && y < m_bottom;
 	}
     bool IsInside2d( const CPointBase & pt ) const noexcept
 	{

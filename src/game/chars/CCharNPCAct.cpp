@@ -62,7 +62,7 @@ lpctstr const CCharNPC::sm_szVerbKeys[NV_QTY+1] =
 	nullptr
 };
 
-void CChar::Action_StartSpecial( CREID_TYPE id )
+void CChar::Action_StartSpecial(const CREID_TYPE id )
 {
 	ADDTOCALLSTACK("CChar::Action_StartSpecial");
 	ASSERT(m_pNPC);
@@ -240,7 +240,7 @@ bool CChar::NPC_OnVerb( CScript &s, CTextConsole * pSrc ) // Execute command fro
 	return true;
 }
 
-void CChar::NPC_ActStart_SpeakTo( CChar * pSrc )
+void CChar::NPC_ActStart_SpeakTo(const CChar * pSrc )
 {
 	ADDTOCALLSTACK("CChar::NPC_ActStart_SpeakTo");
 	ASSERT(m_pNPC);
@@ -695,7 +695,7 @@ int CChar::NPC_WalkToPoint( bool fRun )
 	return 1;
 }
 
-bool CChar::NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger )
+bool CChar::NPC_LookAtCharGuard( CChar * pChar, const bool bFromTrigger )
 {
 	ADDTOCALLSTACK("CChar::NPC_LookAtCharGuard");
 	ASSERT(m_pNPC);
@@ -933,7 +933,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 }
 
 // I might want to go pickup this item ?
-bool CChar::NPC_LookAtItem( CItem * pItem, int iDist )
+bool CChar::NPC_LookAtItem( CItem * pItem, const int iDist )
 {
 	ADDTOCALLSTACK("CChar::NPC_LookAtItem");
 	ASSERT(m_pNPC);
@@ -998,7 +998,7 @@ bool CChar::NPC_LookAtItem( CItem * pItem, int iDist )
 	return false;
 }
 
-bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
+bool CChar::NPC_LookAtChar( CChar * pChar, const int iDist )
 {
 	ADDTOCALLSTACK("CChar::NPC_LookAtChar");
 	ASSERT(m_pNPC);
@@ -1557,7 +1557,7 @@ void CChar::NPC_Act_GoHome()
 	}
 }
 
-void CChar::NPC_LootMemory( CItem * pItem )
+void CChar::NPC_LootMemory(const CItem * pItem )
 {
 	ADDTOCALLSTACK("CChar::NPC_LootMemory");
 	ASSERT(m_pNPC);

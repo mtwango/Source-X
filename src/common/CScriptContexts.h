@@ -24,7 +24,7 @@ struct CScriptLineContext
     constexpr CScriptLineContext() noexcept :
         m_iOffset(-1), m_iLineNum(-1)
     {}
-    constexpr CScriptLineContext(int iOffset, int iLineNum) noexcept :
+    constexpr CScriptLineContext(const int iOffset, const int iLineNum) noexcept :
         m_iOffset(iOffset), m_iLineNum(iLineNum)
     {}
 };

@@ -10,7 +10,7 @@
 #include "CItemCorpse.h"
 
 
-CItemCorpse::CItemCorpse( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemCorpse::CItemCorpse(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
 	CItemContainer( id, pItemDef )
 {
@@ -101,7 +101,7 @@ CChar *CItemCorpse::IsCorpseSleeping() const
 	return nullptr;
 }
 
-int CItemCorpse::GetWeight(word amount) const
+int CItemCorpse::GetWeight(const word amount) const
 {
 	UnreferencedParameter(amount);
 	// GetAmount is messed up.
@@ -136,7 +136,7 @@ bool CChar::CheckCorpseCrime(const CItemCorpse *pCorpse, const bool fLooting, co
 	return false;
 }
 
-CItemCorpse *CChar::FindMyCorpse( bool fIgnoreLOS, int iRadius ) const
+CItemCorpse *CChar::FindMyCorpse(const bool fIgnoreLOS, const int iRadius ) const
 {
 	ADDTOCALLSTACK("CChar::FindMyCorpse");
 	// If they are standing on their own corpse then res the corpse !
@@ -164,7 +164,7 @@ CItemCorpse *CChar::FindMyCorpse( bool fIgnoreLOS, int iRadius ) const
 
 // Create the char corpse when i die (STATF_DEAD) or fall asleep (STATF_SLEEPING)
 // Summoned (STATF_CONJURED) and some others creatures have no corpse.
-CItemCorpse * CChar::MakeCorpse( bool fFrontFall )
+CItemCorpse * CChar::MakeCorpse(const bool fFrontFall )
 {
 	ADDTOCALLSTACK("CChar::MakeCorpse");
 

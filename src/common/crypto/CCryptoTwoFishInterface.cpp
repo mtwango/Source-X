@@ -49,7 +49,7 @@ void CCrypto::InitTwoFish()
 	}
 }
 
-bool CCrypto::DecryptTwoFish( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen )
+bool CCrypto::DecryptTwoFish( byte * pOutput, const byte * pInput, const size_t outLen, const size_t inLen )
 {
 	ADDTOCALLSTACK("CCrypto::DecryptTwoFish");
 	byte tmpBuff[TFISH_RESET];

@@ -6,7 +6,7 @@
 /////////////////////////////////////////////////////////////////////////////
 // -CItemMap
 
-CItemMap::CItemMap( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemMap::CItemMap(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
     CItemVendable( id, pItemDef )
 {
@@ -64,7 +64,7 @@ bool CItemMap::r_LoadVal(CScript & s)	// load an item script
     return false;
 }
 
-bool CItemMap::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemMap::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemMap::r_WriteVal");

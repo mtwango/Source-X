@@ -65,7 +65,7 @@ static constexpr lpctstr _ptcSRefKeys[SREF_QTY+1] =
 };
 
 
-bool CScriptObj::ParseError_UndefinedKeyword(lpctstr ptcKey) // static
+bool CScriptObj::ParseError_UndefinedKeyword(const lpctstr ptcKey) // static
 {
 	g_Log.EventError("Undefined keyword '%s'.\n", ptcKey);
 	return false;
@@ -210,7 +210,7 @@ size_t CScriptObj::r_GetFunctionIndex(lpctstr pszFunction) // static
     return g_Cfg.m_Functions.find_sorted(pszFunction);
 }
 
-bool CScriptObj::r_CanCall(size_t uiFunctionIndex) // static
+bool CScriptObj::r_CanCall(const size_t uiFunctionIndex) // static
 {
     ADDTOCALLSTACK_DEBUG("CScriptObj::r_CanCall");
     if (uiFunctionIndex == sl::scont_bad_index())
@@ -230,7 +230,7 @@ bool CScriptObj::r_Call( lpctstr pszFunction, CScriptTriggerArgsPtr const& pScri
     return r_Call(index, pScriptArgs, pSrc, psVal, piRet);
 }
 
-bool CScriptObj::r_Call( size_t uiFunctionIndex, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * psVal, TRIGRET_TYPE * piRet )
+bool CScriptObj::r_Call(const size_t uiFunctionIndex, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * psVal, TRIGRET_TYPE * piRet )
 {
     ADDTOCALLSTACK("CScriptObj::r_Call (FunctionIndex)");
 	EXC_TRY("Call by index");
@@ -311,7 +311,7 @@ bool CScriptObj::r_Call( size_t uiFunctionIndex, CScriptTriggerArgsPtr const& pS
     return true;
 }
 
-bool CScriptObj::r_ExecSingle(lpctstr ptcLine)
+bool CScriptObj::r_ExecSingle(const lpctstr ptcLine)
 {
 	ADDTOCALLSTACK("CScriptObj::r_ExecSingle");
 	ASSERT(ptcLine);
@@ -320,7 +320,7 @@ bool CScriptObj::r_ExecSingle(lpctstr ptcLine)
 	return r_Verb(scriptLine, &g_Serv);
 }
 
-bool CScriptObj::r_SetVal( lpctstr ptcKey, lpctstr ptcVal )
+bool CScriptObj::r_SetVal(const lpctstr ptcKey, const lpctstr ptcVal )
 {
     ADDTOCALLSTACK("CScriptObj::r_SetVal");
 	ASSERT(ptcKey);
@@ -388,7 +388,7 @@ bool CScriptObj::r_LoadVal( CScript & s )
 	return false;
 }
 
-static void StringFunction( int iFunc, lpctstr ptcKey, CSString &sVal )
+static void StringFunction(const int iFunc, lpctstr ptcKey, CSString &sVal )
 {
 	GETNONWHITESPACE(ptcKey);
 	if ( *ptcKey == '(' )
@@ -1602,7 +1602,7 @@ bool CScriptObj::Execute_FullTrigger(const CScript & s, CScriptTriggerArgsPtr co
 }
 
 
-bool CScriptObj::OnTriggerFind( CScript & s, lpctstr pszTrigName )
+bool CScriptObj::OnTriggerFind( CScript & s, const lpctstr pszTrigName )
 {
 	ADDTOCALLSTACK("CScriptObj::OnTriggerFind");
 	while ( s.ReadKey(false) )
@@ -1619,7 +1619,7 @@ bool CScriptObj::OnTriggerFind( CScript & s, lpctstr pszTrigName )
 	return false;
 }
 
-TRIGRET_TYPE CScriptObj::OnTriggerScript( CScript & s, lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
+TRIGRET_TYPE CScriptObj::OnTriggerScript( CScript & s, const lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
 {
 	ADDTOCALLSTACK("CScriptObj::OnTriggerScript");
 	// look for exact trigger matches
@@ -1699,7 +1699,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerScript( CScript & s, lpctstr pszTrigName, CScr
 	return iRet;
 }
 
-TRIGRET_TYPE CScriptObj::OnTrigger( lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
+TRIGRET_TYPE CScriptObj::OnTrigger(const lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
 {
 	UnreferencedParameter(pszTrigName);
 	UnreferencedParameter(pSrc);
@@ -2139,7 +2139,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopGeneric(CScript& s, int iType, CScriptTrig
 	return TRIGRET_ENDIF;
 }
 
-TRIGRET_TYPE CScriptObj::OnTriggerLoopForCharSpecial(CScript& s, SK_TYPE iCmd, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc, CSString* pResult)
+TRIGRET_TYPE CScriptObj::OnTriggerLoopForCharSpecial(CScript& s, const SK_TYPE iCmd, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc, CSString* pResult)
 {
 	ADDTOCALLSTACK("CScriptObj::OnTriggerLoopForCharSpecial");
 	TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
@@ -2230,7 +2230,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 	return iRet;
 }
 
-TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, SK_TYPE iCmd, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc, CSString* pResult)
+TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, const SK_TYPE iCmd, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc, CSString* pResult)
 {
     ADDTOCALLSTACK("CScriptObj::OnTriggerLoopForContSpecial");
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;

@@ -17,7 +17,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-CItemMulti::CItemMulti(ITEMID_TYPE id, CItemBase * pItemDef, bool fTurnable) :    // CItemBaseMulti
+CItemMulti::CItemMulti(const ITEMID_TYPE id, CItemBase * pItemDef, const bool fTurnable) :    // CItemBaseMulti
     CTimedObject(PROFILE_MULTIS),
     CItem(id, pItemDef),
     CCMultiMovable(fTurnable)
@@ -161,7 +161,7 @@ CRegion * CItemMulti::GetRegion() const noexcept
     return m_pRegion;
 }
 
-int CItemMulti::GetSideDistanceFromCenter(DIR_TYPE dir) const
+int CItemMulti::GetSideDistanceFromCenter(const DIR_TYPE dir) const
 {
     ADDTOCALLSTACK("CItemMulti::GetSideDistanceFromCenter");
     const CItemBaseMulti* pMultiDef = Multi_GetDef();
@@ -177,7 +177,7 @@ int CItemMulti::Multi_GetDistanceMax() const
     return pMultiDef->GetDistanceMax();
 }
 
-const CItemBaseMulti * CItemMulti::Multi_GetDefByID(ITEMID_TYPE id) // static
+const CItemBaseMulti * CItemMulti::Multi_GetDefByID(const ITEMID_TYPE id) // static
 {
     ADDTOCALLSTACK("CItemMulti::Multi_GetDefByID");
     const CItemBase * pItemBase = CItemBase::FindItemBase(id);
@@ -457,7 +457,7 @@ bool CItemMulti::Multi_IsPartOf(const CItem * pItem) const
     return false;
 }
 
-CItem * CItemMulti::Multi_FindItemComponent(int iComp) const
+CItem * CItemMulti::Multi_FindItemComponent(const int iComp) const
 {
     ADDTOCALLSTACK("CItemMulti::Multi_FindItemComponent");
 
@@ -468,7 +468,7 @@ CItem * CItemMulti::Multi_FindItemComponent(int iComp) const
     return nullptr;
 }
 
-CItem * CItemMulti::Multi_FindItemType(IT_TYPE type) const
+CItem * CItemMulti::Multi_FindItemType(const IT_TYPE type) const
 {
     ADDTOCALLSTACK("CItemMulti::Multi_FindItemType");
     // Find a part of this multi nearby.
@@ -527,7 +527,7 @@ void CItemMulti::OnMoveFrom()
     }
 }
 
-bool CItemMulti::MoveTo(const CPointMap& pt, bool fForceFix) // Put item on the ground here.
+bool CItemMulti::MoveTo(const CPointMap& pt, const bool fForceFix) // Put item on the ground here.
 {
     ADDTOCALLSTACK("CItemMulti::MoveTo");
 
@@ -584,7 +584,7 @@ CItem * CItemMulti::Multi_GetSign()
     return pTiller;
 }
 
-void CItemMulti::OnHearRegion(lpctstr pszCmd, CChar * pSrc)
+void CItemMulti::OnHearRegion(const lpctstr pszCmd, CChar * pSrc)
 {
     ADDTOCALLSTACK("CItemMulti::OnHearRegion");
     // IT_SHIP or IT_MULTI
@@ -761,7 +761,7 @@ void CItemMulti::AddCoowner(const CUID& uidCoowner)
     _lCoowners.emplace_back(uidCoowner);
 }
 
-void CItemMulti::DeleteCoowner(const CUID& uidCoowner, bool fRemoveFromList)
+void CItemMulti::DeleteCoowner(const CUID& uidCoowner, const bool fRemoveFromList)
 {
     ADDTOCALLSTACK("CItemMulti::DeleteCoowner");
     for (size_t i = 0; i < _lCoowners.size(); ++i)
@@ -913,7 +913,7 @@ void CItemMulti::AddBan(const CUID& uidBan)
     _lBans.emplace_back(uidBan);
 }
 
-void CItemMulti::DeleteBan(const CUID& uidBan, bool fRemoveFromList)
+void CItemMulti::DeleteBan(const CUID& uidBan, const bool fRemoveFromList)
 {
     ADDTOCALLSTACK("CItemMulti::DeleteBan");
     for (size_t i = 0; i < _lBans.size(); ++i)
@@ -1331,7 +1331,7 @@ CUID CItemMulti::GetMovingCrate(const bool fCreate)
     return uidCrate;
 }
 
-void CItemMulti::TransferAllItemsToMovingCrate(TRANSFER_TYPE iType)
+void CItemMulti::TransferAllItemsToMovingCrate(const TRANSFER_TYPE iType)
 {
     ADDTOCALLSTACK("CItemMulti::TransferAllItemsToMovingCrate");
     auto *const pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
@@ -1596,7 +1596,7 @@ void CItemMulti::AddComponent(const CUID& uidComponent)
     _lComps.emplace_back(uidComponent);
 }
 
-void CItemMulti::DeleteComponent(const CUID& uidComponent, bool fRemoveFromList)
+void CItemMulti::DeleteComponent(const CUID& uidComponent, const bool fRemoveFromList)
 {
     ADDTOCALLSTACK("CItemMulti::DeleteComponent");
     if (fRemoveFromList)
@@ -1654,7 +1654,7 @@ void CItemMulti::RemoveAllComponents()
     _lComps.clear();
 }
 
-void CItemMulti::GenerateBaseComponents(bool *pfNeedKey, dword dwKeyCode)
+void CItemMulti::GenerateBaseComponents(bool *pfNeedKey, const dword dwKeyCode)
 {
     ADDTOCALLSTACK("CItemMulti::GenerateBaseComponents");
     const CItemBaseMulti * pMultiDef = Multi_GetDef();
@@ -1676,7 +1676,7 @@ uint16 CItemMulti::GetBaseStorage() const
     return _uiBaseStorage;
 }
 
-void CItemMulti::SetIncreasedStorage(uint16 uiIncrease)
+void CItemMulti::SetIncreasedStorage(const uint16 uiIncrease)
 {
     _uiIncreasedStorage = uiIncrease;
 }
@@ -1722,7 +1722,7 @@ uint8 CItemMulti::GetLockdownsPercent() const
     return _uiLockdownsPercent;
 }
 
-void CItemMulti::SetLockdownsPercent(uint8 iPercent)
+void CItemMulti::SetLockdownsPercent(const uint8 iPercent)
 {
     _uiLockdownsPercent = iPercent;
 }
@@ -1750,7 +1750,7 @@ void CItemMulti::LockItem(const CUID& uidItem)
     _lLockDowns.emplace_back(uidItem);
 }
 
-void CItemMulti::UnlockItem(const CUID& uidItem, bool fRemoveFromList)
+void CItemMulti::UnlockItem(const CUID& uidItem, const bool fRemoveFromList)
 {
     ADDTOCALLSTACK("CItemMulti::UnlockItem");
     if (fRemoveFromList)
@@ -1827,7 +1827,7 @@ void CItemMulti::Secure(const CUID& uidContainer)
     _lSecureContainers.emplace_back(uidContainer);
 }
 
-void CItemMulti::Release(const CUID& uidContainer, bool fRemoveFromList)
+void CItemMulti::Release(const CUID& uidContainer, const bool fRemoveFromList)
 {
     ADDTOCALLSTACK("CItemMulti::Release");
 
@@ -3725,7 +3725,7 @@ void CMultiStorage::r_Write(const CScript & s) const
     UnreferencedParameter(s);
 }
 
-void CMultiStorage::AddShip(const CUID& uidShip, HOUSE_PRIV ePriv)
+void CMultiStorage::AddShip(const CUID& uidShip, const HOUSE_PRIV ePriv)
 {
     ADDTOCALLSTACK("CMultiStorage::AddShip");
     if (!uidShip.IsValidUID())

@@ -18,7 +18,7 @@ public:
     ~CWorldSearchHolderImpl() noexcept = default;
     CWorldSearchHolderImpl() noexcept = default;
 
-    CSReferenceCounted<CWorldSearch> GetOne(const CPointMap& pt, int iDist)
+    CSReferenceCounted<CWorldSearch> GetOne(const CPointMap& pt, const int iDist)
     {
         for (auto& inst : _instances)
         {
@@ -38,7 +38,7 @@ public:
 
 //--------------
 
-CSReferenceCounted<CWorldSearch> CWorldSearchHolder::GetInstance(const CPointMap& pt, int iDist)    // static
+CSReferenceCounted<CWorldSearch> CWorldSearchHolder::GetInstance(const CPointMap& pt, const int iDist)    // static
 {
     // Thread-unsafe!
     static CWorldSearchHolderImpl holder;
@@ -57,7 +57,7 @@ CWorldSearch::CWorldSearch() noexcept :
 {
 }
 
-CWorldSearch::CWorldSearch(size_t uiPreallocateSize) :
+CWorldSearch::CWorldSearch(const size_t uiPreallocateSize) :
     CWorldSearch()
 {
     if (!uiPreallocateSize)
@@ -73,7 +73,7 @@ CWorldSearch::~CWorldSearch() noexcept
         delete[] _ppCurContObjs;
 }
 
-void CWorldSearch::Reset(const CPointMap& pt, int iDist)
+void CWorldSearch::Reset(const CPointMap& pt, const int iDist)
 {
     //ADDTOCALLSTACK("CWorldSearch::Reset");
     // define a search of the world.
@@ -101,7 +101,7 @@ void CWorldSearch::Reset(const CPointMap& pt, int iDist)
     SetDistanceFunction();
 }
 
-void CWorldSearch::SetAllShow(bool fView)
+void CWorldSearch::SetAllShow(const bool fView)
 {
 	//ADDTOCALLSTACK_DEBUG("CWorldSearch::SetAllShow");
     if (_fAllShow == fView)
@@ -111,7 +111,7 @@ void CWorldSearch::SetAllShow(bool fView)
     SetDistanceFunction();
 }
 
-void CWorldSearch::SetSearchSquare(bool fSquareSearch)
+void CWorldSearch::SetSearchSquare(const bool fSquareSearch)
 {
 	//ADDTOCALLSTACK_DEBUG("CWorldSearch::SetSearchSquare");
     if (_fSearchSquare == fSquareSearch)

@@ -39,7 +39,7 @@ lpctstr const CSFileObjContainer::sm_szVerbKeys[CFOV_QTY+1] =
     nullptr
 };
 
-void CSFileObjContainer::ResizeContainer( size_t iNewRange )
+void CSFileObjContainer::ResizeContainer(const size_t iNewRange )
 {
     ADDTOCALLSTACK("CSFileObjContainer::ResizeContainer");
     if ( iNewRange == sFileList.size() )
@@ -101,7 +101,7 @@ int CSFileObjContainer::GetFilenumber()
     return iFilenumber;
 }
 
-void CSFileObjContainer::SetFilenumber( int iHowMuch )
+void CSFileObjContainer::SetFilenumber(const int iHowMuch )
 {
     ADDTOCALLSTACK("CSFileObjContainer::SetFilenumber");
     ResizeContainer(iHowMuch);
@@ -212,7 +212,7 @@ bool CSFileObjContainer::r_LoadVal( CScript & s )
     return false;
 }
 
-bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CSFileObjContainer::r_WriteVal");

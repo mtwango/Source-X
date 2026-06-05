@@ -31,7 +31,7 @@
 // 0 = object name
 // 1 = char
 // 2 = item type
-bool CChar::TeleportToObj( int iType, tchar * pszArgs )
+bool CChar::TeleportToObj(const int iType, tchar * pszArgs )
 {
 	ADDTOCALLSTACK("CChar::TeleportToObj");
 
@@ -117,7 +117,7 @@ bool CChar::TeleportToObj( int iType, tchar * pszArgs )
 }
 
 // GoCli
-bool CChar::TeleportToCli( int iType, int iArgs )
+bool CChar::TeleportToCli(const int iType, int iArgs )
 {
 	ADDTOCALLSTACK("CChar::TeleportToCli");
 
@@ -146,7 +146,7 @@ bool CChar::TeleportToCli( int iType, int iArgs )
 	return false;
 }
 
-void CChar::Jail( CTextConsole * pSrc, bool fSet, int iCell )
+void CChar::Jail( CTextConsole * pSrc, const bool fSet, const int iCell )
 {
 	ADDTOCALLSTACK("CChar::Jail");
 
@@ -208,7 +208,7 @@ void CChar::Jail( CTextConsole * pSrc, bool fSet, int iCell )
 }
 
 // A vendor is giving me gold. put it in my pack or other place.
-void CChar::AddGoldToPack( int iAmount, CItemContainer * pPack, bool fForceNoStack )
+void CChar::AddGoldToPack( int iAmount, CItemContainer * pPack, const bool fForceNoStack )
 {
 	ADDTOCALLSTACK("CChar::AddGoldToPack");
     ASSERT(iAmount > 0);
@@ -554,7 +554,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 }
 
 // shrunk or died. (or sleeping)
-void CChar::DropAll(CItemContainer * pCorpse, uint64 uiAttr)
+void CChar::DropAll(CItemContainer * pCorpse, const uint64 uiAttr)
 {
 	ADDTOCALLSTACK("CChar::DropAll");
 	if ( IsStatFlag( STATF_CONJURED ))
@@ -581,7 +581,7 @@ void CChar::DropAll(CItemContainer * pCorpse, uint64 uiAttr)
 // drop item that is up in the air as well.
 // pDest       = Container to place items in
 // fLeaveHands = true to leave items in hands; otherwise, false
-void CChar::UnEquipAllItems( CItemContainer * pDest, bool fLeaveHands )
+void CChar::UnEquipAllItems( CItemContainer * pDest, const bool fLeaveHands )
 {
 	ADDTOCALLSTACK("CChar::UnEquipAllItems");
 
@@ -660,7 +660,7 @@ void CChar::UnEquipAllItems( CItemContainer * pDest, bool fLeaveHands )
 
 // Show the world that I am picking up or putting down this object.
 // NOTE: This makes people disapear.
-void CChar::UpdateDrag( CItem * pItem, CObjBase * pCont, CPointMap * pt )
+void CChar::UpdateDrag( CItem * pItem, CObjBase * pCont, const CPointMap * pt )
 {
 	ADDTOCALLSTACK("CChar::UpdateDrag");
 
@@ -673,13 +673,13 @@ void CChar::UpdateDrag( CItem * pItem, CObjBase * pCont, CPointMap * pt )
 	UpdateCanSee(cmd, m_pClient);
 }
 
-void CChar::ObjMessage( lpctstr pMsg, const CObjBase * pSrc ) const
+void CChar::ObjMessage(const lpctstr pMsg, const CObjBase * pSrc ) const
 {
 	if ( ! IsClientActive())
 		return;
 	GetClientActive()->addObjMessage( pMsg, pSrc );
 }
-void CChar::SysMessage( lpctstr pMsg ) const	// Push a message back to the client if there is one.
+void CChar::SysMessage(const lpctstr pMsg ) const	// Push a message back to the client if there is one.
 {
 	if ( ! IsClientActive())
 		return;
@@ -742,7 +742,7 @@ void CChar::UpdateStamFlag() const
 		GetClientActive()->addUpdateStamFlag();
 }
 
-void CChar::UpdateStatVal( STAT_TYPE type, int iChange, ushort uiLimit )
+void CChar::UpdateStatVal(const STAT_TYPE type, const int iChange, ushort uiLimit )
 {
 	ADDTOCALLSTACK("CChar::UpdateStatVal");
 	const int iValPrev = Stat_GetVal(type);
@@ -786,7 +786,7 @@ void CChar::UpdateStatVal( STAT_TYPE type, int iChange, ushort uiLimit )
 }
 
 // Calculate the action to be used to call UpdateAnimate() with it
-ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackward, byte iFrameDelay, byte iAnimLen )
+ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, const bool fTranslate, const bool fBackward, byte iFrameDelay, const byte iAnimLen )
 {
 	ADDTOCALLSTACK("CChar::UpdateAnimate");
 	UnreferencedParameter(iAnimLen);
@@ -2273,7 +2273,7 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, bool fTranslate, bool fBackw
 // ARGS:
 //   fBackward = make the anim go in reverse.
 //   iFrameDelay = in seconds (approx), 0=fastest, 1=slower
-bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , byte iFrameDelay , byte iAnimLen)
+bool CChar::UpdateAnimate(ANIM_TYPE action, const bool fTranslate, const bool fBackward , const byte iFrameDelay , const byte iAnimLen)
 {
 	ADDTOCALLSTACK("CChar::UpdateAnimate");
 	if (action < 0 || action >= ANIM_QTY)
@@ -2447,7 +2447,7 @@ bool CChar::UpdateAnimate(ANIM_TYPE action, bool fTranslate, bool fBackward , by
 
 // If character status has been changed
 // (Polymorph, war mode or hide), resend him
-void CChar::UpdateMode( bool fFull, CClient * pExcludeClient )
+void CChar::UpdateMode(const bool fFull, const CClient * pExcludeClient )
 {
 	ADDTOCALLSTACK("CChar::UpdateMode");
 
@@ -2499,7 +2499,7 @@ void CChar::UpdateVisualRange()
 
 // Who now sees this char ?
 // Did they just see him move ?
-void CChar::UpdateMove( const CPointMap & ptOld, CClient * pExcludeClient, bool bFull )
+void CChar::UpdateMove( const CPointMap & ptOld, const CClient * pExcludeClient, const bool bFull )
 {
 	ADDTOCALLSTACK("CChar::UpdateMove");
 
@@ -2560,7 +2560,7 @@ void CChar::UpdateMove( const CPointMap & ptOld, CClient * pExcludeClient, bool 
 }
 
 // Change in direction.
-void CChar::UpdateDir( DIR_TYPE dir )
+void CChar::UpdateDir(const DIR_TYPE dir )
 {
 	ADDTOCALLSTACK("CChar::UpdateDir (DIR_TYPE)");
 
@@ -3287,7 +3287,7 @@ bool CChar::ItemDrop( CItem * pItem, const CPointMap & pt )
 // Adding 'equip benefics' to the char
 // NOTE: This can be used from scripts as well to equip memories etc.
 // ASSUME this is ok for me to use. (movable etc)
-bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
+bool CChar::ItemEquip( CItem * pItem, const CChar * pCharMsg, const bool fFromDClick )
 {
 	ADDTOCALLSTACK("CChar::ItemEquip");
 
@@ -3441,7 +3441,7 @@ bool CChar::ItemEquip( CItem * pItem, CChar * pCharMsg, bool fFromDClick )
 // OnEat()
 // Generating eating animation
 // also calling @Eat and setting food's level (along with other possible stats 'local.hits',etc?)
-void CChar::EatAnim(CItem* pItem, ushort uiQty)
+void CChar::EatAnim(CItem* pItem, const ushort uiQty)
 {
 	ADDTOCALLSTACK("CChar::EatAnim");
     ASSERT(pItem); //Should never happen, but make sure item is valid.
@@ -3557,7 +3557,7 @@ bool CChar::Reveal( uint64 iFlags )
 	return true;
 }
 
-void CChar::Speak_RevealCheck(TALKMODE_TYPE mode)
+void CChar::Speak_RevealCheck(const TALKMODE_TYPE mode)
 {
     ADDTOCALLSTACK("CChar::Spell_RevealCheck");
     if (mode != TALKMODE_SPELL)
@@ -3573,7 +3573,7 @@ void CChar::Speak_RevealCheck(TALKMODE_TYPE mode)
 // Player: Speak to all clients in the area.
 // Ignore the font argument here !
 // ASCII packet
-void CChar::Speak(lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font)
+void CChar::Speak(lpctstr pszText, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font)
 {
 	ADDTOCALLSTACK("CChar::Speak");
 
@@ -3590,7 +3590,7 @@ void CChar::Speak(lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE 
 // Player: Speak to all clients in the area.
 // Ignore the font argument here !
 // Unicode packet
-void CChar::SpeakUTF8( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang )
+void CChar::SpeakUTF8( lpctstr pszText, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang )
 {
 	ADDTOCALLSTACK("CChar::SpeakUTF8");
 
@@ -3608,7 +3608,7 @@ void CChar::SpeakUTF8( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_
 // Ignore the font argument here !
 // Unicode packet
 // Difference with SpeakUTF8: this method accepts as text input an nword, which is a unicode character if sphere is compiled with UNICODE macro)
-void CChar::SpeakUTF8Ex( const nachar * pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang )
+void CChar::SpeakUTF8Ex( const nachar * pszText, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang )
 {
 	ADDTOCALLSTACK("CChar::SpeakUTF8Ex");
 
@@ -3623,7 +3623,7 @@ void CChar::SpeakUTF8Ex( const nachar * pszText, HUE_TYPE wHue, TALKMODE_TYPE mo
 }
 
 // Convert me into a figurine
-CItem * CChar::Make_Figurine(const CUID &uidOwner, ITEMID_TYPE id )
+CItem * CChar::Make_Figurine(const CUID &uidOwner, const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CChar::Make_Figurine");
 	if ( IsDisconnected() || m_pPlayer )
@@ -4166,7 +4166,7 @@ bool CChar::OnTickEquip( CItem * pItem )
 
 // Leave the antidote in your body for a while.
 // iSkill = 0-1000
-bool CChar::SetPoisonCure( bool fExtra )
+bool CChar::SetPoisonCure(const bool fExtra )
 {
 	ADDTOCALLSTACK("CChar::SetPoisonCure");
 
@@ -4189,7 +4189,7 @@ bool CChar::SetPoisonCure( bool fExtra )
 // iSkill = 0-1000 = how bad the poison is.
 // iHits = how much times the poison will hit. Irrelevant with MAGIFC_OSIFORMULAS enabled, because defaults will be used.
 // Physical attack of poisoning.
-bool CChar::SetPoison( int iSkill, int iHits, CChar * pCharSrc )
+bool CChar::SetPoison(const int iSkill, const int iHits, const CChar * pCharSrc )
 {
 	ADDTOCALLSTACK("CChar::SetPoison");
 
@@ -4291,7 +4291,7 @@ void CChar::Wake()
 }
 
 // Sleep
-void CChar::SleepStart( bool fFrontFall )
+void CChar::SleepStart(const bool fFrontFall )
 {
 	ADDTOCALLSTACK("CChar::SleepStart");
 	if (IsStatFlag(STATF_DEAD|STATF_SLEEPING|STATF_POLYMORPH))
@@ -4567,7 +4567,7 @@ bool CChar::OnFreezeCheck() const
 	return false;
 }
 
-bool CChar::IsStuck(bool fFreezeCheck)
+bool CChar::IsStuck(const bool fFreezeCheck)
 {
     CPointMap pt = GetTopPoint();
     if ( fFreezeCheck && OnFreezeCheck() )
@@ -4582,7 +4582,7 @@ void CChar::Flip()
 	UpdateDir( GetDirTurn( m_dirFace, 1 ));
 }
 
-bool CChar::CanMove(bool fCheckOnly) const
+bool CChar::CanMove(const bool fCheckOnly) const
 {
     ADDTOCALLSTACK("CChar::CanMove");
 
@@ -4726,7 +4726,7 @@ set_and_return_false:
 // RETURN:
 //  ptDst.m_z = the new z
 //  nullptr = failed to walk here.
-CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, bool fCheckChars, bool fCheckOnly, DIR_TYPE dir, bool fPathFinding )
+CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, const bool fCheckChars, const bool fCheckOnly, const DIR_TYPE dir, const bool fPathFinding )
 {
 	ADDTOCALLSTACK("CChar::CanMoveWalkTo");
 
@@ -4873,7 +4873,7 @@ void CChar::CheckRevealOnMove()
 //	true = we can move there
 //	false = we can't move there
 //	default = we teleported
-TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
+TRIGRET_TYPE CChar::CheckLocationEffects(const bool fStanding)
 {
 	ADDTOCALLSTACK("CChar::CheckLocationEffects");
     // This can also be called from char periodic ticks (not classic timer).
@@ -5274,7 +5274,7 @@ bool CChar::MoveToRoom( CRegion * pNewRoom, bool fAllowReject)
 	return true;
 }
 
-bool CChar::MoveToRegionReTest( dword dwType )
+bool CChar::MoveToRegionReTest(const dword dwType )
 {
 	return MoveToRegion( dynamic_cast <CRegionWorld *>( GetTopPoint().GetRegion( dwType )), false);
 }
@@ -5283,7 +5283,7 @@ bool CChar::MoveToRegionReTest( dword dwType )
 // This could be us just taking a step or being teleported.
 // Low level: DOES NOT UPDATE DISPLAYS or container flags. (may be offline)
 // This does not check for gravity.
-bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationEffects, bool fForceFix, bool fAllowReject)
+bool CChar::MoveToChar(const CPointMap& pt, const bool fStanding, const bool fCheckLocationEffects, const bool fForceFix, const bool fAllowReject)
 {
     // WARNING: If you are using fCheckLocationEffects = true, be sure to NOT create situations where this call to CheckLocationEffects
     //  makes it recursively call itself (moving to something that moves again the char and so on).
@@ -5348,7 +5348,7 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 	return true;
 }
 
-bool CChar::MoveTo(const CPointMap& pt, bool fForceFix)
+bool CChar::MoveTo(const CPointMap& pt, const bool fForceFix)
 {
     ADDTOCALLSTACK_DEBUG("CChar::MoveTo");
 
@@ -5356,7 +5356,7 @@ bool CChar::MoveTo(const CPointMap& pt, bool fForceFix)
     return MoveToChar(pt, true, false, fForceFix);
 }
 
-void CChar::SetTopZ( char z )
+void CChar::SetTopZ(const char z )
 {
 	CObjBaseTemplate::SetTopZ( z );
 	m_fClimbUpdated = false; // update climb height
@@ -5365,7 +5365,7 @@ void CChar::SetTopZ( char z )
 
 // Move from here to a valid spot.
 // ASSUME "here" is not a valid spot. (even if it really is)
-bool CChar::MoveToValidSpot(DIR_TYPE dir, int iDist, int iDistStart, bool fFromShip)
+bool CChar::MoveToValidSpot(const DIR_TYPE dir, const int iDist, const int iDistStart, const bool fFromShip)
 {
 	ADDTOCALLSTACK("CChar::MoveToValidSpot");
 
@@ -5411,7 +5411,7 @@ bool CChar::MoveToValidSpot(DIR_TYPE dir, int iDist, int iDistStart, bool fFromS
 	return false;
 }
 
-bool CChar::MoveToNearestShore(bool fNoMsg)
+bool CChar::MoveToNearestShore(const bool fNoMsg)
 {
 	int iDist = 1;
 	int i;
@@ -5437,7 +5437,7 @@ bool CChar::MoveToNearestShore(bool fNoMsg)
 	return (i == 100);
 }
 
-bool CChar::MoveNearObj( const CObjBaseTemplate *pObj, ushort iSteps )
+bool CChar::MoveNearObj( const CObjBaseTemplate *pObj, const ushort iSteps )
 {
 	return CObjBase::MoveNearObj(pObj, iSteps);
 }
@@ -5445,7 +5445,7 @@ bool CChar::MoveNearObj( const CObjBaseTemplate *pObj, ushort iSteps )
 // "PRIVSET"
 // Set this char to be a GM etc. (or take this away)
 // NOTE: They can be off-line at the time.
-bool CChar::SetPrivLevel(CTextConsole * pSrc, lpctstr pszFlags)
+bool CChar::SetPrivLevel(const CTextConsole * pSrc, const lpctstr pszFlags)
 {
 	ADDTOCALLSTACK("CChar::SetPrivLevel");
 
@@ -5489,7 +5489,7 @@ bool CChar::SetPrivLevel(CTextConsole * pSrc, lpctstr pszFlags)
 	return true;
 }
 
-bool CChar::IsTriggerActive(lpctstr trig) const
+bool CChar::IsTriggerActive(const lpctstr trig) const
 {
     if (((_iRunningTriggerId == -1) && _sRunningTrigger.IsEmpty()) || (trig == nullptr))
         return false;
@@ -5503,7 +5503,7 @@ bool CChar::IsTriggerActive(lpctstr trig) const
     return (strcmpi(_sRunningTrigger.GetBuffer(), trig) == 0);
 }
 
-void CChar::SetTriggerActive(lpctstr trig)
+void CChar::SetTriggerActive(const lpctstr trig)
 {
     if (trig == nullptr)
     {
@@ -5704,7 +5704,7 @@ stopandret:
 	return iRet;
 }
 
-TRIGRET_TYPE CChar::OnTrigger( CTRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
+TRIGRET_TYPE CChar::OnTrigger(const CTRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
 {
 	ASSERT( (trigger > CTRIG_AAAUNUSED) && (trigger < CTRIG_QTY) );
     return OnTrigger( sm_szTrigName[trigger], pScriptArgs, pSrc);
@@ -5744,7 +5744,7 @@ void CChar::OnTickStatusUpdate()
 
 // Food decay, decrease FOOD value.
 // Call for hunger penalties if food < 40%
-void CChar::OnTickFood(ushort uiVal, int HitsHungerLoss)
+void CChar::OnTickFood(const ushort uiVal, const int HitsHungerLoss)
 {
 	ADDTOCALLSTACK("CChar::OnTickFood");
     if (Can(CAN_C_STATUE))
@@ -5883,7 +5883,7 @@ bool CChar::IsTickableEvenIfDisconnected() const
     return fRidden || IsStatFlag(STATF_CONJURED);
 }
 
-bool CChar::_CanTick(bool fParentGoingToSleep) const
+bool CChar::_CanTick(const bool fParentGoingToSleep) const
 {
     //ADDTOCALLSTACK_DEBUG("CChar::_CanTick");
     EXC_TRY("Able to tick?");
@@ -6143,7 +6143,7 @@ do_status_update:
     return true;
 }
 
-int64 CChar::PayGold(CChar * pCharSrc, int64 iGold, CItem * pGold, ePayGold iReason)
+int64 CChar::PayGold(CChar * pCharSrc, const int64 iGold, CItem * pGold, const ePayGold iReason)
 {
     ADDTOCALLSTACK("CChar::PayGold");
     CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();

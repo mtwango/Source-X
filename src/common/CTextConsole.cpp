@@ -19,7 +19,7 @@ const CChar * CTextConsole::GetChar() const
 }
 
 
-int CTextConsole::OnConsoleKey( CSString & sText, tchar nChar, bool fEcho )
+int CTextConsole::OnConsoleKey( CSString & sText, const tchar nChar, const bool fEcho )
 {
     ADDTOCALLSTACK("CTextConsole::OnConsoleKey");
     // eventaully we should call OnConsoleCmd
@@ -137,7 +137,7 @@ int CTextConsole::OnConsoleKey( CSString & sText, tchar nChar, bool fEcho )
     return 1;
 }
 
-void CTextConsole::VSysMessage( lpctstr pszFormat, va_list args ) const
+void CTextConsole::VSysMessage(const lpctstr pszFormat, const va_list args ) const
 {
     TemporaryString tsTemp;
     vsnprintf(tsTemp.buffer(), tsTemp.capacity(), pszFormat, args );

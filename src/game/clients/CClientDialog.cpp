@@ -12,7 +12,7 @@
 #include "CClient.h"
 
 
-bool CClient::Dialog_Setup( CLIMODE_TYPE mode, const CResourceID& rid, int iPage, CObjBase * pObj, lpctstr Arguments )
+bool CClient::Dialog_Setup(const CLIMODE_TYPE mode, const CResourceID& rid, const int iPage, CObjBase * pObj, const lpctstr Arguments )
 {
 	ADDTOCALLSTACK("CClient::Dialog_Setup");
 	if ( pObj == nullptr )
@@ -50,7 +50,7 @@ bool CClient::Dialog_Setup( CLIMODE_TYPE mode, const CResourceID& rid, int iPage
 }
 
 
-void CClient::addGumpInputVal( bool fCancel, INPVAL_STYLE style,
+void CClient::addGumpInputVal( bool fCancel, const INPVAL_STYLE style,
 	dword iMaxLength,
 	lpctstr pszText1,
 	lpctstr pszText2, const CObjBase * pObj )
@@ -80,8 +80,7 @@ void CClient::addGumpInputVal( bool fCancel, INPVAL_STYLE style,
 }
 
 void
-CClient::addGumpDialog( CLIMODE_TYPE mode, std::vector<CSString> const* vsControls, std::vector<CSString> const* vsText,
-    int x, int y, CObjBase * pObj, dword dwRid)
+CClient::addGumpDialog(const CLIMODE_TYPE mode, std::vector<CSString> const* vsControls, std::vector<CSString> const* vsText, const int x, const int y, const CObjBase * pObj, const dword dwRid)
 {
 	ADDTOCALLSTACK("CClient::addGumpDialog");
 	// Add a generic GUMP menu.
@@ -191,7 +190,7 @@ TRIGRET_TYPE CClient::Dialog_OnButton(const CResourceID& rid, dword dwButtonID, 
 	return TRIGRET_ENDIF;
 }
 
-bool CClient::Dialog_Close( CObjBase * pObj, dword dwRid, int buttonID )
+bool CClient::Dialog_Close( CObjBase * pObj, const dword dwRid, const int buttonID )
 {
 	ADDTOCALLSTACK("CClient::Dialog_Close");
 
@@ -223,7 +222,7 @@ bool CClient::Dialog_Close( CObjBase * pObj, dword dwRid, int buttonID )
 	return true;
 }
 
-TRIGRET_TYPE CClient::Menu_OnSelect( const CResourceID& rid, int iSelect, CObjBase * pObj ) // Menus for general purpose
+TRIGRET_TYPE CClient::Menu_OnSelect( const CResourceID& rid, const int iSelect, CObjBase * pObj ) // Menus for general purpose
 {
 	ADDTOCALLSTACK("CClient::Menu_OnSelect");
 	// A select was made. so run the script.

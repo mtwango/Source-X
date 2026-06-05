@@ -55,7 +55,7 @@ STONEPRIV_TYPE CStoneMember::GetPriv() const
 	//ADDTOCALLSTACK("CStoneMember::GetPriv");
 	return m_iPriv;
 }
-void CStoneMember::SetPriv(STONEPRIV_TYPE iPriv)
+void CStoneMember::SetPriv(const STONEPRIV_TYPE iPriv)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetPriv");
 	m_iPriv = iPriv;
@@ -72,7 +72,7 @@ bool CStoneMember::IsPrivMember() const
 }
 
 // If the member is really a alliance flag (STONEPRIV_ALLY)
-void CStoneMember::SetWeDeclaredAlly(bool f)
+void CStoneMember::SetWeDeclaredAlly(const bool f)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetWeDeclaredAlly");
 	m_Ally.m_fWeDeclared = f;
@@ -82,7 +82,7 @@ bool CStoneMember::GetWeDeclaredAlly() const
 	//ADDTOCALLSTACK("CStoneMember::GetWeDeclaredAlly");
 	return m_Ally.m_fWeDeclared ? true : false;
 }
-void CStoneMember::SetTheyDeclaredAlly(bool f)
+void CStoneMember::SetTheyDeclaredAlly(const bool f)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetTheyDeclaredAlly");
 	m_Ally.m_fTheyDeclared = f;
@@ -94,7 +94,7 @@ bool CStoneMember::GetTheyDeclaredAlly() const
 }
 
 // If the member is really a war flag (STONEPRIV_ENEMY)
-void CStoneMember::SetWeDeclaredWar(bool f)
+void CStoneMember::SetWeDeclaredWar(const bool f)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetWeDeclaredWar");
 	m_Enemy.m_fWeDeclared = f;
@@ -104,7 +104,7 @@ bool CStoneMember::GetWeDeclaredWar() const
 	//ADDTOCALLSTACK("CStoneMember::GetWeDeclaredWar");
 	return ( m_Enemy.m_fWeDeclared ) ? true : false;
 }
-void CStoneMember::SetTheyDeclaredWar(bool f)
+void CStoneMember::SetTheyDeclaredWar(const bool f)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetTheyDeclaredWar");
 	m_Enemy.m_fTheyDeclared = f;
@@ -125,7 +125,7 @@ void CStoneMember::ToggleAbbrev()
 	//ADDTOCALLSTACK("CStoneMember::ToggleAbbrev");
 	m_Member.m_fAbbrev = !m_Member.m_fAbbrev;
 }
-void CStoneMember::SetAbbrev(bool mode)
+void CStoneMember::SetAbbrev(const bool mode)
 {
 	//ADDTOCALLSTACK("CStoneMember::SetAbbrev");
 	m_Member.m_fAbbrev = mode;
@@ -136,7 +136,7 @@ lpctstr CStoneMember::GetTitle() const
 	//ADDTOCALLSTACK("CStoneMember::GetTitle");
 	return m_sTitle;
 }
-void CStoneMember::SetTitle( lpctstr pTitle )
+void CStoneMember::SetTitle(const lpctstr pTitle )
 {
 	//ADDTOCALLSTACK("CStoneMember::SetTitle");
 	m_sTitle = pTitle;
@@ -153,7 +153,7 @@ int CStoneMember::GetAccountGold() const
 	//ADDTOCALLSTACK("CStoneMember::GetAccountGold");
 	return m_Member.m_iAccountGold;
 }
-void CStoneMember::SetAccountGold( int iGold )
+void CStoneMember::SetAccountGold(const int iGold )
 {
 	//ADDTOCALLSTACK("CStoneMember::SetAccountGold");
 	m_Member.m_iAccountGold = iGold;
@@ -282,7 +282,7 @@ bool CStoneMember::r_LoadVal( CScript & s ) // Load an item Script
 }
 
 
-bool CStoneMember::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CStoneMember::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CStoneMember::r_WriteVal");

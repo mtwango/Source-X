@@ -676,11 +676,11 @@ public:
   */
 	HUE_TYPE GetHueVisible() const;
 
-	void SetAttr(uint64 uiAttr) noexcept
+	void SetAttr(const uint64 uiAttr) noexcept
 	{
 		m_Attr |= uiAttr;
 	}
-	void ClrAttr(uint64 uiAttr) noexcept
+	void ClrAttr(const uint64 uiAttr) noexcept
 	{
 		m_Attr &= ~uiAttr;
 	}
@@ -688,20 +688,20 @@ public:
     {
         return m_Attr;
     }
-	bool IsAttr(uint64 uiAttr) const noexcept
+	bool IsAttr(const uint64 uiAttr) const noexcept
 	{
         // true even if only one flag among those passed is present
-		return (m_Attr & uiAttr);
+		return m_Attr & uiAttr;
 	}
-	void SetCanUse(uint64 uiCanUse) noexcept
+	void SetCanUse(const uint64 uiCanUse) noexcept
 	{
 		m_CanUse |= uiCanUse;
 	}
-	void ClrCanUse(uint64 uiCanUse) noexcept
+	void ClrCanUse(const uint64 uiCanUse) noexcept
 	{
 		m_CanUse &= ~uiCanUse;
 	}
-	bool IsCanUse(uint64 uiCanUse) const noexcept
+	bool IsCanUse(const uint64 uiCanUse) const noexcept
 	{
         // true even if only one flag among those passed is present
         return (m_CanUse & uiCanUse);
@@ -714,11 +714,11 @@ public:
 
 	int64  GetDecayTime() const;
 	void SetDecayTime(int64 iMsecsTimeout, bool fOverrideAlways = false);
-    void SetDecayTimeD(int64 iTenthsTimeout, bool fOverrideAlways = false)
+    void SetDecayTimeD(const int64 iTenthsTimeout, const bool fOverrideAlways = false)
     {
         SetDecayTime(iTenthsTimeout * MSECS_PER_TENTH, fOverrideAlways);
     }
-    void SetDecayTimeS(int64 iSecondsTimeout, bool fOverrideAlways = false)
+    void SetDecayTimeS(const int64 iSecondsTimeout, const bool fOverrideAlways = false)
     {
         SetDecayTime(iSecondsTimeout * MSECS_PER_SEC, fOverrideAlways);
     }
@@ -786,7 +786,7 @@ public:
 	uchar GetContainedGridIndex() const noexcept {
 		return m_containedGridIndex;
 	}
-	void SetContainedGridIndex(uchar index) noexcept {
+	void SetContainedGridIndex(const uchar index) noexcept {
 		m_containedGridIndex = index;
 	}
 
@@ -828,8 +828,8 @@ public:
     TRIGRET_TYPE OnTrigger( ITRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc );
 
 	// Item type specific stuff.
-    bool IsType(IT_TYPE type) const noexcept {
-        return ( m_type == type );
+    bool IsType(const IT_TYPE type) const noexcept {
+        return m_type == type;
     }
     IT_TYPE GetType() const noexcept {
         return m_type;
@@ -849,7 +849,7 @@ public:
 
 	bool IsResourceMatch( const CResourceID& rid, dword dwArg ) const override;
 
-	bool IsValidLockLink( CItem * pItemLock ) const;
+	bool IsValidLockLink(const CItem * pItemLock ) const;
 	bool IsValidLockUID() const;
 	bool IsKeyLockFit( dword dwLockUID ) const;
 
@@ -873,13 +873,13 @@ public:
 	bool Use_Portculis();
 	SOUND_TYPE Use_Music( bool fWell ) const;
 
-	bool SetMagicLock( CChar * pCharSrc, int iSkillLevel );
+	bool SetMagicLock(const CChar * pCharSrc, int iSkillLevel );
 	void SetSwitchState();
 	void SetTrapState( IT_TYPE state, ITEMID_TYPE id, int iTimeSec );
 	int Use_Trap();
 	bool Use_Light();
 	int Use_LockPick( CChar * pCharSrc, bool fTest, bool fFail );
-	lpctstr Use_SpyGlass( CChar * pUser ) const;
+	lpctstr Use_SpyGlass(const CChar * pUser ) const;
 	lpctstr Use_Sextant(const CPointMap &pntCoords ) const;
 
 	bool IsBookWritable() const;

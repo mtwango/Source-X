@@ -10,7 +10,7 @@
 const char *
 CResourceLock::m_sClassName = "CResourceLock";
 
-bool CResourceLock::_Open(lpctstr ptcUnused, uint uiUnused)
+bool CResourceLock::_Open(const lpctstr ptcUnused, const uint uiUnused)
 {
     ADDTOCALLSTACK("CResourceLock::_Open");
     UnreferencedParameter(ptcUnused);
@@ -30,7 +30,7 @@ bool CResourceLock::_Open(lpctstr ptcUnused, uint uiUnused)
     m_PrvScriptContext._OpenScript( this );
     return true;
 }
-bool CResourceLock::Open(lpctstr ptcUnused, uint uiUnused)
+bool CResourceLock::Open(const lpctstr ptcUnused, const uint uiUnused)
 {
     ADDTOCALLSTACK("CResourceLock::Open");
     MT_UNIQUE_LOCK_RETURN(this, CResourceLock::_Open(ptcUnused, uiUnused));
@@ -64,7 +64,7 @@ void CResourceLock::Close()
     CResourceLock::_Close();
 }
 
-bool CResourceLock::_ReadTextLine( bool fRemoveBlanks ) // Read a line from the opened script file
+bool CResourceLock::_ReadTextLine(const bool fRemoveBlanks ) // Read a line from the opened script file
 {
     // ARGS:
     // fRemoveBlanks = Don't report any blank lines, (just keep reading)
@@ -93,13 +93,13 @@ bool CResourceLock::_ReadTextLine( bool fRemoveBlanks ) // Read a line from the 
     EXC_CATCH;
     return false;
 }
-bool CResourceLock::ReadTextLine( bool fRemoveBlanks ) // Read a line from the opened script file
+bool CResourceLock::ReadTextLine(const bool fRemoveBlanks ) // Read a line from the opened script file
 {
     //ADDTOCALLSTACK_DEBUG("CResourceLock::ReadTextLine");
     MT_UNIQUE_LOCK_RETURN(this, CResourceLock::_ReadTextLine(fRemoveBlanks));
 }
 
-int CResourceLock::OpenLock( CResourceScript * pLock, CScriptLineContext context )
+int CResourceLock::OpenLock( CResourceScript * pLock, const CScriptLineContext context )
 {
     ADDTOCALLSTACK("CResourceLock::OpenLock");
     // ONLY called from CResourceLink

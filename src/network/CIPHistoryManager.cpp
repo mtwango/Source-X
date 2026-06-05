@@ -28,7 +28,7 @@ bool HistoryIP::checkPing()
     return (m_fBlocked || (m_iPings++ >= g_Cfg.m_iNetMaxPings));
 }
 
-void HistoryIP::setBlocked(bool isBlocked, int64 timeoutSeconds)
+void HistoryIP::setBlocked(const bool isBlocked, int64 timeoutSeconds)
 {
     // block ip
     ADDTOCALLSTACK("HistoryIP:setBlocked");

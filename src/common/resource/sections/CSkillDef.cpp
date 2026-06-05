@@ -72,7 +72,7 @@ lpctstr const CSkillDef::sm_szLoadKeys[SKC_QTY+1] =
     nullptr
 };
 
-CSkillDef::CSkillDef( SKILL_TYPE iSkill ) :
+CSkillDef::CSkillDef(const SKILL_TYPE iSkill ) :
     CResourceLink( CResourceID( RES_SKILL, iSkill ))
 {
     m_StatPercent	= 0;
@@ -85,7 +85,7 @@ CSkillDef::CSkillDef( SKILL_TYPE iSkill ) :
     m_AdvRate.Init();
 }
 
-bool CSkillDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSkillDef::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CSkillDef::r_WriteVal");

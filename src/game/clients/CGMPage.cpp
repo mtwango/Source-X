@@ -9,7 +9,7 @@
 //////////////////////////////////////////////////////////////////
 // -CGMPage
 
-CGMPage::CGMPage( lpctstr pszAccount )
+CGMPage::CGMPage(const lpctstr pszAccount )
 {
 	m_pClientHandling = nullptr;
 	m_sAccount = pszAccount;
@@ -80,7 +80,7 @@ lpctstr const CGMPage::sm_szLoadKeys[GC_QTY + 1] =
 };
 
 
-bool CGMPage::r_WriteVal(lpctstr pszKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CGMPage::r_WriteVal(const lpctstr pszKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     UnreferencedParameter(fNoCallParent);

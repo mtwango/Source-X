@@ -15,7 +15,7 @@ const CServerTime& CWorldGameTime::GetCurrentTime() noexcept // static
 }
 
 
-int64 CWorldGameTime::GetCurrentTimeInGameMinutes( int64 basetime ) noexcept // static
+int64 CWorldGameTime::GetCurrentTimeInGameMinutes(const int64 basetime ) noexcept // static
 {
 	// Get the time of the day in GameWorld minutes.
     // basetime = ticks.
@@ -32,7 +32,7 @@ int64 CWorldGameTime::GetCurrentTimeInGameMinutes() noexcept // static
 }
 
 
-int64 CWorldGameTime::GetNextNewMoon( bool fMoonIndex ) // static
+int64 CWorldGameTime::GetNextNewMoon(const bool fMoonIndex ) // static
 {
 	ADDTOCALLSTACK("CWorldGameTime::GetNextNewMoon");
 	// "Predict" the next new moon for this moon
@@ -48,7 +48,7 @@ int64 CWorldGameTime::GetNextNewMoon( bool fMoonIndex ) // static
 
 }
 
-uint CWorldGameTime::GetMoonPhase(bool fMoonIndex) // static
+uint CWorldGameTime::GetMoonPhase(const bool fMoonIndex) // static
 {
 	ADDTOCALLSTACK("CWorldGameTime::GetMoonPhase");
 	// bMoonIndex is FALSE if we are looking for the phase of Trammel,

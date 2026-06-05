@@ -63,7 +63,7 @@ void CSFileObj::SetDefaultMode()
     _fRead = true; _fWrite = true;
 }
 
-tchar * CSFileObj::GetReadBuffer(bool fDelete)
+tchar * CSFileObj::GetReadBuffer(const bool fDelete)
 {
     ADDTOCALLSTACK("CSFileObj::GetReadBuffer");
     if ( fDelete )
@@ -221,7 +221,7 @@ bool CSFileObj::r_LoadVal( CScript & s )
     return false;
 }
 
-bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(pSrc);
     UnreferencedParameter(fNoCallParent);
@@ -505,7 +505,7 @@ bool CSFileObj::r_Verb( CScript & s, CTextConsole * pSrc )
     return false;
 }
 
-bool CSFileObj::FileOpen( lpctstr sPath )
+bool CSFileObj::FileOpen(const lpctstr sPath )
 {
     ADDTOCALLSTACK("CSFileObj::FileOpen");
     if ( _pFile->IsFileOpen() )

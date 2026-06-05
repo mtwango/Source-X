@@ -897,7 +897,7 @@ public:
      *
      * @return  true if skill flag, false if not.
      */
-	bool IsSkillFlag( SKILL_TYPE index, SKF_TYPE skf ) const
+	bool IsSkillFlag(const SKILL_TYPE index, const SKF_TYPE skf ) const
 	{
 		const CSkillDef * pSkillDef = GetSkillDef( index );
 		return ( pSkillDef && (pSkillDef->m_dwFlags & skf) );
@@ -1030,7 +1030,7 @@ public:
      *
      * @return  The calculated combat chance to parry.
      */
-    int Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry);
+    int Calc_CombatChanceToParry(const CChar * pChar, CItem*& pItemParry);
     /**
      * @brief   Chance to steal and retrieve the item successfully
      *
@@ -1040,7 +1040,7 @@ public:
      *
      * @return  The calculated stealing item.
      */
-	int  Calc_StealingItem( CChar * pCharThief, CItem * pItem, CChar * pCharMark );
+	int  Calc_StealingItem(const CChar * pCharThief, const CItem * pItem, const CChar * pCharMark );
 
     /**
      * @brief   Chance to steal without being seen by a specific person.
@@ -1061,7 +1061,7 @@ public:
      *
      * @return  The calculated fame kill.
      */
-	int Calc_FameKill( CChar * pKill );
+	int Calc_FameKill(const CChar * pKill );
 
     /**
      * @brief   Calculates the karma given or lost by the kill.
@@ -1071,7 +1071,7 @@ public:
      *
      * @return  The calculated karma kill.
      */
-	int Calc_KarmaKill( CChar * pKill, NOTO_TYPE NotoThem );
+	int Calc_KarmaKill(const CChar * pKill, NOTO_TYPE NotoThem );
 
     /**
      * @brief   Scale the karma based on the current level, Should be harder to gain karma than to loose it.
@@ -1104,7 +1104,7 @@ public:
     *
     * @return The mana cost of the spell if any.
     */
-    ushort Calc_SpellManaCost(CChar * pCharCaster, const CSpellDef * pSpell, CObjBase * pObj);
+    ushort Calc_SpellManaCost(CChar * pCharCaster, const CSpellDef * pSpell, const CObjBase * pObj);
 
     /*
     *@brief Calculates tithing cost of a spell, taking in consideration the LowerReagentCost property and if is  being cast by a wand or scroll.
@@ -1115,7 +1115,7 @@ public:
     * @param fTest: Flag that determines when to consume the reagents.
     * @return sl::scont_bad_index() if all the reagents are found, otherwise returns the first missing reagent.
     */
-    size_t Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpellDef* pSpell, CObjBase* pObj, bool fTest = false);
+    size_t Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpellDef* pSpell, const CObjBase * pObj, bool fTest = false);
 
     /*
     *@brief Calculates tithing cost of a spell, taking in consideration the LowerReagentCost property and if is  being cast by a wand or scroll.
@@ -1126,7 +1126,7 @@ public:
     *
     * @return The tithing cost of the spell, could be 0 if the LowerReagentCost check is passed.
     */
-    ushort Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef* pSpell, CObjBase* pObj);
+    ushort Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef* pSpell, const CObjBase * pObj);
 
     /*
     * @brief Calculates the chance of curing a poison effect.

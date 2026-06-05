@@ -29,7 +29,7 @@ int CChar::NPC_GetAiFlags()
 	return (m_pNPC->GetNpcAiFlags(this));
 }
 
-bool CChar::NPC_Vendor_Restock(bool fForce, bool fFillStock)
+bool CChar::NPC_Vendor_Restock(const bool fForce, bool fFillStock)
 {
 	ADDTOCALLSTACK("CChar::NPC_Vendor_Restock");
 	ASSERT(m_pNPC);
@@ -206,7 +206,7 @@ bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
 	return true;
 }
 
-ushort CChar::NPC_OnTrainCheck( CChar * pCharSrc, SKILL_TYPE Skill )
+ushort CChar::NPC_OnTrainCheck(const CChar * pCharSrc, const SKILL_TYPE Skill )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnTrainCheck");
 	ASSERT(m_pNPC);
@@ -318,7 +318,7 @@ bool CChar::NPC_OnTrainPay(CChar *pCharSrc, CItemMemory *pMemory, CItem * pGold)
 	return true;
 }
 
-bool CChar::NPC_TrainSkill( CChar * pCharSrc, SKILL_TYPE skill, ushort uiAmountToTrain )
+bool CChar::NPC_TrainSkill( CChar * pCharSrc, const SKILL_TYPE skill, ushort uiAmountToTrain )
 {
 	ADDTOCALLSTACK("CChar::NPC_TrainSkill");
 	ASSERT(m_pNPC);
@@ -360,7 +360,7 @@ bool CChar::NPC_TrainSkill( CChar * pCharSrc, SKILL_TYPE skill, ushort uiAmountT
 	return true;
 }
 
-bool CChar::NPC_OnTrainHear( CChar * pCharSrc, lpctstr pszCmd )
+bool CChar::NPC_OnTrainHear(const CChar * pCharSrc, const lpctstr pszCmd )
 {
 	ADDTOCALLSTACK("CChar::NPC_OnTrainHear");
 	ASSERT(m_pNPC);

@@ -5,12 +5,12 @@
 
 // ConsoleOutput
 
-ConsoleOutput::ConsoleOutput(ConsoleTextColor iLogColor, lpctstr ptcLogString) noexcept :
+ConsoleOutput::ConsoleOutput(const ConsoleTextColor iLogColor, const lpctstr ptcLogString) noexcept :
     _iTextColor(iLogColor), _sTextString(ptcLogString)
 {
 }
 
-ConsoleOutput::ConsoleOutput(lpctstr ptcLogString) noexcept :
+ConsoleOutput::ConsoleOutput(const lpctstr ptcLogString) noexcept :
     _iTextColor(CTCOL_DEFAULT), _sTextString(ptcLogString)
 {
 }
@@ -18,11 +18,11 @@ ConsoleOutput::ConsoleOutput(lpctstr ptcLogString) noexcept :
 
 // ConsoleInterface
 
-uint ConsoleInterface::CTColToRGB(ConsoleTextColor color) noexcept // static
+uint ConsoleInterface::CTColToRGB(const ConsoleTextColor color) noexcept // static
 {
-    auto MakeRGB = [](uchar r, uchar g, uchar b) -> uint
+    auto MakeRGB = [](const uchar r, const uchar g, const uchar b) -> uint
     {
-        return ((uint)r | (g << 8) | (b << 16));
+        return (static_cast<uint>(r) | (g << 8) | (b << 16));
     };
     switch (color)
     {

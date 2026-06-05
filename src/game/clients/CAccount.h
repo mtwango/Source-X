@@ -207,13 +207,13 @@ public:
 	* @brief Sets the resdisp on this CAccount based on pClient version.
 	* @return true if success, false otherwise.
 	*/
-	bool SetAutoResDisp(CClient *pClient);
+	bool SetAutoResDisp(const CClient *pClient);
 	/**
 	* @brief Check the current resdisp.
 	* @param what the resdisp to check.
 	* @return true if the current resdisp is equal to what, false otherwise.
 	*/
-    bool IsResDisp(RESDISPLAY_VERSION what) const { return ( m_ResDisp == what ); }
+    bool IsResDisp(const RESDISPLAY_VERSION what) const { return m_ResDisp == what; }
 
 	/************************************************************************
 	* Privileges related section.
@@ -239,17 +239,17 @@ public:
 	* @param wPrivFlags Privilege flags to test.
 	* @return true if all the flags are set, false otherwise.
 	*/
-	bool IsPriv( word wPrivFlags ) const { return (m_PrivFlags & wPrivFlags) != 0; }
+	bool IsPriv(const word wPrivFlags ) const { return (m_PrivFlags & wPrivFlags) != 0; }
 	/**
 	* @brief Set the privileges flags specified.
 	* @param wPrivFlags flags to set.
 	*/
-	void SetPrivFlags( word wPrivFlags ) { m_PrivFlags |= wPrivFlags; }
+	void SetPrivFlags(const word wPrivFlags ) { m_PrivFlags |= wPrivFlags; }
 	/**
 	* @brief Unset the privileges flags specified.
 	* @param wPrivFlags flags to unset.
 	*/
-	void ClearPrivFlags( word wPrivFlags ) { m_PrivFlags &= ~wPrivFlags; }
+	void ClearPrivFlags(const word wPrivFlags ) { m_PrivFlags &= ~wPrivFlags; }
 	/**
 	* @brief Operate with privilege flags.
 	* If pszArgs is empty, only intersection privileges with wPrivFlags are set.
@@ -276,7 +276,7 @@ public:
 	* @param pClient client logging out from this CAccount.
 	* @param fWasChar true if is logged with a CChar.
 	*/
-	void OnLogout(CClient *pClient, bool fWasChar = false);
+	void OnLogout(const CClient *pClient, bool fWasChar = false);
 	/**
 	* @brief Kick / Ban a player.
 	* Only if plevel of CAccount is higher than SRC plevel, do not kick or ban.
@@ -311,13 +311,13 @@ public:
 	* @param pChar to detach.
 	* @return TODOC.
 	*/
-	size_t DetachChar( CChar * pChar );
+	size_t DetachChar(const CChar * pChar );
 	/**
 	* @brief Link the CChar to this CAccount.
 	* @param pChar CChar to link.
 	* @return TODOC.
 	*/
-	size_t AttachChar( CChar * pChar );
+	size_t AttachChar(const CChar * pChar );
 	/**
 	* @brief Removes all chars from this CAccount.
 	* If client is connected, kicks it.
@@ -369,7 +369,7 @@ private:
 	* @param md5 true if we need md5 to store the password.
 	* @return true if CAccount creation is success, false otherwise.
 	*/
-	bool Cmd_AddNew( CTextConsole * pSrc, lpctstr pszName, lpctstr ptcArg, bool md5=false );
+	bool Cmd_AddNew(const CTextConsole * pSrc, lpctstr pszName, lpctstr ptcArg, bool md5=false );
 	/**
 	* @brief Do something to all the unused accounts.
 	* First check for accounts with an inactivity of greater or equal to pszDays. Then perform the action to that accounts.

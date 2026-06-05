@@ -429,7 +429,7 @@ void CItemMultiCustom::CommitChanges(CClient * pClientSrc)
     Update();
 }
 
-void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z, ushort iStairID)
+void CItemMultiCustom::AddItem(CClient * pClientSrc, const ITEMID_TYPE id, const int16 x, const int16 y, int8 z, const ushort iStairID)
 {
     ADDTOCALLSTACK("CItemMultiCustom::AddItem");
     // add an item to the building design at the given location
@@ -580,7 +580,7 @@ void CItemMultiCustom::AddItem(CClient * pClientSrc, ITEMID_TYPE id, int16 x, in
     }
 }
 
-void CItemMultiCustom::AddStairs(CClient * pClientSrc, ITEMID_TYPE id, int16 x, int16 y, int8 z)
+void CItemMultiCustom::AddStairs(CClient * pClientSrc, const ITEMID_TYPE id, const int16 x, const int16 y, int8 z)
 {
     ADDTOCALLSTACK("CItemMultiCustom::AddStairs");
     // add a staircase to the building, the given ID must
@@ -1111,7 +1111,7 @@ uchar CItemMultiCustom::GetLevelCount()
     return 3;
 }
 
-size_t CItemMultiCustom::GetFixtureCount(CDesignDetails * pDesign)
+size_t CItemMultiCustom::GetFixtureCount(const CDesignDetails * pDesign)
 {
     ADDTOCALLSTACK("CItemMultiCustom::GetFixtureCount");
     if (pDesign == nullptr)
@@ -1129,7 +1129,7 @@ size_t CItemMultiCustom::GetFixtureCount(CDesignDetails * pDesign)
     return count;
 }
 
-size_t CItemMultiCustom::GetComponentsAt(int16 x, int16 y, int8 z, CMultiComponent ** pComponents, CDesignDetails * pDesign)
+size_t CItemMultiCustom::GetComponentsAt(int16 x, int16 y, int8 z, CMultiComponent ** pComponents, const CDesignDetails * pDesign)
 {
     ADDTOCALLSTACK("CItemMultiCustom::GetComponentsAt");
     // find a list of components that are located at the given
@@ -1161,7 +1161,7 @@ CPointMap CItemMultiCustom::GetComponentPoint(const CMultiComponent * pComp) con
     return GetComponentPoint(pComp->m_item.m_dx, pComp->m_item.m_dy, (char)(pComp->m_item.m_dz));
 }
 
-CPointMap CItemMultiCustom::GetComponentPoint(int16 dx, int16 dy, int8 dz) const
+CPointMap CItemMultiCustom::GetComponentPoint(const int16 dx, const int16 dy, const int8 dz) const
 {
     ADDTOCALLSTACK("CItemMultiCustom::GetComponentPoint");
     // return the real world location from the given offset
@@ -1237,7 +1237,7 @@ const CRect CItemMultiCustom::GetDesignArea()
     return rect;
 }
 
-void CItemMultiCustom::DeleteComponent(const CUID& uidComponent, bool fRemoveFromList)
+void CItemMultiCustom::DeleteComponent(const CUID& uidComponent, const bool fRemoveFromList)
 {
     /* The code below should remove the item from the m_mainDesign, however it's not being deleted from there even if the world item is
         So, in the next customize, the item will appear again.
@@ -1291,7 +1291,7 @@ void CItemMultiCustom::CopyDesign(CDesignDetails * designFrom, CDesignDetails * 
     }
 }
 
-void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<CUID> &vList)
+void CItemMultiCustom::GetLockdownsAt(const int16 dx, const int16 dy, const int8 dz, std::vector<CUID> &vList)
 {
     if (_lLockDowns.empty())
     {
@@ -1317,7 +1317,7 @@ void CItemMultiCustom::GetLockdownsAt(int16 dx, int16 dy, int8 dz, std::vector<C
     }
 }
 
-void CItemMultiCustom::GetSecuredAt(int16 dx, int16 dy, int8 dz, std::vector<CUID> &vList)
+void CItemMultiCustom::GetSecuredAt(const int16 dx, const int16 dy, const int8 dz, std::vector<CUID> &vList)
 {
     if (_lSecureContainers.empty())
     {
@@ -1351,9 +1351,9 @@ int8 CItemMultiCustom::CalculateLevel(int8 z)
     return z;
 }
 
-void CItemMultiCustom::ClearFloor(int8 iFloor)
+void CItemMultiCustom::ClearFloor(const int8 iFloor)
 {
-    int8 iBaseZ = GetTopPoint().m_z + (iFloor * 20) + 6;
+    const int8 iBaseZ = GetTopPoint().m_z + (iFloor * 20) + 6;
     const int16 iMaxZ = iBaseZ + 19;
     const int16 iMinZ = iBaseZ;
     const auto pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
@@ -1737,7 +1737,7 @@ lpctstr const CItemMultiCustom::sm_szLoadKeys[IMCC_QTY + 1] = // static
     nullptr
 };
 
-bool CItemMultiCustom::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemMultiCustom::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemMultiCustom::r_WriteVal");
@@ -1871,7 +1871,7 @@ bool CItemMultiCustom::r_LoadVal(CScript & s)
     return false;
 }
 
-uint8 CItemMultiCustom::GetPlane(int8 z)
+uint8 CItemMultiCustom::GetPlane(const int8 z)
 {
     if (z >= 67)
         return 4;
@@ -1890,12 +1890,12 @@ uint8 CItemMultiCustom::GetPlane(const CMultiComponent * pComponent)
     return GetPlane(n16_narrow_n8(pComponent->m_item.m_dz));
 }
 
-int8 CItemMultiCustom::GetPlaneZ(uint8 plane)
+int8 CItemMultiCustom::GetPlaneZ(const uint8 plane)
 {
     return n32_narrow_n8_checked(7 + ((plane - 1) * 20), true);
 }
 
-bool CItemMultiCustom::IsValidItem(ITEMID_TYPE id, CClient * pClientSrc, bool fMulti)
+bool CItemMultiCustom::IsValidItem(const ITEMID_TYPE id, const CClient * pClientSrc, const bool fMulti)
 {
     ADDTOCALLSTACK("CItemMultiCustom::IsValidItem");
     if (!fMulti && (id <= 0 || id >= ITEMID_MULTI))
@@ -2058,9 +2058,9 @@ bool CItemMultiCustom::LoadValidItems()
     return false;
 }
 
-void CItemMultiCustom::CSphereMultiCustom::LoadFrom(CDesignDetails * pDesign)
+void CItemMultiCustom::CSphereMultiCustom::LoadFrom(const CDesignDetails * pDesign)
 {
-    m_iItemQty = (uint)pDesign->m_vectorComponents.size();
+    m_iItemQty = static_cast<uint>(pDesign->m_vectorComponents.size());
 
     m_pItems = new CUOMultiItemRec_HS[m_iItemQty];
     for (uint i = 0; i < m_iItemQty; ++i)

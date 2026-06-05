@@ -6,7 +6,7 @@
 //////////////////////////////////////
 // -CItemScript
 
-CItemScript::CItemScript( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemScript::CItemScript(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
     CItemVendable( id, pItemDef )
 {
@@ -37,7 +37,7 @@ void CItemScript::r_Write(CScript & s)
     CItemVendable::r_Write(s);
 }
 
-bool CItemScript::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemScript::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemScript::r_WriteVal");

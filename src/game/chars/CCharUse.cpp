@@ -198,7 +198,7 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 		pCorpse->SetTimeout(0);		// reset corpse timer to make it turn bones
 }
 
-void CChar::Use_MoonGate( CItem * pItem )
+void CChar::Use_MoonGate(const CItem * pItem )
 {
 	ADDTOCALLSTACK("CChar::Use_MoonGate");
 	ASSERT(pItem);
@@ -305,7 +305,7 @@ bool CChar::Use_Kindling( CItem * pKindling )
 	return true;
 }
 
-bool CChar::Use_Cannon_Feed( CItem * pCannon, CItem * pFeed )
+bool CChar::Use_Cannon_Feed( CItem * pCannon, const CItem * pFeed )
 {
 	ADDTOCALLSTACK("CChar::Use_Cannon_Feed");
 	if ( pFeed && pCannon && pCannon->IsType(IT_CANNON_MUZZLE) )
@@ -344,7 +344,7 @@ bool CChar::Use_Cannon_Feed( CItem * pCannon, CItem * pFeed )
 	return false;
 }
 
-bool CChar::Use_Train_Dummy( CItem * pItem, bool fSetup )
+bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
 {
 	ADDTOCALLSTACK("CChar::Use_Train_Dummy");
 	// IT_TRAIN_DUMMY
@@ -403,7 +403,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, bool fSetup )
 	return true;
 }
 
-bool CChar::Use_Train_PickPocketDip( CItem * pItem, bool fSetup )
+bool CChar::Use_Train_PickPocketDip( CItem * pItem, const bool fSetup )
 {
 	ADDTOCALLSTACK("CChar::Use_Train_PickPocketDip");
 	// IT_TRAIN_PICKPOCKET
@@ -459,7 +459,7 @@ bool CChar::Use_Train_PickPocketDip( CItem * pItem, bool fSetup )
 	return true;
 }
 
-bool CChar::Use_Train_ArcheryButte( CItem * pButte, bool fSetup )
+bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 {
 	ADDTOCALLSTACK("CChar::Use_Train_ArcheryButte");
 	// IT_ARCHERY_BUTTE
@@ -711,7 +711,7 @@ bool CChar::Use_Item_Web( CItem * pItemWeb )
 	return true;
 }
 
-int CChar::Use_PlayMusic( CItem * pInstrument, int iDifficultyToPlay )
+int CChar::Use_PlayMusic(const CItem * pInstrument, const int iDifficultyToPlay )
 {
 	ADDTOCALLSTACK("CChar::Use_PlayMusic");
 	// SKILL_ENTICEMENT, SKILL_MUSICIANSHIP,
@@ -920,7 +920,7 @@ void CChar::Use_EatQty( CItem * pFood, ushort uiQty )
 	pFood->ConsumeAmount(uiQty);
 }
 
-bool CChar::Use_Eat( CItem * pItemFood, ushort uiQty )
+bool CChar::Use_Eat( CItem * pItemFood, const ushort uiQty )
 {
 	ADDTOCALLSTACK("CChar::Use_Eat");
 	// What we can eat should depend on body type.
@@ -1115,7 +1115,7 @@ void CChar::Use_Drink( CItem * pItem )
     }
 }
 
-CChar * CChar::Use_Figurine( CItem * pItem, bool fCheckFollowerSlots )
+CChar * CChar::Use_Figurine( CItem * pItem, const bool fCheckFollowerSlots )
 {
 	ADDTOCALLSTACK("CChar::Use_Figurine");
 	// NOTE: The figurine is NOT destroyed.
@@ -1131,7 +1131,7 @@ CChar * CChar::Use_Figurine( CItem * pItem, bool fCheckFollowerSlots )
 
     std::optional<short> iFollowerSlots;
     const bool fShouldCheckFollowerSlots = (fCheckFollowerSlots && IsSetOF(OF_PetSlots));
-    auto _CheckFollowerSlots = [this](short iFollowerSlots_) -> bool
+    auto _CheckFollowerSlots = [this](const short iFollowerSlots_) -> bool
     {
             if ( !FollowersUpdate(this, iFollowerSlots_, true) )
             {
@@ -1230,7 +1230,7 @@ short CChar::GetCurFollowers() const
         });
 }
 
-bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, bool fCheckOnly )
+bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, const bool fCheckOnly )
 {
 	ADDTOCALLSTACK("CChar::FollowersUpdate");
 	// Attemp to update followers on this character based on pChar
@@ -1463,7 +1463,7 @@ bool CChar::Use_KeyChange( CItem * pItemTarg )
 	return true;
 }
 
-bool CChar::Use_Seed( CItem * pSeed, CPointMap * pPoint )
+bool CChar::Use_Seed( CItem * pSeed, const CPointMap * pPoint )
 {
 	ADDTOCALLSTACK("CChar::Use_Seed");
 	// Use the seed at the current point on the ground or some new point that i can touch.
@@ -1570,7 +1570,7 @@ bool CChar::Use_BedRoll( CItem * pItem )
 	}
 }
 
-int CChar::Do_Use_Item(CItem *pItem, bool fLink)
+int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 {
 	ADDTOCALLSTACK("CChar::Do_Use_Item");
 	if (!pItem)
@@ -1956,7 +1956,7 @@ int CChar::Do_Use_Item(CItem *pItem, bool fLink)
 	return fAction | MASK_RETURN_FOLLOW_LINKS;
 }
 
-bool CChar::Use_Item(CItem *pItem, bool fLink)
+bool CChar::Use_Item(CItem *pItem, const bool fLink)
 {
 	ADDTOCALLSTACK("CChar::Use_Item");
 	int result = Do_Use_Item(pItem, fLink);
@@ -1974,7 +1974,7 @@ bool CChar::Use_Item(CItem *pItem, bool fLink)
 	return (result & ~MASK_RETURN_FOLLOW_LINKS) ? true : false;
 }
 
-bool CChar::Use_Obj( CObjBase * pObj, bool fTestTouch, bool fScript  )
+bool CChar::Use_Obj( CObjBase * pObj, const bool fTestTouch, const bool fScript  )
 {
 	ADDTOCALLSTACK("CChar::Use_Obj");
 	if ( !pObj )
@@ -1989,7 +1989,7 @@ bool CChar::Use_Obj( CObjBase * pObj, bool fTestTouch, bool fScript  )
     return Use_Item(pItem, fTestTouch);
 }
 
-bool CChar::ItemEquipArmor( bool fForce )
+bool CChar::ItemEquipArmor(const bool fForce )
 {
 	ADDTOCALLSTACK("CChar::ItemEquipArmor");
 	// Equip ourselves as best as possible.
@@ -2041,7 +2041,7 @@ bool CChar::ItemEquipArmor( bool fForce )
 	return true;
 }
 
-bool CChar::ItemEquipWeapon( bool fForce )
+bool CChar::ItemEquipWeapon(const bool fForce )
 {
 	ADDTOCALLSTACK("CChar::ItemEquipWeapon");
 	// Find my best weapon and equip it

@@ -268,13 +268,13 @@ skip_guilds:
 	return NOTO_GOOD;
 }
 
-HUE_TYPE CChar::Noto_GetHue(const CChar * pCharViewer, bool fIncog) const
+HUE_TYPE CChar::Noto_GetHue(const CChar * pCharViewer, const bool fIncog) const
 {
 	ADDTOCALLSTACK("CChar::Noto_GetHue");
     if (const CVarDefCont *sVal = GetKey("NAME.HUE", true))
-		return (HUE_TYPE)(sVal->GetValNum());
+		return static_cast<HUE_TYPE>(sVal->GetValNum());
 
-	NOTO_TYPE color = Noto_GetFlag(pCharViewer, fIncog, true, true);
+    const NOTO_TYPE color = Noto_GetFlag(pCharViewer, fIncog, true, true);
 	const CChar *pChar = GetOwner();
 	if (!pChar)
 		pChar = this;
@@ -287,7 +287,7 @@ HUE_TYPE CChar::Noto_GetHue(const CChar * pCharViewer, bool fIncog) const
 	case NOTO_GUILD_WAR:	return g_Cfg.m_iColorNotoGuildWar;	// Orange (enemy guild)
 	case NOTO_EVIL:			return g_Cfg.m_iColorNotoEvil;		// Red
 	case NOTO_INVUL:		return pChar->IsPriv(PRIV_GM) ? g_Cfg.m_iColorNotoInvulGameMaster : g_Cfg.m_iColorNotoInvul;		// Purple / Yellow
-	default:				return ((HUE_TYPE)color > NOTO_INVUL ? (HUE_TYPE)color : g_Cfg.m_iColorNotoDefault);	// Grey
+	default:				return (static_cast<HUE_TYPE>(color) > NOTO_INVUL ? static_cast<HUE_TYPE>(color) : g_Cfg.m_iColorNotoDefault);	// Grey
 	}
 }
 
@@ -378,7 +378,7 @@ void CChar::Noto_Murder()
 		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_Murders, g_Cfg.GetSpellEffect(SPELL_NONE, 0), (int)(g_Cfg.m_iMurderDecayTime/MSECS_PER_TENTH), nullptr);
 }
 
-bool CChar::Noto_Criminal( CChar * pCharViewer, bool fFromSawCrime )
+bool CChar::Noto_Criminal( CChar * pCharViewer, const bool fFromSawCrime )
 {
 	ADDTOCALLSTACK("CChar::Noto_Criminal");
 	if ( m_pNPC || IsPriv(PRIV_GM) )
@@ -422,7 +422,7 @@ bool CChar::Noto_Criminal( CChar * pCharViewer, bool fFromSawCrime )
 	return (retCriminal == TRIGRET_RET_FALSE);
 }
 
-void CChar::Noto_ChangeDeltaMsg( int iDelta, lpctstr pszType )
+void CChar::Noto_ChangeDeltaMsg(const int iDelta, const lpctstr pszType )
 {
 	ADDTOCALLSTACK("CChar::Noto_ChangeDeltaMsg");
 	if ( !iDelta )
@@ -500,7 +500,7 @@ void CChar::Noto_Fame( int iFameChange, CChar* pNPC )
     Noto_ChangeDeltaMsg( (int)GetFame() - iFame, g_Cfg.GetDefaultMsg( DEFMSG_NOTO_FAME ) );
 }
 
-void CChar::Noto_Karma( int iKarmaChange, int iBottom, bool fMessage, CChar* pNPC )
+void CChar::Noto_Karma( int iKarmaChange, int iBottom, const bool fMessage, CChar* pNPC )
 {
 	ADDTOCALLSTACK("CChar::Noto_Karma");
 
@@ -543,7 +543,7 @@ void CChar::Noto_Karma( int iKarmaChange, int iBottom, bool fMessage, CChar* pNP
 	}
 }
 
-void CChar::Noto_Kill(CChar * pKill, int iTotalKillers)
+void CChar::Noto_Kill(CChar * pKill, const int iTotalKillers)
 {
     ADDTOCALLSTACK("CChar::Noto_Kill");
     if (!pKill)
@@ -639,7 +639,7 @@ void CChar::Noto_Kill(CChar * pKill, int iTotalKillers)
     Noto_ChangeNewMsg(iPrvLevel);	// inform any title changes
 }
 
-void CChar::NotoSave_Add( CChar * pChar, NOTO_TYPE value, NOTO_TYPE color  )
+void CChar::NotoSave_Add(const CChar * pChar, const NOTO_TYPE value, const NOTO_TYPE color  )
 {
 	ADDTOCALLSTACK("CChar::NotoSave_Add");
 	if ( !pChar )
@@ -670,7 +670,7 @@ void CChar::NotoSave_Add( CChar * pChar, NOTO_TYPE value, NOTO_TYPE color  )
     });
 }
 
-NOTO_TYPE CChar::NotoSave_GetValue(int id, bool fGetColor )
+NOTO_TYPE CChar::NotoSave_GetValue(const int id, const bool fGetColor )
 {
 	ADDTOCALLSTACK("CChar::NotoSave_GetValue");
 	if ( m_notoSaves.empty() )
@@ -686,7 +686,7 @@ NOTO_TYPE CChar::NotoSave_GetValue(int id, bool fGetColor )
     return refNotoSave.value;
 }
 
-int64 CChar::NotoSave_GetTime( int id )
+int64 CChar::NotoSave_GetTime(const int id )
 {
 	ADDTOCALLSTACK("CChar::NotoSave_GetTime");
 	if ( m_notoSaves.empty() )
@@ -705,7 +705,7 @@ void CChar::NotoSave_Clear()
 		m_notoSaves.clear();
 }
 
-void CChar::NotoSave_Update(bool fCharFullUpdate)
+void CChar::NotoSave_Update(const bool fCharFullUpdate)
 {
 	//ADDTOCALLSTACK_DEBUG("CChar::NotoSave_Update");
     EXC_TRY("NotoSave_Update");
@@ -770,7 +770,7 @@ void CChar::NotoSave_Resend(CChar * pChar)
     }
 }
 
-int CChar::NotoSave_GetID( CChar * pChar ) const
+int CChar::NotoSave_GetID(const CChar * pChar ) const
 {
 	ADDTOCALLSTACK("CChar::NotoSave_GetID(CChar)");
 	if ( !pChar || m_notoSaves.empty() )
@@ -788,7 +788,7 @@ int CChar::NotoSave_GetID( CChar * pChar ) const
 	return -1;
 }
 
-bool CChar::NotoSave_Delete( CChar * pChar )
+bool CChar::NotoSave_Delete(const CChar * pChar )
 {
 	ADDTOCALLSTACK("CChar::NotoSave_Delete");
 	if ( ! pChar )

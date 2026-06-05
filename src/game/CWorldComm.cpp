@@ -16,7 +16,7 @@ static constexpr SOUND_TYPE sm_Sounds_Ghost[] =
 	SOUND_GHOST_5
 };
 
-void CWorldComm::Speak( const CObjBaseTemplate * pSrc, lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font ) // static
+void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font ) // static
 {
 	ADDTOCALLSTACK("CWorldComm::Speak");
 	if ( !pszText || !pszText[0] )
@@ -105,7 +105,7 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, lpctstr pszText, HUE_TYPE
 	}
 }
 
-void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang ) // static
+void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwText, HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang ) // static
 {
 	ADDTOCALLSTACK("CWorldComm::SpeakUNICODE");
 	bool fSpeakAsGhost = false;

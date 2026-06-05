@@ -10,7 +10,7 @@
 #include "../CLog.h"
 #include "CResourceScript.h"
 
-CResourceScript::CResourceScript(lpctstr pszFileName) // explicit
+CResourceScript::CResourceScript(const lpctstr pszFileName) // explicit
 {
     _Init();
     _SetFilePath(pszFileName);
@@ -74,7 +74,7 @@ void CResourceScript::ReSync()
     Close();
 }
 
-bool CResourceScript::Open( lpctstr pszFilename, uint wFlags )
+bool CResourceScript::Open(const lpctstr pszFilename, const uint wFlags )
 {
     ADDTOCALLSTACK("CResourceScript::Open");
     // Open the file if it is not already open for use.

@@ -161,7 +161,7 @@ int64 CTimedObject::_GetTimeoutRaw() const noexcept
     return _iTimeout;
 }
 
-void CTimedObject::_SetTimeoutRaw(int64 iDelayInMsecs) noexcept
+void CTimedObject::_SetTimeoutRaw(const int64 iDelayInMsecs) noexcept
 {
     _iTimeout = iDelayInMsecs;
 }

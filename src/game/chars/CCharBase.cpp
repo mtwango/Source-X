@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////
 // -CCharBase
 
-CCharBase::CCharBase( CREID_TYPE id ) :
+CCharBase::CCharBase(const CREID_TYPE id ) :
 	CBaseBaseDef( CResourceID( RES_CHARDEF, id ))
 {
 	m_iHireDayWage = 0;
@@ -104,7 +104,7 @@ void CCharBase::UnLink()
 }
 
 // Setting the visual "ID" for this.
-bool CCharBase::SetDispID( CREID_TYPE id )
+bool CCharBase::SetDispID(const CREID_TYPE id )
 {
 	ADDTOCALLSTACK("CCharBase::SetDispID");
 	if ( id == GetID())
@@ -130,7 +130,7 @@ bool CCharBase::SetDispID( CREID_TYPE id )
 }
 
 // Setting what do I eat
-void CCharBase::SetFoodType( lpctstr pszFood )
+void CCharBase::SetFoodType(const lpctstr pszFood )
 {
 	ADDTOCALLSTACK("CCharBase::SetFoodType");
   	m_FoodType.Load( pszFood );
@@ -160,7 +160,7 @@ lpctstr const CCharBase::sm_szLoadKeys[CBC_QTY+1] =
 	nullptr
 };
 
-bool CCharBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CCharBase::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	ADDTOCALLSTACK("CCharBase::r_WriteVal");
     EXC_TRY("WriteVal");
@@ -529,35 +529,35 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
 	return pBase;
 }
 
-bool CCharBase::IsValidDispID( CREID_TYPE id ) noexcept //  static
+bool CCharBase::IsValidDispID(const CREID_TYPE id ) noexcept //  static
 {
     return( id > CREID_INVALID && id < CREID_QTY );
 }
 
-bool CCharBase::IsPlayableID( CREID_TYPE id, bool bCheckGhost) noexcept
+bool CCharBase::IsPlayableID(const CREID_TYPE id, const bool fCheckGhost) noexcept
 {
-    return ( IsHumanID( id, bCheckGhost) || IsElfID( id, bCheckGhost) || IsGargoyleID( id, bCheckGhost));
+    return ( IsHumanID( id, fCheckGhost) || IsElfID( id, fCheckGhost) || IsGargoyleID( id, fCheckGhost));
 }
 
-bool CCharBase::IsHumanID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
+bool CCharBase::IsHumanID(const CREID_TYPE id, const bool fCheckGhost ) noexcept // static
 {
-    if ( bCheckGhost == true)
+    if ( fCheckGhost == true)
         return( id == CREID_MAN || id == CREID_WOMAN || id == CREID_EQUIP_GM_ROBE  || id == CREID_GHOSTMAN || id == CREID_GHOSTWOMAN);
 
     return (id == CREID_MAN || id == CREID_WOMAN || id == CREID_EQUIP_GM_ROBE);
 }
 
-bool CCharBase::IsElfID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
+bool CCharBase::IsElfID(const CREID_TYPE id, const bool fCheckGhost ) noexcept // static
 {
-    if ( bCheckGhost == true)
+    if ( fCheckGhost == true)
         return( id == CREID_ELFMAN || id == CREID_ELFWOMAN || id == CREID_ELFGHOSTMAN || id == CREID_ELFGHOSTWOMAN);
 
     return (id == CREID_ELFMAN || id == CREID_ELFWOMAN);
 }
 
-bool CCharBase::IsGargoyleID( CREID_TYPE id, bool bCheckGhost ) noexcept // static
+bool CCharBase::IsGargoyleID(const CREID_TYPE id, const bool fCheckGhost ) noexcept // static
 {
-    if ( bCheckGhost == true)
+    if ( fCheckGhost == true)
         return( id == CREID_GARGMAN || id == CREID_GARGWOMAN || id == CREID_GARGGHOSTMAN || id == CREID_GARGGHOSTWOMAN );
 
     return (id == CREID_GARGMAN || id == CREID_GARGWOMAN);

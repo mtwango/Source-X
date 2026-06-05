@@ -80,7 +80,7 @@ public:
      * @param [in,out]  pLocked If non-null, the locked.
      * @return  true if it succeeds, false if it fails.
      */
-	bool ContentFindKeyFor( CItem * pLocked ) const;
+	bool ContentFindKeyFor(const CItem * pLocked ) const;
 	// bool IsItemInside( CItem * pItem ) const;
 
     /**

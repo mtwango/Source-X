@@ -18,7 +18,7 @@ void CUOIndexRec::CopyIndex( const CUOVersionBlock * pVerData )
     m_wVal4 = pVerData->m_wVal4;
 }
 
-void CUOIndexRec::SetupIndex( dword dwOffset, dword dwLength )
+void CUOIndexRec::SetupIndex(const dword dwOffset, const dword dwLength )
 {
     m_dwOffset = dwOffset;
     m_dwLength = dwLength;

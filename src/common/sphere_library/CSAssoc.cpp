@@ -7,7 +7,7 @@
 //***************************************************************************
 // -CValStr
 
-lpctstr CValStr::FindName( int iVal ) const
+lpctstr CValStr::FindName(const int iVal ) const
 {
 	size_t i = 0;
 	ASSERT(this[i].m_pszName != nullptr);
@@ -127,7 +127,7 @@ bool CElementDef::GetValStr( const void * pBase, CSString & sVal ) const
 
 // CSObjListRec:: Constructors, Destructor, Assign operator.
 
-CSStringListRec::CSStringListRec( lpctstr pszVal )
+CSStringListRec::CSStringListRec(const lpctstr pszVal )
     : CSString( pszVal )
 	{ }
 

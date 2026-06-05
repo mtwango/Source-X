@@ -21,7 +21,7 @@
 
 // CSString:: Constructors
 
-CSString::CSString(bool fDefaultInit) :
+CSString::CSString(const bool fDefaultInit) :
     m_pchData(nullptr), m_iLength(0), m_iMaxLength(0)
 {
 #ifdef DEBUG_STRINGS
@@ -33,13 +33,13 @@ CSString::CSString(bool fDefaultInit) :
         InitEmpty(false);
 }
 
-CSString::CSString(lpctstr pStr) :
+CSString::CSString(const lpctstr pStr) :
 	m_pchData(nullptr), m_iLength(0), m_iMaxLength(0)
 {
 	Copy(pStr);
 }
 
-CSString::CSString(lpctstr pStr, int iLen) :
+CSString::CSString(const lpctstr pStr, const int iLen) :
 	m_pchData(nullptr), m_iLength(0), m_iMaxLength(0)
 {
 	CopyLen(pStr, iLen);
@@ -62,7 +62,7 @@ CSString::~CSString() noexcept
 }
 
 // private
-void CSString::InitEmpty(bool fManageBuffer)
+void CSString::InitEmpty(const bool fManageBuffer)
 {
     if (fManageBuffer && IsValid())
     {
@@ -96,7 +96,7 @@ void CSString::InitDefault()
 
 // CSString:: Capacity
 
-void CSString::Clear(bool fResetBuffer) noexcept
+void CSString::Clear(const bool fResetBuffer) noexcept
 {
     if (fResetBuffer)
     {
@@ -122,7 +122,7 @@ bool CSString::IsValid() const noexcept
     return ((m_iMaxLength != 0) && (m_pchData != nullptr));
 }
 
-int CSString::Resize(int iNewLength, bool fPreciseSize)
+int CSString::Resize(const int iNewLength, const bool fPreciseSize)
 {
     // Invalid new length.
     if (iNewLength < 0)
@@ -212,7 +212,7 @@ void CSString::SetValTrue()
 
 // CSString:: Element access
 
-void CSString::SetAt(int nIndex, tchar ch)
+void CSString::SetAt(const int nIndex, const tchar ch)
 {
 	if (!IsValid())
 	{
@@ -230,14 +230,14 @@ void CSString::SetAt(int nIndex, tchar ch)
 
 // CSString:: Modifiers
 
-void CSString::Add(tchar ch)
+void CSString::Add(const tchar ch)
 {
 	const int iLen = m_iLength;
 	Resize(iLen + 1);
 	SetAt(iLen, ch);
 }
 
-void CSString::Add(lpctstr pszStr)
+void CSString::Add(const lpctstr pszStr)
 {
     ASSERT(pszStr);
     if (const int iLenCat = (int)strlen(pszStr))
@@ -278,7 +278,7 @@ void CSString::Copy(lpctstr pszStr)
     Str_CopyLimitNull(m_pchData, pszStr, uiLen + 1);
 }
 
-void CSString::CopyLen(lpctstr pszStr, int iLen)
+void CSString::CopyLen(lpctstr pszStr, const int iLen)
 {
     if (!pszStr)
     {
@@ -312,25 +312,25 @@ const CSString& CSString::operator=(const CSString& s)
 	return *this;
 }
 
-const CSString& CSString::operator=(lpctstr pStr)
+const CSString& CSString::operator=(const lpctstr pStr)
 {
 	Copy(pStr);
 	return *this;
 }
 
-const CSString& CSString::operator+=(lpctstr string)
+const CSString& CSString::operator+=(const lpctstr string)
 {
 	Add(string);
 	return(*this);
 }
 
-const CSString& CSString::operator+=(tchar ch)
+const CSString& CSString::operator+=(const tchar ch)
 {
 	Add(ch);
 	return(*this);
 }
 
-CSString CSString::operator+(lpctstr string)
+CSString CSString::operator+(const lpctstr string)
 {
 	CSString temp(*this);
 	temp += string;
@@ -363,7 +363,7 @@ void CSString::Format(lpctstr pStr, ...)
 	va_end(vargs);
 }
 
-void CSString::FormatV(lpctstr pszFormat, va_list args)
+void CSString::FormatV(const lpctstr pszFormat, const va_list args)
 {
 	TemporaryString tsTemp;
 	vsnprintf(tsTemp.buffer(), tsTemp.capacity(), pszFormat, args);
@@ -374,17 +374,17 @@ void CSString::FormatV(lpctstr pszFormat, va_list args)
     tchar ptcBuf[24]; \
     Copy(function(arg, ptcBuf, sizeof(ptcBuf), base))
 
-void CSString::FormatLLHex(llong iVal)
+void CSString::FormatLLHex(const llong iVal)
 {
     //Format("0%" PRIx64, iVal);
     FORMATNUM_WRAPPER(Str_FromLL_Fast, iVal, 16);
 }
-void CSString::FormatULLHex(ullong uiVal)
+void CSString::FormatULLHex(const ullong uiVal)
 {
     //Format("0%" PRIx64, uiVal);
     FORMATNUM_WRAPPER(Str_FromULL_Fast, uiVal, 16);
 }
-void CSString::FormatHex(dword dwVal)
+void CSString::FormatHex(const dword dwVal)
 {
     // As a general rule, all values in sphere logic are signed...
     // dwVal may contain a (signed) number "big" as the numeric representation of an unsigned ( +(INT_MAX*2) ),
@@ -396,104 +396,104 @@ void CSString::FormatHex(dword dwVal)
     //Format("0%" PRIx32, dwVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, dwVal, 16);
 }
-void CSString::FormatCVal(char iVal)
+void CSString::FormatCVal(const char iVal)
 {
     //Format("%hhd", iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatUCVal(uchar uiVal)
+void CSString::FormatUCVal(const uchar uiVal)
 {
     //Format("%hhu", uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::FormatSVal(short iVal)
+void CSString::FormatSVal(const short iVal)
 {
     //Format("%hd", iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatUSVal(ushort uiVal)
+void CSString::FormatUSVal(const ushort uiVal)
 {
     //Format("%hu", uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::FormatVal(int iVal)
+void CSString::FormatVal(const int iVal)
 {
     //Format("%d", iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatUVal(uint uiVal)
+void CSString::FormatUVal(const uint uiVal)
 {
     //Format("%u", uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::FormatLLVal(llong iVal)
+void CSString::FormatLLVal(const llong iVal)
 {
     //Format("%lld", iVal);
     FORMATNUM_WRAPPER(Str_FromLL_Fast, iVal, 10);
 }
-void CSString::FormatULLVal(ullong uiVal)
+void CSString::FormatULLVal(const ullong uiVal)
 {
     //Format("%llu", uiVal);
     FORMATNUM_WRAPPER(Str_FromULL_Fast, uiVal, 10);
 }
-void CSString::FormatSTVal(size_t uiVal)
+void CSString::FormatSTVal(const size_t uiVal)
 {
     static_assert(sizeof(size_t) <= sizeof(ullong),
         "You can't use FormatSTVal on this architecture (it uses internally Str_FromULL_Fast). Use the old call to Format instead.");
     //Format("%" PRIuSIZE_T, iVal);
     FORMATNUM_WRAPPER(Str_FromULL_Fast, uiVal, 10);
 }
-void CSString::FormatBVal(byte uiVal)
+void CSString::FormatBVal(const byte uiVal)
 {
     //Format("0%" PRIx8, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 16);
 }
-void CSString::FormatWVal(word uiVal)
+void CSString::FormatWVal(const word uiVal)
 {
     //Format("0%" PRIx16, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 16);
 }
-void CSString::FormatDWVal(dword uiVal)
+void CSString::FormatDWVal(const dword uiVal)
 {
     //Format("0%" PRIx32, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 16);
 }
-void CSString::Format8Val(int8 iVal)
+void CSString::Format8Val(const int8 iVal)
 {
     //Format("%" PRId8, iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatU8Val(uint8 uiVal)
+void CSString::FormatU8Val(const uint8 uiVal)
 {
     //Format("%" PRIu8, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::Format16Val(int16 iVal)
+void CSString::Format16Val(const int16 iVal)
 {
     //Format("%" PRId16, iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatU16Val(uint16 uiVal)
+void CSString::FormatU16Val(const uint16 uiVal)
 {
     //Format("%" PRIu16, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::Format32Val(int32 iVal)
+void CSString::Format32Val(const int32 iVal)
 {
     //Format("%" PRId32, iVal);
     FORMATNUM_WRAPPER(Str_FromI_Fast, iVal, 10);
 }
-void CSString::FormatU32Val(uint32 uiVal)
+void CSString::FormatU32Val(const uint32 uiVal)
 {
     //Format("%" PRIu32, uiVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, uiVal, 10);
 }
-void CSString::Format64Val(int64 iVal)
+void CSString::Format64Val(const int64 iVal)
 {
     //Format("%" PRId64, iVal);
     FORMATNUM_WRAPPER(Str_FromLL_Fast, iVal, 10);
 }
-void CSString::FormatU64Val(uint64 uiVal)
+void CSString::FormatU64Val(const uint64 uiVal)
 {
     //Format("%" PRIu64, uiVal);
     FORMATNUM_WRAPPER(Str_FromULL_Fast, uiVal, 10);
@@ -503,14 +503,14 @@ void CSString::FormatU64Val(uint64 uiVal)
 
 // CSString:: String operations
 
-tchar CSString::GetAt(int nIndex) const
+tchar CSString::GetAt(const int nIndex) const
 {
     ASSERT(nIndex >= 0);
     ASSERT(nIndex <= m_iLength);  // Allow to get the null char.
     return m_pchData[nIndex];
 }
 
-tchar& CSString::ReferenceAt(int nIndex)
+tchar& CSString::ReferenceAt(const int nIndex)
 {
     ASSERT(nIndex >= 0);
     ASSERT(nIndex < m_iLength);
@@ -532,17 +532,17 @@ void CSString::Reverse() noexcept
     Str_Reverse(m_pchData);
 }
 
-int CSString::Compare(lpctstr pStr) const noexcept
+int CSString::Compare(const lpctstr pStr) const noexcept
 {
     return strcmp(m_pchData, pStr);
 }
 
-int CSString::CompareNoCase(lpctstr pStr) const noexcept
+int CSString::CompareNoCase(const lpctstr pStr) const noexcept
 {
     return strcmpi(m_pchData, pStr);
 }
 
-int CSString::indexOf(tchar c) noexcept
+int CSString::indexOf(const tchar c) noexcept
 {
     return indexOf(c, 0);
 }
@@ -552,7 +552,7 @@ int CSString::indexOf(const CSString& str) noexcept
     return indexOf(str, 0);
 }
 
-int CSString::lastIndexOf(tchar c) noexcept
+int CSString::lastIndexOf(const tchar c) noexcept
 {
     return lastIndexOf(c, 0);
 }
@@ -562,7 +562,7 @@ int CSString::lastIndexOf(const CSString& str) noexcept
     return lastIndexOf(str, 0);
 }
 
-int CSString::indexOf(tchar c, int offset) noexcept
+int CSString::indexOf(const tchar c, const int offset) noexcept
 {
 	if ((offset < 0) || !IsValid())
 		return -1;
@@ -579,7 +579,7 @@ int CSString::indexOf(tchar c, int offset) noexcept
 	return -1;
 }
 
-int CSString::indexOf(const CSString& str, int offset) noexcept
+int CSString::indexOf(const CSString& str, const int offset) noexcept
 {
 	if ((offset < 0) || !IsValid())
 		return -1;
@@ -627,7 +627,7 @@ int CSString::indexOf(const CSString& str, int offset) noexcept
 	return -1;
 }
 
-int CSString::lastIndexOf(tchar c, int from) noexcept
+int CSString::lastIndexOf(const tchar c, const int from) noexcept
 {
 	if ((from < 0) || !IsValid())
 		return -1;
@@ -644,7 +644,7 @@ int CSString::lastIndexOf(tchar c, int from) noexcept
 	return -1;
 }
 
-int CSString::lastIndexOf(const CSString& str, int from) noexcept
+int CSString::lastIndexOf(const CSString& str, const int from) noexcept
 {
 	if ((from < 0) || !IsValid())
 		return -1;

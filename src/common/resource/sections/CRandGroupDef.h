@@ -44,11 +44,11 @@ public:
     bool r_LoadVal( CScript & s ) override;
     bool r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc = nullptr, bool fNoCallParent = false, bool fNoCallChildren = false ) override;
     size_t GetRandMemberIndex( CChar * pCharSrc = nullptr, bool fTrigger = true ) const;
-    CResourceQty GetMember( size_t i ) const
+    CResourceQty GetMember(const size_t i ) const
     {
         return m_Members[i];
     }
-    CResourceID GetMemberID( size_t i ) const
+    CResourceID GetMemberID(const size_t i ) const
     {
         return m_Members[i].GetResourceID();
     }

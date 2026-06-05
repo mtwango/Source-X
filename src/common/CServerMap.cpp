@@ -45,7 +45,7 @@ int64 CCachedMulItem::GetCacheAge() const
 	return (CWorldGameTime::GetCurrentTime().GetTimeRaw() - m_timeRef );
 }
 
-CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, int iHeight, height_t zHeight ) noexcept :
+CServerMapBlockingState::CServerMapBlockingState(const uint64 uiBlockFlags, int8 z, const int iHeight, const height_t zHeight ) noexcept :
 	m_uiBlockFlags(uiBlockFlags), m_z(z), m_iHeight(iHeight), m_zClimb(0), m_zHeight(zHeight)
 {
 	// m_z = PLAYER_HEIGHT
@@ -67,7 +67,7 @@ CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, i
 	m_zClimbHeight = 0;
 }
 
-CServerMapBlockingState::CServerMapBlockingState( uint64 uiBlockFlags, int8 z, int iHeight, int8 zClimb, height_t zHeight ) noexcept :
+CServerMapBlockingState::CServerMapBlockingState(const uint64 uiBlockFlags, int8 z, const int iHeight, const int8 zClimb, const height_t zHeight ) noexcept :
 	m_uiBlockFlags(uiBlockFlags), m_z(z), m_iHeight(iHeight), m_zClimb(zClimb), m_zHeight(zHeight)
 {
 	m_Top.m_uiBlockFlags = 0;
@@ -175,7 +175,7 @@ bool CServerMapBlockingState::CheckTile( uint64 uiItemBlockFlags, int8 zBottom, 
 	return true;
 }
 
-bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBottom, height_t zHeight, dword dwID ) noexcept
+bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, const int8 zBottom, height_t zHeight, dword dwID ) noexcept
 {
 	//ADDTOCALLSTACK("CServerMapBlockingState::CheckTile_Item");
 	// RETURN:
@@ -262,7 +262,7 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, int8 zBot
 
 }
 
-bool CServerMapBlockingState::CheckTile_Terrain( uint64 uiItemBlockFlags, int8 z, dword dwID ) noexcept
+bool CServerMapBlockingState::CheckTile_Terrain(const uint64 uiItemBlockFlags, const int8 z, const dword dwID ) noexcept
 {
 	//ADDTOCALLSTACK("CServerMapBlockingState::CheckTile_Terrain");
 	// RETURN:
@@ -317,7 +317,7 @@ bool CServerMapBlockingState::CheckTile_Terrain( uint64 uiItemBlockFlags, int8 z
 //////////////////////////////////////////////////////////////////
 // -CServerMapDiffblock
 
-CServerMapDiffBlock::CServerMapDiffBlock(dword dwBlockId, int map)
+CServerMapDiffBlock::CServerMapDiffBlock(const dword dwBlockId, const int map)
 {
 	m_BlockId = dwBlockId;
 	m_map = map;
@@ -339,7 +339,7 @@ CServerMapDiffBlock::~CServerMapDiffBlock()
 //////////////////////////////////////////////////////////////////
 // -CServerMapDiffblockArray
 
-int CServerMapDiffBlockArray::CompareKey( dword id, CServerMapDiffBlock* pBase, bool fNoSpaces ) const
+int CServerMapDiffBlockArray::CompareKey(const dword id, CServerMapDiffBlock* pBase, const bool fNoSpaces ) const
 {
 	UnreferencedParameter(fNoSpaces);
 	ASSERT( pBase );
@@ -361,14 +361,14 @@ CServerStaticsBlock::~CServerStaticsBlock()
         delete[] m_pStatics;
 }
 
-void CServerStaticsBlock::LoadStatics( dword ulBlockIndex, int map )
+void CServerStaticsBlock::LoadStatics(const dword dwBlockIndex, const int map )
 {
 	ADDTOCALLSTACK("CServerStaticsBlock::LoadStatics");
 	// long ulBlockIndex = (bx*(UO_SIZE_Y/UO_BLOCK_SIZE) + by);
 	// NOTE: What is index.m_wVal3 and index.m_wVal4 in VERFILE_STAIDX ?
 	ASSERT( m_iStatics == 0 );
 
-    if (CUOIndexRec index; g_Install.ReadMulIndex(g_Install.m_Staidx[g_MapList.GetMapFileNum(map)], ulBlockIndex, index) )
+    if (CUOIndexRec index; g_Install.ReadMulIndex(g_Install.m_Staidx[g_MapList.GetMapFileNum(map)], dwBlockIndex, index) )
 	{
 		// make sure that the statics block length is valid
 		if ((index.GetBlockLength() % sizeof(CUOStaticItemRec)) != 0)
@@ -405,13 +405,13 @@ void CServerStaticsBlock::LoadStatics(const uint uiCount, const CUOStaticItemRec
 	}
 }
 
-const CUOStaticItemRec * CServerStaticsBlock::GetStatic( uint i ) const
+const CUOStaticItemRec * CServerStaticsBlock::GetStatic(const uint i ) const
 {
     ASSERT( i < m_iStatics );
     return( &m_pStatics[i] );
 }
 
-bool CServerStaticsBlock::IsStaticPoint( uint i, int xo, int yo ) const
+bool CServerStaticsBlock::IsStaticPoint(const uint i, const int xo, const int yo ) const
 {
     ASSERT( (xo >= 0) && (xo < UO_BLOCK_SIZE) );
     ASSERT( (yo >= 0) && (yo < UO_BLOCK_SIZE) );
@@ -424,7 +424,7 @@ bool CServerStaticsBlock::IsStaticPoint( uint i, int xo, int yo ) const
 
 size_t CServerMapBlock::sm_iCount = 0;
 
-void CServerMapBlock::Load( int bx, int by )
+void CServerMapBlock::Load(const int bx, const int by )
 {
 	ADDTOCALLSTACK("CServerMapBlock::Load");
 	// Read in all the statics data for this block.
@@ -533,8 +533,8 @@ void CServerMapBlock::Load( int bx, int by )
 	m_CacheTime.HitCacheTime();		// validate.
 }
 
-CServerMapBlock::CServerMapBlock(int bx, int by, int map) :
-		CPointSort((short)(bx)* UO_BLOCK_SIZE, (short)(by) * UO_BLOCK_SIZE, 0, (uchar)map)
+CServerMapBlock::CServerMapBlock(const int bx, const int by, const int map) :
+		CPointSort(static_cast<short>(bx) * UO_BLOCK_SIZE, static_cast<short>(by) * UO_BLOCK_SIZE, 0, static_cast<uchar>(map))
 {
 	++sm_iCount;
 	Load( bx, by );
@@ -545,7 +545,7 @@ CServerMapBlock::~CServerMapBlock()
 	--sm_iCount;
 }
 
-const CUOMapMeter* CServerMapBlock::GetTerrain(int xo, int yo) const
+const CUOMapMeter* CServerMapBlock::GetTerrain(const int xo, const int yo) const
 {
 	ASSERT(xo >= 0 && xo < UO_BLOCK_SIZE);
 	ASSERT(yo >= 0 && yo < UO_BLOCK_SIZE);
@@ -574,7 +574,7 @@ CUOMulti::CUOMulti()
 {
 	Init();
 }
-CUOMulti::CUOMulti( MULTI_TYPE id )
+CUOMulti::CUOMulti(const MULTI_TYPE id )
 {
 	Init();
 	Load( id );
@@ -590,13 +590,13 @@ void CUOMulti::HitCacheTime() noexcept
     m_timeRef = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 }
 
-const CUOMultiItemRec_HS * CUOMulti::GetItem( size_t i ) const
+const CUOMultiItemRec_HS * CUOMulti::GetItem(const size_t i ) const
 {
 	ASSERT( i<m_iItemQty );
 	return &m_pItems[i];
 }
 
-size_t CUOMulti::Load(MULTI_TYPE id)
+size_t CUOMulti::Load(const MULTI_TYPE id)
 {
 	ADDTOCALLSTACK("CUOMulti::Load");
 	// Just load the whole thing.
@@ -817,7 +817,7 @@ void CServerMapDiffCollection::Init()
 	LoadMapDiffs();
 }
 
-CServerMapDiffBlock * CServerMapDiffCollection::GetNewBlock(dword dwBlockId, int map)
+CServerMapDiffBlock * CServerMapDiffCollection::GetNewBlock(const dword dwBlockId, const int map)
 {
 	// Retrieve a MapDiff block for the specified block id, or
 	// allocate a new MapDiff block if one doesn't exist already.
@@ -832,14 +832,14 @@ CServerMapDiffBlock * CServerMapDiffCollection::GetNewBlock(dword dwBlockId, int
 	return pMapDiffBlock;
 }
 
-CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(int bx, int by, int map)
+CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(const int bx, const int by, const int map)
 {
 	// See GetAtBlock(dword,int)
 	dword dwBlockId = (bx * (g_MapList.GetMapSizeY( map ) / UO_BLOCK_SIZE)) + by;
 	return GetAtBlock( dwBlockId, map );
 }
 
-CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(dword dwBlockId, int map)
+CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(const dword dwBlockId, const int map)
 {
 	// Retrieve a MapDiff block for the specified block id
 	ADDTOCALLSTACK("CServerMapDiffCollection::GetAtBlock");

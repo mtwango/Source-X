@@ -23,7 +23,7 @@ bool CChar::IsResourceMatch( const CResourceID& rid, dword dwAmount ) const
 	return IsResourceMatch(rid, dwAmount, 0);
 }
 
-bool CChar::IsResourceMatch( const CResourceID& rid, dword dwAmount, dword dwArgResearch ) const
+bool CChar::IsResourceMatch( const CResourceID& rid, dword dwAmount, const dword dwArgResearch ) const
 {
 	ADDTOCALLSTACK("CChar::IsResourceMatch (dwArgResearch)");
 	// Is the char a match for this test ?
@@ -193,7 +193,7 @@ CItem *CChar::GetBackpackItem(ITEMID_TYPE id)
 	return nullptr;
 }
 
-CItem *CChar::LayerFind( LAYER_TYPE layer ) const
+CItem *CChar::LayerFind(const LAYER_TYPE layer ) const
 {
 	ADDTOCALLSTACK("CChar::LayerFind");
 	// Find an item i have equipped.
@@ -206,7 +206,7 @@ CItem *CChar::LayerFind( LAYER_TYPE layer ) const
 	return nullptr;
 }
 
-TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc, CSString *pResult, LAYER_TYPE layer )
+TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc, CSString *pResult, const LAYER_TYPE layer )
 {
 	ADDTOCALLSTACK("CChar::OnCharTrigForLayerLoop");
 	const CScriptLineContext StartContext = s.GetContext();
@@ -242,7 +242,7 @@ TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr co
 	return TRIGRET_ENDIF;
 }
 
-int CChar::GetWeightLoadPercent(int iWeight) const
+int CChar::GetWeightLoadPercent(const int iWeight) const
 {
 	ADDTOCALLSTACK("CChar::GetWeightLoadPercent");
 	// Get a percent of load.
@@ -280,7 +280,7 @@ bool CChar::CanCarry( const CItem *pItem ) const
     return (GetTotalWeight() + iItemWeight <= g_Cfg.Calc_MaxCarryWeight(this));
 }
 
-void CChar::ContentAdd( CItem * pItem, bool fForceNoStack )
+void CChar::ContentAdd( CItem * pItem, const bool fForceNoStack )
 {
 	ADDTOCALLSTACK("CChar::ContentAdd");
 	UnreferencedParameter(fForceNoStack);
@@ -288,7 +288,7 @@ void CChar::ContentAdd( CItem * pItem, bool fForceNoStack )
 	//LayerAdd( pItem, LAYER_QTY );
 }
 
-bool CChar::CanEquipStr( CItem *pItem ) const
+bool CChar::CanEquipStr(const CItem *pItem ) const
 {
 	ADDTOCALLSTACK("CChar::CanEquipStr");
 	if ( IsPriv(PRIV_GM) )
@@ -304,7 +304,7 @@ bool CChar::CanEquipStr( CItem *pItem ) const
 	return false;
 }
 
-LAYER_TYPE CChar::CanEquipLayer( CItem *pItem, LAYER_TYPE layer, CChar *pCharMsg, bool fTest )
+LAYER_TYPE CChar::CanEquipLayer(const CItem *pItem, LAYER_TYPE layer, const CChar *pCharMsg, const bool fTest )
 {
 	ADDTOCALLSTACK("CChar::CanEquipLayer");
 	// This takes care of any conflicting items in the slot !
@@ -472,7 +472,7 @@ LAYER_TYPE CChar::CanEquipLayer( CItem *pItem, LAYER_TYPE layer, CChar *pCharMsg
 	return layer;
 }
 
-int CChar::GetStatPercent(STAT_TYPE i) const
+int CChar::GetStatPercent(const STAT_TYPE i) const
 {
 	ADDTOCALLSTACK("CChar::GetStatPercent");
 	ushort maxval = Stat_GetMaxAdjusted(i);
@@ -693,7 +693,7 @@ byte CChar::GetModeFlag( const CClient *pViewer ) const
 	return mode;
 }
 
-byte CChar::GetDirFlag(bool fSquelchForwardStep) const
+byte CChar::GetDirFlag(const bool fSquelchForwardStep) const
 {
 	// future: strongly typed enums will remove the need for this cast
 	byte dir = (byte)(m_dirFace);
@@ -721,7 +721,7 @@ byte CChar::GetDirFlag(bool fSquelchForwardStep) const
 	return dir;
 }
 
-uint64 CChar::GetCanMoveFlags(uint64 uiCanFlags, bool fIgnoreGM) const
+uint64 CChar::GetCanMoveFlags(uint64 uiCanFlags, const bool fIgnoreGM) const
 {
 	// What things do not block us ?
 	if ( IsPriv(PRIV_GM|PRIV_ALLMOVE) && !fIgnoreGM )
@@ -754,7 +754,7 @@ byte CChar::GetLightLevel() const
 	return pSector->GetLight();
 }
 
-CItem *CChar::GetSpellbook(SPELL_TYPE iSpell) const	// Retrieves a spellbook from the magic school given in iSpell
+CItem *CChar::GetSpellbook(const SPELL_TYPE iSpell) const	// Retrieves a spellbook from the magic school given in iSpell
 {
 	ADDTOCALLSTACK("CChar::GetSpellbook");
 	// Search for suitable book in hands first
@@ -815,7 +815,7 @@ short CChar::Food_GetLevelPercent() const
 	return (short)(IMulDiv(Stat_GetVal(STAT_FOOD), 100, max));
 }
 
-lpctstr CChar::Food_GetLevelMessage(bool fPet, bool fHappy) const
+lpctstr CChar::Food_GetLevelMessage(const bool fPet, const bool fHappy) const
 {
 	ADDTOCALLSTACK("CChar::Food_GetLevelMessage");
 	ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
@@ -873,7 +873,7 @@ lpctstr CChar::Food_GetLevelMessage(bool fPet, bool fHappy) const
 	return sm_szFoodLevel[index];
 }
 
-ushort CChar::Food_CanEat( CObjBase *pObj ) const
+ushort CChar::Food_CanEat(const CObjBase *pObj ) const
 {
 	ADDTOCALLSTACK("CChar::Food_CanEat");
 	// Would i want to eat this creature ? hehe
@@ -917,7 +917,7 @@ bool CChar::CanDress(const CChar* pChar) const
     return false;
 }
 
-bool CChar::IsOwnedBy( const CChar * pChar, bool fAllowGM ) const
+bool CChar::IsOwnedBy( const CChar * pChar, const bool fAllowGM ) const
 {
 	ADDTOCALLSTACK("CChar::IsOwnedBy");
 	// Is pChar my master ?
@@ -1405,7 +1405,7 @@ bool CChar::CanTouch( const CObjBase *pObj )
 	return fCanTouch;
 }
 
-IT_TYPE CChar::CanTouchStatic( CPointMap *pPt, ITEMID_TYPE id, const CItem *pItem )
+IT_TYPE CChar::CanTouchStatic( CPointMap *pPt, const ITEMID_TYPE id, const CItem *pItem )
 {
 	ADDTOCALLSTACK("CChar::CanTouchStatic");
 	// Might be a dynamic or a static.
@@ -1448,7 +1448,7 @@ IT_TYPE CChar::CanTouchStatic( CPointMap *pPt, ITEMID_TYPE id, const CItem *pIte
 	return IT_NORMAL;
 }
 
-bool CChar::CanHear( const CObjBaseTemplate *pSrc, TALKMODE_TYPE mode ) const
+bool CChar::CanHear( const CObjBaseTemplate *pSrc, const TALKMODE_TYPE mode ) const
 {
 	ADDTOCALLSTACK("CChar::CanHear");
 	// can we hear text or sound. (not necessarily understand it (ghost))
@@ -1559,7 +1559,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, TALKMODE_TYPE mode ) const
     return true;
 }
 
-bool CChar::CanMoveItem( const CItem *pItem, bool fMsg ) const
+bool CChar::CanMoveItem( const CItem *pItem, const bool fMsg ) const
 {
 	ADDTOCALLSTACK("CChar::CanMoveItem");
 	// Is it possible that i could move this ?
@@ -1699,7 +1699,7 @@ bool CChar::IsTakeCrime( const CItem *pItem, CChar ** ppCharMark ) const
 	return true;
 }
 
-bool CChar::CanUse( const CItem *pItem, bool fMoveOrConsume )
+bool CChar::CanUse( const CItem *pItem, const bool fMoveOrConsume )
 {
 	ADDTOCALLSTACK("CChar::CanUse");
 	// Can the Char use ( CONSUME )  the item where it is ?
@@ -1747,7 +1747,7 @@ bool CChar::IsMountCapable() const
 	return false;
 }
 
-bool CChar::IsVerticalSpace( const CPointMap& ptDest, bool fForceMount ) const
+bool CChar::IsVerticalSpace( const CPointMap& ptDest, const bool fForceMount ) const
 {
 	ADDTOCALLSTACK("CChar::IsVerticalSpace");
 	if ( IsPriv(PRIV_GM | PRIV_ALLMOVE) || !ptDest.IsValidPoint() )
@@ -1766,7 +1766,7 @@ bool CChar::IsVerticalSpace( const CPointMap& ptDest, bool fForceMount ) const
 	return true;
 }
 
-bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovementFlags, height_t uiMyHeight, CServerMapBlockingState* blockingState, bool fPathfinding) const
+bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, const uint64 uiMyMovementFlags, const height_t uiMyHeight, CServerMapBlockingState* blockingState, const bool fPathfinding) const
 {
     ADDTOCALLSTACK("CChar::CanStandAt");
     ASSERT(ptDest);
@@ -1940,7 +1940,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
     return true;
 }
 
-CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, DIR_TYPE dir, height_t *pClimbHeight, bool fPathFinding ) const
+CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, const DIR_TYPE dir, height_t *pClimbHeight, const bool fPathFinding ) const
 {
 	ADDTOCALLSTACK("CChar::CheckValidMove");
 	// Is it ok to move here ? is it blocked ?

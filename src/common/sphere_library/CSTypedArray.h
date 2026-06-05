@@ -123,7 +123,7 @@ void CSTypedArray<TYPE>::assign_at(size_t nIndex, TYPE newElement)
 }
 
 template<class TYPE>
-void CSTypedArray<TYPE>::assign_at_grow(size_t nIndex, TYPE newElement)
+void CSTypedArray<TYPE>::assign_at_grow(const size_t nIndex, TYPE newElement)
 {
     ASSERT(nIndex != sl::scont_bad_index());
 

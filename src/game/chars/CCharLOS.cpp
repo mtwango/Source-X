@@ -9,7 +9,7 @@
 #include <cmath>
 
 
-bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, int iMaxDist, word wFlags, bool bCombatCheck ) const
+bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, const int iMaxDist, const word wFlags, const bool fCombatCheck ) const
 {
 	ADDTOCALLSTACK("CChar::CanSeeLOS");
 	// WARNING: CanSeeLOS is an expensive function (lot of calculations but	most importantly it has to read the UO files, and file I/O is slow).
@@ -22,7 +22,7 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, int iMaxDist
 	// NOTE: if not blocked. pptBlock is undefined.
 	// 3D LOS later - real LOS, i.e. we can't shoot through the floor, but can shoot through the hole in it
 
-	if ( !bCombatCheck && IsPriv(PRIV_GM) )	// If i'm checking the LOS during a combat, i don't want to shoot through the walls even if i'm a GM
+	if ( !fCombatCheck && IsPriv(PRIV_GM) )	// If i'm checking the LOS during a combat, i don't want to shoot through the walls even if i'm a GM
 		return true;
 
 	CPointMap ptSrc(GetTopPoint());
@@ -648,7 +648,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 #undef BETWEENPOINT
 //#undef CALCITEMHEIGHT
 
-bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, word wFlags, bool bCombatCheck ) const
+bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, const word wFlags, const bool fCombatCheck ) const
 {
 	ADDTOCALLSTACK("CChar::CanSeeLOS");
 	// WARNING: CanSeeLOS is an expensive function (lot of calculations but	most importantly it has to read the UO files, and file I/O is slow).
@@ -668,8 +668,8 @@ bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, word wFlags, bool bCombatCh
             const short iTotalZ = pt.m_z + pChar->GetHeightMount(true);
 			pt.m_z = (char)minimum(iTotalZ, UO_SIZE_Z);
 		}
-		return CanSeeLOS_New(pt, nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);
+		return CanSeeLOS_New(pt, nullptr, pObj->GetVisualRange(), wFlags, fCombatCheck);
 	}
 
-    return CanSeeLOS(pObj->GetTopPoint(), nullptr, pObj->GetVisualRange(), wFlags, bCombatCheck);
+    return CanSeeLOS(pObj->GetTopPoint(), nullptr, pObj->GetVisualRange(), wFlags, fCombatCheck);
 }

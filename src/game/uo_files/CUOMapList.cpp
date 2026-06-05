@@ -73,9 +73,9 @@ void CUOMapList::Init()
     }
 }
 
-bool CUOMapList::Load(int map, char *args)
+bool CUOMapList::Load(const int map, char *args)
 {
-    if (( map < 0 ) || ( map >= MAP_SUPPORTED_QTY))
+    if (map < 0 || map >= MAP_SUPPORTED_QTY)
     {
         g_Log.EventError("Invalid map #%d couldn't be initialized.\n", map);
         return false;
@@ -144,7 +144,7 @@ bool CUOMapList::Load(int map, char *args)
 
 // CUOMapList:: Operations.
 
-bool CUOMapList::DetectMapSize(int map) // it sets also the default sector size, if not specified in the ini (<= 0)
+bool CUOMapList::DetectMapSize(const int map) // it sets also the default sector size, if not specified in the ini (<= 0)
 {
     if (m_mapGeoData.maps[map].fInitialized == false )
         return false;
@@ -239,30 +239,30 @@ bool CUOMapList::DetectMapSize(int map) // it sets also the default sector size,
     return (map_data.uiSizeX > 0 && map_data.uiSizeY > 0 && map_data.iSectorSize > 0);
 }
 
-bool CUOMapList::IsMapSupported(int map) const noexcept
+bool CUOMapList::IsMapSupported(const int map) const noexcept
 {
-    return ((map >= 0) && (map < MAP_SUPPORTED_QTY) && m_mapGeoData.maps[map].fEnabled);
+    return map >= 0 && map < MAP_SUPPORTED_QTY && m_mapGeoData.maps[map].fEnabled;
 }
 
-bool CUOMapList::IsInitialized(int map) const
+bool CUOMapList::IsInitialized(const int map) const
 {
     ASSERT(IsMapSupported(map));
     return m_mapGeoData.maps[map].fInitialized;
 }
 
-int CUOMapList::GetSectorSize(int map) const
+int CUOMapList::GetSectorSize(const int map) const
 {
     ASSERT(IsMapSupported(map));
     ASSERT(m_mapGeoData.maps[map].iSectorSize > 0);
     return m_mapGeoData.maps[map].iSectorSize;
 }
 
-int CUOMapList::CalcSectorQty(int map) const
+int CUOMapList::CalcSectorQty(const int map) const
 {
     return (CalcSectorCols(map) * CalcSectorRows(map));
 }
 
-int CUOMapList::CalcSectorCols(int map) const
+int CUOMapList::CalcSectorCols(const int map) const
 {
     ASSERT(IsMapSupported(map));
     const int a = m_mapGeoData.maps[map].uiSizeX;
@@ -272,7 +272,7 @@ int CUOMapList::CalcSectorCols(int map) const
     return ((a / b) + ((a % b) != 0));
 }
 
-int CUOMapList::CalcSectorRows(int map) const
+int CUOMapList::CalcSectorRows(const int map) const
 {
     ASSERT(IsMapSupported(map));
     const int a = m_mapGeoData.maps[map].uiSizeY;
@@ -282,28 +282,28 @@ int CUOMapList::CalcSectorRows(int map) const
     return ((a / b) + ((a % b) != 0));
 }
 
-int CUOMapList::GetMapCenterX(int map) const
+int CUOMapList::GetMapCenterX(const int map) const
 {
     ASSERT(IsMapSupported(map));
     ASSERT(m_mapGeoData.maps[map].uiSizeX != (ushort)-1);
     return (m_mapGeoData.maps[map].uiSizeX / 2);
 }
 
-int CUOMapList::GetMapCenterY(int map) const
+int CUOMapList::GetMapCenterY(const int map) const
 {
     ASSERT(IsMapSupported(map));
     ASSERT(m_mapGeoData.maps[map].uiSizeY != (ushort)-1);
     return (m_mapGeoData.maps[map].uiSizeY / 2);
 }
 
-int CUOMapList::GetMapFileNum(int map) const
+int CUOMapList::GetMapFileNum(const int map) const
 {
     ASSERT(IsMapSupported(map));
     ASSERT(m_mapGeoData.maps[map].iNum != -1);
     return m_mapGeoData.maps[map].iNum;
 }
 
-int CUOMapList::GetMapID(int map) const
+int CUOMapList::GetMapID(const int map) const
 {
     ASSERT(IsMapSupported(map));
     ASSERT(m_mapGeoData.maps[map].iId != -1);

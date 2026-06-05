@@ -23,7 +23,7 @@ size_t CAccounts::Account_GetCount() const
 	return m_Accounts.size();
 }
 
-bool CAccounts::Account_Load( lpctstr pszNameRaw, CScript & s, bool fChanges )
+bool CAccounts::Account_Load( lpctstr pszNameRaw, CScript & s, const bool fChanges )
 {
 	ADDTOCALLSTACK("CAccounts::Account_Load");
 
@@ -65,7 +65,7 @@ bool CAccounts::Account_Load( lpctstr pszNameRaw, CScript & s, bool fChanges )
 	return true;
 }
 
-bool CAccounts::Account_LoadAll( bool fChanges, bool fClearChanges )
+bool CAccounts::Account_LoadAll(const bool fChanges, const bool fClearChanges )
 {
 	ADDTOCALLSTACK("CAccounts::Account_LoadAll");
     char *z = Str_GetTemp();
@@ -166,7 +166,7 @@ CAccount * CAccounts::Account_FindChat( lpctstr pszChatName )
 	return nullptr;
 }
 
-CAccount * CAccounts::Account_Find( lpctstr pszName )
+CAccount * CAccounts::Account_Find(const lpctstr pszName )
 {
 	ADDTOCALLSTACK("CAccounts::Account_Find");
 	tchar szName[ MAX_ACCOUNT_NAME_SIZE ];
@@ -180,7 +180,7 @@ CAccount * CAccounts::Account_Find( lpctstr pszName )
 	return nullptr;
 }
 
-CAccount * CAccounts::Account_FindCreate( lpctstr pszName, bool fAutoCreate )
+CAccount * CAccounts::Account_FindCreate(const lpctstr pszName, bool fAutoCreate )
 {
 	ADDTOCALLSTACK("CAccounts::Account_FindCreate");
 
@@ -242,7 +242,7 @@ void CAccounts::Account_Add( CAccount * pAccount )
 	m_Accounts.AddSortKey(pAccount,pAccount->GetName());
 }
 
-CAccount * CAccounts::Account_Get( size_t index )
+CAccount * CAccounts::Account_Get(const size_t index )
 {
 	ADDTOCALLSTACK("CAccounts::Account_Get");
 	if ( ! m_Accounts.IsValidIndex(index))
@@ -250,7 +250,7 @@ CAccount * CAccounts::Account_Get( size_t index )
 	return static_cast <CAccount *>( m_Accounts[index] );
 }
 
-bool CAccounts::Cmd_AddNew( CTextConsole * pSrc, lpctstr pszName, lpctstr ptcArg, bool md5 )
+bool CAccounts::Cmd_AddNew(const CTextConsole * pSrc, const lpctstr pszName, const lpctstr ptcArg, const bool md5 )
 {
 	ADDTOCALLSTACK("CAccounts::Cmd_AddNew");
 	if (pszName == nullptr || pszName[0] == '\0')
@@ -383,7 +383,7 @@ bool CAccounts::Cmd_ListUnused(CTextConsole * pSrc, lpctstr pszDays, lpctstr psz
 	return true;
 }
 
-void CAccount::SetBlockStatus(bool fNewStatus)
+void CAccount::SetBlockStatus(const bool fNewStatus)
 {
     if (!g_Serv.IsLoadingGeneric())
     {
@@ -519,7 +519,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 // -CAccount
 
 
-bool CAccount::NameStrip( tchar * pszNameOut, lpctstr pszNameInp )
+bool CAccount::NameStrip( tchar * pszNameOut, const lpctstr pszNameInp )
 {
 	ADDTOCALLSTACK("CAccount::NameStrip");
 
@@ -568,7 +568,7 @@ PLEVEL_TYPE CAccount::GetPrivLevelText( lpctstr pszFlags ) // static
 	return (PLEVEL_TYPE)level;
 }
 
-CAccount::CAccount( lpctstr pszName, bool fGuest )
+CAccount::CAccount(const lpctstr pszName, const bool fGuest )
 {
 	g_Serv.StatInc( SERV_STAT_ACCOUNTS );
 
@@ -630,29 +630,29 @@ CAccount::~CAccount()
 	//ClearPasswordTries(true); // I'm destroying the account. Does it even matter? -> no.
 }
 
-lpctstr CAccount::GetDefStr( lpctstr ptcKey, bool fZero ) const
+lpctstr CAccount::GetDefStr(const lpctstr ptcKey, const bool fZero ) const
 {
     return m_BaseDefs.GetKeyStr( ptcKey, fZero );
 }
-int64 CAccount::GetDefNum( lpctstr ptcKey ) const
+int64 CAccount::GetDefNum(const lpctstr ptcKey ) const
 {
     return m_BaseDefs.GetKeyNum( ptcKey );
 }
-void CAccount::SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero)
+void CAccount::SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fZero)
 {
     m_BaseDefs.SetNum(ptcKey, iVal, fZero);
 }
-void CAccount::SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted, bool fZero)
+void CAccount::SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted, const bool fZero)
 {
     m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fZero);
 }
 
-void CAccount::DeleteDef(lpctstr ptcKey)
+void CAccount::DeleteDef(const lpctstr ptcKey)
 {
     m_BaseDefs.DeleteKey(ptcKey);
 }
 
-void CAccount::SetPrivLevel( PLEVEL_TYPE plevel )
+void CAccount::SetPrivLevel(const PLEVEL_TYPE plevel )
 {
 	m_PrivLevel = plevel;	// PLEVEL_Counsel
 }
@@ -678,7 +678,7 @@ byte CAccount::GetMaxChars() const
 	return std::min((m_MaxChars > 0 ? m_MaxChars : g_Cfg.m_iMaxCharsPerAccount), MAX_CHARS_PER_ACCT);
 }
 
-void CAccount::SetMaxChars(byte chars)
+void CAccount::SetMaxChars(const byte chars)
 {
 	m_MaxChars = minimum(chars, MAX_CHARS_PER_ACCT);
 }
@@ -693,7 +693,7 @@ bool CAccount::IsMyAccountChar( const CChar * pChar ) const
 	return(	pChar->m_pPlayer->GetAccount() == this );
 }
 
-size_t CAccount::DetachChar( CChar * pChar )
+size_t CAccount::DetachChar(const CChar * pChar )
 {
 	ADDTOCALLSTACK("CAccount::DetachChar");
 	ASSERT( pChar );
@@ -707,7 +707,7 @@ size_t CAccount::DetachChar( CChar * pChar )
 	return( m_Chars.DetachChar( pChar ));
 }
 
-size_t CAccount::AttachChar( CChar * pChar )
+size_t CAccount::AttachChar(const CChar * pChar )
 {
 	ADDTOCALLSTACK("CAccount::AttachChar");
 	ASSERT(pChar);
@@ -726,7 +726,7 @@ size_t CAccount::AttachChar( CChar * pChar )
 	return( i );
 }
 
-void CAccount::TogPrivFlags( word wPrivFlags, lpctstr pszArgs )
+void CAccount::TogPrivFlags(const word wPrivFlags, lpctstr pszArgs )
 {
 	ADDTOCALLSTACK("CAccount::TogPrivFlags");
 
@@ -779,7 +779,7 @@ void CAccount::OnLogin( CClient * pClient )
 	//_dateConnectedLast = datetime;
 }
 
-void CAccount::OnLogout(CClient *pClient, bool fWasChar)
+void CAccount::OnLogout(const CClient *pClient, const bool fWasChar)
 {
 	ADDTOCALLSTACK("CAccount::OnLogout");
 	ASSERT(pClient);
@@ -800,7 +800,7 @@ void CAccount::OnLogout(CClient *pClient, bool fWasChar)
 	}
 }
 
-bool CAccount::Kick( CTextConsole * pSrc, bool fBlock )
+bool CAccount::Kick( CTextConsole * pSrc, const bool fBlock )
 {
 	ADDTOCALLSTACK("CAccount::Kick");
 	if (( GetPrivLevel() >= pSrc->GetPrivLevel()) &&  ( pSrc->GetChar() ) )
@@ -825,7 +825,7 @@ bool CAccount::Kick( CTextConsole * pSrc, bool fBlock )
 	return true;
 }
 
-bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
+bool CAccount::CheckPasswordTries(const CSocketAddress csaPeerName)
 {
 	if ( csaPeerName.IsLocalAddr() || (csaPeerName.GetAddrIP() == 0x7F000001) )
 	{
@@ -894,7 +894,7 @@ bool CAccount::CheckPasswordTries(CSocketAddress csaPeerName)
 }
 
 
-void CAccount::ClearPasswordTries(bool bAll)
+void CAccount::ClearPasswordTries(const bool bAll)
 {
 	if ( bAll )
 	{
@@ -915,7 +915,7 @@ void CAccount::ClearPasswordTries(bool bAll)
 	}
 }
 
-bool CAccount::CheckPassword( lpctstr pszPassword )
+bool CAccount::CheckPassword(const lpctstr pszPassword )
 {
 	ADDTOCALLSTACK("CAccount::CheckPassword");
 	ASSERT(pszPassword);
@@ -965,7 +965,7 @@ bool CAccount::CheckPassword( lpctstr pszPassword )
 	return false;	// failure.
 }
 
-bool CAccount::SetPassword( lpctstr pszPassword, bool isMD5Hash )
+bool CAccount::SetPassword(const lpctstr pszPassword, const bool isMD5Hash )
 {
 	ADDTOCALLSTACK("CAccount::SetPassword");
 
@@ -1040,7 +1040,7 @@ bool CAccount::SetPassword( lpctstr pszPassword, bool isMD5Hash )
 }
 
 // Generate a new password
-void CAccount::SetNewPassword( lpctstr pszPassword )
+void CAccount::SetNewPassword(const lpctstr pszPassword )
 {
 	ADDTOCALLSTACK("CAccount::SetNewPassword");
 	if ( !pszPassword || !pszPassword[0] )		// no password given, auto-generate password
@@ -1065,7 +1065,7 @@ void CAccount::SetNewPassword( lpctstr pszPassword )
 		m_sNewPassword.Resize(MAX_ACCOUNT_PASSWORD_ENTER);
 }
 
-bool CAccount::SetResDisp(RESDISPLAY_VERSION what)
+bool CAccount::SetResDisp(const RESDISPLAY_VERSION what)
 {
 	if (what >= RDS_T2A && what < RDS_QTY)
 	{
@@ -1075,7 +1075,7 @@ bool CAccount::SetResDisp(RESDISPLAY_VERSION what)
 	return false;
 }
 
-bool CAccount::SetGreaterResDisp(RESDISPLAY_VERSION what)
+bool CAccount::SetGreaterResDisp(const RESDISPLAY_VERSION what)
 {
 	if (what > m_ResDisp)
 		return SetResDisp(what);
@@ -1083,7 +1083,7 @@ bool CAccount::SetGreaterResDisp(RESDISPLAY_VERSION what)
 }
 
 // Set account RESDISP automatically based on player client version
-bool CAccount::SetAutoResDisp(CClient *pClient)
+bool CAccount::SetAutoResDisp(const CClient *pClient)
 {
 	ADDTOCALLSTACK("CAccount::SetAutoResDisp");
 	if ( !pClient )
@@ -1193,7 +1193,7 @@ bool CAccount::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	return CScriptObj::r_GetRef( ptcKey, pRef );
 }
 
-bool CAccount::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CAccount::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CAccount::r_WriteVal");

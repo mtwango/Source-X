@@ -250,7 +250,7 @@ static dword s_dwCodingData[CRYPT_GAMEKEY_COUNT][18+1024];	// to be filled by In
 
 
 NO_SANITIZE_UNDEFINED // integer overflow is expected
-void CCrypto::PrepareKey(CCryptoKeysHolder::CCryptoKey & key, int iTable )	// static
+void CCrypto::PrepareKey(CCryptoKeysHolder::CCryptoKey & key, const int iTable )	// static
 {
 	ADDTOCALLSTACK("CCrypto::PrepareKey");
 	const dword *pCodes = s_dwCodingData[iTable];
@@ -303,7 +303,7 @@ void CCrypto::InitTables() // static
 	sm_fBFishTablesReady = true;
 }
 
-void CCrypto::InitSeed( int iTable )
+void CCrypto::InitSeed(const int iTable )
 {
 	ADDTOCALLSTACK("CCrypto::InitSeed");
 	const byte * pKey = sm_kSeedTable[iTable][m_gameTable][0];
@@ -324,7 +324,7 @@ void CCrypto::InitBlowFish()
 	InitSeed(0);
 }
 
-bool CCrypto::DecryptBlowFish( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen )
+bool CCrypto::DecryptBlowFish( byte * pOutput, const byte * pInput, const size_t outLen, size_t inLen )
 {
 	ADDTOCALLSTACK("CCrypto::DecryptBlowFish");
     size_t outputStartIdx = 0;
@@ -358,7 +358,7 @@ bool CCrypto::DecryptBlowFish( byte * pOutput, const byte * pInput, size_t outLe
     return true;
 }
 
-byte CCrypto::DecryptBFByte( byte bEnc )
+byte CCrypto::DecryptBFByte(const byte bEnc )
 {
 	if( !m_gameBlockPos )
 	{

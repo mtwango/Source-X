@@ -159,13 +159,13 @@ public:
 	}
 
     [[nodiscard]]
-    bool Can(uint64 uiCan) const
+    bool Can(const uint64 uiCan) const
 	{
         return (GetCanFlags() & uiCan);
 	}
 
     [[nodiscard]]
-    bool Can(uint64 uiCan, uint64 uiObjCanFlags) const noexcept
+    bool Can(const uint64 uiCan, const uint64 uiObjCanFlags) const noexcept
     {
         return (uiObjCanFlags & uiCan);
     }
@@ -193,7 +193,7 @@ public:
     * @brief   sets the Spawn item.
     * @param spawn The CCSpawn.
     */
-    void SetSpawn(CCSpawn *spawn);
+    void SetSpawn(const CCSpawn *spawn);
 
     /**
      * @brief   Gets timestamp of the item (it's a property and not related at all with TIMER).
@@ -395,7 +395,7 @@ public:
     *
     * @return  nullptr if it doesn't find a numeric def, else the pointer to the def.
     */
-    CVarDefContNum * GetDefKeyNum(lpctstr ptcKey, bool fDef) const
+    CVarDefContNum * GetDefKeyNum(const lpctstr ptcKey, const bool fDef) const
     {
         return dynamic_cast<CVarDefContNum*>(GetDefKey(ptcKey, fDef));
     }
@@ -410,7 +410,7 @@ public:
     *
     * @return  nullptr if it doesn't find a string def, else the pointer to the def.
     */
-    CVarDefContStr * GetDefKeyStr(lpctstr ptcKey, bool fDef) const
+    CVarDefContStr * GetDefKeyStr(const lpctstr ptcKey, const bool fDef) const
     {
         return dynamic_cast<CVarDefContStr*>(GetDefKey(ptcKey, fDef));
     }
@@ -719,7 +719,7 @@ public:
      * @param [in,out]  pClientExclude  (Optional) If non-null, the client exclude.
      * @param   fPossessive             true to possessive.
      */
-	void Emote(lpctstr pText, CClient * pClientExclude = nullptr, bool fPossessive = false);
+	void Emote(lpctstr pText, const CClient * pClientExclude = nullptr, bool fPossessive = false);
 	void EmoteObj(lpctstr pText);
 
     /**
@@ -732,7 +732,7 @@ public:
      * @param [in,out]  pClientExclude  (Optional) If non-null, the client exclude.
      * @param   fPossessive             true to possessive.
      */
-	void Emote2(lpctstr pText, lpctstr pText2, CClient * pClientExclude = nullptr, bool fPossessive = false);
+	void Emote2(lpctstr pText, lpctstr pText2, const CClient * pClientExclude = nullptr, bool fPossessive = false);
 
     /**
      * @fn  virtual void CObjBase::Speak( lpctstr pText, HUE_TYPE wHue = HUE_TEXT_DEF, TALKMODE_TYPE mode = TALKMODE_SAY, FONT_TYPE font = FONT_NORMAL );
@@ -781,7 +781,7 @@ public:
      * @param [in,out]  pClientExclude  (Optional) If non-null, the client exclude.
      * @param   fHardcoded              true if hardcoded.
      */
-	void RemoveFromView( CClient * pClientExclude = nullptr , bool fHardcoded = true );	// remove this item from all clients.
+	void RemoveFromView(const CClient * pClientExclude = nullptr , bool fHardcoded = true );	// remove this item from all clients.
 
     /**
      * @fn  void CObjBase::ResendOnEquip( bool fAllClients = false );
@@ -810,7 +810,7 @@ public:
      * @param [in,out]  pPacket         If non-null, the packet.
      * @param [in,out]  pClientExclude  (Optional) If non-null, the client exclude.
      */
-	void UpdateCanSee( PacketSend * pPacket, CClient * pClientExclude = nullptr ) const;
+	void UpdateCanSee( PacketSend * pPacket, const CClient * pClientExclude = nullptr ) const;
 
     /**
      * @fn  void CObjBase::UpdateObjMessage( lpctstr pTextThem, lpctstr pTextYou, CClient * pClientExclude, HUE_TYPE wHue, TALKMODE_TYPE iMode, FONT_TYPE iFont = FONT_NORMAL, bool fUnicode = false ) const;
@@ -826,7 +826,7 @@ public:
      * @param   fUnicode                true to unicode.
      */
     void UpdateObjMessage(
-        lpctstr pTextThem, lpctstr pTextYou, CClient * pClientExclude,
+        lpctstr pTextThem, lpctstr pTextYou, const CClient * pClientExclude,
         HUE_TYPE wHue, TALKMODE_TYPE iMode,
         FONT_TYPE iFont = FONT_NORMAL, bool fUnicode = false ) const;
 

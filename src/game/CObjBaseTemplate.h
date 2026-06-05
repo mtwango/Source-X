@@ -66,10 +66,10 @@ public:
 		return m_UID.IsValidUID();
 	}
 
-	void SetUIDContainerFlags(dword dwFlags) noexcept {
+	void SetUIDContainerFlags(const dword dwFlags) noexcept {
 		m_UID.SetObjContainerFlags( dwFlags );
 	}
-    void RemoveUIDFlags(dword dwFlags) noexcept {
+    void RemoveUIDFlags(const dword dwFlags) noexcept {
         m_UID.RemoveObjFlags( dwFlags );
     }
 

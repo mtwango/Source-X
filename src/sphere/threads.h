@@ -194,7 +194,7 @@ public:
     bool isExceptionCaught() const noexcept { return (m_iCaughtExceptionStackPos >= 0); }
     bool isExceptionStackUnwinding() const noexcept { return (m_iStackUnwindingStackPos >= 0); }
 
-    void freezeCallStack(bool freeze) noexcept { m_fFreezeCallStack = freeze; }
+    void freezeCallStack(const bool freeze) noexcept { m_fFreezeCallStack = freeze; }
 
     void pushStackCall(const char *name) noexcept;
     void popStackCall() NOEXCEPT_NODEBUG;

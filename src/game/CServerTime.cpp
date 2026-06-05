@@ -3,18 +3,18 @@
 #include "CServerTime.h"
 
 
-CServerTime CServerTime::operator+( int64 llTimeDiff ) const noexcept
+CServerTime CServerTime::operator+(const int64 llTimeDiff ) const noexcept
 {
 	return CServerTime(m_llPrivateTime + llTimeDiff);
 }
 
-CServerTime CServerTime::operator-( int64 llTimeDiff ) const noexcept
+CServerTime CServerTime::operator-(const int64 llTimeDiff ) const noexcept
 {
     return CServerTime(m_llPrivateTime - llTimeDiff);
 }
 
 
-lpctstr CServerTime::GetTimeMinDesc(int iMinutes) // static
+lpctstr CServerTime::GetTimeMinDesc(const int iMinutes) // static
 {
     const int minute = iMinutes % 60;
     int hour = (iMinutes / 60) % 24;

@@ -10,7 +10,7 @@ CScriptTriggerArgs::CScriptTriggerArgs() noexcept :
 {
 }
 
-CScriptTriggerArgs::CScriptTriggerArgs(lpctstr pszStr)
+CScriptTriggerArgs::CScriptTriggerArgs(const lpctstr pszStr)
 {
     Init(pszStr);
 }
@@ -20,7 +20,7 @@ CScriptTriggerArgs::CScriptTriggerArgs(CScriptObj* pObj) noexcept :
 {
 }
 
-CScriptTriggerArgs::CScriptTriggerArgs(int64 iVal1, int64 iVal2, int64 iVal3, CScriptObj* pObj) noexcept :
+CScriptTriggerArgs::CScriptTriggerArgs(const int64 iVal1, const int64 iVal2, const int64 iVal3, CScriptObj* pObj) noexcept :
     m_iN1(iVal1), m_iN2(iVal2), m_iN3(iVal3), m_pO1(pObj)
 {
 }
@@ -137,7 +137,7 @@ void CScriptTriggerArgs::Init(CScriptObj* pObj)
     m_pO1 = pObj;
 }
 
-void CScriptTriggerArgs::Init(int64 iVal1, int64 iVal2, int64 iVal3, CScriptObj* pObj)
+void CScriptTriggerArgs::Init(const int64 iVal1, const int64 iVal2, const int64 iVal3, CScriptObj* pObj)
 {
     Clear();
     m_iN1 = iVal1;
@@ -371,7 +371,7 @@ bool CScriptTriggerArgs::r_LoadVal( CScript & s )
     return false;
 }
 
-bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CScriptTriggerArgs::r_WriteVal");

@@ -12,7 +12,7 @@ CEventLog::CEventLog() = default;
 CEventLog::~CEventLog() = default;
 
 
-int CEventLog::VEvent(dword dwMask, lpctstr pszFormat, ConsoleTextColor iColor, va_list args) noexcept
+int CEventLog::VEvent(const dword dwMask, const lpctstr pszFormat, const ConsoleTextColor iColor, const va_list args) noexcept
 {
     if (pszFormat == nullptr || pszFormat[0] == '\0')
         return 0;
@@ -29,7 +29,7 @@ int CEventLog::VEvent(dword dwMask, lpctstr pszFormat, ConsoleTextColor iColor, 
     return EventStr(dwMask, pszTemp, iColor);
 }
 
-int CEventLog::Event(dword dwMask, lpctstr pszFormat, ...) noexcept
+int CEventLog::Event(const dword dwMask, lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -65,7 +65,7 @@ int CEventLog::EventWarn(lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
-int CEventLog::EventCustom(ConsoleTextColor iColor, dword dwMask, lpctstr pszFormat, ...) noexcept
+int CEventLog::EventCustom(const ConsoleTextColor iColor, const dword dwMask, lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -121,7 +121,7 @@ const CScriptObj * CLog::SetObjectContext(const CScriptObj * pObjectContext)
     MT_UNIQUE_LOCK_RETURN(this, CLog::_SetObjectContext(pObjectContext));
 }
 
-bool CLog::SetFilePath( lpctstr pszName )
+bool CLog::SetFilePath(const lpctstr pszName )
 {
 	ASSERT( ! IsFileOpen());
 	return CSFileText::SetFilePath( pszName );
@@ -137,15 +137,15 @@ dword CLog::GetLogMask() const
 	return ( m_dwMsgMask & ~(LOGL_QTY|LOGF_QTY) );
 }
 
-void CLog::SetLogMask( dword dwMask )
+void CLog::SetLogMask(const dword dwMask )
 {
 	m_dwMsgMask = GetLogLevel() | ( dwMask & ~(LOGL_QTY|LOGF_QTY) );
 }
 
-bool CLog::IsLoggedMask( dword dwMask ) const
+bool CLog::IsLoggedMask(const dword dwMask ) const
 {
-	return ( ((dwMask & ~(LOGL_QTY | LOGF_QTY | LOGM_NOCONTEXT | LOGM_DEBUG)) == 0) ||	// debug and msgs with no context are not masks to be logged?
-			 (( GetLogMask() & ( dwMask & ~(LOGL_QTY|LOGF_QTY) )) != 0) );
+	return (dwMask & ~(LOGL_QTY | LOGF_QTY | LOGM_NOCONTEXT | LOGM_DEBUG)) == 0 || // debug and msgs with no context are not masks to be logged?
+           ((GetLogMask() & (dwMask & ~(LOGL_QTY | LOGF_QTY))) != 0);
 }
 
 LOG_TYPE CLog::GetLogLevel() const
@@ -153,14 +153,14 @@ LOG_TYPE CLog::GetLogLevel() const
 	return (LOG_TYPE)(m_dwMsgMask & LOGL_QTY);
 }
 
-void CLog::SetLogLevel( LOG_TYPE level )
+void CLog::SetLogLevel(const LOG_TYPE level )
 {
 	m_dwMsgMask = GetLogMask() | ( level & LOGL_QTY );
 }
 
-bool CLog::IsLoggedLevel( LOG_TYPE level ) const
+bool CLog::IsLoggedLevel(const LOG_TYPE level ) const
 {
-	return ( ((level & LOGL_QTY) != 0) && (GetLogLevel() >= (level & LOGL_QTY)) );
+	return (level & LOGL_QTY) != 0 && GetLogLevel() >= (level & LOGL_QTY);
 }
 
 bool CLog::IsLogged( dword dwMask ) const
@@ -170,7 +170,7 @@ bool CLog::IsLogged( dword dwMask ) const
 	return mask || lvl;
 }
 
-bool CLog::_OpenLog( lpctstr pszName )	// name set previously.
+bool CLog::_OpenLog(const lpctstr pszName )	// name set previously.
 {
 	ADDTOCALLSTACK("CLog::_OpenLog");
 
@@ -211,13 +211,13 @@ bool CLog::_OpenLog( lpctstr pszName )	// name set previously.
 	return false;
 }
 
-bool CLog::OpenLog(lpctstr pszName)	// name set previously.
+bool CLog::OpenLog(const lpctstr pszName)	// name set previously.
 {
 	ADDTOCALLSTACK("CLog::OpenLog");
 	MT_UNIQUE_LOCK_RETURN(this, CLog::_OpenLog(pszName));
 }
 
-int CLog::EventStr( dword dwMask, lpctstr pszMsg, ConsoleTextColor iLogColor) noexcept
+int CLog::EventStr(const dword dwMask, const lpctstr pszMsg, const ConsoleTextColor iLogColor) noexcept
 {
 	// NOTE: This could be called in odd interrupt context so don't use dynamic stuff
 

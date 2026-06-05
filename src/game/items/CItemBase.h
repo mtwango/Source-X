@@ -243,7 +243,7 @@ private:
 	int CalculateMakeValue( int iSkillLevel ) const;
 
 protected:
-	static void ReplaceItemBase( CItemBase * pOld, CResourceDef * pNew );
+	static void ReplaceItemBase(const CItemBase * pOld, CResourceDef * pNew );
 public:
 	static void GetItemTiledataFlags( uint64 *uiCanFlags, ITEMID_TYPE id );
 	static height_t GetItemHeightFlags( const CUOItemTypeRec_HS & tile, uint64 *uiCanFlags );
@@ -287,7 +287,7 @@ public:
 	{
 		return m_type;
 	}
-	bool IsType( IT_TYPE type ) const noexcept
+	bool IsType(const IT_TYPE type ) const noexcept
 	{
 		return ( type == m_type );
 	}
@@ -388,11 +388,11 @@ public:
 	{
 		return( m_Height );
 	}
-	void SetTFlags( uint64 Flags ) noexcept
+	void SetTFlags(const uint64 Flags ) noexcept
 	{
 		m_qwFlags = Flags;
 	}
-	void SetHeight( height_t Height) noexcept
+	void SetHeight(const height_t Height) noexcept
 	{
 		m_Height = Height;
 	}

@@ -15,7 +15,7 @@
 #include "../triggers.h"
 #include "CClient.h"
 
-bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
+bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Use_Item");
 	// Assume we can see the target.
@@ -568,7 +568,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, bool fScript )
 	return false;
 }
 
-void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
+void CClient::Cmd_EditItem( CObjBase *pObj, const int iSelect )
 {
 	ADDTOCALLSTACK("CClient::Cmd_EditItem");
 	// ARGS:
@@ -633,7 +633,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, int iSelect )
 }
 
 
-bool CClient::Skill_Menu(SKILL_TYPE skill, lpctstr skillmenu, ITEMID_TYPE itemused)
+bool CClient::Skill_Menu(const SKILL_TYPE skill, lpctstr skillmenu, const ITEMID_TYPE itemused)
 {
 	// Default menu is d_craft_menu
 	// Open in page 0, args is skill used.
@@ -665,7 +665,7 @@ bool CClient::Skill_Menu(SKILL_TYPE skill, lpctstr skillmenu, ITEMID_TYPE itemus
     return false;
 }
 
-bool CClient::Cmd_Skill_Menu( const CResourceID& rid, int iSelect )
+bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Skill_Menu");
 	// Build the skill menu for the curent active skill.
@@ -739,7 +739,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, int iSelect )
 	return true;
 }
 
-int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, int iSelect, CMenuItem * item, int iMaxSize, bool *fShowMenu, bool *fLimitReached )
+int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CMenuItem * item, const int iMaxSize, bool *fShowMenu, bool *fLimitReached )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Skill_Menu_Build");
 	// Build the skill menu for the curent active skill.
@@ -1076,7 +1076,7 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
     return m_pChar->Skill_Start((SKILL_TYPE)(skill));
 }
 
-bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
+bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Skill_Tracking");
 	// look around for stuff.

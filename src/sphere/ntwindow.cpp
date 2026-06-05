@@ -43,7 +43,7 @@ bool CNTWindow::CAboutDlg::OnInitDialog()
 	return false;
 }
 
-bool CNTWindow::CAboutDlg::OnCommand( WORD wNotifyCode, INT_PTR wID, HWND hwndCtl )
+bool CNTWindow::CAboutDlg::OnCommand(const WORD wNotifyCode, const INT_PTR wID, const HWND hwndCtl )
 {
 	UnreferencedParameter(wNotifyCode);
 	UnreferencedParameter(hwndCtl);
@@ -59,7 +59,7 @@ bool CNTWindow::CAboutDlg::OnCommand( WORD wNotifyCode, INT_PTR wID, HWND hwndCt
 	return true;
 }
 
-BOOL CNTWindow::CAboutDlg::DefDialogProc( UINT message, WPARAM wParam, LPARAM lParam )
+BOOL CNTWindow::CAboutDlg::DefDialogProc(const UINT message, const WPARAM wParam, const LPARAM lParam )
 {
 	switch ( message )
 	{
@@ -129,7 +129,7 @@ bool CNTWindow::CStatusDlg::OnInitDialog()
 	return false;
 }
 
-bool CNTWindow::CStatusDlg::OnCommand( word wNotifyCode, INT_PTR wID, HWND hwndCtl )
+bool CNTWindow::CStatusDlg::OnCommand(const word wNotifyCode, const INT_PTR wID, const HWND hwndCtl )
 {
 	UnreferencedParameter(wNotifyCode);
 	UnreferencedParameter(hwndCtl);
@@ -145,7 +145,7 @@ bool CNTWindow::CStatusDlg::OnCommand( word wNotifyCode, INT_PTR wID, HWND hwndC
 	return false;
 }
 
-BOOL CNTWindow::CStatusDlg::DefDialogProc( UINT message, WPARAM wParam, LPARAM lParam )
+BOOL CNTWindow::CStatusDlg::DefDialogProc(const UINT message, const WPARAM wParam, const LPARAM lParam )
 {
 	// IDM_STATUS
 	switch ( message )
@@ -197,7 +197,7 @@ void CNTWindow::onStart()
     NTWindow_Init(_NTWInitParams.hInstance, _NTWInitParams.lpCmdLine, _NTWInitParams.nCmdShow);
 }
 
-void CNTWindow::terminate(bool ended)
+void CNTWindow::terminate(const bool ended)
 {
     AbstractSphereThread::terminate(ended);
 }
@@ -267,7 +267,7 @@ void CNTWindow::List_Clear()
 	m_iLogTextLen = 0;
 }
 
-void CNTWindow::List_AddSingle(COLORREF color, LPCTSTR ptcText)
+void CNTWindow::List_AddSingle(const COLORREF color, const LPCTSTR ptcText)
 {
     constexpr int iMaxTextLen = (64 * 1024);
 
@@ -361,7 +361,7 @@ void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 		theApp.m_wndMain.m_wndLog.ScrollBottomRight();
 }
 
-void CNTWindow::SetWindowTitle(LPCTSTR pText)
+void CNTWindow::SetWindowTitle(const LPCTSTR pText)
 {
     std::unique_lock lock(_mutexWindowTitle);
     if (pText)
@@ -393,7 +393,7 @@ bool CNTWindow::RegisterClass(const char *className)	// static
 	return true;
 }
 
-int CNTWindow::OnCreate( HWND hWnd, LPCREATESTRUCT lParam )
+int CNTWindow::OnCreate(const HWND hWnd, const LPCREATESTRUCT lParam )
 {
 	UnreferencedParameter(lParam);
 	CSWindow::OnCreate(hWnd);
@@ -453,13 +453,13 @@ void CNTWindow::OnDestroy()
     exitActions();
 }
 
-void CNTWindow::OnSetFocus( HWND hWndLoss )
+void CNTWindow::OnSetFocus(const HWND hWndLoss )
 {
 	UnreferencedParameter(hWndLoss);
 	m_wndInput.SetFocus();
 }
 
-LRESULT CNTWindow::OnUserTrayNotify( WPARAM wID, LPARAM lEvent )
+LRESULT CNTWindow::OnUserTrayNotify(const WPARAM wID, const LPARAM lEvent )
 {
 	UnreferencedParameter(wID);
 
@@ -512,7 +512,7 @@ void CNTWindow::OnUserPostMessage(const COLORREF color, const CSString * psMsg )
 	}
 }
 
-void CNTWindow::OnSize( WPARAM nType, int cx, int cy )
+void CNTWindow::OnSize(const WPARAM nType, const int cx, const int cy )
 {
 	if ( nType != SIZE_MINIMIZED && nType != SIZE_MAXHIDE && m_wndLog.m_hWnd )
 	{
@@ -552,7 +552,7 @@ bool CNTWindow::OnClose()
 	return true;	// ok to close.
 }
 
-bool CNTWindow::OnCommand( WORD wNotifyCode, INT_PTR wID, HWND hwndCtl )
+bool CNTWindow::OnCommand(const WORD wNotifyCode, const INT_PTR wID, const HWND hwndCtl )
 {
 	// WM_COMMAND
 	UnreferencedParameter(wNotifyCode);
@@ -639,7 +639,7 @@ bool CNTWindow::OnCommand( WORD wNotifyCode, INT_PTR wID, HWND hwndCtl )
 	return true;
 }
 
-bool CNTWindow::OnSysCommand( WPARAM uCmdType, int xPos, int yPos )
+bool CNTWindow::OnSysCommand(const WPARAM uCmdType, const int xPos, const int yPos )
 {
 	// WM_SYSCOMMAND
 	// return : 1 = i processed this.
@@ -686,7 +686,7 @@ void CNTWindow::SetLogFont( const char * pszFont )
 }
 
 
-LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
+LRESULT CNTWindow::OnNotify(const int idCtrl, NMHDR * pnmh )
 {
 	ASSERT(pnmh);
 	if ( idCtrl != IDC_M_LOG )
@@ -824,7 +824,7 @@ LRESULT CNTWindow::OnNotify( int idCtrl, NMHDR * pnmh )
 	return 0;
 }
 
-LRESULT WINAPI CNTWindow::WindowProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )	// static
+LRESULT WINAPI CNTWindow::WindowProc(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam )	// static
 {
 	try
 	{
@@ -880,7 +880,7 @@ LRESULT WINAPI CNTWindow::WindowProc( HWND hWnd, UINT message, WPARAM wParam, LP
 
 //************************************
 
-bool CNTWindow::NTWindow_Init(HINSTANCE hInstance, LPTSTR lpCmdLine, int nCmdShow)
+bool CNTWindow::NTWindow_Init(const HINSTANCE hInstance, const LPTSTR lpCmdLine, const int nCmdShow)
 {
 #define SPHERE_WINDOW_TITLE_BASE     SPHERE_TITLE " " SPHERE_BUILD_NAME_VER_PREFIX SPHERE_BUILD_INFO_GIT_STR
 	theApp.InitInstance(SPHERE_WINDOW_TITLE_BASE, hInstance, lpCmdLine);

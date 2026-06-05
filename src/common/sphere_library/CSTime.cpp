@@ -149,8 +149,7 @@ CSTime::CSTime( struct tm atm ) noexcept
 }
 */
 
-CSTime::CSTime(int nYear, int nMonth, int nDay, int nHour, int nMin, int nSec,
-			   int nDST) noexcept
+CSTime::CSTime(const int nYear, const int nMonth, const int nDay, const int nHour, const int nMin, const int nSec, const int nDST) noexcept
 {
     tm atm;
 	atm.tm_sec = nSec;
@@ -256,7 +255,7 @@ std::tm CSTime::GetLocalTmPlain() const noexcept
 #endif
 
 #if defined(_WIN32) && defined (MSVC_COMPILER)
-static void SPHERE_CDECL invalidParameterHandler(const wchar_t* expression, const wchar_t* function, const wchar_t* file, uint line, uintptr_t pReserved)
+static void SPHERE_CDECL invalidParameterHandler(const wchar_t* expression, const wchar_t* function, const wchar_t* file, const uint line, const uintptr_t pReserved)
 {
 	// bad format has been specified
 	UnreferencedParameter(expression);
@@ -268,7 +267,7 @@ static void SPHERE_CDECL invalidParameterHandler(const wchar_t* expression, cons
 }
 #endif
 
-static void FormatDateTime(tchar * pszTemp, lpctstr pszFormat, const tm * ptmTemp)
+static void FormatDateTime(tchar * pszTemp, const lpctstr pszFormat, const tm * ptmTemp)
 {
 	ASSERT(pszTemp != nullptr);
 	ASSERT(pszFormat != nullptr);
@@ -361,7 +360,7 @@ CSTime::CSTime() noexcept :
 {
 }
 
-CSTime::CSTime(time_t time) noexcept :
+CSTime::CSTime(const time_t time) noexcept :
     m_time(time)
 {
 }
@@ -377,23 +376,23 @@ const CSTime& CSTime::operator=(const CSTime& timeSrc) noexcept
 	return *this;
 }
 
-const CSTime& CSTime::operator=(time_t t) noexcept
+const CSTime& CSTime::operator=(const time_t t) noexcept
 {
 	m_time = t;
 	return *this;
 }
 
-bool CSTime::operator<=( time_t t ) const noexcept
+bool CSTime::operator<=(const time_t t ) const noexcept
 {
 	return( m_time <= t );
 }
 
-bool CSTime::operator==( time_t t ) const noexcept
+bool CSTime::operator==(const time_t t ) const noexcept
 {
 	return( m_time == t );
 }
 
-bool CSTime::operator!=( time_t t ) const noexcept
+bool CSTime::operator!=(const time_t t ) const noexcept
 {
 	return( m_time != t );
 }

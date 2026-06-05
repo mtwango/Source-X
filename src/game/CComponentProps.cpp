@@ -5,7 +5,7 @@
 
 CComponentProps::~CComponentProps() noexcept = default;
 
-bool CComponentProps::BaseCont_GetPropertyNum(const BaseContNum_t* container, PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
+bool CComponentProps::BaseCont_GetPropertyNum(const BaseContNum_t* container, const PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyNum");
     if (const auto it = container->find(iPropIndex); it != container->end())
@@ -17,7 +17,7 @@ bool CComponentProps::BaseCont_GetPropertyNum(const BaseContNum_t* container, Pr
     return false;
 }
 
-bool CComponentProps::BaseCont_GetPropertyStr(const BaseContStr_t* container, PropertyIndex_t iPropIndex, CSString *psOutVal, bool fZero) const
+bool CComponentProps::BaseCont_GetPropertyStr(const BaseContStr_t* container, const PropertyIndex_t iPropIndex, CSString *psOutVal, const bool fZero) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyStr");
     if (const auto it = container->find(iPropIndex); it != container->end())
@@ -35,7 +35,7 @@ bool CComponentProps::BaseCont_GetPropertyStr(const BaseContStr_t* container, Pr
     return false;
 }
 
-bool CComponentProps::BaseProp_LoadPropVal(PropertyIndex_t iPropIndex, bool fPropStr, CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion)
+bool CComponentProps::BaseProp_LoadPropVal(const PropertyIndex_t iPropIndex, const bool fPropStr, CScript & s, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion)
 {
     ADDTOCALLSTACK("CComponentProps::BaseProp_LoadPropVal");
     if (fPropStr)
@@ -44,7 +44,7 @@ bool CComponentProps::BaseProp_LoadPropVal(PropertyIndex_t iPropIndex, bool fPro
     return SetPropertyNum(iPropIndex, s.GetArgVal(), pLinkedObj, iLimitToExpansion, true);
 }
 
-bool CComponentProps::BaseProp_WritePropVal(PropertyIndex_t iPropIndex, bool fPropStr, CSString & sVal) const
+bool CComponentProps::BaseProp_WritePropVal(const PropertyIndex_t iPropIndex, const bool fPropStr, CSString & sVal) const
 {
     ADDTOCALLSTACK("CComponentProps::BaseProp_WritePropVal");
     if (fPropStr)
@@ -80,7 +80,7 @@ void CComponentProps::BaseCont_Write_ContStr(const BaseContStr_t* container, con
     }
 }
 
-CComponentProps::PropertyValNum_t CComponentProps::GetPropertyNum(PropertyIndex_t iPropIndex) const
+CComponentProps::PropertyValNum_t CComponentProps::GetPropertyNum(const PropertyIndex_t iPropIndex) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyNum");
     // Basically a wrapper for GetPropertyNumPtr, when you don't care if the property is present or not
@@ -89,7 +89,7 @@ CComponentProps::PropertyValNum_t CComponentProps::GetPropertyNum(PropertyIndex_
     return iRet;
 }
 
-CSString CComponentProps::GetPropertyStr(PropertyIndex_t iPropIndex, bool fZero) const
+CSString CComponentProps::GetPropertyStr(const PropertyIndex_t iPropIndex, const bool fZero) const
 {
     ADDTOCALLSTACK("CComponentProps::GetPropertyStr");
     // Basically a wrapper for GetPropertyStrPtr, when you don't care if the property is present or not

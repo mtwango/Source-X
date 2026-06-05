@@ -16,7 +16,7 @@
 //**********************************************
 // -CResourceQty
 
-size_t CResourceQty::WriteKey( tchar * pszArgs, size_t uiBufSize, bool fQtyOnly, bool fKeyOnly ) const
+size_t CResourceQty::WriteKey( tchar * pszArgs, const size_t uiBufSize, const bool fQtyOnly, const bool fKeyOnly ) const
 {
     ADDTOCALLSTACK("CResourceQty::WriteKey");
     size_t i = 0;
@@ -32,7 +32,7 @@ size_t CResourceQty::WriteKey( tchar * pszArgs, size_t uiBufSize, bool fQtyOnly,
     return i;
 }
 
-size_t CResourceQty::WriteNameSingle( tchar * pszArgs, size_t uiBufLen, int iQty ) const
+size_t CResourceQty::WriteNameSingle( tchar * pszArgs, const size_t uiBufLen, const int iQty ) const
 {
     ADDTOCALLSTACK("CResourceQty::WriteNameSingle");
     if ( GetResType() == RES_ITEMDEF )
@@ -104,7 +104,7 @@ CResourceQtyArray::CResourceQtyArray()
     m_mergeOnLoad = true;
 }
 
-CResourceQtyArray::CResourceQtyArray(lpctstr pszCmds)
+CResourceQtyArray::CResourceQtyArray(const lpctstr pszCmds)
 {
     m_mergeOnLoad = true;
     Load(pszCmds);
@@ -115,7 +115,7 @@ void CResourceQtyArray::setNoMergeOnLoad()
     m_mergeOnLoad = false;
 }
 
-size_t CResourceQtyArray::FindResourceType( RES_TYPE type ) const
+size_t CResourceQtyArray::FindResourceType(const RES_TYPE type ) const
 {
     ADDTOCALLSTACK("CResourceQtyArray::FindResourceType");
     // is this RES_TYPE in the array ?
@@ -224,7 +224,7 @@ size_t CResourceQtyArray::Load(lpctstr pszCmds)
     return iValid;
 }
 
-void CResourceQtyArray::WriteKeys( tchar * pszArgs, size_t uiBufSize, size_t index, bool fQtyOnly, bool fKeyOnly ) const
+void CResourceQtyArray::WriteKeys( tchar * pszArgs, const size_t uiBufSize, const size_t index, const bool fQtyOnly, const bool fKeyOnly ) const
 {
     ADDTOCALLSTACK("CResourceQtyArray::WriteKeys");
     size_t max = size();
@@ -243,7 +243,7 @@ void CResourceQtyArray::WriteKeys( tchar * pszArgs, size_t uiBufSize, size_t ind
 }
 
 
-void CResourceQtyArray::WriteNames( tchar * pszArgs, size_t uiBufSize, size_t index ) const
+void CResourceQtyArray::WriteNames( tchar * pszArgs, const size_t uiBufSize, const size_t index ) const
 {
     ADDTOCALLSTACK("CResourceQtyArray::WriteNames");
     int bytes_to_write;

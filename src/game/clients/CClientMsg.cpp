@@ -223,7 +223,7 @@ void CClient::resendBuffs() const
 	}
 }
 
-void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dword ClilocTwo, const word durationSeconds, lpctstr* pptcArgs, uint uiArgCount) const
+void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dword ClilocTwo, const word durationSeconds, const lpctstr * pptcArgs, const uint uiArgCount) const
 {
 	ADDTOCALLSTACK("CClient::addBuff");
 	if ( !IsSetOF(OF_Buffs) )
@@ -246,7 +246,7 @@ void CClient::removeBuff(const BUFF_ICONS IconId) const
 }
 
 
-bool CClient::addDeleteErr(byte code, dword iSlot) const
+bool CClient::addDeleteErr(byte code, const dword iSlot) const
 {
 	ADDTOCALLSTACK("CClient::addDeleteErr");
 	// code
@@ -258,7 +258,7 @@ bool CClient::addDeleteErr(byte code, dword iSlot) const
 	return false;
 }
 
-void CClient::addTime( bool fCurrent ) const
+void CClient::addTime(const bool fCurrent ) const
 {
 	ADDTOCALLSTACK("CClient::addTime");
 	// Send time. (real or game time ??? why ?)
@@ -293,7 +293,7 @@ void CClient::closeContainer( const CObjBase * pObj ) const
 	new PacketCloseContainer(this, pObj);
 }
 
-void CClient::closeUIWindow(const CObjBase* pObj, PacketCloseUIWindowType windowType ) const
+void CClient::closeUIWindow(const CObjBase* pObj, const PacketCloseUIWindowType windowType ) const
 {
 	ADDTOCALLSTACK("CClient::closeUIWindow");
 	new PacketCloseUIWindow(this, pObj, windowType);
@@ -312,7 +312,7 @@ void CClient::addObjectRemove( const CObjBase * pObj ) const
 	addObjectRemove( pObj->GetUID());
 }
 
-void CClient::addRemoveAll( bool fItems, bool fChars )
+void CClient::addRemoveAll(const bool fItems, const bool fChars )
 {
 	ADDTOCALLSTACK("CClient::addRemoveAll");
 	if ( fItems )
@@ -433,7 +433,7 @@ void CClient::addItem( CItem * pItem )
 		addItem_InContainer( pItem );
 }
 
-void CClient::addContainerContents( const CItemContainer * pContainer, bool fCorpseEquip, bool fCorpseFilter, bool fShop ) // Send Backpack (with items)
+void CClient::addContainerContents( const CItemContainer * pContainer, const bool fCorpseEquip, const bool fCorpseFilter, const bool fShop ) // Send Backpack (with items)
 {
 	ADDTOCALLSTACK("CClient::addContainerContents");
 	// NOTE: We needed to send the header for this FIRST !!!
@@ -446,7 +446,7 @@ void CClient::addContainerContents( const CItemContainer * pContainer, bool fCor
 		new PacketItemContents(this, pContainer, fShop, fCorpseFilter);
 }
 
-void CClient::addOpenGump( const CObjBase * pContainer, GUMP_TYPE gump ) const
+void CClient::addOpenGump( const CObjBase * pContainer, const GUMP_TYPE gump ) const
 {
 	ADDTOCALLSTACK("CClient::addOpenGump");
 	// NOTE: if pContainer has not already been sent to the client
@@ -570,7 +570,7 @@ void CClient::addLight() const
 	new PacketGlobalLight(this, iLight);
 }
 
-void CClient::addArrowQuest( int x, int y, int id ) const
+void CClient::addArrowQuest(const int x, const int y, const int id ) const
 {
 	ADDTOCALLSTACK("CClient::addArrowQuest");
 
@@ -595,14 +595,14 @@ void CClient::addArrowQuest( int x, int y, int id ) const
 	new PacketArrowQuest(this, x, y, id);
 }
 
-void CClient::addMusic( MIDI_TYPE id ) const
+void CClient::addMusic(const MIDI_TYPE id ) const
 {
 	ADDTOCALLSTACK("CClient::addMusic");
 	// Music is ussually appropriate for the region.
 	new PacketPlayMusic(this, id);
 }
 
-bool CClient::addKick( CTextConsole * pSrc, bool fBlock )
+bool CClient::addKick( CTextConsole * pSrc, const bool fBlock )
 {
 	ADDTOCALLSTACK("CClient::addKick");
 	// Kick me out.
@@ -632,7 +632,7 @@ bool CClient::addKick( CTextConsole * pSrc, bool fBlock )
 	return true;
 }
 
-void CClient::addSound( SOUND_TYPE id, const CObjBaseTemplate * pBase, int iOnce ) const
+void CClient::addSound(const SOUND_TYPE id, const CObjBaseTemplate * pBase, int iOnce ) const
 {
 	ADDTOCALLSTACK("CClient::addSound");
 	if ( !g_Cfg.m_fGenericSounds )
@@ -653,7 +653,7 @@ void CClient::addSound( SOUND_TYPE id, const CObjBaseTemplate * pBase, int iOnce
 	new PacketPlaySound(this, id, iOnce, 0, pt);
 }
 
-void CClient::addBarkUNICODE( const nachar* pwText, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang ) const
+void CClient::addBarkUNICODE( const nachar* pwText, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang ) const
 {
 	ADDTOCALLSTACK("CClient::addBarkUNICODE");
 	if ( pwText == nullptr )
@@ -675,7 +675,7 @@ void CClient::addBarkUNICODE( const nachar* pwText, const CObjBaseTemplate * pSr
 	new PacketMessageUNICODE(this, pwText, pSrc, wHue, mode, font, lang);
 }
 
-void CClient::addBarkLocalized( int iClilocId, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, lpctstr pArgs ) const
+void CClient::addBarkLocalized(const int iClilocId, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const lpctstr pArgs ) const
 {
 	ADDTOCALLSTACK("CClient::addBarkLocalized");
 	if ( iClilocId <= 0 )
@@ -693,7 +693,7 @@ void CClient::addBarkLocalized( int iClilocId, const CObjBaseTemplate * pSrc, HU
 	new PacketMessageLocalised(this, iClilocId, pSrc, wHue, mode, font, pArgs);
 }
 
-void CClient::addBarkLocalizedEx( int iClilocId, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, AFFIX_TYPE affix, lpctstr pAffix, lpctstr pArgs ) const
+void CClient::addBarkLocalizedEx(const int iClilocId, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, const AFFIX_TYPE affix, const lpctstr pAffix, const lpctstr pArgs ) const
 {
 	ADDTOCALLSTACK("CClient::addBarkLocalizedEx");
 	if ( iClilocId <= 0 )
@@ -711,7 +711,7 @@ void CClient::addBarkLocalizedEx( int iClilocId, const CObjBaseTemplate * pSrc, 
 	new PacketMessageLocalisedEx(this, iClilocId, pSrc, wHue, mode, font, affix, pAffix, pArgs);
 }
 
-void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, bool fUnicode, lpctstr ptcName) const
+void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font, bool fUnicode, lpctstr ptcName) const
 {
 	ADDTOCALLSTACK("CClient::addBarkParse");
 	if ( !pszText )
@@ -928,7 +928,7 @@ bark_default:
 	}
 }
 
-void CClient::addBark( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font ) const
+void CClient::addBark( lpctstr pszText, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font ) const
 {
 	ADDTOCALLSTACK("CClient::addBark");
 	if ( pszText == nullptr )
@@ -949,7 +949,8 @@ void CClient::addBark( lpctstr pszText, const CObjBaseTemplate * pSrc, HUE_TYPE 
 	new PacketMessageASCII(this, pszText, pSrc, wHue, mode, font);
 }
 
-void CClient::addObjMessage( lpctstr pMsg, const CObjBaseTemplate * pSrc, HUE_TYPE wHue, TALKMODE_TYPE mode ) // The message when an item is clicked
+void CClient::addObjMessage(
+    const lpctstr pMsg, const CObjBaseTemplate * pSrc, const HUE_TYPE wHue, const TALKMODE_TYPE mode ) // The message when an item is clicked
 {
 	ADDTOCALLSTACK("CClient::addObjMessage");
 	if ( !pMsg )
@@ -966,8 +967,7 @@ void CClient::addObjMessage( lpctstr pMsg, const CObjBaseTemplate * pSrc, HUE_TY
 	addBarkParse(pMsg, pSrc, wHue, mode);
 }
 
-void CClient::addEffect(EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBaseTemplate * pDst, const CObjBaseTemplate * pSrc,
-    byte bSpeedMsecs, byte bLoop, bool fExplode, dword color, dword render, word effectid, dword explodeid, word explodesound, dword effectuid, byte type) const
+void CClient::addEffect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CObjBaseTemplate * pDst, const CObjBaseTemplate * pSrc, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, word effectid, dword explodeid, word explodesound, dword effectuid, const byte type) const
 {
 	ADDTOCALLSTACK("CClient::addEffect");
 	// bSpeedSeconds = tenths of second = 0=very fast, 7=slow.
@@ -987,8 +987,7 @@ void CClient::addEffect(EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBaseTempla
 }
 
 /* Effect at a Map Point instead of an Object */
-void CClient::addEffectLocation(EFFECT_TYPE motion, ITEMID_TYPE id, const CPointMap *ptSrc, const CPointMap *ptDest,
-    byte bSpeedMsecs, byte bLoop, bool fExplode, dword color, dword render, word effectid, dword explodeid, word explodesound, dword effectuid, byte type) const
+void CClient::addEffectLocation(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CPointMap *ptSrc, const CPointMap *ptDest, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, word effectid, dword explodeid, word explodesound, dword effectuid, const byte type) const
 {
 	ADDTOCALLSTACK("CClient::addEffect");
 	// bSpeedSeconds = tenth of second = 0=very fast, 7=slow.
@@ -1153,7 +1152,7 @@ void CClient::addCharMove( const CChar * pChar ) const
 	addCharMove(pChar, pChar->GetDirFlag());
 }
 
-void CClient::addCharMove( const CChar * pChar, byte iCharDirFlag ) const
+void CClient::addCharMove( const CChar * pChar, const byte iCharDirFlag ) const
 {
 	ADDTOCALLSTACK("CClient::addCharMove (DirFlag)");
 	// This char has just moved on screen.
@@ -1163,7 +1162,7 @@ void CClient::addCharMove( const CChar * pChar, byte iCharDirFlag ) const
 	new PacketCharacterMove(this, pChar, iCharDirFlag);
 }
 
-void CClient::addChar( CChar * pChar, bool fFull )
+void CClient::addChar( CChar * pChar, const bool fFull )
 {
 	ADDTOCALLSTACK("CClient::addChar");
 	// Full update about a char.
@@ -1547,7 +1546,7 @@ bool CClient::addBookOpen( CItem * pBook ) const
 	return true;
 }
 
-void CClient::addBookPage( const CItem * pBook, word wPage, word wCount ) const
+void CClient::addBookPage( const CItem * pBook, const word wPage, word wCount ) const
 {
 	ADDTOCALLSTACK("CClient::addBookPage");
 	// ARGS:
@@ -1621,7 +1620,7 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 	return (uint)count;
 }
 
-void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeout, int iCliloc )
+void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeout, const int iCliloc )
 {
 	ADDTOCALLSTACK("CClient::SetTargMode");
 	// ??? Get rid of menu stuff if previous targ mode.
@@ -1776,7 +1775,7 @@ void CClient::addPromptConsole(const CLIMODE_TYPE mode, lpctstr pPrompt, const C
 	new PacketAddPrompt(this, context1, context2, bUnicode);
 }
 
-void CClient::addTarget( CLIMODE_TYPE targmode, lpctstr pPrompt, bool fAllowGround, bool fCheckCrime, int64 iTimeout, int iCliloc) // Send targetting cursor to client
+void CClient::addTarget( CLIMODE_TYPE targmode, lpctstr pPrompt, const bool fAllowGround, const bool fCheckCrime, int64 iTimeout, const int iCliloc) // Send targetting cursor to client
 {
 	ADDTOCALLSTACK("CClient::addTarget");
 	// Send targetting cursor to client.
@@ -1801,7 +1800,7 @@ void CClient::addTargetDeed( const CItem * pDeed )
 	addTargetItems( CLIMODE_TARG_USE_ITEM, iddef, pDeed->GetHue() );
 }
 
-bool CClient::addTargetChars( CLIMODE_TYPE mode, CREID_TYPE baseID, bool fNotoCheck, int64 iTimeout)
+bool CClient::addTargetChars(const CLIMODE_TYPE mode, CREID_TYPE baseID, bool fNotoCheck, int64 iTimeout)
 {
 	ADDTOCALLSTACK("CClient::addTargetChars");
 	CCharBase * pBase = CCharBase::FindCharBase( baseID );
@@ -1815,7 +1814,7 @@ bool CClient::addTargetChars( CLIMODE_TYPE mode, CREID_TYPE baseID, bool fNotoCh
 	return true;
 }
 
-bool CClient::addTargetItems( CLIMODE_TYPE targmode, ITEMID_TYPE id, HUE_TYPE color, bool fAllowGround )
+bool CClient::addTargetItems( CLIMODE_TYPE targmode, const ITEMID_TYPE id, const HUE_TYPE color, const bool fAllowGround )
 {
 	ADDTOCALLSTACK("CClient::addTargetItems");
 	// Add a list of items to place at target.
@@ -1877,7 +1876,7 @@ void CClient::addTargetCancel()
 	new PacketAddTarget(this, PacketAddTarget::Object, 0, PacketAddTarget::Cancel);
 }
 
-void CClient::addCodexOfWisdom(dword dwTopicID, bool fForceOpen)
+void CClient::addCodexOfWisdom(const dword dwTopicID, const bool fForceOpen)
 {
     ADDTOCALLSTACK("CClient::addCodexOfWisdom");
     // Open Codex of Wisdom
@@ -1896,7 +1895,7 @@ void CClient::addDyeOption( const CObjBase * pObj )
 	SetTargMode( CLIMODE_DYE );
 }
 
-void CClient::addSkillWindow(SKILL_TYPE skill, bool fFromInfo) const // Opens the skills list
+void CClient::addSkillWindow(const SKILL_TYPE skill, const bool fFromInfo) const // Opens the skills list
 {
 	ADDTOCALLSTACK("CClient::addSkillWindow");
 	// Whos skills do we want to look at ?
@@ -2058,7 +2057,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
 	}
 }
 
-void CClient::addPlayerView( const CPointMap & pt, bool bFull )
+void CClient::addPlayerView( const CPointMap & pt, const bool bFull )
 {
 	ADDTOCALLSTACK("CClient::addPlayerView");
 	// I moved = Change my point of view. Teleport etc..
@@ -2111,7 +2110,7 @@ void CClient::addMapDiff() const
 	new PacketEnableMapDiffs(this);
 }
 
-void CClient::addMapWaypoint(CObjBase *pObj, MAPWAYPOINT_TYPE type) const
+void CClient::addMapWaypoint(const CObjBase *pObj, const MAPWAYPOINT_TYPE type) const
 {
     ADDTOCALLSTACK("CClient::addMapWaypoint");
     // Add/remove map waypoints on newer classic or every enhanced clients
@@ -2184,7 +2183,7 @@ void CClient::UpdateStats()
 	}
 }
 
-void CClient::addStatusWindow( CObjBase *pObj, bool fRequested ) // Opens the status window
+void CClient::addStatusWindow( CObjBase *pObj, const bool fRequested ) // Opens the status window
 {
 	ADDTOCALLSTACK("CClient::addStatusWindow");
 	if ( !pObj )
@@ -2207,7 +2206,7 @@ void CClient::addStatusWindow( CObjBase *pObj, bool fRequested ) // Opens the st
 	}
 }
 
-void CClient::addHitsUpdate( CChar *pChar )
+void CClient::addHitsUpdate(const CChar *pChar )
 {
 	ADDTOCALLSTACK("CClient::addHitsUpdate");
 	if ( !pChar )
@@ -2217,7 +2216,7 @@ void CClient::addHitsUpdate( CChar *pChar )
 	cmd.send(this);
 }
 
-void CClient::addManaUpdate( CChar *pChar )
+void CClient::addManaUpdate(const CChar *pChar )
 {
 	ADDTOCALLSTACK("CClient::addManaUpdate");
 	if ( !pChar )
@@ -2233,7 +2232,7 @@ void CClient::addManaUpdate( CChar *pChar )
 	}
 }
 
-void CClient::addStamUpdate( CChar *pChar )
+void CClient::addStamUpdate(const CChar *pChar )
 {
 	ADDTOCALLSTACK("CClient::addStamUpdate");
 	if ( !pChar )
@@ -2343,14 +2342,14 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	new PacketItemContents(this, pContainer);
 }
 
-void CClient::addScrollScript( CResourceLock &s, SCROLL_TYPE type, dword context, lpctstr pszHeader )
+void CClient::addScrollScript( CResourceLock &s, const SCROLL_TYPE type, dword context, const lpctstr pszHeader )
 {
 	ADDTOCALLSTACK("CClient::addScrollScript");
 
 	new PacketOpenScroll(this, s, type, context, pszHeader);
 }
 
-void CClient::addScrollResource( lpctstr pszSec, SCROLL_TYPE type, dword scrollID )
+void CClient::addScrollResource( lpctstr pszSec, const SCROLL_TYPE type, dword scrollID )
 {
 	ADDTOCALLSTACK("CClient::addScrollResource");
 	//
@@ -2455,7 +2454,7 @@ bool CClient::addShopMenuSell( CChar * pVendor )
 	return true;
 }
 
-void CClient::addBankOpen( CChar * pChar, LAYER_TYPE layer )
+void CClient::addBankOpen( CChar * pChar, const LAYER_TYPE layer )
 {
 	ADDTOCALLSTACK("CClient::addBankOpen");
 	// open it up for this pChar.
@@ -2517,7 +2516,7 @@ blank_map:
 	}
 }
 
-void CClient::addMapMode( CItemMap * pMap, MAPCMD_TYPE iType, bool fEdit )
+void CClient::addMapMode( CItemMap * pMap, const MAPCMD_TYPE iType, const bool fEdit )
 {
 	ADDTOCALLSTACK("CClient::addMapMode");
 	// NOTE: MAPMODE_* depends on who is looking. Multi clients could interfere with each other ?
@@ -2547,7 +2546,7 @@ void CClient::addBulletinBoard( const CItemContainer * pBoard )
 	// The client will now ask for the headers it wants.
 }
 
-bool CClient::addBBoardMessage( const CItemContainer * pBoard, BBOARDF_TYPE flag, const CUID& uidMsg )
+bool CClient::addBBoardMessage( const CItemContainer * pBoard, const BBOARDF_TYPE flag, const CUID& uidMsg )
 {
 	ADDTOCALLSTACK("CClient::addBBoardMessage");
 	ASSERT(pBoard);
@@ -2574,7 +2573,7 @@ void CClient::addLoginComplete()
 	new PacketLoginComplete(this);
 }
 
-void CClient::addChatSystemMessage( CHATMSG_TYPE iType, lpctstr pszName1, lpctstr pszName2, CLanguageID lang )
+void CClient::addChatSystemMessage(const CHATMSG_TYPE iType, const lpctstr pszName1, const lpctstr pszName2, const CLanguageID lang )
 {
 	ADDTOCALLSTACK("CClient::addChatSystemMessage");
 
@@ -2634,7 +2633,7 @@ void CClient::addGlobalChatStatusToggle()
 	// TO-DO: also send the status change to all clients on friend list
 }
 
-void CClient::addGumpTextDisp( const CObjBase * pObj, GUMP_TYPE gump, lpctstr pszName, lpctstr pszText )
+void CClient::addGumpTextDisp( const CObjBase * pObj, const GUMP_TYPE gump, const lpctstr pszName, const lpctstr pszText )
 {
 	ADDTOCALLSTACK("CClient::addGumpTextDisp");
 	// ??? how do we control where exactly the text goes ??
@@ -2642,7 +2641,7 @@ void CClient::addGumpTextDisp( const CObjBase * pObj, GUMP_TYPE gump, lpctstr ps
 	new PacketSignGump(this, pObj, gump, pszName, pszText);
 }
 
-void CClient::addItemMenu( CLIMODE_TYPE mode, const CMenuItem * item, uint count, CObjBase * pObj )
+void CClient::addItemMenu(const CLIMODE_TYPE mode, const CMenuItem * item, const uint count, const CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CClient::addItemMenu");
 	// We must set GetTargMode() to show what mode we are in for menu select.
@@ -2675,7 +2674,7 @@ void CClient::addCharPaperdoll( CChar * pChar )
 }
 
 
-void CClient::addShowDamage( int damage, dword uid_damage )
+void CClient::addShowDamage( int damage, const dword uid_damage )
 {
 	ADDTOCALLSTACK("CClient::addShowDamage");
 	if ( damage < 0 )
@@ -2684,17 +2683,17 @@ void CClient::addShowDamage( int damage, dword uid_damage )
 	if ( PacketCombatDamage::CanSendTo(GetNetState()) )
 		new PacketCombatDamage(this, (word)(damage), static_cast<CUID>(uid_damage));
 	else if ( PacketCombatDamageOld::CanSendTo(GetNetState()) )
-		new PacketCombatDamageOld(this, (byte)(damage), static_cast<CUID>(uid_damage));
+		new PacketCombatDamageOld(this, static_cast<byte>(damage), static_cast<CUID>(uid_damage));
 }
 
-void CClient::addSpeedMode( byte speedMode )
+void CClient::addSpeedMode(const byte speedMode )
 {
 	ADDTOCALLSTACK("CClient::addSpeedMode");
 
 	new PacketSpeedMode(this, speedMode);
 }
 
-void CClient::addVisualRange( byte visualRange )
+void CClient::addVisualRange(const byte visualRange )
 {
 	ADDTOCALLSTACK("CClient::addVisualRange");
 
@@ -2710,7 +2709,7 @@ void CClient::addIdleWarning( byte message )
 	new PacketWarningMessage(this, static_cast<PacketWarningMessage::Message>(message));
 }
 
-void CClient::addKRToolbar( bool bEnable )
+void CClient::addKRToolbar(const bool bEnable )
 {
 	ADDTOCALLSTACK("CClient::addKRToolbar");
 	if ( PacketToggleHotbar::CanSendTo(GetNetState()) == false || !IsResClient(RDS_KR) || ( GetConnectType() != CONNECT_GAME ))
@@ -2885,7 +2884,7 @@ byte CClient::Setup_Start( CChar * pChar ) // Send character startup stuff to pl
 	return PacketLoginError::Success;
 }
 
-byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
+byte CClient::Setup_Play(const uint iSlot ) // After hitting "Play Character" button
 {
 	ADDTOCALLSTACK("CClient::Setup_Play");
 	// Mode == CLIMODE_SETUP_CHARLIST
@@ -2917,7 +2916,7 @@ byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
 	return Setup_Start( pChar );
 }
 
-byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
+byte CClient::Setup_Delete(const dword iSlot ) // Deletion of character
 {
 	ADDTOCALLSTACK("CClient::Setup_Delete");
 	ASSERT( GetAccount() );
@@ -2960,7 +2959,7 @@ byte CClient::Setup_Delete( dword iSlot ) // Deletion of character
     return PacketDeleteError::InvalidRequest;
 }
 
-byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, bool fTest )
+byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, const bool fTest )
 {
 	ADDTOCALLSTACK("CClient::Setup_ListReq");
 	// XCMD_CharListReq

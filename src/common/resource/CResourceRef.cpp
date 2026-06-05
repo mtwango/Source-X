@@ -59,7 +59,7 @@ void CResourceRef::SetRef(CResourceLink* pLink)
 //--
 
 
-lpctstr CResourceRefArray::GetResourceName( size_t iIndex ) const
+lpctstr CResourceRefArray::GetResourceName(const size_t iIndex ) const
 {
     // look up the name of the fragment given it's index.
     const CResourceLink * pResourceLink = operator[](iIndex).GetRef();
@@ -67,7 +67,7 @@ lpctstr CResourceRefArray::GetResourceName( size_t iIndex ) const
     return pResourceLink->GetResourceName();
 }
 
-bool CResourceRefArray::r_LoadVal( CScript & s, RES_TYPE restype )
+bool CResourceRefArray::r_LoadVal( CScript & s, const RES_TYPE restype )
 {
     ADDTOCALLSTACK("CResourceRefArray::r_LoadVal");
     EXC_TRY("LoadVal");
@@ -159,7 +159,7 @@ void CResourceRefArray::WriteResourceRefList( CSString & sVal ) const
     sVal.Copy(ptcVal);
 }
 
-size_t CResourceRefArray::FindResourceType( RES_TYPE restype ) const
+size_t CResourceRefArray::FindResourceType(const RES_TYPE restype ) const
 {
     ADDTOCALLSTACK("CResourceRefArray::FindResourceType");
     // Is this resource already in the list ?
@@ -185,7 +185,7 @@ size_t CResourceRefArray::FindResourceID( const CResourceID & rid ) const
     return sl::scont_bad_index();
 }
 
-size_t CResourceRefArray::FindResourceName( RES_TYPE restype, lpctstr ptcKey ) const
+size_t CResourceRefArray::FindResourceName(const RES_TYPE restype, const lpctstr ptcKey ) const
 {
     ADDTOCALLSTACK("CResourceRefArray::FindResourceName");
     // Is this resource already in the list ?
@@ -202,7 +202,7 @@ lpctstr CResourceHolder::GetResourceBlockName( RES_TYPE restype )	// static
     return sm_szResourceBlocks[restype];
 }
 
-void CResourceRefArray::r_Write( CScript & s, lpctstr ptcKey ) const
+void CResourceRefArray::r_Write( CScript & s, const lpctstr ptcKey ) const
 {
     ADDTOCALLSTACK_DEBUG("CResourceRefArray::r_Write");
     for ( size_t j = 0, sz = size(); j < sz; ++j )

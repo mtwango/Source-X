@@ -25,13 +25,13 @@ CNTService::CNTService()
 }
 
 // Try to create the registry key containing the working directory for the application
-static void ExtractPath(LPTSTR szPath)
+static void ExtractPath(const LPTSTR szPath)
 {
     if ( TCHAR *pszPath = strrchr(szPath, '\\') )
 		*pszPath = 0;
 }
 
-static LPTSTR GetLastErrorText(LPTSTR lpszBuf, DWORD dwSize)
+static LPTSTR GetLastErrorText(const LPTSTR lpszBuf, const DWORD dwSize)
 {
 	// Check CSError.
 	//	PURPOSE:  copies error message text to a string
@@ -51,7 +51,7 @@ static LPTSTR GetLastErrorText(LPTSTR lpszBuf, DWORD dwSize)
 /////////////////////////////////////////////////////////////////////////////////////
 
 //	PURPOSE:  Allows any thread to log a message to the NT Event Log
-void CNTService::ReportEvent( WORD wType, DWORD dwEventID, LPCTSTR lpszMsg, LPCTSTR lpszArgs )
+void CNTService::ReportEvent(const WORD wType, const DWORD dwEventID, const LPCTSTR lpszMsg, const LPCTSTR lpszArgs )
 {
 	UnreferencedParameter(dwEventID);
 	g_Log.Event(LOGM_INIT|(( wType == EVENTLOG_INFORMATION_TYPE ) ? LOGL_EVENT : LOGL_ERROR), "%s %s\n", lpszMsg, lpszArgs);
@@ -70,7 +70,7 @@ bool CNTService::_OnTick()
 }
 
 //	PURPOSE:  Sets the current status of the service and reports it to the Service Control Manager
-BOOL CNTService::SetServiceStatus( DWORD dwCurrentState, DWORD dwWin32ExitCode, DWORD dwWaitHint )
+BOOL CNTService::SetServiceStatus(const DWORD dwCurrentState, const DWORD dwWin32ExitCode, const DWORD dwWaitHint )
 {
 	if ( dwCurrentState == SERVICE_START_PENDING )
 		m_sStatus.dwControlsAccepted = 0;
@@ -100,7 +100,7 @@ BOOL CNTService::SetServiceStatus( DWORD dwCurrentState, DWORD dwWin32ExitCode, 
 
 //	PURPOSE:  This function is called by the SCM whenever ControlService() is called on this service.  The
 //		SCM does not start the service through this function.
-void WINAPI CNTService::service_ctrl(DWORD dwCtrlCode) // static
+void WINAPI CNTService::service_ctrl(const DWORD dwCtrlCode) // static
 {
 	if ( dwCtrlCode == SERVICE_CONTROL_STOP )
         g_NTService.ServiceStop();
@@ -108,13 +108,13 @@ void WINAPI CNTService::service_ctrl(DWORD dwCtrlCode) // static
 }
 
 //	PURPOSE: is called by the SCM, and takes care of some initialization and calls ServiceStart().
-void WINAPI CNTService::service_main(DWORD dwArgc, LPTSTR *lpszArgv) // static
+void WINAPI CNTService::service_main(const DWORD dwArgc, LPTSTR *lpszArgv) // static
 {
     g_NTService.ServiceStartMain(dwArgc, lpszArgv);
 }
 
 //	PURPOSE:  starts the service. (synchronous)
-void CNTService::ServiceStartMain(DWORD dwArgc, LPTSTR *lpszArgv)
+void CNTService::ServiceStartMain(const DWORD dwArgc, LPTSTR *lpszArgv)
 {
 	TCHAR *pszMsg = Str_GetTemp();
 
@@ -139,7 +139,7 @@ void CNTService::ServiceStartMain(DWORD dwArgc, LPTSTR *lpszArgv)
 }
 
 //	PURPOSE:  starts the service. (synchronous)
-int CNTService::ServiceStart(DWORD dwArgc, LPTSTR *lpszArgv)
+int CNTService::ServiceStart(const DWORD dwArgc, LPTSTR *lpszArgv)
 {
 	ReportEvent(EVENTLOG_INFORMATION_TYPE, 0, "Service start pending.");
 
@@ -453,7 +453,7 @@ void CNTService::CmdMainStart()
 //
 /////////////////////////////////////////////////////////////////////////////////////
 #ifdef MSVC_COMPILER
-int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)
+int WINAPI WinMain(_In_ const HINSTANCE hInstance, _In_opt_ const HINSTANCE hPrevInstance, _In_ const LPSTR lpCmdLine, _In_ const int nShowCmd)
 #else
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
 #endif

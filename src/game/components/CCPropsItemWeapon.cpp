@@ -30,11 +30,11 @@ CCPropsItemWeapon::CCPropsItemWeapon() : CComponentProps(COMP_PROPS_ITEMWEAPON)
     _uiRange = 0;
 }
 
-static bool CanSubscribeTypeIW(IT_TYPE type) noexcept
+static bool CanSubscribeTypeIW(const IT_TYPE type) noexcept
 {
-    return (type == IT_WEAPON_AXE || type == IT_WEAPON_BOW || type == IT_WEAPON_FENCE || type == IT_WEAPON_MACE_CROOK || type == IT_WEAPON_MACE_PICK || type == IT_WEAPON_MACE_SHARP ||
-        type == IT_WEAPON_MACE_SMITH || type == IT_WEAPON_MACE_STAFF || type == IT_WEAPON_SWORD || type == IT_WEAPON_THROWING || type == IT_WEAPON_WHIP || type == IT_WEAPON_XBOW ||
-        type == IT_FISH_POLE || type == IT_MUSICAL);
+    return type == IT_WEAPON_AXE || type == IT_WEAPON_BOW || type == IT_WEAPON_FENCE || type == IT_WEAPON_MACE_CROOK || type == IT_WEAPON_MACE_PICK ||
+           type == IT_WEAPON_MACE_SHARP || type == IT_WEAPON_MACE_SMITH || type == IT_WEAPON_MACE_STAFF || type == IT_WEAPON_SWORD ||
+           type == IT_WEAPON_THROWING || type == IT_WEAPON_WHIP || type == IT_WEAPON_XBOW || type == IT_FISH_POLE || type == IT_MUSICAL;
 }
 
 bool CCPropsItemWeapon::CanSubscribe(const CItemBase* pItemBase) noexcept // static
@@ -48,13 +48,13 @@ bool CCPropsItemWeapon::CanSubscribe(const CItem* pItem) noexcept // static
 }
 
 
-lpctstr CCPropsItemWeapon::GetPropertyName(PropertyIndex_t iPropIndex) const
+lpctstr CCPropsItemWeapon::GetPropertyName(const PropertyIndex_t iPropIndex) const
 {
     ASSERT(iPropIndex < PROPIWEAP_QTY);
     return _ptcPropertyKeys[iPropIndex];
 }
 
-bool CCPropsItemWeapon::IsPropertyStr(PropertyIndex_t iPropIndex) const
+bool CCPropsItemWeapon::IsPropertyStr(const PropertyIndex_t iPropIndex) const
 {
     switch (iPropIndex)
     {
@@ -65,7 +65,7 @@ bool CCPropsItemWeapon::IsPropertyStr(PropertyIndex_t iPropIndex) const
     }
 }
 
-bool CCPropsItemWeapon::GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
+bool CCPropsItemWeapon::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::GetPropertyNumPtr");
     ASSERT(!IsPropertyStr(iPropIndex));
@@ -96,7 +96,7 @@ bool CCPropsItemWeapon::GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyVa
     }
 }
 
-bool CCPropsItemWeapon::GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString* psOutVal, bool fZero) const
+bool CCPropsItemWeapon::GetPropertyStrPtr(const PropertyIndex_t iPropIndex, CSString* psOutVal, const bool fZero) const
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::GetPropertyStrPtr");
     ASSERT(IsPropertyStr(iPropIndex));
@@ -122,7 +122,7 @@ bool CCPropsItemWeapon::GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString* 
     }
 }
 
-bool CCPropsItemWeapon::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemWeapon::SetPropertyNum(const PropertyIndex_t iPropIndex, const PropertyValNum_t iVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::SetPropertyNum");
 
@@ -164,7 +164,7 @@ bool CCPropsItemWeapon::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNu
     return true;
 }
 
-bool CCPropsItemWeapon::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemWeapon::SetPropertyStr(const PropertyIndex_t iPropIndex, const lpctstr ptcVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::SetPropertyStr");
     ASSERT(ptcVal);
@@ -202,19 +202,19 @@ bool CCPropsItemWeapon::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVa
     return true;
 }
 
-void CCPropsItemWeapon::DeletePropertyNum(PropertyIndex_t iPropIndex)
+void CCPropsItemWeapon::DeletePropertyNum(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::DeletePropertyNum");
     _mPropsNum.erase(iPropIndex);
 }
 
-void CCPropsItemWeapon::DeletePropertyStr(PropertyIndex_t iPropIndex)
+void CCPropsItemWeapon::DeletePropertyStr(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::DeletePropertyStr");
     _mPropsStr.erase(iPropIndex);
 }
 
-bool CCPropsItemWeapon::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, PropertyIndex_t iPropIndex, bool fPropStr)
+bool CCPropsItemWeapon::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const PropertyIndex_t iPropIndex, const bool fPropStr)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::FindLoadPropVal");
     if (!fPropStr && (*s.GetArgRaw() == '\0'))
@@ -227,7 +227,7 @@ bool CCPropsItemWeapon::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDI
     return true;
 }
 
-bool CCPropsItemWeapon::FindWritePropVal(CSString & sVal, PropertyIndex_t iPropIndex, bool fPropStr) const
+bool CCPropsItemWeapon::FindWritePropVal(CSString & sVal, const PropertyIndex_t iPropIndex, const bool fPropStr) const
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::FindWritePropVal");
 

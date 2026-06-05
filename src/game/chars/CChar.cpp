@@ -250,7 +250,7 @@ lpctstr const CChar::sm_szTrigName[CTRIG_QTY+1] =	// static
 
 // Create the "basic" NPC. Not NPC or player yet.
 // NOTE: NEVER return nullptr
-CChar * CChar::CreateBasic(CREID_TYPE baseID) // static
+CChar * CChar::CreateBasic(const CREID_TYPE baseID) // static
 {
 	ADDTOCALLSTACK("CChar::CreateBasic");
     const auto pChar = new CChar(baseID);
@@ -371,7 +371,7 @@ CChar::~CChar()
 	EXC_CATCH;
 }
 
-void CChar::DeleteCleanup(bool fForce)
+void CChar::DeleteCleanup(const bool fForce)
 {
 	ADDTOCALLSTACK("CChar::DeleteCleanup");
 	// Clean up CChar specific data. Not virtual method.
@@ -405,7 +405,7 @@ void CChar::DeleteCleanup(bool fForce)
 
 // Called before Delete(). Notify the world/scripts that i'm going to delete this char.
 // @Destroy or f_onchar_delete can prevent the deletion
-bool CChar::NotifyDelete(bool fForce)
+bool CChar::NotifyDelete(const bool fForce)
 {
 	ADDTOCALLSTACK("CChar::NotifyDelete");
 	if (IsDeleted())
@@ -449,7 +449,7 @@ void CChar::DeletePrepare()
     CObjBase::DeletePrepare();
 }
 
-bool CChar::Delete(bool fForce)
+bool CChar::Delete(const bool fForce)
 {
 	ADDTOCALLSTACK("CChar::Delete");
     EXC_TRY("Cleanup in Delete method");
@@ -638,7 +638,7 @@ bool CChar::SetPlayerAccount( lpctstr pszAccName )
 }
 
 // Set up the char as an NPC
-bool CChar::SetNPCBrain( NPCBRAIN_TYPE NPCBrain )
+bool CChar::SetNPCBrain(const NPCBRAIN_TYPE NPCBrain )
 {
     ADDTOCALLSTACK("CChar::SetNPCBrain");
     if ( NPCBrain == NPCBRAIN_NONE )
@@ -808,7 +808,7 @@ void CChar::_StatFlag_Set( uint64 uiStatFlag) noexcept
     _uiStatFlag |= uiStatFlag;
 }
 */
-void CChar::StatFlag_Set(uint64 uiStatFlag) noexcept
+void CChar::StatFlag_Set(const uint64 uiStatFlag) noexcept
 {
     MT_ENGINE_UNIQUE_LOCK_SET(this);
 	_uiStatFlag |= uiStatFlag;
@@ -820,7 +820,7 @@ void CChar::_StatFlag_Clear(uint64 uiStatFlag) noexcept
     _uiStatFlag &= ~uiStatFlag;
 }
 */
-void CChar::StatFlag_Clear(uint64 uiStatFlag) noexcept
+void CChar::StatFlag_Clear(const uint64 uiStatFlag) noexcept
 {
     MT_ENGINE_UNIQUE_LOCK_SET(this);
 	_uiStatFlag &= ~uiStatFlag;
@@ -835,7 +835,7 @@ void CChar::_StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept
         _uiStatFlag &= ~uiStatFlag;
 }
 */
-void CChar::StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept
+void CChar::StatFlag_Mod(const uint64 uiStatFlag, const bool fMod) noexcept
 {
 //	MT_ENGINE_UNIQUE_LOCK_SET(this);
 //	_StatFlag_Mod(uiStatFlag, fMod);
@@ -845,7 +845,7 @@ void CChar::StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept
 		_uiStatFlag &= ~uiStatFlag;
 }
 
-bool CChar::IsPriv( word flag ) const
+bool CChar::IsPriv(const word flag ) const
 {
 	// PRIV_GM flags
 	if ( m_pPlayer == nullptr )
@@ -881,7 +881,7 @@ int CChar::GetVisualRange() const
 	return m_iVisualRange;
 }
 
-void CChar::SetVisualRange(byte newSight)
+void CChar::SetVisualRange(const byte newSight)
 {
 	CClient* pClient;
 	{
@@ -1082,7 +1082,7 @@ void CChar::CreateNewCharCheck()
 	}
 }
 
-bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
+bool CChar::DupeFrom(const CChar * pChar, const bool fNewbieItems )
 {
 	// CChar part
 	if ( !pChar )
@@ -1262,7 +1262,7 @@ bool CChar::DupeFrom(const CChar * pChar, bool fNewbieItems )
 }
 
 // Reading triggers from CHARDEF
-bool CChar::ReadScriptReducedTrig(CCharBase * pCharDef, CTRIG_TYPE trig, bool fVendor)
+bool CChar::ReadScriptReducedTrig(CCharBase * pCharDef, const CTRIG_TYPE trig, const bool fVendor)
 {
 	ADDTOCALLSTACK("CChar::ReadScriptReducedTrig");
 	if ( !pCharDef || !pCharDef->HasTrigger(trig) )
@@ -1278,7 +1278,7 @@ bool CChar::ReadScriptReducedTrig(CCharBase * pCharDef, CTRIG_TYPE trig, bool fV
 // If this is a regen they will have a pack already.
 // RETURN:
 //  true = default return. (mostly ignored).
-bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
+bool CChar::ReadScriptReduced(CResourceLock &s, const bool fVendor)
 {
 	ADDTOCALLSTACK("CChar::ReadScriptReduced");
 	bool fFullInterp = false;
@@ -1444,14 +1444,14 @@ bool CChar::ReadScriptReduced(CResourceLock &s, bool fVendor)
 	return true;
 }
 
-void CChar::OnWeightChange( int iChange )
+void CChar::OnWeightChange(const int iChange )
 {
 	ADDTOCALLSTACK("CChar::OnWeightChange");
 	CContainer::OnWeightChange( iChange );
 	UpdateStatsFlag();
 }
 
-int CChar::GetWeight(word amount) const
+int CChar::GetWeight(const word amount) const
 {
 	UnreferencedParameter(amount);
 	return GetTotalWeight();
@@ -1476,7 +1476,7 @@ CFactionDef* CChar::GetFaction() noexcept
 }
 
 
-height_t CChar::GetHeightMount( bool fEyeSubstract ) const
+height_t CChar::GetHeightMount(const bool fEyeSubstract ) const
 {
 	ADDTOCALLSTACK_DEBUG("CChar::GetHeightMount");
 	height_t height = GetHeight();
@@ -1540,7 +1540,7 @@ CREID_TYPE CChar::GetDispID() const
 }
 
 // Setting the visual "ID" for this.
-bool CChar::SetDispID(CREID_TYPE id)
+bool CChar::SetDispID(const CREID_TYPE id)
 {
     ADDTOCALLSTACK("CChar::SetDispID");
     // Just change what this char looks like.
@@ -1657,7 +1657,7 @@ lpctstr CChar::GetNameWithoutIncognito() const
 	return GetName();
 }
 
-lpctstr CChar::GetName( bool fAllowAlt ) const
+lpctstr CChar::GetName(const bool fAllowAlt ) const
 {
 	if ( fAllowAlt )
 	{
@@ -5002,7 +5002,7 @@ lbl_cchar_ontriggerspeech:
 }
 
 // Gaining exp
-static uint Calc_ExpGet_Exp(uint level)
+static uint Calc_ExpGet_Exp(const uint level)
 {
     if (level <= 1)
         return 0;
@@ -5246,7 +5246,7 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
 }
 
 // returns <SkillTotal>
-uint CChar::GetSkillTotal(int what, bool how)
+uint CChar::GetSkillTotal(const int what, const bool how)
 {
 	ADDTOCALLSTACK("CChar::GetSkillTotal");
 	uint	uiTotal = 0;

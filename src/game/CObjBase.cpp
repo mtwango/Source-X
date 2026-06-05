@@ -27,7 +27,7 @@
 #include "CObjBase.h"
 
 
-DIR_TYPE GetDirStr(lpctstr pszDir)
+DIR_TYPE GetDirStr(const lpctstr pszDir)
 {
     char iDir2;
 
@@ -92,7 +92,7 @@ static bool GetDeltaStr( CPointMap & pt, tchar * pszDir )
 // -CObjBase stuff
 // Either a player, npc or item.
 
-CObjBase::CObjBase( bool fItem ) :
+CObjBase::CObjBase(const bool fItem ) :
     _sRunningTrigger(false)
 {
 	++ sm_iCount;
@@ -240,7 +240,7 @@ void CObjBase::DeleteCleanup(const bool fForce)
 	CEntity::Delete(fForce);
 }
 
-bool CObjBase::Delete(bool fForce)
+bool CObjBase::Delete(const bool fForce)
 {
 	ADDTOCALLSTACK("CObjBase::Delete");
     EXC_TRY("Cleanup in Delete method");
@@ -293,12 +293,12 @@ int64 CObjBase::GetTimeStampS() const noexcept
 	return m_iTimeStampS;
 }
 
-void CObjBase::SetTimeStampS(int64 t_time) noexcept
+void CObjBase::SetTimeStampS(const int64 t_time) noexcept
 {
 	m_iTimeStampS = t_time;
 }
 
-void CObjBase::TimeoutRecursiveResync(int64 iDelta)
+void CObjBase::TimeoutRecursiveResync(const int64 iDelta)
 {
 	ADDTOCALLSTACK("CObjBase::TimeoutRecursiveResync");
 	if (_IsTimerSet())
@@ -317,12 +317,12 @@ void CObjBase::TimeoutRecursiveResync(int64 iDelta)
 	}
 }
 
-void CObjBase::SetHueQuick(HUE_TYPE wHue)
+void CObjBase::SetHueQuick(const HUE_TYPE wHue)
 {
 	m_wHue = wHue;
 }
 
-void CObjBase::SetHue( HUE_TYPE wHue, bool fAvoidTrigger, CTextConsole *pSrc, CObjBase *pSourceObj, llong iSound)
+void CObjBase::SetHue(const HUE_TYPE wHue, const bool fAvoidTrigger, CTextConsole *pSrc, CObjBase *pSourceObj, const llong iSound)
 {
 	ADDTOCALLSTACK("CObjBase::SetHue");
 	if (g_Serv.IsLoadingGeneric()) //We do not want tons of @Dye being called during world load, just set the hue then continue...
@@ -384,7 +384,7 @@ int CObjBase::IsWeird() const
 	return 0;
 }
 
-void CObjBase::SetUID( dword dwIndex, bool fItem )
+void CObjBase::SetUID( dword dwIndex, const bool fItem )
 {
 	ADDTOCALLSTACK("CObjBase::SetUID");
 	// Move the serial number,
@@ -492,7 +492,7 @@ bool CObjBase::SetNamePool( lpctstr pszName )
 	return true;
 }
 
-bool CObjBase::MoveNearObj( const CObjBaseTemplate *pObj, ushort iSteps )
+bool CObjBase::MoveNearObj( const CObjBaseTemplate *pObj, const ushort iSteps )
 {
 	ADDTOCALLSTACK("CObjBase::MoveNearObj");
 	ASSERT(pObj);
@@ -535,7 +535,7 @@ void CObjBase::r_WriteSafe( CScript & s )
 	}
 }
 
-void CObjBase::Sound( SOUND_TYPE id, int iOnce ) const // Play sound effect for player
+void CObjBase::Sound(const SOUND_TYPE id, int iOnce ) const // Play sound effect for player
 {
 	ADDTOCALLSTACK("CObjBase::Sound");
 	// play for everyone near by.
@@ -552,10 +552,7 @@ void CObjBase::Sound( SOUND_TYPE id, int iOnce ) const // Play sound effect for 
 	}
 }
 
-void CObjBase::Effect(
-    EFFECT_TYPE motion, ITEMID_TYPE id, const CObjBase * pSource,
-    byte bSpeedSeconds, byte bLoop, bool fExplode, dword color, dword render,
-    word effectid, word explodeid, word explodesound, dword effectuid, byte type
+void CObjBase::Effect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CObjBase * pSource, const byte bSpeedSeconds, byte bLoop, bool fExplode, const dword color, const dword render, const word effectid, const word explodeid, const word explodesound, const dword effectuid, const byte type
     ) const
 {
 	ADDTOCALLSTACK("CObjBase::Effect");
@@ -589,8 +586,8 @@ void CObjBase::Effect(
 	}
 }
 
-void CObjBase::EffectLocation(EFFECT_TYPE motion, ITEMID_TYPE id, const CPointMap *pptDest, const CPointMap *pptSrc,
-    byte bSpeedSeconds, byte bLoop, bool fExplode, dword color, dword render, word effectid, word explodeid, word explodesound, dword effectuid, byte type) const
+void CObjBase::EffectLocation(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CPointMap *pptDest, const CPointMap *pptSrc,
+    byte bSpeedSeconds, byte bLoop, bool fExplode, const dword color, const dword render, const word effectid, const word explodeid, const word explodesound, const dword effectuid, const byte type) const
 {
 	ADDTOCALLSTACK("CObjBase::EffectLocation");
 
@@ -624,7 +621,7 @@ void CObjBase::EffectLocation(EFFECT_TYPE motion, ITEMID_TYPE id, const CPointMa
 	}
 }
 
-void CObjBase::Emote(lpctstr pText, CClient * pClientExclude, bool fForcePossessive)
+void CObjBase::Emote(const lpctstr pText, const CClient * pClientExclude, const bool fForcePossessive)
 {
 	ADDTOCALLSTACK("CObjBase::Emote");
 	// IF this is not the top level object then it might be possessive ?
@@ -670,7 +667,7 @@ void CObjBase::Emote(lpctstr pText, CClient * pClientExclude, bool fForcePossess
 	pObjTop->UpdateObjMessage(pszThem, pszYou, pClientExclude, HUE_TEXT_DEF, TALKMODE_EMOTE);
 }
 
-void CObjBase::EmoteObj(lpctstr pText)
+void CObjBase::EmoteObj(const lpctstr pText)
 {
 	ADDTOCALLSTACK("CObjBase::EmoteObj");
 	// This is function that only send an emote to a affacted character.
@@ -691,7 +688,7 @@ void CObjBase::EmoteObj(lpctstr pText)
 	}
 }
 
-void CObjBase::Emote2(lpctstr pText, lpctstr pText1, CClient * pClientExclude, bool fForcePossessive)
+void CObjBase::Emote2(const lpctstr pText, lpctstr pText1, const CClient * pClientExclude, const bool fForcePossessive)
 {
 	ADDTOCALLSTACK("CObjBase::Emote");
 	// IF this is not the top level object then it might be possessive ?
@@ -738,7 +735,7 @@ void CObjBase::Emote2(lpctstr pText, lpctstr pText1, CClient * pClientExclude, b
 
 // Speak to all clients in the area.
 // ASCII packet
-void CObjBase::Speak( lpctstr pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font )
+void CObjBase::Speak(const lpctstr pText, const HUE_TYPE wHue, const TALKMODE_TYPE mode, const FONT_TYPE font )
 {
 	ADDTOCALLSTACK_DEBUG("CObjBase::Speak");
 	CWorldComm::Speak( this, pText, wHue, mode, font );
@@ -746,7 +743,7 @@ void CObjBase::Speak( lpctstr pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYP
 
 // Speak to all clients in the area.
 // Unicode packet
-void CObjBase::SpeakUTF8( lpctstr pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang )
+void CObjBase::SpeakUTF8(const lpctstr pText, const HUE_TYPE wHue, const TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang )
 {
 	ADDTOCALLSTACK_DEBUG("CObjBase::SpeakUTF8");
 	// convert UTF8 to UTF16 UNICODE.
@@ -758,13 +755,13 @@ void CObjBase::SpeakUTF8( lpctstr pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT
 // Speak to all clients in the area.
 // Unicode packet
 // Difference with SpeakUTF8: this method accepts as text input an nachar, which is a network aligned utf16 unicode characters array
-void CObjBase::SpeakUTF8Ex( const nachar * pText, HUE_TYPE wHue, TALKMODE_TYPE mode, FONT_TYPE font, CLanguageID lang )
+void CObjBase::SpeakUTF8Ex( const nachar * pText, const HUE_TYPE wHue, const TALKMODE_TYPE mode, const FONT_TYPE font, const CLanguageID lang )
 {
 	ADDTOCALLSTACK_DEBUG("CObjBase::SpeakUTF8Ex");
 	CWorldComm::SpeakUNICODE( this, pText, wHue, mode, font, lang );
 }
 
-bool CObjBase::MoveNear(CPointMap pt, ushort iSteps )
+bool CObjBase::MoveNear(CPointMap pt, const ushort iSteps )
 {
 	ADDTOCALLSTACK("CObjBase::MoveNear");
 	// Move to nearby this other object.
@@ -799,9 +796,7 @@ bool CObjBase::MoveNear(CPointMap pt, ushort iSteps )
 	return MoveTo(pt);
 }
 
-void CObjBase::UpdateObjMessage(
-    lpctstr pTextThem, lpctstr pTextYou, CClient * pClientExclude,
-    HUE_TYPE wHue, TALKMODE_TYPE iMode, FONT_TYPE iFont, bool fUnicode ) const
+void CObjBase::UpdateObjMessage(const lpctstr pTextThem, const lpctstr pTextYou, const CClient * pClientExclude, const HUE_TYPE wHue, const TALKMODE_TYPE iMode, const FONT_TYPE iFont, const bool fUnicode ) const
 {
 	ADDTOCALLSTACK("CObjBase::UpdateObjMessage");
 	// Show everyone a msg coming from this object.
@@ -823,24 +818,24 @@ void CObjBase::UpdateObjMessage(
 	}
 }
 
-void CObjBase::UpdateCanSee(PacketSend *packet, CClient *exclude) const
+void CObjBase::UpdateCanSee(PacketSend *pPacket, const CClient *pClientExclude) const
 {
 	ADDTOCALLSTACK("CObjBase::UpdateCanSee");
 	// Send this update message to everyone who can see this.
 	// NOTE: Need not be a top level object. CanSee() will calc that.
 
 	ClientIterator it;
-	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
+	for (const CClient * pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
-		if (( pClient == exclude ) || !pClient->CanSee(this) )
+		if (( pClient == pClientExclude ) || !pClient->CanSee(this) )
 			continue;
 
-		packet->send(pClient);
+		pPacket->send(pClient);
 	}
-	delete packet;
+	delete pPacket;
 }
 
-TRIGRET_TYPE CObjBase::OnHearTrigger( CResourceLock & s, lpctstr pszCmd, CChar * pSrc, TALKMODE_TYPE & iModeRef, HUE_TYPE wHue)
+TRIGRET_TYPE CObjBase::OnHearTrigger( CResourceLock & s, lpctstr pszCmd, CChar * pSrc, TALKMODE_TYPE & iModeRef, const HUE_TYPE wHue)
 {
 	ADDTOCALLSTACK("CObjBase::OnHearTrigger");
 	// Check all the keys in this script section.
@@ -3032,7 +3027,7 @@ bool CObjBase::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command fro
 	return false;
 }
 
-void CObjBase::RemoveFromView( CClient * pClientExclude, bool fHardcoded )
+void CObjBase::RemoveFromView(const CClient * pClientExclude, const bool fHardcoded )
 {
 	ADDTOCALLSTACK("CObjBase::RemoveFromView");
 	// Remove this item from all clients.
@@ -3070,7 +3065,7 @@ void CObjBase::RemoveFromView( CClient * pClientExclude, bool fHardcoded )
 	}
 }
 
-void CObjBase::ResendOnEquip( bool fAllClients )
+void CObjBase::ResendOnEquip(const bool fAllClients )
 {
 	ADDTOCALLSTACK("CObjBase::RemoveFromView");
 	// Remove this item from all clients if fAllClients == true, from Enhanced Client only if not.
@@ -3138,7 +3133,7 @@ void CObjBase::FreePropertyList()
 	m_PropertyList = nullptr;
 }
 
-dword CObjBase::UpdatePropertyRevision(dword hash)
+dword CObjBase::UpdatePropertyRevision(const dword hash)
 {
 	ADDTOCALLSTACK("CObjBase::UpdatePropertyRevision");
 
@@ -3269,7 +3264,7 @@ void CObjBase::_GoSleep()
 */
 }
 
-bool CObjBase::_CanTick(bool fParentGoingToSleep) const
+bool CObjBase::_CanTick(const bool fParentGoingToSleep) const
 {
     EXC_TRY("Can tick?");
 
@@ -3294,7 +3289,7 @@ bool CObjBase::_CanTick(bool fParentGoingToSleep) const
 }
 
 
-void CObjBase::ResendTooltip(bool fSendFull, bool fUseCache)
+void CObjBase::ResendTooltip(const bool fSendFull, const bool fUseCache)
 {
 	ADDTOCALLSTACK("CObjBase::ResendTooltip");
     // Send tooltip packet to all nearby clients
@@ -3344,7 +3339,7 @@ CCSpawn * CObjBase::GetSpawn()
     return nullptr;
 }
 
-void CObjBase::SetSpawn(CCSpawn * spawn)
+void CObjBase::SetSpawn(const CCSpawn * spawn)
 {
     if (spawn)
         _uidSpawn.SetObjUID(spawn->GetLink()->GetUID());
@@ -3352,7 +3347,7 @@ void CObjBase::SetSpawn(CCSpawn * spawn)
         _uidSpawn.InitUID();
 }
 
-CSString CObjBase::GetPropStr( const CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, bool fZero, const CComponentProps* pBaseCompProps ) const
+CSString CObjBase::GetPropStr( const CComponentProps* pCompProps, const CComponentProps::PropertyIndex_t iPropIndex, const bool fZero, const CComponentProps* pBaseCompProps ) const
 {
     CSString sProp;
     if (pCompProps && pCompProps->GetPropertyStrPtr(iPropIndex, &sProp, fZero))
@@ -3362,7 +3357,7 @@ CSString CObjBase::GetPropStr( const CComponentProps* pCompProps, CComponentProp
     return sProp;
 }
 
-CSString CObjBase::GetPropStr( COMPPROPS_TYPE iCompPropsType, CComponentProps::PropertyIndex_t iPropIndex, bool fZero, bool fDef ) const
+CSString CObjBase::GetPropStr(const COMPPROPS_TYPE iCompPropsType, const CComponentProps::PropertyIndex_t iPropIndex, const bool fZero, const bool fDef ) const
 {
     CSString sProp;
     const CComponentProps* pCompProps = GetComponentProps(iCompPropsType);
@@ -3379,7 +3374,7 @@ CSString CObjBase::GetPropStr( COMPPROPS_TYPE iCompPropsType, CComponentProps::P
     return sProp;
 }
 
-CComponentProps::PropertyValNum_t CObjBase::GetPropNum( const CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps* pBaseCompProps ) const
+CComponentProps::PropertyValNum_t CObjBase::GetPropNum( const CComponentProps* pCompProps, const CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps* pBaseCompProps ) const
 {
     CComponentProps::PropertyValNum_t iProp = 0;
     if (pCompProps && pCompProps->GetPropertyNumPtr(iPropIndex, &iProp))
@@ -3389,7 +3384,7 @@ CComponentProps::PropertyValNum_t CObjBase::GetPropNum( const CComponentProps* p
     return iProp;
 }
 
-CComponentProps::PropertyValNum_t CObjBase::GetPropNum( COMPPROPS_TYPE iCompPropsType, CComponentProps::PropertyIndex_t iPropIndex, bool fDef ) const
+CComponentProps::PropertyValNum_t CObjBase::GetPropNum(const COMPPROPS_TYPE iCompPropsType, const CComponentProps::PropertyIndex_t iPropIndex, const bool fDef ) const
 {
     CComponentProps::PropertyValNum_t iProp = 0;
     const CComponentProps* pCompProps = GetComponentProps(iCompPropsType);
@@ -3406,14 +3401,14 @@ CComponentProps::PropertyValNum_t CObjBase::GetPropNum( COMPPROPS_TYPE iCompProp
     return iProp;
 }
 
-void CObjBase::SetPropStr( CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, lpctstr ptcVal, bool fDeleteZero )
+void CObjBase::SetPropStr( CComponentProps* pCompProps, const CComponentProps::PropertyIndex_t iPropIndex, const lpctstr ptcVal, const bool fDeleteZero )
 {
     ASSERT(pCompProps);
     const RESDISPLAY_VERSION iLimitToEra = Base_GetDef()->_iEraLimitProps;
     pCompProps->SetPropertyStr(iPropIndex, ptcVal, this, iLimitToEra, fDeleteZero);
 }
 
-void CObjBase::SetPropStr( COMPPROPS_TYPE iCompPropsType, CComponentProps::PropertyIndex_t iPropIndex, lpctstr ptcVal, bool fDeleteZero )
+void CObjBase::SetPropStr(const COMPPROPS_TYPE iCompPropsType, const CComponentProps::PropertyIndex_t iPropIndex, const lpctstr ptcVal, const bool fDeleteZero )
 {
     CComponentProps* pCompProps = GetComponentProps(iCompPropsType);
     if (!pCompProps)
@@ -3425,14 +3420,14 @@ void CObjBase::SetPropStr( COMPPROPS_TYPE iCompPropsType, CComponentProps::Prope
     pCompProps->SetPropertyStr(iPropIndex, ptcVal, this, iLimitToEra, fDeleteZero);
 }
 
-void CObjBase::SetPropNum( CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, CComponentProps::PropertyValNum_t iVal )
+void CObjBase::SetPropNum( CComponentProps* pCompProps, const CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps::PropertyValNum_t iVal )
 {
     ASSERT(pCompProps);
     const RESDISPLAY_VERSION iLimitToEra = Base_GetDef()->_iEraLimitProps;
     pCompProps->SetPropertyNum(iPropIndex, iVal, this, iLimitToEra);
 }
 
-void CObjBase::SetPropNum( COMPPROPS_TYPE iCompPropsType, CComponentProps::PropertyIndex_t iPropIndex, CComponentProps::PropertyValNum_t iVal )
+void CObjBase::SetPropNum(const COMPPROPS_TYPE iCompPropsType, const CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps::PropertyValNum_t iVal )
 {
     CComponentProps* pCompProps = GetComponentProps(iCompPropsType);
     if (!pCompProps)
@@ -3444,7 +3439,7 @@ void CObjBase::SetPropNum( COMPPROPS_TYPE iCompPropsType, CComponentProps::Prope
     pCompProps->SetPropertyNum(iPropIndex, iVal, this, iLimitToEra);
 }
 
-void CObjBase::ModPropNum( CComponentProps* pCompProps, CComponentProps::PropertyIndex_t iPropIndex, CComponentProps::PropertyValNum_t iMod, const CComponentProps* pBaseCompProps )
+void CObjBase::ModPropNum( CComponentProps* pCompProps, const CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps::PropertyValNum_t iMod, const CComponentProps* pBaseCompProps )
 {
     ASSERT(pCompProps);
     CComponentProps::PropertyValNum_t iVal = 0;
@@ -3458,7 +3453,7 @@ void CObjBase::ModPropNum( CComponentProps* pCompProps, CComponentProps::Propert
     pCompProps->SetPropertyNum(iPropIndex, iMod + iVal, this, iLimitToEra);
 }
 
-void CObjBase::ModPropNum( COMPPROPS_TYPE iCompPropsType, CComponentProps::PropertyIndex_t iPropIndex, CComponentProps::PropertyValNum_t iMod, bool fBaseDef )
+void CObjBase::ModPropNum(const COMPPROPS_TYPE iCompPropsType, const CComponentProps::PropertyIndex_t iPropIndex, const CComponentProps::PropertyValNum_t iMod, const bool fBaseDef )
 {
     CComponentProps::PropertyValNum_t iVal = 0;
     CComponentProps* pCompProps = GetComponentProps(iCompPropsType);
@@ -3486,7 +3481,7 @@ void CObjBase::ModPropNum( COMPPROPS_TYPE iCompPropsType, CComponentProps::Prope
     pCompProps->SetPropertyNum(iPropIndex, iVal + iMod, this, iLimitToEra);
 }
 
-lpctstr CObjBase::GetDefStr( lpctstr ptcKey, bool fZero, bool fDef ) const
+lpctstr CObjBase::GetDefStr(const lpctstr ptcKey, const bool fZero, bool fDef ) const
 {
     const CVarDefCont * pVar = GetDefKey( ptcKey, fDef );
 	if ( pVar == nullptr )
@@ -3494,7 +3489,7 @@ lpctstr CObjBase::GetDefStr( lpctstr ptcKey, bool fZero, bool fDef ) const
 	return pVar->GetValStr();
 }
 
-int64 CObjBase::GetDefNum( lpctstr ptcKey, bool fDef, int64 iDefault) const
+int64 CObjBase::GetDefNum(const lpctstr ptcKey, bool fDef, const int64 iDefault) const
 {
 	const CVarDefCont * pVar = GetDefKey( ptcKey, fDef );
 	if ( pVar == nullptr )
@@ -3502,12 +3497,12 @@ int64 CObjBase::GetDefNum( lpctstr ptcKey, bool fDef, int64 iDefault) const
 	return pVar->GetValNum();
 }
 
-void CObjBase::SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero )
+void CObjBase::SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fZero )
 {
 	m_BaseDefs.SetNum(ptcKey, iVal, fZero);
 }
 
-void CObjBase::ModDefNum(lpctstr ptcKey, int64 iMod, bool fBaseDef, bool fZero )
+void CObjBase::ModDefNum(const lpctstr ptcKey, const int64 iMod, const bool fBaseDef, const bool fZero )
 {
     bool fVarFromBase = false;
     CVarDefCont	* pVar	= m_BaseDefs.GetKey( ptcKey );
@@ -3550,17 +3545,17 @@ void CObjBase::ModDefNum(lpctstr ptcKey, int64 iMod, bool fBaseDef, bool fZero )
     pVarNum->SetValNum(iNewVal);
 }
 
-void CObjBase::SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted, bool fZero )
+void CObjBase::SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted, const bool fZero )
 {
 	m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fZero);
 }
 
-void CObjBase::DeleteDef(lpctstr ptcKey)
+void CObjBase::DeleteDef(const lpctstr ptcKey)
 {
 	m_BaseDefs.DeleteKey(ptcKey);
 }
 
-CVarDefCont * CObjBase::GetDefKey( lpctstr ptcKey, bool fDef ) const
+CVarDefCont * CObjBase::GetDefKey(const lpctstr ptcKey, const bool fDef ) const
 {
     if (CVarDefCont *pVar = m_BaseDefs.GetKey(ptcKey); !fDef || pVar )
 		return pVar;
@@ -3569,7 +3564,7 @@ CVarDefCont * CObjBase::GetDefKey( lpctstr ptcKey, bool fDef ) const
     return pBase->m_BaseDefs.GetKey( ptcKey );
 }
 
-lpctstr CObjBase::GetKeyStr( lpctstr ptcKey, bool fZero, bool fDef ) const
+lpctstr CObjBase::GetKeyStr(const lpctstr ptcKey, const bool fZero, const bool fDef ) const
 {
     const CVarDefCont * pVar = GetKey( ptcKey, fDef );
 	if ( pVar == nullptr )
@@ -3577,7 +3572,7 @@ lpctstr CObjBase::GetKeyStr( lpctstr ptcKey, bool fZero, bool fDef ) const
 	return pVar->GetValStr();
 }
 
-int64 CObjBase::GetKeyNum( lpctstr ptcKey, bool fDef ) const
+int64 CObjBase::GetKeyNum(const lpctstr ptcKey, const bool fDef ) const
 {
     const CVarDefCont * pVar = GetKey( ptcKey, fDef );
 	if ( pVar == nullptr )
@@ -3585,7 +3580,7 @@ int64 CObjBase::GetKeyNum( lpctstr ptcKey, bool fDef ) const
 	return pVar->GetValNum();
 }
 
-CVarDefCont * CObjBase::GetKey( lpctstr ptcKey, bool fDef ) const
+CVarDefCont * CObjBase::GetKey(const lpctstr ptcKey, const bool fDef ) const
 {
     if (CVarDefCont *pVar = m_TagDefs.GetKey(ptcKey); !fDef || pVar )
 		return pVar;
@@ -3594,17 +3589,17 @@ CVarDefCont * CObjBase::GetKey( lpctstr ptcKey, bool fDef ) const
     return pBase->m_TagDefs.GetKey( ptcKey );
 }
 
-void CObjBase::SetKeyNum(lpctstr ptcKey, int64 iVal)
+void CObjBase::SetKeyNum(const lpctstr ptcKey, const int64 iVal)
 {
 	m_TagDefs.SetNum(ptcKey, iVal);
 }
 
-void CObjBase::SetKeyStr(lpctstr ptcKey, lpctstr pszVal)
+void CObjBase::SetKeyStr(const lpctstr ptcKey, const lpctstr pszVal)
 {
 	m_TagDefs.SetStr(ptcKey, false, pszVal);
 }
 
-void CObjBase::DeleteKey(lpctstr ptcKey)
+void CObjBase::DeleteKey(const lpctstr ptcKey)
 {
 	m_TagDefs.DeleteKey(ptcKey);
 }
@@ -3622,7 +3617,7 @@ void CObjBase::DupeCopy( const CObjBase * pObj )
     CEntityProps::Copy(pObj);
 }
 
-TRIGRET_TYPE CObjBase::Spell_OnTrigger( SPELL_TYPE spell, SPTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs, CChar * pSrc )
+TRIGRET_TYPE CObjBase::Spell_OnTrigger(const SPELL_TYPE spell, const SPTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs, CChar * pSrc )
 {
 	ADDTOCALLSTACK("CObjBase::Spell_OnTrigger");
 	CSpellDef * pSpellDef = g_Cfg.GetSpellDef( spell );

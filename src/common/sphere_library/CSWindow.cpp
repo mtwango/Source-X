@@ -24,7 +24,7 @@ CSWindow::~CSWindow()
 }
 
 // Standard message handlers.
-BOOL CSWindow::OnCreate(HWND hwnd, LPCREATESTRUCT lpCreateStruct)
+BOOL CSWindow::OnCreate(const HWND hwnd, const LPCREATESTRUCT lpCreateStruct)
 {
     UnreferencedParameter(lpCreateStruct);
     m_hWnd = hwnd;
@@ -36,7 +36,7 @@ void CSWindow::OnDestroy()
     m_hWnd = nullptr;
 }
 
-void CSWindow::OnDestroy( HWND hwnd )
+void CSWindow::OnDestroy(const HWND hwnd )
 {
     UnreferencedParameter(hwnd);
     m_hWnd = nullptr;
@@ -56,25 +56,25 @@ HWND CSWindow::GetParent() const
     return ::GetParent(m_hWnd);
 }
 
-LRESULT CSWindow::SendMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
+LRESULT CSWindow::SendMessage(const UINT uMsg, const WPARAM wParam, const LPARAM lParam) const
 {
     ASSERT(m_hWnd);
     return ::SendMessage(m_hWnd, uMsg, wParam, lParam);
 }
 
-BOOL CSWindow::PostMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) const
+BOOL CSWindow::PostMessage(const UINT uMsg, const WPARAM wParam, const LPARAM lParam) const
 {
     ASSERT(m_hWnd);
     return ::PostMessage(m_hWnd, uMsg, wParam, lParam);
 }
 
-HWND CSWindow::GetDlgItem(int id) const
+HWND CSWindow::GetDlgItem(const int id) const
 {
     ASSERT(m_hWnd);
     return ::GetDlgItem(m_hWnd, id);
 }
 
-BOOL CSWindow::SetDlgItemText(int nIDDlgItem, LPCTSTR lpString)
+BOOL CSWindow::SetDlgItemText(const int nIDDlgItem, const LPCTSTR lpString)
 {
     ASSERT(m_hWnd);
     return ::SetDlgItemText(m_hWnd, nIDDlgItem, lpString);
@@ -90,7 +90,7 @@ void CSWindow::DestroyWindow()
 }
 
 // Area and location
-BOOL CSWindow::MoveWindow(int X, int Y, int nWidth, int nHeight, BOOL bRepaint)
+BOOL CSWindow::MoveWindow(const int X, const int Y, const int nWidth, const int nHeight, const BOOL bRepaint)
 {
     ASSERT(m_hWnd);
     return ::MoveWindow(m_hWnd, X, Y, nWidth, nHeight, bRepaint);
@@ -108,7 +108,7 @@ HWND CSWindow::SetFocus()
     return ::SetFocus(m_hWnd);
 }
 
-BOOL CSWindow::ShowWindow(int nCmdShow)
+BOOL CSWindow::ShowWindow(const int nCmdShow)
 {
     // SW_SHOW
     ASSERT(m_hWnd);
@@ -116,60 +116,60 @@ BOOL CSWindow::ShowWindow(int nCmdShow)
 }
 
 // Standard windows props.
-int CSWindow::GetWindowText(LPTSTR lpszText, int iLen)
+int CSWindow::GetWindowText(const LPTSTR lpszText, const int iLen)
 {
     ASSERT(m_hWnd);
     return ::GetWindowText(m_hWnd, lpszText, iLen);
 }
 
-BOOL CSWindow::SetWindowText(LPCTSTR lpszText)
+BOOL CSWindow::SetWindowText(const LPCTSTR lpszText)
 {
     ASSERT(m_hWnd);
     return ::SetWindowText(m_hWnd, lpszText);
 }
 
-void CSWindow::SetFont(HFONT hFont, BOOL fRedraw)
+void CSWindow::SetFont(HFONT hFont, const BOOL fRedraw)
 {
-    SendMessage(WM_SETFONT, (WPARAM)hFont, MAKELPARAM(fRedraw, 0));
+    SendMessage(WM_SETFONT, reinterpret_cast<WPARAM>(hFont), MAKELPARAM(fRedraw, 0));
 }
 
-HICON CSWindow::SetIcon(HICON hIcon, BOOL fType)
+HICON CSWindow::SetIcon(HICON hIcon, const BOOL fType)
 {
     // ICON_BIG vs ICON_SMALL
-    return (HICON)SendMessage(WM_SETICON, (WPARAM)fType, (LPARAM)hIcon);
+    return reinterpret_cast<HICON>(SendMessage(WM_SETICON, static_cast<WPARAM>(fType), reinterpret_cast<LPARAM>(hIcon)));
 }
 
-UINT_PTR CSWindow::SetTimer(UINT_PTR uTimerID, UINT uWaitmSec)
+UINT_PTR CSWindow::SetTimer(const UINT_PTR uTimerID, const UINT uWaitmSec)
 {
     ASSERT(m_hWnd);
     return ::SetTimer(m_hWnd, uTimerID, uWaitmSec, nullptr);
 }
 
-BOOL CSWindow::KillTimer(UINT_PTR uTimerID)
+BOOL CSWindow::KillTimer(const UINT_PTR uTimerID)
 {
     ASSERT(m_hWnd);
     return ::KillTimer(m_hWnd, uTimerID);
 }
 
-int CSWindow::MessageBox(lpctstr lpszText, lpctstr lpszTitle, UINT fuStyle) const
+int CSWindow::MessageBox(const lpctstr lpszText, const lpctstr lpszTitle, const UINT fuStyle) const
 {
     // ASSERT( m_hWnd ); ok for this to be nullptr !
     return ::MessageBox(m_hWnd, lpszText, lpszTitle, fuStyle);
 }
 
-INT_PTR CSWindow::SetWindowLongPtr(int nIndex, INT_PTR dwNewLong)
+INT_PTR CSWindow::SetWindowLongPtr(const int nIndex, const INT_PTR dwNewLong)
 {
     ASSERT(m_hWnd);
     return ::SetWindowLongPtr(m_hWnd, nIndex, dwNewLong);
 }
 
-INT_PTR CSWindow::GetWindowLongPtr(int nIndex) const
+INT_PTR CSWindow::GetWindowLongPtr(const int nIndex) const
 {
     ASSERT(m_hWnd);
     return ::GetWindowLongPtr(m_hWnd, nIndex);
 }
 
-int CSWindow::SetDlgItemText(int ID, lpctstr lpszText) const
+int CSWindow::SetDlgItemText(const int ID, const lpctstr lpszText) const
 {
     return ::SetDlgItemText(m_hWnd, ID, lpszText);
 }
@@ -177,7 +177,7 @@ int CSWindow::SetDlgItemText(int ID, lpctstr lpszText) const
 
 /* CDialogBase */
 
-INT_PTR CALLBACK CDialogBase::DialogProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) // static
+INT_PTR CALLBACK CDialogBase::DialogProc(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam ) // static
 {
     CDialogBase * pDlg;
     if ( message == WM_INITDIALOG )
@@ -199,7 +199,7 @@ INT_PTR CALLBACK CDialogBase::DialogProc( HWND hWnd, UINT message, WPARAM wParam
     return FALSE;
 }
 
-BOOL CDialogBase::DefDialogProc(UINT message, WPARAM wParam, LPARAM lParam)
+BOOL CDialogBase::DefDialogProc(const UINT message, const WPARAM wParam, const LPARAM lParam)
 {
     UnreferencedParameter(message);
     UnreferencedParameter(wParam);
@@ -215,7 +215,7 @@ ATOM CSWindowBase::RegisterClass( WNDCLASS & wc )	// static
     return ::RegisterClass( &wc );
 }
 
-LRESULT WINAPI CSWindowBase::WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam ) // static
+LRESULT WINAPI CSWindowBase::WndProc(const HWND hWnd, const UINT message, const WPARAM wParam, const LPARAM lParam ) // static
 {
     // NOTE: It is important to call OnDestroy() for asserts to work.
     CSWindowBase * pWnd;
@@ -243,7 +243,7 @@ CWinApp::CWinApp()
     m_pMainWnd = nullptr;
 }
 
-void CWinApp::InitInstance(LPCTSTR pszAppName, HINSTANCE hInstance, LPTSTR lpszCmdLine)
+void CWinApp::InitInstance(const LPCTSTR pszAppName, const HINSTANCE hInstance, const LPTSTR lpszCmdLine)
 {
     m_pszAppName = pszAppName;	// assume this is a static data pointer valid forever.
     m_hInstance	= hInstance;
@@ -272,11 +272,11 @@ void CWinApp::InitInstance(LPCTSTR pszAppName, HINSTANCE hInstance, LPTSTR lpszC
     }
 }
 
-HICON CWinApp::LoadIcon(int id) const
+HICON CWinApp::LoadIcon(const int id) const
 {
     return ::LoadIcon(m_hInstance, MAKEINTRESOURCE(id));
 }
-HMENU CWinApp::LoadMenu(int id) const
+HMENU CWinApp::LoadMenu(const int id) const
 {
     return ::LoadMenu(m_hInstance, MAKEINTRESOURCE(id));
 }
@@ -285,12 +285,12 @@ HMENU CWinApp::LoadMenu(int id) const
 /* CScrollBar */
 
 // Attributes
-void CScrollBar::GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const
+void CScrollBar::GetScrollRange(const LPINT lpMinPos, const LPINT lpMaxPos) const
 {
     ASSERT(IsWindow());
     ::GetScrollRange(m_hWnd, SB_CTL, lpMinPos, lpMaxPos);
 }
-BOOL CScrollBar::GetScrollInfo(LPSCROLLINFO lpScrollInfo, UINT nMask)
+BOOL CScrollBar::GetScrollInfo(const LPSCROLLINFO lpScrollInfo, const UINT nMask)
 {
     lpScrollInfo->cbSize = sizeof(*lpScrollInfo);
     lpScrollInfo->fMask = nMask;
@@ -302,13 +302,13 @@ BOOL CScrollBar::GetScrollInfo(LPSCROLLINFO lpScrollInfo, UINT nMask)
 
 // Operations
 
-void CEdit::SetSel(DWORD dwSelection, BOOL bNoScroll)
+void CEdit::SetSel(const DWORD dwSelection, const BOOL bNoScroll)
 {
     UnreferencedParameter(bNoScroll);
     ASSERT(IsWindow());
     SendMessage(EM_SETSEL, dwSelection, dwSelection);
 }
-void CEdit::SetSel(size_t nStartChar, size_t nEndChar, BOOL bNoScroll)
+void CEdit::SetSel(const size_t nStartChar, const size_t nEndChar, const BOOL bNoScroll)
 {
     UnreferencedParameter(bNoScroll);
     ASSERT(IsWindow());
@@ -327,7 +327,7 @@ void CEdit::GetSel(size_t& nStartChar, size_t& nEndChar) const
     nEndChar = HIWORD(nSelection);
 }
 
-void CEdit::ReplaceSel(lpctstr lpszNewText, BOOL bCanUndo)
+void CEdit::ReplaceSel(lpctstr lpszNewText, const BOOL bCanUndo)
 {
     ASSERT(IsWindow());
     SendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)lpszNewText);
@@ -336,12 +336,12 @@ void CEdit::ReplaceSel(lpctstr lpszNewText, BOOL bCanUndo)
 
 /* CRichEditCtrl */
 
-COLORREF CRichEditCtrl::SetBackgroundColor(BOOL bSysColor, COLORREF cr)
+COLORREF CRichEditCtrl::SetBackgroundColor(const BOOL bSysColor, const COLORREF cr)
 {
-    return ((DWORD)SendMessage(EM_SETBKGNDCOLOR, (WPARAM)bSysColor, cr));
+    return static_cast<DWORD>(SendMessage(EM_SETBKGNDCOLOR, static_cast<WPARAM>(bSysColor), cr));
 }
 
-void CRichEditCtrl::SetSel(int nStartChar, int nEndChar)
+void CRichEditCtrl::SetSel(const int nStartChar, const int nEndChar)
 {
     ASSERT(IsWindow());
     CHARRANGE range;
@@ -358,13 +358,13 @@ void CRichEditCtrl::GetSel(int& nStartChar, int& nEndChar) const
     nEndChar = range.cpMax;
 }
 
-void CRichEditCtrl::SetRedraw(BOOL val)
+void CRichEditCtrl::SetRedraw(const BOOL val)
 {
     ASSERT(IsWindow());
-    SendMessage(WM_SETREDRAW, (WPARAM)val, 0);
+    SendMessage(WM_SETREDRAW, static_cast<WPARAM>(val), 0);
 }
 
-void CRichEditCtrl::SetCaretHide(BOOL val)
+void CRichEditCtrl::SetCaretHide(const BOOL val)
 {
     ASSERT(IsWindow());
     if (val)
@@ -405,7 +405,7 @@ int CRichEditCtrl::GetEventMask() const
     return (DWORD)SendMessage(EM_GETEVENTMASK);
 }
 
-DWORD CRichEditCtrl::SetEventMask(DWORD dwEventMask)
+DWORD CRichEditCtrl::SetEventMask(const DWORD dwEventMask)
 {
     // ENM_NONE = default.
     return (DWORD)SendMessage(EM_SETEVENTMASK, 0, dwEventMask);

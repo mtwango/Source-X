@@ -19,12 +19,12 @@ CUOInstall::CUOInstall()
 	memset(m_UopMapAddress, 0, sizeof(m_UopMapAddress));
 }
 
-CSString CUOInstall::GetFullExePath( lpctstr pszName ) const
+CSString CUOInstall::GetFullExePath(const lpctstr pszName ) const
 {
 	return CSFile::GetMergedFileName( m_sExePath, pszName );
 }
 
-CSString CUOInstall::GetFullCDPath( lpctstr pszName ) const
+CSString CUOInstall::GetFullCDPath(const lpctstr pszName ) const
 {
 	return CSFile::GetMergedFileName( m_sCDPath, pszName );
 }
@@ -114,7 +114,7 @@ void CUOInstall::DetectMulVersions()
 		m_FileFormat[VERFILE_MULTIIDX] = VERFORMAT_HIGHSEAS;
 }
 
-bool CUOInstall::OpenFile( CSFile & file, lpctstr pszName, word wFlags )
+bool CUOInstall::OpenFile( CSFile & file, const lpctstr pszName, const word wFlags )
 {
 	ADDTOCALLSTACK("CUOInstall::OpenFile");
 	ASSERT(pszName);
@@ -133,7 +133,7 @@ bool CUOInstall::OpenFile( CSFile & file, lpctstr pszName, word wFlags )
 	return false;
 }
 
-lpctstr CUOInstall::GetBaseFileName( VERFILE_TYPE i ) // static
+lpctstr CUOInstall::GetBaseFileName(const VERFILE_TYPE i ) // static
 {
 	ADDTOCALLSTACK("CUOInstall::GetBaseFileName");
 	static lpctstr constexpr sm_szFileNames[VERFILE_QTY] =
@@ -176,29 +176,29 @@ lpctstr CUOInstall::GetBaseFileName( VERFILE_TYPE i ) // static
 	return ( i<0 || i>=VERFILE_QTY ) ? nullptr : sm_szFileNames[i];
 }
 
-CSFile * CUOInstall::GetMulFile( VERFILE_TYPE i )
+CSFile * CUOInstall::GetMulFile(const VERFILE_TYPE i )
 {
 	ASSERT( i<VERFILE_QTY );
-	return( &(m_File[i]));
+	return &m_File[i];
 }
 
-VERFILE_FORMAT CUOInstall::GetMulFormat( VERFILE_TYPE i )
+VERFILE_FORMAT CUOInstall::GetMulFormat(const VERFILE_TYPE i )
 {
 	ASSERT( i<VERFILE_QTY );
 	return( m_FileFormat[i] );
 }
 
-void CUOInstall::SetPreferPath( lpctstr pszName )
+void CUOInstall::SetPreferPath(const lpctstr pszName )
 {
 	m_sPreferPath = pszName;
 }
 
-CSString CUOInstall::GetPreferPath( lpctstr pszName ) const
+CSString CUOInstall::GetPreferPath(const lpctstr pszName ) const
 {
 	return CSFile::GetMergedFileName(m_sPreferPath, pszName);
 }
 
-bool CUOInstall::OpenFile( VERFILE_TYPE i )
+bool CUOInstall::OpenFile(const VERFILE_TYPE i )
 {
 	ADDTOCALLSTACK("CUOInstall::OpenFile");
 	CSFile	*pFile = GetMulFile(i);
@@ -220,7 +220,7 @@ bool CUOInstall::OpenFile( VERFILE_TYPE i )
 	return OpenFile(m_File[i], pszTitle, OF_READ|OF_SHARE_DENY_WRITE);
 }
 
-VERFILE_TYPE CUOInstall::OpenFiles( ullong ullMask )
+VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 {
 	ADDTOCALLSTACK("CUOInstall::OpenFiles");
 	// Now open all the required files.
@@ -517,7 +517,7 @@ void CUOInstall::CloseFiles()
 	}
 }
 
-bool CUOInstall::ReadMulIndex(CSFile &file, dword id, CUOIndexRec &Index)
+bool CUOInstall::ReadMulIndex(CSFile &file, const dword id, CUOIndexRec &Index)
 {
 	ADDTOCALLSTACK("CUOInstall::ReadMulIndex");
 
@@ -542,7 +542,7 @@ bool CUOInstall::ReadMulData(CSFile &file, const CUOIndexRec &Index, void * pDat
 	return true;
 }
 
-bool CUOInstall::ReadMulIndex(VERFILE_TYPE fileindex, VERFILE_TYPE filedata, dword id, CUOIndexRec & Index)
+bool CUOInstall::ReadMulIndex(const VERFILE_TYPE fileindex, const VERFILE_TYPE filedata, const dword id, CUOIndexRec & Index)
 {
 	ADDTOCALLSTACK("CUOInstall::ReadMulIndex");
 	// Read about this data type in one of the index files.
@@ -577,13 +577,13 @@ CVerDataMul::~CVerDataMul()
 	Unload();
 }
 
-int CVerDataMul::QCompare(size_t left, dword dwRefIndex) const
+int CVerDataMul::QCompare(const size_t left, const dword dwRefIndex) const
 {
-	dword dwIndex2 = GetEntry(left)->GetIndex();
-	return(dwIndex2 - dwRefIndex);
+    const dword dwIndex2 = GetEntry(left)->GetIndex();
+	return dwIndex2 - dwRefIndex;
 }
 
-void CVerDataMul::QSort(size_t left, size_t right)
+void CVerDataMul::QSort(const size_t left, const size_t right)
 {
 	ADDTOCALLSTACK("CVerDataMul::QSort");
 	static uint uiReentrant = 0;
@@ -688,7 +688,7 @@ size_t CVerDataMul::GetCount() const
 	return(m_Data.size());
 }
 
-const CUOVersionBlock * CVerDataMul::GetEntry(size_t i) const
+const CUOVersionBlock * CVerDataMul::GetEntry(const size_t i) const
 {
 	return(&m_Data.at(i));
 }
@@ -698,7 +698,7 @@ void CVerDataMul::Unload()
 	m_Data.clear();
 }
 
-bool CVerDataMul::FindVerDataBlock(VERFILE_TYPE type, dword id, CUOIndexRec & Index) const
+bool CVerDataMul::FindVerDataBlock(const VERFILE_TYPE type, const dword id, CUOIndexRec & Index) const
 {
 	ADDTOCALLSTACK("CVerDataMul::FindVerDataBlock");
 	// Search the verdata.mul for changes to stuff.

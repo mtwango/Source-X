@@ -29,7 +29,7 @@ static uint HashString(lpctstr str, const size_t length)   // integer overflow i
 #define PUSH_FRONT_TOOLTIP(pObj, t) pObj->m_TooltipData.emplace(pObj->m_TooltipData.begin(),t)
 #define PUSH_BACK_TOOLTIP(pObj, t) pObj->m_TooltipData.emplace_back(t)
 
-bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, bool fShop)
+bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 {
 	ADDTOCALLSTACK("CClient::addAOSTooltip");
 	if (!pObj)

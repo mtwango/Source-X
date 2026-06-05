@@ -26,7 +26,7 @@
 /////////////////////////////////////////////////////////////////
 // -CItemBase
 
-CItemBase::CItemBase( ITEMID_TYPE id ) :
+CItemBase::CItemBase(const ITEMID_TYPE id ) :
 	CBaseBaseDef( CResourceID( RES_ITEMDEF, id ))
 {
 	m_weight		= 0;
@@ -136,7 +136,7 @@ word CItemBase::GetMaxAmount()
     return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
 }
 
-bool CItemBase::SetMaxAmount(word amount)
+bool CItemBase::SetMaxAmount(const word amount)
 {
 	ADDTOCALLSTACK("CItemBase::SetMaxAmount");
 	if (!IsStackableType())
@@ -146,7 +146,7 @@ bool CItemBase::SetMaxAmount(word amount)
 	return true;
 }
 
-void CItemBase::SetTypeName( lpctstr pszName )
+void CItemBase::SetTypeName(const lpctstr pszName )
 {
 	ADDTOCALLSTACK("CItemBase::SetTypeName");
 	ASSERT(pszName);
@@ -332,7 +332,7 @@ GUMP_TYPE CItemBase::IsTypeContainer() const noexcept
 	}
 }
 
-bool CItemBase::IsTypeSpellbook( IT_TYPE type ) noexcept // static
+bool CItemBase::IsTypeSpellbook(const IT_TYPE type ) noexcept // static
 {
 	switch( type )
 	{
@@ -351,7 +351,7 @@ bool CItemBase::IsTypeSpellbook( IT_TYPE type ) noexcept // static
 	}
 }
 
-bool CItemBase::IsTypeMulti( IT_TYPE type ) noexcept	// static
+bool CItemBase::IsTypeMulti(const IT_TYPE type ) noexcept	// static
 {
 	switch( type )
 	{
@@ -366,7 +366,7 @@ bool CItemBase::IsTypeMulti( IT_TYPE type ) noexcept	// static
 	}
 }
 
-bool CItemBase::IsTypeEquippable(IT_TYPE type, LAYER_TYPE layer) noexcept // static
+bool CItemBase::IsTypeEquippable(const IT_TYPE type, const LAYER_TYPE layer) noexcept // static
 {
     // Equippable on (possibly) visible layers.
 
@@ -418,20 +418,20 @@ bool CItemBase::IsTypeEquippable() const noexcept
 	return IsTypeEquippable(m_type, (LAYER_TYPE)m_layer);
 }
 
-bool CItemBase::IsID_Multi( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_Multi(const ITEMID_TYPE id ) noexcept // static
 {
 	// NOTE: Ships are also multi's
-	return ( id >= ITEMID_MULTI && id < ITEMID_MULTI_MAX );
+	return id >= ITEMID_MULTI && id < ITEMID_MULTI_MAX;
 }
 
-bool CItemBase::IsID_House(ITEMID_TYPE id) noexcept
+bool CItemBase::IsID_House(const ITEMID_TYPE id) noexcept
 {
     // IT_MULTI
     // IT_MULTI_CUSTOM
     return (((id >= ITEMID_HOUSE_SMALL_ST_PL) && (id <= ITEMID_HOUSE_SMALL_SHOP_MB)) || ((id >= ITEMID_HOUSEFOUNDATION_7x7) && (id <= ITEMID_HOUSEFOUNDATION_32x32)));
 }
 
-int CItemBase::IsID_Door( ITEMID_TYPE id ) noexcept // static
+int CItemBase::IsID_Door(const ITEMID_TYPE id ) noexcept // static
 {
 	// IT_DOOR
 	static constexpr ITEMID_TYPE sm_Item_DoorBase[] =
@@ -497,9 +497,9 @@ int CItemBase::IsID_Door( ITEMID_TYPE id ) noexcept // static
 	return 0;
 }
 
-bool CItemBase::IsID_DoorOpen( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_DoorOpen(const ITEMID_TYPE id ) noexcept // static
 {
-  	int doordir = IsID_Door(id)-1;
+    const int doordir = IsID_Door(id)-1;
     if ( doordir < 0 )
 		return false;
     if ( doordir & DOOR_OPENED )
@@ -507,23 +507,23 @@ bool CItemBase::IsID_DoorOpen( ITEMID_TYPE id ) noexcept // static
 	return false;
 }
 
-bool CItemBase::IsID_Ship( ITEMID_TYPE id ) noexcept
+bool CItemBase::IsID_Ship(const ITEMID_TYPE id ) noexcept
 {
 	// IT_SHIP
-	return ( id >= ITEMID_MULTI && id <= ITEMID_GALLEON_BRIT2_W );
+	return id >= ITEMID_MULTI && id <= ITEMID_GALLEON_BRIT2_W;
 }
 
-bool CItemBase::IsID_GamePiece( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_GamePiece(const ITEMID_TYPE id ) noexcept // static
 {
-	return ( id >= ITEMID_GAME1_CHECKER && id <= ITEMID_GAME_HI );
+	return id >= ITEMID_GAME1_CHECKER && id <= ITEMID_GAME_HI;
 }
 
-bool CItemBase::IsID_Track( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_Track(const ITEMID_TYPE id ) noexcept // static
 {
-	return ( id >= ITEMID_TRACK_BEGIN && id <= ITEMID_TRACK_END );
+	return id >= ITEMID_TRACK_BEGIN && id <= ITEMID_TRACK_END;
 }
 
-bool CItemBase::IsID_WaterFish( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_WaterFish(const ITEMID_TYPE id ) noexcept // static
 {
 	// IT_WATER
 	// Assume this means water we can fish in.
@@ -535,7 +535,7 @@ bool CItemBase::IsID_WaterFish( ITEMID_TYPE id ) noexcept // static
 	return false;
 }
 
-bool CItemBase::IsID_WaterWash( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_WaterWash(const ITEMID_TYPE id ) noexcept // static
 {
 	// IT_WATER_WASH
 	if ( id >= ITEMID_WATER_TROUGH_1 && id <= ITEMID_WATER_TROUGH_2	)
@@ -543,12 +543,12 @@ bool CItemBase::IsID_WaterWash( ITEMID_TYPE id ) noexcept // static
 	return IsID_WaterFish( id );
 }
 
-bool CItemBase::IsVisibleLayer( LAYER_TYPE layer ) noexcept // static
+bool CItemBase::IsVisibleLayer(const LAYER_TYPE layer ) noexcept // static
 {
     return ((layer > LAYER_NONE) && (layer <= LAYER_HORSE) );
 }
 
-bool CItemBase::IsID_Chair( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsID_Chair(const ITEMID_TYPE id ) noexcept // static
 {
 	// Strangely there is not chair flag in the statics.mul file ??? !!!
 	// IT_CHAIR
@@ -650,7 +650,7 @@ bool CItemBase::IsID_Chair( ITEMID_TYPE id ) noexcept // static
 	}
 }
 
-bool CItemBase::GetItemData( ITEMID_TYPE id, CUOItemTypeRec_HS * pData, bool fNameNotNeeded) // static
+bool CItemBase::GetItemData(const ITEMID_TYPE id, CUOItemTypeRec_HS * pData, const bool fNameNotNeeded) // static
 {
 	//ADDTOCALLSTACK_DEBUG("CItemBase::GetItemData");
 	// Read from g_Install.m_fTileData
@@ -713,7 +713,7 @@ bool CItemBase::GetItemData( ITEMID_TYPE id, CUOItemTypeRec_HS * pData, bool fNa
 	return true;
 }
 
-void CItemBase::GetItemSpecificFlags( const CUOItemTypeRec_HS & tiledata, uint64 *uiBlockFlags, IT_TYPE type, ITEMID_TYPE id ) // static
+void CItemBase::GetItemSpecificFlags( const CUOItemTypeRec_HS & tiledata, uint64 *uiBlockFlags, const IT_TYPE type, const ITEMID_TYPE id ) // static
 {
 	ADDTOCALLSTACK("CItemBase::GetItemSpecificFlags");
 	if ( type == IT_DOOR )
@@ -732,7 +732,7 @@ void CItemBase::GetItemSpecificFlags( const CUOItemTypeRec_HS & tiledata, uint64
         *uiBlockFlags |= CAN_I_PILE;
 }
 
-void CItemBase::GetItemTiledataFlags( uint64 *uiCanFlags, ITEMID_TYPE id ) // static
+void CItemBase::GetItemTiledataFlags( uint64 *uiCanFlags, const ITEMID_TYPE id ) // static
 {
 	ADDTOCALLSTACK("CItemBase::GetItemTiledataFlags");
 
@@ -804,7 +804,7 @@ height_t CItemBase::GetItemHeightFlags( const CUOItemTypeRec_HS & tiledata, uint
 	return tiledata.m_height;
 }
 
-height_t CItemBase::GetItemHeight( ITEMID_TYPE id, uint64 *uiBlockFlags ) // static
+height_t CItemBase::GetItemHeight(const ITEMID_TYPE id, uint64 *uiBlockFlags ) // static
 {
 	ADDTOCALLSTACK_DEBUG("CItemBase::GetItemHeight");
 	// Get just the height and the blocking flags for the item by id.
@@ -837,7 +837,7 @@ height_t CItemBase::GetItemHeight( ITEMID_TYPE id, uint64 *uiBlockFlags ) // sta
 	return GetItemHeightFlags( tiledata, uiBlockFlags );
 }
 
-IT_TYPE CItemBase::GetTypeBase( ITEMID_TYPE id, const CUOItemTypeRec_HS &tiledata ) // static
+IT_TYPE CItemBase::GetTypeBase(const ITEMID_TYPE id, const CUOItemTypeRec_HS &tiledata ) // static
 {
 	ADDTOCALLSTACK("CItemBase::GetTypeBase");
 	if ( IsID_Ship( id ) )
@@ -878,7 +878,7 @@ IT_TYPE CItemBase::GetTypeBase( ITEMID_TYPE id, const CUOItemTypeRec_HS &tiledat
 	return IT_NORMAL;	// Get from script i guess.
 }
 
-ITEMID_TYPE CItemBase::GetNextFlipID( ITEMID_TYPE id ) const
+ITEMID_TYPE CItemBase::GetNextFlipID(const ITEMID_TYPE id ) const
 {
 	ADDTOCALLSTACK("CItemBase::GetNextFlipID");
 	if (!m_flip_id.empty())
@@ -895,7 +895,7 @@ ITEMID_TYPE CItemBase::GetNextFlipID( ITEMID_TYPE id ) const
 	return GetDispID();
 }
 
-bool CItemBase::IsSameDispID( ITEMID_TYPE id ) const
+bool CItemBase::IsSameDispID(const ITEMID_TYPE id ) const
 {
 	ADDTOCALLSTACK("CItemBase::IsSameDispID");
 	// Does this item look like the item we want ?
@@ -915,7 +915,7 @@ bool CItemBase::IsSameDispID( ITEMID_TYPE id ) const
 	return false;
 }
 
-bool CItemBase::IsDupedItem( ITEMID_TYPE id ) const
+bool CItemBase::IsDupedItem(const ITEMID_TYPE id ) const
 {
     ADDTOCALLSTACK("CItemBase::IsDupedItem");
     if (m_flip_id.empty())
@@ -1066,7 +1066,7 @@ lpctstr const CItemBase::sm_szLoadKeys[IBC_QTY+1] =
 	nullptr,
 };
 
-bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	ADDTOCALLSTACK("CItemBase::r_WriteVal");
     EXC_TRY("WriteVal");
@@ -1782,7 +1782,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 	return false;
 }
 
-void CItemBase::ReplaceItemBase( CItemBase * pOld, CResourceDef * pNew ) // static
+void CItemBase::ReplaceItemBase(const CItemBase * pOld, CResourceDef * pNew ) // static
 {
 	ADDTOCALLSTACK("CItemBase::ReplaceItemBase");
 	ASSERT(pOld);
@@ -1836,7 +1836,7 @@ CItemBase * CItemBase::MakeDupeReplacement( CItemBase * pBase, ITEMID_TYPE idmas
 }
 
 
-void CItemBase::SetType(IT_TYPE type)
+void CItemBase::SetType(const IT_TYPE type)
 {
     m_type = type;
 
@@ -1903,7 +1903,7 @@ CItemBaseMulti::CItemBaseMulti( CItemBase* pBase ) :
 	CopyTransfer(pBase);
 }
 
-bool CItemBaseMulti::AddComponent( ITEMID_TYPE id, short dx, short dy, char dz )
+bool CItemBaseMulti::AddComponent(const ITEMID_TYPE id, const short dx, const short dy, const char dz )
 {
 	ADDTOCALLSTACK("CItemBaseMulti::AddComponent");
 	m_rect.UnionPoint( dx, dy );
@@ -1963,7 +1963,7 @@ int CItemBaseMulti::GetDistanceMax() const
 	return (iDist + 1);
 }
 
-int CItemBaseMulti::GetDistanceDir(DIR_TYPE dir) const
+int CItemBaseMulti::GetDistanceDir(const DIR_TYPE dir) const
 {
 	ADDTOCALLSTACK("CItemBaseMulti::GetDistanceDir");
 	ASSERT(dir <= DIR_QTY);
@@ -2095,7 +2095,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
     return false;
 }
 
-bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pChar, bool fNoCallParent, bool fNoCallChildren)
+bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pChar, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemBaseMulti::r_WriteVal");
@@ -2256,7 +2256,7 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 //**************************************************
 
-CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
+CItemBase * CItemBase::FindItemBase(const ITEMID_TYPE id ) // static
 {
     ADDTOCALLSTACK_DEBUG("CItemBase::FindItemBase");
 	// CItemBase is a like item already loaded.
@@ -2339,7 +2339,7 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 	return pBase;
 }
 
-bool CItemBase::IsValidDispID( ITEMID_TYPE id ) noexcept // static
+bool CItemBase::IsValidDispID(const ITEMID_TYPE id ) noexcept // static
 {
     // Is this id in the base artwork set ? tile or multi.
     return ( id > ITEMID_NOTHING && id < ITEMID_MULTI_MAX );
@@ -2347,7 +2347,7 @@ bool CItemBase::IsValidDispID( ITEMID_TYPE id ) noexcept // static
 
 //**************************************************
 
-CItemBaseDupe::CItemBaseDupe(ITEMID_TYPE id, CItemBase* pMasterItem) :
+CItemBaseDupe::CItemBaseDupe(const ITEMID_TYPE id, CItemBase* pMasterItem) :
 	CResourceDef(CResourceID(RES_ITEMDEF, id)),
 	m_MasterItem(pMasterItem),
 	m_qwFlags(0), m_Height(0), m_Can(0)

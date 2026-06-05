@@ -3,7 +3,7 @@
 #include <cstring> // for memcpy
 
 // Encryption used when logging in, to access the server list
-bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen )
+bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, const size_t outLen, const size_t inLen )
 {
 	ADDTOCALLSTACK("CCrypto::DecryptLogin");
     // Algorithm: a kind of rotation cipher

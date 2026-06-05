@@ -50,23 +50,23 @@ struct alignas(alignof(wchar)) naword : nword
     template <typename T>
     naword& operator = (T) = delete;
 
-    naword& operator = (word var) noexcept {
+    naword& operator = (const word var) noexcept {
         nword::operator=(var);
         return *this;
     }
-    naword& operator = (wchar var) noexcept {
+    naword& operator = (const wchar var) noexcept {
         nword::operator=(static_cast<word>(var));
         return *this;
     }
-    naword& operator = (nword var) noexcept {
+    naword& operator = (const nword var) noexcept {
         m_val = var.m_val;
         return *this;
     }
-    naword& operator = (char var) noexcept {
+    naword& operator = (const char var) noexcept {
         nword::operator=(static_cast<word>(var));
         return *this;
     }
-    naword& operator = (unsigned char var) noexcept {
+    naword& operator = (const unsigned char var) noexcept {
         nword::operator=(var);
         return *this;
     }

@@ -15,7 +15,7 @@ CSMemBlock::~CSMemBlock()
 
 // CSMemBlock:: Modifiers.
 
-void CSMemBlock::Alloc( size_t uiSize )
+void CSMemBlock::Alloc(const size_t uiSize )
 {
     Free();
     ASSERT(m_pData == nullptr);
@@ -23,7 +23,7 @@ void CSMemBlock::Alloc( size_t uiSize )
         m_pData = AllocBase(uiSize);
 }
 
-byte * CSMemBlock::AllocBase( size_t uiSize )  // Static
+byte * CSMemBlock::AllocBase(const size_t uiSize )  // Static
 {
     ASSERT(uiSize > 0);
     const auto pData = new byte[ uiSize ]; //();
@@ -57,7 +57,7 @@ CSMemLenBlock::~CSMemLenBlock() = default;
 
 // CSMemLenBlock:: Modifiers.
 
-void CSMemLenBlock::Alloc( size_t uiSize )
+void CSMemLenBlock::Alloc(const size_t uiSize )
 {
     m_uiLength = uiSize;
     CSMemBlock::Alloc(uiSize);
@@ -69,7 +69,7 @@ void CSMemLenBlock::Free()
     CSMemBlock::Free();
 }
 
-void CSMemLenBlock::Resize( size_t uiSizeNew )
+void CSMemLenBlock::Resize(const size_t uiSizeNew )
 {
     ASSERT( uiSizeNew != m_uiLength );
     byte * pDataNew = AllocBase( uiSizeNew );

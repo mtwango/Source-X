@@ -19,7 +19,7 @@ CSQLite::~CSQLite()
 	Close();
 }
 
-int CSQLite::Open( lpctstr strFileName )
+int CSQLite::Open(const lpctstr strFileName )
 {
 	Close();
 
@@ -56,7 +56,7 @@ bool CSQLite::IsOpen()
 	return (m_sqlite3 != nullptr);
 }
 
-int CSQLite::QuerySQL( lpctstr strSQL,  CVarDefMap & mapQueryResult )
+int CSQLite::QuerySQL(const lpctstr strSQL,  CVarDefMap & mapQueryResult )
 {
     ADDTOCALLSTACK("CSQLite::QuerySQL (lpctstr,CVarDefMap)");
 	mapQueryResult.Clear();
@@ -93,7 +93,7 @@ err_and_ret:
 	return m_iLastError;
 }
 
-SQLiteTable CSQLite::QuerySQL( lpctstr strSQL )
+SQLiteTable CSQLite::QuerySQL(const lpctstr strSQL )
 {
     ADDTOCALLSTACK("CSQLite::QuerySQL (lpctstr)");
 	if (!IsOpen()) {
@@ -106,7 +106,7 @@ SQLiteTable CSQLite::QuerySQL( lpctstr strSQL )
     return tableCopy;
 }
 
-SQLiteTablePtr CSQLite::QuerySQLPtr( lpctstr strSQL )
+SQLiteTablePtr CSQLite::QuerySQLPtr(const lpctstr strSQL )
 {
     ADDTOCALLSTACK("CSQLite::QuerySQLPtr");
 	if (!IsOpen())
@@ -183,7 +183,7 @@ void CSQLite::ConvertUTF8ToVString(const char * strInUTF8MB, stdvtstring *pStrOu
     UTF8MBSTR::ConvertUTF8ToString(strInUTF8MB, pStrOut);
 }
 
-int CSQLite::ExecuteSQL( lpctstr strSQL )
+int CSQLite::ExecuteSQL(const lpctstr strSQL )
 {
     ADDTOCALLSTACK("CSQLite::ExecuteSQL");
 	if (!IsOpen())
@@ -207,13 +207,13 @@ int CSQLite::ExecuteSQL( lpctstr strSQL )
 	return iErr;
 }
 
-int CSQLite::IsSQLComplete( lpctstr strSQL )
+int CSQLite::IsSQLComplete(const lpctstr strSQL )
 {
     ADDTOCALLSTACK("CSQLite::IsSQLComplete");
 	return sqlite3_complete( UTF8MBSTR(strSQL) );
 }
 
-int CSQLite::ImportDB(lpctstr strInFileName)
+int CSQLite::ImportDB(const lpctstr strInFileName)
 {
     ADDTOCALLSTACK("CSQLite::ImportDB");
 
@@ -276,7 +276,7 @@ clean_and_ret:
     return iErr;
 }
 
-int CSQLite::ExportDB(lpctstr strOutFileName)
+int CSQLite::ExportDB(const lpctstr strOutFileName)
 {
     ADDTOCALLSTACK("CSQLite::ExportDB");
 
@@ -412,7 +412,7 @@ bool CSQLite::r_LoadVal(CScript & s)
 	return false;
 }
 
-bool CSQLite::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CSQLite::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);
@@ -507,7 +507,7 @@ SQLiteTable::SQLiteTable() :
 {}
 SQLiteTable::~SQLiteTable() = default;
 
-lpctstr SQLiteTable::GetColName( int iCol )
+lpctstr SQLiteTable::GetColName(const int iCol )
 {
 	if (iCol>=0 && iCol<m_iCols)
 	{
@@ -556,7 +556,7 @@ bool SQLiteTable::GoPrev()
 	return false;
 }
 
-bool SQLiteTable::GoRow(uint iRow)
+bool SQLiteTable::GoRow(const uint iRow)
 {
 	if (iRow<m_lstRows.size())
 	{
@@ -566,7 +566,7 @@ bool SQLiteTable::GoRow(uint iRow)
 	return false;
 }
 
-lpctstr SQLiteTable::GetValue(lpctstr lpColName)
+lpctstr SQLiteTable::GetValue(const lpctstr lpColName)
 {
 	if (!lpColName)
         return nullptr;
@@ -583,7 +583,7 @@ lpctstr SQLiteTable::GetValue(lpctstr lpColName)
 	return nullptr;
 }
 
-lpctstr SQLiteTable::GetValue(int iColIndex)
+lpctstr SQLiteTable::GetValue(const int iColIndex)
 {
 	if (iColIndex<0 || iColIndex>=m_iCols)
         return nullptr;
@@ -593,7 +593,7 @@ lpctstr SQLiteTable::GetValue(int iColIndex)
 	return &m_lstRows[m_iPos][iColIndex][0];
 }
 
-lpctstr SQLiteTable::operator [] (lpctstr lpColName)
+lpctstr SQLiteTable::operator [] (const lpctstr lpColName)
 {
 	if (!lpColName)
         return nullptr;
@@ -610,7 +610,7 @@ lpctstr SQLiteTable::operator [] (lpctstr lpColName)
 	return nullptr;
 }
 
-lpctstr SQLiteTable::operator [] (int iColIndex)
+lpctstr SQLiteTable::operator [] (const int iColIndex)
 {
 	if (iColIndex<0 || iColIndex>=m_iCols)
         return nullptr;

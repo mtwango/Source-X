@@ -220,7 +220,7 @@ dword CItemVendable::GetVendorPrice(const int iConvertFactor , const bool forsel
     return static_cast<dword>(llPrice);
 }
 
-bool CItemVendable::IsValidSaleItem( bool fBuyFromVendor ) const
+bool CItemVendable::IsValidSaleItem(const bool fBuyFromVendor ) const
 {
 	ADDTOCALLSTACK("CItemVendable::IsValidSaleItem");
 	// Can this individual item be sold or bought ?

@@ -18,7 +18,7 @@ class Packet;
 
 #if defined(_PACKETDUMP) || defined(_DUMPSUPPORT)
     void xRecordPacketData(const CClient* client, const byte* data, uint length, lpctstr heading);
-    void xRecordPacket(const CClient* client, Packet* packet, lpctstr heading);
+    void xRecordPacket(const CClient* client, const Packet * packet, lpctstr heading);
 #else
     #define xRecordPacketData(_client_, _data_, _length, _heading_)
     #define xRecordPacket(_client_, _packet_, _heading_)
@@ -232,7 +232,7 @@ public:
 
 	CNetState* getTarget() const override { return m_packet->getTarget(); }
 	int getPriority() const override { return m_packet->getPriority(); }
-	void setPriority(int priority) override { m_packet->m_priority = priority; }
+	void setPriority(const int priority) override { m_packet->m_priority = priority; }
 
 	PacketSend* front() override { return m_packet; }
 	void pop() override { m_packet = nullptr; }
@@ -254,7 +254,7 @@ class ExtendedPacketTransaction : public PacketTransaction
 	int m_priority;
 
 public:
-	ExtendedPacketTransaction(CNetState* target, int priority) : m_target(target), m_priority(priority) { }
+	ExtendedPacketTransaction(CNetState* target, const int priority) : m_target(target), m_priority(priority) { }
 	~ExtendedPacketTransaction() override;
 
 private:
@@ -264,7 +264,7 @@ private:
 public:
 	CNetState* getTarget() const override { return m_target; }
 	int getPriority() const override { return m_priority; }
-	void setPriority(int priority) override { m_priority = priority; }
+	void setPriority(const int priority) override { m_priority = priority; }
 
     void push_back(PacketSend* packet) { m_packets.push_back(packet); }
     void emplace_back(PacketSend* packet) { m_packets.emplace_back(packet); }

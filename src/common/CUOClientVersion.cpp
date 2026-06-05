@@ -81,7 +81,7 @@ std::string CUOClientVersion::GetVersionString() const noexcept
 }
 
 
-CUOClientVersion::CUOClientVersion(dword uiClientVersionNumber) noexcept :
+CUOClientVersion::CUOClientVersion(const dword uiClientVersionNumber) noexcept :
     m_build_sub(kuiBuildSubCatchAllVal)
     // build_sub isn't encoded in the version number, so use a special value to inform
     //  that we got this CUOClientVersion from a ver number.
@@ -133,7 +133,7 @@ CUOClientVersion::CUOClientVersion(dword uiClientVersionNumber) noexcept :
     }
 }
 
-CUOClientVersion::CUOClientVersion(lpctstr ptcVersion, bool fEnhancedClient) noexcept :
+CUOClientVersion::CUOClientVersion(const lpctstr ptcVersion, const bool fEnhancedClient) noexcept :
     m_major(0), m_minor(0), m_revision(0), m_build(0), m_build_sub(0)
 {
     if ((ptcVersion == nullptr) || (*ptcVersion == '\0'))
@@ -212,7 +212,7 @@ bool CUOClientVersion::operator <=(CUOClientVersion const& other) const noexcept
     return other > *this;
 }
 
-void CUOClientVersion::ApplyVersionFromStringOldFormat(lptstr ptcVersion) noexcept
+void CUOClientVersion::ApplyVersionFromStringOldFormat(const lptstr ptcVersion) noexcept
 {
     // Get version of old clients, which report the client version as ASCII string (eg: '5.0.2b')
 
@@ -250,7 +250,7 @@ void CUOClientVersion::ApplyVersionFromStringOldFormat(lptstr ptcVersion) noexce
         m_build_sub = static_cast<uint>(atoi(ptcVersion + uiLetterPos));
 }
 
-void CUOClientVersion::ApplyVersionFromStringNewFormat(lptstr ptcVersion, bool fEnhancedClient) noexcept
+void CUOClientVersion::ApplyVersionFromStringNewFormat(const lptstr ptcVersion, const bool fEnhancedClient) noexcept
 {
     // Get version of newer clients, which use only 4 numbers separated by dots (example: 6.0.1.1)
 

@@ -175,11 +175,11 @@ public:
 	CServerMapBlock(const CServerMapBlock& copy) = delete;
 	CServerMapBlock& operator=(const CServerMapBlock& other) = delete;
 
-	int GetOffsetX(int x) const noexcept
+	int GetOffsetX(const int x) const noexcept
 	{
 		return (x - m_x);
 	}
-	int GetOffsetY( int y ) const noexcept
+	int GetOffsetY(const int y ) const noexcept
 	{
 		return (y - m_y);
 	}

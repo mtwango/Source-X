@@ -7,7 +7,7 @@ VERFILE_TYPE CUOVersionBlock::GetFileIndex() const
     return( static_cast<VERFILE_TYPE>(m_file) );
 }
 
-void CUOVersionBlock::SetFile(VERFILE_TYPE dwFile)
+void CUOVersionBlock::SetFile(const VERFILE_TYPE dwFile)
 {
     m_file = dwFile;
 }
@@ -24,7 +24,7 @@ dword CUOVersionBlock::GetBlockIndex() const
     return( m_block );
 }
 
-void CUOVersionBlock::SetBlock(dword dwBlock)
+void CUOVersionBlock::SetBlock(const dword dwBlock)
 {
     m_block = dwBlock;
 }

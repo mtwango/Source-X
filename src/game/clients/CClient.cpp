@@ -236,21 +236,21 @@ CClient* CClient::GetNext() const
     return static_cast <CClient*>(CSObjListRec::GetNext());
 }
 
-bool CClient::IsPriv(word flag) const
+bool CClient::IsPriv(const word flag) const
 {	// PRIV_GM
     if (GetAccount() == nullptr)
         return false;
     return(GetAccount()->IsPriv(flag));
 }
 
-void CClient::SetPrivFlags(word wPrivFlags)
+void CClient::SetPrivFlags(const word wPrivFlags)
 {
     if (GetAccount() == nullptr)
         return;
     GetAccount()->SetPrivFlags(wPrivFlags);
 }
 
-void CClient::ClearPrivFlags(word wPrivFlags)
+void CClient::ClearPrivFlags(const word wPrivFlags)
 {
     if (GetAccount() == nullptr)
         return;
@@ -259,7 +259,7 @@ void CClient::ClearPrivFlags(word wPrivFlags)
 
 // ------------------------------------------------
 
-bool CClient::IsResDisp(RESDISPLAY_VERSION res) const
+bool CClient::IsResDisp(const RESDISPLAY_VERSION res) const
 {
     if (GetAccount() == nullptr)
         return false;
@@ -273,14 +273,14 @@ byte CClient::GetResDisp() const
     return(GetAccount()->GetResDisp());
 }
 
-bool CClient::SetResDisp(RESDISPLAY_VERSION res)
+bool CClient::SetResDisp(const RESDISPLAY_VERSION res)
 {
     if (GetAccount() == nullptr)
         return false;
     return (GetAccount()->SetResDisp(res));
 }
 
-bool CClient::SetGreaterResDisp(RESDISPLAY_VERSION res)
+bool CClient::SetGreaterResDisp(const RESDISPLAY_VERSION res)
 {
     if (GetAccount() == nullptr)
         return false;
@@ -289,7 +289,7 @@ bool CClient::SetGreaterResDisp(RESDISPLAY_VERSION res)
 
 // ------------------------------------------------
 
-void CClient::SetScreenSize(ushort x, ushort y)
+void CClient::SetScreenSize(const ushort x, const ushort y)
 {
     m_ScreenSize.x = x;
     m_ScreenSize.y = y;
@@ -349,7 +349,7 @@ void CClient::SysMessage( lpctstr pszMsg ) const // System message (In lower lef
 	}
 }
 
-void CClient::Announce( bool fArrive ) const
+void CClient::Announce(const bool fArrive ) const
 {
 	ADDTOCALLSTACK("CClient::Announce");
 	if ( !GetAccount() || !GetChar() || !GetChar()->m_pPlayer )
@@ -421,7 +421,7 @@ bool CClient::CanSee( const CObjBaseTemplate * pObj ) const
 	return m_pChar->CanSee( pObj );
 }
 
-bool CClient::CanHear( const CObjBaseTemplate * pSrc, TALKMODE_TYPE mode ) const
+bool CClient::CanHear( const CObjBaseTemplate * pSrc, const TALKMODE_TYPE mode ) const
 {
 	ADDTOCALLSTACK("CClient::CanHear");
 	// can we hear this text or sound.
@@ -478,7 +478,7 @@ void CClient::addTargetVerb( lpctstr pszCmd, lpctstr ptcArg )
 	addTarget(CLIMODE_TARG_OBJ_SET, pszMsg);
 }
 
-void CClient::addTargetFunctionMulti( lpctstr pszFunction, ITEMID_TYPE itemid, HUE_TYPE color, bool fAllowGround )
+void CClient::addTargetFunctionMulti( lpctstr pszFunction, const ITEMID_TYPE itemid, const HUE_TYPE color, const bool fAllowGround )
 {
 	ADDTOCALLSTACK("CClient::addTargetFunctionMulti");
 	// Target a verb at some object .
@@ -496,7 +496,7 @@ void CClient::addTargetFunctionMulti( lpctstr pszFunction, ITEMID_TYPE itemid, H
 	addTargetFunction( pszFunction, fAllowGround, false );
 }
 
-void CClient::addTargetFunction( lpctstr pszFunction, bool fAllowGround, bool fCheckCrime )
+void CClient::addTargetFunction( lpctstr pszFunction, const bool fAllowGround, const bool fCheckCrime )
 {
 	ADDTOCALLSTACK("CClient::addTargetFunction");
 	// Target a verb at some object .
@@ -508,7 +508,7 @@ void CClient::addTargetFunction( lpctstr pszFunction, bool fAllowGround, bool fC
 	addTarget( CLIMODE_TARG_OBJ_FUNC, nullptr, fAllowGround, fCheckCrime );
 }
 
-void CClient::addPromptConsoleFunction( lpctstr pszFunction, lpctstr pszSysmessage, bool bUnicode )
+void CClient::addPromptConsoleFunction(const lpctstr pszFunction, const lpctstr pszSysmessage, const bool bUnicode )
 {
 	ADDTOCALLSTACK("CClient::addPromptConsoleFunction");
 	// Target a verb at some object .
@@ -629,7 +629,7 @@ lpctstr const CClient::sm_szVerbKeys[CV_QTY+1] =	// static
 	nullptr
 };
 
-bool CClient::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CClient::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CClient::r_WriteVal");

@@ -75,27 +75,27 @@ public:
 
 	TRIGRET_TYPE OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction );
 
-	lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
+	lpctstr GetDefStr(const lpctstr ptcKey, const bool fZero = false ) const
 	{
 		return m_BaseDefs.GetKeyStr( ptcKey, fZero );
 	}
 
-	int64 GetDefNum( lpctstr ptcKey ) const
+	int64 GetDefNum(const lpctstr ptcKey ) const
 	{
 		return m_BaseDefs.GetKeyNum( ptcKey );
 	}
 
-    void SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero = true, bool fWarnOverwrite = false)
+    void SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fZero = true, const bool fWarnOverwrite = false)
 	{
         m_BaseDefs.SetNum(ptcKey, iVal, fZero, fWarnOverwrite);
 	}
 
-    void SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted = false, bool fZero = true, bool fWarnOverwrite = false)
+    void SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted = false, const bool fZero = true, const bool fWarnOverwrite = false)
 	{
         m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fZero, fWarnOverwrite);
 	}
 
-	void DeleteDef(lpctstr ptcKey)
+	void DeleteDef(const lpctstr ptcKey)
 	{
 		m_BaseDefs.DeleteKey(ptcKey);
 	}
@@ -145,11 +145,11 @@ public:
 	{
 		return m_dwFlags;
 	}
-    bool IsFlag( dword dwFlags ) const noexcept
+    bool IsFlag(const dword dwFlags ) const noexcept
 	{
         return static_cast<bool>(m_dwFlags & dwFlags);
 	}
-    void SetRegionFlags( dword dwFlags ) noexcept
+    void SetRegionFlags(const dword dwFlags ) noexcept
 	{
 		m_dwFlags |= dwFlags;
 	}

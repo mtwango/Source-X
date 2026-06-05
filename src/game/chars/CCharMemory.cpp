@@ -298,7 +298,7 @@ CItemMemory * CChar::Memory_AddObj( const CObjBase * pObj, word MemTypes )
 }
 
 // Looping through all memories ( ForCharMemoryType ).
-TRIGRET_TYPE CChar::OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, word wMemType )
+TRIGRET_TYPE CChar::OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, const word wMemType )
 {
 	ADDTOCALLSTACK("CChar::OnCharTrigForMemTypeLoop");
 	const CScriptLineContext StartContext = s.GetContext();
@@ -380,7 +380,7 @@ bool CChar::Memory_OnTick( CItemMemory * pMemory )
 }
 
 // The fight is over because somebody ran away.
-void CChar::Memory_Fight_Retreat( CChar * pTarg, CItemMemory * pFight )
+void CChar::Memory_Fight_Retreat(const CChar * pTarg, const CItemMemory * pFight )
 {
 	ADDTOCALLSTACK("CChar::Memory_Fight_Retreat");
 	if ( pTarg == nullptr || pTarg->IsStatFlag( STATF_DEAD ))

@@ -4,7 +4,7 @@
 #include "CItemVendable.h"
 #include "CItemCommCrystal.h"
 
-CItemCommCrystal::CItemCommCrystal( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemCommCrystal::CItemCommCrystal(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
     CItemVendable( id, pItemDef )
 {
@@ -34,7 +34,7 @@ void CItemCommCrystal::OnMoveFrom()
 }
 
 // Move this item to it's point in the world. (ground/top level)
-bool CItemCommCrystal::MoveTo(const CPointMap& pt, bool fForceFix)
+bool CItemCommCrystal::MoveTo(const CPointMap& pt, const bool fForceFix)
 {
     ADDTOCALLSTACK("CItemCommCrystal::MoveTo");
     CSector *pSector = pt.GetSector();
@@ -43,7 +43,7 @@ bool CItemCommCrystal::MoveTo(const CPointMap& pt, bool fForceFix)
     return CItem::MoveTo(pt, fForceFix);
 }
 
-void CItemCommCrystal::OnHear(lpctstr pszCmd, CChar *pSrc)
+void CItemCommCrystal::OnHear(const lpctstr pszCmd, CChar *pSrc)
 {
     ADDTOCALLSTACK("CItemCommCrystal::OnHear");
     // IT_COMM_CRYSTAL
@@ -83,7 +83,7 @@ void CItemCommCrystal::r_Write(CScript & s)
     m_Speech.r_Write(s, "SPEECH");
 }
 
-bool CItemCommCrystal::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemCommCrystal::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemCommCrystal::r_WriteVal");

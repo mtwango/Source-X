@@ -13,13 +13,13 @@ CSQueueBytes::CSQueueBytes() noexcept :
 
 // CSQueueBytes:: Modifiers.
 
-void CSQueueBytes::AddNewData( const byte * pData, size_t iLen )
+void CSQueueBytes::AddNewData( const byte * pData, const size_t iLen )
 {
 	memcpy( AddNewDataLock(iLen), pData, iLen );	// Add new data to the end of the queue.
 	m_iDataQty += iLen;								// The data is now ready.
 }
 
-byte * CSQueueBytes::AddNewDataLock( size_t iLen )
+byte * CSQueueBytes::AddNewDataLock(const size_t iLen )
 {
 	// lock the queue to place this data in it.
 

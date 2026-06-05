@@ -201,7 +201,7 @@ T* fixed_comptime_stack<T, N>::data() {
 }
 */
 template <typename T>
-fixed_runtime_stack<T>::fixed_runtime_stack(size_t size) {
+fixed_runtime_stack<T>::fixed_runtime_stack(const size_t size) {
     _stack = new T[size];
     _top = 0;
     _size = size;
@@ -272,7 +272,7 @@ size_t fixed_runtime_stack<T>::size() const {
 }
 
 template <typename T>
-fixed_growing_stack<T>::fixed_growing_stack(size_t size) {
+fixed_growing_stack<T>::fixed_growing_stack(const size_t size) {
     _stack = new T[size];
     _top = 0;
     _size = size;
@@ -352,7 +352,7 @@ dynamic_list_stack<T>::dynamic_list_stack() {
 }
 
 template <typename T>
-dynamic_list_stack<T>::dynamic_list_stack(size_t _) : dynamic_list_stack() { UnreferencedParameter(_); }
+dynamic_list_stack<T>::dynamic_list_stack(const size_t _) : dynamic_list_stack() { UnreferencedParameter(_); }
 
 template <typename T>
 dynamic_list_stack<T>::dynamic_list_stack(const dynamic_list_stack & o) {

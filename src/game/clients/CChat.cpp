@@ -67,7 +67,7 @@ void CChat::DeleteChannel(CChatChannel* pChannel)
 	m_Channels.erase_element(pChannel);
 }
 
-void CChat::JoinChannel(lpctstr pszChannel, lpctstr pszPassword, CChatChanMember* pMember)
+void CChat::JoinChannel(lpctstr pszChannel, const lpctstr pszPassword, CChatChanMember* pMember)
 {
 	ADDTOCALLSTACK("CChat::JoinChannel");
 
@@ -115,7 +115,7 @@ void CChat::JoinChannel(lpctstr pszChannel, lpctstr pszPassword, CChatChanMember
 		pNewChannel->FillMembersList(pMember);	// fill the members list on this client
 }
 
-void CChat::Action(CClient* pClient, const nachar* pszText, int len, CLanguageID lang)
+void CChat::Action(CClient* pClient, const nachar* pszText, const int len, const CLanguageID lang)
 {
 	ADDTOCALLSTACK("CChat::Action");
 	// ARGS:
@@ -400,7 +400,7 @@ void CChat::QuitChat(CChatChanMember* pClient) noexcept
     }
 }
 
-void CChat::FormatName(CSString& sName, const CChatChanMember* pMember, bool fSystem)
+void CChat::FormatName(CSString& sName, const CChatChanMember* pMember, const bool fSystem)
 {
 	ADDTOCALLSTACK("CChat::FormatName");
 	// Format chat name with proper color
@@ -431,7 +431,7 @@ void CChat::FormatName(CSString& sName, const CChatChanMember* pMember, bool fSy
 	sName.Format("%d%s", iColor, "SYSTEM");
 }
 
-bool CChat::IsValidName( lpctstr pszName, bool fPlayer ) // static
+bool CChat::IsValidName(const lpctstr pszName, const bool fPlayer ) // static
 {
 	ADDTOCALLSTACK("CChat::IsValidName");
 
@@ -454,7 +454,7 @@ bool CChat::IsValidName( lpctstr pszName, bool fPlayer ) // static
 	return true;
 }
 
-void CChat::Broadcast(CChatChanMember *pFrom, lpctstr pszText, CLanguageID lang, bool fOverride)
+void CChat::Broadcast(const CChatChanMember *pFrom, const lpctstr pszText, const CLanguageID lang, const bool fOverride)
 {
 	ADDTOCALLSTACK("CChat::Broadcast");
 
@@ -473,7 +473,7 @@ void CChat::Broadcast(CChatChanMember *pFrom, lpctstr pszText, CLanguageID lang,
 	}
 }
 
-void CChat::BroadcastAddChannel(CChatChannel* pChannel)
+void CChat::BroadcastAddChannel(const CChatChannel * pChannel)
 {
 	ADDTOCALLSTACK("CChat::BroadcastAddChannel");
 	// Send 'add channel' message to all clients
@@ -483,7 +483,7 @@ void CChat::BroadcastAddChannel(CChatChannel* pChannel)
 		pClient->addChatSystemMessage(CHATCMD_AddChannel, pChannel->GetName(), (pClient->m_fUseNewChatSystem ? nullptr : pChannel->GetPassword()));
 }
 
-void CChat::BroadcastRemoveChannel(CChatChannel* pChannel)
+void CChat::BroadcastRemoveChannel(const CChatChannel * pChannel)
 {
 	ADDTOCALLSTACK("CChat::BroadcastRemoveChannel");
 	// Send 'delete channel' message to all clients
@@ -493,7 +493,7 @@ void CChat::BroadcastRemoveChannel(CChatChannel* pChannel)
 		pClient->addChatSystemMessage(CHATCMD_RemoveChannel, pChannel->GetName());
 }
 
-CChatChannel * CChat::FindChannel(lpctstr pszChannel) const
+CChatChannel * CChat::FindChannel(const lpctstr pszChannel) const
 {
 	for (auto const& pChannel : m_Channels)
 	{

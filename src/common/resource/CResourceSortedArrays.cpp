@@ -16,14 +16,14 @@ CSStringSortArray::~CSStringSortArray() noexcept
     DestroyElements();
 }
 
-int CSStringSortArray::CompareKey( tchar* pszID1, tchar* pszID2, bool fNoSpaces ) const
+int CSStringSortArray::CompareKey( tchar* pszID1, tchar* pszID2, const bool fNoSpaces ) const
 {
     UnreferencedParameter(fNoSpaces);
     ASSERT( pszID2 );
     return strcmpi( pszID1, pszID2);
 }
 
-void CSStringSortArray::AddSortString( lpctstr pszText )
+void CSStringSortArray::AddSortString(const lpctstr pszText )
 {
     ASSERT(pszText);
     const size_t len = strlen( pszText );
@@ -45,7 +45,7 @@ void CSStringSortArray::DestroyElements() noexcept
 }
 
 // Array of CScriptObj. name sorted.
-int CObjNameSortArray::CompareKey( lpctstr pszID, CScriptObj* pObj, bool fNoSpaces ) const
+int CObjNameSortArray::CompareKey(const lpctstr pszID, CScriptObj* pObj, const bool fNoSpaces ) const
 {
     ASSERT( pszID );
     ASSERT( pObj );
@@ -79,7 +79,7 @@ int CObjNameSortArray::CompareKey( lpctstr pszID, CScriptObj* pObj, bool fNoSpac
     return strcmpi( pszID, objStr);
 }
 
-int CSkillKeySortArray::CompareKey(lpctstr ptcKey, CValStr * pVal, bool fNoSpaces) const
+int CSkillKeySortArray::CompareKey(const lpctstr ptcKey, CValStr * pVal, const bool fNoSpaces) const
 {
     UnreferencedParameter(fNoSpaces);
     ASSERT(ptcKey);
@@ -87,7 +87,7 @@ int CSkillKeySortArray::CompareKey(lpctstr ptcKey, CValStr * pVal, bool fNoSpace
     return strcmpi(ptcKey, pVal->m_pszName);
 }
 
-int CMultiDefArray::CompareKey(MULTI_TYPE id, CUOMulti* pBase, bool fNoSpaces) const
+int CMultiDefArray::CompareKey(const MULTI_TYPE id, CUOMulti* pBase, const bool fNoSpaces) const
 {
     UnreferencedParameter(fNoSpaces);
     ASSERT(pBase);

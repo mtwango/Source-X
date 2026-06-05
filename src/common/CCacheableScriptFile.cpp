@@ -25,7 +25,7 @@ CCacheableScriptFile::~CCacheableScriptFile()
     }
 }
 
-bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFlags)
 {
     ADDTOCALLSTACK("CCacheableScriptFile::_Open");
 
@@ -178,7 +178,7 @@ bool CCacheableScriptFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
 
     return true;
 }
-bool CCacheableScriptFile::Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CCacheableScriptFile::Open(const lpctstr ptcFilename, const uint uiModeFlags)
 {
     ADDTOCALLSTACK("CCacheableScriptFile::Open");
     MT_UNIQUE_LOCK_RETURN(this, CCacheableScriptFile::_Open(ptcFilename, uiModeFlags));
@@ -239,7 +239,7 @@ bool CCacheableScriptFile::IsEOF() const
     MT_SHARED_LOCK_RETURN(this, _IsEOF());
 }
 
-tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, int sizemax)
+tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, const int sizemax)
 {
     // This function is called for each script line which is being parsed (so VERY frequently), and ADDTOCALLSTACK is expensive if called
     // this much often, so here it's to be preferred ADDTOCALLSTACK_DEBUG, even if we'll lose stack trace precision.
@@ -275,7 +275,7 @@ tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, int sizemax)
     return pBuffer;
 }
 
-tchar * CCacheableScriptFile::ReadString(tchar *pBuffer, int sizemax)
+tchar * CCacheableScriptFile::ReadString(tchar *pBuffer, const int sizemax)
 {
     //ADDTOCALLSTACK_DEBUG("CCacheableScriptFile::ReadString");
     MT_UNIQUE_LOCK_RETURN(this, CCacheableScriptFile::_ReadString(pBuffer, sizemax));
@@ -291,7 +291,7 @@ void CCacheableScriptFile::_dupeFrom(const CCacheableScriptFile *other)
     _fRealFile = false;
     _fileContent = other->_fileContent;
 }
-void CCacheableScriptFile::dupeFrom(CCacheableScriptFile *other)
+void CCacheableScriptFile::dupeFrom(const CCacheableScriptFile *other)
 {
     MT_UNIQUE_LOCK_SET(this);
     _dupeFrom(other);
@@ -319,7 +319,7 @@ bool CCacheableScriptFile::useDefaultFile() const
     MT_SHARED_LOCK_RETURN(this, _useDefaultFile());
 }*/
 
-int CCacheableScriptFile::_Seek(int iOffset, int iOrigin)
+int CCacheableScriptFile::_Seek(const int iOffset, const int iOrigin)
 {
     ADDTOCALLSTACK("CCacheableScriptFile::_Seek");
     if (_useDefaultFile())
@@ -337,7 +337,7 @@ int CCacheableScriptFile::_Seek(int iOffset, int iOrigin)
 
     return 0;
 }
-int CCacheableScriptFile::Seek(int iOffset, int iOrigin)
+int CCacheableScriptFile::Seek(const int iOffset, const int iOrigin)
 {
     ADDTOCALLSTACK("CCacheableScriptFile::Seek");
     MT_UNIQUE_LOCK_RETURN(this, CCacheableScriptFile::_Seek(iOffset, iOrigin));

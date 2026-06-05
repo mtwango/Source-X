@@ -93,7 +93,7 @@ void CExprGlobals::UpdateDefMsgDependentData()
         }};
 }
 
-lpctstr CExprGlobals::SkillTitle(SKILL_TYPE skill, uint uiVal) const
+lpctstr CExprGlobals::SkillTitle(const SKILL_TYPE skill, const uint uiVal) const
 {
     // TODO: CValStr::FindName is hack-ish as hell, please use another way of storing and getting this stuff, like maps.
     switch (skill)
@@ -112,7 +112,7 @@ lpctstr CExprGlobals::SkillTitle(SKILL_TYPE skill, uint uiVal) const
 /////////////////////////////////////////////////////////////////////////
 // - String expressions parsers (separate and evaluate arguments)
 
-uint GetIdentifierString( tchar * szTag, lpctstr pszArgs )
+uint GetIdentifierString( tchar * szTag, const lpctstr pszArgs )
 {
     // Copy the identifier (valid char set) out to this buffer.
     uint i = 0;
@@ -280,7 +280,7 @@ bool Str_Parse(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
 #pragma auto_inline(on)
 #endif
 
-int Str_ParseCmds(tchar * pszCmdLine, tchar ** ppCmd, int iMax, const tchar * pszSep) noexcept
+int Str_ParseCmds(tchar * pszCmdLine, tchar ** ppCmd, const int iMax, const tchar * pszSep) noexcept
 {
     //ASSERT(iMax > 1);
     int iQty = 0;
@@ -485,7 +485,7 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     return true;
 }
 
-int Str_ParseCmdsAdv(tchar * pszCmdLine, tchar ** ppCmd, int iMax, const tchar * pszSep) noexcept
+int Str_ParseCmdsAdv(tchar * pszCmdLine, tchar ** ppCmd, const int iMax, const tchar * pszSep) noexcept
 {
     //ASSERT(iMax > 1);
     int iQty = 0;
@@ -541,9 +541,9 @@ bool IsValidGameObjDef( lpctstr ptcTest )
 /////////////////////////////////////////////////////////////////////////
 // - Calculus
 
-static llong cexpression_power(llong base, llong level) noexcept
+static llong cexpression_power(const llong base, const llong level) noexcept
 {
-    double rc = pow((double)base, (double)level);
+    const double rc = pow(static_cast<double>(base), (double)level);
     return (llong)rc;
 }
 
@@ -559,7 +559,7 @@ int Calc_GetLog2( uint iVal )
 	return i;
 }
 
-int Calc_GetBellCurve( int iValDiff, int iVariance )
+int Calc_GetBellCurve( int iValDiff, const int iVariance )
 {
 	// Produce a log curve.
 	//
@@ -601,7 +601,7 @@ int Calc_GetBellCurve( int iValDiff, int iVariance )
 	return ( iChance - IMulDiv( iChance/2, iValDiff, iVariance ) );
 }
 
-int Calc_GetSCurve( int iValDiff, int iVariance )
+int Calc_GetSCurve(const int iValDiff, const int iVariance )
 {
 	// ARGS:
 	//   iValDiff = Difference between our skill level and difficulty.
@@ -1475,7 +1475,7 @@ int64 CExpression::GetVal(lpctstr & refStrExpr )
     return iVal;
 }
 
-int CExpression::GetRangeVals(lpctstr & refStrExpr, int64 * piVals, int iMaxQty, bool fNoWarn)
+int CExpression::GetRangeVals(lpctstr & refStrExpr, int64 * piVals, const int iMaxQty, const bool fNoWarn)
 {
 	ADDTOCALLSTACK("CExpression::GetRangeVals");
 	// Get a list of values.
@@ -1599,7 +1599,7 @@ CExpression::GetConditionalSubexpressions(
 		}
 
         // Helper lambda functions for the next section.
-        auto findLastClosingBracket = [](lptstr pExpr_) -> lptstr
+        auto findLastClosingBracket = [](const lptstr pExpr_) -> lptstr
         {
             // Returns a pointer to the last closing bracket in the string.
             // If the last character in the string (ignoring comments) is not ')', it means that, if we find a closing bracket,
@@ -1863,7 +1863,7 @@ CExpression::GetConditionalSubexpressions(
 }
 
 static constexpr int kiRangeMaxArgs = 96;
-static int GetRangeArgsPos(lpctstr & pExpr, lpctstr (&pArgPos)[kiRangeMaxArgs][2], bool fIgnoreMissingEndBracket)
+static int GetRangeArgsPos(lpctstr & pExpr, lpctstr (&pArgPos)[kiRangeMaxArgs][2], const bool fIgnoreMissingEndBracket)
 {
 	ADDTOCALLSTACK("CExpression::GetRangeArgsPos");
 	// Get the start and end pointers for each argument in the range
@@ -2309,7 +2309,7 @@ bool CExpression::EvaluateConditionalWhole(lptstr ptcExpr, CScriptExprContext& r
     return fWholeExprVal;
 }
 
-static void EvaluateConditionalQval_ParseArg(tchar* ptcSrc, tchar** ptcDest, lpctstr ptcSep)
+static void EvaluateConditionalQval_ParseArg(tchar* ptcSrc, tchar** ptcDest, const lpctstr ptcSep)
 {
     ASSERT(ptcSep && *ptcSep);
 
@@ -2367,7 +2367,7 @@ static void EvaluateConditionalQval_ParseArg(tchar* ptcSrc, tchar** ptcDest, lpc
 }
 
 bool CExpression::EvaluateConditionalQval(
-    lpctstr ptcKey, CSString& refStrVal,
+    const lpctstr ptcKey, CSString& refStrVal,
     CScriptExprContext& pContext,
     CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
@@ -2411,8 +2411,7 @@ bool CExpression::EvaluateConditionalQval(
 int CExpression::ParseScriptText(
     tchar * ptcResponse,
     CScriptExprContext& pContext,
-    CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc,
-    int iFlags)
+    CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, const int iFlags)
 {
     ADDTOCALLSTACK("CScriptObj::ParseScriptText");
     //ASSERT(ptcResponse[0] != ' ');	// Not needed: i remove whitespaces and invalid characters here.

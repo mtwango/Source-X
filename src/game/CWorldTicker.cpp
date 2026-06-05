@@ -397,7 +397,7 @@ bool CWorldTicker::_EraseTimedObject(CTimedObject* pTimedObject)
     return true;
 }
 
-bool CWorldTicker::AddTimedObject(const int64 iTimeout, CTimedObject* pTimedObject, bool fForce)
+bool CWorldTicker::AddTimedObject(const int64 iTimeout, CTimedObject* pTimedObject, const bool fForce)
 {
     //if (iTimeout < CWorldGameTime::GetCurrentTime().GetTimeRaw())    // We do that to get them tick as sooner as possible; don't uncomment.
     //    return;
@@ -610,7 +610,7 @@ bool CWorldTicker::_EraseCharTicking(CChar* pChar)
     return true;
 }
 
-bool CWorldTicker::AddCharTicking(CChar* pChar, bool fNeedsLock)
+bool CWorldTicker::AddCharTicking(CChar* pChar, const bool fNeedsLock)
 {
     // Add CChar to the periodic ticking list.
     EXC_TRY("AddCharTicking");
@@ -682,7 +682,7 @@ bool CWorldTicker::AddCharTicking(CChar* pChar, bool fNeedsLock)
     return false;
 }
 
-bool CWorldTicker::DelCharTicking(CChar* pChar, bool fNeedsLock)
+bool CWorldTicker::DelCharTicking(CChar* pChar, const bool fNeedsLock)
 {
     EXC_TRY("DelCharTicking");
     const ProfileTask timersTask(PROFILE_TIMERS);
@@ -756,7 +756,7 @@ bool CWorldTicker::IsStatusUpdateTickRegistered(const CObjBase *pObj)
     return false;
 }
 
-bool CWorldTicker::AddObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
+bool CWorldTicker::AddObjStatusUpdate(CObjBase* pObj, const bool fNeedsLock) // static
 {
     EXC_TRY("AddObjStatusUpdate");
     ASSERT(pObj);
@@ -821,7 +821,7 @@ bool CWorldTicker::AddObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
     return false;
 }
 
-bool CWorldTicker::DelObjStatusUpdate(CObjBase* pObj, bool fNeedsLock) // static
+bool CWorldTicker::DelObjStatusUpdate(CObjBase* pObj, const bool fNeedsLock) // static
 {
     EXC_TRY("DelObjStatusUpdate");
     ASSERT(pObj);

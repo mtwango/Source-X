@@ -10,12 +10,12 @@
 
 CVarDefCont::~CVarDefCont() = default;
 
-static int VarDefCompare(const CVarDefCont* pVar, lpctstr ptcKey) noexcept
+static int VarDefCompare(const CVarDefCont* pVar, const lpctstr ptcKey) noexcept
 {
     return strcmpi(pVar->GetKey(), ptcKey);
 }
 
-lpctstr CVarDefCont::GetValStrZeroed(const CVarDefCont* pVar, bool fZero) // static
+lpctstr CVarDefCont::GetValStrZeroed(const CVarDefCont* pVar, const bool fZero) // static
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefCont::GetValStrZeroed");
 	if (pVar)
@@ -34,11 +34,11 @@ lpctstr CVarDefCont::GetValStrZeroed(const CVarDefCont* pVar, bool fZero) // sta
 *
 ***************************************************************************/
 
-CVarDefContNum::CVarDefContNum( lpctstr ptcKey, int64 iVal ) : m_sKey( ptcKey ), m_iVal( iVal )
+CVarDefContNum::CVarDefContNum(const lpctstr ptcKey, const int64 iVal ) : m_sKey( ptcKey ), m_iVal( iVal )
 {
 }
 
-CVarDefContNum::CVarDefContNum( lpctstr ptcKey ) : m_sKey( ptcKey ), m_iVal( 0 )
+CVarDefContNum::CVarDefContNum(const lpctstr ptcKey ) : m_sKey( ptcKey ), m_iVal( 0 )
 {
 }
 
@@ -53,7 +53,7 @@ bool CVarDefContNum::r_LoadVal( CScript & s )
 	return true;
 }
 
-bool CVarDefContNum::r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc )
+bool CVarDefContNum::r_WriteVal(const lpctstr pKey, CSString & sVal, CTextConsole * pSrc )
 {
 	UnreferencedParameter(pKey);
 	UnreferencedParameter(pSrc);
@@ -74,11 +74,11 @@ CVarDefCont * CVarDefContNum::CopySelf() const
 *
 ***************************************************************************/
 
-CVarDefContStr::CVarDefContStr( lpctstr ptcKey, lpctstr pszVal ) : m_sKey( ptcKey ), m_sVal( pszVal )
+CVarDefContStr::CVarDefContStr(const lpctstr ptcKey, const lpctstr pszVal ) : m_sKey( ptcKey ), m_sVal( pszVal )
 {
 }
 
-CVarDefContStr::CVarDefContStr( lpctstr ptcKey ) : m_sKey( ptcKey )
+CVarDefContStr::CVarDefContStr(const lpctstr ptcKey ) : m_sKey( ptcKey )
 {
 }
 
@@ -88,7 +88,7 @@ int64 CVarDefContStr::GetValNum() const
 	return( Exp_Get64Val(pszStr) );
 }
 
-void CVarDefContStr::SetValStr( lpctstr pszVal )
+void CVarDefContStr::SetValStr(const lpctstr pszVal )
 {
     if (const size_t uiLen = strlen(pszVal); uiLen <= SCRIPT_MAX_LINE_LEN/2)
 		m_sVal.CopyLen( pszVal, (int)uiLen );
@@ -102,7 +102,7 @@ bool CVarDefContStr::r_LoadVal( CScript & s )
 	return true;
 }
 
-bool CVarDefContStr::r_WriteVal( lpctstr pKey, CSString & sVal, CTextConsole * pSrc )
+bool CVarDefContStr::r_WriteVal(const lpctstr pKey, CSString & sVal, CTextConsole * pSrc )
 {
 	UnreferencedParameter(pKey);
 	UnreferencedParameter(pSrc);
@@ -135,7 +135,7 @@ CVarDefMap::~CVarDefMap()
 	Clear();
 }
 
-lpctstr CVarDefMap::FindValStr( lpctstr pVal ) const
+lpctstr CVarDefMap::FindValStr(const lpctstr pVal ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::FindValStr");
 	for ( const CVarDefCont * pVarBase : m_Container )
@@ -153,7 +153,7 @@ lpctstr CVarDefMap::FindValStr( lpctstr pVal ) const
 	return nullptr;
 }
 
-lpctstr CVarDefMap::FindValNum( int64 iVal ) const
+lpctstr CVarDefMap::FindValNum(const int64 iVal ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::FindValNum");
     for (const CVarDefCont* pVarBase : m_Container)
@@ -170,7 +170,7 @@ lpctstr CVarDefMap::FindValNum( int64 iVal ) const
 	return nullptr;
 }
 
-CVarDefCont * CVarDefMap::GetAt( size_t at ) const
+CVarDefCont * CVarDefMap::GetAt(const size_t at ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetAt");
 	if ( at > m_Container.size() )
@@ -178,7 +178,7 @@ CVarDefCont * CVarDefMap::GetAt( size_t at ) const
     return m_Container[at];
 }
 
-CVarDefCont * CVarDefMap::GetAtKey( lpctstr ptcKey ) const
+CVarDefCont * CVarDefMap::GetAtKey(const lpctstr ptcKey ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetAtKey");
 
@@ -187,7 +187,7 @@ CVarDefCont * CVarDefMap::GetAtKey( lpctstr ptcKey ) const
 	return nullptr;
 }
 
-void CVarDefMap::DeleteAt( size_t at )
+void CVarDefMap::DeleteAt(const size_t at )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::DeleteAt");
 	if ( at > m_Container.size() )
@@ -210,14 +210,14 @@ void CVarDefMap::DeleteAt( size_t at )
     }
 }
 
-void CVarDefMap::DeleteAtKey( lpctstr ptcKey )
+void CVarDefMap::DeleteAtKey(const lpctstr ptcKey )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::DeleteAtKey");
     if (const size_t idx = m_Container.find_predicate(ptcKey, VarDefCompare); idx != sl::scont_bad_index())
         DeleteAt(idx);
 }
 
-void CVarDefMap::DeleteKey( lpctstr key )
+void CVarDefMap::DeleteKey(const lpctstr key )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::DeleteKey");
 	if ( key && *key)
@@ -238,7 +238,7 @@ void CVarDefMap::Clear()
 	m_Container.clear();
 }
 
-void CVarDefMap::Copy( const CVarDefMap * pArray, bool fClearThis )
+void CVarDefMap::Copy( const CVarDefMap * pArray, const bool fClearThis )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::Copy");
 	if ( !pArray || pArray == this )
@@ -315,12 +315,12 @@ size_t CVarDefMap::GetCount() const noexcept
 	return m_Container.size();
 }
 
-void CVarDefMap::Reserve(size_t uiSize)
+void CVarDefMap::Reserve(const size_t uiSize)
 {
     m_Container.reserve(uiSize);
 }
 
-CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
+CVarDefContNum* CVarDefMap::SetNumNew(const lpctstr pszName, const int64 iVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNumNew");
     const auto pVarNum = new CVarDefContNum( pszName, iVal );
@@ -332,7 +332,7 @@ CVarDefContNum* CVarDefMap::SetNumNew( lpctstr pszName, int64 iVal )
     return nullptr;
 }
 
-CVarDefContNum* CVarDefMap::SetNumOverride( lpctstr ptcKey, int64 iVal )
+CVarDefContNum* CVarDefMap::SetNumOverride(const lpctstr ptcKey, const int64 iVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNumOverride");
     if (const auto pKeyNum = dynamic_cast<CVarDefContNum *>(GetKey(ptcKey)))
@@ -344,7 +344,7 @@ CVarDefContNum* CVarDefMap::SetNumOverride( lpctstr ptcKey, int64 iVal )
 	return SetNumNew(ptcKey,iVal);
 }
 
-CVarDefContNum* CVarDefMap::ModNum(lpctstr pszName, int64 iMod, bool fDeleteZero)
+CVarDefContNum* CVarDefMap::ModNum(const lpctstr pszName, const int64 iMod, const bool fDeleteZero)
 {
     ADDTOCALLSTACK_DEBUG("CVarDefMap::ModNum");
     ASSERT(pszName);
@@ -367,7 +367,7 @@ CVarDefContNum* CVarDefMap::ModNum(lpctstr pszName, int64 iMod, bool fDeleteZero
     return SetNum(pszName, iMod, fDeleteZero);
 }
 
-CVarDefContNum* CVarDefMap::SetNum( lpctstr pszName, int64 iVal, bool fDeleteZero, bool fWarnOverwrite )
+CVarDefContNum* CVarDefMap::SetNum(const lpctstr pszName, const int64 iVal, const bool fDeleteZero, const bool fWarnOverwrite )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetNum");
 	ASSERT(pszName);
@@ -422,7 +422,7 @@ CVarDefContNum* CVarDefMap::SetNum( lpctstr pszName, int64 iVal, bool fDeleteZer
 	return pVarNum;
 }
 
-CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
+CVarDefContStr* CVarDefMap::SetStrNew(const lpctstr pszName, const lpctstr pszVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStrNew");
     auto *const pVarStr = new CVarDefContStr( pszName, pszVal );
@@ -434,7 +434,7 @@ CVarDefContStr* CVarDefMap::SetStrNew( lpctstr pszName, lpctstr pszVal )
     return nullptr;
 }
 
-CVarDefContStr* CVarDefMap::SetStrOverride( lpctstr ptcKey, lpctstr pszVal )
+CVarDefContStr* CVarDefMap::SetStrOverride(const lpctstr ptcKey, const lpctstr pszVal )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStrOverride");
     if (auto *const pKeyStr = dynamic_cast<CVarDefContStr *>(GetKey(ptcKey)))
@@ -446,7 +446,7 @@ CVarDefContStr* CVarDefMap::SetStrOverride( lpctstr ptcKey, lpctstr pszVal )
 	return SetStrNew(ptcKey,pszVal);
 }
 
-CVarDefCont* CVarDefMap::SetStr( lpctstr pszName, bool fQuoted, lpctstr ptcVal, bool fDeleteZero, bool fWarnOverwrite )
+CVarDefCont* CVarDefMap::SetStr(const lpctstr pszName, const bool fQuoted, lpctstr ptcVal, const bool fDeleteZero, const bool fWarnOverwrite )
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::SetStr");
 	// ASSUME: This has been clipped of unwanted beginning and trailing spaces.
@@ -513,7 +513,7 @@ CVarDefCont* CVarDefMap::SetStr( lpctstr pszName, bool fQuoted, lpctstr ptcVal, 
 	return pVarStr;
 }
 
-CVarDefCont * CVarDefMap::GetKey( lpctstr ptcKey ) const
+CVarDefCont * CVarDefMap::GetKey(const lpctstr ptcKey ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetKey");
 	CVarDefCont * pReturn = nullptr;
@@ -528,7 +528,7 @@ CVarDefCont * CVarDefMap::GetKey( lpctstr ptcKey ) const
 	return pReturn;
 }
 
-int64 CVarDefMap::GetKeyNum( lpctstr ptcKey ) const
+int64 CVarDefMap::GetKeyNum(const lpctstr ptcKey ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetKeyNum");
 	const CVarDefCont * pVar = GetKey(ptcKey);
@@ -537,14 +537,14 @@ int64 CVarDefMap::GetKeyNum( lpctstr ptcKey ) const
 	return pVar->GetValNum();
 }
 
-lpctstr CVarDefMap::GetKeyStr( lpctstr ptcKey, bool fZero ) const
+lpctstr CVarDefMap::GetKeyStr(const lpctstr ptcKey, const bool fZero ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetKeyStr");
 	const CVarDefCont * pVar = GetKey(ptcKey);
 	return CVarDefCont::GetValStrZeroed(pVar, fZero);
 }
 
-CVarDefCont * CVarDefMap::CheckParseKey( lpctstr pszArgs ) const
+CVarDefCont * CVarDefMap::CheckParseKey(const lpctstr pszArgs ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::CheckParseKey");
 	tchar szTag[ EXPRESSION_MAX_KEY_LEN ];
@@ -602,7 +602,7 @@ void CVarDefMap::DumpKeys( CTextConsole * pSrc, lpctstr pszPrefix ) const
 	}
 }
 
-void CVarDefMap::ClearKeys(lpctstr mask)
+void CVarDefMap::ClearKeys(const lpctstr mask)
 {
 	ADDTOCALLSTACK("CVarDefMap::ClearKeys");
 	if ( mask && *mask )
@@ -653,7 +653,7 @@ bool CVarDefMap::r_LoadVal( CScript & s )
 }
 */
 
-void CVarDefMap::r_WritePrefix( CScript & s, lpctstr ptcPrefix, lpctstr ptcKeyExclude ) const
+void CVarDefMap::r_WritePrefix( CScript & s, lpctstr ptcPrefix, const lpctstr ptcKeyExclude ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::r_WritePrefix");
     if (m_Container.empty())
@@ -664,7 +664,7 @@ void CVarDefMap::r_WritePrefix( CScript & s, lpctstr ptcPrefix, lpctstr ptcKeyEx
 	TemporaryString ts;
 
 	// Prefix is usually TAG, VAR, etc...
-    auto _WritePrefix = [&ts, fHasPrefix, ptcPrefix](lpctstr ptcKey) -> void
+    auto _WritePrefix = [&ts, fHasPrefix, ptcPrefix](const lpctstr ptcKey) -> void
     {
 		if (fHasPrefix)
 			snprintf(ts.buffer(), ts.capacity(), "%s.%s", ptcPrefix, ptcKey);

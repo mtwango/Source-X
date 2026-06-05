@@ -98,7 +98,7 @@ public:
     CNetState& operator=(const CNetState& other) = delete;
 
     int id() const { return m_id; }	// returns ID of the client
-    void setId(int id) { m_id = id; }		// changes ID of the client
+    void setId(const int id) { m_id = id; }		// changes ID of the client
     void clear();						// clears state
     void clearQueues();					// clears outgoing data queues
 

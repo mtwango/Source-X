@@ -8,7 +8,7 @@
 #include "CUOItemInfo.h"
 
 
-CUOItemInfo::CUOItemInfo( ITEMID_TYPE id, bool fNameNotNeeded)
+CUOItemInfo::CUOItemInfo(const ITEMID_TYPE id, const bool fNameNotNeeded)
 {
     if ( id >= ITEMID_MULTI )
     {

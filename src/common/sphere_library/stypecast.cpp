@@ -11,7 +11,7 @@ void LogEventWarnWrapper(const char* warn_str)
 }
 
 [[nodiscard]]
-uint32 usize_narrow_u32_checked(const size_t source_val, bool should_assert)
+uint32 usize_narrow_u32_checked(const size_t source_val, const bool should_assert)
 {
     if (should_assert) {
         ASSERT(source_val <= std::numeric_limits<uint32>::max());
@@ -23,9 +23,9 @@ uint32 usize_narrow_u32_checked(const size_t source_val, bool should_assert)
 }
 
 [[nodiscard]]
-int8 i8_from_u8_checked(const uint8 source_val, bool should_assert) // not clamping/capping
+int8 i8_from_u8_checked(const uint8 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint8)std::numeric_limits<int8>::max());
+    const bool would_overflow = source_val > static_cast<uint8>(std::numeric_limits<int8>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -37,9 +37,9 @@ int8 i8_from_u8_checked(const uint8 source_val, bool should_assert) // not clamp
 }
 
 [[nodiscard]]
-int16 i8_from_u16_checked(const uint16 source_val, bool should_assert) // not clamping/capping
+int16 i8_from_u16_checked(const uint16 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint16)std::numeric_limits<int8>::max());
+    const bool would_overflow = source_val > static_cast<uint16>(std::numeric_limits<int8>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -51,9 +51,9 @@ int16 i8_from_u16_checked(const uint16 source_val, bool should_assert) // not cl
 }
 
 [[nodiscard]]
-int16 i16_from_u16_checked(const uint16 source_val, bool should_assert) // not clamping/capping
+int16 i16_from_u16_checked(const uint16 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint16)std::numeric_limits<int16>::max());
+    const bool would_overflow = source_val > static_cast<uint16>(std::numeric_limits<int16>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -65,9 +65,9 @@ int16 i16_from_u16_checked(const uint16 source_val, bool should_assert) // not c
 }
 
 [[nodiscard]]
-int16 i16_from_u32_checked(const uint32 source_val, bool should_assert) // not clamping/capping
+int16 i16_from_u32_checked(const uint32 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint32)std::numeric_limits<int16>::max());
+    const bool would_overflow = source_val > static_cast<uint32>(std::numeric_limits<int16>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -79,9 +79,9 @@ int16 i16_from_u32_checked(const uint32 source_val, bool should_assert) // not c
 }
 
 [[nodiscard]]
-int16 i16_from_u64_checked(const uint64 source_val, bool should_assert) // not clamping/capping
+int16 i16_from_u64_checked(const uint64 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint64)std::numeric_limits<int16>::max());
+    const bool would_overflow = source_val > static_cast<uint64>(std::numeric_limits<int16>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -93,9 +93,9 @@ int16 i16_from_u64_checked(const uint64 source_val, bool should_assert) // not c
 }
 
 [[nodiscard]]
-int32 i32_from_u32_checked(const uint32 source_val, bool should_assert) // not clamping/capping
+int32 i32_from_u32_checked(const uint32 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint32)std::numeric_limits<int32>::max());
+    const bool would_overflow = source_val > static_cast<uint32>(std::numeric_limits<int32>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -107,9 +107,9 @@ int32 i32_from_u32_checked(const uint32 source_val, bool should_assert) // not c
 }
 
 [[nodiscard]]
-int32 i32_from_u64_checked(const uint64 source_val, bool should_assert) // not clamping/capping
+int32 i32_from_u64_checked(const uint64 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint64)std::numeric_limits<int64>::max());
+    const bool would_overflow = source_val > static_cast<uint64>(std::numeric_limits<int64>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }
@@ -121,9 +121,9 @@ int32 i32_from_u64_checked(const uint64 source_val, bool should_assert) // not c
 }
 
 [[nodiscard]]
-int64 i64_from_u64_checked(const uint64 source_val, bool should_assert) // not clamping/capping
+int64 i64_from_u64_checked(const uint64 source_val, const bool should_assert) // not clamping/capping
 {
-    const bool would_overflow = (source_val > (uint64)std::numeric_limits<int64>::max());
+    const bool would_overflow = source_val > static_cast<uint64>(std::numeric_limits<int64>::max());
     if (should_assert) {
         ASSERT(!would_overflow);
     }

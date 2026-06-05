@@ -35,7 +35,7 @@ static RandEngines& getRandEngines() {
     return engines;
 }
 
-int32 CSRand::GetVal(int32 iQty)
+int32 CSRand::GetVal(const int32 iQty)
 {
     if (iQty < 2)
         return 0;
@@ -53,7 +53,7 @@ int32 CSRand::GetVal2(int32 iMin, int32 iMax)
     return genRandInt32(iMin, iMax);
 }
 
-int64 CSRand::GetLLVal(int64 iQty)
+int64 CSRand::GetLLVal(const int64 iQty)
 {
     if (iQty < 2)
         return 0;
@@ -74,7 +74,7 @@ int64 CSRand::GetLLVal2(int64 iMin, int64 iMax)
 
 // Biased but fast bounding methods for the generated number (fitting it into a range): https://www.pcg-random.org/posts/bounded-rands.html
 
-int16 CSRand::Get16ValFast(int16 iQty) noexcept
+int16 CSRand::Get16ValFast(const int16 iQty) noexcept
 {
     if (iQty < 2)
         return 0;
@@ -92,7 +92,7 @@ int16 CSRand::Get16Val2Fast(int16 iMin, int16 iMax) noexcept
     return rboff;
 }
 
-int32 CSRand::GetValFast(int32 iQty) noexcept
+int32 CSRand::GetValFast(const int32 iQty) noexcept
 {
     if (iQty < 2)
         return 0;
@@ -110,7 +110,7 @@ int32 CSRand::GetVal2Fast(int32 iMin, int32 iMax) noexcept
     return rboff;
 }
 
-int64 CSRand::GetLLValFast(int64 iQty) noexcept
+int64 CSRand::GetLLValFast(const int64 iQty) noexcept
 {
     if (iQty < 2)
         return 0;
@@ -131,13 +131,13 @@ int64 CSRand::GetLLVal2Fast(int64 iMin, int64 iMax) noexcept
 
 // C++ std Mersenne Twister pseudo - random number generator
 
-int32 CSRand::genRandInt32(int32 min, int32 max)
+int32 CSRand::genRandInt32(const int32 min, const int32 max)
 {
 	std::uniform_int_distribution distr(min, max);
     return distr(getRandEngines().mt);
 }
 
-int64 CSRand::genRandInt64(int64 min, int64 max)
+int64 CSRand::genRandInt64(const int64 min, const int64 max)
 {
 	std::uniform_int_distribution distr(min, max);
 #ifdef ARCH_64
@@ -153,7 +153,7 @@ int64 CSRand::genRandInt64(int64 min, int64 max)
     return distr(getRandEngines().mt);
 }*/
 
-realtype CSRand::genRandReal64(realtype min, realtype max)
+realtype CSRand::genRandReal64(const realtype min, const realtype max)
 {
 	std::uniform_real_distribution distr(min, max);
 #ifdef ARCH_64

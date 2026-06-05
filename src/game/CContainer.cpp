@@ -41,7 +41,7 @@ void CContainer::_GoSleep()
 }
 
 
-void CContainer::ContentDelete(bool fForce)
+void CContainer::ContentDelete(const bool fForce)
 {
     ADDTOCALLSTACK("CContainer::ContentDelete");
     if (_Contents.empty())
@@ -95,7 +95,7 @@ void CContainer::ContentNotifyDelete()
 	}
 }
 
-void CContainer::OnWeightChange( int iChange )
+void CContainer::OnWeightChange(const int iChange )
 {
 	ADDTOCALLSTACK("CContainer::OnWeightChange");
 	// Propagate the weight change up the stack if there is one.
@@ -211,7 +211,7 @@ void CContainer::r_WriteContent( CScript &s ) const
 	}
 }
 
-CItem *CContainer::ContentFind(CResourceID const& rid, dword dwArg, int iDescendLevels ) const
+CItem *CContainer::ContentFind(CResourceID const& rid, const dword dwArg, const int iDescendLevels ) const
 {
 	ADDTOCALLSTACK("CContainer::ContentFind");
 	// send all the items in the container.
@@ -242,7 +242,7 @@ CItem *CContainer::ContentFind(CResourceID const& rid, dword dwArg, int iDescend
 TRIGRET_TYPE CContainer::OnContTriggerForLoop(
     CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc,
     CSString *pResult, CScriptLineContext &StartContext, CScriptLineContext &EndContext,
-    const CResourceID &rid, dword dwArg, int iDescendLevels )
+    const CResourceID &rid, const dword dwArg, const int iDescendLevels )
 {
     ADDTOCALLSTACK("CContainer::OnContTriggerForLoop");
 	if ( rid.GetResIndex() != 0 )
@@ -301,7 +301,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 
 TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
     CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc,
-	CSString *pResult, CScriptLineContext &StartContext, CScriptLineContext &EndContext, int iDecendLevels )
+	CSString *pResult, CScriptLineContext &StartContext, CScriptLineContext &EndContext, const int iDecendLevels )
 {
 	ADDTOCALLSTACK("CContainer::OnGenericContTriggerForLoop");
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
@@ -348,7 +348,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 	return TRIGRET_ENDIF;
 }
 
-bool CContainer::ContentFindKeyFor( CItem *pLocked ) const
+bool CContainer::ContentFindKeyFor(const CItem *pLocked ) const
 {
 	ADDTOCALLSTACK("CContainer::ContentFindKeyFor");
 	// Look for the key that fits this in my possesion.
@@ -363,7 +363,7 @@ CItem *CContainer::ContentFindRandom() const
 	return static_cast<CItem *>(GetContentIndex(g_Rand.GetVal((int32)GetContentCount())));
 }
 
-int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, dword dwArg ) const
+int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, const dword dwArg ) const
 {
     ADDTOCALLSTACK("CContainer::ContentConsumeTest");
     // ARGS:
@@ -407,7 +407,7 @@ int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, dword d
     return iAmount;
 }
 
-int CContainer::ContentConsume( const CResourceID& rid, int amount, dword dwArg )
+int CContainer::ContentConsume( const CResourceID& rid, int amount, const dword dwArg )
 {
 	ADDTOCALLSTACK("CContainer::ContentConsume");
 	// ARGS:
@@ -466,7 +466,7 @@ int CContainer::ContentCount(const CResourceID &rid, const dword dwArg) const
 	return INT32_MAX - ContentConsumeTest(rid, INT32_MAX, dwArg);
 }
 
-void CContainer::ContentAttrMod( uint64 iAttr, bool fSet )
+void CContainer::ContentAttrMod( uint64 iAttr, const bool fSet )
 {
 	ADDTOCALLSTACK("CContainer::ContentAttrMod");
 	// Mark the attr
@@ -505,7 +505,7 @@ void CContainer::ContentsDump( const CPointMap &pt, uint64 iAttrLeave )
 	}
 }
 
-void CContainer::ContentsTransfer( CItemContainer *pCont, bool fNoNewbie )
+void CContainer::ContentsTransfer( CItemContainer *pCont, const bool fNoNewbie )
 {
 	ADDTOCALLSTACK("CContainer::ContentsTransfer");
 	// Move all contents to another container. (pCont)
@@ -521,7 +521,7 @@ void CContainer::ContentsTransfer( CItemContainer *pCont, bool fNoNewbie )
 	}
 }
 
-size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, int iReplicationQty, int iDamagePercent, bool fTest, dword dwArg )
+size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, const int iReplicationQty, int iDamagePercent, const bool fTest, const dword dwArg )
 {
 	ADDTOCALLSTACK("CContainer::ResourceConsumePart");
 	// Consume just some of the resources.
@@ -557,7 +557,7 @@ size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, int
 	return iMissing;
 }
 
-int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iReplicationQty, bool fTest )
+int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iReplicationQty, const bool fTest )
 {
 	ADDTOCALLSTACK("CContainer::ResourceConsume");
 	// Consume or test all the required resources.
@@ -673,7 +673,7 @@ bool CContainer::r_GetRefContainer( lpctstr &ptcKey, CScriptObj *&pRef )
 	return false;
 }
 
-bool CContainer::r_WriteValContainer( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc )
+bool CContainer::r_WriteValContainer(const lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc )
 {
 	UnreferencedParameter(pSrc);
 	ADDTOCALLSTACK("CContainer::r_WriteValContainer");

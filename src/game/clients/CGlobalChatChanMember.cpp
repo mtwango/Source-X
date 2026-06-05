@@ -8,7 +8,7 @@ CGlobalChatChanMember::CGlobalChatChanMember() noexcept :
 
 CGlobalChatChanMember::~CGlobalChatChanMember() noexcept = default;
 
-void CGlobalChatChanMember::SetJID(lpctstr pszJID)
+void CGlobalChatChanMember::SetJID(const lpctstr pszJID)
 {
 	m_strJID = pszJID;
 }
@@ -18,7 +18,7 @@ lpctstr CGlobalChatChanMember::GetJID() const
 	return m_strJID.GetBuffer();
 }
 
-void CGlobalChatChanMember::SetVisible(bool fNewStatus)
+void CGlobalChatChanMember::SetVisible(const bool fNewStatus)
 {
 	m_fVisible = fNewStatus;
 }

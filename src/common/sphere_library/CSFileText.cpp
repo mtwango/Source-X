@@ -35,7 +35,7 @@ bool CSFileText::IsFileOpen() const
     MT_SHARED_LOCK_RETURN(this, _pStream != nullptr);
 }
 
-bool CSFileText::_Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CSFileText::_Open(lpctstr ptcFilename, const uint uiModeFlags)
 {
     ADDTOCALLSTACK("CSFileText::_Open");
 
@@ -61,7 +61,7 @@ bool CSFileText::_Open(lpctstr ptcFilename, uint uiModeFlags)
 
     return true;
 }
-bool CSFileText::Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CSFileText::Open(const lpctstr ptcFilename, const uint uiModeFlags)
 {
     ADDTOCALLSTACK("CSFileText::Open");
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_Open(ptcFilename, uiModeFlags));
@@ -92,7 +92,7 @@ void CSFileText::Close()
 }
 
 // CSFileText:: Content management.
-int CSFileText::_Seek( int iOffset, int iOrigin )
+int CSFileText::_Seek(const int iOffset, const int iOrigin )
 {
     // RETURN:
     //  true = success
@@ -117,9 +117,9 @@ int CSFileText::_Seek( int iOffset, int iOrigin )
         return INT_MAX;
     }
 
-    return (int)iPos;
+    return static_cast<int>(iPos);
 }
-int CSFileText::Seek( int iOffset, int iOrigin )
+int CSFileText::Seek(const int iOffset, const int iOrigin )
 {
     // RETURN:
     //  true = success
@@ -187,7 +187,7 @@ int CSFileText::Printf( lpctstr pFormat, ... )
     return iRet;
 }
 
-int CSFileText::Read( void * pBuffer, int sizemax ) const
+int CSFileText::Read( void * pBuffer, const int sizemax ) const
 {
     // This can return: EOF(-1) constant.
     // returns the number of full items actually read
@@ -207,7 +207,7 @@ int CSFileText::Read( void * pBuffer, int sizemax ) const
     return (int)ret;
 }
 
-tchar * CSFileText::_ReadString( tchar * pBuffer, int sizemax )
+tchar * CSFileText::_ReadString( tchar * pBuffer, const int sizemax )
 {
     // Read a line of text. nullptr/nullptr = EOF
     ADDTOCALLSTACK("CSFileText::_ReadString");
@@ -219,13 +219,13 @@ tchar * CSFileText::_ReadString( tchar * pBuffer, int sizemax )
     return fgets( pBuffer, sizemax, _pStream );
 }
 
-tchar * CSFileText::ReadString( tchar * pBuffer, int sizemax )
+tchar * CSFileText::ReadString( tchar * pBuffer, const int sizemax )
 {
     ADDTOCALLSTACK("CSFileText::ReadString");
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_ReadString(pBuffer, sizemax));
 }
 
-int CSFileText::_VPrintf( lpctstr pFormat, va_list args )
+int CSFileText::_VPrintf(const lpctstr pFormat, const va_list args )
 {
     ADDTOCALLSTACK("CSFileText::_VPrintf");
     ASSERT(pFormat);
@@ -236,7 +236,7 @@ int CSFileText::_VPrintf( lpctstr pFormat, va_list args )
     return vfprintf( _pStream, pFormat, args );
 }
 
-int CSFileText::VPrintf(lpctstr pFormat, va_list args)
+int CSFileText::VPrintf(const lpctstr pFormat, const va_list args)
 {
     ADDTOCALLSTACK("CSFileText::VPrintf");
     ASSERT(pFormat);
@@ -244,7 +244,7 @@ int CSFileText::VPrintf(lpctstr pFormat, va_list args)
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_VPrintf(pFormat, args));
 }
 
-bool CSFileText::_Write( const void * pData, int iLen )
+bool CSFileText::_Write( const void * pData, const int iLen )
 {
     // RETURN: 1 = success else fail.
     ADDTOCALLSTACK("CSFileText::_Write");
@@ -267,14 +267,14 @@ bool CSFileText::_Write( const void * pData, int iLen )
     return ( uiStatus == 1 );
 }
 
-bool CSFileText::Write(const void* pData, int iLen)
+bool CSFileText::Write(const void* pData, const int iLen)
 {
     // RETURN: 1 = success else fail.
     ADDTOCALLSTACK("CSFileText::Write");
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_Write(pData, iLen));
 }
 
-bool CSFileText::_WriteString( lpctstr pStr )
+bool CSFileText::_WriteString(const lpctstr pStr )
 {
     // RETURN: < 0 = failed.
     ADDTOCALLSTACK("CSFileText::_WriteString");
@@ -283,7 +283,7 @@ bool CSFileText::_WriteString( lpctstr pStr )
     return _Write( pStr, (int)strlen( pStr ) );
 }
 
-bool CSFileText::WriteString(lpctstr pStr)
+bool CSFileText::WriteString(const lpctstr pStr)
 {
     ADDTOCALLSTACK("CSFileText::WriteString");
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_WriteString(pStr));

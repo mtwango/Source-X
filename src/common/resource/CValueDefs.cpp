@@ -7,7 +7,7 @@
 //*******************************************
 // -CValueRangeDef
 
-int CValueRangeDef::GetLinear( int iPercent ) const
+int CValueRangeDef::GetLinear(const int iPercent ) const
 {
     // ARGS: iPercent = 0-1000
     return (int)m_iLo + IMulDiv( GetRange(), iPercent, 1000 );
@@ -18,7 +18,7 @@ int CValueRangeDef::GetRandom() const
     return ( (int)m_iLo + g_Rand.GetVal(GetRange()) );
 }
 
-int CValueRangeDef::GetRandomLinear( int iPercent ) const
+int CValueRangeDef::GetRandomLinear(const int iPercent ) const
 {
     ADDTOCALLSTACK("CValueRangeDef::GetRandomLinear");
     return ( ( GetRandom() + GetLinear(iPercent) ) / 2 );
@@ -152,13 +152,13 @@ int CValueCurveDef::GetRandom( ) const
 }
 
 
-int CValueCurveDef::GetRandomLinear( int iSkillPercent  ) const
+int CValueCurveDef::GetRandomLinear(const int iSkillPercent  ) const
 {
     ADDTOCALLSTACK("CValueCurveDef::GetRandomLinear");
     return ( GetLinear( iSkillPercent ) + GetRandom() ) / 2;
 }
 
-int CValueCurveDef::GetChancePercent( int iSkillPercent ) const
+int CValueCurveDef::GetChancePercent(const int iSkillPercent ) const
 {
     ADDTOCALLSTACK("CValueCurveDef::GetChancePercent");
     // ARGS:

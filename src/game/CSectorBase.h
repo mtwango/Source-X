@@ -53,7 +53,7 @@ public:
 	int64 GetTimeLastClient() const noexcept {
 		return m_iTimeLastClient;
 	}
-	void SetTimeLastClient(int64 iTime) noexcept {
+	void SetTimeLastClient(const int64 iTime) noexcept {
 		m_iTimeLastClient = iTime;
 	}
 };
@@ -89,7 +89,7 @@ class CSectorBase		// world sector
 		CObjPointSortArray& operator=(const CObjPointSortArray& other) = delete;
 
         // Find a point fast.
-		int CompareKey(int id, T* pBase, bool fNoSpaces) const override {
+		int CompareKey(int id, T* pBase, const bool fNoSpaces) const override {
 			UnreferencedParameter(fNoSpaces);
 			return (id - pBase->GetPointSortIndex());
 		}
@@ -150,7 +150,7 @@ public:
 	CTeleport * GetTeleport( const CPointMap & pt ) const;
 	bool AddTeleport( CTeleport * pTeleport );
 
-    constexpr bool IsFlagSet( dword dwFlag ) const noexcept {
+    constexpr bool IsFlagSet(const dword dwFlag ) const noexcept {
         return (m_dwFlags & dwFlag);
     }
 

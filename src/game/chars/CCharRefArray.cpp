@@ -52,7 +52,7 @@ size_t CCharRefArray::InsertChar( const CChar *pChar, size_t i )
     return i;
 }
 
-void CCharRefArray::DetachChar( size_t i )
+void CCharRefArray::DetachChar(const size_t i )
 {
     ADDTOCALLSTACK("CCharRefArray::DetachChar");
     m_uidCharArray.erase_at(i);

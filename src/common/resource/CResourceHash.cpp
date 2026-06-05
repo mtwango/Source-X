@@ -94,7 +94,7 @@ void CResourceHash::SortStep()
     }
 }
 
-void CResourceHash::SetAt(CResourceID const& rid, size_t index, CResourceDef* pNew)
+void CResourceHash::SetAt(CResourceID const& rid, const size_t index, CResourceDef* pNew)
 {
     ASSERT(rid.GetResPage() <= RES_PAGE_MAX); // RES_PAGE_ANY can be used only for search, you can't insert a rid with this special page
     m_Array[GetHashArray(rid)][index].reset(pNew);

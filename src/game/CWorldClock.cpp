@@ -12,7 +12,7 @@ int64 CWorldClock::GetSystemClock() noexcept // static
 
 // --
 
-void CWorldClock::InitTime(int64 iTimeBase)
+void CWorldClock::InitTime(const int64 iTimeBase)
 {
 	ADDTOCALLSTACK("CWorldClock::InitTime");
 	_iSysClock_Prev = GetSystemClock();

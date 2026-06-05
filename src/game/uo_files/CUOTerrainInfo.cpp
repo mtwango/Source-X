@@ -7,7 +7,7 @@
 #include "../../common/CLog.h"
 #include "CUOTerrainInfo.h"
 
-CUOTerrainInfo::CUOTerrainInfo( TERRAIN_TYPE id, bool fNameNeeded )
+CUOTerrainInfo::CUOTerrainInfo(const TERRAIN_TYPE id, const bool fNameNeeded )
 {
     if (id >= TERRAIN_QTY)
     {

@@ -1,8 +1,8 @@
 #include "CUOHuesRec.h"
 
-byte CUOHuesRec::GetRGB( int rgb ) const
+byte CUOHuesRec::GetRGB(const int rgb ) const
 {
-    short sColor = m_color[31];
+    const short sColor = m_color[31];
     if ( rgb == 0 ) // R
         return (byte)(((sColor & 0x7C00) >> 7));
     if (rgb == 1)

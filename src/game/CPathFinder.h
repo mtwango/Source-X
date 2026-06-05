@@ -67,7 +67,7 @@ public:
     {
         m_LastPath.clear();
     }
-    const CPointMap& ReadStep(size_t Step = 0) const
+    const CPointMap& ReadStep(const size_t Step = 0) const
     {
         return m_LastPath[Step];
     }

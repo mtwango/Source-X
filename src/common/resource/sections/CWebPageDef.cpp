@@ -59,7 +59,7 @@ public:
 	{
 		return "WebFile";
 	}
-	void SysMessage( lpctstr pszMessage ) const override
+	void SysMessage(const lpctstr pszMessage ) const override
 	{
 		if ( pszMessage == nullptr )
 			return;
@@ -111,7 +111,7 @@ lpctstr const CWebPageDef::sm_szLoadKeys[WC_QTY+1] =
 	nullptr
 };
 
-bool CWebPageDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CWebPageDef::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CWebPageDef::r_WriteVal");
@@ -508,7 +508,7 @@ bool CWebPageDef::SetSourceFile( lpctstr pszName, const CClient * pClient )
 	return true;
 }
 
-bool CWebPageDef::IsMatch( lpctstr pszMatch ) const
+bool CWebPageDef::IsMatch(const lpctstr pszMatch ) const
 {
 	ADDTOCALLSTACK("CWebPageDef::IsMatch");
 	if ( pszMatch == nullptr )	// match all.
@@ -729,7 +729,7 @@ static int HtmlDeCode( tchar * pszDst, lpctstr pszSrc )
 	return( i );
 }
 
-bool CWebPageDef::ServPagePost( CClient * pClient, lpctstr pszURLArgs, tchar * pContentData, size_t uiContentLength )
+bool CWebPageDef::ServPagePost( CClient * pClient, const lpctstr pszURLArgs, tchar * pContentData, const size_t uiContentLength )
 {
 	ADDTOCALLSTACK("CWebPageDef::ServPagePost");
 	UnreferencedParameter(pszURLArgs);

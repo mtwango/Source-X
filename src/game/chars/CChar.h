@@ -356,7 +356,7 @@ public:
 #else
 
     // called very frequently, it's wise to inline it if we can
-    bool IsStatFlag(uint64 uiStatFlag) const noexcept
+    bool IsStatFlag(const uint64 uiStatFlag) const noexcept
     {
         return (_uiStatFlag & uiStatFlag);
     }
@@ -448,7 +448,7 @@ public:
     bool CanUse( const CItem * pItem, bool fMoveOrConsume );
 	bool IsMountCapable() const;
 
-    ushort  Food_CanEat( CObjBase * pObj ) const;
+    ushort  Food_CanEat(const CObjBase * pObj ) const;
 	short   Food_GetLevelPercent() const;
 	lpctstr Food_GetLevelMessage( bool fPet, bool fHappy ) const;
 
@@ -530,7 +530,7 @@ public:
 	void ClientAttach( CClient * pClient );
 	void ClientDetach();
 
-	bool SetPrivLevel( CTextConsole * pSrc, lpctstr pszFlags );
+	bool SetPrivLevel(const CTextConsole * pSrc, lpctstr pszFlags );
 	bool CanDisturb( const CChar * pChar ) const;
 	void SetDisconnected( CSector *pNewSector = nullptr );
 	bool SetPlayerAccount( CAccount * pAccount );
@@ -557,14 +557,14 @@ public:
 	ANIM_TYPE GenerateAnimate(ANIM_TYPE action, bool fTranslate = true, bool fBackward = false, byte iFrameDelay = 0, byte iAnimLen = 7);
 	bool UpdateAnimate(ANIM_TYPE action, bool fTranslate = true, bool fBackward = false, byte iFrameDelay = 0, byte iAnimLen = 7);
 
-    void UpdateMode( bool fFull, CClient * pExcludeClient = nullptr);
+    void UpdateMode( bool fFull, const CClient * pExcludeClient = nullptr);
 	void UpdateSpeedMode();
 	void UpdateVisualRange();
-    void UpdateMove( const CPointMap & ptOld, CClient * pClientExclude = nullptr, bool fFull = false );
+    void UpdateMove( const CPointMap & ptOld, const CClient * pClientExclude = nullptr, bool fFull = false );
 	void UpdateDir( DIR_TYPE dir );
 	void UpdateDir( const CPointMap & pt );
 	void UpdateDir( const CObjBaseTemplate * pObj );
-	void UpdateDrag( CItem * pItem, CObjBase * pCont = nullptr, CPointMap * pt = nullptr );
+	void UpdateDrag( CItem * pItem, CObjBase * pCont = nullptr, const CPointMap * pt = nullptr );
 
 	lpctstr GetPronoun() const;	// he
 	lpctstr GetPossessPronoun() const;	// his
@@ -583,8 +583,8 @@ protected:
 
 public:
 	bool CanCarry( const CItem * pItem ) const;
-	bool CanEquipStr( CItem * pItem ) const;
-	LAYER_TYPE CanEquipLayer( CItem * pItem, LAYER_TYPE layer, CChar * pCharMsg, bool fTest );
+	bool CanEquipStr(const CItem * pItem ) const;
+	LAYER_TYPE CanEquipLayer(const CItem * pItem, LAYER_TYPE layer, const CChar * pCharMsg, bool fTest );
 	CItem * LayerFind( LAYER_TYPE layer ) const;
 	void LayerAdd( CItem * pItem, LAYER_TYPE layer = LAYER_QTY );
 
@@ -706,11 +706,11 @@ public:
 	* @brief What color should the viewer see from me?
 	*
 	* Used to retrieve color for character and corpse's names.
-	* @param pChar is the CChar that needs to know what I am (good, evil, criminal, neutral...) to him.
+	* @param pCharViewer is the CChar that needs to know what I am (good, evil, criminal, neutral...) to him.
 	* @param fIncog if set to true (usually because of Incognito spell), this character will be gray for the viewer (pChar).
 	* @return HUE_TYPE my color.
 	*/
-	HUE_TYPE Noto_GetHue( const CChar * pChar, bool fIncog = false ) const;
+	HUE_TYPE Noto_GetHue( const CChar * pCharViewer, bool fIncog = false ) const;
 
 	/**
 	* @brief I'm neutral?
@@ -796,7 +796,7 @@ public:
 	* @param value is the notoriety value I have for him
 	* @param color (if specified) is the color override sent in packets.
 	*/
-	void NotoSave_Add( CChar * pChar, NOTO_TYPE value, NOTO_TYPE color = NOTO_INVALID );
+	void NotoSave_Add(const CChar * pChar, NOTO_TYPE value, NOTO_TYPE color = NOTO_INVALID );
 
 	/**
 	* @brief Retrieving the stored notoriety for this list's entry.
@@ -840,7 +840,7 @@ public:
 	* @param pChar CChar to retrieve the entry number for.
 	* @return the entry number.
 	*/
-	int NotoSave_GetID( CChar * pChar ) const;
+	int NotoSave_GetID(const CChar * pChar ) const;
 
 	/**
 	* @brief Removing stored data for pChar.
@@ -848,7 +848,7 @@ public:
 	* @param pChar the CChar I want to remove from my list.
 	* @return true if successfully removed it.
 	*/
-	bool NotoSave_Delete( CChar * pChar );
+	bool NotoSave_Delete(const CChar * pChar );
 
 	/**
 	* @brief Removing expired notoriety.
@@ -948,7 +948,7 @@ public:
     TRIGRET_TYPE Skill_OnCharTrigger( SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs); //pArgs.m_iN1 will be rewritten with skill
 
 	bool Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg );
-	bool Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax = INT16_MAX );
+	bool Skill_Tracking(const CUID &uidTarg, const DIR_TYPE & dirPrv, int iDistMax = INT16_MAX );
 	bool Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE stage, bool fSkillOnly = false, int iReplicationQty = 1 );
 	bool Skill_MakeItem_Success();
 	bool Skill_Snoop_Check( const CItemContainer * pItem );
@@ -965,7 +965,7 @@ private:
 	void Skill_Decay();
 	void Skill_Experience( SKILL_TYPE skill, int difficulty );
 
-	int Skill_NaturalResource_Setup( CItem * pResBit );
+	int Skill_NaturalResource_Setup(const CItem * pResBit );
 	CItem * Skill_NaturalResource_Create( CItem * pResBit, SKILL_TYPE skill );
 	void Skill_SetTimeout();
 	int64 Skill_GetTimeout();
@@ -1013,13 +1013,12 @@ private:
 	void Spell_Dispel( int iskilllevel );
 	CChar * Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, int64 iDuration = 0);
 	bool Spell_Recall(CItem * pRune, bool fGate);
-    CItem * Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEffect, int64 iDurationInTenths, CObjBase * pSrc = nullptr, bool fEquip = true );
+    CItem * Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEffect, int64 iDurationInTenths, const CObjBase * pSrc = nullptr, bool fEquip = true );
 	SPELL_TYPE Spell_GetIndex(SKILL_TYPE skill = SKILL_NONE);	//gets first spell for the magic skill given.
 	SPELL_TYPE Spell_GetMax(SKILL_TYPE skill = SKILL_NONE);	//gets first spell for the magic skill given.
 	bool Spell_Equip_OnTick( CItem * pItem );
 
-	void Spell_Field(const CPointMap &pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill,
-        CChar * pCharSrc = nullptr, ITEMID_TYPE idnewEW = (ITEMID_TYPE)0, ITEMID_TYPE idnewNS = (ITEMID_TYPE)0,
+	void Spell_Field(const CPointMap &pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill, const CChar * pCharSrc = nullptr, ITEMID_TYPE idnewEW = (ITEMID_TYPE)0, ITEMID_TYPE idnewNS = (ITEMID_TYPE)0,
         int64 iDuration = 0, HUE_TYPE iColor = HUE_DEFAULT);
 	void Spell_Area(const CPointMap &pt, int iDist, int iSkill, int64 iDuration = 0);
 	bool Spell_TargCheck_Face();
@@ -1034,12 +1033,12 @@ public:
     bool Spell_Teleport( CPointMap ptDest, bool fTakePets = false, bool fCheckAntiMagic = true, bool fDisplayEffect = true,
         ITEMID_TYPE iEffect = ITEMID_NOTHING, SOUND_TYPE iSound = SOUND_NONE );
     bool Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic = true);
-	bool Spell_SimpleEffect( CObjBase * pObj, CObjBase * pObjSrc, SPELL_TYPE &spell, int &iSkillLevel, int64 iDuration = 0);
+	bool Spell_SimpleEffect( CObjBase * pObj, CObjBase * pObjSrc, const SPELL_TYPE &spell, const int &iSkillLevel, int64 iDuration = 0);
 	bool Spell_CastDone();
 	bool OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting = false, int64 iDuration = 0) override;
 	bool Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bool fFailMsg, bool fCheckAntiMagic = true );
     CChar* Spell_Summon_Try(SPELL_TYPE spell, const CPointMap &ptTarg, CREID_TYPE uiCreature, std::optional<short> iFollowerSlotsOverride);
-	int64 GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharSrc = nullptr ); // in tenths of second
+	int64 GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, const CChar * pCharSrc = nullptr ); // in tenths of second
 
 	// Memories about objects in the world. -------------------
 	bool Memory_OnTick( CItemMemory * pMemory );
@@ -1090,14 +1089,14 @@ private:
     */
     byte GetRangeH() const;
 
-	int	Fight_CalcRange( CItem * pWeapon = nullptr ) const;
+	int	Fight_CalcRange(const CItem * pWeapon = nullptr ) const;
     void Fight_SetDefaultSwingDelays();
 
 	bool Fight_IsActive() const;
 public:
 	int CalcArmorDefense() const;
 	static int CalcPercentArmorDefense(LAYER_TYPE layer);
-	void Memory_Fight_Retreat( CChar * pTarg, CItemMemory * pFight );
+	void Memory_Fight_Retreat(const CChar * pTarg, const CItemMemory * pFight );
 	void Memory_Fight_Start( const CChar * pTarg );
 	bool Memory_Fight_OnTick( CItemMemory * pMemory );
 
@@ -1106,7 +1105,7 @@ public:
 	void Fight_ClearAll();
 	void Fight_HitTry();
 	WAR_SWING_TYPE Fight_Hit( CChar * pCharTarg );
-	WAR_SWING_TYPE Fight_CanHit(CChar * pCharTarg, bool fSwingNoRange = false);
+	WAR_SWING_TYPE Fight_CanHit(const CChar * pCharTarg, bool fSwingNoRange = false);
 	SKILL_TYPE Fight_GetWeaponSkill() const;
     DAMAGE_TYPE Fight_GetWeaponDamType(const CItem* pWeapon = nullptr) const;
     int Fight_CalcDamage( const CItem * pWeapon, bool fNoRandom = false, bool fGetMax = true ) const;
@@ -1189,7 +1188,7 @@ public:
     short GetCurFollowers() const;
 
 	int  ItemPickup( CItem * pItem, word amount );
-	bool ItemEquip( CItem * pItem, CChar * pCharMsg = nullptr, bool fFromDClick = false );
+	bool ItemEquip( CItem * pItem, const CChar * pCharMsg = nullptr, bool fFromDClick = false );
 	bool ItemEquipWeapon( bool fForce );
 	bool ItemEquipArmor( bool fForce );
 	bool ItemBounce( CItem * pItem, bool fDisplayMsg = true );
@@ -1201,7 +1200,7 @@ public:
     void EatAnim(CItem* pItem, ushort uiQty);
     bool Reveal( uint64 iFlags = 0 );
     void Jail( CTextConsole * pSrc, bool fSet, int iCell );
-	bool SetPoison( int iSkill, int iHits, CChar * pCharSrc );
+	bool SetPoison( int iSkill, int iHits, const CChar * pCharSrc );
 	bool SetPoisonCure( bool fExtra );
 	bool CheckCorpseCrime(const CItemCorpse *pCorpse, bool fLooting, bool fTest );
 	CItemCorpse * FindMyCorpse( bool fIgnoreLOS = false, int iRadius = 2) const;
@@ -1264,14 +1263,14 @@ public:
 	bool Use_MultiLockDown( CItem * pItemTarg );
 	void Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving );
 	bool Use_Repair( CItem * pItem );
-	int Use_PlayMusic( CItem * pInstrument, int iDifficultyToPlay );
+	int Use_PlayMusic(const CItem * pInstrument, int iDifficultyToPlay );
 	void Use_Drink(CItem *pItem);
-	bool Use_Cannon_Feed( CItem * pCannon, CItem * pFeed );
+	bool Use_Cannon_Feed( CItem * pCannon, const CItem * pFeed );
 	bool Use_Item_Web( CItem * pItem );
-	void Use_MoonGate( CItem * pItem );
+	void Use_MoonGate(const CItem * pItem );
 	bool Use_Kindling( CItem * pKindling );
 	bool Use_BedRoll( CItem * pItem );
-	bool Use_Seed( CItem * pItem, CPointMap * pPoint );
+	bool Use_Seed( CItem * pItem, const CPointMap * pPoint );
 	bool Use_Key( CItem * pKey, CItem * pItemTarg );
 	bool Use_KeyChange( CItem * pItemTarg );
 	bool Use_Train_PickPocketDip( CItem * pItem, bool fSetup );
@@ -1295,7 +1294,7 @@ private:
 	bool NPC_StablePetSelect( CChar * pCharPlayer );
 
 	int NPC_WantThisItem( CItem * pItem ) const;
-	int NPC_GetWeaponUseScore( CItem * pItem );
+	int NPC_GetWeaponUseScore(const CItem * pItem );
 
 	int  NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const;
 	int	 NPC_GetAttackContinueMotivation( CChar * pChar, int iMotivation = 0 ) const;
@@ -1308,16 +1307,16 @@ private:
 public:
 	bool NPC_OnHirePay( CChar * pCharSrc, CItemMemory * pMemory, CItem * pGold );
 	bool NPC_OnHireHear( CChar * pCharSrc );
-	ushort NPC_OnTrainCheck( CChar * pCharSrc, SKILL_TYPE Skill );
+	ushort NPC_OnTrainCheck(const CChar * pCharSrc, SKILL_TYPE Skill );
 	bool NPC_OnTrainPay( CChar * pCharSrc, CItemMemory * pMemory, CItem * pGold );
-	bool NPC_OnTrainHear( CChar * pCharSrc, lpctstr pCmd );
+	bool NPC_OnTrainHear(const CChar * pCharSrc, lpctstr pCmd );
 	bool NPC_TrainSkill( CChar * pCharSrc, SKILL_TYPE skill, ushort uiAmountToTrain );
     int64 PayGold(CChar * pCharSrc, int64 iGold, CItem * pGold, ePayGold iReason);
 private:
 	bool NPC_CheckWalkHere( const CPointMap & pt, const CRegion * pArea ) const;
 	void NPC_OnNoticeSnoop( const CChar * pCharThief, const CChar * pCharMark );
 
-	void NPC_LootMemory( CItem * pItem );
+	void NPC_LootMemory(const CItem * pItem );
 	bool NPC_LookAtCharGuard( CChar * pChar, bool bFromTrigger = false );
 	bool NPC_LookAtCharHealer( CChar * pChar );
 	bool NPC_LookAtCharHuman( CChar * pChar );
@@ -1329,7 +1328,7 @@ private:
 	CChar * NPC_FightFindBestTarget(const std::vector<CChar*> * pvExcludeList = nullptr);
 	bool NPC_FightMagery(CChar * pChar);
 	bool NPC_FightCast(CObjBase * &pChar ,CObjBase * pSrc, SPELL_TYPE &spell, int &skill, int iHealThreshold, bool bIgnoreAITargetChoice = false);
-	bool NPC_FightArchery( CChar * pChar );
+	bool NPC_FightArchery(const CChar * pChar );
 	bool NPC_FightMayCast(bool fCheckSkill = true) const;
 	void NPC_GetAllSpellbookSpells();
 
@@ -1346,7 +1345,7 @@ private:
 	void NPC_Act_Runto(int iDist = 30);
 	bool NPC_Act_Food();
 
-	void NPC_ActStart_SpeakTo( CChar * pSrc );
+	void NPC_ActStart_SpeakTo(const CChar * pSrc );
 
 	void NPC_OnTickAction();
 
@@ -1354,7 +1353,7 @@ public:
 	void NPC_Pathfinding();		//	NPC thread AI - pathfinding
 	void NPC_Food();			//	NPC thread AI - search for food
 	void NPC_ExtraAI();			//	NPC thread AI - some general extra operations
-	void NPC_AddSpellsFromBook(CItem * pBook);
+	void NPC_AddSpellsFromBook(const CItem * pBook);
 
 	void NPC_PetRelease();
 	void NPC_PetDesert();
@@ -1365,7 +1364,7 @@ public:
 	bool NPC_IsOwnedBy( const CChar * pChar, bool fAllowGM = true ) const;
 	bool NPC_CanSpeak() const;
 
-	static CItemVendable * NPC_FindVendableItem( CItemVendable * pVendItem, CItemContainer * pVend1, CItemContainer * pVend2 );
+	static CItemVendable * NPC_FindVendableItem(const CItemVendable * pVendItem, const CItemContainer * pVend1, CItemContainer * pVend2 );
 
 	bool NPC_IsVendor() const;
 	int NPC_GetAiFlags();
@@ -1414,13 +1413,13 @@ public:
 };
 
 
-inline bool CChar::IsSkillBase( SKILL_TYPE skill ) noexcept // static
+inline bool CChar::IsSkillBase(const SKILL_TYPE skill ) noexcept // static
 {
 	// Is this in the base set of skills.
-	return (skill > SKILL_NONE && skill < (SKILL_TYPE)(g_Cfg.m_iMaxSkill));
+	return skill > SKILL_NONE && skill < static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill);
 }
 
-inline bool CChar::IsSkillNPC( SKILL_TYPE skill ) noexcept  // static
+inline bool CChar::IsSkillNPC(const SKILL_TYPE skill ) noexcept  // static
 {
 	// Is this in the NPC set of skills.
 	return (skill >= NPCACT_FOLLOW_TARG && skill < NPCACT_QTY);

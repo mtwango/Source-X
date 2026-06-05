@@ -40,7 +40,7 @@ CSector::~CSector()
 	ASSERT( ! GetClientsNumber());
 }
 
-void CSector::Init(int index, uchar map, short x, short y)
+void CSector::Init(const int index, const uchar map, const short x, const short y)
 {
 	CSectorBase::Init(index, map, x, y);
 	SetDefaultWeatherChance();
@@ -88,7 +88,7 @@ lpctstr const CSector::sm_szLoadKeys[SC_QTY+1] =
 	nullptr
 };
 
-bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);
@@ -642,7 +642,7 @@ lpctstr CSector::GetLocalGameTime() const
 	return CServerTime::GetTimeMinDesc(GetLocalTime());
 }
 
-bool CSector::IsMoonVisible(uint iPhase, int iLocalTime) const
+bool CSector::IsMoonVisible(const uint iPhase, int iLocalTime) const
 {
 	ADDTOCALLSTACK("CSector::IsMoonVisible");
 	// When is moon rise and moon set ?
@@ -670,7 +670,7 @@ bool CSector::IsMoonVisible(uint iPhase, int iLocalTime) const
 	}
 }
 
-byte CSector::GetLightCalc( bool fQuickSet ) const
+byte CSector::GetLightCalc(const bool fQuickSet ) const
 {
 	ADDTOCALLSTACK("CSector::GetLightCalc");
 	// What is the light level default here in this sector.
@@ -773,7 +773,7 @@ byte CSector::GetLightCalc( bool fQuickSet ) const
     return ((m_Env.m_Light < UINT8_MAX) ? (m_Env.m_Light + 1) : m_Env.m_Light);
 }
 
-void CSector::SetLightNow( bool fFlash )
+void CSector::SetLightNow(const bool fFlash )
 {
 	ADDTOCALLSTACK("CSector::SetLightNow");
 	// Set the light level for all the CClients here.
@@ -807,7 +807,7 @@ void CSector::SetLightNow( bool fFlash )
 	}
 }
 
-void CSector::SetLight( int light )
+void CSector::SetLight(const int light )
 {
 	ADDTOCALLSTACK("CSector::SetLight");
 	// GM set light level command
@@ -867,7 +867,7 @@ WEATHER_TYPE CSector::GetWeatherCalc() const
 	return( WEATHER_DRY );
 }
 
-void CSector::SetWeather( WEATHER_TYPE w )
+void CSector::SetWeather(const WEATHER_TYPE w )
 {
 	ADDTOCALLSTACK("CSector::SetWeather");
 	// Set the immediate weather type.
@@ -889,7 +889,7 @@ void CSector::SetWeather( WEATHER_TYPE w )
 	}
 }
 
-void CSector::SetSeason( SEASON_TYPE season )
+void CSector::SetSeason(const SEASON_TYPE season )
 {
 	ADDTOCALLSTACK("CSector::SetSeason");
 	// Set the season type.
@@ -910,7 +910,7 @@ void CSector::SetSeason( SEASON_TYPE season )
 	}
 }
 
-void CSector::SetWeatherChance( bool fRain, int iChance )
+void CSector::SetWeatherChance(const bool fRain, int iChance )
 {
 	ADDTOCALLSTACK("CSector::SetWeatherChance");
 	// Set via the client.
@@ -947,7 +947,7 @@ bool CSector::IsInDungeon() const
 }
 
 
-void CSector::OnHearItem( CChar * pChar, lpctstr pszText )
+void CSector::OnHearItem( CChar * pChar, const lpctstr pszText )
 {
 	ADDTOCALLSTACK("CSector::OnHearItem");
 	// report to any of the items that something was said.
@@ -1074,7 +1074,7 @@ bool CSector::MoveCharToSector( CChar * pChar )
 	return true;
 }
 
-bool CSector::_CanSleep(bool fCheckAdjacents) const
+bool CSector::_CanSleep(const bool fCheckAdjacents) const
 {
 	ADDTOCALLSTACK_DEBUG("CSector::_CanSleep");
 	if ( (g_Cfg._iSectorSleepDelay == 0) || IsFlagSet(SECF_NoSleep) )
@@ -1120,7 +1120,7 @@ void CSector::SetSectorWakeStatus()
     }
 }
 
-void CSector::Close(bool fClosingWorld)
+void CSector::Close(const bool fClosingWorld)
 {
 	ADDTOCALLSTACK("CSector::Close");
 

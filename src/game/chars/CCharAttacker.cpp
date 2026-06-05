@@ -78,7 +78,7 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
 }
 
 // Retrieves damage done to nID enemy
-int CChar::Attacker_GetDam(int attackerIndex) const
+int CChar::Attacker_GetDam(const int attackerIndex) const
 {
     ADDTOCALLSTACK("CChar::Attacker_GetDam");
     if (m_lastAttackers.empty())
@@ -90,7 +90,7 @@ int CChar::Attacker_GetDam(int attackerIndex) const
 }
 
 // Retrieves the amount of time elapsed since the last hit to nID enemy
-int64 CChar::Attacker_GetElapsed(int attackerIndex) const
+int64 CChar::Attacker_GetElapsed(const int attackerIndex) const
 {
     ADDTOCALLSTACK("CChar::Attacker_GetElapsed");
     if (m_lastAttackers.empty())
@@ -102,7 +102,7 @@ int64 CChar::Attacker_GetElapsed(int attackerIndex) const
 }
 
 // Retrieves Threat value that nID enemy represents against me
-int CChar::Attacker_GetThreat(int attackerIndex) const
+int CChar::Attacker_GetThreat(const int attackerIndex) const
 {
     ADDTOCALLSTACK("CChar::Attacker_GetThreat");
     if (m_lastAttackers.empty())
@@ -148,14 +148,14 @@ CChar * CChar::Attacker_GetLast() const
 }
 
 // Set elapsed time (refreshing it?)
-void CChar::Attacker_SetElapsed(const CChar * pChar, int64 value)
+void CChar::Attacker_SetElapsed(const CChar * pChar, const int64 value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetElapsed(CChar)");
     return Attacker_SetElapsed(Attacker_GetID(pChar), value);
 }
 
 // Set elapsed time (refreshing it?)
-void CChar::Attacker_SetElapsed(int attackerIndex, int64 value)
+void CChar::Attacker_SetElapsed(const int attackerIndex, const int64 value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetElapsed(idx)");
     if (m_lastAttackers.empty())
@@ -167,14 +167,14 @@ void CChar::Attacker_SetElapsed(int attackerIndex, int64 value)
 }
 
 // Damaged pChar
-void CChar::Attacker_SetDam(const CChar * pChar, int value)
+void CChar::Attacker_SetDam(const CChar * pChar, const int value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetDam(CChar)");
     return Attacker_SetDam(Attacker_GetID(pChar), value);
 }
 
 // Damaged pChar
-void CChar::Attacker_SetDam(int attackerIndex, int value)
+void CChar::Attacker_SetDam(const int attackerIndex, const int value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetDam(idx)");
     if (m_lastAttackers.empty())
@@ -186,14 +186,14 @@ void CChar::Attacker_SetDam(int attackerIndex, int value)
 }
 
 // New Treat level
-void CChar::Attacker_SetThreat(const CChar * pChar, int value)
+void CChar::Attacker_SetThreat(const CChar * pChar, const int value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetThreat(CChar)");
     return Attacker_SetThreat(Attacker_GetID(pChar), value);
 }
 
 // New Treat level
-void CChar::Attacker_SetThreat(int attackerIndex, int value)
+void CChar::Attacker_SetThreat(const int attackerIndex, const int value)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetThreat(idx)");
     if (m_pPlayer)
@@ -207,14 +207,14 @@ void CChar::Attacker_SetThreat(int attackerIndex, int value)
 }
 
 // Ignoring this pChar on Hit checks
-void CChar::Attacker_SetIgnore(const CChar * pChar, bool fIgnore)
+void CChar::Attacker_SetIgnore(const CChar * pChar, const bool fIgnore)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetIgnore(CChar)");
     return Attacker_SetIgnore(Attacker_GetID(pChar), fIgnore);
 }
 
 // Ignoring this pChar on Hit checks
-void CChar::Attacker_SetIgnore(int attackerIndex, bool fIgnore)
+void CChar::Attacker_SetIgnore(int attackerIndex, const bool fIgnore)
 {
     ADDTOCALLSTACK("CChar::Attacker_SetIgnore(idx)");
     if (m_lastAttackers.empty())
@@ -295,7 +295,7 @@ int CChar::Attacker_GetID(const CUID& uidChar) const
 }
 
 // Get CChar* from attacker list at the given attackerIndex
-CChar * CChar::Attacker_GetUID(int attackerIndex) const
+CChar * CChar::Attacker_GetUID(const int attackerIndex) const
 {
     ADDTOCALLSTACK("CChar::Attacker_GetUID");
     if (m_lastAttackers.empty())
@@ -308,7 +308,7 @@ CChar * CChar::Attacker_GetUID(int attackerIndex) const
 }
 
 // Removing attacker pointed by iterator
-bool CChar::Attacker_Delete(std::vector<LastAttackers>::iterator &itAttacker, bool fForced, ATTACKER_CLEAR_TYPE type)
+bool CChar::Attacker_Delete(std::vector<LastAttackers>::iterator &itAttacker, const bool fForced, const ATTACKER_CLEAR_TYPE type)
 {
     ADDTOCALLSTACK("CChar::Attacker_Delete(iterator)");
     if (m_lastAttackers.empty())
@@ -343,7 +343,7 @@ bool CChar::Attacker_Delete(std::vector<LastAttackers>::iterator &itAttacker, bo
 }
 
 // Removing nID from list
-bool CChar::Attacker_Delete(int attackerIndex, bool fForced, ATTACKER_CLEAR_TYPE type)
+bool CChar::Attacker_Delete(const int attackerIndex, const bool fForced, const ATTACKER_CLEAR_TYPE type)
 {
     ADDTOCALLSTACK("CChar::Attacker_Delete(size_t)");
     if (m_lastAttackers.empty())
@@ -356,7 +356,7 @@ bool CChar::Attacker_Delete(int attackerIndex, bool fForced, ATTACKER_CLEAR_TYPE
 }
 
 // Removing pChar from list
-bool CChar::Attacker_Delete(const CChar * pChar, bool fForced, ATTACKER_CLEAR_TYPE type)
+bool CChar::Attacker_Delete(const CChar * pChar, const bool fForced, const ATTACKER_CLEAR_TYPE type)
 {
     ADDTOCALLSTACK("CChar::Attacker_Delete(CChar)");
     if (!pChar || m_lastAttackers.empty())

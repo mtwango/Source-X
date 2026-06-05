@@ -23,10 +23,10 @@ public:
         ASSERT(!_tiledataItemEntries.empty());
         return static_cast<uint>(_tiledataItemEntries.size() - 1);
     }
-    const CUOItemTypeRec_HS* GetItemEntry(ITEMID_TYPE id) const {
+    const CUOItemTypeRec_HS* GetItemEntry(const ITEMID_TYPE id) const {
         return &(_tiledataItemEntries[id]);
     }
-    const CUOTerrainTypeRec_HS* GetTerrainEntry(TERRAIN_TYPE id) const {
+    const CUOTerrainTypeRec_HS* GetTerrainEntry(const TERRAIN_TYPE id) const {
         return &(_tiledataTerrainEntries[id]);
     }
 };

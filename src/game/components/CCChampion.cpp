@@ -531,7 +531,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
     pCandle->m_uidLink = pLink->GetUID();
 }
 
-void CCChampion::SetLevel(byte iLevel)
+void CCChampion::SetLevel(const byte iLevel)
 {
     ADDTOCALLSTACK("CCChampion::SetLevel");
     if (g_Serv.IsLoadingGeneric())
@@ -667,7 +667,7 @@ void CCChampion::DelWhiteCandle(CANDLEDELREASON_TYPE reason)
 }
 
 // Delete the last created red candle.
-void CCChampion::DelRedCandle(CANDLEDELREASON_TYPE reason)
+void CCChampion::DelRedCandle(const CANDLEDELREASON_TYPE reason)
 {
     ADDTOCALLSTACK("CCChampion::DelRedCandle");
     if (_pRedCandles.empty())
@@ -1058,7 +1058,7 @@ bool CCChampion::r_LoadVal(CScript& s)
     return true;
 }
 
-void CCChampion::Delete(bool fForce)
+void CCChampion::Delete(const bool fForce)
 {
     ADDTOCALLSTACK("CCChampion::Delete");
     UnreferencedParameter(fForce);
@@ -1157,7 +1157,7 @@ bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
 }
 
 
-TRIGRET_TYPE CCChampion::OnTrigger(ITRIG_TYPE trig, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
+TRIGRET_TYPE CCChampion::OnTrigger(const ITRIG_TYPE trig, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
     lpctstr pszTrigName = CItem::sm_szTrigName[trig];
 
@@ -1204,7 +1204,7 @@ CCChampionDef::~CCChampionDef()
 {
 }
 
-bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(pSrc);
     UnreferencedParameter(fNoCallParent);

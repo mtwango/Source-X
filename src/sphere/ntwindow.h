@@ -55,7 +55,7 @@ public:
     {
         CListbox m_wndList;
     public:
-        CListTextConsole(HWND hWndList)
+        CListTextConsole(const HWND hWndList)
         {
             m_wndList.m_hWnd = hWndList;
         }
@@ -71,7 +71,7 @@ public:
         {
             return "Stats";
         }
-        void SysMessage(LPCTSTR pszMessage) const override
+        void SysMessage(const LPCTSTR pszMessage) const override
         {
             if (pszMessage == nullptr)
                 return;

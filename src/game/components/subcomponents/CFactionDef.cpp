@@ -23,7 +23,7 @@ CFactionDef::Group CFactionDef::GetGroup() const noexcept
     return enum_alias_cast<Group>(masked_shifted);
 }
 
-bool CFactionDef::SetGroup(Group group) noexcept
+bool CFactionDef::SetGroup(const Group group) noexcept
 {
     const uint32 group_numeric = enum_alias_cast<uint32>(group);
     if (group_numeric > _kuiGroupMaxVal)
@@ -39,7 +39,7 @@ CFactionDef::Species CFactionDef::GetSpecies() const noexcept
     return enum_alias_cast<Species>(_uiFactionData & _kuiSpeciesMask);
 }
 
-bool CFactionDef::SetSpecies(Species species) noexcept
+bool CFactionDef::SetSpecies(const Species species) noexcept
 {
     const uint32 species_numeric = enum_alias_cast<uint32>(species);
     if (species_numeric > _kuiSpeciesMaxVal)

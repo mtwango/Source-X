@@ -33,7 +33,7 @@ int CCharNPC::Spells_GetCount()
 }
 
 // Retrieve the spell stored at index = n
-SPELL_TYPE CCharNPC::Spells_GetAt(uchar index)
+SPELL_TYPE CCharNPC::Spells_GetAt(const uchar index)
 {
     ADDTOCALLSTACK("CCharNPC::Spells_GetAt");
     if (m_spells.empty())
@@ -46,7 +46,7 @@ SPELL_TYPE CCharNPC::Spells_GetAt(uchar index)
 }
 
 // Delete the spell at the given index
-bool CCharNPC::Spells_DelAt(uchar index)
+bool CCharNPC::Spells_DelAt(const uchar index)
 {
     ADDTOCALLSTACK("CCharNPC::Spells_DelAt");
     if (m_spells.empty())
@@ -63,7 +63,7 @@ bool CCharNPC::Spells_DelAt(uchar index)
 }
 
 // Add this spell to this NPC's list
-bool CCharNPC::Spells_Add(SPELL_TYPE spell)
+bool CCharNPC::Spells_Add(const SPELL_TYPE spell)
 {
     ADDTOCALLSTACK("CCharNPC::Spells_Add");
     if (Spells_FindSpell(spell) >= 0)
@@ -116,7 +116,7 @@ void CChar::NPC_GetAllSpellbookSpells()		// Add all spells found on spellbooks t
     }
 }
 
-void CChar::NPC_AddSpellsFromBook(CItem * pBook)
+void CChar::NPC_AddSpellsFromBook(const CItem * pBook)
 {
     ADDTOCALLSTACK("CChar::NPC_AddSpellsFromBook");
     ASSERT(m_pNPC);
@@ -264,7 +264,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
 // I'm able to use magery
 // test if I can cast this spell
 // Specific behaviours for each spell and spellflag
-bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell, int &skill, int iHealThreshold, bool bIgnoreAITargetChoice)
+bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell, int &skill, const int iHealThreshold, const bool bIgnoreAITargetChoice)
 {
     ADDTOCALLSTACK("CChar::NPC_FightCast");
     ASSERT(m_pNPC);

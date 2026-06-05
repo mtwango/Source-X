@@ -240,7 +240,7 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 	}
 }
 
-int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
+int CServerConfig::Calc_CombatChanceToParry(const CChar * pChar, CItem*& pItemParry)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_CombatChanceToParry");
 	// Check if target will block the hit
@@ -342,7 +342,7 @@ int CServerConfig::Calc_CombatChanceToParry(CChar* pChar, CItem*& pItemParry)
 
 }
 
-int CServerConfig::Calc_FameKill( CChar * pKill )
+int CServerConfig::Calc_FameKill(const CChar * pKill )
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_FameKill");
 	// Translate the fame for a Kill.
@@ -358,7 +358,7 @@ int CServerConfig::Calc_FameKill( CChar * pKill )
 	return iFameChange;
 }
 
-int CServerConfig::Calc_KarmaKill( CChar * pKill, NOTO_TYPE NotoThem )
+int CServerConfig::Calc_KarmaKill(const CChar * pKill, const NOTO_TYPE NotoThem )
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_KarmaKill");
 	// Karma change on kill ?
@@ -393,7 +393,7 @@ int CServerConfig::Calc_KarmaKill( CChar * pKill, NOTO_TYPE NotoThem )
 	return iKarmaChange;
 }
 
-int CServerConfig::Calc_KarmaScale( int iKarma, int iKarmaChange )
+int CServerConfig::Calc_KarmaScale(const int iKarma, int iKarmaChange )
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_KarmaScale");
 	// Scale the karma based on the current level.
@@ -418,7 +418,7 @@ int CServerConfig::Calc_KarmaScale( int iKarma, int iKarmaChange )
 //********************************
 // Stealing
 
-int CServerConfig::Calc_StealingItem( CChar * pCharThief, CItem * pItem, CChar * pCharMark )
+int CServerConfig::Calc_StealingItem(const CChar * pCharThief, const CItem * pItem, const CChar * pCharMark )
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_StealingItem");
 	// Chance to steal and retrieve the item successfully.
@@ -454,7 +454,7 @@ int CServerConfig::Calc_StealingItem( CChar * pCharThief, CItem * pItem, CChar *
 	return (iDifficulty / 2);
 }
 
-bool CServerConfig::Calc_CrimeSeen( const CChar * pCharThief, const CChar * pCharViewer, SKILL_TYPE SkillToSee, bool fBonus ) const
+bool CServerConfig::Calc_CrimeSeen( const CChar * pCharThief, const CChar * pCharViewer, const SKILL_TYPE SkillToSee, const bool fBonus ) const
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_CrimeSeen");
 	// Chance to steal without being seen by a specific person
@@ -527,7 +527,7 @@ lpctstr CServerConfig::Calc_MaptoSextant(const CPointMap &pntCoords)
 	return pTemp;
 }
 
-ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pSpell, CObjBase* pObj)
+ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pSpell, const CObjBase * pObj)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_SpellManaCost");
 
@@ -560,7 +560,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	return iCost;
 }
 
-size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpellDef* pSpell, CObjBase* pObj, bool fTest)
+size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpellDef* pSpell, const CObjBase * pObj, const bool fTest)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_SpellReagentsConsume");
 
@@ -583,7 +583,7 @@ size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpell
 	return sl::scont_bad_index();
 }
 
-ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef* pSpell, CObjBase* pObj)
+ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef* pSpell, const CObjBase * pObj)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_SpellTithingCost");
 
@@ -602,7 +602,7 @@ ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef*
 	return 0; //No tithing points consumed.
 }
 
-bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, int iCureLevel, bool fIsGm)
+bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, const int iCureLevel, const bool fIsGm)
 {
 	ADDTOCALLSTACK("CServerConfig::Calc_CurePoisonChance");
 

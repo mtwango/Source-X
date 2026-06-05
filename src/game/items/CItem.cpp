@@ -139,7 +139,7 @@ void CItem::SetLockDownOfMulti(const CUID& uidMulti)
 		m_TagDefs.SetNum("MultiLockDown", uidMulti.GetObjUID(), false, false);
 }
 
-CItem::CItem( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItem::CItem(const ITEMID_TYPE id, CItemBase * pItemDef ) :
 	CTimedObject(PROFILE_ITEMS),
 	CObjBase( true )
 {
@@ -189,7 +189,7 @@ void CItem::DeletePrepare()
     CObjBase::DeletePrepare();
 }
 
-void CItem::DeleteCleanup(bool fForce)
+void CItem::DeleteCleanup(const bool fForce)
 {
 	ADDTOCALLSTACK("CItem::DeleteCleanup");
 	_uiInternalStateFlags |= SF_DELETING;
@@ -249,7 +249,7 @@ bool CItem::NotifyDelete()
 	return true;
 }
 
-bool CItem::Delete(bool fForce)
+bool CItem::Delete(const bool fForce)
 {
 	ADDTOCALLSTACK("CItem::Delete");
     EXC_TRY("Cleanup in Delete method");
@@ -380,7 +380,7 @@ CItem * CItem::CreateBase( ITEMID_TYPE id, IT_TYPE type )	// static
 	return pItem;
 }
 
-CItem * CItem::CreateDupeItem( const CItem * pItem, CChar * pSrc, bool fSetNew )	// static
+CItem * CItem::CreateDupeItem( const CItem * pItem, CChar * pSrc, const bool fSetNew )	// static
 {
 	ADDTOCALLSTACK("CItem::CreateDupeItem");
 	// Dupe this item.
@@ -399,7 +399,7 @@ CItem * CItem::CreateDupeItem( const CItem * pItem, CChar * pSrc, bool fSetNew )
 	return pItemNew;
 }
 
-CItem * CItem::CreateScript(ITEMID_TYPE id, CChar * pSrc, IT_TYPE type) // static
+CItem * CItem::CreateScript(const ITEMID_TYPE id, CChar * pSrc, const IT_TYPE type) // static
 {
 	ADDTOCALLSTACK("CItem::CreateScript");
 	// Create item from the script id.
@@ -455,7 +455,7 @@ CItem * CItem::GenerateScript( CChar * pSrc)
 	return this;
 }
 
-CItem * CItem::CreateHeader( tchar * pArg, CObjBase * pCont, bool fDupeCheck, CChar * pSrc )
+CItem * CItem::CreateHeader( tchar * pArg, CObjBase * pCont, const bool fDupeCheck, CChar * pSrc )
 {
 	ADDTOCALLSTACK("CItem::CreateHeader");
 	// Just read info on a single item carryed by a CChar.
@@ -549,7 +549,7 @@ lpctstr const CItem::sm_szTemplateTable[ITC_QTY+1] =
 	nullptr
 };
 
-CItem * CItem::CreateTemplate( ITEMID_TYPE id, CObjBase * pCont, CChar * pSrc )	// static
+CItem * CItem::CreateTemplate(const ITEMID_TYPE id, CObjBase * pCont, CChar * pSrc )	// static
 {
 	ADDTOCALLSTACK("CItem::CreateTemplate");
 	// Create an item or a template.
@@ -1238,7 +1238,7 @@ int CItem::FixWeirdness()
     return IsWeird();
 }
 
-CItem * CItem::UnStackSplit( word amount, CChar * pCharSrc )
+CItem * CItem::UnStackSplit(const word amount, CChar * pCharSrc )
 {
 	ADDTOCALLSTACK("CItem::UnStackSplit");
 	// Set this item to have this amount.
@@ -1428,7 +1428,7 @@ int64 CItem::GetDecayTime() const
 	return g_Cfg.m_iDecay_Item;
 }
 
-void CItem::_SetTimeout( int64 iMsecs )
+void CItem::_SetTimeout(const int64 iMsecs )
 {
 	ADDTOCALLSTACK("CItem::_SetTimeout");
 	// PURPOSE:
@@ -1450,7 +1450,7 @@ void CItem::_SetTimeout( int64 iMsecs )
 	CTimedObject::_SetTimeout(iMsecs);
 }
 
-bool CItem::MoveToUpdate(const CPointMap& pt, bool fForceFix)
+bool CItem::MoveToUpdate(const CPointMap& pt, const bool fForceFix)
 {
     ADDTOCALLSTACK("CItem::MoveToUpdate");
 	bool fReturn = MoveTo(pt, fForceFix);
@@ -1458,7 +1458,7 @@ bool CItem::MoveToUpdate(const CPointMap& pt, bool fForceFix)
 	return fReturn;
 }
 
-bool CItem::MoveToDecay(const CPointMap & pt, int64 iMsecsTimeout, bool fForceFix)
+bool CItem::MoveToDecay(const CPointMap & pt, const int64 iMsecsTimeout, const bool fForceFix)
 {
     ADDTOCALLSTACK("CItem::MoveToDecay");
 	if (!MoveToUpdate(pt, fForceFix))
@@ -1467,7 +1467,7 @@ bool CItem::MoveToDecay(const CPointMap & pt, int64 iMsecsTimeout, bool fForceFi
 	return true;
 }
 
-void CItem::SetDecayTime(int64 iMsecsTimeout, bool fOverrideAlways)
+void CItem::SetDecayTime(int64 iMsecsTimeout, const bool fOverrideAlways)
 {
 	ADDTOCALLSTACK("CItem::SetDecayTime");
 	// 0 = default (decay on the next tick)
@@ -1543,7 +1543,7 @@ SOUND_TYPE CItem::GetDropSound( const CObjBase * pObjOn ) const
     return (iSnd);
 }
 
-bool CItem::MoveTo(const CPointMap& pt, bool fForceFix) // Put item on the ground here.
+bool CItem::MoveTo(const CPointMap& pt, const bool fForceFix) // Put item on the ground here.
 {
 	ADDTOCALLSTACK("CItem::MoveTo");
 	// Move this item to it's point in the world. (ground/top level)
@@ -1690,7 +1690,7 @@ bool CItem::MoveToCheck( const CPointMap & pt, CChar * pCharMover )
 	return true;
 }
 
-bool CItem::MoveNearObj( const CObjBaseTemplate* pObj, ushort uiSteps )
+bool CItem::MoveNearObj( const CObjBaseTemplate* pObj, const ushort uiSteps )
 {
 	ADDTOCALLSTACK("CItem::MoveNearObj");
 	// Put in the same container as another item.
@@ -1752,7 +1752,7 @@ lpctstr CItem::GetName() const
 	return CItemBase::GetNamePluralize( pszNameBase, ((m_wAmount != 1) && ! IsType(IT_CORPSE)) );
 }
 
-lpctstr CItem::GetNameFull( bool fIdentified ) const
+lpctstr CItem::GetNameFull(const bool fIdentified ) const
 {
 	ADDTOCALLSTACK("CItem::GetNameFull");
 	// Should be lpctstr
@@ -1996,7 +1996,7 @@ HUE_TYPE CItem::GetHueVisible() const
 	return GetHue();
 }
 
-int CItem::GetWeight(word amount) const
+int CItem::GetWeight(const word amount) const
 {
 	int iWeight = m_weight * (amount ? amount : GetAmount());
     if (const int iReduction = GetPropNum(COMP_PROPS_ITEMCHAR, PROPITCH_WEIGHTREDUCTION, true))
@@ -2086,7 +2086,7 @@ bool CItem::SetBase( CItemBase * pItemDef )
 	return true;
 }
 
-bool CItem::SetBaseID( ITEMID_TYPE id )
+bool CItem::SetBaseID(const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CItem::SetBaseID");
 	// Converting the type of an existing item is possibly risky.
@@ -2104,7 +2104,7 @@ bool CItem::SetBaseID( ITEMID_TYPE id )
 	return true;
 }
 
-void CItem::OnHear( lpctstr pszCmd, CChar * pSrc )
+void CItem::OnHear(const lpctstr pszCmd, CChar * pSrc )
 {
     ADDTOCALLSTACK("CItem::OnHear");
 	// This should never be called directly. Normal items cannot hear. IT_SHIP and IT_COMM_CRYSTAL
@@ -2136,7 +2136,7 @@ dword CItem::GetIDCommon() const
     return GetID();
 }
 
-bool CItem::SetID( ITEMID_TYPE id )
+bool CItem::SetID(const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CItem::SetID");
 	if ( ! IsSameDispID( id ))
@@ -2148,14 +2148,14 @@ bool CItem::SetID( ITEMID_TYPE id )
 	return true;
 }
 
-bool CItem::IsSameDispID( ITEMID_TYPE id ) const	// account for flipped types ?
+bool CItem::IsSameDispID(const ITEMID_TYPE id ) const	// account for flipped types ?
 {
 	const CItemBase * pItemDef = Item_GetDef();
 	ASSERT(pItemDef);
 	return pItemDef->IsSameDispID( id );
 }
 
-bool CItem::SetDispID( ITEMID_TYPE id )
+bool CItem::SetDispID(const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CItem::SetDispID");
 	// Just change what this item looks like.
@@ -2178,7 +2178,7 @@ bool CItem::SetDispID( ITEMID_TYPE id )
 	return true;
 }
 
-void CItem::SetAmount(word amount )
+void CItem::SetAmount(const word amount )
 {
 	ADDTOCALLSTACK("CItem::SetAmount");
 	// propagate the weight change.
@@ -2225,7 +2225,7 @@ word CItem::GetMaxAmount()
     return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
 }
 
-bool CItem::SetMaxAmount(word amount)
+bool CItem::SetMaxAmount(const word amount)
 {
 	ADDTOCALLSTACK("CItem::SetMaxAmount");
 	if (!IsStackableType())
@@ -2235,7 +2235,7 @@ bool CItem::SetMaxAmount(word amount)
 	return true;
 }
 
-void CItem::SetAmountUpdate(word amount )
+void CItem::SetAmountUpdate(const word amount )
 {
 	ADDTOCALLSTACK("CItem::SetAmountUpdate");
 	uint oldamount = GetAmount();
@@ -2259,7 +2259,7 @@ bool CItem::CanSendAmount() const noexcept
     return true;
 }
 
-void CItem::WriteUOX( CScript & s, int index, int dx, int dy )
+void CItem::WriteUOX( CScript & s, const int index, const int dx, const int dy )
 {
 	ADDTOCALLSTACK("CItem::WriteUOX");
 	s.Printf( "SECTION WORLDITEM %d\n", index );
@@ -2601,7 +2601,7 @@ lpctstr const CItem::sm_szLoadKeys[IC_QTY+1] =
 };
 
 
-bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	ADDTOCALLSTACK("CItem::r_WriteVal");
 	EXC_TRY("WriteVal");
@@ -2920,7 +2920,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bo
 	return false;
 }
 
-void CItem::r_LoadMore1(dword dwVal)
+void CItem::r_LoadMore1(const dword dwVal)
 {
     ADDTOCALLSTACK_DEBUG("CItem::r_LoadMore1");
     // Ensure that (when needed) the dwVal is stored as a CResourceIDBase,
@@ -2977,7 +2977,7 @@ void CItem::r_LoadMore1(dword dwVal)
     }
 }
 
-void CItem::r_LoadMore2(dword dwVal)
+void CItem::r_LoadMore2(const dword dwVal)
 {
     ADDTOCALLSTACK_DEBUG("CItem::r_LoadMore2");
     // Ensure that (when needed) the dwVal is stored as a CResourceIDBase
@@ -3038,7 +3038,7 @@ lpctstr CItem::ResourceGetName(const CResourceID& rid)
     return g_Cfg.ResourceGetName(rid);
 }
 
-lpctstr CItem::ResourceTypedGetName(const CResourceIDBase& rid, RES_TYPE iExpectedType, lptstr *ptcOutError)
+lpctstr CItem::ResourceTypedGetName(const CResourceIDBase& rid, const RES_TYPE iExpectedType, lptstr *ptcOutError)
 {
     ADDTOCALLSTACK("CItem::ResourceTypedGetName");
     if (Can(CAN_I_SCRIPTEDMORE))
@@ -3639,9 +3639,9 @@ bool CItem::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from s
 	return false;
 }
 
-bool CItem::IsTriggerActive(lpctstr trig) const
+bool CItem::IsTriggerActive(const lpctstr trig) const
 {
-    if (((_iRunningTriggerId == -1) && _sRunningTrigger.IsEmpty()) || (trig == nullptr))
+    if ((_iRunningTriggerId == -1 && _sRunningTrigger.IsEmpty()) || trig == nullptr)
         return false;
     if (_iRunningTriggerId != -1)
     {
@@ -3653,7 +3653,7 @@ bool CItem::IsTriggerActive(lpctstr trig) const
     return (strcmpi(_sRunningTrigger.GetBuffer(), trig) == 0);
 }
 
-void CItem::SetTriggerActive(lpctstr trig)
+void CItem::SetTriggerActive(const lpctstr trig)
 {
     if (trig == nullptr)
     {
@@ -3839,14 +3839,14 @@ stopandret:
 	return iRet;
 }
 
-TRIGRET_TYPE CItem::OnTrigger( ITRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
+TRIGRET_TYPE CItem::OnTrigger(const ITRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc )
 {
 	ASSERT((trigger >= 0) && (trigger < ITRIG_QTY));
     return OnTrigger( sm_szTrigName[trigger], pScriptArgs, pSrc );
 }
 
 // Item type specific stuff.
-bool CItem::SetType(IT_TYPE type, bool fPreCheck)
+bool CItem::SetType(const IT_TYPE type, const bool fPreCheck)
 {
 	ADDTOCALLSTACK("CItem::SetType");
 
@@ -4067,7 +4067,7 @@ void CItem::DupeCopy( const CObjBase* pItemObj )
     CEntity::Copy(pItem);
 }
 
-void CItem::SetAnim( ITEMID_TYPE id, int64 iTicksTimeout)
+void CItem::SetAnim(const ITEMID_TYPE id, const int64 iTicksTimeout)
 {
 	ADDTOCALLSTACK("CItem::SetAnim");
 	// Set this to an active anim that will revert to old form when done.
@@ -4177,7 +4177,7 @@ void CItem::Update(const CClient * pClientExclude)
 	}
 }
 
-bool CItem::IsValidLockLink( CItem * pItemLock ) const
+bool CItem::IsValidLockLink(const CItem * pItemLock ) const
 {
 	ADDTOCALLSTACK("CItem::IsValidLockLink");
 	// IT_KEY
@@ -4217,9 +4217,9 @@ bool CItem::IsValidLockUID() const
 	return false;
 }
 
-bool CItem::IsKeyLockFit( dword dwLockUID ) const
+bool CItem::IsKeyLockFit(const dword dwLockUID ) const
 {
-	return ( m_itKey.m_UIDLock == dwLockUID );
+	return m_itKey.m_UIDLock == dwLockUID;
 }
 
 void CItem::ConvertBolttoCloth()
@@ -4283,7 +4283,7 @@ void CItem::ConvertBolttoCloth()
 	}
 }
 
-word CItem::ConsumeAmount( word iQty )
+word CItem::ConsumeAmount(const word iQty )
 {
 	ADDTOCALLSTACK("CItem::ConsumeAmount");
 	// Eat or drink specific item. delete it when gone.
@@ -4309,7 +4309,7 @@ CREID_TYPE CItem::GetCorpseType() const
 	return (CREID_TYPE)(GetAmount());	// What does the corpse look like ?
 }
 
-void CItem::SetCorpseType( CREID_TYPE id )
+void CItem::SetCorpseType(const CREID_TYPE id )
 {
 	// future: strongly typed enums will remove the need for this cast
     ASSERT(id <= UINT16_MAX);
@@ -4331,7 +4331,7 @@ SPELL_TYPE CItem::GetScrollSpell() const
 	return( SPELL_NONE );
 }
 
-bool CItem::IsSpellInBook( SPELL_TYPE spell ) const
+bool CItem::IsSpellInBook(const SPELL_TYPE spell ) const
 {
 	ADDTOCALLSTACK("CItem::IsSpellInBook");
 	CItemBase *pItemDef = Item_GetDef();
@@ -4403,7 +4403,7 @@ SKILL_TYPE CItem::GetSpellBookSkill()
 	return SKILL_NONE;// SKILL_NONE returns 1000+ index in CChar::Spell_GetIndex()
 }
 
-uint CItem::AddSpellbookSpell( SPELL_TYPE spell, bool fUpdate )
+uint CItem::AddSpellbookSpell(const SPELL_TYPE spell, const bool fUpdate )
 {
 	ADDTOCALLSTACK("CItem::AddSpellbookSpell");
 	// Add  this scroll to the spellbook.
@@ -4555,7 +4555,7 @@ bool CItem::Use_Portculis()
 	return true;
 }
 
-SOUND_TYPE CItem::Use_Music( bool fWell ) const
+SOUND_TYPE CItem::Use_Music(const bool fWell ) const
 {
 	ADDTOCALLSTACK("CItem::Use_Music");
 	const CItemBase * pItemDef = Item_GetDef();
@@ -4568,7 +4568,7 @@ bool CItem::IsDoorOpen() const
 	return CItemBase::IsID_DoorOpen( GetDispID());
 }
 
-bool CItem::Use_DoorNew( bool bJustOpen )
+bool CItem::Use_DoorNew(const bool bJustOpen )
 {
 	ADDTOCALLSTACK("CItem::Use_DoorNew");
 
@@ -4624,7 +4624,7 @@ bool CItem::Use_DoorNew( bool bJustOpen )
 	return( ! bClosing );
 }
 
-bool CItem::Use_Door( bool fJustOpen )
+bool CItem::Use_Door(const bool fJustOpen )
 {
 	ADDTOCALLSTACK("CItem::Use_Door");
 	// don't call this directly but call CChar::Use_Item() instead.
@@ -5041,14 +5041,14 @@ CItem *CItem::Weapon_FindRangedAmmo(const CResourceID& id)
 	return nullptr;
 }
 
-bool CItem::IsMemoryTypes( word wType ) const
+bool CItem::IsMemoryTypes(const word wType ) const
 {
 	if ( ! IsType( IT_EQ_MEMORY_OBJ ))
 		return false;
 	return (( GetHue() & wType ) ? true : false );
 }
 
-lpctstr CItem::Use_SpyGlass( CChar * pUser ) const
+lpctstr CItem::Use_SpyGlass(const CChar * pUser ) const
 {
 	ADDTOCALLSTACK("CItem::Use_SpyGlass");
 	// IT_SPY_GLASS
@@ -5297,7 +5297,7 @@ bool CItem::Use_Light()
 	return true;
 }
 
-int CItem::Use_LockPick( CChar * pCharSrc, bool fTest, bool fFail )
+int CItem::Use_LockPick( CChar * pCharSrc, const bool fTest, const bool fFail )
 {
 	ADDTOCALLSTACK("CItem::Use_LockPick");
 	// This is the locked item.
@@ -5381,7 +5381,7 @@ void CItem::SetSwitchState()
 	}
 }
 
-void CItem::SetTrapState( IT_TYPE state, ITEMID_TYPE id, int iTimeSec )
+void CItem::SetTrapState(const IT_TYPE state, ITEMID_TYPE id, int iTimeSec )
 {
 	ADDTOCALLSTACK("CItem::SetTrapState");
 	ASSERT( IsType(IT_TRAP) || IsType(IT_TRAP_ACTIVE) || IsType(IT_TRAP_INACTIVE) );
@@ -5429,7 +5429,7 @@ int CItem::Use_Trap()
 	return m_itTrap.m_iDamage;	// base damage done.
 }
 
-bool CItem::SetMagicLock( CChar * pCharSrc, int iSkillLevel )
+bool CItem::SetMagicLock(const CChar * pCharSrc, const int iSkillLevel )
 {
 	ADDTOCALLSTACK("CItem::SetMagicLock");
 	UnreferencedParameter(iSkillLevel);
@@ -5508,7 +5508,7 @@ bool CItem::SetMagicLock( CChar * pCharSrc, int iSkillLevel )
 	return true;
 }
 
-bool CItem::OnSpellEffect(SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting, int64 iDuration)
+bool CItem::OnSpellEffect(SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, const bool fReflecting, const int64 iDuration)
 {
 	ADDTOCALLSTACK("CItem::OnSpellEffect");
     UnreferencedParameter(fReflecting);	// items are not affected by Magic Reflection
@@ -5710,7 +5710,7 @@ lpctstr CItem::Armor_GetRepairDesc() const
     return g_Cfg.GetDefaultMsg(DEFMSG_ITEMSTATUS_FALL_APART);
 }
 
-int CItem::OnTakeDamage( int iDmg, CChar * pSrc, DAMAGE_TYPE uType )
+int CItem::OnTakeDamage(const int iDmg, CChar * pSrc, const DAMAGE_TYPE uType )
 {
 	ADDTOCALLSTACK("CItem::OnTakeDamage");
 	// This will damage the item durability, break stuff, explode potions, etc.
@@ -5943,7 +5943,7 @@ void CItem::OnExplosion()
 	Sound(0x307);
 }
 
-bool CItem::IsResourceMatch( const CResourceID& rid, dword dwArg ) const
+bool CItem::IsResourceMatch( const CResourceID& rid, const dword dwArg ) const
 {
 	ADDTOCALLSTACK("CItem::IsResourceMatch");
 	// Check for all the matching special cases.
@@ -6075,7 +6075,7 @@ bool CItem::_CanHoldTimer() const
 	return true;
 }
 
-bool CItem::_CanTick(bool fParentGoingToSleep) const
+bool CItem::_CanTick(const bool fParentGoingToSleep) const
 {
     //ADDTOCALLSTACK_DEBUG("CItem::_CanTick");
     EXC_TRY("Able to tick?");

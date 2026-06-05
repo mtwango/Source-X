@@ -17,7 +17,7 @@
 
 static_assert(sizeof(CPointBase) == sizeof(CPointMap), "CPointBase and CPointMap have to have the same size. Was a virtual method added?");
 
-DIR_TYPE GetDirTurn( DIR_TYPE dir, int offset )
+DIR_TYPE GetDirTurn(const DIR_TYPE dir, int offset )
 {
 	// Turn in a direction.
 	// +1 = to the right.
@@ -347,7 +347,7 @@ void CPointBase::Set( const CPointBase & pt ) noexcept
 	m_map = pt.m_map;
 }
 
-void CPointBase::Set( short x, short y, char z, uchar map ) noexcept
+void CPointBase::Set(const short x, const short y, const char z, const uchar map ) noexcept
 {
 	m_x = x;
 	m_y = y;
@@ -355,7 +355,7 @@ void CPointBase::Set( short x, short y, char z, uchar map ) noexcept
 	m_map = map;
 }
 
-void CPointBase::Move( DIR_TYPE dir )
+void CPointBase::Move(const DIR_TYPE dir )
 {
 	// Move a point in a direction.
 	ASSERT( (dir > DIR_INVALID) && (dir <= DIR_QTY) );
@@ -363,7 +363,7 @@ void CPointBase::Move( DIR_TYPE dir )
 	m_y += (short)(sm_Moves[dir][1]);
 }
 
-void CPointBase::MoveN( DIR_TYPE dir, int amount )
+void CPointBase::MoveN(const DIR_TYPE dir, const int amount )
 {
 	// Move a point in a direction.
 	ASSERT( dir <= DIR_QTY );
@@ -824,7 +824,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 	return true;
 }
 
-bool CPointBase::r_LoadVal( lpctstr ptcKey, lpctstr pszArgs )
+bool CPointBase::r_LoadVal(const lpctstr ptcKey, lpctstr pszArgs )
 {
 	ADDTOCALLSTACK("CPointBase::r_LoadVal");
 	int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
@@ -842,7 +842,7 @@ bool CPointBase::r_LoadVal( lpctstr ptcKey, lpctstr pszArgs )
 	return true;
 }
 
-DIR_TYPE CPointBase::GetDir( const CPointBase & pt, DIR_TYPE DirDefault ) const // Direction to point pt
+DIR_TYPE CPointBase::GetDir( const CPointBase & pt, const DIR_TYPE DirDefault ) const // Direction to point pt
 {
 	ADDTOCALLSTACK_DEBUG("CPointBase::GetDir");
 	// Get the 2D direction between points.
@@ -925,7 +925,7 @@ DIR_TYPE CPointBase::GetDir( const CPointBase & pt, DIR_TYPE DirDefault ) const 
     return extreme ? dir_card : dir_diag;
 }
 
-int CPointBase::StepLinePath( const CPointBase & ptSrc, int iSteps )
+int CPointBase::StepLinePath( const CPointBase & ptSrc, const int iSteps )
 {
 	ADDTOCALLSTACK("CPointBase::StepLinePath");
 	// Take x steps toward this point.
@@ -940,7 +940,7 @@ int CPointBase::StepLinePath( const CPointBase & ptSrc, int iSteps )
 	return iDist2D;
 }
 
-tchar * CPointBase::WriteUsed( tchar * ptcBuffer, size_t uiBufferLen) const noexcept
+tchar * CPointBase::WriteUsed( tchar * ptcBuffer, const size_t uiBufferLen) const noexcept
 {
 	ADDTOCALLSTACK_DEBUG("CPointBase::WriteUsed");
 	if ( m_map )
@@ -1060,7 +1060,7 @@ CSector * CPointBase::GetSector() const
     return CWorldMap::GetSectorByCoordsUnchecked(m_map, m_x, m_y);
 }
 
-CRegion * CPointBase::GetRegion( dword dwType ) const
+CRegion * CPointBase::GetRegion(const dword dwType ) const
 {
 	ADDTOCALLSTACK_DEBUG("CPointBase::GetRegion");
 	// What region in the current CSector am i in ?
@@ -1073,7 +1073,7 @@ CRegion * CPointBase::GetRegion( dword dwType ) const
     return !pSector ? nullptr : pSector->GetRegion(*this, dwType);
 }
 
-size_t CPointBase::GetRegions( dword dwType, CRegionLinks *pRLinks ) const
+size_t CPointBase::GetRegions(const dword dwType, CRegionLinks *pRLinks ) const
 {
     // This function is called SO frequently that's better to not add it to the call stack.
 	// ADDTOCALLSTACK_DEBUG("CPointBase::GetRegions");
@@ -1094,7 +1094,7 @@ int CPointBase::GetPointSortIndex() const noexcept
 //*************************************************************************
 // -CPointSort
 
-CPointSort::CPointSort(short x, short y, char z, uchar map ) noexcept :
+CPointSort::CPointSort(const short x, const short y, const char z, const uchar map ) noexcept :
     CPointMap(x, y, z, map)
 {
 }

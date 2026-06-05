@@ -173,7 +173,7 @@ constexpr auto n64_narrow_n32(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n64_narrow_n32_checked(const T source_val, bool should_assert = false)
+    auto n64_narrow_n32_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -232,7 +232,7 @@ constexpr auto n64_narrow_n16(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n64_narrow_n16_checked(const T source_val, bool should_assert = false)
+    auto n64_narrow_n16_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -289,7 +289,7 @@ constexpr auto n64_narrow_n8(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n64_narrow_n8_checked(const T source_val, bool should_assert = false)
+    auto n64_narrow_n8_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -348,7 +348,7 @@ constexpr auto n32_narrow_n16(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n32_narrow_n16_checked(const T source_val, bool should_assert = false)
+    auto n32_narrow_n16_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -402,7 +402,7 @@ constexpr auto n32_narrow_n8(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n32_narrow_n8_checked(const T source_val, bool should_assert = false)
+    auto n32_narrow_n8_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -457,7 +457,7 @@ constexpr auto n16_narrow_n8(const T source_val) noexcept
 //  otherwise just print an error if it overflows (wise to do this if the values depends from user input/scripts).
 template <typename T>
 [[nodiscard]]
-    auto n16_narrow_n8_checked(const T source_val, bool should_assert = false)
+    auto n16_narrow_n8_checked(const T source_val, const bool should_assert = false)
 {
     if (should_assert)
     {
@@ -603,7 +603,7 @@ template <typename T> int64 i64_from_u64_checked(T, bool) = delete; // disable i
 
 [[nodiscard]]
 inline
-    int8 i8_from_usize_checked(const size_t source_val, bool should_assert = false) // not clamping/capping
+    int8 i8_from_usize_checked(const size_t source_val, const bool should_assert = false) // not clamping/capping
 {
 #if (__SIZEOF_POINTER__ == 8) //SIZE_MAX == UINT64_MAX
     return n64_narrow_n8_checked(source_val, should_assert);
@@ -618,7 +618,7 @@ template <typename T> int8 i8_from_usize_checked(T, bool) = delete; // disable i
 
 [[nodiscard]]
 inline
-    int16 i16_from_usize_checked(const size_t source_val, bool should_assert = false) // not clamping/capping
+    int16 i16_from_usize_checked(const size_t source_val, const bool should_assert = false) // not clamping/capping
 {
 #if (__SIZEOF_POINTER__ == 8) //SIZE_MAX == UINT64_MAX
     return n64_narrow_n16_checked(source_val, should_assert);
@@ -632,7 +632,7 @@ template <typename T> int16 i16_from_usize_checked(T, bool) = delete; // disable
 
 [[nodiscard]]
 inline
-    int32 i32_from_usize_checked(const size_t source_val, bool should_assert = false) // not clamping/capping
+    int32 i32_from_usize_checked(const size_t source_val, const bool should_assert = false) // not clamping/capping
 {
 #if (__SIZEOF_POINTER__ == 8) //SIZE_MAX == UINT64_MAX
     return i32_from_u32_clamping(n64_narrow_n32_checked(source_val, should_assert));
@@ -646,7 +646,7 @@ template <typename T> int32 i32_from_usize_checked(T, bool) = delete; // disable
 
 [[nodiscard]]
 inline
-    int64 i64_from_usize_checked(const size_t source_val, bool should_assert = false) // not clamping/capping
+    int64 i64_from_usize_checked(const size_t source_val, const bool should_assert = false) // not clamping/capping
 {
 #if (__SIZEOF_POINTER__ == 8) //SIZE_MAX == UINT64_MAX
     return i64_from_u64_checked(n_alias_cast<uint64>(source_val), should_assert);

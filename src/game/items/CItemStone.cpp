@@ -88,7 +88,7 @@ lpctstr CItemStone::GetAbbrev() const
 	return m_sAbbrev;
 }
 
-void CItemStone::SetAbbrev( lpctstr pAbbrev )
+void CItemStone::SetAbbrev(const lpctstr pAbbrev )
 {
 	m_sAbbrev = pAbbrev;
 }
@@ -1023,7 +1023,7 @@ bool CItemStone::NoMembers() const
 	return true;
 }
 
-CStoneMember * CItemStone::AddRecruit(const CChar * pChar, STONEPRIV_TYPE iPriv, bool bFull)
+CStoneMember * CItemStone::AddRecruit(const CChar * pChar, STONEPRIV_TYPE iPriv, const bool bFull)
 {
 	ADDTOCALLSTACK("CItemStone::AddRecruit");
 	// CLIMODE_TARG_STONE_RECRUIT

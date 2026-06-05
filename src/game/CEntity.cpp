@@ -16,7 +16,7 @@ CEntity::~CEntity()
     ClearComponents();
 }
 
-void CEntity::Delete(bool fForce)
+void CEntity::Delete(const bool fForce)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::Delete");
     if (_lComponents.empty())
@@ -77,13 +77,13 @@ void CEntity::UnsubscribeComponent(const CComponent *pComponent)
     //_List.container.shrink_to_fit();
 }
 
-bool CEntity::IsComponentSubscribed(CComponent *pComponent) const
+bool CEntity::IsComponentSubscribed(const CComponent *pComponent) const
 {
     ADDTOCALLSTACK_DEBUG("CEntity::IsComponentSubscribed");
     return ( !_lComponents.empty() && (_lComponents.end() != _lComponents.find(pComponent->GetType())) );
 }
 
-CComponent * CEntity::GetComponent(COMP_TYPE type) const
+CComponent * CEntity::GetComponent(const COMP_TYPE type) const
 {
     ADDTOCALLSTACK_DEBUG("CEntity::GetComponent");
     ASSERT(type < COMP_QTY);
@@ -125,7 +125,7 @@ void CEntity::r_Write(CScript & s) // Storing data in the worldsave.
     }
 }
 
-bool CEntity::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc)
+bool CEntity::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::r_WriteVal");
     if (_lComponents.empty())

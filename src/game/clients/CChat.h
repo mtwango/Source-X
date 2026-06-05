@@ -32,9 +32,9 @@ public:
 	static bool IsValidName(lpctstr pszName, bool fPlayer);
 
 	void Action( CClient * pClient, const nachar * pszText, int len, CLanguageID lang ); // Text from a client
-	void Broadcast(CChatChanMember * pFrom, lpctstr pszText, CLanguageID lang = 0, bool fOverride = false);
-	void BroadcastAddChannel(CChatChannel* pChannel);
-	void BroadcastRemoveChannel(CChatChannel* pChannel);
+	void Broadcast(const CChatChanMember * pFrom, lpctstr pszText, CLanguageID lang = 0, bool fOverride = false);
+	void BroadcastAddChannel(const CChatChannel * pChannel);
+	void BroadcastRemoveChannel(const CChatChannel * pChannel);
 	void QuitChat(CChatChanMember * pClient) noexcept;
 
 	bool IsChannel(const CChatChannel* pChannel) const;

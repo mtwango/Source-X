@@ -96,7 +96,7 @@ CResourceHolder::CResourceHolder()
 
 
 
-CResourceID CResourceHolder::ResourceGetID_EatStr(RES_TYPE restype, lpctstr &ptcName, word wPage, bool fCanFail)
+CResourceID CResourceHolder::ResourceGetID_EatStr(const RES_TYPE restype, lpctstr &ptcName, const word wPage, const bool fCanFail)
 {
     ADDTOCALLSTACK("CResourceHolder::ResourceGetID_EatStr");
     // Find the Resource ID given this name.
@@ -150,13 +150,13 @@ CResourceID CResourceHolder::ResourceGetID_EatStr(RES_TYPE restype, lpctstr &ptc
     return CResourceID((RES_TYPE)iEvalResType, iEvalResIndex, wPage);
 }
 
-CResourceID CResourceHolder::ResourceGetID( RES_TYPE restype, lpctstr ptcName, word wPage, bool fCanFail )
+CResourceID CResourceHolder::ResourceGetID(const RES_TYPE restype, lpctstr ptcName, const word wPage, const bool fCanFail )
 {
 	ADDTOCALLSTACK("CResourceHolder::ResourceGetID");
 	return ResourceGetID_EatStr(restype, ptcName, wPage, fCanFail);
 }
 
-CResourceID CResourceHolder::ResourceGetIDType( RES_TYPE restype, lpctstr pszName, word wPage )
+CResourceID CResourceHolder::ResourceGetIDType(const RES_TYPE restype, const lpctstr pszName, const word wPage )
 {
 	// Get a resource of just this index type.
     ASSERT(restype != RES_QTY);
@@ -169,7 +169,7 @@ CResourceID CResourceHolder::ResourceGetIDType( RES_TYPE restype, lpctstr pszNam
 	return rid;
 }
 
-int CResourceHolder::ResourceGetIndexType( RES_TYPE restype, lpctstr pszName, word wPage )
+int CResourceHolder::ResourceGetIndexType(const RES_TYPE restype, const lpctstr pszName, const word wPage )
 {
 	ADDTOCALLSTACK("CResourceHolder::ResourceGetIndexType");
 	// Get a resource of just this index type.
@@ -190,7 +190,7 @@ sl::smart_ptr_view<CResourceDef> CResourceHolder::ResourceGetDefRef(const CResou
 	return m_ResHash.GetSmartPtrViewAt( rid, index );
 }
 
-sl::smart_ptr_view<CResourceDef> CResourceHolder::ResourceGetDefRefByName( RES_TYPE restype, lpctstr pszName, word wPage )
+sl::smart_ptr_view<CResourceDef> CResourceHolder::ResourceGetDefRefByName(const RES_TYPE restype, const lpctstr pszName, const word wPage )
 {
     ADDTOCALLSTACK("CResourceHolder::ResourceGetDefRefByName");
     // resolve a name to the actual resource def.
@@ -205,7 +205,7 @@ CResourceDef* CResourceHolder::ResourceGetDef(const CResourceID& rid) const
 	return ResourceGetDefRef(rid).get();
 }
 
-CResourceDef* CResourceHolder::ResourceGetDefByName(RES_TYPE restype, lpctstr pszName, word wPage)
+CResourceDef* CResourceHolder::ResourceGetDefByName(const RES_TYPE restype, const lpctstr pszName, const word wPage)
 {
 	ADDTOCALLSTACK("CResourceHolder::ResourceGetDefByName");
 	return ResourceGetDefRefByName(restype, pszName, wPage).get();

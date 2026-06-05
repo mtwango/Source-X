@@ -13,7 +13,7 @@
 #include "CCharNPC.h"
 
 
-CREID_TYPE CChar::NPC_GetAllyGroupType(CREID_TYPE idTest) // static
+CREID_TYPE CChar::NPC_GetAllyGroupType(const CREID_TYPE idTest) // static
 {
 	ADDTOCALLSTACK("CChar::NPC_GetAllyGroupType");
 	switch ( idTest )
@@ -365,7 +365,7 @@ int CChar::NPC_GetVendorMarkup() const
 	return g_Cfg.m_iVendorMarkup;
 }
 
-size_t CChar::NPC_OnHearName( lpctstr pszText ) const
+size_t CChar::NPC_OnHearName(const lpctstr pszText ) const
 {
 	ADDTOCALLSTACK("CChar::NPC_OnHearName");
 	ASSERT(m_pNPC);
@@ -424,7 +424,7 @@ bool CChar::NPC_CanSpeak() const
 	return ( pCharDef != nullptr && (pCharDef->m_Speech.size() > 0) );
 }
 
-bool CChar::NPC_FightMayCast(bool fCheckSkill) const
+bool CChar::NPC_FightMayCast(const bool fCheckSkill) const
 {
 	ADDTOCALLSTACK("CChar::NPC_FightMayCast");
 	ASSERT(m_pNPC);
@@ -445,7 +445,7 @@ bool CChar::NPC_FightMayCast(bool fCheckSkill) const
 	return true;
 }
 
-bool CChar::NPC_IsOwnedBy( const CChar * pChar, bool fAllowGM ) const
+bool CChar::NPC_IsOwnedBy( const CChar * pChar, const bool fAllowGM ) const
 {
 	ADDTOCALLSTACK("CChar::NPC_IsOwnedBy");
 	ASSERT(m_pNPC);
@@ -510,7 +510,7 @@ CChar * CChar::NPC_PetGetOwnerRecursive() const
 	return pCharOwner;
 }
 
-ushort CChar::NPC_GetTrainMax( const CChar * pStudent, SKILL_TYPE Skill ) const
+ushort CChar::NPC_GetTrainMax( const CChar * pStudent, const SKILL_TYPE Skill ) const
 {
 	ADDTOCALLSTACK("CChar::NPC_GetTrainMax");
 	ASSERT(m_pNPC);
@@ -599,7 +599,7 @@ bool CChar::NPC_CheckWalkHere( const CPointMap & pt, const CRegion * pArea ) con
 	return true;
 }
 
-CItemVendable * CChar::NPC_FindVendableItem( CItemVendable * pVendItem, CItemContainer * pContBuy, CItemContainer * pContStock ) // static
+CItemVendable * CChar::NPC_FindVendableItem(const CItemVendable * pVendItem, const CItemContainer * pContBuy, CItemContainer * pContStock ) // static
 {
 	ADDTOCALLSTACK("CChar::NPC_FindVendableItem");
 	UnreferencedParameter(pContStock);
@@ -665,7 +665,7 @@ int CChar::NPC_WantThisItem( CItem * pItem ) const
 	return 0;
 }
 
-int CChar::NPC_GetWeaponUseScore( CItem * pWeapon )
+int CChar::NPC_GetWeaponUseScore(const CItem * pWeapon )
 {
 	ADDTOCALLSTACK("CChar::NPC_GetWeaponUseScore");
 	ASSERT(m_pNPC);

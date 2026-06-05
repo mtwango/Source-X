@@ -9,7 +9,7 @@
 #include "CNetworkThread.h"
 
 
-static const char* GenerateNetworkThreadName(size_t id)
+static const char* GenerateNetworkThreadName(const size_t id)
 {
     char* name = Str_GetTemp();
     snprintf(name, AbstractThread::m_nameMaxLength, "T_Net #%" PRIuSIZE_T, id);
@@ -20,7 +20,7 @@ static const char* GenerateNetworkThreadName(size_t id)
 //  (processInput/processOutput/flush/assignNetworkState), so the manager can use the same code path in both modes;
 //  in non-threaded mode the object runs inline on T_Main, and in threaded mode the exact same object is started with its own OS thread.
 
-CNetworkThread::CNetworkThread(CNetworkManager* manager, size_t id)
+CNetworkThread::CNetworkThread(CNetworkManager* manager, const size_t id)
     : AbstractSphereThread(GenerateNetworkThreadName(id), ThreadPriority::Disabled),
     m_manager(manager), m_id(id), _iTimeLastStateDataCheck(0)
 {
@@ -38,7 +38,7 @@ void CNetworkThread::assignNetworkState(CNetState* state)
         awaken();
 }
 
-void CNetworkThread::queuePacket(PacketSend* packet, bool appendTransaction)
+void CNetworkThread::queuePacket(PacketSend* packet, const bool appendTransaction)
 {
     // queue a packet for sending
     CNetworkOutput::QueuePacket(packet, appendTransaction);

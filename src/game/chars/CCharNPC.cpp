@@ -37,7 +37,7 @@ CChar * CChar::CreateNPC( CREID_TYPE baseID )	// static
 	return pChar;
 }
 
-CCharNPC::CCharNPC( CChar * pChar, NPCBRAIN_TYPE NPCBrain )
+CCharNPC::CCharNPC( CChar * pChar, const NPCBRAIN_TYPE NPCBrain )
 {
 	UnreferencedParameter(pChar);
 	m_Brain = NPCBrain;
@@ -140,7 +140,7 @@ bool CCharNPC::r_LoadVal( CChar * pChar, CScript &s )
 	return false;
 }
 
-bool CCharNPC::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
+bool CCharNPC::r_WriteVal( CChar * pChar, const lpctstr ptcKey, CSString & sVal )
 {
 	EXC_TRY("WriteVal");
 	switch ( FindTableSorted( ptcKey, sm_szLoadKeys, CNC_QTY ))
@@ -256,7 +256,7 @@ int CCharNPC::GetNpcAiFlags( const CChar *pChar ) const
 }
 
 // Create an NPC from script.
-void CChar::NPC_LoadScript( bool fRestock )
+void CChar::NPC_LoadScript(const bool fRestock )
 {
 	ADDTOCALLSTACK("CChar::NPC_LoadScript");
 	if (!m_pNPC)

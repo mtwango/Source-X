@@ -1523,7 +1523,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 #undef LOG_WARN_NOINIT
 }
 
-const CSpellDef * CServerConfig::GetSpellDef( SPELL_TYPE index ) const
+const CSpellDef * CServerConfig::GetSpellDef(const SPELL_TYPE index ) const
 {
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index <= SPELL_NONE)
@@ -1534,7 +1534,7 @@ const CSpellDef * CServerConfig::GetSpellDef( SPELL_TYPE index ) const
     return m_SpellDefs[uiIndex].get();
 }
 
-CSpellDef * CServerConfig::GetSpellDef( SPELL_TYPE index )
+CSpellDef * CServerConfig::GetSpellDef(const SPELL_TYPE index )
 {
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index <= SPELL_NONE)
@@ -1545,7 +1545,7 @@ CSpellDef * CServerConfig::GetSpellDef( SPELL_TYPE index )
     return m_SpellDefs[uiIndex].get();
 }
 
-lpctstr CServerConfig::GetSkillKey( SKILL_TYPE index ) const
+lpctstr CServerConfig::GetSkillKey(const SKILL_TYPE index ) const
 {
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index < 0)
@@ -1556,7 +1556,7 @@ lpctstr CServerConfig::GetSkillKey( SKILL_TYPE index ) const
     return m_SkillIndexDefs[uiIndex]->GetKey();
 }
 
-const CSkillDef* CServerConfig::GetSkillDef( SKILL_TYPE index ) const
+const CSkillDef* CServerConfig::GetSkillDef(const SKILL_TYPE index ) const
 {
     if (index < 0)
         return nullptr;
@@ -1566,7 +1566,7 @@ const CSkillDef* CServerConfig::GetSkillDef( SKILL_TYPE index ) const
     return m_SkillIndexDefs[uiIndex].get();
 }
 
-CSkillDef* CServerConfig::GetSkillDef( SKILL_TYPE index )
+CSkillDef* CServerConfig::GetSkillDef(const SKILL_TYPE index )
 {
     if (index < 0)
         return nullptr;
@@ -1576,7 +1576,7 @@ CSkillDef* CServerConfig::GetSkillDef( SKILL_TYPE index )
     return m_SkillIndexDefs[uiIndex].get();
 }
 
-const CSkillDef* CServerConfig::FindSkillDef( lpctstr ptcKey ) const
+const CSkillDef* CServerConfig::FindSkillDef(const lpctstr ptcKey ) const
 {
     // Find the skill name in the alpha sorted list.
     // RETURN: SKILL_NONE = error.
@@ -1586,7 +1586,7 @@ const CSkillDef* CServerConfig::FindSkillDef( lpctstr ptcKey ) const
     return m_SkillNameDefs[i].get();
 }
 
-const CSkillDef * CServerConfig::SkillLookup( lpctstr ptcKey )
+const CSkillDef * CServerConfig::SkillLookup(const lpctstr ptcKey )
 {
 	ADDTOCALLSTACK("CServerConfig::SkillLookup");
 
@@ -2324,7 +2324,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 //*************************************************************
 
-bool CServerConfig::IsConsoleCmd( tchar ch ) const
+bool CServerConfig::IsConsoleCmd(const tchar ch ) const
 {
 	ADDTOCALLSTACK("CServerConfig::IsConsoleCmd");
 	return (ch == '.' || ch == '/' );
@@ -2359,13 +2359,13 @@ static constexpr lpctstr _ptcStatName[STAT_QTY] = // not alphabetically sorted o
     "FOOD"
 };
 
-STAT_TYPE CServerConfig::GetStatKey( lpctstr ptcKey ) // static
+STAT_TYPE CServerConfig::GetStatKey(const lpctstr ptcKey ) // static
 {
 	//ADDTOCALLSTACK_DEBUG("CServerConfig::GetStatKey");
-	return (STAT_TYPE) FindTable( ptcKey, _ptcStatName, std::size(_ptcStatName));
+	return static_cast<STAT_TYPE>(FindTable(ptcKey, _ptcStatName, std::size(_ptcStatName)));
 }
 
-lpctstr CServerConfig::GetStatName(STAT_TYPE iKey) // static
+lpctstr CServerConfig::GetStatName(const STAT_TYPE iKey) // static
 {
     //ADDTOCALLSTACK_DEBUG("CServerConfig::GetStatName");
     ASSERT(iKey >= STAT_STR && iKey < STAT_QTY);
@@ -2373,7 +2373,7 @@ lpctstr CServerConfig::GetStatName(STAT_TYPE iKey) // static
 }
 
 
-int CServerConfig::GetSpellEffect( SPELL_TYPE spell, int iSkillVal ) const
+int CServerConfig::GetSpellEffect(const SPELL_TYPE spell, int iSkillVal ) const
 {
 	ADDTOCALLSTACK("CServerConfig::GetSpellEffect");
 	// NOTE: Any randomizing of the effect must be done by varying the skill level .
@@ -2386,15 +2386,15 @@ int CServerConfig::GetSpellEffect( SPELL_TYPE spell, int iSkillVal ) const
 	return pSpellDef->m_vcEffect.GetLinear( iSkillVal );
 }
 
-lpctstr CServerConfig::GetRune( tchar ch ) const
+lpctstr CServerConfig::GetRune(const tchar ch ) const
 {
-    uint index = (uint)(toupper(ch) - 'A');
+    const uint index = static_cast<uint>(toupper(ch) - 'A');
     if ( ! m_Runes.IsValidIndex(index))
         return "?";
     return m_Runes[index]->GetBuffer();
 }
 
-lpctstr CServerConfig::GetNotoTitle( int iLevel, bool bFemale ) const
+lpctstr CServerConfig::GetNotoTitle(const int iLevel, const bool bFemale ) const
 {
 	ADDTOCALLSTACK("CServerConfig::GetNotoTitle");
 	// Retrieve the title used for the given noto level and gender
@@ -2444,7 +2444,7 @@ bool CServerConfig::IsValidEmailAddressFormat( lpctstr pszEmail ) // static
 	return true;
 }
 
-CServerRef CServerConfig::Server_GetDef( size_t index )
+CServerRef CServerConfig::Server_GetDef(const size_t index )
 {
 	ADDTOCALLSTACK("CServerConfig::Server_GetDef");
 	if ( ! m_Servers.IsValidIndex(index))
@@ -2452,7 +2452,7 @@ CServerRef CServerConfig::Server_GetDef( size_t index )
 	return static_cast<CServerDef *>(m_Servers[index]);
 }
 
-CWebPageDef * CServerConfig::FindWebPage( lpctstr pszPath ) const
+CWebPageDef * CServerConfig::FindWebPage(const lpctstr pszPath ) const
 {
 	ADDTOCALLSTACK("CServerConfig::FindWebPage");
 	if ( pszPath == nullptr )
@@ -2488,7 +2488,7 @@ CWebPageDef * CServerConfig::FindWebPage( lpctstr pszPath ) const
 	return nullptr;
 }
 
-bool CServerConfig::IsObscene( lpctstr pszText ) const
+bool CServerConfig::IsObscene(const lpctstr pszText ) const
 {
 	ADDTOCALLSTACK("CServerConfig::IsObscene");
 	// does this text contain obscene content?
@@ -2507,7 +2507,7 @@ bool CServerConfig::IsObscene( lpctstr pszText ) const
 	return false;
 }
 
-bool CServerConfig::SetKRDialogMap(dword rid, dword idKRDialog)
+bool CServerConfig::SetKRDialogMap(const dword rid, const dword idKRDialog)
 {
 	ADDTOCALLSTACK("CServerConfig::SetKRDialogMap");
 	// Defines a link between the given ResourceID and KR DialogID, so that
@@ -2538,7 +2538,7 @@ bool CServerConfig::SetKRDialogMap(dword rid, dword idKRDialog)
 	return true;
 }
 
-dword CServerConfig::GetKRDialogMap(dword idKRDialog)
+dword CServerConfig::GetKRDialogMap(const dword idKRDialog)
 {
 	ADDTOCALLSTACK("CServerConfig::GetKRDialogMap");
 	// Translates the given KR DialogID into the ResourceID of its scripted dialog.
@@ -2554,7 +2554,7 @@ dword CServerConfig::GetKRDialogMap(dword idKRDialog)
 	return 0;
 }
 
-dword CServerConfig::GetKRDialog(dword rid)
+dword CServerConfig::GetKRDialog(const dword rid)
 {
 	ADDTOCALLSTACK("CServerConfig::GetKRDialog");
 	// Translates the given ResourceID into it's equivalent KR DialogID.
@@ -2577,7 +2577,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs( CItem * pItem )
 	return GetMultiItemDefs(pItem->GetDispID());		// multi.mul multi
 }
 
-const CUOMulti * CServerConfig::GetMultiItemDefs( ITEMID_TYPE itemid )
+const CUOMulti * CServerConfig::GetMultiItemDefs(const ITEMID_TYPE itemid )
 {
 	ADDTOCALLSTACK("CServerConfig::GetMultiItemDefs(ITEMID_TYPE)");
 	if ( !CItemBase::IsID_Multi(itemid) )
@@ -2594,7 +2594,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs( ITEMID_TYPE itemid )
 	return pMulti;
 }
 
-PLEVEL_TYPE CServerConfig::GetPrivCommandLevel( lpctstr pszCmd ) const
+PLEVEL_TYPE CServerConfig::GetPrivCommandLevel(const lpctstr pszCmd ) const
 {
 	ADDTOCALLSTACK("CServerConfig::GetPrivCommandLevel");
 	// What is this commands plevel ?
@@ -2615,7 +2615,7 @@ PLEVEL_TYPE CServerConfig::GetPrivCommandLevel( lpctstr pszCmd ) const
 	return (PLEVEL_TYPE)m_iDefaultCommandLevel; // default level.
 }
 
-bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, lpctstr pszCmd, CTextConsole * pSrc ) const
+bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr pszCmd, CTextConsole * pSrc ) const
 {
 	ADDTOCALLSTACK("CServerConfig::CanUsePrivVerb");
 	// can i use this verb on this object ?
@@ -2836,7 +2836,7 @@ void CServerConfig::LoadSortSpells()
 
 //*************************************************************
 
-uint CServerConfig::GetPacketFlag( bool bCharlist, RESDISPLAY_VERSION res, uchar chars )
+uint CServerConfig::GetPacketFlag(const bool bCharlist, const RESDISPLAY_VERSION res, const uchar chars )
 {
 	// This is needed by the packet 0xB9, which is sent to the client very early, before we can know if this is a 2D, KR, EC, 3D client.
 	// Using the CNetState here to know which kind of client is it is pointless, because at this time the client type is always the default value (2D).
@@ -2981,7 +2981,7 @@ uint CServerConfig::GetPacketFlag( bool bCharlist, RESDISPLAY_VERSION res, uchar
 
 //*************************************************************
 
-CResourceScript * CServerConfig::GetResourceFile( size_t i )
+CResourceScript * CServerConfig::GetResourceFile(const size_t i )
 {
     if ( ! m_ResourceFiles.IsValidIndex(i) )
         return nullptr;	// All resource files we need to get blocks from later.
@@ -3006,7 +3006,7 @@ CResourceScript * CServerConfig::FindResourceFile( lpctstr pszPath )
     return nullptr;
 }
 
-bool CServerConfig::OpenResourceFind( CScript &s, lpctstr pszFilename, bool fCritical )
+bool CServerConfig::OpenResourceFind( CScript &s, lpctstr pszFilename, const bool fCritical )
 {
     ADDTOCALLSTACK("CServerConfig::OpenResourceFind");
     // Open a single resource script file.
@@ -3045,7 +3045,7 @@ bool CServerConfig::OpenResourceFind( CScript &s, lpctstr pszFilename, bool fCri
 }
 
 
-CResourceScript * CServerConfig::AddResourceFile( lpctstr pszName )
+CResourceScript * CServerConfig::AddResourceFile(const lpctstr pszName )
 {
     ADDTOCALLSTACK("CResourceHolder::AddResourceFile");
     ASSERT(pszName != nullptr);
@@ -3101,7 +3101,7 @@ CResourceScript * CServerConfig::AddResourceFile( lpctstr pszName )
     return pNewRes;
 }
 
-void CServerConfig::AddResourceDir( lpctstr pszDirName )
+void CServerConfig::AddResourceDir(const lpctstr pszDirName )
 {
     ADDTOCALLSTACK("CServerConfig::AddResourceDir");
     if ( pszDirName[0] == '\0' )
@@ -3141,7 +3141,7 @@ void CServerConfig::AddResourceDir( lpctstr pszDirName )
 
     // Order them by name (not including path, it is added later).
     std::ranges::sort(vecFileNames,
-        [](lpctstr ptcFirst, lpctstr ptcSecond) noexcept {return strcmp(ptcFirst, ptcSecond) < 0;}
+        [](const lpctstr ptcFirst, const lpctstr ptcSecond) noexcept {return strcmp(ptcFirst, ptcSecond) < 0;}
         );
 
     for (lpctstr elem : vecFileNames)
@@ -3151,7 +3151,7 @@ void CServerConfig::AddResourceDir( lpctstr pszDirName )
     }
 }
 
-bool CServerConfig::LoadResources( CResourceScript * pScript, bool fAddSorted )
+bool CServerConfig::LoadResources( CResourceScript * pScript, const bool fAddSorted )
 {
     ADDTOCALLSTACK("CServerConfig::LoadResources");
     // Open the file then load it.
@@ -3184,7 +3184,7 @@ CResourceScript * CServerConfig::LoadResourcesAdd( lpctstr pszNewFileName )
     return pScript;
 }
 
-void CServerConfig::LoadResourcesOpen( CScript * pScript, bool fAddSorted )
+void CServerConfig::LoadResourcesOpen( CScript * pScript, const bool fAddSorted )
 {
     ADDTOCALLSTACK("CServerConfig::LoadResourcesOpen");
     // Load an already open resource file.
@@ -4159,7 +4159,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 
 //*************************************************************
 
-CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, CVarDefContNum ** ppVarNum, bool fNewStyleDef )
+CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszName, CVarDefContNum ** ppVarNum, const bool fNewStyleDef )
 {
 	ADDTOCALLSTACK("CServerConfig::ResourceGetNewID");
 	// We are reading in a script block.
@@ -4560,7 +4560,7 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 	return rid;
 }
 
-sl::smart_ptr_view<CResourceDef> CServerConfig::RegisteredResourceGetDefRefByName(RES_TYPE restype, lpctstr ptcName, word wPage)
+sl::smart_ptr_view<CResourceDef> CServerConfig::RegisteredResourceGetDefRefByName(const RES_TYPE restype, lpctstr ptcName, const word wPage)
 {
 	ADDTOCALLSTACK("CServerConfig::RegisteredResourceGetDefRefByName");
 	return ResourceGetDefRefByName(restype, ptcName, wPage);
@@ -4636,13 +4636,13 @@ CResourceDef * CServerConfig::RegisteredResourceGetDef( const CResourceID& rid )
 	return RegisteredResourceGetDefRef(rid).get();
 }
 
-CResourceDef* CServerConfig::RegisteredResourceGetDefByName(RES_TYPE restype, lpctstr ptcName, word wPage)
+CResourceDef* CServerConfig::RegisteredResourceGetDefByName(const RES_TYPE restype, lpctstr ptcName, const word wPage)
 {
 	ADDTOCALLSTACK("CServerConfig::RegisteredResourceGetDefByName");
 	return RegisteredResourceGetDefRefByName(restype, ptcName, wPage).get();
 }
 
-lpctstr CServerConfig::ResourceTypedGetName(const CResourceIDBase& rid, RES_TYPE iExpectedType, lptstr* ptcOutError)
+lpctstr CServerConfig::ResourceTypedGetName(const CResourceIDBase& rid, const RES_TYPE iExpectedType, lptstr* ptcOutError)
 {
     ADDTOCALLSTACK("CServerConfig::ResourceTypedGetName");
     auto ridValid = CResourceID(iExpectedType, 0);
@@ -4695,7 +4695,7 @@ lpctstr CServerConfig::ResourceGetName( const CResourceID& rid ) const
 
 ////////////////////////////////////////////////////////////////////////////////
 
-void CServerConfig::_OnTick( bool fNow )
+void CServerConfig::_OnTick(const bool fNow )
 {
 	ADDTOCALLSTACK("CServerConfig::_OnTick");
 	// Give a tick to the less critical stuff.
@@ -4729,7 +4729,7 @@ void CServerConfig::_OnTick( bool fNow )
 	m_timePeriodic = CWorldGameTime::GetCurrentTime().GetTimeRaw() + ( 60 * MSECS_PER_SEC );
 }
 
-void CServerConfig::PrintEFOFFlags(bool bEF, bool bOF, const CTextConsole *pSrc)
+void CServerConfig::PrintEFOFFlags(const bool bEF, const bool bOF, const CTextConsole *pSrc)
 {
 	ADDTOCALLSTACK("CServerConfig::PrintEFOFFlags");
 	if ( g_Serv.IsLoadingGeneric() )
@@ -4813,7 +4813,7 @@ void CServerConfig::PrintEFOFFlags(bool bEF, bool bOF, const CTextConsole *pSrc)
 #undef catresname
 }
 
-bool CServerConfig::LoadIni(bool fTest)
+bool CServerConfig::LoadIni(const bool fTest)
 {
 	ADDTOCALLSTACK("CServerConfig::LoadIni");
 
@@ -4887,7 +4887,7 @@ bool CServerConfig::LoadCryptIni()
 	return true;
 }
 
-void CServerConfig::Unload( bool fResync )
+void CServerConfig::Unload(const bool fResync )
 {
 	ADDTOCALLSTACK("CServerConfig::Unload");
 	if ( fResync )
@@ -5195,7 +5195,7 @@ bool CServerConfig::Load( bool fResync )
 	return true;
 }
 
-lpctstr CServerConfig::GetDefaultMsg(int lKeyNum)
+lpctstr CServerConfig::GetDefaultMsg(const int lKeyNum)
 {
     ADDTOCALLSTACK("CServerConfig::GetDefaultMsg(int)");
 	if (( lKeyNum < 0 ) || ( lKeyNum >= DEFMSG_QTY ))
@@ -5213,7 +5213,7 @@ lpctstr CServerConfig::GetDefaultMsg(int lKeyNum)
 #endif
 }
 
-lpctstr CServerConfig::GetDefaultMsg(lpctstr ptcKey)
+lpctstr CServerConfig::GetDefaultMsg(const lpctstr ptcKey)
 {
     ADDTOCALLSTACK("CServerConfig::GetDefaultMsg(lpctstr)");
     auto gReader = g_ExprGlobals.mtEngineLockedReader();

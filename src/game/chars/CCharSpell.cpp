@@ -18,7 +18,7 @@
 #include "CCharNPC.h"
 
 
-SPELL_TYPE CChar::Spell_GetIndex(SKILL_TYPE skill)	// Returns the first spell for the given skill
+SPELL_TYPE CChar::Spell_GetIndex(const SKILL_TYPE skill)	// Returns the first spell for the given skill
 {
 	if (skill == SKILL_NONE)	// providing no skill returns first monster's custom spell.
 		return SPELL_Summon_Undead;
@@ -47,7 +47,7 @@ SPELL_TYPE CChar::Spell_GetIndex(SKILL_TYPE skill)	// Returns the first spell fo
 	}
 }
 
-SPELL_TYPE CChar::Spell_GetMax(SKILL_TYPE skill)
+SPELL_TYPE CChar::Spell_GetMax(const SKILL_TYPE skill)
 {
 	if (skill == SKILL_NONE)	// providing no skill returns the last spell for monsters.
 		return SPELL_CUSTOM_QTY;
@@ -103,7 +103,7 @@ void CChar::Spell_Dispel(int iLevel)
 	}
 }
 
-bool CChar::Spell_Teleport( CPointMap ptNew, bool fTakePets, bool fCheckAntiMagic, bool fDisplayEffect, ITEMID_TYPE iEffect, SOUND_TYPE iSound )
+bool CChar::Spell_Teleport( CPointMap ptNew, const bool fTakePets, const bool fCheckAntiMagic, const bool fDisplayEffect, ITEMID_TYPE iEffect, SOUND_TYPE iSound )
 {
 	ADDTOCALLSTACK("CChar::Spell_Teleport");
 	// Teleport you to this place.
@@ -246,7 +246,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, bool fTakePets, bool fCheckAntiMagi
 	return true;
 }
 
-bool CChar::Spell_CreateGate(CPointMap ptDest, bool fCheckAntiMagic)
+bool CChar::Spell_CreateGate(CPointMap ptDest, const bool fCheckAntiMagic)
 {
     ADDTOCALLSTACK("CChar::Spell_CreateGate");
     // Create moongate between current pt and destination pt
@@ -378,7 +378,7 @@ CChar * CChar::Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, const
 	return pChar;
 }
 
-bool CChar::Spell_Recall(CItem * pRune, bool fGate)
+bool CChar::Spell_Recall(CItem * pRune, const bool fGate)
 {
 	ADDTOCALLSTACK("CChar::Spell_Recall");
 	if (pRune && (IsTrigUsed(TRIGGER_SPELLEFFECT) || IsTrigUsed(TRIGGER_ITEMSPELL)))
@@ -532,7 +532,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 }
 
 
-template<typename T> void _CheckLimitEffectSkill(T& varEffect, const CChar* pCaster, SKILL_TYPE skill)
+template<typename T> void _CheckLimitEffectSkill(T& varEffect, const CChar* pCaster, const SKILL_TYPE skill)
 {
     // The bonus effect shouldn't set the skill above the skill max value
     ushort uiSkillMax = pCaster->Skill_GetMax(skill, true);
@@ -606,7 +606,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 		}
 		case LAYER_SPELL_Polymorph:
 		{
-            auto _EffectSetRegenVal = [this]<typename T0>(STAT_TYPE stat, T0& spellPow) -> void
+            auto _EffectSetRegenVal = [this]<typename T0>(const STAT_TYPE stat, T0& spellPow) -> void
             {
                 int iMod = Stats_GetRegenVal(stat) - spellPow;
                 if (iMod < 0)
@@ -1379,9 +1379,9 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 	}
 
 
-    auto _CheckLimitEffectStat = [this, &wStatEffectRef](STAT_TYPE iStat, bool fAdd) -> void
+    auto _CheckLimitEffectStat = [this, &wStatEffectRef](const STAT_TYPE iStat, const bool fAdd) -> void
     {
-        int iEffectDiff = (int)Stat_GetAdjusted(iStat);
+        int iEffectDiff = Stat_GetAdjusted(iStat);
         if (fAdd)
         {
             iEffectDiff += wStatEffectRef;
@@ -2064,7 +2064,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 	return false;
 }
 
-CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEffect, int64 iDurationInTenths, CObjBase * pSrc, bool bEquip )
+CItem * CChar::Spell_Effect_Create(const SPELL_TYPE spell, const LAYER_TYPE layer, const int iEffect, const int64 iDurationInTenths, const CObjBase * pSrc, const bool fEquip )
 {
 	ADDTOCALLSTACK("CChar::Spell_Effect_Create");
 	// Attach an effect to the Character.
@@ -2132,14 +2132,14 @@ CItem * CChar::Spell_Effect_Create( SPELL_TYPE spell, LAYER_TYPE layer, int iEff
 	if ( pSrc )
 		pSpell->m_uidLink = pSrc->GetUID();
 
-	if ( bEquip )
+	if ( fEquip )
 		LayerAdd(pSpell, layer);
 
 	Spell_Effect_Add(pSpell);
 	return pSpell;
 }
 
-void CChar::Spell_Area(const CPointMap &pntTarg, int iDist, int iSkillLevel, int64 iDuration)
+void CChar::Spell_Area(const CPointMap &pntTarg, const int iDist, int iSkillLevel, const int64 iDuration)
 {
 	ADDTOCALLSTACK("CChar::Spell_Area");
 	// Effects all creatures in the area. (but not us)
@@ -2181,7 +2181,7 @@ void CChar::Spell_Area(const CPointMap &pntTarg, int iDist, int iSkillLevel, int
 	}
 }
 
-void CChar::Spell_Field(const CPointMap &pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkillLevel, CChar * pCharSrc, ITEMID_TYPE idnewEW, ITEMID_TYPE idnewNS, int64 iDuration, HUE_TYPE iColor)
+void CChar::Spell_Field(const CPointMap &pntTarg, const ITEMID_TYPE idEW, const ITEMID_TYPE idNS, const uint fieldWidth, const uint fieldGauge, int iSkillLevel, const CChar * pCharSrc, const ITEMID_TYPE idnewEW, const ITEMID_TYPE idnewNS, int64 iDuration, const HUE_TYPE iColor)
 {
 	ADDTOCALLSTACK("CChar::Spell_Field");
 	// Cast the field spell to here.
@@ -2353,7 +2353,7 @@ void CChar::Spell_Field(const CPointMap &pntTarg, ITEMID_TYPE idEW, ITEMID_TYPE 
 	}
 }
 
-bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, bool fTest, CObjBase * pSrc, bool fFailMsg, bool fCheckAntiMagic )
+bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pSrc, const bool fFailMsg, const bool fCheckAntiMagic )
 {
 	ADDTOCALLSTACK("CChar::Spell_CanCast");
 	// ARGS:
@@ -2850,7 +2850,7 @@ bool CChar::Spell_TargCheck()
 	return true;
 }
 
-bool CChar::Spell_Unequip( LAYER_TYPE layer )
+bool CChar::Spell_Unequip(const LAYER_TYPE layer )
 {
 	ADDTOCALLSTACK("CChar::Spell_Unequip");
     if (CItem *pItemPrev = LayerFind(layer); pItemPrev != nullptr )
@@ -2880,7 +2880,7 @@ bool CChar::Spell_Unequip( LAYER_TYPE layer )
 	return true;
 }
 
-bool CChar::Spell_SimpleEffect( CObjBase * pObj, CObjBase * pObjSrc, SPELL_TYPE &spell, int &iSkillLevel, int64 iDuration)
+bool CChar::Spell_SimpleEffect( CObjBase * pObj, CObjBase * pObjSrc, const SPELL_TYPE &spell, const int &iSkillLevel, const int64 iDuration)
 {
 	ADDTOCALLSTACK("CChar::Spell_SimpleEffect");
 	if ( pObj == nullptr )
@@ -3350,12 +3350,12 @@ bool CChar::Spell_CastDone()
 	if ( IsClientActive() && IsSetMagicFlags(MAGICF_PRECAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOPRECAST) )
 	{
 		iDifficulty /= 10;
-		Skill_Experience((SKILL_TYPE)(iSkill), iDifficulty);
+		Skill_Experience(static_cast<SKILL_TYPE>(iSkill), iDifficulty);
 	}
 	return true;
 }
 
-void CChar::Spell_CastFail(bool fAbort)
+void CChar::Spell_CastFail(const bool fAbort)
 {
 	ADDTOCALLSTACK("CChar::Spell_CastFail");
 	ITEMID_TYPE iT1 = ITEMID_FX_SPELL_FAIL;
@@ -3645,7 +3645,7 @@ int CChar::Spell_CastStart()
 	return iDifficulty;
 }
 
-bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, bool fReflecting, int64 iDuration )
+bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, CItem * pSourceItem, const bool fReflecting, int64 iDuration )
 {
 	ADDTOCALLSTACK("CChar::OnSpellEffect");
 	// Spell has a direct effect on this char.
@@ -4213,7 +4213,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	return true;
 }
 
-int64 CChar::GetSpellDuration( SPELL_TYPE spell, int iSkillLevel, CChar * pCharSrc )
+int64 CChar::GetSpellDuration(const SPELL_TYPE spell, const int iSkillLevel, const CChar * pCharSrc )
 {
 	ADDTOCALLSTACK("CChar::GetSpellDuration");
 	int64 iDuration = -1;   // tenths of second

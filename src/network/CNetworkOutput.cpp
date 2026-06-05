@@ -16,7 +16,7 @@
 *	void SendCompleted_Winsock			Winsock event handler for when async operation completes
 *
 ***************************************************************************/
-static void CALLBACK SendCompleted_Winsock(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED lpOverlapped, DWORD dwFlags)
+static void CALLBACK SendCompleted_Winsock(const DWORD dwError, const DWORD cbTransferred, const LPWSAOVERLAPPED lpOverlapped, const DWORD dwFlags)
 {
 	UnreferencedParameter(dwFlags);
 	ADDTOCALLSTACK("SendCompleted_Winsock");
@@ -197,7 +197,7 @@ size_t CNetworkOutput::flush(CNetState* state)
 	return packetsSent;
 }
 
-size_t CNetworkOutput::processPacketQueue(CNetState* state, uint priority)
+size_t CNetworkOutput::processPacketQueue(CNetState* state, const uint priority)
 {
 	// process a client's packet queue
 	ADDTOCALLSTACK("CNetworkOutput::processPacketQueue");
@@ -473,7 +473,7 @@ bool CNetworkOutput::sendPacketData(CNetState* state, PacketSend* packet)
 	return false;
 }
 
-size_t CNetworkOutput::sendData(CNetState* state, const byte* data, size_t length)
+size_t CNetworkOutput::sendData(CNetState* state, const byte* data, const size_t length)
 {
 	// send raw data to client
 	ADDTOCALLSTACK("CNetworkOutput::sendData");
@@ -569,7 +569,7 @@ size_t CNetworkOutput::sendData(CNetState* state, const byte* data, size_t lengt
 	return _failed_result();
 }
 
-void CNetworkOutput::onAsyncSendComplete(CNetState* state, bool success)
+void CNetworkOutput::onAsyncSendComplete(CNetState* state, const bool success)
 {
 	// notify that async operation completed
 	ADDTOCALLSTACK("CNetworkOutput::onAsyncSendComplete");
@@ -593,7 +593,7 @@ void CNetworkOutput::onAsyncSendComplete(CNetState* state, bool success)
 	}
 }
 
-void CNetworkOutput::QueuePacket(PacketSend* packet, bool appendTransaction)
+void CNetworkOutput::QueuePacket(PacketSend* packet, const bool appendTransaction)
 {
 	// queue a packet for sending
 	ADDTOCALLSTACK("CNetworkOutput::QueuePacket");

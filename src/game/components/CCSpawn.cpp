@@ -60,7 +60,7 @@ CCSpawn *CCSpawn::GetBadSpawn(int index)
     return ret;
 }
 
-CCSpawn::CCSpawn(CItem *pLink, bool fIsChampion) : CComponent(COMP_SPAWN), _fIsChampion(fIsChampion)
+CCSpawn::CCSpawn(CItem *pLink, const bool fIsChampion) : CComponent(COMP_SPAWN), _fIsChampion(fIsChampion)
 {
     //ADDTOCALLSTACK_DEBUG("CCSpawn::CCSpawn");
     _pLink = pLink;
@@ -120,7 +120,7 @@ const CResourceIDBase& CCSpawn::GetSpawnID() const
     return _idSpawn;
 }
 
-void CCSpawn::SetAmount(uint16 iAmount)
+void CCSpawn::SetAmount(const uint16 iAmount)
 {
     //ADDTOCALLSTACK("CCSpawn::SetAmount");
     _iAmount = iAmount;
@@ -160,7 +160,7 @@ const CResourceDef* CCSpawn::_FixDef()
 
     if (pItem->IsType(IT_SPAWN_CHAR))
     {
-        auto _TryChar = [this](CREID_TYPE idChar_) -> const CResourceDef*
+        auto _TryChar = [this](const CREID_TYPE idChar_) -> const CResourceDef*
         {
             const CResourceDef* pResDef_ = CCharBase::FindCharBase(idChar_);
             if (pResDef_)
@@ -207,7 +207,7 @@ const CResourceDef* CCSpawn::_FixDef()
 
     if (pItem->IsType(IT_SPAWN_ITEM))
     {
-        auto _TryItem = [this](ITEMID_TYPE idItem_) -> const CResourceDef *
+        auto _TryItem = [this](const ITEMID_TYPE idItem_) -> const CResourceDef *
         {
             const CResourceDef *pResDef_ = CItemBase::FindItemBase(idItem_);
             if (pResDef_)
@@ -276,7 +276,7 @@ uint CCSpawn::WriteName(tchar *ptcOut) const
     return snprintf(ptcOut, Str_TempLength(), " (%s)", ptcName);
 }
 
-void CCSpawn::Delete(bool fForce)
+void CCSpawn::Delete(const bool fForce)
 {
     ADDTOCALLSTACK("CCSpawn::Delete");
     UnreferencedParameter(fForce);
@@ -819,7 +819,7 @@ lpctstr const CCSpawn::sm_szLoadKeys[ISPW_QTY + 1] =
     nullptr
 };
 
-bool CCSpawn::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc)
+bool CCSpawn::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc)
 {
     ADDTOCALLSTACK("CCSpawn::r_WriteVal");
     UnreferencedParameter(pSrc);

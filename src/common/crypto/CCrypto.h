@@ -86,7 +86,7 @@ private:
 	byte m_md5_digest[MD5_RESET + 1]; // 16
 
 	bool EncryptMD5( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen );
-	void InitMD5(byte * ucInitialize);
+	void InitMD5(const byte * ucInitialize);
 	// ------------------ EOF MD5 ----------------------------
 
 	// ------------- Login Encryption ----------------------

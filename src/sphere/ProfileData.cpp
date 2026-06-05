@@ -31,7 +31,7 @@ int ProfileData::GetActiveWindow() const noexcept
     return m_iActiveWindowSeconds / 1000;
 }
 
-void ProfileData::SetActive(int iSampleSec)
+void ProfileData::SetActive(const int iSampleSec)
 {
 	ADDTOCALLSTACK("ProfileData::SetActive");
 
@@ -53,7 +53,7 @@ void ProfileData::SetActive(int iSampleSec)
 	m_TimeTotal = 0;
 }
 
-void ProfileData::Start(PROFILE_TYPE id)
+void ProfileData::Start(const PROFILE_TYPE id)
 {
 	// ADDTOCALLSTACK("ProfileData::Start"); // CPU intensive
 	if (( id >= PROFILE_TIME_QTY ) || !m_iActiveWindowSeconds )
@@ -120,7 +120,7 @@ void ProfileData::Start(PROFILE_TYPE id)
 	m_CurrentTask = id;
 }
 
-void ProfileData::Count(PROFILE_TYPE id, dword dwVal)
+void ProfileData::Count(const PROFILE_TYPE id, const dword dwVal)
 {
 	ADDTOCALLSTACK("ProfileData::Count");
 
@@ -129,7 +129,7 @@ void ProfileData::Count(PROFILE_TYPE id, dword dwVal)
 	++ m_CurrentTimes[id].m_iCount;
 }
 
-void ProfileData::EnableProfile(PROFILE_TYPE id) noexcept
+void ProfileData::EnableProfile(const PROFILE_TYPE id) noexcept
 {
 	if (id >= PROFILE_QTY)
 		return;
@@ -137,7 +137,7 @@ void ProfileData::EnableProfile(PROFILE_TYPE id) noexcept
 	m_EnabledProfiles[id] = true;
 }
 
-bool ProfileData::IsEnabled(PROFILE_TYPE id) const noexcept
+bool ProfileData::IsEnabled(const PROFILE_TYPE id) const noexcept
 {
 	if (id > PROFILE_QTY)
 		return false;
@@ -160,7 +160,7 @@ PROFILE_TYPE ProfileData::GetCurrentTask() const noexcept
 	return m_CurrentTask;
 }
 
-lpctstr ProfileData::GetName(PROFILE_TYPE id) const noexcept
+lpctstr ProfileData::GetName(const PROFILE_TYPE id) const noexcept
 {
 	static lpctstr constexpr sm_pszProfileName[PROFILE_QTY] =
 	{
@@ -187,7 +187,7 @@ lpctstr ProfileData::GetName(PROFILE_TYPE id) const noexcept
 	return (id < PROFILE_QTY) ? sm_pszProfileName[id] : "";
 }
 
-lpctstr ProfileData::GetDescription(PROFILE_TYPE id) const
+lpctstr ProfileData::GetDescription(const PROFILE_TYPE id) const
 {
 	ADDTOCALLSTACK("ProfileData::GetDesc");
 	ASSERT(id < PROFILE_QTY);

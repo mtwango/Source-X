@@ -13,7 +13,7 @@ CLanguageID::CLanguageID( const char * pszInit ) noexcept
     Set( pszInit );
 }
 
-CLanguageID::CLanguageID(int iDefault) noexcept :
+CLanguageID::CLanguageID(const int iDefault) noexcept :
     m_codes{}
 {
     UnreferencedParameter(iDefault);
@@ -51,7 +51,7 @@ lpctstr CLanguageID::GetStr() const
     return pszTmp;
 }
 
-bool CLanguageID::Set(lpctstr pszLang) noexcept
+bool CLanguageID::Set(const lpctstr pszLang) noexcept
 {
     // needs not be terminated!
     if (pszLang != nullptr)

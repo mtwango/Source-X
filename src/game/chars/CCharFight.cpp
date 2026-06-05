@@ -96,7 +96,7 @@ void CChar::OnNoticeCrime( CChar * pCriminal, CChar * pCharMark )
 //	pCharMark = offended char.
 // RETURN:
 //  true = somebody saw me.
-bool CChar::CheckCrimeSeen( SKILL_TYPE SkillToSee, CChar * pCharMark, const CObjBase * pItem, lpctstr ptcAction )
+bool CChar::CheckCrimeSeen(const SKILL_TYPE SkillToSee, CChar * pCharMark, const CObjBase * pItem, const lpctstr ptcAction )
 {
 	ADDTOCALLSTACK("CChar::CheckCrimeSeen");
     // Who notices ?
@@ -323,7 +323,7 @@ void CChar::OnHarmedBy( CChar * pCharSrc )
 //
 // RETURN: true = ok.
 //  false = we are immune to this char ! (or they to us)
-bool CChar::OnAttackedBy(CChar * pCharSrc, bool fCommandPet, bool fShouldReveal)
+bool CChar::OnAttackedBy(CChar * pCharSrc, bool fCommandPet, const bool fShouldReveal)
 {
 	ADDTOCALLSTACK("CChar::OnAttackedBy");
 
@@ -564,7 +564,7 @@ int CChar::CalcArmorDefense() const
 	return maximum(( iDefenseTotal / 100 ) + m_ModAr, 0);
 }
 
- int CChar::CalcPercentArmorDefense(LAYER_TYPE layer) //static
+ int CChar::CalcPercentArmorDefense(const LAYER_TYPE layer) //static
 {
 	 ADDTOCALLSTACK("CChar::CalcPercentArmorDefense");
 	 int iPercentArmorDefence = 0;
@@ -1047,7 +1047,7 @@ effect_bounce:
 	return iDmg;
 }
 
-void CChar::OnTakeDamageInflictArea(int iDmg, CChar* pSrc, DAMAGE_TYPE uType, int iDmgPhysical, int iDmgFire, int iDmgCold, int iDmgPoison, int iDmgEnergy, HUE_TYPE effectHue, SOUND_TYPE effectSound)
+void CChar::OnTakeDamageInflictArea(const int iDmg, CChar* pSrc, const DAMAGE_TYPE uType, const int iDmgPhysical, const int iDmgFire, const int iDmgCold, const int iDmgPoison, const int iDmgEnergy, const HUE_TYPE effectHue, const SOUND_TYPE effectSound)
 {
     ADDTOCALLSTACK("CChar::OnTakeDamageInflictArea");
 
@@ -1181,7 +1181,7 @@ bool CChar::Fight_IsActive() const
 }
 
 // Calculating base DMG (also used for STATUS value)
-int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax ) const
+int CChar::Fight_CalcDamage(const CItem * pWeapon, const bool fNoRandom, const bool fGetMax ) const
 {
 	ADDTOCALLSTACK("CChar::Fight_CalcDamage");
 
@@ -1338,7 +1338,7 @@ void CChar::Fight_ClearAll()
 }
 
 // I no longer want to attack this char.
-bool CChar::Fight_Clear(CChar *pChar, bool fForced)
+bool CChar::Fight_Clear(CChar *pChar, const bool fForced)
 {
 	ADDTOCALLSTACK("CChar::Fight_Clear");
     if ( !pChar || !Attacker_Delete(pChar, fForced, ATTACKER_CLEAR_FORCED) )
@@ -1376,7 +1376,7 @@ bool CChar::Fight_Clear(CChar *pChar, bool fForced)
 // This is just my intent.
 // RETURN:
 //  true = new attack is accepted.
-bool CChar::Fight_Attack( CChar *pCharTarg, bool fToldByMaster )
+bool CChar::Fight_Attack( CChar *pCharTarg, const bool fToldByMaster )
 {
 	ADDTOCALLSTACK("CChar::Fight_Attack");
 
@@ -1623,7 +1623,7 @@ void CChar::Fight_HitTry()
 }
 
 // Distance from which I can hit
-int CChar::Fight_CalcRange( CItem * pWeapon ) const
+int CChar::Fight_CalcRange(const CItem * pWeapon ) const
 {
 	ADDTOCALLSTACK("CChar::Fight_CalcRange");
 
@@ -1658,7 +1658,7 @@ void CChar::Fight_SetDefaultSwingDelays()
     }
 }
 
-WAR_SWING_TYPE CChar::Fight_CanHit(CChar * pCharSrc, bool fSwingNoRange)
+WAR_SWING_TYPE CChar::Fight_CanHit(const CChar * pCharSrc, const bool fSwingNoRange)
 {
 	ADDTOCALLSTACK("CChar::Fight_CanHit");
 	//	Very basic check on possibility to hit

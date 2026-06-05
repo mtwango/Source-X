@@ -104,7 +104,7 @@ public:
 
 // Inline methods definition
 
-inline uint16 CUOMapList::GetMapSizeX(int map) const noexcept
+inline uint16 CUOMapList::GetMapSizeX(const int map) const noexcept
 {
     // Used by CPointBase::IsValidXY() and IsValidPoint(), which is called a LOT
     //ASSERT(IsMapSupported(map));
@@ -112,7 +112,7 @@ inline uint16 CUOMapList::GetMapSizeX(int map) const noexcept
     return m_mapGeoData.maps[map].uiSizeX;
 }
 
-inline uint16 CUOMapList::GetMapSizeY(int map) const noexcept
+inline uint16 CUOMapList::GetMapSizeY(const int map) const noexcept
 {
     // Used by CPointBase::IsValidXY() and IsValidPoint(), which is called a LOT
     //ASSERT(IsMapSupported(map));

@@ -11,7 +11,7 @@ ProfileData& GetCurrentProfileData()
     return cur_thread->m_profile;
 }
 
-ProfileTask::ProfileTask(PROFILE_TYPE id) :
+ProfileTask::ProfileTask(const PROFILE_TYPE id) :
     m_context(nullptr), m_previousTask(PROFILE_OVERHEAD)
 {
     if (!IsSetEF(EF_Script_Profiler))

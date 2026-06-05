@@ -54,11 +54,11 @@ public:
     {
         return m_Array[GetHashArray(rid)].find_sorted(rid);
     }
-    constexpr sl::smart_ptr_view<CResourceDef> GetSmartPtrViewAt(const CResourceID& rid, size_t index) const
+    constexpr sl::smart_ptr_view<CResourceDef> GetSmartPtrViewAt(const CResourceID& rid, const size_t index) const
     {
         return sl::smart_ptr_view<CResourceDef>(m_Array[GetHashArray(rid)][index]);
     }
-    CResourceDef* GetBarePtrAt(const CResourceID& rid, size_t index) const
+    CResourceDef* GetBarePtrAt(const CResourceID& rid, const size_t index) const
     {
         return m_Array[GetHashArray(rid)][index].get();
     }

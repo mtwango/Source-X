@@ -217,7 +217,7 @@ void CSectorBase::SetAdjacentSectors()
     //        (int)m_BasePointSectUnits.m_map, m_index, (int)m_BasePointSectUnits.m_x, (int)m_BasePointSectUnits.m_y, nAdj);
 }
 
-CSector *CSectorBase::_GetAdjacentSector(DIR_TYPE dir) const
+CSector *CSectorBase::_GetAdjacentSector(const DIR_TYPE dir) const
 {
     ASSERT(dir >= DIR_N && dir < DIR_QTY);
     return _ppAdjacentSectors[dir];
@@ -231,7 +231,7 @@ CSectorBase::CSectorBase() :
     //memset(_ppAdjacentSectors, 0, DIR_QTY * sizeof(_ppAdjacentSectors));
 }
 
-void CSectorBase::Init(int index, uchar map, short x, short y)
+void CSectorBase::Init(const int index, const uchar map, const short x, const short y)
 {
 	ADDTOCALLSTACK("CSectorBase::Init");
 	if (!g_MapList.IsMapSupported(map) || !g_MapList.IsInitialized(map))
@@ -285,7 +285,7 @@ CPointBase CSectorBase::GetBasePointMapUnits() const noexcept
     };
 }
 
-CRegion * CSectorBase::GetRegion( const CPointBase & pt, dword dwType ) const
+CRegion * CSectorBase::GetRegion( const CPointBase & pt, const dword dwType ) const
 {
 	ADDTOCALLSTACK_DEBUG("CSectorBase::GetRegion");
 	// Does it match the mask of types we care about ?
@@ -334,7 +334,7 @@ CRegion * CSectorBase::GetRegion( const CPointBase & pt, dword dwType ) const
 }
 
 // Balkon: get regions list (to cycle through intercepted house regions)
-size_t CSectorBase::GetRegions( const CPointBase & pt, dword dwType, CRegionLinks *pRLinks ) const
+size_t CSectorBase::GetRegions( const CPointBase & pt, const dword dwType, CRegionLinks *pRLinks ) const
 {
 	//ADDTOCALLSTACK_DEBUG("CSectorBase::GetRegions");  // Called very frequently
     const size_t uiQty = m_RegionLinks.size();

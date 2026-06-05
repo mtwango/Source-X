@@ -1084,7 +1084,7 @@ class PacketVendorSellList : public PacketSend
 {
 public:
 	PacketVendorSellList(const CChar* vendor);
-	uint fillSellList(CClient* target, const CItemContainer* container, CItemContainer* stock1, CItemContainer* stock2, int iConvertFactor);
+	uint fillSellList(CClient* target, const CItemContainer* container, const CItemContainer * stock1, CItemContainer* stock2, int iConvertFactor);
 };
 
 /***************************************************************************

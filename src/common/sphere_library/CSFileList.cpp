@@ -18,7 +18,7 @@ CSFileList::CSFileList() = default;
 CSFileList::~CSFileList() = default;
 
 // Similar to the MFC CFileFind
-bool CSFileList::ReadFileInfo( lpctstr pszFilePath, time_t & dwDateChange, dword & dwSize ) // static
+bool CSFileList::ReadFileInfo(const lpctstr pszFilePath, time_t & dwDateChange, dword & dwSize ) // static
 {
 	ADDTOCALLSTACK("CSFileList::ReadFileInfo");
 #ifdef _WIN32
@@ -52,7 +52,7 @@ bool CSFileList::ReadFileInfo( lpctstr pszFilePath, time_t & dwDateChange, dword
 	return true;
 }
 
-int CSFileList::ReadDir( lpctstr pszFilePath, bool bShowError )
+int CSFileList::ReadDir(const lpctstr pszFilePath, const bool bShowError )
 {
 	ADDTOCALLSTACK("CSFileList::ReadDir");
 	// NOTE: It seems NOT to like the trailing \ alone

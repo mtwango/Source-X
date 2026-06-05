@@ -76,7 +76,7 @@ struct CObjUniquePtrNameVectorSorter
         // Current strcmpi implementation internally converts to lowerCASE the strings, so this will work until Str_CmpHeadI checks with tolower, instead of toupper
         return (strcmpi(s1->GetName(), s2->GetName()) < 0);
     }
-    static int _compare(std::unique_ptr<_ObjType> const& pObj, lpctstr ptcKey)
+    static int _compare(std::unique_ptr<_ObjType> const& pObj, const lpctstr ptcKey)
     {
         return -Str_CmpHeadI(ptcKey, pObj->GetName());  // We use Str_CmpHeadI to ignore '_' and whitespaces (args to the function or whatever) in ptcKey
     }
@@ -87,7 +87,7 @@ class CObjUniquePtrNameSortVector final : public sl::unique_ptr_sorted_vector<_O
 public:
     //static const char *m_sClassName;
     size_t find_sorted(lpctstr ptcKey) const noexcept { return this->find_predicate(ptcKey, CObjUniquePtrNameVectorSorter<_ObjType>::_compare);        }
-    bool ContainsKey(lpctstr ptcKey) const noexcept { return (sl::scont_bad_index() != this->find_sorted(ptcKey)); }
+    bool ContainsKey(const lpctstr ptcKey) const noexcept { return (sl::scont_bad_index() != this->find_sorted(ptcKey)); }
 };
 
 #endif // _INC_CRESOURCESORTEDARRAYS_H

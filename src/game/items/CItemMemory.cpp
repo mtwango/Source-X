@@ -4,7 +4,7 @@
 #include "CItemMemory.h"
 #include "CItemStone.h"
 
-CItemMemory::CItemMemory( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemMemory::CItemMemory(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
 	CItem( ITEMID_MEMORY, pItemDef )
 {
@@ -20,7 +20,7 @@ CItemMemory::~CItemMemory()
 }
 */
 
-word CItemMemory::SetMemoryTypes( word wType )	// For memory type objects.
+word CItemMemory::SetMemoryTypes(const word wType )	// For memory type objects.
 {
 	SetHueQuick( wType );
 	return( wType );
@@ -45,7 +45,7 @@ bool CItemMemory::Guild_IsAbbrevOn() const
 	return (m_itEqMemory.m_Action != 0);
 }
 
-void CItemMemory::Guild_SetAbbrev(bool fAbbrevShow)
+void CItemMemory::Guild_SetAbbrev(const bool fAbbrevShow)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetAbbrev");
 	m_itEqMemory.m_Action = fAbbrevShow;
@@ -57,7 +57,7 @@ word CItemMemory::Guild_GetVotes() const
 	return m_itEqMemory.m_Skill;
 }
 
-void CItemMemory::Guild_SetVotes(word wVotes)
+void CItemMemory::Guild_SetVotes(const word wVotes)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetVotes");
 	m_itEqMemory.m_Skill = wVotes;
@@ -77,7 +77,7 @@ CUID CItemMemory::Guild_GetLoyalTo() const
 	return iUid;
 }
 
-bool CItemMemory::Guild_SetTitle(lpctstr pszTitle)
+bool CItemMemory::Guild_SetTitle(const lpctstr pszTitle)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetTitle");
 	return (m_TagDefs.SetStr("Title", false, pszTitle) != nullptr);

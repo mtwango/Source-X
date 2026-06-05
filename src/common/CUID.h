@@ -50,7 +50,7 @@ public:
 	{
 		SetPrivateUID(uid.GetPrivateUID());
 	}
-    constexpr explicit CUID(dword dwPrivateUID) noexcept
+    constexpr explicit CUID(const dword dwPrivateUID) noexcept
 	{
 		// TODO: directly setting the private UID can led to unexpected results...
 		//	it's better to use SetObjUID in order to "filter" the raw value passed.
@@ -100,7 +100,7 @@ public:
     void RemoveObjFlags(dword dwFlags) noexcept;
 
     // Internal UID with flags used only by the core, not scripts nor understood by the client.
-    constexpr void SetPrivateUID(dword dwVal) noexcept {
+    constexpr void SetPrivateUID(const dword dwVal) noexcept {
         m_dwInternalVal = dwVal;
     }
     constexpr dword GetPrivateUID() const noexcept {
@@ -120,8 +120,8 @@ public:
 		return m_dwInternalVal < rhs.m_dwInternalVal;
 	}
 
-    bool operator != (dword index) const noexcept {
-		return (GetObjUID() != index);
+    bool operator != (const dword index) const noexcept {
+		return GetObjUID() != index;
 	}
     bool operator == (const dword index) const noexcept {
 		return (GetObjUID() == index);
@@ -132,7 +132,7 @@ protected:
 	// Be sure that, when doing an assignment directly via a dword (so directly assigning a m_dwInternalVal), we know what we are doing.
 	// To enforce that we make this method protected, so that the only public way to assign the m_dwInternalVal is via SetPrivateUID.
 	// That's very necessary also because most of the times we want to do the assignment via SetObjUID, not SetPrivateUID.
-	CUID& operator = (dword index) noexcept {
+	CUID& operator = (const dword index) noexcept {
 		SetPrivateUID(index);
 		return *this;
 	}
@@ -141,13 +141,13 @@ public:
     static CObjBase * ObjFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
     static CItem * ItemFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
     static CChar * CharFindFromUID(dword dwPrivateUID, bool fInvalidateBeingDeleted = false) noexcept;
-    CObjBase * ObjFind(bool fInvalidateBeingDeleted = false) const noexcept {
+    CObjBase * ObjFind(const bool fInvalidateBeingDeleted = false) const noexcept {
 		return ObjFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
-    CItem * ItemFind(bool fInvalidateBeingDeleted = false) const noexcept {
+    CItem * ItemFind(const bool fInvalidateBeingDeleted = false) const noexcept {
 		return ItemFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
-    CChar * CharFind(bool fInvalidateBeingDeleted = false) const noexcept{
+    CChar * CharFind(const bool fInvalidateBeingDeleted = false) const noexcept{
 		return CharFindFromUID(m_dwInternalVal, fInvalidateBeingDeleted);
 	}
 

@@ -13,7 +13,7 @@ CRect::CRect() noexcept :
 {
 }
 
-CRect::CRect(int left, int top, int right, int bottom, int map) noexcept :
+CRect::CRect(const int left, const int top, const int right, const int bottom, const int map) noexcept :
 	m_left(left), m_top(top), m_right(right), m_bottom(bottom), m_map(map)
 {
 }
@@ -28,7 +28,7 @@ void CRect::SetRectEmpty() noexcept
 	m_left = m_top = m_right = m_bottom = m_map = 0;
 }
 
-void CRect::OffsetRect( int x, int y )
+void CRect::OffsetRect(const int x, const int y )
 {
     m_left += x;
     m_top += y;
@@ -36,7 +36,7 @@ void CRect::OffsetRect( int x, int y )
     m_bottom += y;
 }
 
-void CRect::UnionPoint( int x, int y )
+void CRect::UnionPoint(const int x, const int y )
 {
     // Inflate this rect to include this point.
     // NON inclusive rect!
@@ -67,7 +67,7 @@ void CRect::UnionRect( const CRect & rect )
     }
 }
 
-bool CRect::IsInside( int x, int y, int map ) const noexcept
+bool CRect::IsInside(const int x, const int y, const int map ) const noexcept
 {
     // NON inclusive rect! Is the point in the rectangle ?
     return( IsInsideX(x) &&	IsInsideY(y) && ( m_map == map ));
@@ -128,7 +128,7 @@ void CRect::NormalizeRect() noexcept
 */
 }
 
-void CRect::SetRect( int left, int top, int right, int bottom, int map ) noexcept
+void CRect::SetRect(const int left, const int top, const int right, const int bottom, const int map ) noexcept
 {
     m_left = left;
     m_top = top;
@@ -138,7 +138,7 @@ void CRect::SetRect( int left, int top, int right, int bottom, int map ) noexcep
     NormalizeRect();
 }
 
-void CRect::NormalizeRectMax( int cx, int cy ) noexcept
+void CRect::NormalizeRectMax(const int cx, const int cy ) noexcept
 {
     m_left      = sl::fmath::sMax(0, m_left);
     m_top       = sl::fmath::sMax(0, m_top);
@@ -157,7 +157,7 @@ void CRect::NormalizeRectMax( int cx, int cy ) noexcept
     */
 }
 
-size_t CRect::Read( lpctstr pszVal )
+size_t CRect::Read(const lpctstr pszVal )
 {
 	ADDTOCALLSTACK("CRect::Read");
 	// parse reading the rectangle
@@ -212,7 +212,7 @@ size_t CRect::Read( lpctstr pszVal )
 	return i;
 }
 
-tchar * CRect::Write( tchar * ptcBuffer, uint uiBufferLen) const
+tchar * CRect::Write( tchar * ptcBuffer, const uint uiBufferLen) const
 {
     snprintf(ptcBuffer, uiBufferLen, "%d,%d,%d,%d,%d", m_left, m_top, m_right, m_bottom, m_map);
     return ptcBuffer;
@@ -234,7 +234,7 @@ CPointBase CRect::GetCenter() const noexcept
         );
 }
 
-CPointBase CRect::GetRectCorner( DIR_TYPE dir ) const
+CPointBase CRect::GetRectCorner(const DIR_TYPE dir ) const
 {
 	ADDTOCALLSTACK("CRect::GetRectCorner");
 	ASSERT(dir <= DIR_QTY);
@@ -287,7 +287,7 @@ CPointBase CRect::GetRectCorner( DIR_TYPE dir ) const
 }
 
 // get the n-th sector that makes up this rect.
-CSector * CRect::GetSectorAtIndex( int i ) const noexcept
+CSector * CRect::GetSectorAtIndex(const int i ) const noexcept
 {
     //ADDTOCALLSTACK_DEBUG("CRect::GetSectorAtIndexWithHints");
     // get all the CSector(s) that overlap this rect.
@@ -389,7 +389,7 @@ const CRect& CRect::operator += (const CRect& rect)
 //*************************************************************************
 // -CRectMap
 
-CRectMap::CRectMap(int left, int top, int right, int bottom, int map) noexcept :
+CRectMap::CRectMap(const int left, const int top, const int right, const int bottom, const int map) noexcept :
 	CRect(left, top, right, bottom, map)
 {
 }

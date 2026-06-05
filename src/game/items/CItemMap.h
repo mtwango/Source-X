@@ -14,7 +14,7 @@ struct CMapPinRec // Pin on a map
 	short m_x;
 	short m_y;
 
-    CMapPinRec( short x, short y ) noexcept
+    CMapPinRec(const short x, const short y ) noexcept
 		: m_x(x), m_y(y)
 	{
 	}

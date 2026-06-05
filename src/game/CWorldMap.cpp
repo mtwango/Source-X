@@ -226,7 +226,7 @@ IT_TYPE CWorldMap::GetTerrainItemType(const dword dwTerrainIndex) // static
 // Map reading and blocking.
 
 // gets sector # from one map
-CSector* CWorldMap::GetSectorByIndex(int map, int index) noexcept // static
+CSector* CWorldMap::GetSectorByIndex(const int map, const int index) noexcept // static
 {
     //ADDTOCALLSTACK_DEBUG("CWorldMap::GetSectorByIndex(index)");
 
@@ -335,7 +335,7 @@ std::optional<CUOMapMeter> CWorldMap::GetMapMeterAdjusted(const CPointMap& pt)
     return std::make_optional<CUOMapMeter>(pMapTop);
 }
 
-bool CWorldMap::IsTypeNear_Top( const CPointMap & pt, IT_TYPE iType, int iDistance ) // static
+bool CWorldMap::IsTypeNear_Top( const CPointMap & pt, const IT_TYPE iType, const int iDistance ) // static
 {
 	ADDTOCALLSTACK("CWorldMap::IsTypeNear_Top");
 	if ( !pt.IsValidPoint() )

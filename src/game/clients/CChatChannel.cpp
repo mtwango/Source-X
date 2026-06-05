@@ -6,7 +6,7 @@
 #include "CClient.h"
 
 
-CChatChannel::CChatChannel(lpctstr pszName, lpctstr pszPassword, bool fStatic)
+CChatChannel::CChatChannel(const lpctstr pszName, const lpctstr pszPassword, const bool fStatic)
 {
     m_sName = pszName;
     m_sPassword = pszPassword;
@@ -30,7 +30,7 @@ lpctstr CChatChannel::GetPassword() const
     return m_sPassword;
 }
 
-void CChatChannel::SetPassword( lpctstr pszPassword)
+void CChatChannel::SetPassword(const lpctstr pszPassword)
 {
     m_sPassword = pszPassword;
 }
@@ -40,7 +40,7 @@ bool CChatChannel::IsPassworded() const
     return !m_sPassword.IsEmpty();
 }
 
-void CChatChannel::WhoIs(lpctstr pszBy, lpctstr pszMember)
+void CChatChannel::WhoIs(const lpctstr pszBy, const lpctstr pszMember)
 {
     ADDTOCALLSTACK("CChatChannel::WhoIs");
     CChatChanMember * pBy = FindMember(pszBy);
@@ -64,7 +64,7 @@ void CChatChannel::WhoIs(lpctstr pszBy, lpctstr pszMember)
     }
 }
 
-void CChatChannel::Emote(lpctstr pszBy, lpctstr pszMsg, CLanguageID lang )
+void CChatChannel::Emote(const lpctstr pszBy, const lpctstr pszMsg, const CLanguageID lang )
 {
     ADDTOCALLSTACK("CChatChannel::Emote");
     if (HasVoice(pszBy))
@@ -73,7 +73,7 @@ void CChatChannel::Emote(lpctstr pszBy, lpctstr pszMsg, CLanguageID lang )
         FindMember(pszBy)->SendChatMsg(CHATMSG_RevokedSpeaking);
 }
 
-void CChatChannel::ToggleVoiceDefault(lpctstr  pszBy)
+void CChatChannel::ToggleVoiceDefault(const lpctstr pszBy)
 {
     ADDTOCALLSTACK("CChatChannel::ToggleVoiceDefault");
     if (!IsModerator(pszBy))
@@ -88,21 +88,21 @@ void CChatChannel::ToggleVoiceDefault(lpctstr  pszBy)
     SetVoiceDefault(!GetVoiceDefault());
 }
 
-void CChatChannel::DisableVoiceDefault(lpctstr  pszBy)
+void CChatChannel::DisableVoiceDefault(const lpctstr pszBy)
 {
     ADDTOCALLSTACK("CChatChannel::DisableVoiceDefault");
     if (GetVoiceDefault())
         ToggleVoiceDefault(pszBy);
 }
 
-void CChatChannel::EnableVoiceDefault(lpctstr  pszBy)
+void CChatChannel::EnableVoiceDefault(const lpctstr pszBy)
 {
     ADDTOCALLSTACK("CChatChannel::EnableVoiceDefault");
     if (!GetVoiceDefault())
         ToggleVoiceDefault(pszBy);
 }
 
-void CChatChannel::SendPrivateMessage(CChatChanMember * pFrom, lpctstr pszTo, lpctstr pszMsg)
+void CChatChannel::SendPrivateMessage(CChatChanMember * pFrom, const lpctstr pszTo, const lpctstr pszMsg)
 {
     ADDTOCALLSTACK("CChatChannel::SendPrivateMessage");
     CChatChanMember * pTo = FindMember(pszTo);
@@ -138,7 +138,7 @@ void CChatChannel::SendPrivateMessage(CChatChanMember * pFrom, lpctstr pszTo, lp
         pTo->SendChatMsg(CHATMSG_PlayerPrivate, sName, pszMsg);
 }
 
-void CChatChannel::RenameChannel(CChatChanMember* pBy, lpctstr pszName)
+void CChatChannel::RenameChannel(CChatChanMember* pBy, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::RenameChannel");
 
@@ -161,7 +161,7 @@ void CChatChannel::RenameChannel(CChatChanMember* pBy, lpctstr pszName)
     g_Serv.m_Chats.BroadcastAddChannel(this);
 }
 
-void CChatChannel::SendMember(CChatChanMember* pMember, CChatChanMember* pToMember)
+void CChatChannel::SendMember(const CChatChanMember * pMember, CChatChanMember* pToMember)
 {
     ADDTOCALLSTACK("CChatChannel::SendMember");
     if (!pMember)
@@ -230,7 +230,7 @@ void CChatChannel::RemoveMember(CChatChanMember * pMember)
     pMember->SetChannel(nullptr);
 }
 
-CChatChanMember* CChatChannel::FindMember(lpctstr pszName) const
+CChatChanMember* CChatChannel::FindMember(const lpctstr pszName) const
 {
     ADDTOCALLSTACK("CChatChannel::FindMember");
     size_t i = FindMemberIndex( pszName );
@@ -240,7 +240,7 @@ CChatChanMember* CChatChannel::FindMember(lpctstr pszName) const
     return m_Members[i].get();
 }
 
-bool CChatChannel::RemoveMemberByName(lpctstr pszName)
+bool CChatChannel::RemoveMemberByName(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::RemoveMemberByName");
     CChatChanMember* pMember = FindMember(pszName);
@@ -251,7 +251,7 @@ bool CChatChannel::RemoveMemberByName(lpctstr pszName)
     return true;
 }
 
-void CChatChannel::SetName(lpctstr pszName)
+void CChatChannel::SetName(const lpctstr pszName)
 {
     m_sName = pszName;
 }
@@ -279,7 +279,7 @@ bool CChatChannel::HasVoice(lpctstr pszMember) const
     return true;
 }
 
-void CChatChannel::SetModerator(lpctstr pszMember, bool fFlag)
+void CChatChannel::SetModerator(lpctstr pszMember, const bool fFlag)
 {
     ADDTOCALLSTACK("CChatChannel::SetModerator");
     // See if they are already a moderator
@@ -351,7 +351,7 @@ void CChatChannel::AddMember(CChatChanMember * pMember)
     }
 }
 
-void CChatChannel::SetVoice(lpctstr pszName, bool fFlag)
+void CChatChannel::SetVoice(lpctstr pszName, const bool fFlag)
 {
     ADDTOCALLSTACK("CChatChannel::SetVoice");
     // See if they have no voice already
@@ -370,7 +370,7 @@ void CChatChannel::SetVoice(lpctstr pszName, bool fFlag)
     }
 }
 
-void CChatChannel::MemberTalk(CChatChanMember * pByMember, lpctstr pszText, CLanguageID lang )
+void CChatChannel::MemberTalk(CChatChanMember * pByMember, const lpctstr pszText, const CLanguageID lang )
 {
     ADDTOCALLSTACK("CChatChannel::MemberTalk");
     // Do I have a voice?
@@ -382,7 +382,7 @@ void CChatChannel::MemberTalk(CChatChanMember * pByMember, lpctstr pszText, CLan
     Broadcast(CHATMSG_PlayerTalk, pByMember->GetChatName(), pszText, lang );
 }
 
-void CChatChannel::ChangePassword(CChatChanMember * pByMember, lpctstr pszPassword)
+void CChatChannel::ChangePassword(CChatChanMember * pByMember, const lpctstr pszPassword)
 {
     ADDTOCALLSTACK("CChatChannel::ChangePassword");
     if (!IsModerator(pByMember->GetChatName()))
@@ -397,7 +397,7 @@ void CChatChannel::ChangePassword(CChatChanMember * pByMember, lpctstr pszPasswo
     }
 }
 
-void CChatChannel::Broadcast(CHATMSG_TYPE iType, lpctstr pszName, lpctstr pszText, CLanguageID lang, bool fOverride )
+void CChatChannel::Broadcast(const CHATMSG_TYPE iType, const lpctstr pszName, const lpctstr pszText, const CLanguageID lang, const bool fOverride )
 {
     ADDTOCALLSTACK("CChatChannel::Broadcast");
     CSString sName;
@@ -429,7 +429,7 @@ void CChatChannel::Broadcast(CHATMSG_TYPE iType, lpctstr pszName, lpctstr pszTex
     }
 }
 
-void CChatChannel::GrantVoice(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::GrantVoice(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::GrantVoice");
     if (!IsModerator(pByMember->GetChatName()))
@@ -451,7 +451,7 @@ void CChatChannel::GrantVoice(CChatChanMember * pByMember, lpctstr pszName)
     Broadcast(CHATMSG_PlayerNowSpeaking, pszName, "", "");
 }
 
-void CChatChannel::RevokeVoice(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::RevokeVoice(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::RevokeVoice");
     if (!IsModerator(pByMember->GetChatName()))
@@ -473,7 +473,7 @@ void CChatChannel::RevokeVoice(CChatChanMember * pByMember, lpctstr pszName)
     Broadcast(CHATMSG_PlayerNoSpeaking, pszName, "", "");
 }
 
-void CChatChannel::ToggleVoice(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::ToggleVoice(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::ToggleVoice");
     if (!HasVoice(pszName)) // (This also returns true if this person is not in the channel)
@@ -482,7 +482,7 @@ void CChatChannel::ToggleVoice(CChatChanMember * pByMember, lpctstr pszName)
         RevokeVoice(pByMember, pszName); // this checks and reports on membership
 }
 
-size_t CChatChannel::FindMemberIndex(lpctstr pszName) const
+size_t CChatChannel::FindMemberIndex(const lpctstr pszName) const
 {
     ADDTOCALLSTACK("CChatChannel::FindMemberIndex");
     for (size_t i = 0; i < m_Members.size(); ++i)
@@ -495,7 +495,7 @@ size_t CChatChannel::FindMemberIndex(lpctstr pszName) const
     return sl::scont_bad_index();
 }
 
-void CChatChannel::GrantModerator(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::GrantModerator(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::GrantModerator");
     if (!IsModerator(pByMember->GetChatName()))
@@ -519,7 +519,7 @@ void CChatChannel::GrantModerator(CChatChanMember * pByMember, lpctstr pszName)
     pMember->SendChatMsg(CHATMSG_YouAreAModerator, pByMember->GetChatName());
 }
 
-void CChatChannel::RevokeModerator(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::RevokeModerator(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::RevokeModerator");
     if (!IsModerator(pByMember->GetChatName()))
@@ -543,7 +543,7 @@ void CChatChannel::RevokeModerator(CChatChanMember * pByMember, lpctstr pszName)
     pMember->SendChatMsg(CHATMSG_RemovedListModerators, pByMember->GetChatName());
 }
 
-void CChatChannel::ToggleModerator(CChatChanMember * pByMember, lpctstr pszName)
+void CChatChannel::ToggleModerator(CChatChanMember * pByMember, const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::ToggleModerator");
     if (!IsModerator(pszName))
@@ -557,7 +557,7 @@ bool CChatChannel::GetVoiceDefault()  const
     return m_fVoiceDefault;
 }
 
-void CChatChannel::SetVoiceDefault(bool fVoiceDefault)
+void CChatChannel::SetVoiceDefault(const bool fVoiceDefault)
 {
     m_fVoiceDefault = fVoiceDefault;
 }
@@ -576,7 +576,7 @@ void CChatChannel::FillMembersList(CChatChanMember* pMember)
     }
 }
 
-void CChatChannel::PrivateMessage(CChatChanMember* pFrom, lpctstr pszTo, lpctstr pszMsg, CLanguageID lang)
+void CChatChannel::PrivateMessage(CChatChanMember* pFrom, const lpctstr pszTo, const lpctstr pszMsg, const CLanguageID lang)
 {
     ADDTOCALLSTACK("CChatChannel::PrivateMessage");
     CChatChanMember* pTo = FindMember(pszTo);
@@ -665,21 +665,21 @@ void CChatChannel::RemoveVoice(CChatChanMember* pByMember, lpctstr pszName)
     Broadcast(CHATMSG_PlayerNoSpeaking, pszName);
 }
 
-void CChatChannel::EnableDefaultVoice(lpctstr pszName)
+void CChatChannel::EnableDefaultVoice(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::EnableDefaultVoice");
     if (!GetVoiceDefault())
         ToggleDefaultVoice(pszName);
 }
 
-void CChatChannel::DisableDefaultVoice(lpctstr pszName)
+void CChatChannel::DisableDefaultVoice(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::DisableDefaultVoice");
     if (GetVoiceDefault())
         ToggleDefaultVoice(pszName);
 }
 
-void CChatChannel::ToggleDefaultVoice(lpctstr pszName)
+void CChatChannel::ToggleDefaultVoice(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::ToggleDefaultVoice");
     if (!IsModerator(pszName))

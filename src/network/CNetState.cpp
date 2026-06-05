@@ -17,7 +17,7 @@
 #define NETWORK_DISCONNECTPRI	PacketSend::PRI_HIGHEST			// packet priorty to continue sending before closing sockets
 
 
-CNetState::CNetState(int id) :
+CNetState::CNetState(const int id) :
     m_outgoing{}, m_incoming{}
 {
     m_id = id;
@@ -178,7 +178,7 @@ void CNetState::clearQueues()
     }
 }
 
-void CNetState::init(SOCKET socket, CSocketAddress addr)
+void CNetState::init(const SOCKET socket, const CSocketAddress addr)
 {
     ADDTOCALLSTACK("CNetState::init");
 
@@ -250,12 +250,12 @@ void CNetState::markWriteClosed() volatile
     m_isWriteClosed = true;
 }
 
-void CNetState::markFlush(bool needsFlush) volatile noexcept
+void CNetState::markFlush(const bool needsFlush) volatile noexcept
 {
     m_needsFlush = needsFlush;
 }
 
-void CNetState::setAsyncMode(bool isAsync) volatile noexcept
+void CNetState::setAsyncMode(const bool isAsync) volatile noexcept
 {
     m_useAsync = isAsync;
 }
@@ -270,7 +270,7 @@ bool CNetState::isSendingAsync() const volatile noexcept
     return m_isSendingAsync;
 }
 
-void CNetState::setSendingAsync(bool isSending) volatile noexcept
+void CNetState::setSendingAsync(const bool isSending) volatile noexcept
 {
     m_isSendingAsync = isSending;
 }
@@ -353,7 +353,7 @@ bool CNetState::canReceive(const PacketSend * packet) const
     return true;
 }
 
-void CNetState::beginTransaction(int priority)
+void CNetState::beginTransaction(const int priority)
 {
     ADDTOCALLSTACK("CNetState::beginTransaction");
     if (m_outgoing.pendingTransaction != nullptr)
@@ -382,32 +382,32 @@ void CNetState::endTransaction()
 }
 
 
-bool CNetState::isClientCryptVersionNumber(dword version) const
+bool CNetState::isClientCryptVersionNumber(const dword version) const
 {
     return m_clientVersionNumber && CUOClientVersion(m_clientVersionNumber) >= CUOClientVersion(version);
 }
 
-bool CNetState::isClientReportedVersionNumber(dword version) const
+bool CNetState::isClientReportedVersionNumber(const dword version) const
 {
     return m_reportedVersionNumber && CUOClientVersion(m_reportedVersionNumber) >= CUOClientVersion(version);
 }
 
-bool CNetState::isClientVersionNumber(dword version) const
+bool CNetState::isClientVersionNumber(const dword version) const
 {
     return isClientCryptVersionNumber(version) || isClientReportedVersionNumber(version);
 }
 
-bool CNetState::isCryptLessVersionNumber(dword version) const
+bool CNetState::isCryptLessVersionNumber(const dword version) const
 {
     return m_clientVersionNumber && CUOClientVersion(m_clientVersionNumber) < CUOClientVersion(version);
 }
 
-bool CNetState::isClientReportedLessVersionNumber(dword version) const
+bool CNetState::isClientReportedLessVersionNumber(const dword version) const
 {
     return m_reportedVersionNumber && CUOClientVersion(m_reportedVersionNumber) < CUOClientVersion(version);
 }
 
-bool CNetState::isClientLessVersionNumber(dword version) const
+bool CNetState::isClientLessVersionNumber(const dword version) const
 {
     return isCryptLessVersionNumber(version) || isClientReportedLessVersionNumber(version);
 }

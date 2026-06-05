@@ -146,7 +146,7 @@ public:
      * @param   ptcKey  The key.
      * @return  The definition pointer.
      */
-    CVarDefCont * GetKey( lpctstr ptcKey ) const
+    CVarDefCont * GetKey(const lpctstr ptcKey ) const
     {
         return m_BaseDefs.GetKey(ptcKey);
     }
@@ -157,7 +157,7 @@ public:
      * @param   fZero   Return "0" if empty/undefined.
      * @return  The definition string.
      */
-	lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
+	lpctstr GetDefStr(const lpctstr ptcKey, const bool fZero = false ) const
 	{
 		return m_BaseDefs.GetKeyStr( ptcKey, fZero );
 	}
@@ -167,7 +167,7 @@ public:
      * @param   ptcKey  The key.
      * @return  The definition number.
      */
-	int64 GetDefNum( lpctstr ptcKey ) const
+	int64 GetDefNum(const lpctstr ptcKey ) const
 	{
 		return m_BaseDefs.GetKeyNum( ptcKey );
 	}
@@ -179,7 +179,7 @@ public:
      * @param   fDeleteZero true to zero.
      * @param   fWarnOverwrite Log warning to console.
      */
-	void SetDefNum(lpctstr ptcKey, int64 iVal, bool fDeleteZero = true, bool fWarnOverwrite = true)
+	void SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fDeleteZero = true, const bool fWarnOverwrite = true)
 	{
 		m_BaseDefs.SetNum(ptcKey, iVal, fDeleteZero, fWarnOverwrite);
 	}
@@ -192,7 +192,7 @@ public:
      * @param   fDeleteZero true to zero.
      * @param   fWarnOverwrite Log warning to console.
      */
-	void SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted = false, bool fDeleteZero = true, bool fWarnOverwrite = true)
+	void SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted = false, const bool fDeleteZero = true, const bool fWarnOverwrite = true)
 	{
 		m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fDeleteZero, fWarnOverwrite);
 	}
@@ -201,7 +201,7 @@ public:
      * @brief   Deletes the definition described by ptcKey.
      * @param   ptcKey  The key.
      */
-	void DeleteDef(lpctstr ptcKey)
+	void DeleteDef(const lpctstr ptcKey)
 	{
 		m_BaseDefs.DeleteKey(ptcKey);
 	}

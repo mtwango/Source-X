@@ -165,7 +165,7 @@ bool CItem::Plant_OnTick()
     return true;
 }
 
-bool CItem::Plant_SetID(ITEMID_TYPE id)
+bool CItem::Plant_SetID(const ITEMID_TYPE id)
 {
     const bool iRet = SetID(id);
     OnTrigger(ITRIG_Create, CScriptParserBufs::GetCScriptTriggerArgsPtr(), &g_Serv);

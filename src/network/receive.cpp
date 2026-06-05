@@ -31,7 +31,7 @@
  *
  *
  ***************************************************************************/
-PacketUnknown::PacketUnknown(uint size) : Packet(size)
+PacketUnknown::PacketUnknown(const uint size) : Packet(size)
 {
 }
 
@@ -51,7 +51,7 @@ bool PacketUnknown::onReceive(CNetState* net)
  *
  *
  ***************************************************************************/
-PacketCreate::PacketCreate(uint size) : Packet(size)
+PacketCreate::PacketCreate(const uint size) : Packet(size)
 {
 }
 
@@ -154,9 +154,9 @@ bool PacketCreate::onReceive(CNetState* net)
 		hue, hairid, hairhue, beardid, beardhue, shirthue, pantshue, ITEMID_NOTHING, startloc, flags);
 }
 
-bool PacketCreate::doCreate(const CNetState * net, lpctstr charname, bool fFemale, RACE_TYPE rtRace, ushort wStr, ushort wDex, ushort wInt, PROFESSION_TYPE prProf,
-	SKILL_TYPE skSkill1, ushort uiSkillVal1, SKILL_TYPE skSkill2, ushort uiSkillVal2, SKILL_TYPE skSkill3, ushort uiSkillVal3, SKILL_TYPE skSkill4, ushort uiSkillVal4,
-	HUE_TYPE wSkinHue, ITEMID_TYPE idHair, HUE_TYPE wHairHue, ITEMID_TYPE idBeard, HUE_TYPE wBeardHue, HUE_TYPE wShirtHue, HUE_TYPE wPantsHue, ITEMID_TYPE idFace, int iStartLoc, uint uiFlags)
+bool PacketCreate::doCreate(const CNetState * net, const lpctstr charname, const bool fFemale, RACE_TYPE rtRace, const ushort wStr, const ushort wDex, const ushort wInt, PROFESSION_TYPE prProf, const SKILL_TYPE skSkill1, const ushort uiSkillVal1, const SKILL_TYPE skSkill2, const ushort uiSkillVal2, const SKILL_TYPE skSkill3, const ushort uiSkillVal3,
+    const SKILL_TYPE skSkill4, const ushort uiSkillVal4, const HUE_TYPE wSkinHue, const ITEMID_TYPE idHair, const HUE_TYPE wHairHue, const ITEMID_TYPE idBeard, const HUE_TYPE wBeardHue,
+    const HUE_TYPE wShirtHue, const HUE_TYPE wPantsHue, const ITEMID_TYPE idFace, const int iStartLoc, const uint uiFlags)
 {
 	ADDTOCALLSTACK("PacketCreate::doCreate");
 
@@ -250,7 +250,7 @@ block_creation:
  *
  *
  ***************************************************************************/
-PacketMovementReq::PacketMovementReq(uint size) : Packet(size)
+PacketMovementReq::PacketMovementReq(const uint size) : Packet(size)
 {
 }
 

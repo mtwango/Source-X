@@ -54,7 +54,7 @@ public:
 
     [[nodiscard]]
     static
-    constexpr int CalcSectorIndex(int maxX, int x, int y) noexcept {
+    constexpr int CalcSectorIndex(const int maxX, const int x, const int y) noexcept {
         // Row-major order: index = row * numColumns + column
         return (y * maxX) + x;
     }

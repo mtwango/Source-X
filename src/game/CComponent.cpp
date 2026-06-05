@@ -1,7 +1,7 @@
 
 #include "CComponent.h"
 
-CComponent::CComponent(COMP_TYPE type) noexcept :
+CComponent::CComponent(const COMP_TYPE type) noexcept :
     _iType(type)
 {
 }

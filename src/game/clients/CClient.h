@@ -62,7 +62,7 @@ public:
 		const word m_ID;
 		CSString const m_sText;
 
-        TResponseString( word id, lpctstr pszText )
+        TResponseString(const word id, const lpctstr pszText )
             : m_ID( id ), m_sText( pszText )
 		{
 		}
@@ -285,7 +285,7 @@ private:
 
 	bool OnTarg_UnExtract( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Stone_Recruit(const CChar * pChar, bool bFull = false );
-	bool OnTarg_Char_Add( CObjBase * pObj, const CPointMap & pt );
+	bool OnTarg_Char_Add(const CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Item_Add(const CObjBase * pObj, CPointMap & pt );
 	bool OnTarg_Item_Link( CObjBase * pObj );
 	bool OnTarg_Tile( CObjBase * pObj, const CPointMap & pt );
@@ -295,7 +295,7 @@ private:
 	bool OnTarg_Use_Item( CObjBase * pObj, CPointMap & pt, ITEMID_TYPE id );
 	bool OnTarg_Party_Add( CChar * pChar );
 	bool OnTarg_GlobalChat_Add(const CChar * pChar);
-	CItem* OnTarg_Use_Multi( const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed );
+	CItem* OnTarg_Use_Multi( const CItemBase * pItemDef, CPointMap & pt, const CItem *pDeed );
 
 	int OnSkill_AnimalLore(const CUID &uid, int iTestLevel, bool fTest );
 	int OnSkill_Anatomy(const CUID &uid, int iTestLevel, bool fTest );
@@ -308,7 +308,7 @@ private:
 	bool OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Skill_Herd_Dest( CObjBase * pObj, const CPointMap & pt );
 	bool OnTarg_Skill_Poison(const CObjBase * pObj );
-	bool OnTarg_Skill_Provoke( CObjBase * pObj );
+	bool OnTarg_Skill_Provoke(const CObjBase * pObj );
 	bool OnTarg_Skill(const CObjBase * pObj );
 
 	bool OnTarg_Pet_Command( CObjBase * pObj, const CPointMap & pt );
@@ -448,7 +448,7 @@ public:
 	void addItem_InContainer( const CItem * pItem );
 	void addItem( CItem * pItem );
 
-    void addBuff(BUFF_ICONS IconId, dword ClilocOne, dword ClilocTwo, word durationSeconds = 0, lpctstr* pptcArgs = nullptr, uint uiArgCount = 0) const;
+    void addBuff(BUFF_ICONS IconId, dword ClilocOne, dword ClilocTwo, word durationSeconds = 0, const lpctstr * pptcArgs = nullptr, uint uiArgCount = 0) const;
 	void removeBuff(BUFF_ICONS IconId) const;
 	void resendBuffs() const;
 
@@ -481,7 +481,7 @@ public:
 	void addReSync();
 	void addMap() const;
 	void addMapDiff() const;
-    void addMapWaypoint(CObjBase *pObj, MAPWAYPOINT_TYPE type) const;
+    void addMapWaypoint(const CObjBase *pObj, MAPWAYPOINT_TYPE type) const;
 	void addChangeServer() const;
 	void addPlayerUpdate() const;
 
@@ -521,9 +521,9 @@ public:
 	bool addBookOpen( CItem * pBook ) const;
 	void addBookPage( const CItem * pBook, word wPage, word wCount ) const;
 	void addStatusWindow( CObjBase * pObj, bool fRequested = false ); // Opens the status window
-	void addHitsUpdate( CChar * pChar );
-	void addManaUpdate( CChar * pChar );
-	void addStamUpdate( CChar * pChar );
+	void addHitsUpdate(const CChar * pChar );
+	void addManaUpdate(const CChar * pChar );
+	void addStamUpdate(const CChar * pChar );
 	void addHealthBarUpdate( const CChar * pChar ) const;
 	void addBondedStatus( const CChar * pChar, bool fIsDead ) const;
 	void addSkillWindow(SKILL_TYPE skill, bool fFromInfo = false) const; // Opens the skills list
@@ -538,8 +538,9 @@ public:
 	void addGumpTextDisp( const CObjBase * pObj, GUMP_TYPE gump, lpctstr pszName, lpctstr pszText );
 	void addGumpInputVal( bool fcancel, INPVAL_STYLE style, dword dwmask, lpctstr ptext1, lpctstr ptext2, const CObjBase * pObj );
 
-	void addItemMenu( CLIMODE_TYPE mode, const CMenuItem * item, uint count, CObjBase * pObj = nullptr );
-	void addGumpDialog( CLIMODE_TYPE mode, std::vector<CSString> const* vsControls, std::vector<CSString> const* vsText, int x, int y, CObjBase * pObj = nullptr, dword dwRid = 0 );
+	void addItemMenu( CLIMODE_TYPE mode, const CMenuItem * item, uint count, const CObjBase * pObj = nullptr );
+	void addGumpDialog( CLIMODE_TYPE mode, std::vector<CSString> const* vsControls, std::vector<CSString> const* vsText, int x, int y,
+        const CObjBase * pObj = nullptr, dword dwRid = 0 );
 
 	bool addGumpDialogProps( const CUID& uid );
 
@@ -870,27 +871,27 @@ public:
 
 	CItemMultiCustom * m_pHouseDesign; // The building this client is designing
 
-    lpctstr GetDefStr( lpctstr ptcKey, bool fZero = false ) const
+    lpctstr GetDefStr(const lpctstr ptcKey, const bool fZero = false ) const
 	{
 		return m_BaseDefs.GetKeyStr( ptcKey, fZero );
 	}
 
-	int64 GetDefNum( lpctstr ptcKey ) const
+	int64 GetDefNum(const lpctstr ptcKey ) const
 	{
 		return m_BaseDefs.GetKeyNum( ptcKey );
 	}
 
-    void SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero = true, bool fWarnOverwrite = false)
+    void SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fZero = true, const bool fWarnOverwrite = false)
 	{
         m_BaseDefs.SetNum(ptcKey, iVal, fZero, fWarnOverwrite);
 	}
 
-    void SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted = false, bool fZero = true, bool fWarnOverwrite = false)
+    void SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted = false, const bool fZero = true, const bool fWarnOverwrite = false)
 	{
         m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fZero, fWarnOverwrite);
 	}
 
-	void DeleteDef(lpctstr ptcKey)
+	void DeleteDef(const lpctstr ptcKey)
 	{
 		m_BaseDefs.DeleteKey(ptcKey);
 	}

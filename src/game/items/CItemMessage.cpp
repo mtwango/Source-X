@@ -4,7 +4,7 @@
 #include "CItemMessage.h"
 #include "CItemVendable.h"
 
-CItemMessage::CItemMessage( ITEMID_TYPE id, CItemBase * pItemDef ) :
+CItemMessage::CItemMessage(const ITEMID_TYPE id, CItemBase * pItemDef ) :
     CTimedObject(PROFILE_ITEMS),
     CItemVendable( id, pItemDef )
 // TODO: is there a reason it inherits from CItemVendable instead of CItem?
@@ -81,7 +81,7 @@ bool CItemMessage::r_LoadVal(CScript &s)
     return false;
 }
 
-bool CItemMessage::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren)
+bool CItemMessage::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CItemMessage::r_WriteVal");
@@ -191,7 +191,7 @@ word CItemMessage::GetPageCount() const
     return (word)sz;
 }
 
-lpctstr CItemMessage::GetPageText( word wPage ) const
+lpctstr CItemMessage::GetPageText(const word wPage ) const
 {
     if ( m_sBodyLines.IsValidIndex(wPage) == false )
         return nullptr;
@@ -200,14 +200,14 @@ lpctstr CItemMessage::GetPageText( word wPage ) const
     return m_sBodyLines[wPage]->GetBuffer();
 }
 
-void CItemMessage::SetPageText( word wPage, lpctstr pszText )
+void CItemMessage::SetPageText(const word wPage, const lpctstr pszText )
 {
     if ( pszText == nullptr )
         return;
     m_sBodyLines.assign_at_grow(wPage, new CSString(pszText));
 }
 
-void CItemMessage::AddPageText( lpctstr pszText )
+void CItemMessage::AddPageText(const lpctstr pszText )
 {
     m_sBodyLines.emplace_back(new CSString(pszText));
 }

@@ -54,11 +54,11 @@ public:
     lpctstr GetKey() const noexcept override {
         return m_sKey.GetBuffer();
     }
-    void SetKey(lpctstr ptcKey) override {
+    void SetKey(const lpctstr ptcKey) override {
         m_sKey = ptcKey;
     }
 
-    void SetValNum(int64 iVal) {
+    void SetValNum(const int64 iVal) {
         m_iVal = iVal;
     }
     int64 GetValNum() const override {
@@ -91,7 +91,7 @@ public:
     lpctstr GetKey() const noexcept override {
         return m_sKey.GetBuffer();
     }
-    void SetKey(lpctstr ptcKey) override {
+    void SetKey(const lpctstr ptcKey) override {
         m_sKey = ptcKey;
     }
 
@@ -185,12 +185,12 @@ public:
 
 /* Inline methods definitions */
 
-CVarDefContNum * CVarDefMap::GetKeyDefNum(lpctstr ptcKey) const
+CVarDefContNum * CVarDefMap::GetKeyDefNum(const lpctstr ptcKey) const
 {
     return dynamic_cast<CVarDefContNum*>(GetKey(ptcKey));
 }
 
-CVarDefContStr * CVarDefMap::GetKeyDefStr(lpctstr ptcKey) const
+CVarDefContStr * CVarDefMap::GetKeyDefStr(const lpctstr ptcKey) const
 {
     return dynamic_cast<CVarDefContStr*>(GetKey(ptcKey));
 }

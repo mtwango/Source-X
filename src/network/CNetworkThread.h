@@ -45,7 +45,7 @@ public:
     void queuePacket(PacketSend* packet, bool appendTransaction);
     void queuePacketTransaction(PacketTransaction* transaction);
 
-    void onAsyncSendComplete(CNetState* state, bool success)
+    void onAsyncSendComplete(CNetState* state, const bool success)
     {
         // notify that async operation completed
         m_output.onAsyncSendComplete(state, success);

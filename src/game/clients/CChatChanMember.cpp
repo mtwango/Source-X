@@ -32,7 +32,7 @@ bool CChatChanMember::IsChatActive() const noexcept
     return m_fChatActive;
 }
 
-void CChatChanMember::SetReceiving(bool fOnOff)
+void CChatChanMember::SetReceiving(const bool fOnOff)
 {
     if (m_fReceiving != fOnOff)
         ToggleReceiving();
@@ -62,7 +62,7 @@ void CChatChanMember::addChatWindow()
     }
 }
 
-size_t CChatChanMember::FindIgnoringIndex(lpctstr pszName) const
+size_t CChatChanMember::FindIgnoringIndex(const lpctstr pszName) const
 {
     ADDTOCALLSTACK("CChatChanMember::FindIgnoringIndex");
     for ( size_t i = 0; i < m_IgnoredMembers.size(); i++)
@@ -73,7 +73,7 @@ size_t CChatChanMember::FindIgnoringIndex(lpctstr pszName) const
     return sl::scont_bad_index();
 }
 
-void CChatChanMember::Ignore(lpctstr pszName)
+void CChatChanMember::Ignore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::Ignore");
     if (!IsIgnoring(pszName))
@@ -82,7 +82,7 @@ void CChatChanMember::Ignore(lpctstr pszName)
         SendChatMsg(CHATMSG_AlreadyIgnoringPlayer, pszName);
 }
 
-void CChatChanMember::DontIgnore(lpctstr pszName)
+void CChatChanMember::DontIgnore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::DontIgnore");
     if (IsIgnoring(pszName))
@@ -91,7 +91,7 @@ void CChatChanMember::DontIgnore(lpctstr pszName)
         SendChatMsg(CHATMSG_NotIgnoring, pszName);
 }
 
-void CChatChanMember::ToggleIgnore(lpctstr pszName)
+void CChatChanMember::ToggleIgnore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::ToggleIgnore");
     if (size_t i = FindIgnoringIndex(pszName); i != sl::scont_bad_index() )
@@ -126,7 +126,7 @@ void CChatChanMember::ClearIgnoreList()
     SendChatMsg(CHATMSG_NoLongerIgnoringAnyone);
 }
 
-void CChatChanMember::RenameChannel(lpctstr pszName)
+void CChatChanMember::RenameChannel(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::RenameChannel");
     if (CChatChannel *pChannel = GetChannel(); !pChannel)
@@ -137,7 +137,7 @@ void CChatChanMember::RenameChannel(lpctstr pszName)
         pChannel->RenameChannel(this, pszName);
 }
 
-void CChatChanMember::SendChatMsg(CHATMSG_TYPE iType, lpctstr pszName1, lpctstr pszName2, CLanguageID lang )
+void CChatChanMember::SendChatMsg(const CHATMSG_TYPE iType, const lpctstr pszName1, const lpctstr pszName2, const CLanguageID lang )
 {
     ADDTOCALLSTACK("CChatChanMember::SendChatMsg");
     GetClientActive()->addChatSystemMessage(iType, pszName1, pszName2, lang );
@@ -198,7 +198,7 @@ lpctstr CChatChanMember::GetChatName() const
     return "";
 }
 
-bool CChatChanMember::IsIgnoring(lpctstr pszName) const
+bool CChatChanMember::IsIgnoring(const lpctstr pszName) const
 {
     ADDTOCALLSTACK("CChatChanMember::IsIgnoring");
     return( FindIgnoringIndex(pszName) != sl::scont_bad_index() );
@@ -231,7 +231,7 @@ void CChatChanMember::ShowCharacterName()
     SendChatMsg(CHATMSG_ShowingName);
 }
 
-void CChatChanMember::AddIgnore(lpctstr pszName)
+void CChatChanMember::AddIgnore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatMember::AddIgnore");
     if (IsIgnoring(pszName))
@@ -240,7 +240,7 @@ void CChatChanMember::AddIgnore(lpctstr pszName)
         ToggleIgnore(pszName);
 }
 
-void CChatChanMember::RemoveIgnore(lpctstr pszName)
+void CChatChanMember::RemoveIgnore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatMember::RemoveIgnore");
     if (!IsIgnoring(pszName))

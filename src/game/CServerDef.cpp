@@ -58,7 +58,7 @@ CServerDef::CServerDef( lpctstr pszName, CSocketAddressIP dwIP ) :
 	m_eAccApp = ACCAPP_Unspecified;
 }
 
-size_t CServerDef::StatGet(SERV_STAT_TYPE i) const
+size_t CServerDef::StatGet(const SERV_STAT_TYPE i) const
 {
 	ADDTOCALLSTACK("CServerDef::StatGet");
 	ASSERT( i >= 0 && i < SERV_STAT_QTY );
@@ -160,7 +160,7 @@ size_t CServerDef::StatGet(SERV_STAT_TYPE i) const
 	return 0;
 }
 
-void CServerDef::SetName( lpctstr pszName )
+void CServerDef::SetName(const lpctstr pszName )
 {
 	ADDTOCALLSTACK("CServerDef::SetName");
 	if ( ! pszName )
@@ -181,19 +181,19 @@ void CServerDef::SetName( lpctstr pszName )
 	m_sName = szName;
 }
 
-void CServerDef::StatInc(SERV_STAT_TYPE i)
+void CServerDef::StatInc(const SERV_STAT_TYPE i)
 {
     ASSERT(i >= 0 && i < SERV_STAT_QTY);
     ++m_stStat[i];
 }
 
-void CServerDef::StatDec(SERV_STAT_TYPE i)
+void CServerDef::StatDec(const SERV_STAT_TYPE i)
 {
     ASSERT(i >= 0 && i < SERV_STAT_QTY);
     --m_stStat[i];
 }
 
-void CServerDef::SetStat(SERV_STAT_TYPE i, size_t uiVal)
+void CServerDef::SetStat(const SERV_STAT_TYPE i, const size_t uiVal)
 {
     ASSERT(i >= 0 && i < SERV_STAT_QTY);
     m_stStat[i] = uiVal;
@@ -411,7 +411,7 @@ bool CServerDef::r_LoadVal( CScript & s )
 	return false;
 }
 
-bool CServerDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CServerDef::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	ADDTOCALLSTACK("CServerDef::r_WriteVal");
 	EXC_TRY("WriteVal");

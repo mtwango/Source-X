@@ -22,7 +22,7 @@ namespace sl {
 // - Runs getaddrinfo(AF_INET, AI_CANONNAME) in a background thread, since that api doesn't have a timeout feature/parameter.
 // - Waits up to `timeout` and returns true only if at least one IPv4 address is obtained
 // On Windows, ensure WSAStartup() succeeded before calling.
-auto hostname_resolve_with_timeout_v4(std::string_view name, int timeout_milliseconds)
+auto hostname_resolve_with_timeout_v4(std::string_view name, const int timeout_milliseconds)
     -> std::pair<bool, ResolveResultV4>
 {
     const auto timeout = std::chrono::milliseconds(timeout_milliseconds);

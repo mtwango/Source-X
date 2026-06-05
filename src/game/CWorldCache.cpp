@@ -12,7 +12,7 @@ CWorldCache::CWorldCache()
 		_mapBlocks[i].reset();
 }
 
-static int _GetMapBlocksCount(int iMap) noexcept
+static int _GetMapBlocksCount(const int iMap) noexcept
 {
 	const int iXBlocks = g_MapList.GetMapSizeX(iMap) / UO_BLOCK_SIZE;
 	const int iYBlocks = g_MapList.GetMapSizeY(iMap) / UO_BLOCK_SIZE;
@@ -31,7 +31,7 @@ void CWorldCache::Init()
 	}
 }
 
-void CWorldCache::CheckMapBlockCache(int64 iCurTime, int64 iCacheTime)
+void CWorldCache::CheckMapBlockCache(const int64 iCurTime, const int64 iCacheTime)
 {
 	ADDTOCALLSTACK("CWorldCache::CheckMapBlockCache");
 	// Clean out the sectors map cache if it has not been used recently.

@@ -7,7 +7,7 @@ static constexpr auto _ptcWarnInvalidResource = "Expected a valid ResourceID, fo
 
 // CResourceIDBase
 
-CResourceIDBase::CResourceIDBase(RES_TYPE restype) // explicit
+CResourceIDBase::CResourceIDBase(const RES_TYPE restype) // explicit
 {
     if (restype >= RES_QTY)
     {
@@ -18,7 +18,7 @@ CResourceIDBase::CResourceIDBase(RES_TYPE restype) // explicit
     m_dwInternalVal = UID_F_RESOURCE | (restype << RES_TYPE_SHIFT);
 }
 
-CResourceIDBase::CResourceIDBase(RES_TYPE restype, int iIndex) // explicit
+CResourceIDBase::CResourceIDBase(const RES_TYPE restype, const int iIndex) // explicit
 {
     if (restype >= RES_QTY)
     {
@@ -28,7 +28,7 @@ CResourceIDBase::CResourceIDBase(RES_TYPE restype, int iIndex) // explicit
     m_dwInternalVal = UID_F_RESOURCE | (restype << RES_TYPE_SHIFT) | (iIndex & RES_INDEX_MASK);
 }
 
-CResourceIDBase::CResourceIDBase(dword dwPrivateID) // explicit
+CResourceIDBase::CResourceIDBase(const dword dwPrivateID) // explicit
 {
     if (!IsValidUID(dwPrivateID))
     {
@@ -78,7 +78,7 @@ bool CResourceIDBase::IsUIDItem() const
     return false;
 }
 
-CItem* CResourceIDBase::ItemFindFromResource(bool fInvalidateBeingDeleted) const   // replacement for CUID::ItemFind()
+CItem* CResourceIDBase::ItemFindFromResource(const bool fInvalidateBeingDeleted) const   // replacement for CUID::ItemFind()
 {
     // Used by multis: when they are realized, a new CRegionWorld is created from a CResourceID with an internal value = to the m_dwInternalVal (private UID) of the multi, plus a | UID_F_RESOURCE.
     //  Remove the reserved UID_* flags (so also UID_F_RESOURCE), and find the item (in our case actually the multi) with that uid.

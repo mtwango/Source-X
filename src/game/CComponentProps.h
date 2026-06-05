@@ -45,7 +45,7 @@ public:
     using BaseContStrPair_t = BaseContStr_t::value_type;
 
 
-    CComponentProps(COMPPROPS_TYPE type) noexcept {
+    CComponentProps(const COMPPROPS_TYPE type) noexcept {
         _iType = type;
     }
     virtual ~CComponentProps() noexcept;

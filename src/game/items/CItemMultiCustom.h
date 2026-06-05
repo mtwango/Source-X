@@ -36,7 +36,7 @@ private:
     {
     public:
         CSphereMultiCustom() = default;
-        void LoadFrom(CDesignDetails * pDesign);
+        void LoadFrom(const CDesignDetails * pDesign);
 
         CSphereMultiCustom(const CSphereMultiCustom& copy) = delete;
         CSphereMultiCustom& operator=(const CSphereMultiCustom& other) = delete;
@@ -109,15 +109,15 @@ public:
 
     const CSphereMultiCustom * GetMultiItemDefs();
     const CRect GetDesignArea();
-    size_t GetFixtureCount(CDesignDetails * pDesign = nullptr);
-    size_t GetComponentsAt(int16 dx, int16 dy, int8 dz, CMultiComponent ** pComponents, CDesignDetails * pDesign = nullptr);
+    size_t GetFixtureCount(const CDesignDetails * pDesign = nullptr);
+    size_t GetComponentsAt(int16 dx, int16 dy, int8 dz, CMultiComponent ** pComponents, const CDesignDetails * pDesign = nullptr);
     int GetRevision(const CClient * pClientSrc = nullptr) const;
     uchar GetLevelCount();
 
     static uint8 GetPlane(int8 z);
     static uint8 GetPlane(const CMultiComponent * pComponent);
     static int8 GetPlaneZ(uint8 plane);
-    static bool IsValidItem(ITEMID_TYPE id, CClient * pClientSrc, bool fMulti);
+    static bool IsValidItem(ITEMID_TYPE id, const CClient * pClientSrc, bool fMulti);
 
     CDesignDetails* GetDesignMain()
     {

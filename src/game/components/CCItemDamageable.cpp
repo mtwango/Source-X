@@ -29,9 +29,9 @@ bool CCItemDamageable::CanSubscribe(const CItem* pItem) noexcept // static
     return pItem->Can(CAN_I_DAMAGEABLE);
 }
 
-void CCItemDamageable::SetCurHits(word iCurHits)
+void CCItemDamageable::SetCurHits(const word iCurHits)
 {
-    if (!g_Serv.IsLoadingGeneric() && (_iCurHits != iCurHits))
+    if (!g_Serv.IsLoadingGeneric() && _iCurHits != iCurHits)
     {
         _fNeedUpdate = true;
     }
@@ -39,9 +39,9 @@ void CCItemDamageable::SetCurHits(word iCurHits)
     OnTickStatsUpdate();
 }
 
-void CCItemDamageable::SetMaxHits(word iMaxHits)
+void CCItemDamageable::SetMaxHits(const word iMaxHits)
 {
-    if (!g_Serv.IsLoadingGeneric() && (_iMaxHits != iMaxHits))
+    if (!g_Serv.IsLoadingGeneric() && _iMaxHits != iMaxHits)
     {
         _fNeedUpdate = true;
     }
@@ -97,7 +97,7 @@ void CCItemDamageable::OnTickStatsUpdate()
     _fNeedUpdate = false;
 }
 
-void CCItemDamageable::Delete(bool fForced)
+void CCItemDamageable::Delete(const bool fForced)
 {
     UnreferencedParameter(fForced);
 }
@@ -142,7 +142,7 @@ bool CCItemDamageable::r_LoadVal(CScript & s)
     return false;
 }
 
-bool CCItemDamageable::r_WriteVal(lpctstr ptcKey, CSString & s, CTextConsole * pSrc)
+bool CCItemDamageable::r_WriteVal(const lpctstr ptcKey, CSString & s, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CCItemDamageable::r_WriteVal");
     UnreferencedParameter(pSrc);

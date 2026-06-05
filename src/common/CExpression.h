@@ -240,7 +240,7 @@ public:
     int64 GetVal(lptstr& refArgs) {
         return GetVal(const_cast<lpctstr&>(refArgs));
 	}
-    int GetRangeVals(lptstr &refStrExpr, int64 * piVals, int iMaxQty, bool fNoWarn = false) {
+    int GetRangeVals(lptstr &refStrExpr, int64 * piVals, const int iMaxQty, const bool fNoWarn = false) {
         return GetRangeVals(const_cast<lpctstr &>(refStrExpr), piVals, iMaxQty, fNoWarn);
 	}
     int64 GetRangeNumber(lptstr &refStrArgs) {

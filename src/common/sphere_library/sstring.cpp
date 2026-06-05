@@ -57,8 +57,7 @@ template<class _IntType>
 bool cstr_to_num(
     const char * RESTRICT str,
     _IntType   * const    out,
-    uint        base = 0,
-    size_t      stop_at_len = 0,
+    uint        base = 0, const size_t stop_at_len = 0,
     bool const  ignore_trailing_extra_chars = false
     ) noexcept
 {
@@ -328,7 +327,7 @@ bool cstr_to_num(
 
 // Wrapper functions
 
-std::optional<char> Str_ToI8 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<char> Str_ToI8 (const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     char val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -336,7 +335,7 @@ std::optional<char> Str_ToI8 (const tchar * ptcStr, uint base, size_t uiStopAtLe
     return val;
 }
 
-std::optional<uchar> Str_ToU8 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<uchar> Str_ToU8 (const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     uchar val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -344,7 +343,7 @@ std::optional<uchar> Str_ToU8 (const tchar * ptcStr, uint base, size_t uiStopAtL
     return val;
 }
 
-std::optional<short> Str_ToI16 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<short> Str_ToI16 (const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     short val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -352,7 +351,7 @@ std::optional<short> Str_ToI16 (const tchar * ptcStr, uint base, size_t uiStopAt
     return val;
 }
 
-std::optional<ushort> Str_ToU16 (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<ushort> Str_ToU16 (const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     ushort val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -360,7 +359,7 @@ std::optional<ushort> Str_ToU16 (const tchar * ptcStr, uint base, size_t uiStopA
     return val;
 }
 
-std::optional<int> Str_ToI (const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<int> Str_ToI (const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     int val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -368,7 +367,7 @@ std::optional<int> Str_ToI (const tchar * ptcStr, uint base, size_t uiStopAtLen,
     return val;
 }
 
-std::optional<uint> Str_ToU(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<uint> Str_ToU(const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     uint val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -376,7 +375,7 @@ std::optional<uint> Str_ToU(const tchar * ptcStr, uint base, size_t uiStopAtLen,
     return val;
 }
 
-std::optional<llong> Str_ToLL(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<llong> Str_ToLL(const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     llong val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -384,7 +383,7 @@ std::optional<llong> Str_ToLL(const tchar * ptcStr, uint base, size_t uiStopAtLe
     return val;
 }
 
-std::optional<ullong> Str_ToULL(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<ullong> Str_ToULL(const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     ullong val = 0;
     if (const bool fSuccess = cstr_to_num(ptcStr, &val, base, uiStopAtLen, fIgnoreExcessChars); !fSuccess)
@@ -427,7 +426,7 @@ static constexpr char DIGITS_LOWER[16] = {
 };
 
 // Map a nibble [0,15] to its lowercase hex character
-static constexpr char hexdig_lower(uint32_t v) noexcept
+static constexpr char hexdig_lower(const uint32_t v) noexcept
 {
     return DIGITS_LOWER[v & 0xF];
 }
@@ -436,7 +435,7 @@ static constexpr char hexdig_lower(uint32_t v) noexcept
 // Compute hex digits to emit within a fixed width (8 or 16 nibbles) after
 // trimming leading zero nibbles within that width.
 // Special-case zero as exactly one hex digit ("0"), so final hex "00".
-static constexpr int hex_digits_from_width(uint64_t u, int iWidthNibbles) noexcept
+static constexpr int hex_digits_from_width(const uint64_t u, const int iWidthNibbles) noexcept
 {
     if (iWidthNibbles == 8)
     {
@@ -475,7 +474,7 @@ static constexpr std::array<char, 200> DEC_00_99 = []{
 // Decimal path (uiBase 10) uses a two-digit LUT (lookup table) for throughput.
 // Other bases use a generic fallback (reverse into tmp, then write forward).
 template<typename _IntType>
-tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint32 uiBase) noexcept
+tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, const size_t uiBufLength, uint32 uiBase) noexcept
 {
     static_assert(std::is_integral_v<_IntType>, "Str_FromInt_Fast requires an integral type");
     static_assert(sizeof(_IntType) <= 8, "Only up to 64-bit integers are supported");
@@ -711,48 +710,48 @@ tchar* Str_FromInt_Fast(_IntType val, tchar* ptcOutBuf, size_t uiBufLength, uint
 
 // Typed front-writing wrappers: they return buf on success, nullptr on failure.
 // For now keep _Fast and standard variants. They were there for historical purposes (previous implementation was back-writing).
-tchar* Str_FromI_Fast(int val, tchar* buf, size_t buf_length, uint base) noexcept
+tchar* Str_FromI_Fast(const int val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     return Str_FromInt_Fast(val, buf, buf_length, base);
 }
 
-tchar* Str_FromUI_Fast(uint val, tchar* buf, size_t buf_length, uint base) noexcept
+tchar* Str_FromUI_Fast(const uint val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     return Str_FromInt_Fast(val, buf, buf_length, base);
 }
 
-tchar* Str_FromLL_Fast (llong val, tchar* buf, size_t buf_length, uint base) noexcept
+tchar* Str_FromLL_Fast (const llong val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     return Str_FromInt_Fast(val, buf, buf_length, base);
 }
 
-tchar* Str_FromULL_Fast (ullong val, tchar* buf, size_t buf_length, uint base) noexcept
+tchar* Str_FromULL_Fast (const ullong val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     return Str_FromInt_Fast(val, buf, buf_length, base);
 }
 
-void Str_FromI(int val, tchar* buf, size_t buf_length, uint base) noexcept
+void Str_FromI(const int val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     (void) Str_FromI_Fast(val, buf, buf_length, base);
 }
 
-void Str_FromUI(uint val, tchar* buf, size_t buf_length, uint base) noexcept
+void Str_FromUI(const uint val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     (void) Str_FromUI_Fast(val, buf, buf_length, base);
 }
 
-void Str_FromLL(llong val, tchar* buf, size_t buf_length, uint base) noexcept
+void Str_FromLL(const llong val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     (void) Str_FromLL_Fast(val, buf, buf_length, base);
 }
 
-void Str_FromULL(ullong val, tchar* buf, size_t buf_length, uint base) noexcept
+void Str_FromULL(const ullong val, tchar* buf, const size_t buf_length, const uint base) noexcept
 {
     (void) Str_FromULL_Fast(val, buf, buf_length, base);
 }
 
 
-size_t FindStrWord( lpctstr_restrict pTextSearch, lpctstr_restrict pszKeyWord ) noexcept
+size_t FindStrWord(const lpctstr_restrict pTextSearch, lpctstr_restrict pszKeyWord ) noexcept
 {
     // Find any of the pszKeyWord in the pTextSearch string.
     // Make sure we look for starts of words.
@@ -790,7 +789,7 @@ size_t FindStrWord( lpctstr_restrict pTextSearch, lpctstr_restrict pszKeyWord ) 
     }
 }
 
-int Str_CmpHeadI(lpctstr_restrict ptcFind, lpctstr_restrict ptcHere) noexcept
+int Str_CmpHeadI(const lpctstr_restrict ptcFind, const lpctstr_restrict ptcHere) noexcept
 {
     for (uint i = 0; ; ++i)
     {
@@ -830,7 +829,7 @@ static int Str_CmpHeadI_Table(const tchar * ptcFind, const tchar * ptcTable) noe
 // String utilities: Modifiers
 
 // Useful also for s(n)printf!
-int StrncpyCharBytesWritten(int iBytesToWrite, size_t uiBufSize, bool fPrintError)
+int StrncpyCharBytesWritten(const int iBytesToWrite, const size_t uiBufSize, const bool fPrintError)
 {
     if (iBytesToWrite < 0)
         return 0;
@@ -960,7 +959,7 @@ bool IsSimpleNumberString( lpctstr_restrict pszTest ) noexcept
 
 // strcpy doesn't have an argument to truncate the copy to the buffer length;
 // strncpy doesn't null-terminate if it truncates the copy, and if uiMaxlen is > than the source string length, the remaining space is filled with '\0'
-size_t Str_CopyLimit(lptstr_restrict pDst, lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
+size_t Str_CopyLimit(const lptstr_restrict pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
 {
     if (uiMaxSize == 0) [[unlikely]]
         return 0;
@@ -982,7 +981,7 @@ size_t Str_CopyLimit(lptstr_restrict pDst, lpctstr_restrict pSrc, const size_t u
     return toCopy; // bytes copied in pDst string (CAN count the string terminator)
 }
 
-size_t Str_CopyLimitNull(lptstr_restrict pDst, lpctstr_restrict pSrc, size_t uiMaxSize) noexcept
+size_t Str_CopyLimitNull(const lptstr_restrict pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
 {
     if (uiMaxSize == 0) [[unlikely]]
     {
@@ -1074,7 +1073,7 @@ size_t Str_CopyLimitNull_ShortStr(char* dst, const char* src, size_t max_len)
 */
 
 // Acceptable overhead for out use cases (non-performance critical).
-size_t Str_CopyLen(lptstr_restrict pDst, lpctstr_restrict pSrc) noexcept
+size_t Str_CopyLen(const lptstr_restrict pDst, const lpctstr_restrict pSrc) noexcept
 {
     strcpy(pDst, pSrc);
     return strlen(pDst);
@@ -1127,7 +1126,7 @@ size_t Str_UTF8CharCount(const char* pStr) noexcept
 * If retval >= siz, truncation occurs.
 */
 // Adapted from: OpenBSD: strlcpy.c,v 1.11 2006/05/05 15:27:38
-size_t Str_ConcatLimitNull(tchar *pDst, const tchar *pSrc, size_t uiMaxSize) noexcept
+size_t Str_ConcatLimitNull(tchar *pDst, const tchar *pSrc, const size_t uiMaxSize) noexcept
 {
     if (uiMaxSize == 0)
         return 0;
@@ -1164,7 +1163,7 @@ size_t Str_ConcatLimitNull(tchar *pDst, const tchar *pSrc, size_t uiMaxSize) noe
     return (dlen + (s - pSrc));	/* count does not include '\0' */
 }
 
-tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t str_len, size_t substr_len) noexcept
+tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t str_len, const size_t substr_len) noexcept
 {
     if (str_len == 0 || substr_len == 0)
         return nullptr;
@@ -1192,7 +1191,7 @@ tchar* Str_FindSubstring(lptstr_restrict str, lpctstr_restrict substr, size_t st
     return str;
 }
 
-const tchar * Str_GetArticleAndSpace(lpctstr_restrict pszWord) noexcept
+const tchar * Str_GetArticleAndSpace(const lpctstr_restrict pszWord) noexcept
 {
     // NOTE: This is wrong many times.
     //  ie. some words need no article (plurals) : boots.
@@ -1212,7 +1211,7 @@ const tchar * Str_GetArticleAndSpace(lpctstr_restrict pszWord) noexcept
     return "a ";
 }
 
-int Str_GetBare(tchar * ptcOut, const tchar *ptcSrc, size_t uiMaxOutSize, const tchar * ptcStripList) noexcept
+int Str_GetBare(tchar * ptcOut, const tchar *ptcSrc, const size_t uiMaxOutSize, const tchar * ptcStripList) noexcept
 {
     // That the client can deal with. Basic punctuation and alpha and numbers.
     // RETURN: Output length.
@@ -1281,9 +1280,9 @@ int Str_GetBare(tchar * pszOut, const tchar * pszInp, int iMaxOutSize, const tch
 }
 */
 
-tchar * Str_MakeFiltered(lptstr_restrict pStr) noexcept
+tchar * Str_MakeFiltered(const lptstr_restrict pStr) noexcept
 {
-    int len = (int)strlen(pStr);
+    int len = static_cast<int>(strlen(pStr));
     for (int i = 0; len; ++i, --len)
     {
         if (pStr[i] == '\\')
@@ -1303,9 +1302,9 @@ tchar * Str_MakeFiltered(lptstr_restrict pStr) noexcept
     return pStr;
 }
 
-void Str_MakeUnFiltered(tchar * pStrOut, const tchar * pStrIn, int iSizeMax) noexcept
+void Str_MakeUnFiltered(tchar * pStrOut, const tchar * pStrIn, const int iSizeMax) noexcept
 {
-    int len = (int)strlen(pStrIn);
+    const int len = static_cast<int>(strlen(pStrIn));
     int iIn = 0;
     for (int iOut = 0; iOut < iSizeMax && iIn <= len; ++iIn, ++iOut)
     {
@@ -1498,7 +1497,7 @@ void Str_SkipEnclosedAngularBrackets(tchar*& ptcLine) noexcept
 
 // String utilities: String operations
 
-int FindTable(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept
+int FindTable(const tchar * ptcFind, const tchar * const * pptcTable, const int iCount) noexcept
 {
     // A non-sorted table.
     for (int i = 0; i < iCount; ++i)
@@ -1509,7 +1508,7 @@ int FindTable(const tchar * ptcFind, const tchar * const * pptcTable, int iCount
     return -1;
 }
 
-int FindTableSorted(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept
+int FindTableSorted(const tchar * ptcFind, const tchar * const * pptcTable, const int iCount) noexcept
 {
     // Do a binary search (un-cased) on a sorted table.
     // RETURN: -1 = not found
@@ -1550,7 +1549,7 @@ int FindTableSorted(const tchar * ptcFind, const tchar * const * pptcTable, int 
     */
 }
 
-int FindTableHead(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept // REQUIRES the table to be UPPERCASE
+int FindTableHead(const tchar * ptcFind, const tchar * const * pptcTable, const int iCount) noexcept // REQUIRES the table to be UPPERCASE
 {
     for (int i = 0; i < iCount; ++i)
     {
@@ -1560,7 +1559,7 @@ int FindTableHead(const tchar * ptcFind, const tchar * const * pptcTable, int iC
     return -1;
 }
 
-int FindTableHeadSorted(const tchar * ptcFind, const tchar * const * pptcTable, int iCount) noexcept // REQUIRES the table to be UPPERCASE, and sorted
+int FindTableHeadSorted(const tchar * ptcFind, const tchar * const * pptcTable, const int iCount) noexcept // REQUIRES the table to be UPPERCASE, and sorted
 {
     // Do a binary search (un-cased) on a sorted table.
     // Uses Str_CmpHeadI, which checks if we have reached, during comparison, ppszTable end ('\0'), ignoring if pszFind is longer (maybe has arguments?)
@@ -1602,7 +1601,7 @@ int FindTableHeadSorted(const tchar * ptcFind, const tchar * const * pptcTable, 
     */
 }
 
-int FindCAssocRegTableHeadSorted(const tchar * pszFind, const tchar * const* ppszTable, int iCount, size_t uiElemSize) noexcept // REQUIRES the table to be UPPERCASE, and sorted
+int FindCAssocRegTableHeadSorted(const tchar * pszFind, const tchar * const* ppszTable, const int iCount, const size_t uiElemSize) noexcept // REQUIRES the table to be UPPERCASE, and sorted
 {
     // Do a binary search (un-cased) on a sorted table.
     // Uses Str_CmpHeadI, which checks if we have reached, during comparison, ppszTable end ('\0'), ignoring if pszFind is longer (maybe has arguments?)
@@ -1627,7 +1626,7 @@ int FindCAssocRegTableHeadSorted(const tchar * pszFind, const tchar * const* pps
     return -1;
 }
 
-bool Str_Untrusted_InvalidTermination(const tchar * pszIn, size_t uiMaxAcceptableSize) noexcept
+bool Str_Untrusted_InvalidTermination(const tchar * pszIn, const size_t uiMaxAcceptableSize) noexcept
 {
     if (pszIn == nullptr)
         return true;
@@ -1642,7 +1641,7 @@ bool Str_Untrusted_InvalidTermination(const tchar * pszIn, size_t uiMaxAcceptabl
     return (*p != '\0');
 }
 
-bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize) noexcept
+bool Str_Untrusted_InvalidName(const tchar * pszIn, const size_t uiMaxAcceptableSize) noexcept
 {
     if (pszIn == nullptr)
         return true;
@@ -1660,7 +1659,7 @@ bool Str_Untrusted_InvalidName(const tchar * pszIn, size_t uiMaxAcceptableSize) 
     return (*p != '\0');
 }
 
-int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, int offset) noexcept
+int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, const int offset) noexcept
 {
     if (offset < 0)
         return -1;
@@ -1929,7 +1928,7 @@ int Str_RegExMatch(const tchar * pPattern, const tchar * pText, tchar * lastErro
 
 //--
 
-void CharToMultiByteNonNull(byte * Dest, const char * Src, int MBytes) noexcept
+void CharToMultiByteNonNull(byte * Dest, const char * Src, const int MBytes) noexcept
 {
     for (int idx = 0; idx != MBytes * 2; idx += 2) {
         if (Src[idx / 2] == '\0')
@@ -2055,7 +2054,7 @@ size_t UTF8MBSTR::ConvertUTF8ToString(const char* strInUTF8MB, std::vector<tchar
 
 ssize_t
 //getdelim(char **buf, size_t *bufsiz, int delimiter, FILE *fp)
-fReadUntilDelimiter(char **buf, size_t *bufsiz, int delimiter, FILE *fp) noexcept
+fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) noexcept
 {
     char *ptr, *eptr;
 

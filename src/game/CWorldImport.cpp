@@ -30,7 +30,7 @@ struct CImportSer : CSObjListRec
 	CImportSer& operator=(const CImportSer& other) = delete;
 };
 
-CImportSer::CImportSer( dword dwSer ) noexcept :
+CImportSer::CImportSer(const dword dwSer ) noexcept :
     m_dwSer( dwSer )
 {
     m_pObj = nullptr;
@@ -235,7 +235,7 @@ void CImportFile::ImportFix()
 	m_ListSer.ClearContainer();	// done with the list now.
 }
 
-bool CImportFile::ImportSCP( CScript & s, word wModeFlags )
+bool CImportFile::ImportSCP( CScript & s, const word wModeFlags )
 {
 	ADDTOCALLSTACK("CImportFile::ImportSCP");
 	// Import a SPHERE format SCP file.
@@ -798,7 +798,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
 	return true;
 }
 
-bool CWorld::Import( lpctstr pszFilename, const CChar * pSrc, word wModeFlags, int iDist, short dx, short dy, tchar * pszArg1, tchar * pszArg2 )
+bool CWorld::Import(const lpctstr pszFilename, const CChar * pSrc, const word wModeFlags, const int iDist, short dx, short dy, tchar * pszArg1, tchar * pszArg2 )
 {
 	ADDTOCALLSTACK("CWorld::Import");
 	// wModeFlags = IMPFLAGS_TYPE
@@ -884,7 +884,7 @@ bool CWorld::DumpAreas(const CTextConsole * pSrc, lpctstr pszFilename )
 }
 
 
-bool CWorld::Export( lpctstr pszFilename, const CChar * pSrc, word wModeFlags, int iDist, short dx, short dy )
+bool CWorld::Export(const lpctstr pszFilename, const CChar * pSrc, const word wModeFlags, const int iDist, short dx, short dy )
 {
 	ADDTOCALLSTACK("CWorld::Export");
 	// wModeFlags = IMPFLAGS_TYPE

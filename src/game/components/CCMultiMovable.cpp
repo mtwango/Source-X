@@ -30,7 +30,7 @@ enum ShipDelay
 };
 
 
-CCMultiMovable::CCMultiMovable(bool fCanTurn) :
+CCMultiMovable::CCMultiMovable(const bool fCanTurn) :
     _shipSpeed{}
 {
     _fCanTurn = fCanTurn;
@@ -57,7 +57,7 @@ int CCMultiMovable::GetFaceOffset() const
     return (pItemThis->GetID() & 3);
 }
 
-bool CCMultiMovable::SetMoveDir(DIR_TYPE dir, ShipMovementType eMovementType, bool fWheelMove)
+bool CCMultiMovable::SetMoveDir(const DIR_TYPE dir, ShipMovementType eMovementType, const bool fWheelMove)
 {
     ADDTOCALLSTACK("CCMultiMovable::SetMoveDir");
     // Set the direction we will move next time we get a tick.
@@ -267,7 +267,7 @@ void CCMultiMovable::SetPilot(CChar *pChar)
 }
 
 
-bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, bool fUpdateViewFull)
+bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewFull)
 {
     ADDTOCALLSTACK("CCMultiMovable::MoveDelta");
     // Move the ship one space in some direction.
@@ -489,7 +489,7 @@ bool CCMultiMovable::CanMoveTo(const CPointMap & pt) const
     return false;
 }
 
-bool CCMultiMovable::Face(DIR_TYPE dir)
+bool CCMultiMovable::Face(const DIR_TYPE dir)
 {
     ADDTOCALLSTACK("CCMultiMovable::Face");
     // Change the direction of the ship.
@@ -645,7 +645,7 @@ bool CCMultiMovable::Face(DIR_TYPE dir)
     return true;
 }
 
-bool CCMultiMovable::Move(DIR_TYPE dir, int distance)
+bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 {
     ADDTOCALLSTACK("CCMultiMovable::Move");
     if ((dir >= DIR_QTY) || (dir <= DIR_INVALID))

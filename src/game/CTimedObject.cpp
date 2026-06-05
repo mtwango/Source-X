@@ -6,7 +6,7 @@
 #include "CTimedObject.h"
 
 
-CTimedObject::CTimedObject(PROFILE_TYPE profile) noexcept :
+CTimedObject::CTimedObject(const PROFILE_TYPE profile) noexcept :
     _iTimeout(0), _profileType(profile), _fIsSleeping(true),
     _fIsInWorldTickList(false), _fIsInWorldTickAddList(false)
 {
@@ -43,7 +43,7 @@ bool CTimedObject::OnTick()
     MT_ENGINE_UNIQUE_LOCK_RETURN(_OnTick());
 }
 
-void CTimedObject::_SetTimeout(int64 iDelayInMsecs)
+void CTimedObject::_SetTimeout(const int64 iDelayInMsecs)
 {
     ADDTOCALLSTACK_DEBUG("CTimedObject::_SetTimeout");
     // Assume we have the mutex already locked here
@@ -77,7 +77,7 @@ void CTimedObject::_SetTimeout(int64 iDelayInMsecs)
 }
 
 
-void CTimedObject::SetTimeout(int64 iDelayInMsecs)
+void CTimedObject::SetTimeout(const int64 iDelayInMsecs)
 {
     ADDTOCALLSTACK_DEBUG("CTimedObject::SetTimeout");
     MT_ENGINE_UNIQUE_LOCK_SET(this);
@@ -85,20 +85,20 @@ void CTimedObject::SetTimeout(int64 iDelayInMsecs)
 }
 
 // SetTimeout variants call the right virtual for SetTimeout
-void CTimedObject::_SetTimeoutS(int64 iSeconds)
+void CTimedObject::_SetTimeoutS(const int64 iSeconds)
 {
     _SetTimeout(iSeconds * MSECS_PER_SEC);
 }
-void CTimedObject::SetTimeoutS(int64 iSeconds)
+void CTimedObject::SetTimeoutS(const int64 iSeconds)
 {
     SetTimeout(iSeconds * MSECS_PER_SEC);
 }
 
-void CTimedObject::_SetTimeoutD(int64 iTenths)
+void CTimedObject::_SetTimeoutD(const int64 iTenths)
 {
     _SetTimeout(iTenths * MSECS_PER_TENTH);
 }
-void CTimedObject::SetTimeoutD(int64 iTenths)
+void CTimedObject::SetTimeoutD(const int64 iTenths)
 {
     SetTimeout(iTenths * MSECS_PER_TENTH);
 }

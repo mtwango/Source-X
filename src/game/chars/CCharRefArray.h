@@ -31,11 +31,11 @@ public:
 	{
 		return m_uidCharArray.size();
 	}
-	const CUID& GetChar( size_t i ) const
+	const CUID& GetChar(const size_t i ) const
 	{
 		return m_uidCharArray[i];
 	}
-	bool IsValidIndex( size_t i ) const
+	bool IsValidIndex(const size_t i ) const
 	{
 		return m_uidCharArray.IsValidIndex(i);
 	}

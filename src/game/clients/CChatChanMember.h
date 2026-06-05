@@ -65,7 +65,7 @@ public:
 
 private:
     bool GetWhoIs() const { return m_fAllowWhoIs; }
-    void SetWhoIs(bool fAllowWhoIs) { m_fAllowWhoIs = fAllowWhoIs; }
+    void SetWhoIs(const bool fAllowWhoIs) { m_fAllowWhoIs = fAllowWhoIs; }
     bool IsReceivingAllowed() const { return m_fReceiving; }
     lpctstr GetChatName() const;
 

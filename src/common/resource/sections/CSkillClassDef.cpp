@@ -37,7 +37,7 @@ void CSkillClassDef::Init()
     }
 }
 
-bool CSkillClassDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSkillClassDef::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CSkillClassDef::r_WriteVal");

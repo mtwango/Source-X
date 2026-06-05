@@ -48,7 +48,7 @@ static constexpr word kxCompress_Base[COMPRESS_TREE_SIZE] =
 } ;
 
 NO_SANITIZE_UNDEFINED // integer overflow is expected
-uint CHuffman::Compress( byte * pOutput, const byte * pInput, uint outLen, uint inLen ) // static
+uint CHuffman::Compress( byte * pOutput, const byte * pInput, const uint outLen, const uint inLen ) // static
 {
 	ADDTOCALLSTACK("CHuffman::Compress");
 

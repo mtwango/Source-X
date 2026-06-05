@@ -72,7 +72,7 @@ static bool* _GetAbortImmediate() noexcept
     return &_fIsAbortImmediate;
 }
 
-void SetAbortImmediate(bool on) noexcept
+void SetAbortImmediate(const bool on) noexcept
 {
     *_GetAbortImmediate() = on;
 }
@@ -92,7 +92,7 @@ void RaiseRecoverableAbort()
 }
 
 [[noreturn]]
-void RaiseImmediateAbort(int iErrCode)
+void RaiseImmediateAbort(const int iErrCode)
 {
     // Have iErrCode to help with the debugging process. Use a different number for each invocation,
     UnreferencedParameter(iErrCode);
@@ -114,7 +114,7 @@ void RaiseImmediateAbort(int iErrCode)
 }
 
 #ifdef _WIN32
-int CSError::GetSystemErrorMessage(dword dwError, lptstr lpszError, dword dwErrorBufLength) // static
+int CSError::GetSystemErrorMessage(const dword dwError, const lptstr lpszError, const dword dwErrorBufLength) // static
 {
     //	PURPOSE:  copies error message text to a string
     //
@@ -144,7 +144,7 @@ int CSError::GetSystemErrorMessage(dword dwError, lptstr lpszError, dword dwErro
 }
 #endif
 
-bool CSError::GetErrorMessage( lptstr lpszError, uint uiMaxError ) const
+bool CSError::GetErrorMessage(const lptstr lpszError, const uint uiMaxError ) const
 {
 #ifdef _WIN32
 	// Compatible with CException and CSFileException
@@ -177,7 +177,7 @@ CSError::CSError( const CSError &e ) :
 {
 }
 
-CSError::CSError( LOG_TYPE eSev, dword hErr, lpctstr pszDescription ) :
+CSError::CSError(const LOG_TYPE eSev, const dword hErr, const lpctstr pszDescription ) :
 	m_eSeverity( eSev ),
 	m_hError( hErr ),
 	m_pszDescription( pszDescription )
@@ -190,7 +190,7 @@ CSError::CSError( LOG_TYPE eSev, dword hErr, lpctstr pszDescription ) :
 // --------------------------------------------------------------------------------
 
 
-bool CAssert::GetErrorMessage(lptstr lpszError, uint uiMaxError) const
+bool CAssert::GetErrorMessage(const lptstr lpszError, const uint uiMaxError) const
 {
 	snprintf(lpszError, uiMaxError, "Assert severity=%d: '%s' file '%s', line %lld", m_eSeverity, m_pExp, m_pFile, m_llLine);
 	return true;
@@ -237,7 +237,7 @@ bool CWinStructuredException::GetErrorMessage(lptstr lpszError, uint uiMaxError)
 // --------------------------------------------------------------------------------
 
 [[noreturn]]
-void Assert_Fail( lpctstr pExp, lpctstr pFile, long long llLine )
+void Assert_Fail(const lpctstr pExp, const lpctstr pFile, const long long llLine )
 {
 	EXC_NOTIFY_DEBUGGER;
 	throw CAssert(LOGL_CRIT, pExp, pFile, llLine);

@@ -13,7 +13,7 @@
 
 //----------------------------------------------------------------------
 
-void CChar::Stat_AddMod( STAT_TYPE i, int iVal )
+void CChar::Stat_AddMod(const STAT_TYPE i, const int iVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_AddMod");
 	ASSERT(i >= 0 && i < STAT_QTY);
@@ -23,7 +23,7 @@ void CChar::Stat_AddMod( STAT_TYPE i, int iVal )
     Stat_SetMod(i, Stat_GetMod(i) + iVal);
 }
 
-void CChar::Stat_SetMod( STAT_TYPE i, int iVal )
+void CChar::Stat_SetMod(const STAT_TYPE i, int iVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_SetMod");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
@@ -70,7 +70,7 @@ void CChar::Stat_SetMod( STAT_TYPE i, int iVal )
 	UpdateStatsFlag();
 }
 
-int CChar::Stat_GetMod( STAT_TYPE i ) const
+int CChar::Stat_GetMod(const STAT_TYPE i ) const
 {
     ADDTOCALLSTACK("CChar::Stat_GetMod");
     ASSERT(i >= 0 && i < STAT_QTY);
@@ -78,7 +78,7 @@ int CChar::Stat_GetMod( STAT_TYPE i ) const
     return m_Stat[i].m_mod;
 }
 
-void CChar::Stat_SetMaxMod( STAT_TYPE i, int iVal )
+void CChar::Stat_SetMaxMod(const STAT_TYPE i, int iVal )
 {
     ADDTOCALLSTACK("CChar::Stat_SetMaxMod");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
@@ -118,7 +118,7 @@ void CChar::Stat_SetMaxMod( STAT_TYPE i, int iVal )
     UpdateStatsFlag();
 }
 
-void CChar::Stat_AddMaxMod( STAT_TYPE i, int iVal )
+void CChar::Stat_AddMaxMod(const STAT_TYPE i, int iVal )
 {
     ADDTOCALLSTACK("CChar::Stat_AddMaxMod");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
@@ -144,14 +144,14 @@ void CChar::Stat_AddMaxMod( STAT_TYPE i, int iVal )
     UpdateStatsFlag();
 }
 
-int CChar::Stat_GetMaxMod( STAT_TYPE i ) const
+int CChar::Stat_GetMaxMod(const STAT_TYPE i ) const
 {
     ADDTOCALLSTACK("CChar::Stat_GetMaxMod");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
     return m_Stat[i].m_maxMod;
 }
 
-void CChar::Stat_SetVal( STAT_TYPE i, ushort uiVal )
+void CChar::Stat_SetVal(const STAT_TYPE i, const ushort uiVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_SetVal");
 	if (i > STAT_BASE_QTY || i == STAT_FOOD) // Food must trigger Statchange. Redirect to Base value
@@ -173,7 +173,7 @@ void CChar::Stat_SetVal( STAT_TYPE i, ushort uiVal )
     }
 }
 
-void CChar::Stat_AddVal( STAT_TYPE i, int iVal )
+void CChar::Stat_AddVal(const STAT_TYPE i, int iVal )
 {
     ADDTOCALLSTACK("CChar::Stat_AddVal");
     if (iVal == 0)
@@ -210,7 +210,7 @@ void CChar::Stat_AddVal( STAT_TYPE i, int iVal )
     }
 }
 
-ushort CChar::Stat_GetVal( STAT_TYPE i ) const
+ushort CChar::Stat_GetVal(const STAT_TYPE i ) const
 {
 	//ADDTOCALLSTACK("CChar::Stat_GetVal"); // Called very frequently.
 	if ( i > STAT_BASE_QTY || i == STAT_FOOD ) // Food must trigger Statchange. Redirect to Base value
@@ -220,7 +220,7 @@ ushort CChar::Stat_GetVal( STAT_TYPE i ) const
 	return m_Stat[i].m_val;
 }
 
-void CChar::Stat_SetMax( STAT_TYPE i, ushort uiVal )
+void CChar::Stat_SetMax(const STAT_TYPE i, ushort uiVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_SetMax");
 	ASSERT((i > STAT_NONE) && (i < STAT_QTY)); // allow for food
@@ -265,7 +265,7 @@ void CChar::Stat_SetMax( STAT_TYPE i, ushort uiVal )
 	}
 }
 
-ushort CChar::Stat_GetMax( STAT_TYPE i ) const
+ushort CChar::Stat_GetMax(const STAT_TYPE i ) const
 {
 	ADDTOCALLSTACK("CChar::Stat_GetMax");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
@@ -294,7 +294,7 @@ ushort CChar::Stat_GetMax( STAT_TYPE i ) const
 	return uiVal;
 }
 
-ushort CChar::Stat_GetMaxAdjusted( STAT_TYPE i ) const
+ushort CChar::Stat_GetMaxAdjusted(const STAT_TYPE i ) const
 {
     ADDTOCALLSTACK("CChar::Stat_GetMaxAdjusted");
     return static_cast<ushort>(Stat_GetMax(i) + Stat_GetMaxMod(i));
@@ -310,13 +310,13 @@ uint CChar::Stat_GetSum() const
 	return uiStatSum;
 }
 
-ushort CChar::Stat_GetAdjusted( STAT_TYPE i ) const
+ushort CChar::Stat_GetAdjusted(const STAT_TYPE i ) const
 {
 	ADDTOCALLSTACK_DEBUG("CChar::Stat_GetAdjusted");
     return static_cast<ushort>(Stat_GetBase(i) + Stat_GetMod(i));
 }
 
-ushort CChar::Stat_GetBase( STAT_TYPE i ) const
+ushort CChar::Stat_GetBase(const STAT_TYPE i ) const
 {
     ADDTOCALLSTACK("CChar::Stat_GetBase");
     ASSERT(i >= 0 && i < STAT_QTY);
@@ -324,7 +324,7 @@ ushort CChar::Stat_GetBase( STAT_TYPE i ) const
     return m_Stat[i].m_base;
 }
 
-void CChar::Stat_AddBase( STAT_TYPE i, int iVal )
+void CChar::Stat_AddBase(const STAT_TYPE i, const int iVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_AddBase");
     if (iVal == 0)
@@ -333,7 +333,7 @@ void CChar::Stat_AddBase( STAT_TYPE i, int iVal )
 	Stat_SetBase( i, static_cast<ushort>(Stat_GetBase(i) + iVal) );
 }
 
-void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
+void CChar::Stat_SetBase(const STAT_TYPE i, ushort uiVal )
 {
 	ADDTOCALLSTACK("CChar::Stat_SetBase");
 	ASSERT(i >= 0 && i < STAT_QTY);
@@ -427,7 +427,7 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 	UpdateStatsFlag();
 }
 
-ushort CChar::Stat_GetLimit( STAT_TYPE i ) const
+ushort CChar::Stat_GetLimit(const STAT_TYPE i ) const
 {
 	ADDTOCALLSTACK("CChar::Stat_GetLimit");
 	const CVarDefCont * pTagStorage = nullptr;
@@ -571,7 +571,7 @@ bool CChar::Stats_Regen()
 	return true;
 }
 
-int64 CChar::Stats_GetRegenRate(STAT_TYPE iStat)
+int64 CChar::Stats_GetRegenRate(const STAT_TYPE iStat)
 {
     //ADDTOCALLSTACK("CChar::Stats_GetRegenRate");  // Called very frequently.
     // Return regen rate for the given stat.
@@ -585,7 +585,7 @@ int64 CChar::Stats_GetRegenRate(STAT_TYPE iStat)
     return iRate;
 }
 
-void CChar::Stats_SetRegenRate(STAT_TYPE iStat, int64 iRateMilliseconds)
+void CChar::Stats_SetRegenRate(const STAT_TYPE iStat, const int64 iRateMilliseconds)
 {
     ADDTOCALLSTACK("CChar::Stats_SetRegenRate");
     // Sets regen rate for the given stat (in milliseconds).
@@ -594,7 +594,7 @@ void CChar::Stats_SetRegenRate(STAT_TYPE iStat, int64 iRateMilliseconds)
     m_Stat[iStat].m_regenRate = iRateMilliseconds;
 }
 
-ushort CChar::Stats_GetRegenVal(STAT_TYPE iStat)
+ushort CChar::Stats_GetRegenVal(const STAT_TYPE iStat)
 {
 	ADDTOCALLSTACK("CChar::Stats_GetRegenVal");
 	// Return regen val for the given stat.
@@ -604,7 +604,7 @@ ushort CChar::Stats_GetRegenVal(STAT_TYPE iStat)
 	return maximum(1, uiVal);
 }
 
-void CChar::Stats_SetRegenVal(STAT_TYPE iStat, ushort uiVal)
+void CChar::Stats_SetRegenVal(const STAT_TYPE iStat, const ushort uiVal)
 {
     ADDTOCALLSTACK("CChar::Stats_SetRegenVal");
     // Sets regen val for the given stat.
@@ -613,7 +613,7 @@ void CChar::Stats_SetRegenVal(STAT_TYPE iStat, ushort uiVal)
     m_Stat[iStat].m_regenVal = uiVal;
 }
 
-void CChar::Stats_AddRegenVal(STAT_TYPE iStat, int iVal)
+void CChar::Stats_AddRegenVal(const STAT_TYPE iStat, const int iVal)
 {
     ADDTOCALLSTACK("CChar::Stats_AddRegenVal");
     // Updated the regen val for the given stat.
@@ -624,14 +624,14 @@ void CChar::Stats_AddRegenVal(STAT_TYPE iStat, int iVal)
     m_Stat[iStat].m_regenVal = static_cast<ushort>(m_Stat[iStat].m_regenVal + iVal);
 }
 
-SKILLLOCK_TYPE CChar::Stat_GetLock(STAT_TYPE stat)
+SKILLLOCK_TYPE CChar::Stat_GetLock(const STAT_TYPE stat)
 {
 	if (!m_pPlayer)
 		return SKILLLOCK_UP;	// Always raising status for NPCs.
 	return m_pPlayer->Stat_GetLock(stat);
 }
 
-void CChar::Stat_SetLock(STAT_TYPE stat, SKILLLOCK_TYPE state)
+void CChar::Stat_SetLock(const STAT_TYPE stat, const SKILLLOCK_TYPE state)
 {
 	if (!m_pPlayer)
 		return;
@@ -709,7 +709,7 @@ void CChar::SetFame(ushort uiNewFame, CChar* pNPC)
     m_uiFame = (short)(maximum(0, minimum(g_Cfg.m_iMaxFame, uiNewFame)));
 }
 
-bool CChar::Stat_Decrease(STAT_TYPE stat, SKILL_TYPE skill)
+bool CChar::Stat_Decrease(const STAT_TYPE stat, const SKILL_TYPE skill)
 {
     ADDTOCALLSTACK("CChar::Stat_Decrease");
 	// Stat to decrease

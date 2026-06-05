@@ -15,7 +15,7 @@ public:
 	CPointMap m_pt;
 	int iClilocDescription; //Only for clients 7.00.13 +
 
-	explicit CStartLoc(lpctstr pszArea) noexcept :
+	explicit CStartLoc(const lpctstr pszArea) noexcept :
 		m_sArea(pszArea), iClilocDescription(1149559)
 	{}
 	~CStartLoc() noexcept = default;

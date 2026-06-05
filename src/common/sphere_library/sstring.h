@@ -408,7 +408,7 @@ inline ssize_t sGetLine_StaticBuf(const char *data, const size_t datasize) noexc
 
 //--- Inline methods
 
-std::optional<size_t> Str_ToST(const tchar * ptcStr, uint base, size_t uiStopAtLen, bool fIgnoreExcessChars) noexcept
+std::optional<size_t> Str_ToST(const tchar * ptcStr, const uint base, const size_t uiStopAtLen, const bool fIgnoreExcessChars) noexcept
 {
     if constexpr (sizeof(size_t) == 4)
         return Str_ToU(ptcStr, base, uiStopAtLen, fIgnoreExcessChars);
@@ -416,7 +416,7 @@ std::optional<size_t> Str_ToST(const tchar * ptcStr, uint base, size_t uiStopAtL
         return Str_ToULL(ptcStr, base, uiStopAtLen, fIgnoreExcessChars);
 }
 
-bool IsHexNumDigit(int c) noexcept
+bool IsHexNumDigit(const int c) noexcept
 {
     return
         (c >= 'A' && c <= 'F') ||

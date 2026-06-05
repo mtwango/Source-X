@@ -34,7 +34,7 @@ CRegion::~CRegion()
 	UnRealizeRegion();
 }
 
-void CRegion::SetModified( dword dwModFlag ) noexcept
+void CRegion::SetModified(const dword dwModFlag ) noexcept
 {
 	if ( !m_iLinkedSectors )
         return;
@@ -117,7 +117,7 @@ bool CRegion::SetRegionRect( const CRectMap & rect )
     return AddRegionRect( rect );
 }
 
-void CRegion::SetName( lpctstr pszName )
+void CRegion::SetName(const lpctstr pszName )
 {
 	ADDTOCALLSTACK("CRegion::SetName");
 	if ( pszName == nullptr || pszName[0] == '%' )
@@ -294,7 +294,7 @@ lpctstr const CRegion::sm_szLoadKeys[RC_QTY+1] =	// static (Sorted)
 	nullptr
 };
 
-bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CRegion::r_WriteVal");
@@ -615,7 +615,7 @@ bool CRegion::r_LoadVal( CScript & s )
 }
 
 
-void CRegion::r_WriteBody( CScript & s, lpctstr pszPrefix )
+void CRegion::r_WriteBody( CScript & s, const lpctstr pszPrefix )
 {
 	ADDTOCALLSTACK("CRegion::r_WriteBody");
 	TemporaryString tsTemp;
@@ -695,7 +695,7 @@ void CRegion::r_Write( CScript &s )
 	r_WriteBase( s );
 }
 
-void CRegion::TogRegionFlags( dword dwFlags, bool fSet ) noexcept
+void CRegion::TogRegionFlags(const dword dwFlags, const bool fSet ) noexcept
 {
     if ( fSet )
         m_dwFlags |= dwFlags;
@@ -711,7 +711,7 @@ bool CRegion::IsGuarded() const
 	return( IsFlag( REGION_FLAG_GUARDED ) && ! IsFlag( REGION_FLAG_SAFE ));
 }
 
-bool CRegion::CheckAntiMagic( SPELL_TYPE spell ) const
+bool CRegion::CheckAntiMagic(const SPELL_TYPE spell ) const
 {
 	ADDTOCALLSTACK("CRegion::CheckAntiMagic");
 	// return: true = blocked.
@@ -839,7 +839,7 @@ bool CRegion::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 	return false;
 }
 
-bool CRegion::SendSectorsVerb( lpctstr pszVerb, lpctstr pszArgs, CTextConsole * pSrc )
+bool CRegion::SendSectorsVerb(const lpctstr pszVerb, const lpctstr pszArgs, CTextConsole * pSrc )
 {
 	ADDTOCALLSTACK("CRegion::SendSectorsVerb");
 	// Send a command to all the CSectors in this region.
@@ -945,7 +945,7 @@ bool CRegionWorld::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	return( CRegion::r_GetRef( ptcKey, pRef ));
 }
 
-bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CRegionWorld::r_WriteVal");
@@ -1026,7 +1026,7 @@ void CRegionWorld::r_WriteModified( CScript &s )
 }
 
 
-void CRegionWorld::r_WriteBody( CScript &s, lpctstr pszPrefix )
+void CRegionWorld::r_WriteBody( CScript &s, const lpctstr pszPrefix )
 {
 	ADDTOCALLSTACK("CRegionWorld::r_WriteBody");
 	CRegion::r_WriteBody( s, pszPrefix );
@@ -1068,7 +1068,7 @@ bool CRegionWorld::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 }
 
 
-const CRandGroupDef * CRegionWorld::FindNaturalResource(int type) const
+const CRandGroupDef * CRegionWorld::FindNaturalResource(const int type) const
 {
 	ADDTOCALLSTACK("CRegionWorld::FindNaturalResource");
 	// Find the natural resources assinged to this region.

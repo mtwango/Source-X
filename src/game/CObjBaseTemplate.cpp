@@ -28,13 +28,13 @@ void CObjBaseTemplate::DupeCopy( const CObjBaseTemplate * pObj )
 	m_pt = pObj->m_pt;
 }
 
-void CObjBaseTemplate::SetUID( dword dwIndex )
+void CObjBaseTemplate::SetUID(const dword dwIndex )
 {
 	// don't set container flags through here.
 	m_UID.SetObjUID( dwIndex );	// Will have UID_F_ITEM as well.
 }
 
-void CObjBaseTemplate::SetUnkZ( char z )
+void CObjBaseTemplate::SetUnkZ(const char z )
 {
 	m_pt.m_z = z;
 }
@@ -47,7 +47,7 @@ CSector * CObjBaseTemplate::GetTopSector() const noexcept
 	return GetTopLevelObj()->GetTopPoint().GetSector();
 }
 
-void CObjBaseTemplate::SetEquipLayer( LAYER_TYPE layer )
+void CObjBaseTemplate::SetEquipLayer(const LAYER_TYPE layer )
 {
 	SetUIDContainerFlags( UID_O_EQUIPPED );
 	m_pt.m_x = 0;	// these don't apply.
@@ -57,7 +57,7 @@ void CObjBaseTemplate::SetEquipLayer( LAYER_TYPE layer )
 	m_pt.m_map = 0;
 }
 
-void CObjBaseTemplate::SetContainedLayer( byte layer ) noexcept
+void CObjBaseTemplate::SetContainedLayer(const byte layer ) noexcept
 {
 	// used for corpse or Restock count as well in Vendor container.
 	m_pt.m_z = (char)layer;
@@ -79,7 +79,7 @@ void CObjBaseTemplate::SetTopPoint( const CPointMap & pt )
 	m_pt = pt;
 }
 
-void CObjBaseTemplate::SetTopZ( char z )
+void CObjBaseTemplate::SetTopZ(const char z )
 {
 	m_pt.m_z = z;
 }
@@ -148,13 +148,13 @@ int CObjBaseTemplate::GetTopDist3D( const CObjBaseTemplate * pObj ) const // 3D 
 	return GetTopPoint().GetDist3D( pObj->GetTopPoint());
 }
 
-DIR_TYPE CObjBaseTemplate::GetTopDir( const CObjBaseTemplate * pObj, DIR_TYPE DirDefault ) const
+DIR_TYPE CObjBaseTemplate::GetTopDir( const CObjBaseTemplate * pObj, const DIR_TYPE DirDefault ) const
 {
 	ASSERT( pObj );
 	return GetTopPoint().GetDir( pObj->GetTopPoint(), DirDefault );
 }
 
-DIR_TYPE CObjBaseTemplate::GetDir( const CObjBaseTemplate * pObj, DIR_TYPE DirDefault ) const
+DIR_TYPE CObjBaseTemplate::GetDir( const CObjBaseTemplate * pObj, const DIR_TYPE DirDefault ) const
 {
 	ASSERT( pObj );
 	pObj = pObj->GetTopLevelObj();
@@ -184,7 +184,7 @@ lpctstr CObjBaseTemplate::GetName() const
 	return m_sName.GetBuffer();
 }
 
-bool CObjBaseTemplate::SetName( lpctstr pszName )
+bool CObjBaseTemplate::SetName(const lpctstr pszName )
 {
 	// NOTE: Name length <= MAX_NAME_SIZE
 	if ( !pszName )

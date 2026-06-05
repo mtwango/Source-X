@@ -85,7 +85,7 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 }
 
 
-bool CClient::OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, ITEMID_TYPE id )
+bool CClient::OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Obj_Function");
     m_Targ_p = pt;
@@ -116,7 +116,7 @@ bool CClient::OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, ITEMID
 }
 
 
-bool CClient::OnTarg_Obj_Info(const CObjBase * pObj, const CPointMap & pt, ITEMID_TYPE id )
+bool CClient::OnTarg_Obj_Info(const CObjBase * pObj, const CPointMap & pt, const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Obj_Info");
 	// CLIMODE_TARG_OBJ_INFO "INFO"
@@ -331,7 +331,7 @@ bool CClient::OnTarg_UnExtract( CObjBase * pObj, const CPointMap & pt )
 	return true;
 }
 
-bool CClient::OnTarg_Char_Add( CObjBase * pObj, const CPointMap & pt )
+bool CClient::OnTarg_Char_Add(const CObjBase * pObj, const CPointMap & pt )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Char_Add");
 	// CLIMODE_TARG_ADDCHAR
@@ -1414,7 +1414,7 @@ bool CClient::OnTarg_Skill(const CObjBase * pObj )
 	return true;
 }
 
-bool CClient::OnTarg_Skill_Provoke( CObjBase * pObj )
+bool CClient::OnTarg_Skill_Provoke(const CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Skill_Provoke");
 	// CLIMODE_TARG_SKILL_PROVOKE
@@ -1659,7 +1659,7 @@ bool CClient::OnTarg_Use_Deed( CItem * pDeed, CPointMap & pt )
 	return true;
 }
 
-CItem * CClient::OnTarg_Use_Multi(const CItemBase * pItemDef, CPointMap & pt, CItem *pDeed)
+CItem * CClient::OnTarg_Use_Multi(const CItemBase * pItemDef, CPointMap & pt, const CItem *pDeed)
 {
     ADDTOCALLSTACK("CClient::OnTarg_Use_Multi");
     // Might be a IT_MULTI or it might not. place it anyhow.
@@ -1670,7 +1670,7 @@ CItem * CClient::OnTarg_Use_Multi(const CItemBase * pItemDef, CPointMap & pt, CI
     return CItemMulti::Multi_Create(GetChar(), pItemDef, pt, pDeed);
 }
 
-bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, ITEMID_TYPE id )
+bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID_TYPE id )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Use_Item");
 	// CLIMODE_TARG_USE_ITEM started from Event_DoubleClick()

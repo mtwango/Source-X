@@ -2,20 +2,20 @@
 #include "CClientTooltip.h"
 #include <cstdarg>
 
-CClientTooltip::CClientTooltip(dword dwClilocID)
+CClientTooltip::CClientTooltip(const dword dwClilocID)
 {
     m_clilocid = dwClilocID;
     m_args[0] = '\0';
 }
 
-CClientTooltip::CClientTooltip(dword dwClilocID, lpctstr ptcArgs)
+CClientTooltip::CClientTooltip(const dword dwClilocID, const lpctstr ptcArgs)
 {
     ASSERT(ptcArgs);
     m_clilocid = dwClilocID;
     Str_CopyLimitNull(m_args, ptcArgs, MAX_TOOLTIP_LEN);
 }
 
-CClientTooltip::CClientTooltip(dword dwClilocID, int64 iArgs)
+CClientTooltip::CClientTooltip(const dword dwClilocID, const int64 iArgs)
 {
     m_clilocid = dwClilocID;
     snprintf(m_args, MAX_TOOLTIP_LEN - 1, "%" PRId64, iArgs);

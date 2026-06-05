@@ -3,7 +3,7 @@
 #include "CMD5.h"
 
 
-void CCrypto::InitMD5(byte * ucInitialize)
+void CCrypto::InitMD5(const byte * ucInitialize)
 {
 	ADDTOCALLSTACK("CCrypto::InitMD5");
 	m_md5_position = 0;
@@ -13,7 +13,7 @@ void CCrypto::InitMD5(byte * ucInitialize)
 	m_md5_engine->numericDigest( &m_md5_digest[0] );
 }
 
-bool CCrypto::EncryptMD5( byte * pOutput, const byte * pInput, size_t outLen, size_t inLen )
+bool CCrypto::EncryptMD5( byte * pOutput, const byte * pInput, const size_t outLen, const size_t inLen )
 {
 	ADDTOCALLSTACK("CCrypto::EncryptMD5");
 

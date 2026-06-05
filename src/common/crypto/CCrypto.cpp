@@ -65,24 +65,24 @@ void CCryptoKeysHolder::addNoCryptKey()
 
 // --
 
-void CCrypto::SetClientVerNumber( dword iVer )
+void CCrypto::SetClientVerNumber(const dword iVer )
 {
 	m_iClientVersion = iVer;
 }
 
-void CCrypto::SetMasterKeys( dword hi, dword low )
+void CCrypto::SetMasterKeys(const dword hi, const dword low )
 {
 	m_MasterHi = hi;
 	m_MasterLo = low;
 }
 
-void CCrypto::SetCryptMask( dword hi, dword low )
+void CCrypto::SetCryptMask(const dword hi, const dword low )
 {
 	m_CryptMaskHi = hi;
 	m_CryptMaskLo= low;
 }
 
-bool CCrypto::SetConnectType( CONNECT_TYPE ctWho )
+bool CCrypto::SetConnectType(const CONNECT_TYPE ctWho )
 {
 	if ( ctWho > CONNECT_NONE && ctWho < CONNECT_QTY )
 	{
@@ -93,7 +93,7 @@ bool CCrypto::SetConnectType( CONNECT_TYPE ctWho )
 	return false;
 }
 
-bool CCrypto::SetEncryptionType( ENCRYPTION_TYPE etWho )
+bool CCrypto::SetEncryptionType(const ENCRYPTION_TYPE etWho )
 {
 	if ( etWho >= ENC_NONE && etWho < ENC_QTY )
 	{
@@ -142,7 +142,7 @@ std::string CCrypto::GetClientVer() const
 	return CUOClientVersion(GetClientVerNumber()).GetVersionString();
 }
 
-bool CCrypto::SetClientVerFromNumber( dword uiVer, bool fSetEncrypt )
+bool CCrypto::SetClientVerFromNumber(const dword uiVer, const bool fSetEncrypt )
 {
 	ADDTOCALLSTACK("CCrypto::SetClientVerFromNumber");
 	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
@@ -158,15 +158,15 @@ bool CCrypto::SetClientVerFromNumber( dword uiVer, bool fSetEncrypt )
 	return false;
 }
 
-bool CCrypto::SetClientVerFromKeyIndex( uint uiIndex, bool fSetEncrypt )
+bool CCrypto::SetClientVerFromKeyIndex(const uint uiVer, const bool fSetEncrypt )
 {
 	ADDTOCALLSTACK("CCrypto::SetClientVerFromKeyIndex");
 	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
 
-	if ( (size_t)uiIndex >= keys_holder->client_keys.size() )
+	if ( (size_t)uiVer >= keys_holder->client_keys.size() )
 		return false;
 
-	auto &[m_client, m_key_1, m_key_2, m_EncType] = keys_holder->client_keys[uiIndex];
+	auto &[m_client, m_key_1, m_key_2, m_EncType] = keys_holder->client_keys[uiVer];
 
 	SetClientVerNumber(m_client);
 	SetMasterKeys(m_key_1, m_key_2); // Hi - Lo
@@ -241,7 +241,7 @@ CCrypto::~CCrypto()
 	delete m_md5_engine;
 }
 
-bool CCrypto::Init( dword dwIP, const byte * pEvent, uint inLen, bool isclientKr )
+bool CCrypto::Init(const dword dwIP, const byte * pEvent, const uint inLen, const bool isClientKR )
 {
 	ADDTOCALLSTACK("CCrypto::Init");
 	bool bReturn = true;
@@ -256,7 +256,7 @@ bool CCrypto::Init( dword dwIP, const byte * pEvent, uint inLen, bool isclientKr
 	}
 	else
 	{
-		if ( isclientKr )
+		if ( isClientKR )
 		{
 			m_seed = dwIP;
 			m_fInit = SetConnectType( CONNECT_GAME ) && SetEncryptionType( ENC_NONE );
@@ -278,7 +278,7 @@ bool CCrypto::Init( dword dwIP, const byte * pEvent, uint inLen, bool isclientKr
 	return bReturn;
 }
 
-void CCrypto::InitFast( dword dwIP, CONNECT_TYPE ctInit, bool fRelay)
+void CCrypto::InitFast(const dword dwIP, const CONNECT_TYPE ctInit, const bool fRelay)
 {
 	/**
 	 * Quickly set seed and connection type.
@@ -314,7 +314,7 @@ void CCrypto::InitFast( dword dwIP, CONNECT_TYPE ctInit, bool fRelay)
 /*		Encryption utility methods		*/
 
 
-bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, uint outLen, uint inLen )
+bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, const uint outLen, const uint inLen )
 {
 	/**
 	* When the client switches between login and game server without opening a new connection, the first game packet
@@ -407,7 +407,7 @@ bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, uint out
     return true;
 }
 
-bool CCrypto::Encrypt( byte * pOutput, const byte * pInput, uint outLen, uint inLen )
+bool CCrypto::Encrypt( byte * pOutput, const byte * pInput, const uint outLen, const uint inLen )
 {
 	ADDTOCALLSTACK("CCrypto::Encrypt");
 	if ( ! inLen )
@@ -438,7 +438,7 @@ bool CCrypto::Encrypt( byte * pOutput, const byte * pInput, uint outLen, uint in
     return true;
 }
 
-bool CCrypto::Decrypt( byte * pOutput, const byte * pInput, uint outLen, uint inLen )
+bool CCrypto::Decrypt( byte * pOutput, const byte * pInput, const uint outLen, const uint inLen )
 {
 	ADDTOCALLSTACK("CCrypto::Decrypt");
 	if ( ! inLen )
@@ -515,7 +515,7 @@ bool CCrypto::Decrypt( byte * pOutput, const byte * pInput, uint outLen, uint in
 
 /*		Handle login encryption		*/
 
-bool CCrypto::LoginCryptStart( dword dwIP, const byte * pEvent, uint inLen )
+bool CCrypto::LoginCryptStart(const dword dwIP, const byte * pEvent, const uint inLen )
 {
 	ADDTOCALLSTACK("CCrypto::LoginCryptStart");
 	ASSERT(pEvent != nullptr);
@@ -615,7 +615,7 @@ bool CCrypto::LoginCryptStart( dword dwIP, const byte * pEvent, uint inLen )
     return true;
 }
 
-bool CCrypto::GameCryptStart( dword dwIP, const byte * pEvent, uint inLen )
+bool CCrypto::GameCryptStart(const dword dwIP, const byte * pEvent, const uint inLen )
 {
 	ADDTOCALLSTACK("CCrypto::GameCryptStart");
 	ASSERT( pEvent != nullptr );

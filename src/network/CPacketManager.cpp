@@ -148,7 +148,7 @@ void PacketManager::registerStandardPackets()
     registerEncoded(EXTAOS_QuestButton, new PacketQuestButton());				// quest button press
 }
 
-void PacketManager::registerPacket(uint id, Packet* handler)
+void PacketManager::registerPacket(const uint id, Packet* handler)
 {
     // assign standard packet handler
     ADDTOCALLSTACK("PacketManager::registerPacket");
@@ -157,7 +157,7 @@ void PacketManager::registerPacket(uint id, Packet* handler)
     m_handlers[id] = handler;
 }
 
-void PacketManager::registerExtended(uint id, Packet* handler)
+void PacketManager::registerExtended(const uint id, Packet* handler)
 {
     // assign extended packet handler
     ADDTOCALLSTACK("PacketManager::registerExtended");
@@ -166,7 +166,7 @@ void PacketManager::registerExtended(uint id, Packet* handler)
     m_extended[id] = handler;
 }
 
-void PacketManager::registerEncoded(uint id, Packet* handler)
+void PacketManager::registerEncoded(const uint id, Packet* handler)
 {
     // assign encoded packet handler
     ADDTOCALLSTACK("PacketManager::registerEncoded");
@@ -175,7 +175,7 @@ void PacketManager::registerEncoded(uint id, Packet* handler)
     m_encoded[id] = handler;
 }
 
-void PacketManager::unregisterPacket(uint id)
+void PacketManager::unregisterPacket(const uint id)
 {
     // delete standard packet handler
     ADDTOCALLSTACK("PacketManager::unregisterPacket");
@@ -187,7 +187,7 @@ void PacketManager::unregisterPacket(uint id)
     m_handlers[id] = nullptr;
 }
 
-void PacketManager::unregisterExtended(uint id)
+void PacketManager::unregisterExtended(const uint id)
 {
     // delete extended packet handler
     ADDTOCALLSTACK("PacketManager::unregisterExtended");
@@ -199,7 +199,7 @@ void PacketManager::unregisterExtended(uint id)
     m_extended[id] = nullptr;
 }
 
-void PacketManager::unregisterEncoded(uint id)
+void PacketManager::unregisterEncoded(const uint id)
 {
     // delete encoded packet handler
     ADDTOCALLSTACK("PacketManager::unregisterEncoded");
@@ -211,7 +211,7 @@ void PacketManager::unregisterEncoded(uint id)
     m_encoded[id] = nullptr;
 }
 
-Packet* PacketManager::getHandler(uint id) const
+Packet* PacketManager::getHandler(const uint id) const
 {
     // get standard packet handler
     if (id >= std::size(m_handlers))
@@ -220,7 +220,7 @@ Packet* PacketManager::getHandler(uint id) const
     return m_handlers[id];
 }
 
-Packet* PacketManager::getExtendedHandler(uint id) const
+Packet* PacketManager::getExtendedHandler(const uint id) const
 {
     // get extended packet handler
     if (id >= std::size(m_extended))
@@ -229,7 +229,7 @@ Packet* PacketManager::getExtendedHandler(uint id) const
     return m_extended[id];
 }
 
-Packet* PacketManager::getEncodedHandler(uint id) const
+Packet* PacketManager::getEncodedHandler(const uint id) const
 {
     // get encoded packet handler
     if (id >= std::size(m_encoded))

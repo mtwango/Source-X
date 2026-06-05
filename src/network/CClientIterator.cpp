@@ -34,7 +34,7 @@ ClientIterator::~ClientIterator()
     m_nextClient = nullptr;
 }
 
-CClient* ClientIterator::next(bool includeClosing)
+CClient* ClientIterator::next(const bool includeClosing)
 {
     for (CClient* current = m_nextClient; current != nullptr; current = current->GetNext())
     {

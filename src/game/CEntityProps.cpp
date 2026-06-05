@@ -47,7 +47,7 @@ void CEntityProps::UnsubscribeComponentProps(const CComponentProps *pComponent)
     _lComponentProps.erase(it);  // iterator invalidation!
 }
 
-CComponentProps * CEntityProps::GetComponentProps(COMPPROPS_TYPE type)
+CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE type)
 {
     ASSERT(type < COMP_PROPS_QTY);
     if (_lComponentProps.empty())
@@ -58,7 +58,7 @@ CComponentProps * CEntityProps::GetComponentProps(COMPPROPS_TYPE type)
     return (it == _lComponentProps.end()) ? nullptr : it->second.get();
 }
 
-const CComponentProps * CEntityProps::GetComponentProps(COMPPROPS_TYPE type) const
+const CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE type) const
 {
     if (!_lComponentProps.empty())
     {
@@ -153,7 +153,7 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
 }
 
 
-bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, lpctstr ptcKey, CSString& sVal) const
+bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, const lpctstr ptcKey, CSString& sVal) const
 {
     for (const auto &val : _lComponentProps | std::views::values)
     {
@@ -180,7 +180,7 @@ bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, lpctstr ptcKey, CSString& sV
     return false;
 }
 
-bool CEntityProps::r_WritePropVal(lpctstr ptcKey, CSString & sVal, const CObjBase *pObjEntityProps, const CBaseBaseDef *pBaseEntityProps) // static
+bool CEntityProps::r_WritePropVal(const lpctstr ptcKey, CSString & sVal, const CObjBase *pObjEntityProps, const CBaseBaseDef *pBaseEntityProps) // static
 {
     ADDTOCALLSTACK("CEntityProps::r_WritePropVal");
     // return false: invalid property for any of the subscribed components

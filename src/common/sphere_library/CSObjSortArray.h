@@ -91,7 +91,7 @@ public:
 // CSObjSortArray:: Modifiers.
 
 template<class TYPE,class KEY_TYPE>
-size_t CSObjSortArray<TYPE,KEY_TYPE>::AddPresorted( size_t index, int iCompareRes, TYPE pNew )
+size_t CSObjSortArray<TYPE,KEY_TYPE>::AddPresorted( size_t index, const int iCompareRes, TYPE pNew )
 {
 	if ( iCompareRes > 0 )
 		++index;
@@ -139,7 +139,7 @@ size_t CSObjSortArray<TYPE,KEY_TYPE>::FindKey( KEY_TYPE key ) const
 }
 
 template<class TYPE, class KEY_TYPE>
-size_t CSObjSortArray<TYPE, KEY_TYPE>::FindKeyNear( KEY_TYPE key, int & iCompareRes, bool fNoSpaces ) const
+size_t CSObjSortArray<TYPE, KEY_TYPE>::FindKeyNear( KEY_TYPE key, int & iCompareRes, const bool fNoSpaces ) const
 {
 	// Do a binary search for the key.
 	// RETURN: index

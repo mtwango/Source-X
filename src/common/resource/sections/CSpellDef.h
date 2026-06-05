@@ -79,7 +79,7 @@ public:
     *
     * @return  true if match, false if not.
     */
-    bool IsSpellType( uint64 uiFlags ) const
+    bool IsSpellType(const uint64 uiFlags ) const
     {
         return (( m_uiFlags & uiFlags ) ? true : false );
     }

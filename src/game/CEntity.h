@@ -52,7 +52,7 @@ public:
     * @param pComponent the CComponent to check.
     * @return true if the pComponent is suscribed.
     */
-    bool IsComponentSubscribed(CComponent *pComponent) const;
+    bool IsComponentSubscribed(const CComponent *pComponent) const;
 
     /**
     * @brief Gets a pointer to the given CComponent type.

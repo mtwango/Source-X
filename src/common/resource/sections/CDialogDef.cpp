@@ -531,7 +531,7 @@ CDialogDef::CDialogDef(const CResourceID &rid) :
 }
 
 
-bool CDialogDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CDialogDef::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CDialogDef::r_WriteVal");
@@ -550,7 +550,7 @@ bool CDialogDef::r_LoadVal( CScript & s )
 }
 
 
-bool CDialogDef::GumpSetup( int iPage, CClient * pClient, CObjBase * pObjSrc, lpctstr Arguments )
+bool CDialogDef::GumpSetup(const int iPage, CClient * pClient, CObjBase * pObjSrc, const lpctstr Arguments )
 {
     ADDTOCALLSTACK("CDialogDef::GumpSetup");
     CResourceLock	s;

@@ -107,7 +107,7 @@ void CUOMobTypes::Load()
     }
 }
 
-const CUOMobTypesEntry* CUOMobTypes::GetEntry(uint id) const
+const CUOMobTypesEntry* CUOMobTypes::GetEntry(const uint id) const
 {
     ASSERT(id < _vMobTypesEntries.size());
     return &(_vMobTypesEntries[id]);

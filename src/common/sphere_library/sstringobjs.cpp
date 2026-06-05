@@ -55,15 +55,15 @@ tchar* Str_GetTemp() noexcept
 }
 
 [[nodiscard]]
-tchar* Str_CopyToTemp(lpctstr pSrc) noexcept
+tchar* Str_CopyToTemp(const lpctstr pSrc) noexcept
 {
-    lptstr pDest = Str_GetTemp();
+    const lptstr pDest = Str_GetTemp();
     Str_CopyLimitNull(pDest, pSrc, Str_TempLength());
     return pDest;
 }
 
 [[nodiscard]]
-lpctstr Str_mtEngineGetSafeTemp(lpctstr pSrc) noexcept
+lpctstr Str_mtEngineGetSafeTemp(const lpctstr pSrc) noexcept
 {
 #if MT_ENGINES
     return Str_CopyToTemp(pSrc);
@@ -84,7 +84,7 @@ AbstractString::AbstractString() :
 
 AbstractString::~AbstractString() = default;
 
-void AbstractString::ensureLengthHeap(size_t newLength)
+void AbstractString::ensureLengthHeap(const size_t newLength)
 {
 	if (newLength >= m_realLength)
 	{
@@ -121,12 +121,12 @@ void AbstractString::destroyHeap() noexcept
 	}
 }
 
-char AbstractString::charAt(size_t index) const noexcept
+char AbstractString::charAt(const size_t index) const noexcept
 {
 	return m_buf[index];
 }
 
-void AbstractString::setAt(size_t index, char c) noexcept
+void AbstractString::setAt(const size_t index, const char c) noexcept
 {
 	m_buf[index] = c;
 }
@@ -137,7 +137,7 @@ void AbstractString::append(const char *s) noexcept
 	strcat(m_buf, s);
 }
 
-void AbstractString::replace(char what, char toWhat) noexcept
+void AbstractString::replace(const char what, const char toWhat) noexcept
 {
 	for (size_t i = 0; i < m_length; ++i )
 	{
@@ -190,7 +190,7 @@ bool AbstractString::startsWithHead(const char *s) const noexcept
 	}
 }
 
-size_t AbstractString::indexOf(char c) const noexcept
+size_t AbstractString::indexOf(const char c) const noexcept
 {
 	char *pos = strchr(m_buf, c);
 	return (size_t)(( pos == nullptr ) ? -1 : pos - m_buf);
@@ -202,7 +202,7 @@ size_t AbstractString::indexOf(const char *s) const noexcept
 	return (size_t)((pos == nullptr) ? -1 : pos - m_buf);
 }
 
-size_t AbstractString::lastIndexOf(char c) const noexcept
+size_t AbstractString::lastIndexOf(const char c) const noexcept
 {
 	char *pos = strrchr(m_buf, c);
 	return (size_t)((pos == nullptr) ? -1 : pos - m_buf);
@@ -267,12 +267,12 @@ TemporaryString::TemporaryString(char *buffer, char *state)
 	init(buffer, state);
 }
 
-TemporaryString::TemporaryString(lpctstr pStr) : TemporaryString()
+TemporaryString::TemporaryString(const lpctstr pStr) : TemporaryString()
 {
 	m_length = Str_CopyLimitNull(m_buf, pStr, m_realLength);
 }
 
-TemporaryString::TemporaryString(lpctstr pStr, size_t uiLen) : TemporaryString()
+TemporaryString::TemporaryString(const lpctstr pStr, const size_t uiLen) : TemporaryString()
 {
 	m_length = Str_CopyLimitNull(m_buf, pStr, minimum(uiLen, m_realLength));
 }
@@ -309,7 +309,7 @@ void TemporaryString::init(char *buffer, char *state) noexcept
 	m_length = 0;
 }
 
-void TemporaryString::resize(size_t newLength)
+void TemporaryString::resize(const size_t newLength)
 {
 	if (m_useHeap)
 	{

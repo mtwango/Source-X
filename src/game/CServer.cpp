@@ -368,7 +368,7 @@ CServer::~CServer()
 {
 }
 
-void CServer::SetSignals( bool fMsg )
+void CServer::SetSignals(const bool fMsg )
 {
 	// We have just started or we changed Secure mode.
 
@@ -399,7 +399,7 @@ void CServer::SetSignals( bool fMsg )
 	}
 }
 
-bool CServer::SetProcessPriority(int iPriorityLevel)
+bool CServer::SetProcessPriority(const int iPriorityLevel)
 {
     bool fSuccess;
 #ifdef _WIN32
@@ -439,7 +439,7 @@ ServMode CServer::GetServerMode() const noexcept
     return m_iModeCode.load(std::memory_order_acquire);
 }
 
-void CServer::SetServerMode( ServMode mode )
+void CServer::SetServerMode(const ServMode mode )
 {
 	ADDTOCALLSTACK("CServer::SetServerMode");
 	m_iModeCode.store(mode, std::memory_order_release);
@@ -474,7 +474,7 @@ int CServer::GetExitFlag() const noexcept
     return m_iExitFlag.load(std::memory_order_acquire);
 }
 
-void CServer::SetExitFlag(int iFlag) noexcept
+void CServer::SetExitFlag(const int iFlag) noexcept
 {
     ADDTOCALLSTACK("CServer::SetExitFlag");
     if ( GetExitFlag() )
@@ -511,7 +511,7 @@ bool CServer::IsDestroyingWorld() const noexcept
     return (servMode == ServMode::Exiting || servMode == ServMode::StartupLoadingScripts || servMode == ServMode::StartupLoadingSaves);
 }
 
-void CServer::Shutdown( int64 iMinutes ) // If shutdown is initialized
+void CServer::Shutdown(const int64 iMinutes ) // If shutdown is initialized
 {
 	ADDTOCALLSTACK("CServer::Shutdown");
 	if ( iMinutes <= 0 )
@@ -551,7 +551,7 @@ void CServer::SysMessage(std::unique_ptr<ConsoleOutput>&& pMsg) const
 #endif
 }
 
-void CServer::PrintTelnet( lpctstr pszMsg ) const
+void CServer::PrintTelnet(const lpctstr pszMsg ) const
 {
 	if ( ! m_iAdminClients )
 		return;
@@ -587,7 +587,7 @@ void CServer::PrintStr(ConsoleTextColor iColor, lpctstr ptcMsg) const
     PrintTelnet(ptcMsg);
 }
 
-ssize_t CServer::PrintPercent( ssize_t iCount, ssize_t iTotal ) const
+ssize_t CServer::PrintPercent(const ssize_t iCount, const ssize_t iTotal ) const
 {
 	ADDTOCALLSTACK("CServer::PrintPercent");
 	if ( iTotal <= 0 )
@@ -630,7 +630,7 @@ int64 CServer::GetAgeHours() const
 	return (CWorldGameTime::GetCurrentTime().GetTimeRaw() / (60 * 60 * MSECS_PER_SEC));
 }
 
-lpctstr CServer::GetStatusString( byte iIndex ) const
+lpctstr CServer::GetStatusString(const byte iIndex ) const
 {
 	ADDTOCALLSTACK("CServer::GetStatusString");
 	// NOTE: The key names should match those in CServerDef::r_LoadVal
@@ -1614,7 +1614,7 @@ bool CServer::r_LoadVal( CScript &s )
 	return CServerDef::r_LoadVal(s);
 }
 
-bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	ADDTOCALLSTACK("CServer::r_WriteVal");
 	if ( !strnicmp(ptcKey, "ACCOUNT.", 8) )
@@ -2293,7 +2293,7 @@ log_cont:
 extern void defragSphere(const char *);
 
 
-bool CServer::CommandLinePreLoad( int argc, tchar * argv[] )
+bool CServer::CommandLinePreLoad(const int argc, tchar * argv[] )
 {
     ADDTOCALLSTACK("CServer::CommandLinePreLoad");
     // Console Command line.
@@ -2350,7 +2350,7 @@ bool CServer::CommandLinePreLoad( int argc, tchar * argv[] )
 }
 
 
-bool CServer::CommandLinePostLoad( int argc, tchar * argv[] )
+bool CServer::CommandLinePostLoad(const int argc, tchar * argv[] )
 {
     ADDTOCALLSTACK("CServer::CommandLinePostLoad");
 	// Console Command line.
@@ -2461,7 +2461,7 @@ bool CServer::CommandLinePostLoad( int argc, tchar * argv[] )
 	return true;
 }
 
-void CServer::SetResyncPause(bool fPause, CTextConsole * pSrc, bool fMessage)
+void CServer::SetResyncPause(const bool fPause, CTextConsole * pSrc, bool fMessage)
 {
 	ADDTOCALLSTACK("CServer::SetResyncPause");
 	if ( fPause )

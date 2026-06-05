@@ -46,7 +46,7 @@ public:
         //InitPoint();
     }
 
-    CPointBase(short x, short y, char z, uchar map) noexcept :
+    CPointBase(const short x, const short y, const char z, const uchar map) noexcept :
         m_x(x), m_y(y), m_z(z), m_map(map)
     {
     }
@@ -119,7 +119,7 @@ struct CPointMap : CPointBase
 {
 	// A point in the world (or in a container) (initialized)
     CPointMap() noexcept = default;
-	CPointMap(short x, short y, char z = 0, uchar map = 0) noexcept :
+	CPointMap(const short x, const short y, const char z = 0, const uchar map = 0) noexcept :
 		CPointBase(x, y, z, map) { }
 
 	CPointMap(const CPointMap& pt) noexcept :

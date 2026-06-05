@@ -29,7 +29,7 @@ size_t CRegionBase::GetRegionRectCount() const
 	return iQty;
 }
 
-CRectMap & CRegionBase::GetRegionRect(size_t i)
+CRectMap & CRegionBase::GetRegionRect(const size_t i)
 {
 	ADDTOCALLSTACK("CRegionBase::GetRegionRect");
 	// Get a particular rectangle.
@@ -38,7 +38,7 @@ CRectMap & CRegionBase::GetRegionRect(size_t i)
 	return m_Rects[i];
 }
 
-const CRectMap & CRegionBase::GetRegionRect(size_t i) const
+const CRectMap & CRegionBase::GetRegionRect(const size_t i) const
 {
 	ADDTOCALLSTACK("CRegionBase::GetRegionRect");
     if (const size_t iQty = m_Rects.size(); iQty <= 0 )
@@ -46,7 +46,7 @@ const CRectMap & CRegionBase::GetRegionRect(size_t i) const
 	return m_Rects[i];
 }
 
-CPointMap CRegionBase::GetRegionCorner( DIR_TYPE dir ) const
+CPointMap CRegionBase::GetRegionCorner(const DIR_TYPE dir ) const
 {
 	ADDTOCALLSTACK("CRegionBase::GetRegionCorner");
 	// NOTE: DIR_QTY = center.

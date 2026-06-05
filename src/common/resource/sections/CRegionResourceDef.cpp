@@ -37,7 +37,7 @@ lpctstr const CRegionResourceDef::sm_szTrigName[RRTRIG_QTY+1] =	// static
 };
 
 
-TRIGRET_TYPE CRegionResourceDef::OnTrigger(lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
+TRIGRET_TYPE CRegionResourceDef::OnTrigger(const lpctstr pszTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CRegionResourceDef::OnTrigger");
     // Attach some trigger to the cchar. (PC or NPC)
@@ -87,7 +87,7 @@ bool CRegionResourceDef::r_LoadVal( CScript & s )
     return false;
 }
 
-bool CRegionResourceDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CRegionResourceDef::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CRegionResourceDef::r_WriteVal");

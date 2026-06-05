@@ -75,7 +75,7 @@ void CBaseBaseDef::SetTypeName( lpctstr pszName )
 	m_sName = pszName;
 }
 
-bool CBaseBaseDef::Can( uint64 uiCan ) const
+bool CBaseBaseDef::Can(const uint64 uiCan ) const
 {
 	return (m_Can & uiCan);
 }
@@ -107,7 +107,7 @@ bool CBaseBaseDef::r_Verb(CScript &s, CTextConsole * pSrc) // Execute command fr
 }
 */
 
-bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CBaseBaseDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
 	UnreferencedParameter(pSrc);
     UnreferencedParameter(fNoCallParent);
@@ -445,7 +445,7 @@ height_t CBaseBaseDef::GetHeight() const
 	return( m_Height );
 }
 
-void CBaseBaseDef::SetHeight( height_t Height )
+void CBaseBaseDef::SetHeight(const height_t Height )
 {
 	m_Height = Height;
 }
@@ -455,7 +455,7 @@ byte CBaseBaseDef::GetResLevel() const
 	return( m_ResLevel );
 }
 
-bool CBaseBaseDef::SetResLevel(RESDISPLAY_VERSION ResLevel )
+bool CBaseBaseDef::SetResLevel(const RESDISPLAY_VERSION ResLevel )
 {
 	if ( ResLevel >= RDS_T2A && ResLevel < RDS_QTY )
 	{
@@ -470,7 +470,7 @@ HUE_TYPE CBaseBaseDef::GetResDispDnHue() const
 	return( m_ResDispDnHue );
 }
 
-void CBaseBaseDef::SetResDispDnHue( HUE_TYPE ResDispDnHue )
+void CBaseBaseDef::SetResDispDnHue(const HUE_TYPE ResDispDnHue )
 {
 	m_ResDispDnHue = ResDispDnHue;
 }
@@ -480,12 +480,12 @@ word CBaseBaseDef::GetResDispDnId() const
 	return( m_ResDispDnId );
 }
 
-void CBaseBaseDef::SetResDispDnId( word ResDispDnId )
+void CBaseBaseDef::SetResDispDnId(const word ResDispDnId )
 {
 	m_ResDispDnId = ResDispDnId;
 }
 
-ushort CBaseBaseDef::ConvertRangeStr(lpctstr ptcRange) // static
+ushort CBaseBaseDef::ConvertRangeStr(const lpctstr ptcRange) // static
 {
 	int64 piVal[2];
 	tchar* ptcTmp = Str_GetTemp();

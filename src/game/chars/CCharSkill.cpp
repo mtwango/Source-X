@@ -78,7 +78,7 @@ SKILL_TYPE CChar::Skill_GetMagicRandom(ushort uiVal)
 	return SKILL_NONE;
 }
 
-bool CChar::Skill_CanUse( SKILL_TYPE skill )
+bool CChar::Skill_CanUse(const SKILL_TYPE skill )
 {
 	ADDTOCALLSTACK("CChar::Skill_CanUse");
 	if ( g_Cfg.IsSkillFlag( skill, SKF_DISABLED ) )
@@ -110,14 +110,14 @@ SKILL_TYPE CChar::Skill_GetMagicBest()
 	return skill;
 }
 
-SKILLLOCK_TYPE CChar::Skill_GetLock( SKILL_TYPE skill ) const
+SKILLLOCK_TYPE CChar::Skill_GetLock(const SKILL_TYPE skill ) const
 {
 	if ( ! m_pPlayer )
 		return( SKILLLOCK_UP );
 	return( m_pPlayer->Skill_GetLock(skill));
 }
 
-ushort CChar::Skill_GetAdjusted( SKILL_TYPE skill ) const
+ushort CChar::Skill_GetAdjusted(const SKILL_TYPE skill ) const
 {
 	ADDTOCALLSTACK("CChar::Skill_GetAdjusted");
 	// Get the skill adjusted for str,dex,int = 0-1000
@@ -171,7 +171,7 @@ ushort CChar::Skill_GetAdjusted( SKILL_TYPE skill ) const
 	return ( Skill_GetBase(skill) + uiAdjSkill + uiBonSkill );
 }
 
-void CChar::Skill_AddBase( SKILL_TYPE skill, int iChange )
+void CChar::Skill_AddBase(const SKILL_TYPE skill, const int iChange )
 {
     ADDTOCALLSTACK("CChar::Skill_AddBase");
     ASSERT( IsSkillBase(skill));
@@ -184,7 +184,7 @@ void CChar::Skill_AddBase( SKILL_TYPE skill, int iChange )
     Skill_SetBase(skill, (ushort)iNewVal);
 }
 
-void CChar::Skill_SetBase( SKILL_TYPE skill, ushort uiValue )
+void CChar::Skill_SetBase(const SKILL_TYPE skill, ushort uiValue )
 {
 	ADDTOCALLSTACK("CChar::Skill_SetBase");
 	ASSERT( IsSkillBase(skill));
@@ -237,7 +237,7 @@ void CChar::Skill_SetBase( SKILL_TYPE skill, ushort uiValue )
 		UpdateStatsFlag();
 }
 
-ushort CChar::Skill_GetMax( SKILL_TYPE skill, bool ignoreLock ) const
+ushort CChar::Skill_GetMax(const SKILL_TYPE skill, const bool ignoreLock ) const
 {
 	ADDTOCALLSTACK("CChar::Skill_GetMax");
 	const CVarDefCont * pTagStorage = nullptr;
@@ -352,7 +352,7 @@ void CChar::Skill_Decay()
 	}
 }
 
-void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
+void CChar::Skill_Experience(const SKILL_TYPE skill, int iDifficulty )
 {
 	ADDTOCALLSTACK("CChar::Skill_Experience");
 	// Give the char credit for using the skill.
@@ -501,7 +501,7 @@ void CChar::Skill_Experience( SKILL_TYPE skill, int iDifficulty )
 	}
 }
 
-bool CChar::Skill_CheckSuccess( SKILL_TYPE skill, int iDifficulty, bool fUseBellCurve ) const
+bool CChar::Skill_CheckSuccess(const SKILL_TYPE skill, int iDifficulty, const bool fUseBellCurve ) const
 {
 	ADDTOCALLSTACK("CChar::Skill_CheckSuccess");
 	// PURPOSE:
@@ -529,7 +529,7 @@ bool CChar::Skill_CheckSuccess( SKILL_TYPE skill, int iDifficulty, bool fUseBell
 	return ( iSuccessChance >= g_Rand.GetVal(1000) );
 }
 
-bool CChar::Skill_UseQuick(SKILL_TYPE skill, int64 iDifficulty, bool fAllowGain, bool fUseBellCurve, bool fForceCheck )
+bool CChar::Skill_UseQuick(const SKILL_TYPE skill, int64 iDifficulty, const bool fAllowGain, const bool fUseBellCurve, const bool fForceCheck )
 {
 	ADDTOCALLSTACK("CChar::Skill_UseQuick");
 	// ARGS:
@@ -592,7 +592,7 @@ void CChar::Skill_Cleanup()
 	_SetTimeoutD( m_pPlayer ? -1 : 1 );	// we should get a brain tick next time
 }
 
-lpctstr CChar::Skill_GetName( bool fUse ) const
+lpctstr CChar::Skill_GetName(const bool fUse ) const
 {
 	ADDTOCALLSTACK("CChar::Skill_GetName");
 	// Name the current skill we are doing.
@@ -633,7 +633,7 @@ lpctstr CChar::Skill_GetName( bool fUse ) const
 	}
 }
 
-ushort CChar::Skill_GetBase( SKILL_TYPE skill ) const
+ushort CChar::Skill_GetBase(const SKILL_TYPE skill ) const
 {
 	ASSERT( IsSkillBase(skill));
 	return( m_Skill[skill] );
@@ -856,7 +856,7 @@ int CChar::SkillResourceTest( const CResourceQtyArray * pResources )
 }
 
 
-bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE stage, bool fSkillOnly, int iReplicationQty )
+bool CChar::Skill_MakeItem(const ITEMID_TYPE id, const CUID &uidTarg, const SKTRIG_TYPE stage, const bool fSkillOnly, int iReplicationQty )
 {
 	ADDTOCALLSTACK("CChar::Skill_MakeItem");
 	// "MAKEITEM"
@@ -960,7 +960,7 @@ bool CChar::Skill_MakeItem( ITEMID_TYPE id, const CUID &uidTarg, SKTRIG_TYPE sta
 	return true;
 }
 
-int CChar::Skill_NaturalResource_Setup( CItem * pResBit )
+int CChar::Skill_NaturalResource_Setup(const CItem * pResBit )
 {
 	ADDTOCALLSTACK("CChar::Skill_NaturalResource_Setup");
 	// RETURN: skill difficulty
@@ -975,7 +975,7 @@ int CChar::Skill_NaturalResource_Setup( CItem * pResBit )
 	return (pOreDef->m_vcSkill.GetRandom() / 10);
 }
 
-CItem * CChar::Skill_NaturalResource_Create( CItem * pResBit, SKILL_TYPE skill )
+CItem * CChar::Skill_NaturalResource_Create( CItem * pResBit, const SKILL_TYPE skill )
 {
 	ADDTOCALLSTACK("CChar::Skill_NaturalResource_Create");
 	// Create some natural resource item.
@@ -1271,7 +1271,7 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 	return true;
 }
 
-bool CChar::Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax )
+bool CChar::Skill_Tracking(const CUID &uidTarg, const DIR_TYPE & dirPrv, const int iDistMax )
 {
 	ADDTOCALLSTACK("CChar::Skill_Tracking");
 	// SKILL_TRACKING
@@ -1330,7 +1330,7 @@ bool CChar::Skill_Tracking(const CUID &uidTarg, DIR_TYPE & dirPrv, int iDistMax 
 //************************************
 // Skill handlers.
 
-int CChar::Skill_Tracking( SKTRIG_TYPE stage )
+int CChar::Skill_Tracking(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Tracking");
 	// SKILL_TRACKING
@@ -1366,7 +1366,7 @@ int CChar::Skill_Tracking( SKTRIG_TYPE stage )
 	return -SKTRIG_ABORT;
 }
 
-int CChar::Skill_Mining( SKTRIG_TYPE stage )
+int CChar::Skill_Mining(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Mining");
 	// SKILL_MINING
@@ -1463,7 +1463,7 @@ int CChar::Skill_Mining( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Fishing( SKTRIG_TYPE stage )
+int CChar::Skill_Fishing(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Fishing");
 	// SKILL_FISHING
@@ -1569,7 +1569,7 @@ int CChar::Skill_Fishing( SKTRIG_TYPE stage )
     return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Lumberjack( SKTRIG_TYPE stage )
+int CChar::Skill_Lumberjack(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Lumberjack");
 	// SKILL_LUMBERJACK
@@ -1671,7 +1671,7 @@ int CChar::Skill_Lumberjack( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_DetectHidden( SKTRIG_TYPE stage )
+int CChar::Skill_DetectHidden(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_DetectHidden");
 	// SKILL_DETECTINGHIDDEN
@@ -1733,7 +1733,7 @@ int CChar::Skill_DetectHidden( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Cartography( SKTRIG_TYPE stage )
+int CChar::Skill_Cartography(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Cartography");
 	// SKILL_CARTOGRAPHY
@@ -1749,7 +1749,7 @@ int CChar::Skill_Cartography( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));	// How difficult? 1-1000
 }
 
-int CChar::Skill_Musicianship( SKTRIG_TYPE stage )
+int CChar::Skill_Musicianship(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Musicianship");
 	// m_Act_UID = the instrument i targeted to play.
@@ -1769,7 +1769,7 @@ int CChar::Skill_Musicianship( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Peacemaking( SKTRIG_TYPE stage )
+int CChar::Skill_Peacemaking(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Peacemaking");
 	// try to make all those listening peacable.
@@ -1877,7 +1877,7 @@ int CChar::Skill_Peacemaking( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Enticement( SKTRIG_TYPE stage )
+int CChar::Skill_Enticement(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Enticement");
 	// m_Act_UID = my target
@@ -1973,7 +1973,7 @@ int CChar::Skill_Enticement( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Provocation(SKTRIG_TYPE stage)
+int CChar::Skill_Provocation(const SKTRIG_TYPE stage)
 {
 	ADDTOCALLSTACK("CChar::Skill_Provocation");
 	// m_Act_Prv_UID = provoke this person
@@ -2132,7 +2132,7 @@ int CChar::Skill_Provocation(SKTRIG_TYPE stage)
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Poisoning( SKTRIG_TYPE stage )
+int CChar::Skill_Poisoning(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Poisoning");
 	// Act_TargPrv = poison this weapon/food
@@ -2194,7 +2194,7 @@ int CChar::Skill_Poisoning( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Cooking( SKTRIG_TYPE stage )
+int CChar::Skill_Cooking(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Cooking");
 	// m_atCreate.m_iItemID = create this item
@@ -2237,7 +2237,7 @@ int CChar::Skill_Cooking( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));
 }
 
-int CChar::Skill_Taming( SKTRIG_TYPE stage )
+int CChar::Skill_Taming(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Taming");
 	// m_Act_UID = creature to tame.
@@ -2385,7 +2385,7 @@ int CChar::Skill_Taming( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Lockpicking( SKTRIG_TYPE stage )
+int CChar::Skill_Lockpicking(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Lockpicking");
 	// m_Act_UID = the item to be picked.
@@ -2440,7 +2440,7 @@ int CChar::Skill_Lockpicking( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Hiding( SKTRIG_TYPE stage )
+int CChar::Skill_Hiding(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Hiding");
 	// SKILL_Hiding
@@ -2494,7 +2494,7 @@ int CChar::Skill_Hiding( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Herding( SKTRIG_TYPE stage )
+int CChar::Skill_Herding(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Herding");
 	// m_Act_UID = move this creature.
@@ -2595,7 +2595,7 @@ int CChar::Skill_Herding( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_SpiritSpeak( SKTRIG_TYPE stage )
+int CChar::Skill_SpiritSpeak(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_SpiritSpeak");
 
@@ -2624,7 +2624,7 @@ int CChar::Skill_SpiritSpeak( SKTRIG_TYPE stage )
 	return -SKTRIG_ABORT;
 }
 
-int CChar::Skill_Meditation( SKTRIG_TYPE stage )
+int CChar::Skill_Meditation(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Meditation");
 	// SKILL_MEDITATION
@@ -2696,7 +2696,7 @@ int CChar::Skill_Meditation( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Healing( SKTRIG_TYPE stage )
+int CChar::Skill_Healing(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Healing");
 	// SKILL_VETERINARY:
@@ -2859,7 +2859,7 @@ int CChar::Skill_Healing( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_RemoveTrap( SKTRIG_TYPE stage )
+int CChar::Skill_RemoveTrap(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_RemoveTrap");
 	// m_Act_UID = trap
@@ -2900,7 +2900,7 @@ int CChar::Skill_RemoveTrap( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Begging( SKTRIG_TYPE stage )
+int CChar::Skill_Begging(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Begging");
 	// m_Act_UID = Our begging target.
@@ -2935,7 +2935,7 @@ int CChar::Skill_Begging( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Magery( SKTRIG_TYPE stage )
+int CChar::Skill_Magery(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Magery");
 	// SKILL_MAGERY
@@ -2980,7 +2980,7 @@ int CChar::Skill_Magery( SKTRIG_TYPE stage )
 	return -SKTRIG_ABORT;
 }
 
-int CChar::Skill_Fighting( SKTRIG_TYPE stage )
+int CChar::Skill_Fighting(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Fighting");
 	// SKILL_ARCHERY:
@@ -3044,7 +3044,7 @@ int CChar::Skill_Fighting( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_MakeItem( SKTRIG_TYPE stage )
+int CChar::Skill_MakeItem(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_MakeItem");
 	// SKILL_ALCHEMY:
@@ -3081,7 +3081,7 @@ int CChar::Skill_MakeItem( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Tailoring( SKTRIG_TYPE stage )
+int CChar::Skill_Tailoring(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Tailoring");
 	if ( stage == SKTRIG_SUCCESS )
@@ -3093,7 +3093,7 @@ int CChar::Skill_Tailoring( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));
 }
 
-int CChar::Skill_Inscription( SKTRIG_TYPE stage )
+int CChar::Skill_Inscription(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Inscription");
 	if ( stage == SKTRIG_START )
@@ -3107,7 +3107,7 @@ int CChar::Skill_Inscription( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));	// How difficult? 1-1000
 }
 
-int CChar::Skill_Blacksmith( SKTRIG_TYPE stage )
+int CChar::Skill_Blacksmith(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Blacksmith");
 	// m_atCreate.m_iItemID = create this item
@@ -3136,7 +3136,7 @@ int CChar::Skill_Blacksmith( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));	// How difficult? 1-1000
 }
 
-int CChar::Skill_Carpentry( SKTRIG_TYPE stage )
+int CChar::Skill_Carpentry(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Carpentry");
 	// m_Act_UID = the item we want to be part of this process.
@@ -3152,7 +3152,7 @@ int CChar::Skill_Carpentry( SKTRIG_TYPE stage )
 	return( Skill_MakeItem( stage ));	// How difficult? 1-1000
 }
 
-int CChar::Skill_Scripted( SKTRIG_TYPE stage )
+int CChar::Skill_Scripted(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Scripted");
 	if (stage == SKTRIG_SUCCESS || stage == SKTRIG_FAIL || stage == SKTRIG_ABORT)
@@ -3164,7 +3164,7 @@ int CChar::Skill_Scripted( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;	// something odd
 }
 
-int CChar::Skill_Information( SKTRIG_TYPE stage )
+int CChar::Skill_Information(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Information");
 	// SKILL_ANIMALLORE:
@@ -3197,7 +3197,7 @@ int CChar::Skill_Information( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;
 }
 
-int CChar::Skill_Act_Napping( SKTRIG_TYPE stage )
+int CChar::Skill_Act_Napping(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Act_Napping");
 	// NPCACT_NAPPING:
@@ -3225,7 +3225,7 @@ int CChar::Skill_Act_Napping( SKTRIG_TYPE stage )
 	return -SKTRIG_QTY;	// something odd
 }
 
-int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
+int CChar::Skill_Act_Breath(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Act_Breath");
 	// NPCACT_BREATH
@@ -3318,7 +3318,7 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
+int CChar::Skill_Act_Throwing(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Act_Throwing");
 	// NPCACT_THROWING
@@ -3443,7 +3443,7 @@ int CChar::Skill_Act_Throwing( SKTRIG_TYPE stage )
 	return 0;
 }
 
-int CChar::Skill_Act_Training( SKTRIG_TYPE stage )
+int CChar::Skill_Act_Training(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK("CChar::Skill_Act_Training");
 	// NPCACT_TRAINING
@@ -3487,7 +3487,7 @@ int CChar::Skill_Act_Training( SKTRIG_TYPE stage )
 
 //************************************
 // General skill stuff.
-ANIM_TYPE CChar::Skill_GetAnim( SKILL_TYPE skill )
+ANIM_TYPE CChar::Skill_GetAnim(const SKILL_TYPE skill )
 {
 	switch ( skill )
 	{
@@ -3504,7 +3504,7 @@ ANIM_TYPE CChar::Skill_GetAnim( SKILL_TYPE skill )
 	}
 }
 
-SOUND_TYPE CChar::Skill_GetSound( SKILL_TYPE skill )
+SOUND_TYPE CChar::Skill_GetSound(const SKILL_TYPE skill )
 {
 	switch ( skill )
 	{
@@ -3613,7 +3613,7 @@ int CChar::Skill_Stroke()
 	return -SKTRIG_STROKE;	// keep active.
 }
 
-int CChar::Skill_Stage( SKTRIG_TYPE stage )
+int CChar::Skill_Stage(const SKTRIG_TYPE stage )
 {
 	ADDTOCALLSTACK_DEBUG("CChar::Skill_Stage");
     EXC_TRY("Skill_Stage");
@@ -3812,7 +3812,7 @@ void CChar::Skill_Fail( bool fCancel )
 }
 
 
-TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs )
+TRIGRET_TYPE CChar::Skill_OnTrigger(const SKILL_TYPE skill, const SKTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs )
 {
 	ADDTOCALLSTACK("CChar::Skill_OnTrigger");
 	if ( !IsSkillBase(skill) )
@@ -3839,7 +3839,7 @@ TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScrip
 	return iRet;
 }
 
-TRIGRET_TYPE CChar::Skill_OnCharTrigger(SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs )
+TRIGRET_TYPE CChar::Skill_OnCharTrigger(const SKILL_TYPE skill, const CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs )
 {
 	ADDTOCALLSTACK("CChar::Skill_OnCharTrigger");
 	if ( !IsSkillBase(skill) )
@@ -3936,7 +3936,7 @@ int CChar::Skill_Done()
 	return -SKTRIG_SUCCESS;
 }
 
-bool CChar::Skill_Wait( SKILL_TYPE skilltry )
+bool CChar::Skill_Wait(const SKILL_TYPE skilltry )
 {
 	ADDTOCALLSTACK("CChar::Skill_Wait");
 	// Some sort of push button skill.
@@ -4067,7 +4067,7 @@ bool CChar::Skill_Snoop_Check(const CItemContainer * pItem)
 // -SKTRIG_QTY = no chance. and not a crime
 // -SKTRIG_FAIL = no chance and caught.
 // 0-100 = difficulty = percent chance of failure.
-int CChar::Skill_Snooping(SKTRIG_TYPE stage)
+int CChar::Skill_Snooping(const SKTRIG_TYPE stage)
 {
 	ADDTOCALLSTACK("CChar::Skill_Snooping");
 
@@ -4142,7 +4142,7 @@ int CChar::Skill_Snooping(SKTRIG_TYPE stage)
 // -SKTRIG_QTY = no chance. and not a crime
 // -SKTRIG_FAIL = no chance and caught.
 // 0-100 = difficulty = percent chance of failure.
-int CChar::Skill_Stealing(SKTRIG_TYPE stage)
+int CChar::Skill_Stealing(const SKTRIG_TYPE stage)
 {
 	ADDTOCALLSTACK("CChar::Skill_Stealing");
 
@@ -4307,7 +4307,7 @@ The skill increase the amount of stamina gained by 1 for each 10% points of Focu
 of mana by 1 for each 20%  points of Focus.
 The Skill_Focus method is called from Stats_Regen64 method  found in CCharStat.cpp
 */
-int CChar::Skill_Focus(STAT_TYPE stat)
+int CChar::Skill_Focus(const STAT_TYPE stat)
 {
 	ADDTOCALLSTACK("CChar::Skill_Focus");
 
@@ -4334,7 +4334,7 @@ int CChar::Skill_Focus(STAT_TYPE stat)
 	return -SKTRIG_QTY;
 
 }
-bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
+bool CChar::Skill_Start(const SKILL_TYPE skill, const int iDifficultyIncrease )
 {
 	ADDTOCALLSTACK("CChar::Skill_Start");
 	// We have all the info we need to do the skill. (targeting etc.)

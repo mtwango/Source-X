@@ -69,7 +69,7 @@ lpctstr const CSpellDef::sm_szLoadKeys[SPC_QTY+1] =
     nullptr
 };
 
-CSpellDef::CSpellDef( SPELL_TYPE id ) :
+CSpellDef::CSpellDef(const SPELL_TYPE id ) :
     CResourceLink( CResourceID( RES_SPELL, id ))
 {
     m_uiFlags = SPELLFLAG_DISABLED;
@@ -87,7 +87,7 @@ CSpellDef::CSpellDef( SPELL_TYPE id ) :
     m_Interrupt.m_aiValues[0] = 1000;
 }
 
-bool CSpellDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CSpellDef::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
     ADDTOCALLSTACK("CSpellDef::r_WriteVal");

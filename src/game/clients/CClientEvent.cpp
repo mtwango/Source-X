@@ -86,7 +86,7 @@ void CClient::Event_ChatButton(const nachar* pszName) // Client's chat button wa
 	GetChar()->SetTriggerActive();
 }
 
-void CClient::Event_ChatText( const nachar* pszText, int len, CLanguageID lang ) // Text from a client
+void CClient::Event_ChatText( const nachar* pszText, const int len, const CLanguageID lang ) // Text from a client
 {
 	ADDTOCALLSTACK("CClient::Event_ChatText");
 	// Just send it all to the chat system
@@ -723,7 +723,7 @@ void CClient::Event_Skill_Use( SKILL_TYPE skill ) // Skill is clicked on the ski
 }
 
 
-bool CClient::Event_CheckWalkBuffer(byte rawdir)
+bool CClient::Event_CheckWalkBuffer(const byte rawdir)
 {
 	ADDTOCALLSTACK("CClient::Event_CheckWalkBuffer");
 	//Return False: block the step
@@ -815,7 +815,7 @@ bool CClient::Event_CheckWalkBuffer(byte rawdir)
 	return true;
 }
 
-bool CClient::Event_ExceededNetworkQuota(uchar uiType, int64 iBytes, int64 iQuota)
+bool CClient::Event_ExceededNetworkQuota(const uchar uiType, const int64 iBytes, const int64 iQuota)
 {
 	ADDTOCALLSTACK("CClient::Event_ExceededNetworkQuota");
 
@@ -841,7 +841,7 @@ bool CClient::Event_ExceededNetworkQuota(uchar uiType, int64 iBytes, int64 iQuot
 }
 
 
-bool CClient::Event_Walk( byte rawdir, byte sequence ) // Player moves
+bool CClient::Event_Walk(const byte rawdir, const byte sequence ) // Player moves
 {
 	ADDTOCALLSTACK("CClient::Event_Walk");
 	// The client is sending a walk request to server, so the server must check
@@ -965,7 +965,7 @@ bool CClient::Event_Walk( byte rawdir, byte sequence ) // Player moves
 }
 
 // Client selected an combat ability on book
-void CClient::Event_CombatAbilitySelect(dword dwAbility)
+void CClient::Event_CombatAbilitySelect(const dword dwAbility)
 {
     ADDTOCALLSTACK("CClient::Event_CombatAbilitySelect");
     if ( !m_pChar )
@@ -980,7 +980,7 @@ void CClient::Event_CombatAbilitySelect(dword dwAbility)
 }
 
 // Client selected an virtue on gump
-void CClient::Event_VirtueSelect(dword dwVirtue, CChar *pCharTarg)
+void CClient::Event_VirtueSelect(const dword dwVirtue, CChar *pCharTarg)
 {
     ADDTOCALLSTACK("CClient::Event_VirtueSelect");
     if ( !m_pChar )
@@ -1037,7 +1037,7 @@ void CClient::Event_CombatMode( bool fWar ) // Only for switching to combat mode
     m_pChar->UpdateMode(m_pChar->IsStatFlag(STATF_DEAD), this);
 }
 
-bool CClient::Event_Command(lpctstr pszCommand, TALKMODE_TYPE mode)
+bool CClient::Event_Command(lpctstr pszCommand, const TALKMODE_TYPE mode)
 {
 	ADDTOCALLSTACK("CClient::Event_Command");
 	if ( mode == TALKMODE_GUILD || mode == TALKMODE_ALLIANCE ) // guild and alliance don't pass this.
@@ -1135,7 +1135,7 @@ void CClient::Event_Attack(const CUID &uid)
 
 // Client/Player buying items from the Vendor
 
-void CClient::Event_VendorBuy_Cheater( int iCode )
+void CClient::Event_VendorBuy_Cheater(const int iCode )
 {
 	ADDTOCALLSTACK("CClient::Event_VendorBuy_Cheater");
 
@@ -1153,7 +1153,7 @@ void CClient::Event_VendorBuy_Cheater( int iCode )
 	SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_CANTBUY));
 }
 
-void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, uint uiItemCount)
+void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, const uint uiItemCount)
 {
     ADDTOCALLSTACK("CClient::Event_VendorBuy");
     if (m_pChar == nullptr || pVendor == nullptr || items == nullptr || uiItemCount <= 0)
@@ -1416,7 +1416,7 @@ do_consume:
         addSound(SOUND_DROP_GOLD1); //Gold sound is better than cloth one, 0x57 is SOUND_USE_CLOTH
 }
 
-void CClient::Event_VendorSell_Cheater( int iCode )
+void CClient::Event_VendorSell_Cheater(const int iCode )
 {
 	ADDTOCALLSTACK("CClient::Event_VendorSell_Cheater");
 
@@ -1435,7 +1435,7 @@ void CClient::Event_VendorSell_Cheater( int iCode )
 	SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_CANTSELL));
 }
 
-void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, uint uiItemCount)
+void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, const uint uiItemCount)
 {
 	ADDTOCALLSTACK("CClient::Event_VendorSell");
 	// Player Selling items to the vendor.
@@ -1800,7 +1800,7 @@ void CClient::Event_PromptResp( lpctstr pszText, size_t len, dword context1, dwo
 	SysMessage(sMsg);
 }
 
-void CClient::Event_PromptResp_GMPage(lpctstr pszReason)
+void CClient::Event_PromptResp_GMPage(const lpctstr pszReason)
 {
 	ADDTOCALLSTACK("CClient::Event_PromptResp_GMPage");
 	// Player sent an GM page
@@ -1851,7 +1851,7 @@ void CClient::Event_PromptResp_GMPage(lpctstr pszReason)
 }
 
 
-void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
+void CClient::Event_Talk_Common(const lpctstr pszText)	// PC speech
 {
 	ADDTOCALLSTACK("CClient::Event_Talk_Common");
 	if ( !m_pChar || !m_pChar->m_pPlayer || !m_pChar->m_pArea )
@@ -2017,7 +2017,7 @@ void CClient::Event_Talk_Common(lpctstr pszText)	// PC speech
 }
 
 // PC speech: response to ASCII speech request
-void CClient::Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, bool fNoStrip)
+void CClient::Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, const bool fNoStrip)
 {
 	ADDTOCALLSTACK("CClient::Event_Talk");
 
@@ -2110,7 +2110,7 @@ void CClient::Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, bo
 }
 
 // PC speech: response to Unicode speech request
-void CClient::Event_TalkUNICODE(nachar* wszText, int iTextLen, HUE_TYPE wHue, TALKMODE_TYPE mMode, FONT_TYPE font, lpctstr pszLang )
+void CClient::Event_TalkUNICODE(nachar* wszText, const int iTextLen, HUE_TYPE wHue, TALKMODE_TYPE mMode, const FONT_TYPE font, const lpctstr pszLang )
 {
 	ADDTOCALLSTACK("CClient::Event_TalkUNICODE");
 	// Get the text in wide bytes.
@@ -2229,7 +2229,7 @@ bool CClient::Event_SetName(const CUID &uid, const char * pszCharName)
 	return true;
 }
 
-void CDialogResponseArgs::AddText( word id, lpctstr pszText )
+void CDialogResponseArgs::AddText(const word id, const lpctstr pszText )
 {
     m_TextArray.push_back(new TResponseString(id, pszText));
 }
@@ -2239,7 +2239,7 @@ lpctstr CDialogResponseArgs::GetName() const
 	return "ARGD";
 }
 
-bool CDialogResponseArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CDialogResponseArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallChildren);
 	ADDTOCALLSTACK("CDialogResponseArgs::r_WriteVal");
@@ -2444,7 +2444,7 @@ void CClient::Event_SingleClick(const CUID &uid)
 	SysMessagef("Bogus item uid=0%x?", (dword)uid);
 }
 
-void CClient::Event_Target(dword context, CUID uid, CPointMap pt, byte flags, ITEMID_TYPE id)
+void CClient::Event_Target(const dword context, CUID uid, CPointMap pt, const byte flags, const ITEMID_TYPE id)
 {
 	ADDTOCALLSTACK("CClient::Event_Target");
 	// XCMD_Target
@@ -2550,7 +2550,7 @@ void CClient::Event_Target(dword context, CUID uid, CPointMap pt, byte flags, IT
 	}
 }
 
-void CClient::Event_AOSPopupMenuRequest( dword uid ) //construct packet after a client request
+void CClient::Event_AOSPopupMenuRequest(const dword uid ) //construct packet after a client request
 {
 	ADDTOCALLSTACK("CClient::Event_AOSPopupMenuRequest");
 	CUID uObj(uid);
@@ -2743,7 +2743,7 @@ void CClient::Event_AOSPopupMenuRequest( dword uid ) //construct packet after a 
 	m_pPopupPacket = nullptr;
 }
 
-void CClient::Event_AOSPopupMenuSelect(dword uid, word EntryTag)	//do something after a player selected something from a pop-up menu
+void CClient::Event_AOSPopupMenuSelect(const dword uid, const word EntryTag)	//do something after a player selected something from a pop-up menu
 {
 	ADDTOCALLSTACK("CClient::Event_AOSPopupMenuSelect");
 	if ( !m_pChar || !EntryTag )
@@ -2916,7 +2916,7 @@ void CClient::Event_AOSPopupMenuSelect(dword uid, word EntryTag)	//do something 
 	}
 }
 
-void CClient::Event_BugReport( const tchar * pszText, int len, BUGREPORT_TYPE type, CLanguageID lang )
+void CClient::Event_BugReport( const tchar * pszText, const int len, const BUGREPORT_TYPE type, const CLanguageID lang )
 {
 	ADDTOCALLSTACK("CClient::Event_BugReport");
     UnreferencedParameter(len);
@@ -2934,7 +2934,7 @@ void CClient::Event_BugReport( const tchar * pszText, int len, BUGREPORT_TYPE ty
 	}
 }
 
-void CClient::Event_UseToolbar(byte bType, dword dwArg)
+void CClient::Event_UseToolbar(const byte bType, dword dwArg)
 {
 	ADDTOCALLSTACK("CClient::Event_UseToolbar");
 	if ( !m_pChar )
@@ -2975,7 +2975,7 @@ void CClient::Event_UseToolbar(byte bType, dword dwArg)
 
 //----------------------------------------------------------------------
 
-void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
+void CClient::Event_ExtCmd(const EXTCMD_TYPE type, tchar *pszName )
 {
 	ADDTOCALLSTACK("CClient::Event_ExtCmd");
 	if ( !m_pChar )

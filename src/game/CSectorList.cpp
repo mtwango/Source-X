@@ -95,7 +95,7 @@ void CSectorList::Init()
     g_Log.Event(LOGM_INIT, "Allocated map sectors:%s\n", tsConcat.buffer());
 }
 
-void CSectorList::Close(bool fClosingWorld)
+void CSectorList::Close(const bool fClosingWorld)
 {
 	ADDTOCALLSTACK("CSectorList::Close");
 
@@ -115,7 +115,7 @@ void CSectorList::Close(bool fClosingWorld)
 
 
 [[nodiscard]]
-const MapSectorsData* CSectorList::GetMapSectorData(int map) const noexcept
+const MapSectorsData* CSectorList::GetMapSectorData(const int map) const noexcept
 {
     if (!g_MapList.IsMapSupported(map))
         return nullptr;
@@ -124,7 +124,7 @@ const MapSectorsData* CSectorList::GetMapSectorData(int map) const noexcept
 }
 
 [[nodiscard]]
-const MapSectorsData& CSectorList::GetMapSectorDataUnchecked(int map) const noexcept
+const MapSectorsData& CSectorList::GetMapSectorDataUnchecked(const int map) const noexcept
 {
     // We assume we HAVE checked that's a valid map and that we are not indexing the _SectorData out of bounds.
     //if (!g_MapList.IsMapSupported(map))
@@ -133,7 +133,7 @@ const MapSectorsData& CSectorList::GetMapSectorDataUnchecked(int map) const noex
     return _SectorData[map];
 }
 
-CSector* CSectorList::GetSectorByIndexUnchecked(int map, int index) const noexcept
+CSector* CSectorList::GetSectorByIndexUnchecked(const int map, const int index) const noexcept
 {
     // We call this method very often and from places we ASSUME have already checked that the map number is legit.
     //  (it's done in CWorldMap::GetSectorByIndex).
@@ -148,7 +148,7 @@ CSector* CSectorList::GetSectorByIndexUnchecked(int map, int index) const noexce
     return (index < sd.iSectorQty) ? &(sd._pSectors.get()[index]) : nullptr;
 }
 
-CSector* CSectorList::GetSectorByCoordsUnchecked(int map, short x, short y) const NOEXCEPT_NODEBUG
+CSector* CSectorList::GetSectorByCoordsUnchecked(const int map, const short x, const short y) const NOEXCEPT_NODEBUG
 {
     // We call this method very often and from places we ASSUME have already checked that the map number is legit.
     //  (it's done in CPointBase::GetSector())
@@ -195,7 +195,7 @@ int CSectorList::GetSectorAbsoluteQty() const noexcept
 	return iCount;
 }
 
-CSector* CSectorList::GetSectorAbsolute(int index) noexcept
+CSector* CSectorList::GetSectorAbsolute(const int index) noexcept
 {
 	for (int base = 0, m = 0; m < MAP_SUPPORTED_QTY; ++m)
 	{

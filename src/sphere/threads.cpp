@@ -306,7 +306,7 @@ void ThreadHolder::markThreadsClosing() CANTHROW
     }
 }
 
-AbstractThread * ThreadHolder::getThreadAt(size_t at) noexcept
+AbstractThread * ThreadHolder::getThreadAt(const size_t at) noexcept
 {
     std::shared_lock lock(m_mutex);
     if (at >= getActiveThreads())
@@ -459,7 +459,7 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
 #endif
 }
 
-AbstractThread::AbstractThread(const char *name, ThreadPriority priority)
+AbstractThread::AbstractThread(const char *name, const ThreadPriority priority)
 {
     if (m_threadsAvailable == 0)
     {
@@ -546,7 +546,7 @@ void AbstractThread::start()
     m_terminateEvent->reset();
 }
 
-void AbstractThread::terminate(bool ended)
+void AbstractThread::terminate(const bool ended)
 {
     if (!isActive())
         return;
@@ -779,7 +779,7 @@ void AbstractThread::onStart()
 }
 
 
-void AbstractThread::setPriority(ThreadPriority pri)
+void AbstractThread::setPriority(const ThreadPriority pri)
 {
     ASSERT(((pri >= ThreadPriority::Idle) && (pri <= ThreadPriority::RealTime)) || (pri == ThreadPriority::Disabled));
     m_priority = pri;
@@ -859,7 +859,7 @@ void AbstractThread::detachFromCurrentThread() noexcept
 
 // ----- AbstractSphereThread -----
 
-AbstractSphereThread::AbstractSphereThread(const char *name, ThreadPriority priority)
+AbstractSphereThread::AbstractSphereThread(const char *name, const ThreadPriority priority)
     : AbstractThread(name, priority)
     , m_pExpr{std::make_unique<CExpression>()}
 {
@@ -907,7 +907,7 @@ void AbstractSphereThread::pushStackCall(const char *name) noexcept
 #ifdef _DEBUG
     if (m_iStackPos < -1)
         RaiseImmediateAbort(16);
-    if (m_iStackPos >= (ssize_t)ARRAY_COUNT(m_stackInfo) - 1)
+    if (m_iStackPos >= static_cast<ssize_t>(std::size(m_stackInfo)) - 1)
         RaiseImmediateAbort(17);
 #endif
 
@@ -1111,7 +1111,7 @@ void StackDebugInformation::printStackTrace() noexcept
             s->printStackTrace();
 }
 
-void StackDebugInformation::freezeCallStack(bool freeze) noexcept
+void StackDebugInformation::freezeCallStack(const bool freeze) noexcept
 {
     if (AbstractThread *pThreadState = ThreadHolder::current())
         if (auto* s = dynamic_cast<AbstractSphereThread*>(pThreadState))

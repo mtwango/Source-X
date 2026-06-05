@@ -39,7 +39,7 @@ int CSFile::GetLastError()
 #endif
 }
 
-void CSFile::_NotifyIOError( lpctstr szMessage ) const
+void CSFile::_NotifyIOError(const lpctstr szMessage ) const
 {
     ADDTOCALLSTACK("CSFile::_NotifyIOError");
     const int iErrorCode = GetLastError();
@@ -85,7 +85,7 @@ void CSFile::Close()
     CSFile::_Close();
 }
 
-bool CSFile::_Open( lpctstr ptcFilename, uint uiModeFlags )
+bool CSFile::_Open( lpctstr ptcFilename, const uint uiModeFlags )
 {
     ADDTOCALLSTACK("CSFile::_Open");
     // RETURN: true = success.
@@ -149,7 +149,7 @@ bool CSFile::_Open( lpctstr ptcFilename, uint uiModeFlags )
     return (_fileDescriptor != _kInvalidFD);
 }
 
-bool CSFile::Open( lpctstr ptcFilename, uint uiModeFlags )
+bool CSFile::Open(const lpctstr ptcFilename, const uint uiModeFlags )
 {
     ADDTOCALLSTACK("CSFile::Open");
     MT_UNIQUE_LOCK_RETURN(this, CSFile::_Open(ptcFilename, uiModeFlags));
@@ -173,7 +173,7 @@ lpctstr CSFile::GetFilePath() const
     MT_SHARED_LOCK_RETURN(this, _strFileName.GetBuffer());
 }
 
-bool CSFile::_SetFilePath( lpctstr pszName )
+bool CSFile::_SetFilePath(const lpctstr pszName )
 {
     ADDTOCALLSTACK("CFile::_SetFilePath");
     if ( pszName == nullptr )
@@ -190,7 +190,7 @@ bool CSFile::_SetFilePath( lpctstr pszName )
     return true;
 }
 
-bool CSFile::SetFilePath( lpctstr pszName )
+bool CSFile::SetFilePath(const lpctstr pszName )
 {
     ADDTOCALLSTACK("CFile::SetFilePath");
     MT_UNIQUE_LOCK_RETURN(this, CSFile::_SetFilePath(pszName));
@@ -308,7 +308,7 @@ int CSFile::_Seek( int iOffset, int iOrigin )
     return (int)ret;
 }
 
-int CSFile::Seek( int iOffset, int iOrigin )
+int CSFile::Seek(const int iOffset, const int iOrigin )
 {
     ADDTOCALLSTACK("CSFile::Seek");
     MT_UNIQUE_LOCK_RETURN(this, CSFile::_Seek(iOffset, iOrigin));
@@ -368,7 +368,7 @@ bool CSFile::_Write( const void * pData, int iLength )
 #endif
 }
 
-bool CSFile::Write(const void* pData, int iLength)
+bool CSFile::Write(const void* pData, const int iLength)
 {
     ADDTOCALLSTACK("CSFile::Write");
     MT_UNIQUE_LOCK_RETURN(this, CSFile::_Write(pData, iLength));
@@ -376,7 +376,7 @@ bool CSFile::Write(const void* pData, int iLength)
 
 // CSFile:: File name operations.
 
-lpctstr CSFile::GetFilesTitle( lpctstr pszPath )  // static
+lpctstr CSFile::GetFilesTitle(const lpctstr pszPath )  // static
 {
     //ADDTOCALLSTACK("CSFile::GetFilesTitle");
 	// strrchr
@@ -404,7 +404,7 @@ lpctstr CSFile::GetFileTitle() const
     return GetFilesTitle( GetFilePath() );
 }
 
-lpctstr CSFile::GetFilesExt( lpctstr pszName )	// static
+lpctstr CSFile::GetFilesExt(const lpctstr pszName )	// static
 {
     //ADDTOCALLSTACK("CSFile::GetFilesExt");
     // get the EXTension including the .
@@ -430,7 +430,7 @@ lpctstr CSFile::GetFileExt() const
 }
 
 
-CSString CSFile::GetMergedFileName( lpctstr pszBase, lpctstr pszName ) // static
+CSString CSFile::GetMergedFileName(const lpctstr pszBase, const lpctstr pszName ) // static
 {
 	ADDTOCALLSTACK("CSFile::GetMergedFileName");
     // Merge path and file name.
@@ -484,7 +484,7 @@ bool CSFile::IsWriteMode() const
 
 // static methods
 
-bool CSFile::FileExists(lpctstr ptcFilePath) // static
+bool CSFile::FileExists(const lpctstr ptcFilePath) // static
 {
 #ifdef _WIN32
     // WINDOWS

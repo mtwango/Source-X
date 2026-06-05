@@ -11,7 +11,7 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
-CItemShip::CItemShip(ITEMID_TYPE id, CItemBase * pItemDef) :
+CItemShip::CItemShip(const ITEMID_TYPE id, CItemBase * pItemDef) :
     CTimedObject(PROFILE_SHIPS),
     CItemMulti(id, pItemDef, true)
 {

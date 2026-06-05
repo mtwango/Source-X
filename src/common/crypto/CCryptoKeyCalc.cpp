@@ -34,7 +34,7 @@ static GetEncryptionTypeForClient(const CUOClientVersion &ver) noexcept
 }
 
 std::string_view
-static EncryptionTypeToString(ENCRYPTION_TYPE enc) noexcept
+static EncryptionTypeToString(const ENCRYPTION_TYPE enc) noexcept
 {
     switch (enc)
     {

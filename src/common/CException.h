@@ -83,7 +83,7 @@ protected:
 	const long long m_llLine;
 public:
 	static const char *m_sClassName;
-	CAssert(LOG_TYPE eSeverity, lpctstr pExp, lpctstr pFile, long long llLine) :
+	CAssert(const LOG_TYPE eSeverity, const lpctstr pExp, const lpctstr pFile, const long long llLine) :
 		CSError(eSeverity, 0, "Assert"), m_pExp(pExp), m_pFile(pFile), m_llLine(llLine)
 	{
 	}

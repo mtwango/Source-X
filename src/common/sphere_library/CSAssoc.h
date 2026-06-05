@@ -22,12 +22,12 @@ struct CValStr
 	int m_iVal;
 
 	lpctstr FindName(int iVal) const;
-	void SetValues( int iVal, lpctstr pszName )
+	void SetValues(const int iVal, const lpctstr pszName )
 	{
 		m_iVal = iVal;
 		m_pszName = pszName;
 	}
-	void SetValue( int iVal )
+	void SetValue(const int iVal )
 	{
 		m_iVal = iVal;
 	}
@@ -123,11 +123,11 @@ public:
 	{
 		return static_cast<CSStringListRec *>( GetContainerHead() );
 	}
-	void AddHead( lpctstr pszVal )
+	void AddHead(const lpctstr pszVal )
 	{
 		InsertContentHead( new CSStringListRec( pszVal ));
 	}
-	void AddTail( lpctstr pszVal )
+	void AddTail(const lpctstr pszVal )
 	{
 		InsertContentTail( new CSStringListRec( pszVal ));
 	}

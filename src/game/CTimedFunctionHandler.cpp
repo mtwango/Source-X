@@ -95,7 +95,7 @@ TRIGRET_TYPE CTimedFunctionHandler::Loop(const lpctstr ptcCommand, int iLoopsMad
 	return TRIGRET_ENDIF;
 }
 
-void CTimedFunctionHandler::Add(const CUID& uid, int64 iTimeout, const char* pcCommand)
+void CTimedFunctionHandler::Add(const CUID& uid, const int64 iTimeout, const char* pcCommand)
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::Add");
 	ASSERT(pcCommand != nullptr);
@@ -107,7 +107,7 @@ void CTimedFunctionHandler::Add(const CUID& uid, int64 iTimeout, const char* pcC
 	tf->SetTimeout(iTimeout);
 }
 
-int CTimedFunctionHandler::Load(lpctstr ptcKeyword, bool fQuoted, lpctstr ptcArg)
+int CTimedFunctionHandler::Load(const lpctstr ptcKeyword, const bool fQuoted, const lpctstr ptcArg)
 {
 	ADDTOCALLSTACK("CTimedFunctionHandler::Load");
 	UnreferencedParameter(fQuoted);

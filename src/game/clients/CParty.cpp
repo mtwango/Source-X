@@ -71,7 +71,7 @@ bool CPartyDef::SetMaster(const CChar *pNewMaster )
 	return (i == 0);
 }
 
-void CPartyDef::SetLootFlag( CChar *pChar, bool fSet )
+void CPartyDef::SetLootFlag( CChar *pChar, const bool fSet )
 {
 	ADDTOCALLSTACK("CPartyDef::SetLootFlag");
 	ASSERT(pChar);
@@ -111,7 +111,7 @@ void CPartyDef::AddStatsUpdate(const CChar *pChar, PacketSend *pPacket )
 }
 
 // ---------------------------------------------------------
-void CPartyDef::SysMessageAll( lpctstr pText )
+void CPartyDef::SysMessageAll(const lpctstr pText )
 {
 	ADDTOCALLSTACK("CPartyDef::SysMessageAll");
 	// SysMessage to all members of the party.
@@ -125,7 +125,7 @@ void CPartyDef::SysMessageAll( lpctstr pText )
 	}
 }
 
-void CPartyDef::UpdateWaypointAll(CChar * pCharSrc, MAPWAYPOINT_TYPE type)
+void CPartyDef::UpdateWaypointAll(const CChar * pCharSrc, const MAPWAYPOINT_TYPE type)
 {
     ADDTOCALLSTACK("CPartyDef::UpdateWaypointAll");
     // Send pCharSrc map waypoint location to all party members (enhanced client only)
@@ -212,7 +212,7 @@ bool CPartyDef::SendAddList( CChar *pCharDest )
 	return true;
 }
 
-bool CPartyDef::SendRemoveList( CChar *pCharRemove, bool bFor )
+bool CPartyDef::SendRemoveList( CChar *pCharRemove, const bool bFor )
 {
 	ADDTOCALLSTACK("CPartyDef::SendRemoveList");
 
@@ -617,7 +617,7 @@ bool CPartyDef::r_LoadVal( CScript &s )
 	return false;
 }
 
-bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, bool fNoCallParent, bool fNoCallChildren )
+bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren )
 {
     UnreferencedParameter(fNoCallParent);
     UnreferencedParameter(fNoCallChildren);
@@ -903,27 +903,27 @@ bool CPartyDef::r_Load( CScript &s )
 	return false;
 }
 
-lpctstr CPartyDef::GetDefStr( lpctstr ptcKey, bool fZero ) const
+lpctstr CPartyDef::GetDefStr(const lpctstr ptcKey, const bool fZero ) const
 {
 	return m_BaseDefs.GetKeyStr( ptcKey, fZero );
 }
 
-int64 CPartyDef::GetDefNum( lpctstr ptcKey ) const
+int64 CPartyDef::GetDefNum(const lpctstr ptcKey ) const
 {
 	return m_BaseDefs.GetKeyNum( ptcKey );
 }
 
-void CPartyDef::SetDefNum(lpctstr ptcKey, int64 iVal, bool fZero )
+void CPartyDef::SetDefNum(const lpctstr ptcKey, const int64 iVal, const bool fZero )
 {
 	m_BaseDefs.SetNum(ptcKey, iVal, fZero);
 }
 
-void CPartyDef::SetDefStr(lpctstr ptcKey, lpctstr pszVal, bool fQuoted, bool fZero )
+void CPartyDef::SetDefStr(const lpctstr ptcKey, const lpctstr pszVal, const bool fQuoted, const bool fZero )
 {
 	m_BaseDefs.SetStr(ptcKey, fQuoted, pszVal, fZero);
 }
 
-void CPartyDef::DeleteDef(lpctstr ptcKey)
+void CPartyDef::DeleteDef(const lpctstr ptcKey)
 {
 	m_BaseDefs.DeleteKey(ptcKey);
 }

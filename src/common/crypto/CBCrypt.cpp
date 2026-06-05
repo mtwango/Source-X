@@ -56,7 +56,7 @@ static int timing_safe_strcmp(const char *str1, const char *str2)
  * The return value is zero if the salt could be correctly generated and
  * nonzero otherwise.
  */
-static int bcrypt_gensalt(const char* prefix, int factor, char salt[BCRYPT_HASHSIZE])
+static int bcrypt_gensalt(const char* prefix, const int factor, char salt[BCRYPT_HASHSIZE])
 {
 #define RANDBYTES (16)
 	//char input[RANDBYTES];
@@ -115,7 +115,7 @@ static int bcrypt_checkpw(const char *passwd, const char hash[BCRYPT_HASHSIZE])
 
 /* Sphere Methods*/
 
-CSString CBCrypt::HashBCrypt(const char* password, int iPrefixCode, int iCost)  // static
+CSString CBCrypt::HashBCrypt(const char* password, const int iPrefixCode, const int iCost)  // static
 {
     char salt[BCRYPT_HASHSIZE];
     char hash[BCRYPT_HASHSIZE];

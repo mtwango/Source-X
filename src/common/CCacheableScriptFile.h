@@ -51,7 +51,7 @@ public:
 
 protected:
     void _dupeFrom(const CCacheableScriptFile *other);
-    void dupeFrom(CCacheableScriptFile *other);
+    void dupeFrom(const CCacheableScriptFile *other);
 
     bool _HasCache() const;
 public:

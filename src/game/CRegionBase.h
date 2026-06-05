@@ -40,11 +40,11 @@ public:
 	bool IsEqualRegion( const CRegionBase * pRegionTest ) const;
 
     [[nodiscard]]
-    CSector * GetSectorAtIndex( int i ) const noexcept {
+    CSector * GetSectorAtIndex(const int i ) const noexcept {
         return m_rectUnion.GetSectorAtIndex(i);
 	}
     [[nodiscard]]
-    CSector * GetSectorAtIndexWithHints( int i, CRect::SectIndexingHints_s hints ) const noexcept {
+    CSector * GetSectorAtIndexWithHints(const int i, CRect::SectIndexingHints_s hints ) const noexcept {
         return m_rectUnion.GetSectorAtIndexWithHints(i, std::move(hints));
     }
 

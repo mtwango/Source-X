@@ -20,7 +20,7 @@ namespace zlib {
 /////////////////////////////////////////////////////////////////
 // -CClient stuff.
 
-uint CClient::xCompress( byte * pOutput, const byte * pInput, uint outLen, uint inLen ) // static
+uint CClient::xCompress( byte * pOutput, const byte * pInput, const uint outLen, const uint inLen ) // static
 {
 	ADDTOCALLSTACK("CClient::xCompress");
 	// The game server will compress the outgoing data to the clients.
@@ -43,7 +43,7 @@ bool CClient::IsConnecting() const
 	}
 }
 
-lpctstr CClient::GetConnectTypeStr(CONNECT_TYPE iType)
+lpctstr CClient::GetConnectTypeStr(const CONNECT_TYPE iType)
 {
 	switch (iType)
 	{
@@ -60,7 +60,7 @@ lpctstr CClient::GetConnectTypeStr(CONNECT_TYPE iType)
 	}
 }
 
-void CClient::SetConnectType( CONNECT_TYPE iType )
+void CClient::SetConnectType(const CONNECT_TYPE iType )
 {
 	ADDTOCALLSTACK("CClient::SetConnectType");
 
@@ -828,7 +828,7 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 	return false;
 }
 
-bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
+bool CClient::xProcessClientSetup( CEvent * pEvent, const uint uiLen )
 {
 	ADDTOCALLSTACK("CClient::xProcessClientSetup");
 	// If this is a login then try to process the data and figure out what client it is.
@@ -989,7 +989,7 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, uint uiLen )
 	return( lErr == PacketLoginError::Success );
 }
 
-bool CClient::xCanEncLogin(bool bCheckCliver)
+bool CClient::xCanEncLogin(const bool bCheckCliver)
 {
 	ADDTOCALLSTACK("CClient::xCanEncLogin");
 	if ( !bCheckCliver )

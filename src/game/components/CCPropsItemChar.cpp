@@ -39,13 +39,13 @@ bool CCPropsItemChar::CanSubscribe(const CObjBase* pObj) noexcept // static
 */
 
 
-lpctstr CCPropsItemChar::GetPropertyName(PropertyIndex_t iPropIndex) const
+lpctstr CCPropsItemChar::GetPropertyName(const PropertyIndex_t iPropIndex) const
 {
     ASSERT(iPropIndex < PROPITCH_QTY);
     return _ptcPropertyKeys[iPropIndex];
 }
 
-bool CCPropsItemChar::IsPropertyStr(PropertyIndex_t iPropIndex) const
+bool CCPropsItemChar::IsPropertyStr(const PropertyIndex_t iPropIndex) const
 {
     /*
     switch (iPropIndex)
@@ -60,21 +60,21 @@ bool CCPropsItemChar::IsPropertyStr(PropertyIndex_t iPropIndex) const
     return false;
 }
 
-bool CCPropsItemChar::GetPropertyNumPtr(PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
+bool CCPropsItemChar::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyValNum_t* piOutVal) const
 {
     ADDTOCALLSTACK("CCPropsItemChar::GetPropertyNumPtr");
     ASSERT(!IsPropertyStr(iPropIndex));
     return BaseCont_GetPropertyNum(&_mPropsNum, iPropIndex, piOutVal);
 }
 
-bool CCPropsItemChar::GetPropertyStrPtr(PropertyIndex_t iPropIndex, CSString* psOutVal, bool fZero) const
+bool CCPropsItemChar::GetPropertyStrPtr(const PropertyIndex_t iPropIndex, CSString* psOutVal, const bool fZero) const
 {
     ADDTOCALLSTACK("CCPropsItemChar::GetPropertyStrPtr");
     ASSERT(IsPropertyStr(iPropIndex));
     return BaseCont_GetPropertyStr(&_mPropsStr, iPropIndex, psOutVal, fZero);
 }
 
-bool CCPropsItemChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_t iVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemChar::SetPropertyNum(const PropertyIndex_t iPropIndex, const PropertyValNum_t iVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemChar::SetPropertyNum");
     ASSERT(!IsPropertyStr(iPropIndex));
@@ -132,7 +132,7 @@ bool CCPropsItemChar::SetPropertyNum(PropertyIndex_t iPropIndex, PropertyValNum_
     return true;
 }
 
-bool CCPropsItemChar::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, bool fDeleteZero)
+bool CCPropsItemChar::SetPropertyStr(const PropertyIndex_t iPropIndex, const lpctstr ptcVal, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const bool fDeleteZero)
 {
     ADDTOCALLSTACK("CCPropsItemChar::SetPropertyStr");
     ASSERT(ptcVal);
@@ -158,19 +158,19 @@ bool CCPropsItemChar::SetPropertyStr(PropertyIndex_t iPropIndex, lpctstr ptcVal,
     return true;
 }
 
-void CCPropsItemChar::DeletePropertyNum(PropertyIndex_t iPropIndex)
+void CCPropsItemChar::DeletePropertyNum(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemChar::DeletePropertyNum");
     _mPropsNum.erase(iPropIndex);
 }
 
-void CCPropsItemChar::DeletePropertyStr(PropertyIndex_t iPropIndex)
+void CCPropsItemChar::DeletePropertyStr(const PropertyIndex_t iPropIndex)
 {
     ADDTOCALLSTACK("CCPropsItemChar::DeletePropertyStr");
     _mPropsStr.erase(iPropIndex);
 }
 
-bool CCPropsItemChar::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISPLAY_VERSION iLimitToExpansion, PropertyIndex_t iPropIndex, bool fPropStr)
+bool CCPropsItemChar::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, const RESDISPLAY_VERSION iLimitToExpansion, const PropertyIndex_t iPropIndex, const bool fPropStr)
 {
     ADDTOCALLSTACK("CCPropsItemChar::FindLoadPropVal");
     if (!fPropStr && (*s.GetArgRaw() == '\0'))
@@ -183,7 +183,7 @@ bool CCPropsItemChar::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, RESDISP
     return true;
 }
 
-bool CCPropsItemChar::FindWritePropVal(CSString & sVal, PropertyIndex_t iPropIndex, bool fPropStr) const
+bool CCPropsItemChar::FindWritePropVal(CSString & sVal, const PropertyIndex_t iPropIndex, const bool fPropStr) const
 {
     ADDTOCALLSTACK("CCPropsItemChar::FindWritePropVal");
 

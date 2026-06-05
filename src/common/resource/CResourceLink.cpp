@@ -25,7 +25,7 @@ CResourceLink::CResourceLink(const CResourceID& rid, const CVarDefContNum * pDef
 
 CResourceLink::~CResourceLink() = default;
 
-void CResourceLink::ScanSection( RES_TYPE restype )
+void CResourceLink::ScanSection(const RES_TYPE restype )
 {
     ADDTOCALLSTACK("CResourceLink::ScanSection");
     // Scan the section we are linking to for useful stuff.

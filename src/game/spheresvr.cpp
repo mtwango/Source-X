@@ -130,7 +130,7 @@ extern "C"
 #endif
 
 
-static bool WritePidFile(int iMode = 0)
+static bool WritePidFile(const int iMode = 0)
 {
     const auto *const fileName = SPHERE_FILE ".pid";
 	FILE* pidFile;

@@ -26,7 +26,7 @@
 //
 #if defined(_PACKETDUMP) || defined(_DUMPSUPPORT)
 
-void xRecordPacketData(const CClient* client, const byte* data, uint length, lpctstr heading)
+void xRecordPacketData(const CClient* client, const byte* data, const uint length, const lpctstr heading)
 {
 #ifdef _DUMPSUPPORT
     if (client->GetAccount() != nullptr && strnicmp(client->GetAccount()->GetName(), (lpctstr)g_Cfg.m_sDumpAccPackets, strlen(client->GetAccount()->GetName())))
@@ -40,7 +40,7 @@ void xRecordPacketData(const CClient* client, const byte* data, uint length, lpc
     xRecordPacket(client, &packet, heading);
 }
 
-void xRecordPacket(const CClient* client, Packet* packet, lpctstr heading)
+void xRecordPacket(const CClient* client, const Packet * packet, const lpctstr heading)
 {
 #ifdef _DUMPSUPPORT
     if (client->GetAccount() != nullptr && strnicmp(client->GetAccount()->GetName(), (lpctstr)g_Cfg.m_sDumpAccPackets, strlen(client->GetAccount()->GetName())))
@@ -83,7 +83,7 @@ void xRecordPacket(const CClient* client, Packet* packet, lpctstr heading)
 #endif	//defined(_PACKETDUMP) || defined(_DUMPSUPPORT)
 
 
-Packet::Packet(uint size) : m_buffer(nullptr)
+Packet::Packet(const uint size) : m_buffer(nullptr)
 {
 	m_expectedLength = size;
 	clear();
@@ -96,7 +96,7 @@ Packet::Packet(const Packet& other) : m_buffer(nullptr)
 	copy(other);
 }
 
-Packet::Packet(const byte* data, uint size) : m_buffer(nullptr)
+Packet::Packet(const byte* data, const uint size) : m_buffer(nullptr)
 {
 	clear();
 	m_expectedLength = 0;
@@ -172,7 +172,7 @@ void Packet::expand(uint size)
 	m_position = oldPosition;
 }
 
-void Packet::resize(uint newsize)
+void Packet::resize(const uint newsize)
 {
 	ASSERT(newsize > 0);
 	if ( newsize > m_bufferSize )		// increase buffer, copying the contents
@@ -194,13 +194,13 @@ void Packet::resize(uint newsize)
 	seek();
 }
 
-void Packet::seek(uint pos)
+void Packet::seek(const uint pos)
 {
 	ASSERT(pos <= m_length);
 	m_position = pos;
 }
 
-void Packet::skip(int count)
+void Packet::skip(const int count)
 {
 	// ensure we can't go lower than 0
     if (count < 0 && (uint)abs(count) > m_position)
@@ -213,13 +213,13 @@ void Packet::skip(int count)
 	m_position = (uint)((int64)m_position + count);
 }
 
-byte &Packet::operator[](uint index)
+byte &Packet::operator[](const uint index)
 {
 	ASSERT(index <= m_length);
 	return m_buffer[index];
 }
 
-const byte &Packet::operator[](uint index) const
+const byte &Packet::operator[](const uint index) const
 {
 	ASSERT(index <= m_length);
 	return m_buffer[index];
@@ -273,7 +273,7 @@ void Packet::writeByte(const byte value)
 	m_buffer[m_position++] = value;
 }
 
-void Packet::writeData(const byte* buffer, uint size)
+void Packet::writeData(const byte* buffer, const uint size)
 {
 	if ((m_position + (sizeof(byte) * size)) > m_bufferSize)
 		expand((sizeof(byte) * size));
@@ -337,7 +337,7 @@ void Packet::writeInt64(const dword hi, const dword lo)
 	m_buffer[m_position++] = (byte)(lo >> 24);
 }
 
-void Packet::writeStringASCII(const char* value, bool terminate)
+void Packet::writeStringASCII(const char* value, const bool terminate)
 {
 	while ((value != nullptr) && *value)
 	{
@@ -349,7 +349,7 @@ void Packet::writeStringASCII(const char* value, bool terminate)
 		writeCharASCII('\0');
 }
 
-void Packet::writeStringFixedASCII(const char* value, uint size, bool terminate)
+void Packet::writeStringFixedASCII(const char* value, const uint size, const bool terminate)
 {
 	if (size <= 0)
 		return;
@@ -367,7 +367,7 @@ void Packet::writeStringFixedASCII(const char* value, uint size, bool terminate)
 	}
 }
 
-void Packet::writeStringASCII(const wchar* value, bool terminate)
+void Packet::writeStringASCII(const wchar* value, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 
@@ -403,7 +403,7 @@ void Packet::writeStringASCII(const wchar* value, bool terminate)
 #endif
 }
 
-void Packet::writeStringFixedASCII(const wchar* value, uint size, bool terminate)
+void Packet::writeStringFixedASCII(const wchar* value, const uint size, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 	if (size <= 0)
@@ -446,7 +446,7 @@ void Packet::writeStringFixedASCII(const wchar* value, uint size, bool terminate
 #endif
 }
 
-void Packet::writeStringUTF16(const char* value, bool terminate)
+void Packet::writeStringUTF16(const char* value, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 
@@ -471,7 +471,7 @@ void Packet::writeStringUTF16(const char* value, bool terminate)
 #endif
 }
 
-void Packet::writeStringFixedUTF16(const char* value, uint size, bool terminate)
+void Packet::writeStringFixedUTF16(const char* value, const uint size, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 	if (size <= 0)
@@ -503,7 +503,7 @@ void Packet::writeStringFixedUTF16(const char* value, uint size, bool terminate)
 #endif
 }
 
-void Packet::writeStringUTF16(const wchar* value, bool terminate)
+void Packet::writeStringUTF16(const wchar* value, const bool terminate)
 {
 	while ((value != nullptr) && *value)
 	{
@@ -515,7 +515,7 @@ void Packet::writeStringUTF16(const wchar* value, bool terminate)
 		writeCharUTF16('\0');
 }
 
-void Packet::writeStringFixedUTF16(const wchar* value, uint size, bool terminate)
+void Packet::writeStringFixedUTF16(const wchar* value, uint size, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 	if (size <= 0)
@@ -560,7 +560,7 @@ void Packet::writeStringFixedUTF16(const wchar* value, uint size, bool terminate
 #endif
 }
 
-void Packet::writeStringNETUTF16(const char* value, bool terminate)
+void Packet::writeStringNETUTF16(const char* value, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 
@@ -585,7 +585,7 @@ void Packet::writeStringNETUTF16(const char* value, bool terminate)
 #endif
 }
 
-void Packet::writeStringFixedNETUTF16(const char* value, uint size, bool terminate)
+void Packet::writeStringFixedNETUTF16(const char* value, const uint size, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 	if (size <= 0)
@@ -617,7 +617,7 @@ void Packet::writeStringFixedNETUTF16(const char* value, uint size, bool termina
 #endif
 }
 
-void Packet::writeStringNETUTF16(const wchar* value, bool terminate)
+void Packet::writeStringNETUTF16(const wchar* value, const bool terminate)
 {
 	while ((value != nullptr) && *value)
 	{
@@ -629,7 +629,7 @@ void Packet::writeStringNETUTF16(const wchar* value, bool terminate)
 		writeCharNETUTF16('\0');
 }
 
-void Packet::writeStringFixedNETUTF16(const wchar* value, uint size, bool terminate)
+void Packet::writeStringFixedNETUTF16(const wchar* value, uint size, const bool terminate)
 {
 #ifdef USE_UNICODE_LIB
 	if (size <= 0)
@@ -779,7 +779,7 @@ int64 Packet::readInt64()
 	return qw;
 }
 
-void Packet::readStringASCII(char* buffer, uint length, bool includeNull)
+void Packet::readStringASCII(char* buffer, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -800,7 +800,7 @@ void Packet::readStringASCII(char* buffer, uint length, bool includeNull)
 		buffer[i] = '\0';
 }
 
-void Packet::readStringASCII(wchar* buffer, uint length, bool includeNull)
+void Packet::readStringASCII(wchar* buffer, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -838,7 +838,7 @@ void Packet::readStringASCII(wchar* buffer, uint length, bool includeNull)
 #endif
 }
 
-void Packet::readStringUTF16(wchar* buffer, uint length, bool includeNull)
+void Packet::readStringUTF16(wchar* buffer, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -859,7 +859,7 @@ void Packet::readStringUTF16(wchar* buffer, uint length, bool includeNull)
 		buffer[i] = '\0';
 }
 
-void Packet::readStringUTF16(char* buffer, uint bufferSize, uint length, bool includeNull)
+void Packet::readStringUTF16(char* buffer, const uint bufferSize, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -884,7 +884,7 @@ void Packet::readStringUTF16(char* buffer, uint bufferSize, uint length, bool in
 #endif
 }
 
-void Packet::readStringNETUTF16(wchar* buffer, uint length, bool includeNull)
+void Packet::readStringNETUTF16(wchar* buffer, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -905,7 +905,7 @@ void Packet::readStringNETUTF16(wchar* buffer, uint length, bool includeNull)
 		buffer[i] = '\0';
 }
 
-void Packet::readStringNETUTF16(char* buffer, uint bufferSize, uint length, bool includeNull)
+void Packet::readStringNETUTF16(char* buffer, const uint bufferSize, const uint length, const bool includeNull)
 {
 	ASSERT(buffer != nullptr);
 
@@ -930,7 +930,7 @@ void Packet::readStringNETUTF16(char* buffer, uint bufferSize, uint length, bool
 #endif
 }
 
-uint Packet::readStringNullASCII(char* buffer, uint maxlength)
+uint Packet::readStringNullASCII(char* buffer, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -947,7 +947,7 @@ uint Packet::readStringNullASCII(char* buffer, uint maxlength)
 	return i;
 }
 
-uint Packet::readStringNullASCII(wchar* buffer, uint maxlength)
+uint Packet::readStringNullASCII(wchar* buffer, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -978,7 +978,7 @@ uint Packet::readStringNullASCII(wchar* buffer, uint maxlength)
 	return length;
 }
 
-uint Packet::readStringNullUTF16(wchar* buffer, uint maxlength)
+uint Packet::readStringNullUTF16(wchar* buffer, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -995,7 +995,7 @@ uint Packet::readStringNullUTF16(wchar* buffer, uint maxlength)
 	return i;
 }
 
-uint Packet::readStringNullUTF16(char* buffer, uint bufferSize, uint maxlength)
+uint Packet::readStringNullUTF16(char* buffer, const uint bufferSize, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -1018,7 +1018,7 @@ uint Packet::readStringNullUTF16(char* buffer, uint bufferSize, uint maxlength)
 	return length;
 }
 
-uint Packet::readStringNullNETUTF16(wchar* buffer, uint maxlength)
+uint Packet::readStringNullNETUTF16(wchar* buffer, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -1035,7 +1035,7 @@ uint Packet::readStringNullNETUTF16(wchar* buffer, uint maxlength)
 	return i;
 }
 
-uint Packet::readStringNullNETUTF16(char* buffer, uint bufferSize, uint maxlength)
+uint Packet::readStringNullNETUTF16(char* buffer, const uint bufferSize, const uint maxlength)
 {
 	ASSERT(buffer != nullptr);
 
@@ -1203,7 +1203,7 @@ bool Packet::onReceive(CNetState* client)
  *
  *
  ***************************************************************************/
-PacketSend::PacketSend(byte id, uint len, Priority priority)
+PacketSend::PacketSend(const byte id, const uint len, const Priority priority)
 	: m_priority(priority), m_target(nullptr), m_lengthPosition(0)
 {
 	if (len > 0)
@@ -1251,7 +1251,7 @@ PacketSend* PacketSend::clone() const
 	return new PacketSend(this);
 }
 
-void PacketSend::send(const CClient *client, bool appendTransaction)
+void PacketSend::send(const CClient *client, const bool appendTransaction)
 {
 	ADDTOCALLSTACK("PacketSend::send");
 
@@ -1269,7 +1269,7 @@ void PacketSend::send(const CClient *client, bool appendTransaction)
 	m_target->getParentThread()->queuePacket(this->clone(), appendTransaction);
 }
 
-void PacketSend::push(const CClient *client, bool appendTransaction)
+void PacketSend::push(const CClient *client, const bool appendTransaction)
 {
 	ADDTOCALLSTACK("PacketSend::push");
 
@@ -1371,7 +1371,7 @@ ExtendedPacketTransaction::~ExtendedPacketTransaction()
  *
  *
  ***************************************************************************/
-OpenPacketTransaction::OpenPacketTransaction(const CClient* client, int priority)
+OpenPacketTransaction::OpenPacketTransaction(const CClient* client, const int priority)
 {
 	ASSERT(client != nullptr);
 

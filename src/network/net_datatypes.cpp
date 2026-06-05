@@ -13,7 +13,7 @@ nword::operator word () const noexcept
     return ntohs(m_val);
 }
 
-nword& nword::operator = (word val) noexcept
+nword& nword::operator = (const word val) noexcept
 {
     m_val = htons(val);
     return (*this);
@@ -25,14 +25,14 @@ ndword::operator dword () const noexcept
     return ntohl(m_val);
 }
 
-ndword& ndword::operator = (dword val) noexcept
+ndword& ndword::operator = (const dword val) noexcept
 {
     m_val = htonl(val);
     return (*this);
 }
 
 
-static int CvtSystemToUTF16(wchar& wChar, lpctstr pInp, int iSizeInBytes)
+static int CvtSystemToUTF16(wchar& wChar, const lpctstr pInp, const int iSizeInBytes)
 {
     // Convert a UTF8 encoded string to a single unicode char.
     // RETURN: The length used from input string. < iSizeInBytes
@@ -85,7 +85,7 @@ static int CvtSystemToUTF16(wchar& wChar, lpctstr pInp, int iSizeInBytes)
     return iBytes;
 }
 
-static int CvtUTF16ToSystem(tchar* pOut, int iSizeOutBytes, wchar wChar)
+static int CvtUTF16ToSystem(tchar* pOut, const int iSizeOutBytes, wchar wChar)
 {
     // Convert a single unicode char to system string.
     // RETURN: The length < iSizeOutBytes
@@ -143,7 +143,7 @@ static int CvtUTF16ToSystem(tchar* pOut, int iSizeOutBytes, wchar wChar)
     return iBytes;
 }
 
-int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, lpctstr pInp, int iSizeInBytes)
+int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, const lpctstr pInp, int iSizeInBytes)
 {
     //
     // Convert the system default text format UTF8 to UNICODE

@@ -32,7 +32,7 @@ int CSVFile::GetCurrentRow() const
     MT_SHARED_LOCK_RETURN(this, _iCurrentRow);
 }
 
-bool CSVFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CSVFile::_Open(const lpctstr ptcFilename, const uint uiModeFlags)
 {
 	ADDTOCALLSTACK("CSVFile::_Open");
 	if ( !CCacheableScriptFile::_Open(ptcFilename, uiModeFlags) )
@@ -86,13 +86,13 @@ bool CSVFile::_Open(lpctstr ptcFilename, uint uiModeFlags)
 	_pszColumnNames[_iColumnCount] = nullptr;
 	return true;
 }
-bool CSVFile::Open(lpctstr ptcFilename, uint uiModeFlags)
+bool CSVFile::Open(const lpctstr ptcFilename, const uint uiModeFlags)
 {
     ADDTOCALLSTACK("CSVFile::Open");
     MT_UNIQUE_LOCK_RETURN(this, CSVFile::_Open(ptcFilename, uiModeFlags));
 }
 
-int CSVFile::_ReadRowContent(tchar ** ppOutput, int rowIndex, int columns)
+int CSVFile::_ReadRowContent(tchar ** ppOutput, const int rowIndex, const int columns)
 {
 	ADDTOCALLSTACK("CSVFile::_ReadRowContent");
     ASSERT(columns > 0 && columns <= i32_from_u32_clamping(kuiMaxColumns));
@@ -113,7 +113,7 @@ int CSVFile::_ReadNextRowContent(tchar ** ppOutput)
 	return _ReadRowContent(ppOutput, _iCurrentRow);
 }
 
-bool CSVFile::_ReadRowContent(int rowIndex, CSVRowData& target)
+bool CSVFile::_ReadRowContent(const int rowIndex, CSVRowData& target)
 {
 	ADDTOCALLSTACK("CSVFile::_ReadRowContent");
 	// get row data

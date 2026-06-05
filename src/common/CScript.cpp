@@ -19,13 +19,13 @@
 ///////////////////////////////////////////////////////////////
 // -CScriptKey
 
-bool CScriptKey::IsKey( lpctstr pszName ) const
+bool CScriptKey::IsKey(const lpctstr pszName ) const
 {
 	ASSERT(m_pszKey);
-	return ( ! strcmpi( m_pszKey, pszName ));
+	return !strcmpi(m_pszKey, pszName);
 }
 
-bool CScriptKey::IsKeyHead( lpctstr pszName, size_t len ) const
+bool CScriptKey::IsKeyHead(const lpctstr pszName, const size_t len ) const
 {
 	ASSERT(m_pszKey);
 	if (!strnicmp(m_pszKey, "ONAME", 5))
@@ -84,7 +84,7 @@ tchar * CScriptKey::GetArgStr( bool * fQuoted )	// this could be a quoted string
 	return pStr;
 }
 
-dword CScriptKey::GetArgFlag( dword dwStart, dword dwMask )
+dword CScriptKey::GetArgFlag(const dword dwStart, const dword dwMask )
 {
 	ADDTOCALLSTACK("CScriptKey::GetArgFlag");
 	// No args = toggle the flag.
@@ -102,7 +102,7 @@ dword CScriptKey::GetArgFlag( dword dwStart, dword dwMask )
     return (dwStart & ~dwMask);
 }
 
-int64 CScriptKey::GetArgLLFlag(uint64 iStart, uint64 iMask)
+int64 CScriptKey::GetArgLLFlag(const uint64 iStart, const uint64 iMask)
 {
     ADDTOCALLSTACK("CScriptKey::GetArgLLFlag");
     // No args = toggle the flag.
@@ -355,7 +355,7 @@ bool CScriptKeyAlloc::ParseKey( lpctstr ptcKey )
 	return true;
 }
 
-bool CScriptKeyAlloc::ParseKey( lpctstr ptcKey, lpctstr pszVal )
+bool CScriptKeyAlloc::ParseKey(const lpctstr ptcKey, lpctstr pszVal )
 {
 	//ADDTOCALLSTACK("CScriptKeyAlloc::ParseKey");
 	ASSERT(ptcKey);
@@ -436,12 +436,12 @@ CScript::CScript()
 	_InitBase();
 }
 
-CScript::CScript(lpctstr ptcKey) : CScript()
+CScript::CScript(const lpctstr ptcKey) : CScript()
 {
 	ParseKey(ptcKey);
 }
 
-CScript::CScript(lpctstr ptcKey, lpctstr ptcVal) : CScript()
+CScript::CScript(const lpctstr ptcKey, lpctstr ptcVal) : CScript()
 {
 	ParseKey( ptcKey, ptcVal );
 }
@@ -510,13 +510,13 @@ bool CScript::_Open( lpctstr ptcFilename, uint uiFlags )
 	return true;
 }
 
-bool CScript::Open( lpctstr ptcFilename, uint uiFlags )
+bool CScript::Open(const lpctstr ptcFilename, const uint uiFlags )
 {
     ADDTOCALLSTACK("CScript::Open");
     MT_UNIQUE_LOCK_RETURN(this, CScript::_Open(ptcFilename, uiFlags));
 }
 
-bool CScript::_ReadTextLine( bool fRemoveBlanks ) // Read a line from the opened script file
+bool CScript::_ReadTextLine(const bool fRemoveBlanks ) // Read a line from the opened script file
 {
 	// This function is called for each script line which is being parsed (so VERY frequently), and ADDTOCALLSTACK is expensive if called
 	// this much often, so here it's to be preferred ADDTOCALLSTACK_DEBUG, even if we'll lose stack trace precision.
@@ -539,12 +539,12 @@ bool CScript::_ReadTextLine( bool fRemoveBlanks ) // Read a line from the opened
 	m_pszKey[0] = '\0';
 	return false;
 }
-bool CScript::ReadTextLine( bool fRemoveBlanks ) // Read a line from the opened script file
+bool CScript::ReadTextLine(const bool fRemoveBlanks ) // Read a line from the opened script file
 {
     MT_UNIQUE_LOCK_RETURN(this, CScript::_ReadTextLine(fRemoveBlanks));
 }
 
-bool CScript::FindTextHeader( lpctstr pszName ) // Find a section in the current script
+bool CScript::FindTextHeader(const lpctstr pszName ) // Find a section in the current script
 {
 	ADDTOCALLSTACK("CScript::FindTextHeader");
 	// RETURN: false = EOF reached.
@@ -570,7 +570,7 @@ bool CScript::FindTextHeader( lpctstr pszName ) // Find a section in the current
 	return true;
 }
 
-int CScript::_Seek( int iOffset, int iOrigin )
+int CScript::_Seek(const int iOffset, const int iOrigin )
 {
 	ADDTOCALLSTACK("CScript::_Seek");
 	// Go to the start of a new section.
@@ -581,7 +581,7 @@ int CScript::_Seek( int iOffset, int iOrigin )
 	m_iSectionData = iOffset;
 	return CCacheableScriptFile::_Seek(iOffset,iOrigin);
 }
-int CScript::Seek( int iOffset, int iOrigin )
+int CScript::Seek(const int iOffset, const int iOrigin )
 {
     ADDTOCALLSTACK("CScript::Seek");
     MT_UNIQUE_LOCK_RETURN(this, CScript::_Seek(iOffset, iOrigin));
@@ -642,7 +642,7 @@ foundit:
 	return false;
 }
 
-bool CScript::FindSection( lpctstr pszName, uint uModeFlags )
+bool CScript::FindSection(const lpctstr pszName, const uint uiModeFlags )
 {
 	ADDTOCALLSTACK("CScript::FindSection");
 	// Find a section in the current script
@@ -666,7 +666,7 @@ bool CScript::FindSection( lpctstr pszName, uint uModeFlags )
 
 	// Failure Error display. (default)
 
-	if ( ! ( uModeFlags & OF_NONCRIT ))
+	if ( ! ( uiModeFlags & OF_NONCRIT ))
 		g_Log.Event(LOGL_WARN, "Did not find '%s' section '%s'\n", GetFileTitle(), pszName);
 	return false;
 }
@@ -677,13 +677,13 @@ lpctstr CScript::GetSection() const
 	return m_pszKey;
 }
 
-bool CScript::IsSectionType( lpctstr pszName ) //const
+bool CScript::IsSectionType(const lpctstr pszName ) //const
 {
 	// Only valid after FindNextSection()
 	return( ! strcmpi( GetKey(), pszName ) );
 }
 
-bool CScript::ReadKey( bool fRemoveBlanks )
+bool CScript::ReadKey(const bool fRemoveBlanks )
 {
 	// This function is called for each script line which is being parsed (so VERY frequently), and ADDTOCALLSTACK is expensive
 	//ADDTOCALLSTACK("CScript::ReadKey");
@@ -773,7 +773,7 @@ bool CScript::ReadKeyParse() // Read line from script
 	return false;
 }
 
-bool CScript::FindKey( lpctstr pszName ) // Find a key in the current section
+bool CScript::FindKey(const lpctstr pszName ) // Find a key in the current section
 {
 	ADDTOCALLSTACK("CScript::FindKey");
 	if ( strlen( pszName ) > SCRIPT_MAX_SECTION_LEN )
@@ -878,7 +878,7 @@ bool CScript::WriteSection( lpctstr ptcSection, ... )
 	return true;
 }
 
-bool CScript::WriteKeySingle(lptstr ptcKey)
+bool CScript::WriteKeySingle(const lptstr ptcKey)
 {
 	ADDTOCALLSTACK_DEBUG("CScript::WriteKeySingle");
 	if (ptcKey == nullptr || ptcKey[0] == '\0')
@@ -908,7 +908,7 @@ bool CScript::WriteKeySingle(lptstr ptcKey)
 	return true;
 }
 
-bool CScript::WriteKeyStr(lpctstr ptcKey, lpctstr ptcVal)
+bool CScript::WriteKeyStr(const lpctstr ptcKey, lpctstr ptcVal)
 {
 	ADDTOCALLSTACK_DEBUG("CScript::WriteKeyStr");
 	if (ptcKey == nullptr || ptcKey[0] == '\0')
@@ -954,7 +954,7 @@ bool CScript::WriteKeyStr(lpctstr ptcKey, lpctstr ptcVal)
 //}
 
 static thread_local tchar ptcWriteKeyBuf[SCRIPT_MAX_LINE_LEN];
-void CScript::WriteKeyFormat(lpctstr ptcKey, lpctstr pszVal, ...)
+void CScript::WriteKeyFormat(const lpctstr ptcKey, lpctstr pszVal, ...)
 {
 	ADDTOCALLSTACK_DEBUG("CScript::WriteKeyFormat");
 	va_list vargs;
@@ -964,13 +964,13 @@ void CScript::WriteKeyFormat(lpctstr ptcKey, lpctstr pszVal, ...)
 	va_end( vargs );
 }
 
-void CScript::WriteKeyVal(lpctstr ptcKey, int64 iVal)
+void CScript::WriteKeyVal(const lpctstr ptcKey, const int64 iVal)
 {
 	Str_FromLL(iVal, ptcWriteKeyBuf, sizeof(ptcWriteKeyBuf), 10);
 	WriteKeyStr(ptcKey, ptcWriteKeyBuf);
 }
 
-void CScript::WriteKeyHex(lpctstr ptcKey, int64 iVal)
+void CScript::WriteKeyHex(const lpctstr ptcKey, const int64 iVal)
 {
 	Str_FromLL(iVal, ptcWriteKeyBuf, sizeof(ptcWriteKeyBuf), 16);
 	WriteKeyStr(ptcKey, ptcWriteKeyBuf);

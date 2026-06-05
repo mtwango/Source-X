@@ -10,7 +10,7 @@
 #include "../common/CLog.h"
 
 
-void AddSocketToSet(fd_set& fds, SOCKET socket, int& count)
+void AddSocketToSet(fd_set& fds, const SOCKET socket, int& count)
 {
 #ifdef _WIN32
     UnreferencedParameter(count);
@@ -22,7 +22,7 @@ void AddSocketToSet(fd_set& fds, SOCKET socket, int& count)
 #endif
 }
 
-void CheckReportNetAPIErr(int retval, lpctstr ptcOperation)
+void CheckReportNetAPIErr(const int retval, const lpctstr ptcOperation)
 {
 	if (retval == 0)
 		return;
@@ -46,7 +46,7 @@ CSocketAddressIP::CSocketAddressIP()
 {
 	s_addr = INADDR_BROADCAST;
 }
-CSocketAddressIP::CSocketAddressIP( dword dwIP )
+CSocketAddressIP::CSocketAddressIP(const dword dwIP )
 {
 	s_addr = dwIP;
 }
@@ -66,7 +66,7 @@ dword CSocketAddressIP::GetAddrIP() const
 	return( s_addr );
 }
 
-void CSocketAddressIP::SetAddrIP( dword dwIP )
+void CSocketAddressIP::SetAddrIP(const dword dwIP )
 {
 	s_addr = dwIP;
 }
@@ -76,7 +76,7 @@ lpctstr CSocketAddressIP::GetAddrStr() const
 	return inet_ntoa( *this );
 }
 
-void CSocketAddressIP::SetAddrStr( lpctstr pszIP )
+void CSocketAddressIP::SetAddrStr(const lpctstr pszIP )
 {
 	// NOTE: This must be in 1.2.3.4 format.
 	s_addr = inet_addr( pszIP );
@@ -128,7 +128,7 @@ bool CSocketAddressIP::SetHostStruct( const hostent * pHost )
 	return true;
 }
 
-bool CSocketAddressIP::SetHostStr( lpctstr pszHostName )
+bool CSocketAddressIP::SetHostStr(const lpctstr pszHostName )
 {
 	// try to resolve the host name with DNS for the true ip address.
 	if ( pszHostName[0] == '\0' )
@@ -154,19 +154,19 @@ CSocketAddress::CSocketAddress()
 	m_port = 0;
 }
 
-CSocketAddress::CSocketAddress( in_addr dwIP, word uPort )
+CSocketAddress::CSocketAddress(const in_addr dwIP, const word uPort )
 {
 	s_addr = dwIP.s_addr;
 	m_port = uPort;
 }
 
-CSocketAddress::CSocketAddress( CSocketAddressIP ip, word uPort )
+CSocketAddress::CSocketAddress(const CSocketAddressIP ip, const word uPort )
 {
 	s_addr = ip.GetAddrIP();
 	m_port = uPort;
 }
 
-CSocketAddress::CSocketAddress( dword dwIP, word uPort )
+CSocketAddress::CSocketAddress(const dword dwIP, const word uPort )
 {
 	s_addr = dwIP;
 	m_port = uPort;
@@ -198,14 +198,14 @@ word CSocketAddress::GetPort() const
 	return( m_port );
 }
 
-void CSocketAddress::SetPort( word wPort )
+void CSocketAddress::SetPort(const word wPort )
 {
 	m_port = wPort;
 }
 
-void CSocketAddress::SetPortStr( lpctstr pszPort )
+void CSocketAddress::SetPortStr(const lpctstr pszPort )
 {
-	m_port = (word)(atoi(pszPort));
+	m_port = static_cast<word>(atoi(pszPort));
 }
 
 bool CSocketAddress::SetPortExtStr( tchar * pszIP )
@@ -225,7 +225,7 @@ bool CSocketAddress::SetPortExtStr( tchar * pszIP )
 }
 
 // Port and address together.
-bool CSocketAddress::SetHostPortStr( lpctstr pszIP )
+bool CSocketAddress::SetHostPortStr(const lpctstr pszIP )
 {
 	// NOTE: This is a blocking call !!!!
 	tchar szIP[256];
@@ -262,7 +262,7 @@ CSocket::CSocket()
 	Clear();
 }
 
-CSocket::CSocket( SOCKET socket )	// accept case.
+CSocket::CSocket(const SOCKET socket )	// accept case.
 {
 	m_hSocket = socket;
 }
@@ -272,7 +272,7 @@ CSocket::~CSocket()
 	Close();
 }
 
-void CSocket::SetSocket(SOCKET socket)
+void CSocket::SetSocket(const SOCKET socket)
 {
 	Close();
 	m_hSocket = socket;
@@ -284,7 +284,7 @@ void CSocket::Clear()
 	m_hSocket = INVALID_SOCKET;
 }
 
-int CSocket::GetLastError(bool bUseErrno)
+int CSocket::GetLastError(const bool bUseErrno)
 {
 #ifdef _WIN32
 	UnreferencedParameter(bUseErrno);
@@ -309,7 +309,7 @@ bool CSocket::Create()
 	return( Create( AF_INET, SOCK_STREAM, IPPROTO_TCP ) );
 }
 
-bool CSocket::Create( int iAf, int iType, int iProtocol )
+bool CSocket::Create(const int iAf, const int iType, const int iProtocol )
 {
 	ASSERT( ! IsOpen());
 	m_hSocket = socket( iAf, iType, iProtocol );
@@ -331,9 +331,9 @@ int CSocket::Bind( const CSocketAddress & SockAddr )
 	return( Bind( &SockAddrIn ));
 }
 
-int CSocket::Listen( int iMaxBacklogConnections )
+int CSocket::Listen(const int iMaxBacklogConnections )
 {
-	return( listen( m_hSocket, iMaxBacklogConnections ));
+	return listen(m_hSocket, iMaxBacklogConnections);
 }
 
 int CSocket::Connect(sockaddr_in * pSockAddrIn )
@@ -348,13 +348,13 @@ int CSocket::Connect( const CSocketAddress & SockAddr )
 	return( Connect( &SockAddrIn ));
 }
 
-int CSocket::Connect( const in_addr & ip, word wPort )
+int CSocket::Connect( const in_addr & ip, const word wPort )
 {
-	CSocketAddress SockAddr( ip.s_addr, wPort );
-	return( Connect( SockAddr ));
+    const CSocketAddress SockAddr( ip.s_addr, wPort );
+	return Connect(SockAddr);
 }
 
-int CSocket::Connect( lpctstr pszHostName, word wPort )
+int CSocket::Connect(const lpctstr pszHostName, const word wPort )
 {
 	CSocketAddress SockAddr;
 	SockAddr.SetHostStr( pszHostName );
@@ -377,13 +377,13 @@ SOCKET CSocket::Accept( CSocketAddress & SockAddr ) const
 	return( hSocket );
 }
 
-int CSocket::Send( const void * pData, int len ) const
+int CSocket::Send( const void * pData, const int len ) const
 {
 	// RETURN: length sent
 	return send( m_hSocket, static_cast<const char *>(pData), len, 0 );
 }
 
-int CSocket::Receive( void * pData, int len, int flags )
+int CSocket::Receive( void * pData, const int len, const int flags )
 {
 	// RETURN: length, <= 0 is closed or error.
 	// flags = MSG_PEEK or MSG_OOB
@@ -428,24 +428,24 @@ CSocketAddress CSocket::GetPeerName( ) const
     return (CSocketAddress(SockAddrIn));
 }
 
-int CSocket::SetSockOpt( int nOptionName, const void * optval, int optlen, int nLevel ) const
+int CSocket::SetSockOpt(const int nOptionName, const void * optval, const int optlen, const int nLevel ) const
 {
 	// level = SOL_SOCKET and IPPROTO_TCP.
     return( setsockopt( m_hSocket, nLevel, nOptionName, static_cast<const char *>(optval), optlen ));
 }
 
-int CSocket::GetSockOpt( int nOptionName, void * optval, int * poptlen, int nLevel ) const
+int CSocket::GetSockOpt(const int nOptionName, void * optval, int * poptlen, const int nLevel ) const
 {
     return getsockopt( m_hSocket, nLevel, nOptionName, static_cast<char *>(optval), reinterpret_cast<socklen_t *>(poptlen));
 }
 
 #ifdef _WIN32
-	int CSocket::IOCtlSocket(int icmd, DWORD * pdwArgs )
+	int CSocket::IOCtlSocket(const int icmd, DWORD * pdwArgs )
 	{
 		return ioctlsocket( m_hSocket, icmd, pdwArgs );
 	}
 
-	int CSocket::SendAsync( LPWSABUF lpBuffers, DWORD dwBufferCount, LPDWORD lpNumberOfBytesSent, DWORD dwFlags, LPWSAOVERLAPPED lpOverlapped, LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine ) const
+	int CSocket::SendAsync(const LPWSABUF lpBuffers, const DWORD dwBufferCount, const LPDWORD lpNumberOfBytesSent, const DWORD dwFlags, const LPWSAOVERLAPPED lpOverlapped, const LPWSAOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine ) const
 	{
 		 // RETURN: length sent
 		 return( WSASend( m_hSocket, lpBuffers, dwBufferCount, lpNumberOfBytesSent, dwFlags, lpOverlapped, lpCompletionRoutine ));
@@ -470,7 +470,7 @@ int CSocket::GetSockOpt( int nOptionName, void * optval, int * poptlen, int nLev
 	}
 #endif
 
-int CSocket::SetNonBlocking(bool fEnable)
+int CSocket::SetNonBlocking(const bool fEnable)
 {
 #ifdef _WIN32
 	DWORD lVal = fEnable? 1 : 0;	// 0 =  block
@@ -502,7 +502,7 @@ void CSocket::CloseSocket( SOCKET hClose )
 #endif
 }
 
-short CSocket::GetProtocolIdByName( lpctstr pszName )
+short CSocket::GetProtocolIdByName(const lpctstr pszName )
 {
 
     protoent *ppe = getprotobyname(pszName);

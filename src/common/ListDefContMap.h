@@ -30,7 +30,7 @@ public:
     lpctstr GetKey() const {
         return m_Key.GetBuffer();
     }
-    void SetKey(lpctstr ptcKey) {
+    void SetKey(const lpctstr ptcKey) {
         m_Key = ptcKey;
     }
 
@@ -59,7 +59,7 @@ public:
     int64 GetValNum() const override {
         return m_iVal;
     }
-    void SetValNum(int64 iVal) {
+    void SetValNum(const int64 iVal) {
         m_iVal = iVal;
     }
 	lpctstr GetValStr() const override;
@@ -186,7 +186,7 @@ private:
 	CListDefCont * GetAtKey( lpctstr at );
 	void DeleteAt( size_t at );
 	void DeleteAtKey( lpctstr at );
-	void DeleteAtIterator( DefSet::iterator it );
+	void DeleteAtIterator(const DefSet::iterator &it );
 
 public:
 	void Copy( const CListDefMap * pArray );

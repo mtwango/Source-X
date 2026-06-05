@@ -20,7 +20,7 @@ public:
     {
         return m_rid;
     }
-    void SetResourceID(const CResourceID& rid, int iQty) noexcept
+    void SetResourceID(const CResourceID& rid, const int iQty) noexcept
     {
         m_rid = rid;
         m_iQty = iQty;
@@ -38,7 +38,7 @@ public:
     {
         return m_iQty;
     }
-    void SetResQty(int64 iQuantity) noexcept
+    void SetResQty(const int64 iQuantity) noexcept
     {
         m_iQty = iQuantity;
     }
@@ -82,7 +82,7 @@ public:
     {
         return FindResourceID(rid) != sl::scont_bad_index();
     }
-    bool ContainsResourceType( RES_TYPE type ) const
+    bool ContainsResourceType(const RES_TYPE type ) const
     {
         return FindResourceType(type) != sl::scont_bad_index();
     }

@@ -715,11 +715,11 @@ effect_bounce:
 			if ( iDmgPhysical == 0 )		// if physical damage is not set, let's assume it as the remaining value
 				iDmgPhysical = 100 - (iDmgFire + iDmgCold + iDmgPoison + iDmgEnergy);
 
-			int iPhysicalDamage = iDmg * iDmgPhysical * (100 - (int)GetPropNum(pCCPChar, PROPCH_RESPHYSICAL, pBaseCCPChar));
-			int iFireDamage = iDmg * iDmgFire * (100 - (int)GetPropNum(pCCPChar, PROPCH_RESFIRE, pBaseCCPChar));
-			int iColdDamage = iDmg * iDmgCold * (100 - (int)GetPropNum(pCCPChar, PROPCH_RESCOLD, pBaseCCPChar));
-			int iPoisonDamage = iDmg * iDmgPoison * (100 - (int)GetPropNum(pCCPChar, PROPCH_RESPOISON, pBaseCCPChar));
-			int iEnergyDamage = iDmg * iDmgEnergy * (100 - (int)GetPropNum(pCCPChar, PROPCH_RESENERGY, pBaseCCPChar));
+			int iPhysicalDamage = iDmg * iDmgPhysical * (100 - GetPropNum(pCCPChar, PROPCH_RESPHYSICAL, pBaseCCPChar));
+			int iFireDamage = iDmg * iDmgFire * (100 - GetPropNum(pCCPChar, PROPCH_RESFIRE, pBaseCCPChar));
+			int iColdDamage = iDmg * iDmgCold * (100 - GetPropNum(pCCPChar, PROPCH_RESCOLD, pBaseCCPChar));
+			int iPoisonDamage = iDmg * iDmgPoison * (100 - GetPropNum(pCCPChar, PROPCH_RESPOISON, pBaseCCPChar));
+			int iEnergyDamage = iDmg * iDmgEnergy * (100 - GetPropNum(pCCPChar, PROPCH_RESENERGY, pBaseCCPChar));
 
 			iDmg = (iPhysicalDamage + iFireDamage + iColdDamage + iPoisonDamage + iEnergyDamage) / 10000;
 		}
@@ -746,7 +746,7 @@ effect_bounce:
         pScriptArgs->Init(iDmg, uiType, 0, nullptr);
         pScriptArgs->m_VarsLocal.SetNum("ItemDamageLayer", sm_ArmorDamageLayers[static_cast<uint>(g_Rand.Get16ValFast(std::size(sm_ArmorDamageLayers)))]);
         pScriptArgs->m_VarsLocal.SetNum("ItemDamageChance", 25);
-        pScriptArgs->m_VarsLocal.SetNum("Spell", (int)spell);
+        pScriptArgs->m_VarsLocal.SetNum("Spell", spell);
         if ( fElemental )
         {
             pScriptArgs->m_VarsLocal.SetNum("DamagePercentPhysical", iDmgPhysical);
@@ -1001,7 +1001,7 @@ effect_bounce:
                 if (int iReflectPhysical = static_cast<ushort>(std::min(GetPropNum(pCCPChar, PROPCH_REFLECTPHYSICALDAM, pBaseCCPChar), 250)))
                 {
                     int iReflectPhysicalDam = (iDmg * iReflectPhysical) / 100;
-                    pSrc->OnTakeDamage(iReflectPhysicalDam, this, (DAMAGE_TYPE)(DAMAGE_FIXED | DAMAGE_REACTIVE), iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
+                    pSrc->OnTakeDamage(iReflectPhysicalDam, this, DAMAGE_FIXED | DAMAGE_REACTIVE, iDmgPhysical, iDmgFire, iDmgCold, iDmgPoison, iDmgEnergy);
                 }
             }
 
@@ -1020,16 +1020,16 @@ effect_bounce:
 	if ( IsAosFlagEnabled( FEATURE_AOS_DAMAGE ) )
 	{
 		if ( IsClientActive() )
-			m_pClient->addShowDamage( iDmg, (dword)(GetUID()) );
+			m_pClient->addShowDamage( iDmg, GetUID() );
 		if ( pSrc->IsClientActive() && (pSrc != this) )
-			pSrc->m_pClient->addShowDamage( iDmg, (dword)(GetUID()) );
+			pSrc->m_pClient->addShowDamage( iDmg, GetUID() );
 		else
 		{
             if (CChar *pSrcOwner = pSrc->GetOwner();
                 pSrcOwner != nullptr && pSrcOwner != this ) //If my pet damages somebody display the pop-up damage unless it's damaging me because i already received the pop-up damage on before.
 			{
 				if ( pSrcOwner->IsClientActive() )
-					pSrcOwner->m_pClient->addShowDamage( iDmg, (dword)(GetUID()) );
+					pSrcOwner->m_pClient->addShowDamage( iDmg, GetUID() );
 			}
 		}
 	}
@@ -1735,14 +1735,14 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 
     CItem *pWeapon = m_uidWeapon.ItemFind();
 	DAMAGE_TYPE iDmgType = Fight_GetWeaponDamType(pWeapon);
-    bool fSwingNoRange = (bool)(IsSetCombatFlags(COMBAT_SWING_NORANGE));
+    bool fSwingNoRange = IsSetCombatFlags(COMBAT_SWING_NORANGE);
 
 	if ( IsTrigUsed(TRIGGER_HITCHECK) )
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = m_atFight.m_iWarSwingState;
         pScriptArgs->m_iN2 = iDmgType;
-        pScriptArgs->m_VarsLocal.SetNum("Recoil_NoRange", (int)fSwingNoRange);
+        pScriptArgs->m_VarsLocal.SetNum("Recoil_NoRange", fSwingNoRange);
 
         TRIGRET_TYPE tRet = OnTrigger(CTRIG_HitCheck, pScriptArgs, pCharTarg);
 		if ( tRet == TRIGRET_RET_TRUE )
@@ -1776,11 +1776,11 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
                     Fight_CalcDamage(m_uidWeapon.ItemFind()),
                     this,
                     iDmgType,
-                    (int)GetPropNum(pCCPChar, PROPCH_DAMPHYSICAL, pBaseCCPChar),
-                    (int)GetPropNum(pCCPChar, PROPCH_DAMFIRE,     pBaseCCPChar),
-                    (int)GetPropNum(pCCPChar, PROPCH_DAMCOLD,     pBaseCCPChar),
-                    (int)GetPropNum(pCCPChar, PROPCH_DAMPOISON,   pBaseCCPChar),
-                    (int)GetPropNum(pCCPChar, PROPCH_DAMENERGY,   pBaseCCPChar)
+                    GetPropNum(pCCPChar, PROPCH_DAMPHYSICAL, pBaseCCPChar),
+                    GetPropNum(pCCPChar, PROPCH_DAMFIRE, pBaseCCPChar),
+                    GetPropNum(pCCPChar, PROPCH_DAMCOLD, pBaseCCPChar),
+                    GetPropNum(pCCPChar, PROPCH_DAMPOISON, pBaseCCPChar),
+                    GetPropNum(pCCPChar, PROPCH_DAMENERGY, pBaseCCPChar)
                 );
 
                 return WAR_SWING_EQUIPPING;
@@ -2231,11 +2231,11 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
         iDmg,
         this,
         iDmgType,
-        (int)GetPropNum(pCCPChar, PROPCH_DAMPHYSICAL, pBaseCCPChar),
-        (int)GetPropNum(pCCPChar, PROPCH_DAMFIRE,     pBaseCCPChar),
-        (int)GetPropNum(pCCPChar, PROPCH_DAMCOLD,     pBaseCCPChar),
-        (int)GetPropNum(pCCPChar, PROPCH_DAMPOISON,   pBaseCCPChar),
-        (int)GetPropNum(pCCPChar, PROPCH_DAMENERGY,   pBaseCCPChar)
+        GetPropNum(pCCPChar, PROPCH_DAMPHYSICAL, pBaseCCPChar),
+        GetPropNum(pCCPChar, PROPCH_DAMFIRE, pBaseCCPChar),
+        GetPropNum(pCCPChar, PROPCH_DAMCOLD, pBaseCCPChar),
+        GetPropNum(pCCPChar, PROPCH_DAMPOISON, pBaseCCPChar),
+        GetPropNum(pCCPChar, PROPCH_DAMENERGY, pBaseCCPChar)
     );
 
 	if ( iDmg > 0 )
@@ -2293,22 +2293,22 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
         {
 
             if (GetPropNum(pCCPChar, PROPCH_HITAREAPHYSICAL, pBaseCCPChar) > g_Rand.GetVal(100))
-                pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_HIT_BLUNT, 100, 0, 0, 0, 0, static_cast<HUE_TYPE>(0x32), static_cast<SOUND_TYPE>(0x10E));
+                pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_HIT_BLUNT, 100, 0, 0, 0, 0, 0x32, 0x10E);
 
             if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE))
 	        {
 
 		        if (GetPropNum(pCCPChar, PROPCH_HITAREAFIRE, pBaseCCPChar) > g_Rand.GetVal(100))
-			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_FIRE, 0, 100, 0, 0, 0, static_cast<HUE_TYPE>(0x488), static_cast<SOUND_TYPE>(0x11D));
+			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_FIRE, 0, 100, 0, 0, 0, 0x488, 0x11D);
 
 		        if (GetPropNum(pCCPChar, PROPCH_HITAREACOLD, pBaseCCPChar) > g_Rand.GetVal(100))
-			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_COLD, 0, 0, 100, 0, 0, static_cast<HUE_TYPE>(0x834), static_cast<SOUND_TYPE>(0xFC));
+			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_COLD, 0, 0, 100, 0, 0, 0x834, 0xFC);
 
 		        if (GetPropNum(pCCPChar, PROPCH_HITAREAPOISON, pBaseCCPChar) > g_Rand.GetVal(100))
-			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_POISON, 0, 0, 0, 100, 0, static_cast<HUE_TYPE>(0x48E), static_cast<SOUND_TYPE>(0x205));
+			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_POISON, 0, 0, 0, 100, 0, 0x48E, 0x205);
 
 		        if (GetPropNum(pCCPChar, PROPCH_HITAREAENERGY, pBaseCCPChar) > g_Rand.GetVal(100))
-			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_ENERGY, 0, 0, 0, 0, 100, static_cast<HUE_TYPE>(0x78), static_cast<SOUND_TYPE>(0x1F1));
+			        pCharTarg->OnTakeDamageInflictArea(iDmg / 2, this, DAMAGE_ENERGY, 0, 0, 0, 0, 100, 0x78, 0x1F1);
 
 	        }
 

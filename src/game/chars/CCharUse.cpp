@@ -99,7 +99,7 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 
 		tchar* pszTmp = Str_GetTemp();
 		snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", static_cast<int>(i));
-        pScriptArgs->m_VarsLocal.SetNum(pszTmp, (int64)id);
+        pScriptArgs->m_VarsLocal.SetNum(pszTmp, id);
 
 		iResourceQty = static_cast<word>(pCorpseDef->m_BaseResources[i].GetResQty());
 		snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", static_cast<int>(i));
@@ -107,7 +107,7 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 	}
 	if (IsTrigUsed(TRIGGER_CARVECORPSE) || IsTrigUsed(TRIGGER_ITEMCARVECORPSE))
 	{
-        switch (static_cast<CItem*>(pCorpse)->OnTrigger(ITRIG_CarveCorpse, pScriptArgs, this))
+        switch (pCorpse->OnTrigger(ITRIG_CarveCorpse, pScriptArgs, this))
 		{
 		case TRIGRET_RET_TRUE:	return;
 		default:				break;
@@ -173,7 +173,7 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 		}
 
 		if (iResourceQty > 1 )
-			pPart->SetAmount((word)iResourceQty);
+			pPart->SetAmount(iResourceQty);
 
 		if ( pChar && pChar->m_pPlayer )
 		{
@@ -1075,7 +1075,7 @@ void CChar::Use_Drink( CItem * pItem )
 		OnSpellEffect(static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
 
 		// Give me the marker that i've used a potion.
-		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_PotionUsed, g_Cfg.GetSpellEffect(SPELL_NONE, iSkillQuality), (int64)dwDelay, this);
+		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_PotionUsed, g_Cfg.GetSpellEffect(SPELL_NONE, iSkillQuality), dwDelay, this);
 	}
 	else if ( pItem->IsType(IT_DRINK) && IsSetOF(OF_DrinkIsFood) )
 	{
@@ -1083,7 +1083,7 @@ void CChar::Use_Drink( CItem * pItem )
 		if ( pItem->m_itDrink.m_foodval )
 			uiRestore = static_cast<ushort>(pItem->m_itDrink.m_foodval);
 		else
-			uiRestore = (ushort)(pItem->Item_GetDef()->GetVolume());
+			uiRestore = pItem->Item_GetDef()->GetVolume();
 
 		if ( uiRestore < 1 )
 			uiRestore = 1;

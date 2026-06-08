@@ -1177,13 +1177,13 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 				HUE_TYPE RandomHairHue = static_cast<HUE_TYPE>(g_Rand.GetVal2(HUE_HAIR_LOW, HUE_HAIR_HIGH));
                 if (CItem *pHair = LayerFind(LAYER_HAIR))
 				{
-					pSpell->m_TagDefs.SetNum("COLOR.HAIR", (int64)(pHair->GetHue()));
+					pSpell->m_TagDefs.SetNum("COLOR.HAIR", pHair->GetHue());
 					pHair->SetHue(RandomHairHue);
 				}
 
                 if (CItem *pBeard = LayerFind(LAYER_BEARD))
 				{
-					pSpell->m_TagDefs.SetNum("COLOR.BEARD", (int64)(pBeard->GetHue()));
+					pSpell->m_TagDefs.SetNum("COLOR.BEARD", pBeard->GetHue());
 					pBeard->SetHue(RandomHairHue);
 				}
 
@@ -1639,7 +1639,7 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 				}
 
                 if ( wStatEffectRef > Stat_GetVal(STAT_INT) )
-                    wStatEffectRef = (word)(Stat_GetVal(STAT_INT));
+                    wStatEffectRef = Stat_GetVal(STAT_INT);
 
 				UpdateStatVal( STAT_INT, -wStatEffectRef );
 			}
@@ -3723,7 +3723,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
             iEffect *= ((pCharSrc->Skill_GetBase(SKILL_EVALINT) * 3) / 1000) + 1;
 
             // Spell Damage Increase bonus
-            int DamageBonus = (int)(pCharSrc->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESPELLDAM, true));
+            int DamageBonus = pCharSrc->GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASESPELLDAM, true);
             if (m_pPlayer && pCharSrc->m_pPlayer && DamageBonus > 15)		// Spell Damage Increase is capped at 15% on PvP
                 DamageBonus = 15;
 
@@ -3745,7 +3745,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	}
 
     const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-    pScriptArgs->Init((int)spell, iSkillLevel, 0, pSourceItem);
+    pScriptArgs->Init(spell, iSkillLevel, 0, pSourceItem);
     pScriptArgs->m_VarsLocal.SetNum("DamageType", 0);
     pScriptArgs->m_VarsLocal.SetNum("CreateObject1", pSpellDef->m_idEffect);
     pScriptArgs->m_VarsLocal.SetNum("Explode", fExplode);

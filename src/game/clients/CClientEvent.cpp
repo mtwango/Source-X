@@ -2441,7 +2441,7 @@ void CClient::Event_SingleClick(const CUID &uid)
 		return;
 	}
 
-	SysMessagef("Bogus item uid=0%x?", (dword)uid);
+	SysMessagef("Bogus item uid=0%x?", static_cast<dword>(uid));
 }
 
 void CClient::Event_Target(const dword context, CUID uid, CPointMap pt, const byte flags, const ITEMID_TYPE id)

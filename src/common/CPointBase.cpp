@@ -35,7 +35,7 @@ lpctstr CPointBase::sm_szDirs[] {"\0"};
 void CPointBase::InitRuntimeDefaultValues()
 {
     sl::AssignInitlistToCSizedArray(
-		sm_szDirs, std::size(CPointBase::sm_szDirs),
+		sm_szDirs, std::size(sm_szDirs),
 		{
 			g_Cfg.GetDefaultMsg(DEFMSG_MAP_DIR_0),
 			g_Cfg.GetDefaultMsg(DEFMSG_MAP_DIR_1),

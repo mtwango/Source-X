@@ -5330,7 +5330,7 @@ PacketItemWorldNew::PacketItemWorldNew(const CClient* target, const CChar* mobil
     const HUE_TYPE hue = mobile->GetHue();
 
 	writeInt16(1);
-	writeByte(static_cast<byte>(source));
+	writeByte(source);
 	writeInt32(uid);
 	writeInt16(static_cast<word>(id));
 	writeByte(dir);

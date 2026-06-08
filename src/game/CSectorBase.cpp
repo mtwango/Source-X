@@ -117,13 +117,13 @@ void CItemsList::AddItemToSector( CItem * pItem )
         else if (dynamic_cast<const CSectorObjCont*>(pParent))
         {
             // I'm moving it here from another sector.
-            const auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
+            const auto itOldParent = std::ranges::find(*pParent, pItem);
             DEBUG_ASSERT(itOldParent != pParent->cend());
         }
         else if (dynamic_cast<const CContainer*>(pParent))
         {
             // CItemContainer, CChar...
-            const auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
+            const auto itOldParent = std::ranges::find(*pParent, pItem);
             DEBUG_ASSERT(itOldParent != pParent->cend());
         }
         else

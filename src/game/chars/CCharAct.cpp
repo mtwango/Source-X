@@ -5497,7 +5497,7 @@ bool CChar::IsTriggerActive(const lpctstr trig) const
     if (_iRunningTriggerId != -1)
     {
         ASSERT(_iRunningTriggerId < CTRIG_QTY);
-        const int iAction = FindTableSorted( trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1 );
+        const int iAction = FindTableSorted( trig, sm_szTrigName, std::size(sm_szTrigName) - 1 );
         return (_iRunningTriggerId == iAction);
     }
     ASSERT(!_sRunningTrigger.IsEmpty());
@@ -5512,7 +5512,7 @@ void CChar::SetTriggerActive(const lpctstr trig)
         _sRunningTrigger.Clear();
         return;
     }
-    if (const int iAction = FindTableSorted(trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1); iAction != -1)
+    if (const int iAction = FindTableSorted(trig, sm_szTrigName, std::size(sm_szTrigName) - 1); iAction != -1)
     {
         _iRunningTriggerId = static_cast<short>(iAction);
         _sRunningTrigger = sm_szTrigName[iAction];

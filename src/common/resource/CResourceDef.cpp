@@ -42,7 +42,7 @@ bool CResourceDef::SetResourceName(const lpctstr pszName )
 
     const dword dwResPrivateUID = GetResourceID().GetPrivateUID();
     const int iResIndex = GetResourceID().GetResIndex();
-    CVarDefContNum* pVarKeyNum = nullptr;
+    const CVarDefContNum * pVarKeyNum = nullptr;
 
     auto gwriter = g_ExprGlobals.mtEngineLockedWriter();
     if ( const CVarDefCont *pExistingVarKey = gwriter->m_VarResDefs.GetKey(pszName) )

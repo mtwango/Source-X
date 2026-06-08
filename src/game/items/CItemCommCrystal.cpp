@@ -56,7 +56,7 @@ void CItemCommCrystal::OnHear(const lpctstr pszCmd, CChar *pSrc)
         CResourceLock s;
         if ( !pLink->ResourceLock(s) )
             continue;
-        if (TRIGRET_TYPE iRet = OnHearTrigger(s, pszCmd, pSrc, mode); iRet == TRIGRET_ENDIF || iRet == TRIGRET_RET_FALSE )
+        if (const TRIGRET_TYPE iRet = OnHearTrigger(s, pszCmd, pSrc, mode); iRet == TRIGRET_ENDIF || iRet == TRIGRET_RET_FALSE )
             continue;
         break;
     }
@@ -113,7 +113,7 @@ bool CItemCommCrystal::r_LoadVal(CScript & s)
 void CItemCommCrystal::DupeCopy(const CObjBase *pItemObj)
 {
     ADDTOCALLSTACK("CItemCommCrystal::DupeCopy");
-    auto pItem = dynamic_cast<const CItem*>(pItemObj);
+    const auto pItem = dynamic_cast<const CItem*>(pItemObj);
     ASSERT(pItem);
 
     CItemVendable::DupeCopy(pItem);

@@ -2,6 +2,8 @@
 #include "../sphere_library/CSRand.h"
 #include "../CExpression.h" // included in the precompiled header
 #include "CValueDefs.h"
+#include <cstddef>
+#include <cstddef>
 
 
 //*******************************************
@@ -31,7 +33,7 @@ bool CValueRangeDef::Load( tchar * pszDef )
     // it can be a range (with format {lo# hi#}) or a single value, even without brackets,
     //	so we don't need a warning if GetRangeVals doesn't find the brackets
     int64 piVal[2];
-    int iQty = CExpression::GetExprParser().GetRangeVals( pszDef, piVal, std::size(piVal), true);
+    const int iQty = CExpression::GetExprParser().GetRangeVals( pszDef, piVal, std::size(piVal), true);
     if ( iQty <= 0 )
         return false;
 
@@ -57,7 +59,7 @@ const tchar * CValueCurveDef::Write() const
     ADDTOCALLSTACK("CValueCurveDef::Write");
     tchar * pszOut = Str_GetTemp();
     size_t j = 0;
-    size_t iQty = m_aiValues.size();
+    size_t const iQty = m_aiValues.size();
     for ( size_t i = 0; i < iQty; i++ )
     {
         if ( i > 0 )
@@ -74,7 +76,7 @@ bool CValueCurveDef::Load( tchar * pszDef )
     ADDTOCALLSTACK("CValueCurveDef::Load");
     // ADV_RATE = Chance at 0, to 100.0
     int64 Arg_piCmd[101];
-    size_t iQty = Str_ParseCmds( pszDef, Arg_piCmd, std::size(Arg_piCmd));
+    size_t const iQty = Str_ParseCmds( pszDef, Arg_piCmd, std::size(Arg_piCmd));
     m_aiValues.resize(iQty);
     if ( iQty == 0 )
     {
@@ -135,9 +137,9 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
             break;
     }
 
-    int iLoVal = m_aiValues[iLoIdx];
-    int iHiVal = m_aiValues[iLoIdx + 1];
-    int iChance = iLoVal + static_cast<int>(IMulDivLL(iHiVal - iLoVal, iSkillPercent, iSegSize));
+    const int iLoVal = m_aiValues[iLoIdx];
+    const int iHiVal = m_aiValues[iLoIdx + 1];
+    const int iChance = iLoVal + static_cast<int>(IMulDivLL(iHiVal - iLoVal, iSkillPercent, iSegSize));
 
     if ( iChance <= 0 )
         return 0; // less than no chance ?
@@ -170,7 +172,7 @@ int CValueCurveDef::GetChancePercent(const int iSkillPercent ) const
     //  percent chance of success * 10 = 0 - 1000.
 
     // How many uses for a gain of .1 (div by 100)
-    int iChance = GetLinear( iSkillPercent );
+    const int iChance = GetLinear( iSkillPercent );
     if ( iChance <= 0 )
         return 0; // less than no chance ?
                   // Express uses as a percentage * 10.

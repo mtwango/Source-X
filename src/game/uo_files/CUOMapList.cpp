@@ -86,7 +86,7 @@ bool CUOMapList::Load(const int map, char *args)
     {
         tchar * ppCmd[5];	// maxx,maxy,sectorsize,mapnum[like 0 for map0/statics0/staidx0],mapid
 
-        if (size_t iCount = Str_ParseCmds(args, ppCmd, std::size(ppCmd), ","); iCount <= 0 )	// simple MAPX= same as disabling the map
+        if (const size_t iCount = Str_ParseCmds(args, ppCmd, std::size(ppCmd), ","); iCount <= 0 )	// simple MAPX= same as disabling the map
         {
             fEnabled = false;
             fInitialized = true;

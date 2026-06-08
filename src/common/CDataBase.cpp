@@ -37,7 +37,7 @@ bool CDataBase::Connect(const char *user, const char *password, const char *base
 	m_fConnected = false;
 
 	// Starting with MariaDB 10.6.2+ the format for mysql_get_client_version* changed to report the version of the client library instead of the server version.
-    if (unsigned long ver = mysql_get_client_version(); ver < MIN_MARIADB_VERSION_ALLOW )
+    if (const unsigned long ver = mysql_get_client_version(); ver < MIN_MARIADB_VERSION_ALLOW )
 	{
 		g_Log.Event(LOGM_NOCONTEXT|LOGL_ERROR, "Your MariaDB client library is too old (version %lu). Minimal allowed version is %d. MySQL support disabled.\n", ver, MIN_MARIADB_VERSION_ALLOW);
 		g_Cfg.m_fMySql = false;
@@ -126,8 +126,8 @@ bool CDataBase::query(const char *query, CVarDefMap & mapQueryResult)
 
     if ( m_res != nullptr )
     {
-        MYSQL_FIELD * fields = mysql_fetch_fields(m_res);
-        int num_fields = mysql_num_fields(m_res);
+        const MYSQL_FIELD * fields = mysql_fetch_fields(m_res);
+        const int num_fields = mysql_num_fields(m_res);
 
         mapQueryResult.SetNum("NUMROWS", mysql_num_rows(m_res));
         mapQueryResult.SetNum("NUMCOLS", num_fields);
@@ -136,12 +136,12 @@ bool CDataBase::query(const char *query, CVarDefMap & mapQueryResult)
         char **trow = nullptr;
         int rownum = 0;
         char *zStore = Str_GetTemp();
-        char empty = 0;
+        constexpr char empty = 0;
         while ( (trow = mysql_fetch_row(m_res)) != nullptr )
         {
             for ( int i = 0; i < num_fields; ++i )
             {
-                char *z = trow[i];
+                const char *z = trow[i];
                 if (z == nullptr) //We need to check if the row empty, and return char 0 as return, because SetStr clean up \0 chars from vardef and causes the Sphere crash.
                     z = &empty;
 
@@ -386,7 +386,7 @@ bool CDataBase::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, c
 		return true;
 	}
 
-    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
+    switch (const int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case DBO_AEXECUTE:
 		case DBO_AQUERY:

@@ -439,17 +439,17 @@ static constexpr int hex_digits_from_width(const uint64_t u, const int iWidthNib
 {
     if (iWidthNibbles == 8)
     {
-        uint32 v = static_cast<uint32_t>(u);
+        const uint32 v = static_cast<uint32_t>(u);
         if (v == 0)
             return 1; // represent 0 as "0" (the caller will prefix a single '0' for "00")
         // Count leading zero bits in 32-bit domain, then convert to nibbles.
         // countl_zero(0) would be 32, but we have v != 0 here.
-        int lz = std::countl_zero(v);
+        const int lz = std::countl_zero(v);
         return 8 - (lz / 4);
     }
     if (u == 0)
         return 1;
-    int lz = std::countl_zero(u); // counts in 64-bit domain
+    const int lz = std::countl_zero(u); // counts in 64-bit domain
     return 16 - (lz / 4);
 }
 
@@ -913,7 +913,7 @@ bool IsSimpleNumberString( lpctstr_restrict pszTest ) noexcept
 
     for ( ; ; ++pszTest )
     {
-        tchar ch = *pszTest;
+        const tchar ch = *pszTest;
         if ( ! ch )
             return true;
 
@@ -1139,7 +1139,7 @@ size_t Str_ConcatLimitNull(tchar *pDst, const tchar *pSrc, const size_t uiMaxSiz
     {
         ++d;
     }
-    size_t dlen = d - pDst;
+    const size_t dlen = d - pDst;
     n = uiMaxSize - dlen;
 
     if (n == 0)
@@ -1201,7 +1201,7 @@ const tchar * Str_GetArticleAndSpace(const lpctstr_restrict pszWord) noexcept
     if (pszWord)
     {
         static constexpr tchar sm_Vowels[] = { 'A', 'E', 'I', 'O', 'U' };
-        tchar chName = static_cast<tchar>(toupper(pszWord[0]));
+        const tchar chName = static_cast<tchar>(toupper(pszWord[0]));
         for (uint x = 0; x < std::size(sm_Vowels); ++x)
         {
             if (chName == sm_Vowels[x])
@@ -1225,7 +1225,7 @@ int Str_GetBare(tchar * ptcOut, const tchar *ptcSrc, const size_t uiMaxOutSize, 
     tchar* out          = ptcOut;
 
     // Process each char until SRC ends or output buffer is full
-    for (tchar *const outEnd = ptcOut + (uiMaxOutSize - 1); *ptcSrc && out < outEnd; ++ptcSrc)
+    for (const tchar *const outEnd = ptcOut + (uiMaxOutSize - 1); *ptcSrc && out < outEnd; ++ptcSrc)
     {
         const uchar ch = static_cast<uchar>(*ptcSrc);
 
@@ -1423,7 +1423,7 @@ void Str_EatEndWhitespace(const tchar* const pStrBegin, tchar*& pStrEnd) noexcep
     if (pStrBegin == pStrEnd) [[unlikely]]
         return;
 
-    tchar* ptcPrev = pStrEnd - 1;
+    const tchar * ptcPrev = pStrEnd - 1;
     while ((ptcPrev != pStrBegin) && IsWhitespace(*ptcPrev))
     {
         if (*ptcPrev == '\0')
@@ -1672,13 +1672,13 @@ int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, const int offset) noex
     if (slen > len)
         return -1;
 
-    tchar firstChar = pStr2[0];
+    const tchar firstChar = pStr2[0];
 
     for (int i = offset; i < len; ++i)
     {
-        if (tchar c = pStr1[i]; c == firstChar)
+        if (const tchar c = pStr1[i]; c == firstChar)
         {
-            if (int rem = len - i; rem >= slen)
+            if (const int rem = len - i; rem >= slen)
             {
                 int j = i;
                 int k = 0;
@@ -1717,7 +1717,7 @@ static MATCH_TYPE Str_Match_After_Star(const tchar * pPattern, const tchar * pTe
         return MATCH_VALID;
 
     // get the next character to match which must be a literal or '['
-    tchar nextp = static_cast<tchar>(tolower(*pPattern));
+    const tchar nextp = static_cast<tchar>(tolower(*pPattern));
     MATCH_TYPE match = MATCH_INVALID;
 
     // Continue until we run out of text or definite result seen
@@ -1822,7 +1822,7 @@ MATCH_TYPE Str_Match(const tchar * pPattern, const tchar * pText) noexcept
                     // if the text character is in range then match found.
                     // make sure the range letters have the proper
                     // relationship to one another before comparison
-                    tchar chText = static_cast<tchar>(tolower(*pText));
+                    const tchar chText = static_cast<tchar>(tolower(*pText));
                     if (range_start < range_end)
                     {
                         if (chText >= range_start && chText <= range_end)
@@ -1888,7 +1888,7 @@ tchar * Str_UnQuote(tchar * pStr) noexcept
 {
     GETNONWHITESPACE(pStr);
 
-    if (tchar ch = *pStr; (ch == '"') || (ch == '\''))
+    if (const tchar ch = *pStr; (ch == '"') || (ch == '\''))
         ++pStr;
 
     for (tchar *pEnd = pStr + strlen(pStr) - 1; pEnd >= pStr; --pEnd)
@@ -1906,8 +1906,8 @@ int Str_RegExMatch(const tchar * pPattern, const tchar * pText, tchar * lastErro
 {
     try
     {
-        CRegexp expressionformatch(pPattern, NO_FLAG);
-        if (MatchResult result = expressionformatch.Match(pText); result.IsMatched())
+        const CRegexp expressionformatch(pPattern, NO_FLAG);
+        if (const MatchResult result = expressionformatch.Match(pText); result.IsMatched())
             return 1;
 
         return 0;
@@ -2066,10 +2066,10 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) n
     }
 
     for (ptr = *buf, eptr = *buf + *bufsiz;;) {
-        int c = fgetc(fp);
+        const int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                if (ssize_t diff = ptr - *buf; diff != 0) {
+                if (const ssize_t diff = ptr - *buf; diff != 0) {
                     *ptr = '\0';
                     return diff;
                 }
@@ -2083,8 +2083,8 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) n
         }
         if (ptr + 2 >= eptr) {
             char *nbuf;
-            size_t nbufsiz = *bufsiz * 2;
-            ssize_t d = ptr - *buf;
+            const size_t nbufsiz = *bufsiz * 2;
+            const ssize_t d = ptr - *buf;
             if ((nbuf = static_cast<char*>(realloc(*buf, nbufsiz))) == nullptr)
                 return -1;
             *buf = nbuf;
@@ -2105,7 +2105,7 @@ ssize_t fReadUntilDelimiter_StaticBuf(char *buf, const size_t bufsiz, const int 
         const int c = fgetc(fp);
         if (c == -1) {
             if (feof(fp)) {
-                if (ssize_t diff = ptr - buf; diff != 0) {
+                if (const ssize_t diff = ptr - buf; diff != 0) {
                     *ptr = '\0';
                     return diff;
                 }

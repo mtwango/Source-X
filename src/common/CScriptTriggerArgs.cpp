@@ -93,8 +93,8 @@ void CScriptTriggerArgs::Init( lpctstr pszStr )
     // take out the last quote symbol (if present).
     if (fWholeArgQuoted)
     {
-        lpctstr ptcArgStart = m_s1_buf_vec.GetBuffer();
-        lptstr ptcArgEnd = ptcParse;
+        const lpctstr ptcArgStart = m_s1_buf_vec.GetBuffer();
+        const lptstr ptcArgEnd = ptcParse;
         for (ptcParse = ptcArgEnd - 1; ptcParse != ptcArgStart; --ptcParse)
         {
             if (IsWhitespace(*ptcParse))
@@ -379,7 +379,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
     if ( IsSetEF( EF_Intrinsic_Locals ) )
     {
         EXC_SET_BLOCK("intrinsic");
-        if (CVarDefCont *pVar = m_VarsLocal.GetKey(ptcKey))
+        if (const CVarDefCont *pVar = m_VarsLocal.GetKey(ptcKey))
         {
             sVal = pVar->GetValStr();
             return true;
@@ -508,7 +508,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
         }
 
         SKIP_SEPARATORS(ptcKey);
-        uint uiNum = Exp_GetUSingle(ptcKey);
+        const uint uiNum = Exp_GetUSingle(ptcKey);
         if (uiNum >= m_v.size())
         {
             sVal.Clear();

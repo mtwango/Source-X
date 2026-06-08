@@ -60,7 +60,7 @@ void CSObjList::ClearContainer()
 	EXC_TRY("Deleting objects scheduled for deletion");
 	for (;;)	// iterate the list.
 	{
-		CSObjListRec * pRec = GetContainerHead();
+        const CSObjListRec * pRec = GetContainerHead();
         if ( pRec == nullptr ) {
             fSuccess = true;
             break;

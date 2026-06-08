@@ -110,9 +110,9 @@ int CItemMemory::FixWeirdness()
 	}
 
     // Automatic transition from old to new spawn engine
-    if (dword dwFlags = GetHue(); dwFlags & MEMORY_LEGACY_ISPAWNED)
+    if (const dword dwFlags = GetHue(); dwFlags & MEMORY_LEGACY_ISPAWNED)
     {
-        CItem *pSpawnItem = m_uidLink.ItemFind();
+        const CItem *pSpawnItem = m_uidLink.ItemFind();
         if (!pSpawnItem)
         {
             iResultCode = 0x4227;

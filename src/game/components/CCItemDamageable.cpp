@@ -80,7 +80,7 @@ void CCItemDamageable::OnTickStatsUpdate()
 
         auto AreaChars = CWorldSearchHolder::GetInstance(pt, g_Cfg.m_iMapViewSize);
         AreaChars->SetSearchSquare(true);
-        CChar *pChar = nullptr;
+        const CChar *pChar = nullptr;
         for (;;)
         {
             pChar = AreaChars->GetChar();
@@ -119,7 +119,7 @@ lpctstr const CCItemDamageable::sm_szLoadKeys[CIDMGL_QTY + 1] =
 bool CCItemDamageable::r_LoadVal(CScript & s)
 {
     ADDTOCALLSTACK("CCItemDamageable::r_LoadVal");
-    int iKeyNum = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
+    const int iKeyNum = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iKeyNum < 0)
     {
         return false;
@@ -146,7 +146,7 @@ bool CCItemDamageable::r_WriteVal(const lpctstr ptcKey, CSString & s, CTextConso
 {
     ADDTOCALLSTACK("CCItemDamageable::r_WriteVal");
     UnreferencedParameter(pSrc);
-    int iKeyNum = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
+    const int iKeyNum = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iKeyNum < 0)
     {
         return false;

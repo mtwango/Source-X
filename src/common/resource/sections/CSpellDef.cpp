@@ -290,7 +290,7 @@ bool CSpellDef::r_LoadVal( CScript &s )
 bool CSpellDef::GetPrimarySkill( int * piSkill, int * piQty ) const
 {
     ADDTOCALLSTACK("CSpellDef::GetPrimarySkill");
-    size_t i = m_SkillReq.FindResourceType( RES_SKILL );
+    const size_t i = m_SkillReq.FindResourceType( RES_SKILL );
     if ( i == sl::scont_bad_index() )
         return false;
 

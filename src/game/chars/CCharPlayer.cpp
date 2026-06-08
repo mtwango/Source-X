@@ -49,7 +49,7 @@ CCharPlayer::~CCharPlayer()
 {
 	m_Speech.clear();
 
-	CMultiStorage* pOldStorage = _pMultiStorage;
+    const CMultiStorage * pOldStorage = _pMultiStorage;
 	_pMultiStorage = nullptr;   // I need _pMultiStorage to be nullptr before CMultiStorage destructor is called !
 	delete pOldStorage;
 }
@@ -82,7 +82,7 @@ bool CCharPlayer::SetSkillClass( CChar * pChar, const CResourceID &rid )
 		return true;
 
 	// Remove any previous skillclass from the Events block.
-    if (size_t i = pChar->m_OEvents.FindResourceType(RES_SKILLCLASS); i != sl::scont_bad_index() )
+    if (const size_t i = pChar->m_OEvents.FindResourceType(RES_SKILLCLASS); i != sl::scont_bad_index() )
 		pChar->m_OEvents.erase(pChar->m_OEvents.begin() + i);
 
 	m_SkillClass.SetRef(pLink);
@@ -193,7 +193,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
         ptcKey += fIsGuild ? 5 : 4;
         if (*ptcKey == 0)
         {
-            if (CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN))
+            if (const CItemStone *pMyGuild = pChar->Guild_Find(fIsGuild ? MEMORY_GUILD : MEMORY_TOWN))
                 sVal.FormatHex(pMyGuild->GetUID());
             else
                 sVal.SetValFalse();
@@ -263,13 +263,13 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 			return true;
 		case CPC_REFUSETRADES:
 			{
-				CVarDefCont * pVar = pChar->GetDefKey(ptcKey, true);
+                const CVarDefCont * pVar = pChar->GetDefKey(ptcKey, true);
 				sVal.FormatLLVal(pVar ? pVar->GetValNum() : 0);
 			}
 			return true;
 		case CPC_SKILLCLASS:
 			{
-				CSkillClassDef* pSkillClass = GetSkillClass();
+                const CSkillClassDef * pSkillClass = GetSkillClass();
 				ASSERT(pSkillClass);
 				sVal = pSkillClass->GetResourceName();
 			}
@@ -277,7 +277,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		case CPC_SKILLLOCK:
 			{
 				// "SkillLock[alchemy]"
-				SKILL_TYPE skill = Skill_GetLockType( ptcKey );
+                const SKILL_TYPE skill = Skill_GetLockType( ptcKey );
 				if ( skill <= SKILL_NONE )
 					return false;
 				sVal.FormatVal( Skill_GetLock( skill ));
@@ -288,7 +288,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		case CPC_STATLOCK:
 			{
 				// "StatLock[str]"
-				STAT_TYPE stat = Stat_GetLockType( ptcKey );
+                const STAT_TYPE stat = Stat_GetLockType( ptcKey );
 				if (( stat <= STAT_NONE ) || ( stat >= STAT_BASE_QTY ))
 					return false;
 				sVal.FormatVal( Stat_GetLock( stat ));
@@ -352,7 +352,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 
     if (lpctstr ptcKey = s.GetKey(); ( !strnicmp(ptcKey, "GUILD", 5) ) || ( !strnicmp(ptcKey, "TOWN", 4) ) )
 	{
-		bool bIsGuild = !strnicmp(ptcKey, "GUILD", 5);
+        const bool bIsGuild = !strnicmp(ptcKey, "GUILD", 5);
 		ptcKey += bIsGuild ? 5 : 4;
 		if ( *ptcKey == '.' )
 		{
@@ -384,7 +384,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 		}
 		case CPC_DELHOUSE:
 		{
-            if (dword dwUID = s.GetArgDWVal(); dwUID == UID_UNUSED)
+            if (const dword dwUID = s.GetArgDWVal(); dwUID == UID_UNUSED)
 			{
 				GetMultiStorage()->ClearHouses();
 			}
@@ -412,7 +412,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 		}
 		case CPC_DELSHIP:
 		{
-            if (dword dwUID = s.GetArgDWVal(); dwUID == UINT_MAX)
+            if (const dword dwUID = s.GetArgDWVal(); dwUID == UINT_MAX)
 			{
 				GetMultiStorage()->ClearShips();
 			}
@@ -481,7 +481,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 			return SetSkillClass( pChar, g_Cfg.ResourceGetIDType( RES_SKILLCLASS, s.GetArgStr()));
 		case CPC_SKILLLOCK:
 			{
-				SKILL_TYPE skill = Skill_GetLockType( s.GetKey());
+                const SKILL_TYPE skill = Skill_GetLockType( s.GetKey());
 				if ( skill <= SKILL_NONE )
 					return false;
 				int bState = s.GetArgVal();
@@ -498,7 +498,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 			} return true;
 		case CPC_STATLOCK:
 			{
-				STAT_TYPE stat = Stat_GetLockType( s.GetKey());
+            const STAT_TYPE stat = Stat_GetLockType( s.GetKey());
 				if (( stat <= STAT_NONE ) || ( stat >= STAT_BASE_QTY ))
 					return false;
 				int bState = s.GetArgVal();
@@ -543,7 +543,7 @@ void CCharPlayer::r_WriteChar( CChar * pChar, CScript & s )
 		s.WriteKeyVal( "DEATHS", m_wDeaths );
 	if ( m_wMurders )
 		s.WriteKeyVal( "KILLS", m_wMurders );
-	if (CSkillClassDef* pSkillClass = GetSkillClass())
+	if (const CSkillClassDef * pSkillClass = GetSkillClass())
 	{
 		if (pSkillClass->GetResourceID().GetResIndex())
 			s.WriteKeyStr("SKILLCLASS", pSkillClass->GetResourceName());
@@ -640,13 +640,13 @@ bool CChar::Player_OnVerb( CScript &s, CTextConsole * pSrc )
 		return false;
 
 	lpctstr ptcKey = s.GetKey();
-	int cpVerb = FindTableSorted( ptcKey, CCharPlayer::sm_szVerbKeys, std::size(CCharPlayer::sm_szVerbKeys) - 1 );
+    const int cpVerb = FindTableSorted( ptcKey, CCharPlayer::sm_szVerbKeys, std::size(CCharPlayer::sm_szVerbKeys) - 1 );
 
 	if ( cpVerb <= -1 )
 	{
 		if ( ( !strnicmp(ptcKey, "GUILD", 5) ) || ( !strnicmp(ptcKey, "TOWN", 4) ) )
 		{
-			bool fIsGuild = !strnicmp(ptcKey, "GUILD", 5);
+            const bool fIsGuild = !strnicmp(ptcKey, "GUILD", 5);
 			ptcKey += fIsGuild ? 5 : 4;
 			if ( *ptcKey == '.' )
 			{

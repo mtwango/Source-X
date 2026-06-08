@@ -55,7 +55,7 @@ void CClient::resendBuffs() const
 
 	// Spells
 	tchar NumBuff[7][8];
-	lpctstr pNumBuff[7] = { NumBuff[0], NumBuff[1], NumBuff[2], NumBuff[3], NumBuff[4], NumBuff[5], NumBuff[6] };
+    const lpctstr pNumBuff[7] = { NumBuff[0], NumBuff[1], NumBuff[2], NumBuff[3], NumBuff[4], NumBuff[5], NumBuff[6] };
 
 	word wStatEffect = 0;
 	word wTimerEffect = 0;
@@ -322,7 +322,7 @@ void CClient::addRemoveAll(const bool fItems, const bool fChars )
 		AreaItems->SetSearchSquare(true);
 		for (;;)
 		{
-			CItem * pItem = AreaItems->GetItem();
+            const CItem * pItem = AreaItems->GetItem();
 			if ( pItem == nullptr )
 				break;
 			addObjectRemove(pItem);
@@ -330,13 +330,13 @@ void CClient::addRemoveAll(const bool fItems, const bool fChars )
 	}
 	if ( fChars )
 	{
-		CChar * pCharSrc = GetChar();
+        const CChar * pCharSrc = GetChar();
 		auto AreaChars = CWorldSearchHolder::GetInstance(GetChar()->GetTopPoint(), GetChar()->GetVisualRange());
 		AreaChars->SetAllShow(IsPriv(PRIV_ALLSHOW));
 		AreaChars->SetSearchSquare(true);
 		for (;;)
 		{
-			CChar * pChar = AreaChars->GetChar();
+            const CChar * pChar = AreaChars->GetChar();
 			if ( pChar == nullptr )
 				break;
 			if ( pChar == pCharSrc )
@@ -461,11 +461,11 @@ bool CClient::addContainerSetup( const CItemContainer * pContainer ) // Send Bac
 	ASSERT(pContainer->IsItem());
 
 	// open the container with the proper GUMP.
-	CItemBase * pItemDef = pContainer->Item_GetDef();
+    const CItemBase * pItemDef = pContainer->Item_GetDef();
 	if (!pItemDef)
 		return false;
 
-	GUMP_TYPE gump = pItemDef->IsTypeContainer();
+    const GUMP_TYPE gump = pItemDef->IsTypeContainer();
 	if ( gump <= GUMP_RESERVED )
 		return false;
 
@@ -574,7 +574,7 @@ void CClient::addArrowQuest(const int x, const int y, const int id ) const
 {
 	ADDTOCALLSTACK("CClient::addArrowQuest");
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(x, y, 0, nullptr);
     if (GetNetState()->isClientVersionNumber(MINCLIVER_HS) || GetNetState()->isClientEnhanced())
         pScriptArgs->m_iN3 = id;
@@ -620,7 +620,7 @@ bool CClient::addKick( CTextConsole * pSrc, const bool fBlock )
 	if ( ! GetAccount()->Kick( pSrc, fBlock ))
 		return false;
 
-	lpctstr pszAction = fBlock ? "KICK" : "DISCONNECT";
+    const lpctstr pszAction = fBlock ? "KICK" : "DISCONNECT";
 	SysMessagef("You have been %sed by '%s'", pszAction, pSrc->GetName());
 
 	if ( IsConnectTypePacket() )
@@ -871,8 +871,8 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 		case 3:	// Extended localized message (with affixed ASCII text)
 		{
             tchar * ppArgs[256];
-			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
-			int iClilocId = Exp_GetVal( pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
+            const int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
+            const int iClilocId = Exp_GetVal( pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
 			int iAffixType = Exp_GetVal( ppArgs[1] );
 			CSString CArgs;
 
@@ -890,8 +890,8 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 		case 2:	// Localized
 		{
             tchar * ppArgs[256];
-			int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
-			int iClilocId = Exp_GetVal(pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
+            const int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
+            const int iClilocId = Exp_GetVal(pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
 			CSString CArgs;
 			for ( int i = 1; i < iQty; ++i )
 			{
@@ -1095,7 +1095,7 @@ void CClient::GetAdjustedCharID( const CChar * pChar, CREID_TYPE &id, HUE_TYPE &
 	}
 
 	id = pChar->GetDispID();
-	CCharBase * pCharDef = pChar->Char_GetDef();
+    const CCharBase * pCharDef = pChar->Char_GetDef();
 
 	if ( m_pChar->IsStatFlag(STATF_HALLUCINATING) )
 	{
@@ -1216,8 +1216,8 @@ void CClient::addItemName( CItem * pItem )
 	if ( !pItem )
 		return;
 
-	bool fIdentified = ( IsPriv(PRIV_GM) || pItem->IsAttr( ATTR_IDENTIFIED ));
-	lpctstr pszNameFull = pItem->GetNameFull( fIdentified );
+    const bool fIdentified = ( IsPriv(PRIV_GM) || pItem->IsAttr( ATTR_IDENTIFIED ));
+    const lpctstr pszNameFull = pItem->GetNameFull( fIdentified );
 
 	tchar szName[ MAX_ITEM_NAME_SIZE * 2 ];
 	size_t len = Str_CopyLimitNull( szName, pszNameFull, std::size(szName));
@@ -1277,7 +1277,7 @@ void CClient::addItemName( CItem * pItem )
 			case IT_SPAWN_CHAR:
 			case IT_SPAWN_ITEM:
 				{
-                if ( CCSpawn *pSpawn = pItem->GetSpawn() )
+                if (const CCSpawn *pSpawn = pItem->GetSpawn() )
 						len += pSpawn->WriteName(szName + len);
 				}
 				break;
@@ -1289,7 +1289,7 @@ void CClient::addItemName( CItem * pItem )
 				{
                     if (pItem->m_itResource.m_ridRes.IsValidResource())
                     {
-                        if (CResourceDef *pResDef = g_Cfg.RegisteredResourceGetDef(pItem->m_itResource.m_ridRes))
+                        if (const CResourceDef *pResDef = g_Cfg.RegisteredResourceGetDef(pItem->m_itResource.m_ridRes))
                             len += snprintf(szName + len, sizeof(szName) - len, " (%s)", pResDef->GetName());
                     }
 				}
@@ -1304,15 +1304,15 @@ void CClient::addItemName( CItem * pItem )
 
 	if (( IsTrigUsed(TRIGGER_AFTERCLICK) ) || ( IsTrigUsed(TRIGGER_ITEMAFTERCLICK) ))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, 0, this);
         pScriptArgs->m_VarsLocal.SetStrNew("ClickMsgText", &szName[0]);
         pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
-        if (TRIGRET_TYPE ret = pItem->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
+        if (const TRIGRET_TYPE ret = pItem->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
 			return;
 
-        if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
+        if (const lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(szName, pNewStr, std::size(szName));
 
         wHue = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
@@ -1359,7 +1359,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 	{
 		if ( pChar->GetNPCBrainGroup() == NPCBRAIN_HUMAN )
 		{
-            if (lpctstr title = pChar->GetTradeTitle(); *title )
+            if (const lpctstr title = pChar->GetTradeTitle(); *title )
 			{
                 Str_ConcatLimitNull( pszTemp, " ", Str_TempLength() );
                 Str_ConcatLimitNull( pszTemp, title, Str_TempLength() );
@@ -1367,7 +1367,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 		}
 	}
 
-	bool fAllShow = IsPriv(PRIV_DEBUG|PRIV_ALLSHOW);
+    const bool fAllShow = IsPriv(PRIV_DEBUG|PRIV_ALLSHOW);
 
 	if ( g_Cfg.m_fCharTags || fAllShow )
 	{
@@ -1424,17 +1424,17 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 
 	if ( IsTrigUsed(TRIGGER_AFTERCLICK) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, 0, this);
         pScriptArgs->m_VarsLocal.SetStrNew("ClickMsgText", pszTemp);
         pScriptArgs->m_VarsLocal.SetNumNew("ClickMsgHue", wHue);
 
         // TODO: const correctness...
 
-        if (TRIGRET_TYPE ret = const_cast<CChar *>(pChar)->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
+        if (const TRIGRET_TYPE ret = const_cast<CChar *>(pChar)->OnTrigger("@AfterClick", pScriptArgs, m_pChar); ret == TRIGRET_RET_TRUE )
 			return;
 
-        if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
+        if (const lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(pszTemp, pNewStr, Str_TempLength());
 
         wHue = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
@@ -1483,7 +1483,7 @@ void CClient::addPlayerStart( CChar * pChar )
 	addPlayerWarMode();
 	addLoginComplete();
 	addTime(true);
-	if ( CSector *pSector = pt.GetSector() )
+	if (const CSector *pSector = pt.GetSector() )
 		addSeason(pSector->GetSeason());
 	if (pChar->m_pParty)
 		pChar->m_pParty->SendAddList(nullptr);
@@ -1524,7 +1524,7 @@ bool CClient::addBookOpen( CItem * pBook ) const
 		return false;
 
 	word wPagesNow = 0;
-	bool bNewPacket = PacketDisplayBookNew::CanSendTo(GetNetState());
+    const bool bNewPacket = PacketDisplayBookNew::CanSendTo(GetNetState());
 
 	if (pBook->IsBookSystem() == false)
 	{
@@ -1638,7 +1638,7 @@ void CClient::SetTargMode(const CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iT
 		{
 			if ( IsTrigUsed(TRIGGER_TARGON_CANCEL) )
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_s1 =  m_Targ_Text;
                 if (pCharThis->OnTrigger( CTRIG_Targon_Cancel, pScriptArgs, pCharThis ) == TRIGRET_RET_TRUE )
 					fSuppressCancelMessage = true;
@@ -1657,7 +1657,7 @@ void CClient::SetTargMode(const CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iT
 		{
             if (g_Cfg.GetSpellDef(m_tmSkillMagery.m_iSpell))
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(m_tmSkillMagery.m_iSpell, 0, 0, m_Targ_Prv_UID.ObjFind());
 
 				if ( IsTrigUsed(TRIGGER_SPELLTARGETCANCEL) )
@@ -1803,7 +1803,7 @@ void CClient::addTargetDeed( const CItem * pDeed )
 bool CClient::addTargetChars(const CLIMODE_TYPE mode, CREID_TYPE baseID, bool fNotoCheck, int64 iTimeout)
 {
 	ADDTOCALLSTACK("CClient::addTargetChars");
-	CCharBase * pBase = CCharBase::FindCharBase( baseID );
+    const CCharBase * pBase = CCharBase::FindCharBase( baseID );
 	if ( !pBase )
 		return false;
 
@@ -1903,13 +1903,13 @@ void CClient::addSkillWindow(const SKILL_TYPE skill, const bool fFromInfo) const
 	if (pChar == nullptr)
 		pChar = m_pChar;
 
-	bool fAllSkills = (skill >= static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill));
+    const bool fAllSkills = (skill >= static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill));
 	if (fAllSkills == false && g_Cfg.m_SkillIndexDefs.valid_index(skill) == false)
 		return;
 
 	if ( IsTrigUsed(TRIGGER_USERSKILLS) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init((fAllSkills? -1 : skill), fFromInfo, 0, nullptr);
         if (m_pChar->OnTrigger(CTRIG_UserSkills, pScriptArgs, pChar) == TRIGRET_RET_TRUE)
 			return;
@@ -2095,7 +2095,7 @@ void CClient::addMap() const
 	if ( m_pChar == nullptr )
 		return;
 
-	CPointMap pt = m_pChar->GetTopPoint();
+    const CPointMap pt = m_pChar->GetTopPoint();
 	new PacketMapChange(this, g_MapList.GetMapID(pt.m_map));
 }
 
@@ -2134,7 +2134,7 @@ void CClient::addMapWaypoint(const CObjBase *pObj, const MAPWAYPOINT_TYPE type) 
 void CClient::addChangeServer() const
 {
 	ADDTOCALLSTACK("CClient::addChangeServer");
-	CPointMap pt = m_pChar->GetTopPoint();
+    const CPointMap pt = m_pChar->GetTopPoint();
 
 	new PacketZoneChange(this, pt);
 }
@@ -2191,7 +2191,7 @@ void CClient::addStatusWindow( CObjBase *pObj, const bool fRequested ) // Opens 
 
 	if ( IsTrigUsed(TRIGGER_USERSTATS) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, fRequested, pObj);
         if ( m_pChar->OnTrigger(CTRIG_UserStats, pScriptArgs, dynamic_cast<CTextConsole *>(pObj)) == TRIGRET_RET_TRUE )
 			return;
@@ -2281,7 +2281,7 @@ void CClient::addSpellbookOpen( CItem * pBook )
 
 	if ( IsTrigUsed(TRIGGER_SPELLBOOK) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init( 0, 0, 0, pBook );
         if ( m_pChar->OnTrigger( CTRIG_SpellBook, pScriptArgs, m_pChar ) == TRIGRET_RET_TRUE )
 			return;
@@ -2296,7 +2296,7 @@ void CClient::addSpellbookOpen( CItem * pBook )
 	}
 
     // count what spells I have.
-	int count = pBook->GetSpellcountInBook();
+    const int count = pBook->GetSpellcountInBook();
 	if ( count == -1 )
 		return;
 	addItem(pBook); 	// NOTE: if the spellbook item is not present on the client it will crash.
@@ -2329,7 +2329,7 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	int count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-        if (auto pItem = dynamic_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
+        if (const auto pItem = dynamic_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
 			continue;
 		++ count;
 	}
@@ -2383,8 +2383,8 @@ bool CClient::addShopMenuBuy( CChar * pVendor )
 	if ( !pVendor->IsStatFlag(STATF_PET) )
 		pVendor->NPC_Vendor_Restock();
 
-	CItemContainer *pContainer = pVendor->GetBank(LAYER_VENDOR_STOCK);
-	CItemContainer *pContainerExtra = pVendor->GetBank(LAYER_VENDOR_EXTRA);
+    const CItemContainer *pContainer = pVendor->GetBank(LAYER_VENDOR_STOCK);
+    const CItemContainer *pContainerExtra = pVendor->GetBank(LAYER_VENDOR_EXTRA);
 	if (!pContainer || !pContainerExtra)
 	{
 		DEBUG_MSG(("Vendor with no LAYER_VENDOR_STOCK or LAYER_VENDOR_EXTRA!\n"));
@@ -2447,7 +2447,7 @@ bool CClient::addShopMenuSell( CChar * pVendor )
 		pContainer2 = nullptr;		// no stock
 
 	PacketVendorSellList cmd( pVendor );
-    if (size_t count = cmd.fillSellList(this, m_pChar->GetPackSafe(), pContainer1, pContainer2, -pVendor->NPC_GetVendorMarkup()); count <= 0 )
+    if (const size_t count = cmd.fillSellList(this, m_pChar->GetPackSafe(), pContainer1, pContainer2, -pVendor->NPC_GetVendorMarkup()); count <= 0 )
 		return false;
 
 	cmd.send( this );
@@ -2741,14 +2741,14 @@ void CClient::SendPacket( tchar * ptcKey )
 		if ( toupper(*ptcKey) == 'D' )
 		{
 			++ptcKey;
-            dword iVal = Exp_GetDWVal(ptcKey);
+            const dword iVal = Exp_GetDWVal(ptcKey);
 
 			packet->writeInt32(iVal);
 		}
 		else if ( toupper(*ptcKey) == 'W' )
 		{
 			++ptcKey;
-			word iVal = (Exp_GetWVal(ptcKey));
+            const word iVal = (Exp_GetWVal(ptcKey));
 
 			packet->writeInt16(iVal);
 		}
@@ -2756,7 +2756,7 @@ void CClient::SendPacket( tchar * ptcKey )
 		{
 			if ( toupper(*ptcKey) == 'B' )
 				ptcKey++;
-			byte iVal = (Exp_GetBVal(ptcKey));
+            const byte iVal = (Exp_GetBVal(ptcKey));
 
 			packet->writeByte(iVal);
 		}
@@ -2797,7 +2797,7 @@ byte CClient::Setup_Start( CChar * pChar ) // Send character startup stuff to pl
 	bool fQuickLogIn = pChar->LayerFind(LAYER_FLAG_ClientLinger);
 	if ( IsTrigUsed(TRIGGER_LOGIN) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(fNoMessages, fQuickLogIn, 0, nullptr);
         if ( pChar->OnTrigger( CTRIG_LogIn, pScriptArgs, pChar ) == TRIGRET_RET_TRUE )
 		{
@@ -2901,7 +2901,7 @@ byte CClient::Setup_Play(const uint iSlot ) // After hitting "Play Character" bu
 	if (pChar == nullptr || !pAccount->IsMyAccountChar(pChar))
 		return( PacketLoginError::BadCharacter );
 
-    if (CChar *pCharLast = pAccount->m_uidLastChar.CharFind(); pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
+    if (const CChar *pCharLast = pAccount->m_uidLastChar.CharFind(); pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
 		! pCharLast->IsDisconnected() && (pChar->GetUID() != pCharLast->GetUID()))
 	{
 		addIdleWarning(PacketWarningMessage::CharacterInWorld);
@@ -2909,7 +2909,7 @@ byte CClient::Setup_Play(const uint iSlot ) // After hitting "Play Character" bu
 	}
 
 	// LastLogged update
-	CSTime datetime = CSTime::GetCurrentTime();
+    const CSTime datetime = CSTime::GetCurrentTime();
 	pAccount->m_TagDefs.SetStr("LastLogged", false, pAccount->_dateConnectedLast.Format(nullptr));
 	pAccount->_dateConnectedLast = datetime;
 
@@ -2980,7 +2980,7 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
 
 	CSString sMsg;
 
-    if (byte lErr = LogIn(pszAccName, pszPassword, sMsg); lErr != PacketLoginError::Success )
+    if (const byte lErr = LogIn(pszAccName, pszPassword, sMsg); lErr != PacketLoginError::Success )
 	{
 		if ( fTest && lErr != PacketLoginError::Other )
 		{
@@ -3006,7 +3006,7 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
 	}*/
 
     dword dwFeatureFlags;
-    if (dword dwCliVer = m_Crypt.GetClientVerNumber(); dwCliVer && (dwCliVer < 1260000) )
+    if (const dword dwCliVer = m_Crypt.GetClientVerNumber(); dwCliVer && (dwCliVer < 1260000) )
     {
         dwFeatureFlags = 0x03;
     }
@@ -3049,9 +3049,9 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 		else
 		{
 			//	from same ip - allow reconnect if the old char is lingering out
-            if ( CChar *pCharOld = pClientPrev->GetChar() )
+            if (const CChar *pCharOld = pClientPrev->GetChar() )
 			{
-                if (CItem *pItem = pCharOld->LayerFind(LAYER_FLAG_ClientLinger); !pItem )
+                if (const CItem *pItem = pCharOld->LayerFind(LAYER_FLAG_ClientLinger); !pItem )
 					fInUse = true;
 			}
 
@@ -3078,7 +3078,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 	if ( g_Cfg.m_iClientsMax <= 0 )
 	{
 		// Allow no one but locals on.
-        if (CSocketAddress SockName = GetPeer(); ! GetPeer().IsLocalAddr() && SockName.GetAddrIP() != GetPeer().GetAddrIP() )
+        if (const CSocketAddress SockName = GetPeer(); ! GetPeer().IsLocalAddr() && SockName.GetAddrIP() != GetPeer().GetAddrIP() )
 		{
 			g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached (only local connections allowed).\n", GetSocketID(), pAccount->GetName());
 			sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_SERV_LD );
@@ -3107,7 +3107,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 	//	Do the scripts allow to login this account?
 	pAccount->m_Last_IP.SetAddrIP(GetPeer().GetAddrIP());
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(pAccount->GetName());
     pScriptArgs->m_iN1 = GetConnectType();
     pScriptArgs->m_pO1 = this;
@@ -3137,8 +3137,8 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 		return( PacketLoginError::Success );
 
 	char szTmp[ MAX_NAME_SIZE ];
-	size_t iLen1 = strlen( ptcAccName );
-	size_t iLen2 = strlen( ptcPassword );
+    const size_t iLen1 = strlen( ptcAccName );
+    const size_t iLen2 = strlen( ptcPassword );
 	size_t iLen3 = Str_GetBare( szTmp, ptcAccName, MAX_NAME_SIZE );
 	if ( (iLen1 == 0) || (iLen1 != iLen3) || (iLen1 > MAX_NAME_SIZE) )	// a corrupt message.
 	{
@@ -3175,7 +3175,7 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 			}
 
 			sprintf(ptcTemp, "GUEST%d", i);
-			CAccount * pAccount = g_Accounts.Account_FindCreate(ptcTemp, true );
+            const CAccount * pAccount = g_Accounts.Account_FindCreate(ptcTemp, true );
 			ASSERT( pAccount );
 
 			if ( pAccount->FindClient() == nullptr )
@@ -3194,7 +3194,7 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 		}
 	}
 
-	bool fAutoCreate = ( g_Serv.m_eAccApp == ACCAPP_Free || g_Serv.m_eAccApp == ACCAPP_GuestAuto || g_Serv.m_eAccApp == ACCAPP_GuestTrial );
+    const bool fAutoCreate = ( g_Serv.m_eAccApp == ACCAPP_Free || g_Serv.m_eAccApp == ACCAPP_GuestAuto || g_Serv.m_eAccApp == ACCAPP_GuestTrial );
 	CAccount * pAccount = g_Accounts.Account_FindCreate(ptcAccName, fAutoCreate);
 	if ( ! pAccount )
 	{

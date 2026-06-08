@@ -199,7 +199,7 @@ void CNetState::init(const SOCKET socket, const CSocketAddress addr)
     // Disable NAGLE algorythm for data compression/coalescing.
     // Send as fast as we can. we handle packing ourselves.
 
-    int iSockFlag = 1;
+    constexpr int iSockFlag = 1;
     iSockRet = m_socket.SetSockOpt(TCP_NODELAY, &iSockFlag, sizeof(iSockFlag), IPPROTO_TCP);
     CheckReportNetAPIErr(iSockRet, "NetState::init.TCP_NODELAY");
 
@@ -278,7 +278,7 @@ void CNetState::setSendingAsync(const bool isSending) volatile noexcept
 void CNetState::detectAsyncMode()
 {
     ADDTOCALLSTACK("CNetState::detectAsyncMode");
-    bool wasAsync = isAsyncMode();
+    const bool wasAsync = isAsyncMode();
 
     // is async mode enabled?
     if (!g_Cfg.m_fUseAsyncNetwork || !isInUse())

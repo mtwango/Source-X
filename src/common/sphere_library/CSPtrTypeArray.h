@@ -96,7 +96,7 @@ bool CSPtrTypeArray<TYPE>::RemovePtr( TYPE pData )
 template<class TYPE>
 bool CSPtrTypeArray<TYPE>::ContainsPtr( TYPE pData ) const
 {
-    size_t nIndex = FindPtr(pData);
+    const size_t nIndex = FindPtr(pData);
     ASSERT((nIndex == sl::scont_bad_index()) || IsValidIndex(nIndex));
     return nIndex != sl::scont_bad_index();
 }

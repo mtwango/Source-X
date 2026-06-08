@@ -95,9 +95,9 @@ void CNTWindow::CStatusDlg::FillStats()
 
 	m_wndListStats.ResetContent();
 
-	CListTextConsole capture( m_wndListStats.m_hWnd );
+    const CListTextConsole capture( m_wndListStats.m_hWnd );
 
-	size_t iThreadCount = ThreadHolder::get().getActiveThreads();
+    const size_t iThreadCount = ThreadHolder::get().getActiveThreads();
 	for ( size_t iThreads = 0; iThreads < iThreadCount; ++iThreads)
 	{
 		AbstractThread* thrCurrent = ThreadHolder::get().getThreadAt(iThreads);
@@ -310,7 +310,7 @@ void CNTWindow::List_AddSingle(const COLORREF color, const LPCTSTR ptcText)
 
 void CNTWindow::List_AddGroup(std::deque<std::unique_ptr<ConsoleOutput>>&& msgs)
 {
-    std::deque moved_msgs(std::move(msgs));
+    const std::deque moved_msgs(std::move(msgs));
     constexpr int iMaxTextLen = (64 * 1024);
 
 	// Erase the old text to make space for all the message queue at once
@@ -384,7 +384,7 @@ bool CNTWindow::RegisterClass(const char *className)	// static
 	wc.lpszMenuName = nullptr;
 	wc.lpszClassName = className;
 
-    if (ATOM frc = ::RegisterClass(&wc); !frc )
+    if (const ATOM frc = ::RegisterClass(&wc); !frc )
 	{
 		return false;
 	}
@@ -469,10 +469,10 @@ LRESULT CNTWindow::OnUserTrayNotify(const WPARAM wID, const LPARAM lEvent )
 	case WM_RBUTTONDOWN:
 		// Context menu ?
 		{
-			HMENU hMenu = theApp.LoadMenu( IDM_POP_TRAY );
+            const HMENU hMenu = theApp.LoadMenu( IDM_POP_TRAY );
 			if ( hMenu == nullptr )
 				break;
-            if ( HMENU hMenuPop = GetSubMenu(hMenu, 0) )
+            if (const HMENU hMenuPop = GetSubMenu(hMenu, 0) )
 			{
 				POINT point;
 				if ( GetCursorPos( &point ))
@@ -524,7 +524,7 @@ void CNTWindow::OnSize(const WPARAM nType, const int cx, const int cy )
 			ASSERT(hFont);
 
 			LOGFONT logfont;
-			int iRet = ::GetObject(hFont, sizeof(logfont),&logfont );
+            const int iRet = ::GetObject(hFont, sizeof(logfont),&logfont );
 			ASSERT(iRet==sizeof(logfont));
 			UnreferencedParameter(iRet);
 
@@ -542,7 +542,7 @@ bool CNTWindow::OnClose()
 	// WM_CLOSE
 	if ( g_Serv.GetExitFlag() == 0 )
 	{
-		int iRet = theApp.m_wndMain.MessageBox("Are you sure you want to close the server?",
+        const int iRet = theApp.m_wndMain.MessageBox("Are you sure you want to close the server?",
 			theApp.m_pszAppName, MB_YESNO|MB_ICONQUESTION );
 		if ( iRet == IDNO )
 			return false;
@@ -673,7 +673,7 @@ void CNTWindow::SetLogFont( const char * pszFont )
 
 		// calculate height for a 10pt font, some systems can produce an unreadable
 		// font size if we let CreateFontIndirect pick a system default size
-        if (HDC hdc = GetDC(nullptr); hdc != nullptr)
+        if (const HDC hdc = GetDC(nullptr); hdc != nullptr)
 		{
 			logfont.lfHeight = IMulDiv(10, GetDeviceCaps(hdc, LOGPIXELSY), 72);
 			ReleaseDC(nullptr, hdc);
@@ -711,10 +711,10 @@ LRESULT CNTWindow::OnNotify(const int idCtrl, NMHDR * pnmh )
 				return 0;
 			case WM_RBUTTONDOWN:
 				{
-					HMENU hMenu = theApp.LoadMenu( IDM_POP_LOG );
+                    const HMENU hMenu = theApp.LoadMenu( IDM_POP_LOG );
 					if ( !hMenu )
 						return 0;
-                    if ( HMENU hMenuPop = GetSubMenu(hMenu, 0) )
+                    if (const HMENU hMenuPop = GetSubMenu(hMenu, 0) )
 					{
 						POINT point;
 						if ( GetCursorPos( &point ))
@@ -731,7 +731,7 @@ LRESULT CNTWindow::OnNotify(const int idCtrl, NMHDR * pnmh )
 					pt.y = HIWORD(pMsg->lParam);
 
 					// get selected line
-					LRESULT line = m_wndLog.SendMessage(EM_LINEFROMCHAR, m_wndLog.SendMessage(EM_CHARFROMPOS, 0, reinterpret_cast<LPARAM>(&pt)), 0);
+                    const LRESULT line = m_wndLog.SendMessage(EM_LINEFROMCHAR, m_wndLog.SendMessage(EM_CHARFROMPOS, 0, reinterpret_cast<LPARAM>(&pt)), 0);
 
 					// get the line text
 					reinterpret_cast<word*>(zTemp)[0] = SCRIPT_MAX_LINE_LEN - 1; // first word is used to indicate the max buffer length
@@ -792,12 +792,12 @@ LRESULT CNTWindow::OnNotify(const int idCtrl, NMHDR * pnmh )
 								TCHAR * z = Str_GetTemp();
 								if (GetFullPathName(filePath, THREAD_STRING_LENGTH, z, nullptr) > 0)
 								{
-                                    if (INT_PTR r = reinterpret_cast<INT_PTR>(ShellExecute(nullptr, nullptr, z, nullptr, nullptr, SW_SHOW)); r > 32)
+                                    if (const INT_PTR r = reinterpret_cast<INT_PTR>(ShellExecute(nullptr, nullptr, z, nullptr, nullptr, SW_SHOW)); r > 32)
 										return 1;
 								}
 
 								// failure occurred
-                                if (int errorCode = CSFile::GetLastError(); CSError::GetSystemErrorMessage(errorCode, z, THREAD_STRING_LENGTH) > 0)
+                                if (const int errorCode = CSFile::GetLastError(); CSError::GetSystemErrorMessage(errorCode, z, THREAD_STRING_LENGTH) > 0)
 									g_Log.Event(LOGL_WARN, "Failed to open '%s' code=%d (%s).\n", filePath, errorCode, z);
 								else
 									g_Log.Event(LOGL_WARN, "Failed to open '%s' code=%d.\n", filePath, errorCode);
@@ -812,7 +812,7 @@ LRESULT CNTWindow::OnNotify(const int idCtrl, NMHDR * pnmh )
 					// Should we allow CTL C etc ?
 					if ( pMsg->lParam & (1<<29))	// ALT
 						return 0;
-                    if (SHORT sState = GetKeyState(VK_CONTROL); sState & 0xff00 )
+                    if (const SHORT sState = GetKeyState(VK_CONTROL); sState & 0xff00 )
 						return 0;
 					m_wndInput.SetFocus();
 					m_wndInput.PostMessage( WM_CHAR, pMsg->wParam, pMsg->lParam );
@@ -889,7 +889,7 @@ bool CNTWindow::NTWindow_Init(const HINSTANCE hInstance, const LPTSTR lpCmdLine,
 	char	className[32] = SPHERE_TITLE;
 	TCHAR	*argv[32];
 	argv[0] = nullptr;
-    if (int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " \t") + 1; ( argc > 1 ) && _IS_SWITCH(*argv[1]) )
+    if (const int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " \t") + 1; ( argc > 1 ) && _IS_SWITCH(*argv[1]) )
 	{
 		if ( toupper(argv[1][1]) == 'C' )
 		{
@@ -929,7 +929,7 @@ void CNTWindow::NTWindow_DeleteIcon()
 void CNTWindow::NTWindow_ExitServer()
 {
 	// Unattach the window.
-    if (int iExitFlag = g_Serv.GetExitFlag(); iExitFlag < 0 )
+    if (const int iExitFlag = g_Serv.GetExitFlag(); iExitFlag < 0 )
 	{
 		TCHAR *pszMsg = Str_GetTemp();
 		sprintf(pszMsg, "Server terminated by error %d!", iExitFlag);
@@ -948,7 +948,7 @@ void CNTWindow::NTWindow_CheckUpdateWindowTitle()
         _mutexWindowTitle.unlock_shared();
         return;
     }
-    std::string strNewTitle = _strWindowTitle;
+    const std::string strNewTitle = _strWindowTitle;
     _strWindowTitle.clear();
     _fNewWindowTitle = false;
     _mutexWindowTitle.unlock_shared();
@@ -1103,7 +1103,7 @@ bool CNTWindow::NTWindow_OnTick( int iWaitmSec )
 						}
 
 						// detect part of the text we are entered so far
-						TCHAR *p = &pszTemp[strlen(pszTemp) - 1];
+                        const TCHAR *p = &pszTemp[strlen(pszTemp) - 1];
 						while (( p >= pszTemp ) && ( *p != '.' ) && ( *p != ' ' ) && ( *p != '/' ) && ( *p != '=' ))
 						{
 							--p;
@@ -1116,8 +1116,8 @@ bool CNTWindow::NTWindow_OnTick( int iWaitmSec )
 
 						// search in the auto-complete list for starting on P, and save coords of 1st and Last matched
 						CSStringListRec	*firstmatch = nullptr;
-						CSStringListRec	*lastmatch = nullptr;
-						CSStringListRec	*curmatch = nullptr;	// the one that should be set
+                        CSStringListRec * lastmatch = nullptr;
+                        CSStringListRec * curmatch = nullptr;	// the one that should be set
 
 						for ( curmatch = g_AutoComplete.GetHead(); curmatch != nullptr; curmatch = curmatch->GetNext() )
 						{
@@ -1152,7 +1152,7 @@ bool CNTWindow::NTWindow_OnTick( int iWaitmSec )
 							}
 							else											// need to find for the next record
 							{
-								size_t curselLen = strlen(pszCurSel);
+                                const size_t curselLen = strlen(pszCurSel);
 								for ( curmatch = firstmatch; curmatch != lastmatch->GetNext(); curmatch = curmatch->GetNext() )
 								{
 									// found the first next one
@@ -1167,7 +1167,7 @@ bool CNTWindow::NTWindow_OnTick( int iWaitmSec )
 								}
 							}
 
-							LPCTSTR	tmp = curmatch->GetBuffer() + inputLen;
+                            const LPCTSTR tmp = curmatch->GetBuffer() + inputLen;
 							inp->ReplaceSel(tmp);
 							if ( !bOnly )
 							{

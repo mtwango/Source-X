@@ -134,7 +134,7 @@ size_t CSObjSortArray<TYPE,KEY_TYPE>::FindKey( KEY_TYPE key ) const
 {
 	// Find exact key
 	int iCompareRes;
-	size_t index = FindKeyNear(key, iCompareRes, false);
+    const size_t index = FindKeyNear(key, iCompareRes, false);
 	return (iCompareRes != 0 ? sl::scont_bad_index() : index);
 }
 

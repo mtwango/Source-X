@@ -40,7 +40,7 @@ int CRandGroupDef::CalcTotalWeight()
 {
     ADDTOCALLSTACK("CRandGroupDef::CalcTotalWeight");
     int iTotal = 0;
-    size_t iQty = m_Members.size();
+    const size_t iQty = m_Members.size();
     for ( size_t i = 0; i < iQty; ++i )
     {
         iTotal += static_cast<int>(m_Members[i].GetResQty());
@@ -74,7 +74,7 @@ bool CRandGroupDef::r_LoadVal( CScript &s )
         case RGC_CONTAINER:
         {
             tchar	*ppCmd[2];
-            size_t iArgs = Str_ParseCmds(s.GetArgStr(), ppCmd, std::size(ppCmd));
+            const size_t iArgs = Str_ParseCmds(s.GetArgStr(), ppCmd, std::size(ppCmd));
             CResourceQty rec;
 
             rec.SetResourceID(
@@ -93,7 +93,7 @@ bool CRandGroupDef::r_LoadVal( CScript &s )
         case RGC_WEIGHT: // Modify the weight of the last item.
             if (!m_Members.empty() )
             {
-                int iWeight = s.GetArgVal();
+                const int iWeight = s.GetArgVal();
                 m_Members[m_Members.size() - 1].SetResQty(iWeight);
                 CalcTotalWeight();
             }
@@ -132,7 +132,7 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
         case RGC_ID:
         case RGC_CONTAINER:
         {
-            if (size_t i = GetRandMemberIndex(); i != sl::scont_bad_index() )
+            if (const size_t i = GetRandMemberIndex(); i != sl::scont_bad_index() )
                 sVal.FormatHex(GetMemberID(i).GetResIndex());
             break;
         }
@@ -173,7 +173,7 @@ bool CRandGroupDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * p
                 {
                     bool fQtyOnly = false;
                     bool fKeyOnly = false;
-                    int index = Exp_GetVal( ptcKey );
+                    const int index = Exp_GetVal( ptcKey );
                     SKIP_SEPARATORS( ptcKey );
 
                     if ( !strnicmp( ptcKey, "KEY", 3 ))

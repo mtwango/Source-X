@@ -52,7 +52,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 
 	// we do not need to send tooltips for items not in LOS (multis/ships)
 	//DEBUG_MSG(("(( m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()) (%x) > UO_MAP_VIEW_SIZE_DEFAULT (%x) ) && ( !bShop ) (%x) )", m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()), UO_MAP_VIEW_SIZE_DEFAULT, ( !bShop )));
-    if (int iDist = GetChar()->GetTopPoint().GetDistSight(pObj->GetTopPoint());
+    if (const int iDist = GetChar()->GetTopPoint().GetDistSight(pObj->GetTopPoint());
         (iDist > GetChar()->GetVisualRange()) && (iDist <= g_Cfg.m_iMapViewRadar) && !fShop ) //(iDist <= UO_MAP_VIEW_RADAR) fShop is needed because items equipped or in a container have invalid GetTopPoint (and a very high iDist)
 		return false;
 
@@ -95,7 +95,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 
 			if (IsTrigUsed(TRIGGER_CLIENTTOOLTIP) || (pItem && IsTrigUsed(TRIGGER_ITEMCLIENTTOOLTIP)) || (pChar && IsTrigUsed(TRIGGER_CHARCLIENTTOOLTIP)))
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pObj;
                 pScriptArgs->m_iN1 = fRequested;
                 iRet = pObj->OnTrigger("@ClientTooltip", pScriptArgs, this->GetChar()); //ITRIG_CLIENTTOOLTIP , CTRIG_ClientTooltip
@@ -117,7 +117,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 
 			if (IsTrigUsed(TRIGGER_CLIENTTOOLTIP_AFTERDEFAULT) || (pItem && IsTrigUsed(TRIGGER_ITEMCLIENTTOOLTIP_AFTERDEFAULT)) || (pChar && IsTrigUsed(TRIGGER_CHARCLIENTTOOLTIP_AFTERDEFAULT)))
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pObj;
                 pScriptArgs->m_iN1 = fRequested;
                 iRet = pObj->OnTrigger("@ClientTooltip_AfterDefault", pScriptArgs, this->GetChar()); //Save to return on iRet to make sure return value doesn't stuck the boolean.
@@ -132,7 +132,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 		dword dwArgumentHash = 0;
 		for (size_t i = 0; i < pObj->m_TooltipData.size(); ++i)
 		{
-			CClientTooltip* tipEntry = pObj->m_TooltipData[i].get();
+            const CClientTooltip * tipEntry = pObj->m_TooltipData[i].get();
             dwArgumentHash = HashString(tipEntry->m_args, strlen(tipEntry->m_args));
 
 			DOHASH(tipEntry->m_clilocid);
@@ -159,7 +159,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 		//
 		// we still want to generate a hash though, so we don't have to increment
 		// the revision number if the tooltip hasn't actually been changed
-		dword revision = pObj->UpdatePropertyRevision(dwHash);
+        const dword revision = pObj->UpdatePropertyRevision(dwHash);
 		propertyList = new PacketPropertyList(pObj, revision, pObj->m_TooltipData);
 
 		// cache the property list for next time, unless property list is
@@ -266,7 +266,7 @@ void CClient::AOSTooltip_addName(CObjBase* pObj)
 
 			if (pGuildMember->IsAbbrevOn())
 			{
-                if (lpctstr ptcAbbrev = pParentStone->GetAbbrev(); ptcAbbrev[0])
+                if (const lpctstr ptcAbbrev = pParentStone->GetAbbrev(); ptcAbbrev[0])
 				{
 					Str_ConcatLimitNull(lpSuffix, " [", Str_TempLength());
 					Str_ConcatLimitNull(lpSuffix, ptcAbbrev, Str_TempLength());
@@ -329,10 +329,10 @@ void CClient::AOSTooltip_addDefaultCharData(CChar * pChar)
 	{
 		if (g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE)
 		{
-            if (CREID_TYPE id = pChar->GetID(); id == CREID_LLAMA_PACK || id == CREID_HORSE_PACK || id == CREID_GIANT_BEETLE)
+            if (const CREID_TYPE id = pChar->GetID(); id == CREID_LLAMA_PACK || id == CREID_HORSE_PACK || id == CREID_GIANT_BEETLE)
 			{
                 CClientTooltip *t = nullptr;
-                int iWeight = pChar->GetWeight() / WEIGHT_UNITS;
+                const int iWeight = pChar->GetWeight() / WEIGHT_UNITS;
                 PUSH_BACK_TOOLTIP(pChar, t = new CClientTooltip(iWeight == 1 ? 1072788 : 1072789)); // Weight: ~1_WEIGHT~ stone / Weight: ~1_WEIGHT~ stones
 				t->FormatArgs("%d", iWeight);
 			}
@@ -393,7 +393,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	{
 		if (pItem->IsMovable())
 		{
-			int iWeight = pItem->GetWeight() / WEIGHT_UNITS;
+            const int iWeight = pItem->GetWeight() / WEIGHT_UNITS;
             PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(iWeight == 1 ? 1072788 : 1072789)); // Weight: ~1_WEIGHT~ stone / Weight: ~1_WEIGHT~ stones
 			t->FormatArgs("%d", iWeight);
 		}
@@ -408,13 +408,13 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	if (pItem->IsAttr(ATTR_EXCEPTIONAL))
 		PUSH_BACK_TOOLTIP(pItem, new CClientTooltip(1060636)); // exceptional
 
-    if (int64 ArtifactRarity = pItem->GetDefNum("RARITY", true); ArtifactRarity > 0)
+    if (const int64 ArtifactRarity = pItem->GetDefNum("RARITY", true); ArtifactRarity > 0)
 	{
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061078)); // artifact rarity ~1_val~
 		t->FormatArgs("%" PRId64, ArtifactRarity);
 	}
 
-    if (int64 UsesRemaining = pItem->GetDefNum("USESCUR", true); UsesRemaining > 0)
+    if (const int64 UsesRemaining = pItem->GetDefNum("USESCUR", true); UsesRemaining > 0)
 	{
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060584)); // uses remaining: ~1_val~
 		t->FormatArgs("%" PRId64, UsesRemaining);
@@ -422,7 +422,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 
 	if (pItem->IsTypeArmorWeapon())
 	{
-        if (int64 SelfRepair = pItem->GetDefNum("SELFREPAIR", true); SelfRepair != 0)
+        if (const int64 SelfRepair = pItem->GetDefNum("SELFREPAIR", true); SelfRepair != 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060450)); // self repair ~1_val~
 			t->FormatArgs("%" PRId64, SelfRepair);
@@ -445,7 +445,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 			ASSERT(pContainer);
 			if ( g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE )
 			{
-                if (int iMaxWeight = (pItem->GetContainedLayer() == LAYER_PACK) ? g_Cfg.m_iBackpackOverload + pItem->m_ModMaxWeight : pItem->m_ModMaxWeight;
+                if (const int iMaxWeight = (pItem->GetContainedLayer() == LAYER_PACK) ? g_Cfg.m_iBackpackOverload + pItem->m_ModMaxWeight : pItem->m_ModMaxWeight;
                     iMaxWeight > 0)
 				{
                     PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1072241)); // Contents: ~1_COUNT~/~2_MAXCOUNT~ items, ~3_WEIGHT~/~4_MAXWEIGHT~ stones
@@ -530,7 +530,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061167)); // weapon speed ~1_val~
 		t->FormatArgs("%hhu", pItem->GetSpeed());
 
-        if (uchar Range = pItem->GetRangeH(); Range > 1)
+        if (const uchar Range = pItem->GetRangeH(); Range > 1)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061169, Range)); // range ~1_val~
 		}
@@ -590,7 +590,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 		lpctstr regionName = g_Cfg.GetDefaultMsg(DEFMSG_RUNE_LOCATION_UNK);
 		if (pt.GetRegion(REGION_TYPE_AREA))
 			regionName = pt.GetRegion(REGION_TYPE_AREA)->GetName();
-		bool regionMulti = (pt.GetRegion(REGION_TYPE_MULTI) != nullptr);
+        const bool regionMulti = (pt.GetRegion(REGION_TYPE_MULTI) != nullptr);
 
 		if (pt.m_map == 0)
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(regionMulti ? 1062452 : 1060805)); // ~1_val~ (Felucca)[(House)]
@@ -620,7 +620,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_SPELLBOOK_MYSTIC:
 	case IT_SPELLBOOK_MASTERY:
 	{
-        if (int count = pItem->GetSpellcountInBook(); count > 0)
+        if (const int count = pItem->GetSpellcountInBook(); count > 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1042886)); // ~1_NUMBERS_OF_SPELLS~ Spells
 			t->FormatArgs("%d", count);
@@ -664,7 +664,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
         const auto pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
         if (!pSpawn)
             break;
-		CResourceDef * pSpawnItemDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
+        const CResourceDef * pSpawnItemDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
 
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060658)); // ~1_val~: ~2_val~
 		t->FormatArgs("Item\t%u %s", pSpawn->GetPile(), pSpawnItemDef ? pSpawnItemDef->GetName() : "none");
@@ -680,7 +680,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 
 	case IT_COMM_CRYSTAL:
 	{
-		CItem *pLink = pItem->m_uidLink.ItemFind();
+        const CItem *pLink = pItem->m_uidLink.ItemFind();
 		PUSH_BACK_TOOLTIP(pItem, new CClientTooltip((pLink && pLink->IsType(IT_COMM_CRYSTAL)) ? 1060742 : 1060743)); // active / inactive
 		PUSH_BACK_TOOLTIP(pItem, new CClientTooltip(1060745)); // broadcast
 	} break;

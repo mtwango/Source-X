@@ -15,7 +15,7 @@ bool CItemTypeDef::r_LoadVal( CScript & s )
 {
     ADDTOCALLSTACK("CItemTypeDef::r_LoadVal");
     EXC_TRY("LoadVal");
-    lpctstr		ptcKey	= s.GetKey();
+    const lpctstr		ptcKey	= s.GetKey();
     lpctstr		pszArgs	= s.GetArgStr();
 
     if ( !strnicmp( ptcKey, "TERRAIN", 7 ) )
@@ -47,7 +47,7 @@ bool CItemTypeDef::r_LoadVal( CScript & s )
 
         if ( iLo > iHi )		// swap
         {
-            llong iTmp = iHi;
+            const llong iTmp = iHi;
             iHi	= iLo;
             iLo	= iTmp;
         }
@@ -59,7 +59,7 @@ bool CItemTypeDef::r_LoadVal( CScript & s )
         }
 
         // Get the weak ptr from reshash
-        sl::smart_ptr_view<CResourceDef> def_registered = g_Cfg.RegisteredResourceGetDefRef(GetResourceID());
+        const sl::smart_ptr_view<CResourceDef> def_registered = g_Cfg.RegisteredResourceGetDefRef(GetResourceID());
         for (llong i = iLo; i <= iHi; ++i )
         {
             g_World.m_TileTypes.emplace_index_grow(static_cast<size_t>(i), def_registered);

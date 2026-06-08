@@ -152,7 +152,7 @@ bool CSFileObj::r_LoadVal( CScript & s )
         return false;
     }
 
-    switch ( int index = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
+    switch (const int index = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
     {
         case FO_WRITE:
         case FO_WRITECHR:
@@ -247,7 +247,7 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
         return true;
     }
 
-    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
+    switch (const int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
     {
         case FO_FILEEXIST:
         {
@@ -333,7 +333,7 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
         case FO_READBYTE:
         case FO_READCHAR:
         {
-            bool fChr = ( index == FO_READCHAR );
+            const bool fChr = ( index == FO_READCHAR );
             int iRead = 1;
 
             if ( !fChr )
@@ -374,11 +374,11 @@ bool CSFileObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc,
             tchar * psReadBuf = this->GetReadBuffer();
             ASSERT(psReadBuf != nullptr);
 
-            int iLines = Exp_GetVal(ptcKey);
+            const int iLines = Exp_GetVal(ptcKey);
             if ( iLines < 0 )
                 return false;
 
-            int iSeek = _pFile->GetPosition();
+            const int iSeek = _pFile->GetPosition();
             _pFile->SeekToBegin();
 
             if ( iLines == 0 )
@@ -462,9 +462,9 @@ bool CSFileObj::r_Verb( CScript & s, CTextConsole * pSrc )
     EXC_TRY("Verb");
     ASSERT(pSrc);
 
-    lpctstr ptcKey = s.GetKey();
+    const lpctstr ptcKey = s.GetKey();
 
-    int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
+    const int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 
     if ( index < 0 )
         return( this->r_LoadVal( s ) );

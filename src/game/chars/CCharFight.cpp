@@ -44,7 +44,7 @@ void CChar::OnNoticeCrime( CChar * pCriminal, CChar * pCharMark )
 		bool fMakeCriminal = false; //We don't need to call guards automatically in default.
 		if (IsTrigUsed(TRIGGER_SEECRIME))
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = fMakeCriminal;
             pScriptArgs->m_pO1 = pCharMark;
             OnTrigger(CTRIG_SeeCrime, pScriptArgs, pCriminal);
@@ -61,7 +61,7 @@ void CChar::OnNoticeCrime( CChar * pCriminal, CChar * pCharMark )
 	// NPC's can take other actions.
 
 	ASSERT(m_pNPC);
-	bool fMyMaster = NPC_IsOwnedBy( pCriminal );
+    const bool fMyMaster = NPC_IsOwnedBy( pCriminal );
 
 	if ( this != pCharMark )	// it's not me.
 	{
@@ -144,7 +144,7 @@ bool CChar::CheckCrimeSeen(const SKILL_TYPE SkillToSee, CChar * pCharMark, const
                 pScriptArgs->m_iN2 = pItem ? static_cast<dword>(pItem->GetUID()) : 0;    // here i can modify pItem via scripts, so it isn't really const
                 pScriptArgs->m_pO1 = pCharMark;
 
-                if (TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_SeeSnoop, pScriptArgs, this); iRet == TRIGRET_RET_TRUE)
+                if (const TRIGRET_TYPE iRet = pChar->OnTrigger(CTRIG_SeeSnoop, pScriptArgs, this); iRet == TRIGRET_RET_TRUE)
 					continue;
 			}
 
@@ -252,7 +252,7 @@ bool CChar::CallGuards( CChar * pCriminal )
 	CResourceID rid = g_Cfg.ResourceGetIDType(RES_CHARDEF, (pVarDefGuards ? pVarDefGuards->GetValStr() : "GUARDS"));
 	if (IsTrigUsed(TRIGGER_CALLGUARDS))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = rid.GetResIndex();
         pScriptArgs->m_iN2 = 0;
         pScriptArgs->m_VarObjs.Insert(1, pCriminal, true);
@@ -289,7 +289,7 @@ void CChar::OnHarmedBy( CChar * pCharSrc )
 {
 	ADDTOCALLSTACK("CChar::OnHarmedBy");
 
-	bool fFightActive = Fight_IsActive();
+    const bool fFightActive = Fight_IsActive();
 	Memory_AddObjTypes(pCharSrc, MEMORY_HARMEDBY);
 	if ( m_pNPC)
 	{
@@ -537,7 +537,7 @@ int CChar::CalcArmorDefense() const
 					if (g_Cfg.m_iCombatParryingEra & PARRYERA_ARSCALING)
 					{
 						shieldZone = ARMOR_SHIELD;
-						int uShieldAC = ((Skill_GetBase(SKILL_PARRYING) * iDefense) / 2000) + 1;
+                        const int uShieldAC = ((Skill_GetBase(SKILL_PARRYING) * iDefense) / 2000) + 1;
 						iDefense = minimum(iDefense / 2, uShieldAC);
 					}
 					if (IsSetCombatFlags(COMBAT_STACKARMOR)) //Don't understand, you can't stack shields
@@ -1130,7 +1130,7 @@ DAMAGE_TYPE CChar::Fight_GetWeaponDamType(const CItem* pWeapon) const
         }
         else
         {
-            switch (CItemBase *pWeaponDef = pWeapon->Item_GetDef(); pWeaponDef->GetType() )
+            switch (const CItemBase *pWeaponDef = pWeapon->Item_GetDef(); pWeaponDef->GetType() )
             {
                 case IT_WEAPON_SWORD:
                 case IT_WEAPON_AXE:
@@ -1205,7 +1205,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, const bool fNoRandom, const b
 		// Horrific Beast (necro spell) changes char base damage to 5-15
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
 		{
-            if (CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
+            if (const CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
 			{
 				iDmgMin += pPoly->m_itSpell.m_PolyStr;
 				iDmgMax += pPoly->m_itSpell.m_PolyDex;
@@ -1215,20 +1215,20 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, const bool fNoRandom, const b
 
 	if ( m_pPlayer || IsSetCombatFlags(COMBAT_NPC_BONUSDAMAGE))
 	{
-		int iIncreaseDam = (int)GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDAM, true);
+        const int iIncreaseDam = GetPropNum(COMP_PROPS_CHAR, PROPCH_INCREASEDAM, true);
 		int iDmgBonus = maximum(-100, minimum(iIncreaseDam, 100));		// Damage Increase is capped at +-100%
 
 		// Racial Bonus (Berserk), gargoyles gains +15% Damage Increase per each 20 HP lost
 		if ((g_Cfg.m_iRacialFlags & RACIALF_GARG_BERSERK) && IsGargoyle())
 		{
-			int iStrDiff = (Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR));
+            const int iStrDiff = (Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR));
 			iDmgBonus += minimum(15 * (iStrDiff / 20), 60);		// value is capped at 60%
 		}
 
 		// Horrific Beast (necro spell) add +25% Damage Increase
 		if (g_Cfg.m_iFeatureAOS & FEATURE_AOS_UPDATE_B)
 		{
-            if (CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
+            if (const CItem *pPoly = LayerFind(LAYER_SPELL_Polymorph); pPoly && pPoly->m_itSpell.m_spell == SPELL_Horrific_Beast)
 				iDmgBonus += 25;
 		}
 
@@ -1409,7 +1409,7 @@ bool CChar::Fight_Attack( CChar *pCharTarg, const bool fToldByMaster )
 	bool ignored = Attacker_GetIgnore(pTarget);
 	if ( ((IsTrigUsed(TRIGGER_ATTACK)) || (IsTrigUsed(TRIGGER_CHARATTACK))) && m_Fight_Targ_UID != pCharTarg->GetUID() )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = threat;
         pScriptArgs->m_iN2 = static_cast<int>(ignored);
         if ( OnTrigger(CTRIG_Attack, pScriptArgs, pTarget) == TRIGRET_RET_TRUE )
@@ -1485,7 +1485,7 @@ void CChar::Fight_HitTry()
 		// I can't hit this target, try switch to another one
 		if (m_pNPC)
 		{
-			std::vector vExcludeTargets { pCharTarg };	// Ignore the current target, i want other npcs
+            const std::vector vExcludeTargets { pCharTarg };	// Ignore the current target, i want other npcs
 			if (!Fight_Attack(NPC_FightFindBestTarget(&vExcludeTargets)))
 			{
 				Skill_Start(SKILL_NONE);
@@ -1535,7 +1535,7 @@ void CChar::Fight_HitTry()
         }
     }
 
-    WAR_SWING_TYPE retHit = Fight_Hit(pCharTarg);
+    const WAR_SWING_TYPE retHit = Fight_Hit(pCharTarg);
 
     if (IsSetCombatFlags(COMBAT_FIRSTHIT_INSTANT))
     {
@@ -1688,14 +1688,14 @@ WAR_SWING_TYPE CChar::Fight_CanHit(const CChar * pCharSrc, const bool fSwingNoRa
         (IsSetCombatFlags(COMBAT_ANIM_HIT_SMOOTH) && (m_atFight.m_iWarSwingState == WAR_SWING_SWINGING)) ||
         (!IsSetCombatFlags(COMBAT_ANIM_HIT_SMOOTH) && (m_atFight.m_iWarSwingState == WAR_SWING_READY)))
     {
-        if (int dist = GetTopDist3D(pCharSrc); dist > GetVisualRange())
+        if (const int dist = GetTopDist3D(pCharSrc); dist > GetVisualRange())
         {
             if (!IsSetCombatFlags(COMBAT_STAYINRANGE))
                 return WAR_SWING_SWINGING; //Keep loading the hit or keep it loaded and ready.
 
             return WAR_SWING_INVALID;
         }
-        if (word wLOSFlags = (g_Cfg.IsSkillFlag(Skill_GetActive(), SKF_RANGED)) ? LOS_NB_WINDOWS : 0; !CanSeeLOS(pCharSrc, wLOSFlags, true))
+        if (const word wLOSFlags = (g_Cfg.IsSkillFlag(Skill_GetActive(), SKF_RANGED)) ? LOS_NB_WINDOWS : 0; !CanSeeLOS(pCharSrc, wLOSFlags, true))
             return WAR_SWING_SWINGING;
     }
 

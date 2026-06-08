@@ -6,7 +6,7 @@
 
 ProfileData& GetCurrentProfileData()
 {
-    auto cur_thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().current());
+    const auto cur_thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().current());
     ASSERT(cur_thread);
     return cur_thread->m_profile;
 }

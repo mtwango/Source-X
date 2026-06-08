@@ -38,10 +38,10 @@ bool CItem::Plant_Use(CChar *pChar)
 
     if (IsTrigUsed(TRIGGER_RESOURCETEST))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iGrowID, iFruitID, iFruitIDOverride, nullptr);
 
-        if (TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceTest, pScriptArgs, pChar); iRet == TRIGRET_RET_TRUE)
+        if (const TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceTest, pScriptArgs, pChar); iRet == TRIGRET_RET_TRUE)
             return true;
 
         iGrowID = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_iN1)));
@@ -69,7 +69,7 @@ bool CItem::Plant_Use(CChar *pChar)
         {
             if (IsTrigUsed(TRIGGER_RESOURCEGATHER))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(iAmount, 0, 0, pItemFruit);
 
                 const TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceGather, pScriptArgs, pChar);
@@ -139,7 +139,7 @@ bool CItem::Plant_OnTick()
 			auto AreaItems = CWorldSearchHolder::GetInstance(GetTopPoint());
 			for (;;)
 			{
-				CItem *pItem = AreaItems->GetItem();
+                const CItem *pItem = AreaItems->GetItem();
 				if ( !pItem )
 				{
 					CItem *pItemFruit = CreateScript(iFruitID);

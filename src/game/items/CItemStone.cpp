@@ -98,7 +98,7 @@ lpctstr CItemStone::GetTypeName() const
 	ADDTOCALLSTACK("CItemStone::GetTypeName");
 	CVarDefCont const* pResult = nullptr;
     {
-        auto gReader = g_ExprGlobals.mtEngineLockedReader();
+        const auto gReader = g_ExprGlobals.mtEngineLockedReader();
         switch ( GetType() )
         {
             case IT_STONE_GUILD:

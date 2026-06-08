@@ -59,10 +59,12 @@ bool PacketCreate::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketCreate::onReceive");
 	tchar charname[MAX_NAME_SIZE];
-	SKILL_TYPE skill1 = SKILL_NONE, skill2 = SKILL_NONE, skill3 = SKILL_NONE, skill4 = SKILL_NONE;
-	byte skillval1 = 0, skillval2 = 0, skillval3 = 0, skillval4 = 0;
+	SKILL_TYPE skill1 = SKILL_NONE, skill2 = SKILL_NONE, skill3 = SKILL_NONE;
+    constexpr SKILL_TYPE skill4 = SKILL_NONE;
+    byte skillval1 = 0, skillval2 = 0, skillval3 = 0;
+    constexpr byte skillval4 = 0;
 
-	skip(9); // 4=pattern1, 4=pattern2, 1=kuoc
+    skip(9); // 4=pattern1, 4=pattern2, 1=kuoc
 	readStringASCII(charname, MAX_NAME_SIZE);
 	skip(2); // 0x00
     const dword flags = readInt32();
@@ -183,8 +185,8 @@ bool PacketCreate::doCreate(const CNetState * net, const lpctstr charname, const
 	}
 
 	// make sure they don't already have too many characters
-	byte iMaxChars = account->GetMaxChars();
-    if (uint iQtyChars = static_cast<uint>(account->m_Chars.GetCharCount()); iQtyChars >= iMaxChars)
+    const byte iMaxChars = account->GetMaxChars();
+    if (const uint iQtyChars = static_cast<uint>(account->m_Chars.GetCharCount()); iQtyChars >= iMaxChars)
 	{
 		client->SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_MAXCHARS), static_cast<int>(iQtyChars));
 		if (client->GetPrivLevel() < PLEVEL_Seer)
@@ -337,7 +339,7 @@ bool PacketAttackReq::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketAttackReq::onReceive");
 
-	CUID target(readInt32());
+    const CUID target(readInt32());
 
 	CClient* client = net->getClient();
 	ASSERT(client);
@@ -361,10 +363,10 @@ bool PacketDoubleClick::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketDoubleClick::onReceive");
 
-	dword serial = readInt32();
+    const dword serial = readInt32();
 
-	CUID target(serial &~ UID_F_RESOURCE);
-	bool macro = (serial & UID_F_RESOURCE) == UID_F_RESOURCE;
+    const CUID target(serial &~ UID_F_RESOURCE);
+    const bool macro = (serial & UID_F_RESOURCE) == UID_F_RESOURCE;
 
 	CClient* client = net->getClient();
 	ASSERT(client);
@@ -388,8 +390,8 @@ bool PacketItemPickupReq::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketItemPickupReq::onReceive");
 
-	CUID serial(readInt32());
-	word amount = readInt16();
+    const CUID serial(readInt32());
+    const word amount = readInt16();
 
 	CClient* client = net->getClient();
 	ASSERT(client);
@@ -431,10 +433,10 @@ bool PacketItemDropReq::onReceive(CNetState* net)
 	if ( !character )
 		return false;
 
-	CUID serial(readInt32());
-	word x = readInt16();
-	word y = readInt16();
-	byte z = readByte();
+    const CUID serial(readInt32());
+    const word x = readInt16();
+    const word y = readInt16();
+    const byte z = readByte();
 
 	byte grid = 0;
 	if ( net->isClientVersionNumber(MINCLIVER_ITEMGRID) || net->isClientKR() || net->isClientEnhanced() )
@@ -447,8 +449,8 @@ bool PacketItemDropReq::onReceive(CNetState* net)
 			grid = 0;
 	}
 
-	CUID container(readInt32());
-    CPointMap pt(static_cast<int16_t>(x), static_cast<int16_t>(y), static_cast<int8_t>(z), character->GetTopMap());
+    const CUID container(readInt32());
+    const CPointMap pt(static_cast<int16_t>(x), static_cast<int16_t>(y), static_cast<int8_t>(z), character->GetTopMap());
 
 	client->Event_Item_Drop(serial, pt, container, grid);
 	return true;
@@ -470,7 +472,7 @@ bool PacketSingleClick::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketSingleClick::onReceive");
 
-	CUID serial(readInt32());
+    const CUID serial(readInt32());
 
 	CClient* client = net->getClient();
 	ASSERT(client);
@@ -497,7 +499,7 @@ bool PacketTextCommand::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-    if (word packetLength = readInt16(); (packetLength < 5) || (packetLength > MAX_EXTCMD_ARG_LEN + 4))
+    if (const word packetLength = readInt16(); (packetLength < 5) || (packetLength > MAX_EXTCMD_ARG_LEN + 4))
 		return false;
 
     const auto type = static_cast<EXTCMD_TYPE>(readByte());
@@ -655,8 +657,8 @@ bool PacketObjStatusReq::onReceive(CNetState* net)
 	if ( !client->GetChar() )
 		return false;
 	skip(4);	// 0xedededed
-	byte requestType = readByte();
-	CUID targetSerial(readInt32());
+    const byte requestType = readByte();
+    const CUID targetSerial(readInt32());
 
 	if ( requestType == 4 )
 		client->addStatusWindow(targetSerial.ObjFind(), true);
@@ -683,7 +685,7 @@ bool PacketSkillLockChange::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	CChar* character = client->GetChar();
+    const CChar * character = client->GetChar();
 	if (character == nullptr || character->m_pPlayer == nullptr)
 		return false;
 
@@ -731,9 +733,9 @@ bool PacketVendorBuyReq::onReceive(CNetState* net)
 	if (buyer == nullptr)
 		return false;
 
-	word packetLength = readInt16();
-	CUID vendorSerial(readInt32());
-    if (byte flags = readByte(); flags == 0)
+    const word packetLength = readInt16();
+    const CUID vendorSerial(readInt32());
+    if (const byte flags = readByte(); flags == 0)
 		return true;
 
 	CChar* vendor = vendorSerial.CharFind();
@@ -751,7 +753,7 @@ bool PacketVendorBuyReq::onReceive(CNetState* net)
 
     VendorItem items[MAX_ITEMS_CONT] = {};
     const uint uiCountFromPacket = (packetLength - 8u) / 7u;
-	uint itemCount = minimum(uiCountFromPacket, g_Cfg.m_iContainerMaxItems);
+    const uint itemCount = minimum(uiCountFromPacket, g_Cfg.m_iContainerMaxItems);
 
 	// check buying speed
     if (const CVarDefCont *vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME"); vardef != nullptr)
@@ -848,7 +850,7 @@ bool PacketMapEdit::onReceive(CNetState* net)
     const auto action = static_cast<MAPCMD_TYPE>(readByte());
     const byte pin = readByte();
     const word x = readInt16();
-	word y = readInt16();
+    const word y = readInt16();
 
 	CClient* client = net->getClient();
 	ASSERT(client);
@@ -880,7 +882,7 @@ bool PacketMapEdit::onReceive(CNetState* net)
 			if (map->m_Pins.size() > CItemMap::MAX_PINS)
 				return true;
 
-			CMapPinRec mapPin(x, y);
+            const CMapPinRec mapPin(x, y);
 			map->m_Pins.push_back(mapPin);
 		} break;
 
@@ -889,7 +891,7 @@ bool PacketMapEdit::onReceive(CNetState* net)
 			if (map->m_Pins.size() > CItemMap::MAX_PINS)
 				return true;
 
-			CMapPinRec mapPin(x, y);
+            const CMapPinRec mapPin(x, y);
 			map->m_Pins.insert(pin, mapPin);
 		} break;
 
@@ -950,15 +952,15 @@ bool PacketCharPlay::onReceive(CNetState* net)
     skip(4); // ? (0 - Orion, Classic, ClassicUO, 0xff000000 - Enhanced client).
     skip(4); // Login count.
     skip(16); // ?
-	uint slot = readInt32();
+    const uint slot = readInt32();
 	skip(4); // ip
 
 	CClient* client = net->getClient();
 	if (!client)	//Sometimes seems to happen? returning here to avoid console errors because of assert
 		return false;
-	//ASSERT(client);
+	// ASSERT(client);
 
-	byte err = client->Setup_Play(slot);
+    const byte err = client->Setup_Play(slot);
 
 	client->addLoginErr(err);
 	return true;
@@ -982,13 +984,13 @@ bool PacketBookPageEdit::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	CChar* character = client->GetChar();
+    const CChar * character = client->GetChar();
 	if (character == nullptr)
 		return false;
 
 	skip(2); // packet length
-	CUID bookSerial(readInt32());
-	word pageCount = readInt16();
+    const CUID bookSerial(readInt32());
+    const word pageCount = readInt16();
 
 	CItem* book = bookSerial.ItemFind();
 	if (book == nullptr || character->CanSee(book) == false)
@@ -1073,16 +1075,16 @@ bool PacketTarget::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	CChar* character = client->GetChar();
+    const CChar * character = client->GetChar();
 	if (character == nullptr)
 		return false;
 
 	skip(1); // target type
-	dword context = readInt32();
-	byte flags = readByte();
-	CUID targetSerial(readInt32());
-	word x = readInt16();
-	word y = readInt16();
+    const dword context = readInt32();
+    const byte flags = readByte();
+    const CUID targetSerial(readInt32());
+    const word x = readInt16();
+    const word y = readInt16();
 	skip(1);
     const byte z = readByte();
     const auto id = static_cast<ITEMID_TYPE>(readInt16());
@@ -1220,7 +1222,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 				return true;
 			}
 
-            if (size_t uiContCount = board->GetContentCount(); uiContCount > 32)
+            if (const size_t uiContCount = board->GetContentCount(); uiContCount > 32)
 			{
 				// roll a message off
                 const auto pMsg = static_cast<CItem*>(board->GetContentIndex(uiContCount - 1));
@@ -1241,7 +1243,7 @@ bool PacketBulletinBoardReq::onReceive(CNetState* net)
 				DEBUG_ERR(("%x:BBoard can't create message item\n", net->id()));
 				return true;
 			}
-			CSTime datetime = CSTime::GetCurrentTime();
+            const CSTime datetime = CSTime::GetCurrentTime();
 			newMessage->SetAttr(ATTR_MOVE_NEVER);
 			newMessage->SetName(str);
 			newMessage->SetTimeStampS(datetime.GetTime());
@@ -1308,7 +1310,7 @@ bool PacketWarModeReq::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketWarModeReq::onReceive");
 
-	bool war = readBool();
+    const bool war = readBool();
 	skip(3); // unknown
 	net->getClient()->Event_CombatMode(war);
 	return true;
@@ -1330,7 +1332,7 @@ bool PacketPingReq::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketPingReq::onReceive");
 
-	byte value = readByte();
+    const byte value = readByte();
 	new PacketPingAck(net->getClient(), value);
 	return true;
 }
@@ -1351,7 +1353,7 @@ bool PacketCharRename::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketCharRename::onReceive");
 
-	CUID serial(readInt32());
+    const CUID serial(readInt32());
 	tchar* name = Str_GetTemp();
 	readStringASCII(name, MAX_NAME_SIZE);
 
@@ -1380,9 +1382,9 @@ bool PacketMenuChoice::onReceive(CNetState* net)
     if (const CChar *character = client->GetChar(); character == nullptr)
 		return false;
 
-	CUID serial(readInt32());
-	word context = readInt16();
-	word select = readInt16();
+    const CUID serial(readInt32());
+    const word context = readInt16();
+    const word select = readInt16();
 
 	if (context != client->GetTargMode() || serial != client->m_tmMenu.m_UID)
 	{
@@ -1453,7 +1455,7 @@ bool PacketServersReq::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	byte lErr = client->Login_ServerList(acctname, acctpass);
+    const byte lErr = client->Login_ServerList(acctname, acctpass);
 	client->addLoginErr(lErr);
 	return true;
 }
@@ -1474,13 +1476,13 @@ bool PacketCharDelete::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketCharDelete::onReceive");
 
 	skip(MAX_NAME_SIZE); // charpass
-	dword slot = readInt32();
+    const dword slot = readInt32();
 	skip(4); // client ip
 
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	byte err = client->Setup_Delete(slot);
+    const byte err = client->Setup_Delete(slot);
 	client->addDeleteErr(err,slot);
 	return true;
 }
@@ -1716,7 +1718,7 @@ bool PacketBookHeaderEdit::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketBookHeaderEdit::onReceive");
 
-	CUID bookSerial(readInt32());
+    const CUID bookSerial(readInt32());
 	skip(1); // writable
 	skip(1); // unknown
 	skip(2); // pages
@@ -1747,9 +1749,9 @@ bool PacketDyeObject::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketDyeObject::onReceive");
 
-	CUID serial(readInt32());
+    const CUID serial(readInt32());
 	skip(2); // item id
-	HUE_TYPE hue = readInt16();
+    const HUE_TYPE hue = readInt16();
 
 	net->getClient()->Event_Item_Dye(serial, hue);
 	return true;
@@ -1808,9 +1810,9 @@ bool PacketPromptResponse::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketPromptResponse::onReceive");
 
 	uint packetLength = readInt16();
-	dword context1 = readInt32();
-	dword context2 = readInt32();
-	dword type = readInt32();
+    const dword context1 = readInt32();
+    const dword context2 = readInt32();
+    const dword type = readInt32();
 
 	if (packetLength < getPosition())
 		return false;
@@ -1906,7 +1908,7 @@ bool PacketVendorSellReq::onReceive(CNetState* net)
     // check selling speed
     if (const CVarDefCont *vardef = g_Cfg.m_fAllowBuySellAgent ? nullptr : client->m_TagDefs.GetKey("BUYSELLTIME"); vardef != nullptr)
 	{
-        if (int64 allowsell = vardef->GetValNum() + ((itemCount * 3LL) * MSECS_PER_TENTH); CWorldGameTime::GetCurrentTime() < allowsell)
+        if (const int64 allowsell = vardef->GetValNum() + ((itemCount * 3LL) * MSECS_PER_TENTH); CWorldGameTime::GetCurrentTime() < allowsell)
 		{
 			client->SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_SELLFAST));
 			return true;
@@ -1940,7 +1942,7 @@ bool PacketServerSelect::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketServerSelect::onReceive");
 
-	uint server = readInt16();
+    const uint server = readInt16();
 
 	net->getClient()->Login_Relay(server);
 	return true;
@@ -2016,10 +2018,10 @@ bool PacketGumpValueInputResponse::onReceive(CNetState* net)
 	ASSERT(client);
 
 	skip(2); // length
-	CUID uid(readInt32());
+    const CUID uid(readInt32());
 	readInt16(); // context
-	byte action = readByte();
-	word textLength = readInt16();
+    const byte action = readByte();
+    const word textLength = readInt16();
 	tchar text[MAX_NAME_SIZE];
 	readStringASCII(text, minimum(MAX_NAME_SIZE, textLength));
 
@@ -2051,7 +2053,7 @@ bool PacketGumpValueInputResponse::onReceive(CNetState* net)
 		// m_Prop_UID = object we are after
 
 		CScript script(client->m_Targ_Text, text);
-		bool ret = object->r_Verb(script, client->GetChar());
+        const bool ret = object->r_Verb(script, client->GetChar());
 		if (ret == false)
 		{
 			client->SysMessagef("Invalid set: %s = %s", static_cast<lpctstr>(client->m_Targ_Text), static_cast<lpctstr>(text));
@@ -2163,10 +2165,10 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 		return false;
 
 	skip(2); // length
-	CUID serial(readInt32());
+    const CUID serial(readInt32());
 	dword context = readInt32();
 	dword button = readInt32();
-	dword checkCount = readInt32();
+    const dword checkCount = readInt32();
     if (checkCount > MAX_DIALOG_CONTROLTYPE_QTY)
     {
         g_Log.EventError("%x:PacketGumpDialogRet check count too high.\n", net->id());
@@ -2195,7 +2197,7 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 		}
         if (context == CLIMODE_DIALOG_FACESELECTION)
         {
-            if (dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
+            if (const dword maxID = (g_Cfg.m_iFeatureExtra & FEATURE_EXTRA_ROLEPLAYFACES) ? ITEMID_FACE_VAMPIRE : ITEMID_FACE_10;
                 (button >= ITEMID_FACE_1) && (button <= maxID))
             {
                 CItem *pFace = character->LayerFind(LAYER_FACE);
@@ -2246,7 +2248,7 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 	// package up the gump response info.
     // TODO: just split CDialogResponseArgs into two objects (CScriptTriggerArgs and a struct for other data?)
     //  Or just make CScriptTriggerArgs a member of CDialogResponseArgs... Favor composition over inheritance!
-    auto resp = std::make_shared<CDialogResponseArgs>();
+    const auto resp = std::make_shared<CDialogResponseArgs>();
 
 	// store the returned checked boxes' ids for possible later use
 	for (uint i = 0; i < checkCount; ++i)
@@ -2257,7 +2259,7 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 	tchar* text = Str_GetTemp();
 	for (uint i = 0; i < textCount; ++i)
 	{
-		word id = readInt16();
+        const word id = readInt16();
 		word length = readInt16();
 		length = minimum(length, THREAD_STRING_LENGTH);
 		readStringNETUTF16(text, THREAD_STRING_LENGTH, length, false);
@@ -2315,7 +2317,7 @@ bool PacketChatCommand::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	uint packetLength = readInt16();
+    const uint packetLength = readInt16();
 	tchar language[4];
 	readStringASCII(language, std::size(language));
 
@@ -2388,7 +2390,7 @@ bool PacketToolTipReq::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	CUID serial(readInt32());
+    const CUID serial(readInt32());
 	client->Event_ToolTip(serial);
 	return true;
 }
@@ -2412,9 +2414,9 @@ bool PacketProfileReq::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	word packetLength = readInt16();
-	bool write = readBool();
-	CUID serial(readInt32());
+    const word packetLength = readInt16();
+    const bool write = readBool();
+    const CUID serial(readInt32());
 	word textLength(0);
 	tchar* text(nullptr);
 
@@ -2451,8 +2453,8 @@ bool PacketMailMessage::onReceive(CNetState* net)
 	CClient* client = net->getClient();
 	ASSERT(client);
 
-	CUID serial1(readInt32());
-	CUID serial2(readInt32());
+    const CUID serial1(readInt32());
+    const CUID serial2(readInt32());
 
 	client->Event_MailMsg(serial1, serial2);
 	return true;
@@ -2501,7 +2503,7 @@ bool PacketClientVersion::onReceive(CNetState* net)
 		CClient* client = net->getClient();
 		ASSERT(client);
 
-		dword version = CUOClientVersion(versionStr).GetLegacyVersionNumber();
+        const dword version = CUOClientVersion(versionStr).GetLegacyVersionNumber();
 		net->m_reportedVersionNumber = version;
 		net->detectAsyncMode();
 
@@ -2548,7 +2550,7 @@ bool PacketExtendedCommand::onReceive(CNetState* net)
 	if (client->GetChar() == nullptr)
 		return false;
 
-	word packetLength = readInt16();
+    const word packetLength = readInt16();
     if (packetLength > 1000)
         return false;
 
@@ -2562,7 +2564,7 @@ bool PacketExtendedCommand::onReceive(CNetState* net)
 	handler->seek();
 	for (int i = 0; i < packetLength; ++i)
 	{
-		byte next = readByte();
+        const byte next = readByte();
 		handler->writeByte(next);
 	}
 
@@ -2591,7 +2593,7 @@ bool PacketScreenSize::onReceive(CNetState* net)
 	ASSERT(client);
 
     skip(2);
-    ushort x = readInt16();
+    const ushort x = readInt16();
     ushort y = readInt16();
     skip(2);
 
@@ -2664,7 +2666,7 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 			if (character->m_pParty == nullptr)
 				return false;
 
-			CUID serial(readInt32());
+            const CUID serial(readInt32());
 			character->m_pParty->RemoveMember(serial, character->GetUID());
 		} break;
 
@@ -2704,13 +2706,13 @@ bool PacketPartyMessage::onReceive(CNetState* net)
 		case PARTYMSG_Accept:
 		{
 			// we accept or decline the offer of an invite
-			CUID serial(readInt32());
+            const CUID serial(readInt32());
 			CPartyDef::AcceptEvent(character, serial);
 		} break;
 
 		case PARTYMSG_Decline:
 		{
-			CUID serial(readInt32());
+            const CUID serial(readInt32());
 			CPartyDef::DeclineEvent(character, serial);
 		} break;
 
@@ -2828,7 +2830,7 @@ bool PacketLanguage::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketLanguage::onReceive");
 
-	CClient* client = net->getClient();
+    const CClient * client = net->getClient();
 	ASSERT(client);
 
 	tchar language[4];
@@ -2983,7 +2985,7 @@ bool PacketPopupReq::onReceive(CNetState* net)
 
 	if (IsAosFlagEnabled( FEATURE_AOS_POPUP ) && client->GetResDisp() >= RDS_AOS)
 	{
-		dword serial(readInt32());
+        const dword serial(readInt32());
 		client->Event_AOSPopupMenuRequest(serial);
 	}
 
@@ -3011,8 +3013,8 @@ bool PacketPopupSelect::onReceive(CNetState* net)
 
 	if (IsAosFlagEnabled( FEATURE_AOS_POPUP ) && client->GetResDisp() >= RDS_AOS)
 	{
-		dword serial = readInt32();
-		word tag = readInt16();
+        const dword serial = readInt32();
+        const word tag = readInt16();
 
 		client->Event_AOSPopupMenuSelect(serial, tag);
 	}
@@ -3203,10 +3205,10 @@ bool PacketBandageMacro::onReceive(CNetState* net)
 		return false;
 	}
 
-    CUID uidBandage(readInt32());
-    CUID uidTarget(readInt32());
+    const CUID uidBandage(readInt32());
+    const CUID uidTarget(readInt32());
 	CItem* bandage = uidBandage.ItemFind();
-	CObjBase* target = uidTarget.ObjFind();
+    const CObjBase * target = uidTarget.ObjFind();
 	if (bandage == nullptr || target == nullptr)
 	{
 		return true;
@@ -3280,7 +3282,7 @@ bool PacketTargetedSkill::onReceive(CNetState* net)
     ADDTOCALLSTACK("PacketTargetedSkill::onReceive");
 
     word  wSkillID    = readInt16();    // if SkillID = 0, it means that is lastskill
-    dword dwTargetUID = readInt32();
+    const dword dwTargetUID = readInt32();
 
     if ((wSkillID != 0) && !CChar::IsSkillBase(static_cast<SKILL_TYPE>(wSkillID)))
     {
@@ -3358,7 +3360,7 @@ bool PacketGargoyleFly::onReceive(CNetState* net)
 		client->addBuff(BI_GARGOYLEFLY, 1112193, 1112567);
 
 		// float player up to the hover Z
-        if (CPointMap ptHover = CWorldMap::FindItemTypeNearby(character->GetTopPoint(), IT_HOVEROVER, 0); ptHover.IsValidPoint() )
+        if (const CPointMap ptHover = CWorldMap::FindItemTypeNearby(character->GetTopPoint(), IT_HOVEROVER, 0); ptHover.IsValidPoint() )
 			character->MoveTo(ptHover);
 	}
 
@@ -3400,7 +3402,7 @@ bool PacketWheelBoatMove::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-	CChar* character = client->GetChar();
+    const CChar * character = client->GetChar();
 	if (!character)
 		return false;
 
@@ -3455,9 +3457,9 @@ bool PacketPromptResponseUnicode::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketPromptResponseUnicode::onReceive");
 
 	uint length = readInt16();
-	dword context1 = readInt32();
-	dword context2 = readInt32();
-	dword type = readInt32();
+    const dword context1 = readInt32();
+    const dword context2 = readInt32();
+    const dword type = readInt32();
 	char language[4];
 	readStringASCII(language, std::size(language));
 
@@ -3492,7 +3494,7 @@ bool PacketViewRange::onReceive(CNetState* net)
 	if ( !character )
 		return false;
 
-	byte iVal = readByte();
+    const byte iVal = readByte();
 	character->SetVisualRange(iVal);
 	return true;
 }
@@ -3534,7 +3536,7 @@ bool PacketBookHeaderEditNew::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketBookHeaderEditNew::onReceive");
 
 	skip(2); // length
-	CUID bookSerial(readInt32());
+    const CUID bookSerial(readInt32());
 	skip(1); // unknown
 	skip(1); // writable
 	skip(2); // pages
@@ -3542,10 +3544,10 @@ bool PacketBookHeaderEditNew::onReceive(CNetState* net)
 	tchar title[2 * MAX_NAME_SIZE];
 	tchar author[MAX_NAME_SIZE];
 
-	uint titleLength = readInt16();
+    const uint titleLength = readInt16();
 	readStringASCII(title, minimum(titleLength, ARRAY_COUNT(title)));
 
-	uint authorLength = readInt16();
+    const uint authorLength = readInt16();
 	readStringASCII(author, minimum(authorLength, ARRAY_COUNT(author)));
 
 	net->getClient()->Event_Book_Title(bookSerial, title, author);
@@ -3600,7 +3602,7 @@ bool PacketAOSTooltipReq::onReceive(CNetState* net)
                 if (!pSearchObjItem)
                     break;
 
-                if (LAYER_TYPE objContItemLayer = pSearchObjItem->GetEquipLayer(); objContItemLayer >= 26 && objContItemLayer <= 28)
+                if (const LAYER_TYPE objContItemLayer = pSearchObjItem->GetEquipLayer(); objContItemLayer >= 26 && objContItemLayer <= 28)
                 {
                     // If this container is equipped in the shop layers, it's a shop item
                     bShop = true;
@@ -3645,10 +3647,10 @@ bool PacketEncodedCommand::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-	word packetLength = readInt16();
+    const word packetLength = readInt16();
 	if (packetLength > 1000)
 		return false;
-    if (CUID serial(readInt32()); character->GetUID() != serial)
+    if (const CUID serial(readInt32()); character->GetUID() != serial)
 		return false;
 
     const auto type = static_cast<EXTAOS_TYPE>(readInt16());
@@ -3662,7 +3664,7 @@ bool PacketEncodedCommand::onReceive(CNetState* net)
 	handler->seek();
 	for (int i = 0; i < packetLength; ++i)
 	{
-		byte next = readByte();
+        const byte next = readByte();
 		handler->writeByte(next);
 	}
 
@@ -3687,7 +3689,7 @@ bool PacketHouseDesignBackup::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketHouseDesignBackup::onReceive");
 
-	CClient* client = net->getClient();
+    const CClient * client = net->getClient();
 	ASSERT(client);
 
 	CItemMultiCustom* house = client->m_pHouseDesign;
@@ -3780,9 +3782,9 @@ bool PacketHouseDesignDestroyItem::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = static_cast<word>(readInt32());
+    const word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = static_cast<word>(readInt32());
+    const word z = static_cast<word>(readInt32());
 
 	house->RemoveItem(client, id, x, y, static_cast<char>(z));
 	return true;
@@ -3816,7 +3818,7 @@ bool PacketHouseDesignPlaceItem::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = static_cast<word>(readInt32());
+    const word y = static_cast<word>(readInt32());
 
 	house->AddItem(client, id, x, y);
 	return true;
@@ -3838,7 +3840,7 @@ bool PacketHouseDesignExit::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketHouseDesignExit::onReceive");
 
-	CClient* client = net->getClient();
+    const CClient * client = net->getClient();
 	ASSERT(client);
 
 	CItemMultiCustom* house = client->m_pHouseDesign;
@@ -3877,7 +3879,7 @@ bool PacketHouseDesignPlaceStair::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = static_cast<word>(readInt32());
+    const word y = static_cast<word>(readInt32());
 
 	house->AddStairs(client, id, x, y);
 	return true;
@@ -3961,7 +3963,7 @@ bool PacketHouseDesignSwitch::onReceive(CNetState* net)
 		return true;
 
 	skip(1); // 0x00
-	dword level = readInt32();
+    const dword level = readInt32();
 
 	house->SwitchToLevel(client, static_cast<uchar>(level));
 	return true;
@@ -3995,9 +3997,9 @@ bool PacketHouseDesignPlaceRoof::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = static_cast<word>(readInt32());
+    const word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = static_cast<word>(readInt32());
+    const word z = static_cast<word>(readInt32());
 
 	house->AddRoof(client, id, x, y, static_cast<char>(z));
 	return true;
@@ -4031,9 +4033,9 @@ bool PacketHouseDesignDestroyRoof::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = static_cast<word>(readInt32());
+    const word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = static_cast<word>(readInt32());
+    const word z = static_cast<word>(readInt32());
 
 	house->RemoveRoof(client, id, x, y, static_cast<char>(z));
 	return true;
@@ -4059,7 +4061,7 @@ bool PacketSpecialMove::onReceive(CNetState* net)
 	ASSERT(client);
 
 	skip(1);
-	dword ability = readInt32();
+    const dword ability = readInt32();
 
 	client->Event_CombatAbilitySelect(ability);
 	return true;
@@ -4113,7 +4115,7 @@ bool PacketEquipLastWeapon::onReceive(CNetState* net)
     CChar *pChar = pClient->GetChar();
     if ( !pChar )
         return false;
-    CCharPlayer* pCharPlayer = pChar->m_pPlayer;
+    const CCharPlayer * pCharPlayer = pChar->m_pPlayer;
     if ( !pCharPlayer )
         return false;
 
@@ -4261,7 +4263,7 @@ bool PacketBugReport::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketBugReport::onReceive");
 
-    if (word packetLength = readInt16(); packetLength < 10)
+    if (const word packetLength = readInt16(); packetLength < 10)
 		return false;
 
 	tchar language[4];
@@ -4270,7 +4272,7 @@ bool PacketBugReport::onReceive(CNetState* net)
     const auto type = static_cast<BUGREPORT_TYPE>(readInt16());
 
 	tchar text[MAX_TALK_BUFFER];
-	int textLength = static_cast<int>(readStringNullNETUTF16(text, MAX_TALK_BUFFER, MAX_TALK_BUFFER - 1));
+    const int textLength = static_cast<int>(readStringNullNETUTF16(text, MAX_TALK_BUFFER, MAX_TALK_BUFFER - 1));
 
 	net->getClient()->Event_BugReport(text, textLength, type, CLanguageID(language));
 	return true;
@@ -4292,7 +4294,7 @@ bool PacketClientType::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketClientType::onReceive");
 
-    if (word packetLength = readInt16(); packetLength < 9)
+    if (const word packetLength = readInt16(); packetLength < 9)
 		return false;
 
 	skip(2); // ..count?
@@ -4345,14 +4347,14 @@ bool PacketUseHotbar::onReceive(CNetState* net)
 
 	CClient* client = net->getClient();
 	ASSERT(client);
-    if (CChar *character = client->GetChar(); character == nullptr)
+    if (const CChar *character = client->GetChar(); character == nullptr)
 		return false;
 
 	skip(2); // 1
 	skip(2); // 6
-	byte type = readByte();
+    const byte type = readByte();
 	skip(1); // zero
-	dword parameter = readInt32();
+    const dword parameter = readInt32();
 
 	client->Event_UseToolbar(type, parameter);
 	return true;
@@ -4481,17 +4483,17 @@ bool PacketMovementReqNew::onReceive(CNetState* net)
 	CClient *client = net->getClient();
 	ASSERT(client);
 
-    if (word packetlen = readInt16(); getLength() != packetlen)
+    if (const word packetlen = readInt16(); getLength() != packetlen)
         return false;   // It's not a valid PacketMovementReqNew, maybe it's a Krrios or Injection packet?
 
 	byte steps = readByte();
 	while ( steps )
 	{
 		skip(8);	//int64 iTime1 = readInt64();
-		skip(8);	//int64 iTime2 = readInt64();
-		byte sequence = readByte();
+		skip(8);	// int64 iTime2 = readInt64();
+        const byte sequence = readByte();
 		byte direction = readByte();
-        if (dword mode = readInt32(); mode == 2 )
+        if (const dword mode = readInt32(); mode == 2 )
 			direction |= DIR_MASK_RUNNING;
 
 		// The client send these values, but they're not really needed
@@ -4526,7 +4528,7 @@ bool PacketTimeSyncRequest::onReceive(CNetState* net)
 {
 	ADDTOCALLSTACK("PacketTimeSyncRequest::onReceive");
 
-	CClient* client = net->getClient();
+    const CClient * client = net->getClient();
 	ASSERT(client);
 
 	//int64 iTime = readInt64();	// what we must do with this value?
@@ -4551,19 +4553,19 @@ bool PacketCrashReport::onReceive(CNetState* net)
 	ADDTOCALLSTACK("PacketCrashReport::onReceive");
 
 	skip(2); // packet length
-	byte versionMaj = readByte();
-	byte versionMin = readByte();
-	byte versionRev = readByte();
-	byte versionPat = readByte();
-	word x = readInt16();
-	word y = readInt16();
-	byte z = readByte();
-	byte map = readByte();
+    const byte versionMaj = readByte();
+    const byte versionMin = readByte();
+    const byte versionRev = readByte();
+    const byte versionPat = readByte();
+    const word x = readInt16();
+    const word y = readInt16();
+    const byte z = readByte();
+    const byte map = readByte();
 	skip(32); // account name
 	skip(32); // character name
 	skip(15); // ip address
 	skip(4); // unknown
-	dword errorCode = readInt32();
+    const dword errorCode = readInt32();
 	tchar executable[100];
 	readStringASCII(executable, std::size(executable));
 	tchar description[100];
@@ -4621,9 +4623,9 @@ bool PacketCreateHS::onReceive(CNetState* net)
     const auto prof = static_cast<PROFESSION_TYPE>(readByte());
 	skip(15); // 0x00
     const byte race_sex_flag = readByte();
-	byte strength = readByte();
-	byte dexterity = readByte();
-	byte intelligence = readByte();
+    const byte strength = readByte();
+    const byte dexterity = readByte();
+    const byte intelligence = readByte();
 	skill1 = static_cast<SKILL_TYPE>(readByte());
 	skillval1 = readByte();
 	skill2 = static_cast<SKILL_TYPE>(readByte());
@@ -4638,13 +4640,13 @@ bool PacketCreateHS::onReceive(CNetState* net)
     const auto beardid = static_cast<ITEMID_TYPE>(readInt16());
     const HUE_TYPE beardhue = readInt16();
 	skip(1); // shard index
-	byte startloc = readByte();
+    const byte startloc = readByte();
 	skip(8); // 4=slot, 4=ip
-	HUE_TYPE shirthue = readInt16();
-	HUE_TYPE pantshue = readInt16();
+    const HUE_TYPE shirthue = readInt16();
+    const HUE_TYPE pantshue = readInt16();
 
 	// convert race_sex_flag: determine which race and sex the client has selected
-	bool isFemale = (race_sex_flag % 2) != 0;	// Even=Male, Odd=Female (rule applies to all clients)
+    const bool isFemale = (race_sex_flag % 2) != 0;	// Even=Male, Odd=Female (rule applies to all clients)
 	RACE_TYPE rtRace = RACETYPE_HUMAN;			// Human
 	/*
 	race_sex_flag values since Classic Client 7.0.16.0
@@ -4701,7 +4703,7 @@ bool PacketGlobalChatReq::onReceive(CNetState* net)
 	}
 
 	readByte();
-	byte action = readByte();
+    const byte action = readByte();
 	skip(1);
 
 	tchar xml[MAX_TALK_BUFFER * 2];

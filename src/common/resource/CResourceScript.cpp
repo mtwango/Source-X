@@ -27,7 +27,7 @@ bool CResourceScript::_CheckForChange()
     // Get Size/Date info on the file to see if it has changed.
     time_t dateChange;
     dword dwSize;
-    lpctstr ptcFilePath = _GetFilePath();
+    const lpctstr ptcFilePath = _GetFilePath();
 
     if ( !CSFileList::ReadFileInfo(ptcFilePath, dateChange, dwSize) )
     {

@@ -47,9 +47,9 @@ bool CChar::NPC_Vendor_Restock(const bool fForce, bool fFillStock)
     if ( !fForce && (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pNPC->m_timeRestock) >= 0))
 	{
         bRestockNow = true; // restock timeout has expired, make it restock again (unless it's declared to do not restock in the bellow lines).
-        if (CRegionWorld *region = GetRegion(); region != nullptr )
+        if (const CRegionWorld *region = GetRegion(); region != nullptr )
 		{
-            if (CVarDefCont *vardef = region->m_TagDefs.GetKey("RestockVendors"); vardef != nullptr )
+            if (const CVarDefCont *vardef = region->m_TagDefs.GetKey("RestockVendors"); vardef != nullptr )
 				iRestockDelay = vardef->GetValNum() * MSECS_PER_TENTH;  // backwards: it was working on tenths in scripts before, keep it like that and update it to seconds.
 			if ( region->m_TagDefs.GetKey("NoRestock") != nullptr )
 				bRestockNow = false;
@@ -57,7 +57,7 @@ bool CChar::NPC_Vendor_Restock(const bool fForce, bool fFillStock)
 		if ( m_TagDefs.GetKey("NoRestock") != nullptr )
 			bRestockNow = false;
 	}
-        int64 iNextRestock = CWorldGameTime::GetCurrentTime().GetTimeRaw() + iRestockDelay;
+    const int64 iNextRestock = CWorldGameTime::GetCurrentTime().GetTimeRaw() + iRestockDelay;
 
 	// At restock the containers are actually emptied
 	if ( bRestockNow )
@@ -104,7 +104,7 @@ bool CChar::NPC_StablePetSelect( CChar * pCharPlayer )
 	if ( ! pCharPlayer->IsClientActive())
 		return false;
 
-	CItemContainer *pStableContainer = pCharPlayer->GetBank(LAYER_STABLE);
+    const CItemContainer *pStableContainer = pCharPlayer->GetBank(LAYER_STABLE);
     ASSERT(pStableContainer); //Should never terminate
 
 	if (pStableContainer->GetContentCount() >= g_Cfg.m_iContainerMaxItems)
@@ -181,7 +181,7 @@ bool CChar::NPC_StablePetRetrieve( CChar * pCharPlayer )
 	if ( m_pNPC->m_Brain != NPCBRAIN_STABLE )
 		return false;
 
-	CItemContainer* pStableContainer = pCharPlayer->GetBank(LAYER_STABLE);
+    const CItemContainer * pStableContainer = pCharPlayer->GetBank(LAYER_STABLE);
 	ASSERT(pStableContainer);
 
 	int iCount = 0;
@@ -323,7 +323,7 @@ bool CChar::NPC_TrainSkill( CChar * pCharSrc, const SKILL_TYPE skill, ushort uiA
 	ADDTOCALLSTACK("CChar::NPC_TrainSkill");
 	ASSERT(m_pNPC);
 
-	ushort iTrain = uiAmountToTrain;
+    const ushort iTrain = uiAmountToTrain;
 	if ( (pCharSrc->Skill_GetSum() + uiAmountToTrain) > pCharSrc->Skill_GetSumMax() )
 	{
 		for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
@@ -384,12 +384,12 @@ bool CChar::NPC_OnTrainHear(const CChar * pCharSrc, const lpctstr pszCmd )
 		if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 			continue;
 
-		lpctstr pSkillKey = g_Cfg.GetSkillKey(static_cast<SKILL_TYPE>(i));
+        const lpctstr pSkillKey = g_Cfg.GetSkillKey(static_cast<SKILL_TYPE>(i));
 		if ( FindStrWord( pszCmd, pSkillKey ) <= 0)
 			continue;
 
 		// Can we train in this ?
-		int iTrainCost = NPC_OnTrainCheck(pCharSrc, static_cast<SKILL_TYPE>(i)) * g_Cfg.m_iTrainSkillCost;
+        const int iTrainCost = NPC_OnTrainCheck(pCharSrc, static_cast<SKILL_TYPE>(i)) * g_Cfg.m_iTrainSkillCost;
 		if ( iTrainCost <= 0 )
 			return true;
 

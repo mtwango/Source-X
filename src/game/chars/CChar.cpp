@@ -308,7 +308,7 @@ CChar::CChar( CREID_TYPE baseID ) :
 	SetID( baseID );
     m_dwDispIndex = baseID;
 
-	CCharBase* pCharDef = Char_GetDef();
+    const CCharBase * pCharDef = Char_GetDef();
 	ASSERT(pCharDef);
 	m_attackBase = pCharDef->m_attackBase;
 	m_attackRange = pCharDef->m_attackRange;
@@ -415,8 +415,8 @@ bool CChar::NotifyDelete(const bool fForce)
 	if (IsTrigUsed(TRIGGER_DESTROY))
 	{
 		//We can forbid the deletion in here with no pain
-		//If Delete is forced, we must avoid the possibility to block deletion (will create infinite loop)
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+		// If Delete is forced, we must avoid the possibility to block deletion (will create infinite loop)
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         if (OnTrigger(CTRIG_Destroy, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE && !fForce)
 			return false;
 	}
@@ -425,7 +425,7 @@ bool CChar::NotifyDelete(const bool fForce)
 	if (m_pPlayer)
 	{
 		TRIGRET_TYPE trigReturn;
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 		if (m_pClient)
             pScriptArgs->m_pO1 = m_pClient;
         r_Call("f_onchar_delete", pScriptArgs, this, nullptr, &trigReturn);
@@ -1049,12 +1049,16 @@ void CChar::CreateNewCharCheck()
 		{
 			if ( !m_exp )
 			{
-				CCharBase *pCharDef = Char_GetDef();
+                const CCharBase *pCharDef = Char_GetDef();
 
-				int mult = (Stat_GetMaxAdjusted(STAT_STR) + (Stat_GetMaxAdjusted(STAT_DEX) / 2) + Stat_GetMaxAdjusted(STAT_INT)) / 3;
-				ushort iSkillArchery = Skill_GetBase(SKILL_ARCHERY), iSkillThrowing = Skill_GetBase(SKILL_THROWING), iSkillSwordsmanship = Skill_GetBase(SKILL_SWORDSMANSHIP);
-				ushort iSkillMacefighting = Skill_GetBase(SKILL_MACEFIGHTING), iSkillFencing = Skill_GetBase(SKILL_FENCING), iSkillWrestling = Skill_GetBase(SKILL_WRESTLING);
-				m_exp = maximum(
+                const int mult = (Stat_GetMaxAdjusted(STAT_STR) + (Stat_GetMaxAdjusted(STAT_DEX) / 2) + Stat_GetMaxAdjusted(STAT_INT)) / 3;
+                const ushort iSkillArchery = Skill_GetBase(SKILL_ARCHERY);
+                const ushort iSkillThrowing      = Skill_GetBase(SKILL_THROWING);
+                const ushort iSkillSwordsmanship = Skill_GetBase(SKILL_SWORDSMANSHIP);
+                const ushort iSkillMacefighting = Skill_GetBase(SKILL_MACEFIGHTING);
+                const ushort iSkillFencing       = Skill_GetBase(SKILL_FENCING);
+                const ushort iSkillWrestling = Skill_GetBase(SKILL_WRESTLING);
+                m_exp = maximum(
 						iSkillArchery,
 						maximum(iSkillThrowing,
 						maximum(iSkillSwordsmanship,
@@ -1184,7 +1188,7 @@ bool CChar::DupeFrom(const CChar * pChar, const bool fNewbieItems )
         if ( CItem *myLayer = LayerFind(layer) )
 			myLayer->Delete();
 
-        CItem * fromLayer = pChar->LayerFind( layer );
+        const CItem * fromLayer = pChar->LayerFind( layer );
 		if ( !fromLayer )
 			continue;
 
@@ -1291,13 +1295,13 @@ bool CChar::ReadScriptReduced(CResourceLock &s, const bool fVendor)
 			break;
 
 		bool fItemCreated = false;	// With the current keyword, have i created an item?
-		int iCmd = FindTableSorted(s.GetKey(), CItem::sm_szTemplateTable, std::size(CItem::sm_szTemplateTable) - 1);
+        const int iCmd = FindTableSorted(s.GetKey(), CItem::sm_szTemplateTable, std::size(CItem::sm_szTemplateTable) - 1);
 		if (iCmd == ITC_FUNC)
 		{
 			if (!pItem || fBlockItemAttr)
 				continue;
 
-			lptstr ptcFunctionName = s.GetArgRaw();
+            const lptstr ptcFunctionName = s.GetArgRaw();
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
             // Locate arguments for the called function
@@ -1431,7 +1435,7 @@ bool CChar::ReadScriptReduced(CResourceLock &s, const bool fVendor)
 		{
 			// I'm setting an attribute to myself, not the item (e.g. @Create trigger). Run that script line.
             CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-            if (TRIGRET_TYPE tRet = OnTriggerRun(s, TRIGRUN_SINGLE_EXEC, pScriptArgs, &g_Serv, nullptr); (tRet == TRIGRET_RET_FALSE) && fFullInterp)
+            if (const TRIGRET_TYPE tRet = OnTriggerRun(s, TRIGRUN_SINGLE_EXEC, pScriptArgs, &g_Serv, nullptr); (tRet == TRIGRET_RET_FALSE) && fFullInterp)
 				;
 			else if ( tRet != TRIGRET_RET_DEFAULT )
 			{
@@ -1465,13 +1469,13 @@ bool CChar::SetName( lpctstr pszName )
 
 const CFactionDef* CChar::GetFaction() const noexcept
 {
-    auto pComp = static_cast<CCPropsChar const*>(GetComponentProps(COMP_PROPS_CHAR));
+    const auto pComp = static_cast<CCPropsChar const*>(GetComponentProps(COMP_PROPS_CHAR));
 	return (!pComp ? nullptr : pComp->GetFaction());
 }
 
 CFactionDef* CChar::GetFaction() noexcept
 {
-    auto pComp = static_cast<CCPropsChar*>(GetComponentProps(COMP_PROPS_CHAR));
+    const auto pComp = static_cast<CCPropsChar*>(GetComponentProps(COMP_PROPS_CHAR));
 	return (!pComp ? nullptr : pComp->GetFaction());
 }
 
@@ -1499,7 +1503,7 @@ height_t CChar::GetHeight() const
 		return tmpHeight;
 
     // This is SLOW (since this method is called very frequently)! Move those defs value to CharDef!
-    auto gReader = g_ExprGlobals.mtEngineLockedReader();
+    const auto gReader = g_ExprGlobals.mtEngineLockedReader();
     const uint uiDispID = pCharDef->GetDispID();
     char heightDef[20]{"height_"};
     Str_FromUI(uiDispID, heightDef + 7, sizeof(heightDef) - 7, 16);
@@ -1645,7 +1649,7 @@ lpctstr CChar::GetNameWithoutIncognito() const
 {
 	if ( IsStatFlag( STATF_INCOGNITO ) )
 	{
-		CItem * pSpell = nullptr;
+        const CItem * pSpell = nullptr;
 		pSpell = LayerFind(LAYER_SPELL_Incognito);
 		if ( pSpell == nullptr )
 			pSpell = LayerFind(LAYER_FLAG_Potion);
@@ -1661,12 +1665,12 @@ lpctstr CChar::GetName(const bool fAllowAlt ) const
 {
 	if ( fAllowAlt )
 	{
-        if (lpctstr pAltName = GetKeyStr("NAME.ALT"); pAltName && *pAltName )
+        if (const lpctstr pAltName = GetKeyStr("NAME.ALT"); pAltName && *pAltName )
 			return pAltName;
 	}
 	if ( ! IsIndividualName() )			// allow some creatures to go unnamed.
 	{
-		CCharBase * pCharDef = Char_GetDef();
+        const CCharBase * pCharDef = Char_GetDef();
 		ASSERT(pCharDef);
 		return pCharDef->GetTypeName();	// Just use it's type name instead.
 	}
@@ -2175,7 +2179,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         return true;
     }
 
-    if (int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
+    if (const int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
 		SKIP_SEPARATORS(ptcKey);
@@ -2199,7 +2203,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				if (m_pPlayer)
 				{
 					const int16 iPos = static_cast<int16>(Exp_GetSingle(ptcKey));
-					CMultiStorage* pMultiStorage = m_pPlayer->GetMultiStorage();
+                    const CMultiStorage * pMultiStorage = m_pPlayer->GetMultiStorage();
 					if (pMultiStorage == nullptr || pMultiStorage->GetHouseCountReal() <= iPos)
 					{
 						return false;
@@ -4306,7 +4310,7 @@ bool CChar::r_Load( CScript & s ) // Load a character from script
 	{
 		SetDisconnected();
 	}
-    if ( int iResultCode = CObjBase::IsWeird() )
+    if (const int iResultCode = CObjBase::IsWeird() )
 	{
 		DEBUG_ERR(( "Char 0%x Invalid, id='%s', code=0%x\n", static_cast<dword>(GetUID()), GetResourceName(), iResultCode ));
 		Delete();
@@ -5075,7 +5079,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 			// limiting delta to current level? check if delta goes out of level
 			if (g_Cfg.m_fLevelSystem && g_Cfg.m_iExperienceMode&EXP_MODE_DOWN_NOLEVEL)
 			{
-                if (uint exp = Calc_ExpGet_Exp(m_level); iExpDelta + m_exp < exp)
+                if (const uint exp = Calc_ExpGet_Exp(m_level); iExpDelta + m_exp < exp)
                     iExpDelta = static_cast<llong>(exp) - m_exp;
 			}
 		}
@@ -5090,7 +5094,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 
 		if (IsTrigUsed(TRIGGER_EXPCHANGE))
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(iExpDelta, fShowMsg, 0, nullptr);
             pScriptArgs->m_pO1 = pCharDead;
             if (OnTrigger(CTRIG_ExpChange, pScriptArgs, this) == TRIGRET_RET_TRUE)
@@ -5108,9 +5112,9 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
         if (m_pClient && fShowMsg && iExpDelta)
 		{
 			int iWord = 0;
-            llong absval = abs(iExpDelta);
+            const llong absval = abs(iExpDelta);
 
-            if (llong maxval = (g_Cfg.m_fLevelSystem && g_Cfg.m_iLevelNextAt) ? maximum(g_Cfg.m_iLevelNextAt, 1000) : 1000; absval >= maxval)				// 100%
+            if (const llong maxval = (g_Cfg.m_fLevelSystem && g_Cfg.m_iLevelNextAt) ? maximum(g_Cfg.m_iLevelNextAt, 1000) : 1000; absval >= maxval)				// 100%
 				iWord = 7;
 			else if (absval >= (maxval * 2) / 3)//  66%
 				iWord = 6;
@@ -5142,7 +5146,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 
 			if (IsTrigUsed(TRIGGER_EXPLEVELCHANGE))
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(iExpDelta, 0, 0, nullptr);
                 if (OnTrigger(CTRIG_ExpLevelChange, pScriptArgs, this) == TRIGRET_RET_TRUE)
 					return;
@@ -5182,7 +5186,7 @@ bool CChar::CanConsume(CItem* pItem, word iQty)
     if (!pItem || iQty <= 0)
         return true;
 
-    word iQtyMax = pItem->GetAmount();
+    const word iQtyMax = pItem->GetAmount();
     if (iQty <= iQtyMax)
         return true;
 
@@ -5196,7 +5200,7 @@ bool CChar::CanConsume(CItem* pItem, word iQty)
 
     if (IsContainer())
     {
-        CItemBase* pItemDef = pItem->Item_GetDef();
+        const CItemBase * pItemDef = pItem->Item_GetDef();
         if (CContainer *pCont = this)
         {
             CResourceQtyArray Resources;
@@ -5214,7 +5218,7 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
     if (!pItem || iQty <= 0)
         return true;
 
-    word iQtyMax = pItem->GetAmount();
+    const word iQtyMax = pItem->GetAmount();
     if (iQty < iQtyMax)
     {
         pItem->SetAmountUpdate(iQtyMax - iQty);
@@ -5227,9 +5231,9 @@ bool CChar::ConsumeFromPack(CItem* pItem, word iQty)
     }
 
     iQty = iQty - iQtyMax;
-    if (CItemBase *pItemDef = pItem->Item_GetDef())
+    if (const CItemBase *pItemDef = pItem->Item_GetDef())
     {
-        lpctstr resName = pItemDef->GetResourceName();
+        const lpctstr resName = pItemDef->GetResourceName();
         pItem->Delete();
         if (CContainer *pCont = this)
         {
@@ -5253,7 +5257,7 @@ uint CChar::GetSkillTotal(const int what, const bool how)
 
     for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		ushort uiBase = Skill_GetBase(static_cast<SKILL_TYPE>(i));
+        const ushort uiBase = Skill_GetBase(static_cast<SKILL_TYPE>(i));
 		if ( how )
 		{
 			if ( what < 0 )

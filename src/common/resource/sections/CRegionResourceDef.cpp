@@ -45,7 +45,7 @@ TRIGRET_TYPE CRegionResourceDef::OnTrigger(const lpctstr pszTrigName, CScriptTri
 
     if (CResourceLock s; ResourceLock( s ))
     {
-        TRIGRET_TYPE iRet = OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc);
+        const TRIGRET_TYPE iRet = OnTriggerScript( s, pszTrigName, pScriptArgs, pSrc);
         return iRet;
     }
     return TRIGRET_RET_DEFAULT;
@@ -100,7 +100,7 @@ bool CRegionResourceDef::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CText
             break;
         case RMC_REAP: // "REAP",
         {
-            CItemBase * pItemDef = CItemBase::FindItemBase(m_ReapItem);
+            const CItemBase * pItemDef = CItemBase::FindItemBase(m_ReapItem);
             if ( !pItemDef )
             {
                 return false;

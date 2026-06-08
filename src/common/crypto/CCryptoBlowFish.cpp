@@ -263,7 +263,7 @@ void CCrypto::PrepareKey(CCryptoKeysHolder::CCryptoKey & key, const int iTable )
 	}
 	key.u_iKey[0] ^= pCodes[17];
 
-	dword tmp = key.u_iKey[0];
+    const dword tmp = key.u_iKey[0];
 	key.u_iKey[0] = key.u_iKey[1];
 	key.u_iKey[1] = tmp;
 }
@@ -333,7 +333,7 @@ bool CCrypto::DecryptBlowFish( byte * pOutput, const byte * pInput, const size_t
         if (outputStartIdx >= outLen)
             return false;
 
-		size_t lenOld = CRYPT_GAMETABLE_TRIGGER - m_gameStreamPos;
+        const size_t lenOld = CRYPT_GAMETABLE_TRIGGER - m_gameStreamPos;
 
 		DecryptBlowFish(pOutput, pInput, outLen, lenOld);
 
@@ -366,7 +366,7 @@ byte CCrypto::DecryptBFByte(const byte bEnc )
 		m_gameBlockPos = 8;
 	}
 	--m_gameBlockPos;
-	byte result = bEnc ^ m_Key.u_cKey[m_gameBlockPos];
+    const byte result = bEnc ^ m_Key.u_cKey[m_gameBlockPos];
 	m_Key.u_cKey[m_gameBlockPos] = bEnc;
 
 	return result;

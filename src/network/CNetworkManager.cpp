@@ -37,7 +37,7 @@ void CNetworkManager::createNetworkThreads(size_t count)
 
     // limit the number of threads to avoid stupid values, the maximum is calculated
     // to allow a maximum of 32 clients per thread at full load
-    if (size_t maxThreads = maximum((FD_SETSIZE / 32), 1); count > maxThreads)
+    if (const size_t maxThreads = maximum((FD_SETSIZE / 32), 1); count > maxThreads)
     {
         count = maxThreads;
         g_Log.Event(LOGL_WARN | LOGM_INIT, "Too many network threads requested. Reducing number to %" PRIuSIZE_T ".\n", count);
@@ -88,7 +88,7 @@ bool CNetworkManager::checkNewConnection()
     // check for any new connections
     ADDTOCALLSTACK("CNetworkManager::checkNewConnection");
 
-    SOCKET mainSocket = g_Serv.m_SocketMain.GetSocket();
+    const SOCKET mainSocket = g_Serv.m_SocketMain.GetSocket();
 
     fd_set fds;
     int count = 0;
@@ -124,7 +124,7 @@ void CNetworkManager::acceptNewConnection()
     // accept socket connection
     EXC_SET_BLOCK("accept");
     CSocketAddress client_addr;
-    SOCKET h = g_Serv.m_SocketMain.Accept(client_addr);
+    const SOCKET h = g_Serv.m_SocketMain.Accept(client_addr);
     if (h == INVALID_SOCKET)
         return;
 
@@ -180,7 +180,7 @@ void CNetworkManager::acceptNewConnection()
 
 
         // Call this special scripted function.
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(client_addr.GetAddrStr());
         pScriptArgs->m_VarsLocal.SetNumNew("TIME_CUR_CONNECTED_MS", ip.m_iTimeLastConnectedMs);
         pScriptArgs->m_VarsLocal.SetNumNew("TIME_LAST_CONNECTED_MS", iIpPrevConnectionTime);
@@ -271,7 +271,7 @@ void CNetworkManager::acceptNewConnection()
     */
 
     // Call this special scripted function.
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(client_addr.GetAddrStr());
     pScriptArgs->m_iN1 = iIpPrevConnectionTime;
     pScriptArgs->m_iN2 = ip.m_iTimeLastConnectedMs; // Current connection time.

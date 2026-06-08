@@ -125,10 +125,10 @@ CResourceID CResourceHolder::ResourceGetID_EatStr(const RES_TYPE restype, lpctst
     }
     */
 
-    lpctstr ptcNameStart = ptcName;
-    dword dwEvalPrivateUID = Exp_GetDWVal(ptcName);    // May be some complex expression {}
+    const lpctstr ptcNameStart = ptcName;
+    const dword dwEvalPrivateUID = Exp_GetDWVal(ptcName);    // May be some complex expression {}
     int iEvalResType  = ResGetType(dwEvalPrivateUID);
-    int iEvalResIndex = ResGetIndex(dwEvalPrivateUID);
+    const int iEvalResIndex = ResGetIndex(dwEvalPrivateUID);
 
     // We are NOT creating.
     if ((restype != RES_UNKNOWN) && (iEvalResType == RES_UNKNOWN))
@@ -184,7 +184,7 @@ sl::smart_ptr_view<CResourceDef> CResourceHolder::ResourceGetDefRef(const CResou
 	ADDTOCALLSTACK("CResourceHolder::ResourceGetDefRef");
 	if ( ! rid.IsValidResource() )
 		return {};
-	size_t index = m_ResHash.FindKey( rid );
+    const size_t index = m_ResHash.FindKey( rid );
 	if ( index == sl::scont_bad_index() )
 		return {};
 	return m_ResHash.GetSmartPtrViewAt( rid, index );

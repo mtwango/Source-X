@@ -161,7 +161,7 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, const bool fAllPets )
 	bool bTargAllowGround = false;
 	bool bCheckCrime = false;
 	lpctstr pTargPrompt = nullptr;
-	CCharBase *pCharDef = Char_GetDef();
+    const CCharBase *pCharDef = Char_GetDef();
 
 	switch ( iCmd )
 	{
@@ -268,12 +268,12 @@ bool CChar::NPC_OnHearPetCmd( lpctstr pszCmd, CChar *pSrc, const bool fAllPets )
 			if ( !NPC_CanSpeak() )
 				break;
 
-			uint iWage = pCharDef->GetHireDayWage();
-			CItemContainer *pBank = GetBank();
+            const uint iWage = pCharDef->GetHireDayWage();
+            const CItemContainer *pBank = GetBank();
 			tchar *pszMsg = Str_GetTemp();
 			if ( NPC_IsVendor() )
 			{
-				CItemContainer *pCont = GetBank(LAYER_VENDOR_STOCK);
+                const CItemContainer *pCont = GetBank(LAYER_VENDOR_STOCK);
 				tchar *pszTemp1 = Str_GetTemp();
 				tchar *pszTemp2 = Str_GetTemp();
 				tchar *pszTemp3 = Str_GetTemp();
@@ -517,7 +517,7 @@ bool CChar::NPC_OnHearPetCmdTarg(const int iCmd, CChar *pSrc, CObjBase *pObj, co
 				break;
 			if ( IsSetOF(OF_PetSlots) )
 			{
-                if (short iFollowerSlots = GetFollowerSlots(); !pCharTarg->FollowersUpdate(this, iFollowerSlots, true) )
+                if (const short iFollowerSlots = GetFollowerSlots(); !pCharTarg->FollowersUpdate(this, iFollowerSlots, true) )
 				{
 					pSrc->SysMessageDefault(DEFMSG_PETSLOTS_TRY_TRANSFER);
 					break;
@@ -566,7 +566,7 @@ void CChar::NPC_PetClearOwners()
 
 			for ( size_t i = 0; i < std::size(sm_VendorLayers); ++i )
 			{
-				CItemContainer * pCont = GetBank( sm_VendorLayers[i] );
+                const CItemContainer * pCont = GetBank( sm_VendorLayers[i] );
 				if ( !pCont )
 					continue;
 
@@ -600,7 +600,7 @@ bool CChar::NPC_PetSetOwner( CChar * pChar )
 	if ( m_pPlayer || !pChar || (pChar == this) )
 		return false;
 
-    if (CChar *pOwner = NPC_PetGetOwner(); pOwner == pChar )
+    if (const CChar *pOwner = NPC_PetGetOwner(); pOwner == pChar )
 		return false;
 
 	m_ptHome.InitPoint();	// no longer homed
@@ -643,10 +643,10 @@ bool CChar::NPC_CheckHirelingStatus()
 	if ( ! IsStatFlag( STATF_PET ))
 		return true;
 
-	CCharBase * pCharDef = Char_GetDef();
-	int64 iFoodConsumeRate = g_Cfg.m_iRegenRate[STAT_FOOD] / MSECS_PER_SEC;
+    const CCharBase * pCharDef = Char_GetDef();
+    const int64 iFoodConsumeRate = g_Cfg.m_iRegenRate[STAT_FOOD] / MSECS_PER_SEC;
 
-    uint uiWage = pCharDef->GetHireDayWage();
+    const uint uiWage = pCharDef->GetHireDayWage();
     if ( ! uiWage || ! iFoodConsumeRate )
 		return true;
 
@@ -665,7 +665,7 @@ bool CChar::NPC_CheckHirelingStatus()
         snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_NPC_PET_WAGE_COST ), uiWage);
 		Speak(pszMsg);
 
-        if ( CChar *pOwner = NPC_PetGetOwner() )
+        if (const CChar *pOwner = NPC_PetGetOwner() )
 		{
 			Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_PET_HIRE_TIMEUP ) );
 
@@ -767,7 +767,7 @@ bool CChar::NPC_OnHireHear( CChar * pCharSrc )
 	ADDTOCALLSTACK("CChar::NPC_OnHireHear");
 	ASSERT(m_pNPC);
 
-	CCharBase * pCharDef = Char_GetDef();
+    const CCharBase * pCharDef = Char_GetDef();
 	uint uiWage = pCharDef->GetHireDayWage();
 	if ( ! uiWage )
 	{

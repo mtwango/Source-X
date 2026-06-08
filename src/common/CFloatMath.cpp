@@ -36,8 +36,8 @@ realtype CFloatMath::MakeFloatMath(lpctstr & ptcRefExpr )
 		--_iReentrant_Count;
 		return 0;
 	}
-	//DEBUG_ERR(("Expr: '%s' GetSingle(Expr) '%f' GetValMath(GetSingle(Expr), Expr) '%f'\n",Expr,GetSingle(Expr),GetValMath(GetSingle(Expr), Expr)));
-    realtype dVal = GetValMath(GetSingle(ptcRefExpr), ptcRefExpr);
+	// DEBUG_ERR(("Expr: '%s' GetSingle(Expr) '%f' GetValMath(GetSingle(Expr), Expr) '%f'\n",Expr,GetSingle(Expr),GetValMath(GetSingle(Expr), Expr)));
+    const realtype dVal = GetValMath(GetSingle(ptcRefExpr), ptcRefExpr);
 	--_iReentrant_Count;
 	return dVal;
 }
@@ -73,7 +73,7 @@ realtype CFloatMath::GetValMath(realtype dVal, lpctstr & ptcRefExpr )
 		case '/':
             ++ptcRefExpr;
 			{
-                realtype dTempVal = MakeFloatMath( ptcRefExpr );
+                const realtype dTempVal = MakeFloatMath( ptcRefExpr );
 				if ( ! dTempVal )
 				{
 					g_Log.EventError("Evaluating float math: Divide by 0\n");
@@ -97,7 +97,7 @@ realtype CFloatMath::GetValMath(realtype dVal, lpctstr & ptcRefExpr )
 		case '@':
             ++ptcRefExpr;
 			{
-                realtype dTempVal = MakeFloatMath( ptcRefExpr );
+                const realtype dTempVal = MakeFloatMath( ptcRefExpr );
 				if ( (dVal == 0) && (dTempVal <= 0) )
 				{
 					DEBUG_ERR(( "Float_MakeFloatMath: Power of zero with zero or negative exponent is undefined\n" ));
@@ -696,7 +696,7 @@ realtype CFloatMath::GetRandVal2( realtype dMin, realtype dMax )
 	ADDTOCALLSTACK("CFloatMath::GetRandVal2");
 	if ( dMin > dMax )
 	{
-		realtype tmp = dMin;
+        const realtype tmp = dMin;
 		dMin = dMax;
 		dMax = tmp;
 	}

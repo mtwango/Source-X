@@ -108,8 +108,8 @@ bool CPathFinder::FindPath() //A* algorithm
 		return false; // path not existent
 	}
 
-	CPathFinderPoint* Start = &m_Points[X][Y]; //Start point
-	CPathFinderPoint* End =   &m_Points[m_Target.m_x][m_Target.m_y]; //End Point
+	CPathFinderPoint* Start = &m_Points[X][Y]; // Start point
+    const CPathFinderPoint * End =   &m_Points[m_Target.m_x][m_Target.m_y]; //End Point
 
 	ASSERT(Start);
 	ASSERT(End);

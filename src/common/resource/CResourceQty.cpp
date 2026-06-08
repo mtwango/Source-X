@@ -44,7 +44,7 @@ size_t CResourceQty::WriteNameSingle( tchar * pszArgs, const size_t uiBufLen, co
             return Str_CopyLimitNull(pszArgs, ptcSrc, uiBufLen);
         }
     }
-    if (auto pResourceDef = static_cast<const CScriptObj *>(g_Cfg.RegisteredResourceGetDef(m_rid)); pResourceDef != nullptr )
+    if (const auto pResourceDef = static_cast<const CScriptObj *>(g_Cfg.RegisteredResourceGetDef(m_rid)); pResourceDef != nullptr )
         return Str_CopyLimitNull(pszArgs, pResourceDef->GetName(), uiBufLen);
 
     return Str_CopyLimitNull(pszArgs, g_Cfg.ResourceGetName(m_rid), uiBufLen);
@@ -56,7 +56,7 @@ bool CResourceQty::Load(lpctstr &pszCmds)
     // Can be either order.:
     // "Name Qty" or "Qty Name"
 
-    lpctstr orig = pszCmds;
+    const lpctstr orig = pszCmds;
     GETNONWHITESPACE(pszCmds);	// Skip leading spaces.
 
     m_iQty = INT64_MIN;
@@ -202,7 +202,7 @@ size_t CResourceQtyArray::Load(lpctstr pszCmds)
             if ( res.GetResourceID().IsValidUID())
             {
                 // Replace any previous refs to this same entry ?
-                if (size_t i = FindResourceID(res.GetResourceID()); i != sl::scont_bad_index() )
+                if (const size_t i = FindResourceID(res.GetResourceID()); i != sl::scont_bad_index() )
                 {
                     operator[](i) = std::move(res);
                 }

@@ -145,10 +145,10 @@ std::string CCrypto::GetClientVer() const
 bool CCrypto::SetClientVerFromNumber(const dword uiVer, const bool fSetEncrypt )
 {
 	ADDTOCALLSTACK("CCrypto::SetClientVerFromNumber");
-	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
+    const CCryptoKeysHolder * keys_holder = CCryptoKeysHolder::get();
 	for (uint i = 0; i < keys_holder->client_keys.size(); ++i )
 	{
-        if (CCryptoClientKey &key = keys_holder->client_keys[i]; uiVer == key.m_client )
+        if (const CCryptoClientKey &key = keys_holder->client_keys[i]; uiVer == key.m_client )
 		{
 			if ( SetClientVerFromKeyIndex( i, fSetEncrypt ))
 				return true;
@@ -188,7 +188,7 @@ void CCrypto::SetClientVerFromOther( const CCrypto & crypt )
 bool CCrypto::SetClientVerFromString( lpctstr pszVersion )
 {
 	ADDTOCALLSTACK("CCrypto::SetClientVerFromString");
-	uint uiVer = CUOClientVersion(pszVersion).GetLegacyVersionNumber();
+    const uint uiVer = CUOClientVersion(pszVersion).GetLegacyVersionNumber();
 	m_fInit = false;
 
 	if ( ! SetClientVerFromNumber( uiVer ) )
@@ -356,7 +356,7 @@ bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, const ui
 	// new seed requires a reset of the md5 engine
 	m_md5_engine->reset();
 
-	ENCRYPTION_TYPE etPrevious = GetEncryptionType();
+    const ENCRYPTION_TYPE etPrevious = GetEncryptionType();
 
 	// decrypt packet as game
 	// - rather than trust spherecrypt.ini, we can autodetect the encryption type
@@ -444,7 +444,7 @@ bool CCrypto::Decrypt( byte * pOutput, const byte * pInput, const uint outLen, c
 	if ( ! inLen )
 		return false;
 
-    ENCRYPTION_TYPE enc = GetEncryptionType();
+    const ENCRYPTION_TYPE enc = GetEncryptionType();
 	if ( (m_ConnectType == CONNECT_LOGIN) || ( enc == ENC_LOGIN ) )
 	{
         if (!DecryptLogin( pOutput, pInput, outLen, inLen ))
@@ -533,7 +533,7 @@ bool CCrypto::LoginCryptStart(const dword dwIP, const byte * pEvent, const uint 
 	SetClientVerFromKeyIndex(0);
 	SetCryptMask(tmp_CryptMaskHi, tmp_CryptMaskLo);
 
-	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
+    const CCryptoKeysHolder * keys_holder = CCryptoKeysHolder::get();
 
 	for (uint i = 0, iAccountNameLen = 0;;)
 	{
@@ -665,7 +665,7 @@ bool CCrypto::GameCryptStart(const dword dwIP, const byte * pEvent, const uint i
         const dword tmp_CryptMaskHi = ((( m_seed) ^ 0x43210000) >> 16) | (((~m_seed) ^ 0xabcdffff) & 0xffff0000);
         SetClientVerFromKeyIndex(0);
 
-		CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
+        const CCryptoKeysHolder * keys_holder = CCryptoKeysHolder::get();
         for (uint i = 0;;)
         {
             if ( i >= keys_holder->client_keys.size() )

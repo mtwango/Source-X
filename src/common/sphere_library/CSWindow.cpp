@@ -322,7 +322,7 @@ size_t CEdit::GetSel() const
 void CEdit::GetSel(size_t& nStartChar, size_t& nEndChar) const
 {
     ASSERT(IsWindow());
-    size_t nSelection = GetSel();
+    const size_t nSelection = GetSel();
     nStartChar = LOWORD(nSelection);
     nEndChar = HIWORD(nSelection);
 }

@@ -60,11 +60,11 @@ void AutoResetEvent::wait(uint32 timeout) noexcept
 
     while (true)
     {
-        if (DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE); rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
+        if (const DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE); rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
             return;                // signalled or timed out
 
         // WAIT_IO_COMPLETION – recalc remaining time
-        DWORD now = GetTickCount();
+        const DWORD now = GetTickCount();
         if (now - start >= timeout)
             return;
         remaining = timeout - (now - start);
@@ -148,10 +148,10 @@ void ManualResetEvent::wait(uint32 timeout) noexcept
 
     while (true)
     {
-        if (DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE); rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
+        if (const DWORD rc = WaitForSingleObjectEx(m_handle, remaining, TRUE); rc == WAIT_OBJECT_0 || rc == WAIT_TIMEOUT)
             return;
 
-        DWORD now = GetTickCount();
+        const DWORD now = GetTickCount();
         if (now - start >= timeout)
             return;
         remaining = timeout - (now - start);

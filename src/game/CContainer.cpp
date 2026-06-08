@@ -147,7 +147,7 @@ void CContainer::ContentAddPrivate( CItem *pItem )
 	if ( !pItem->IsType(IT_EQ_TRADE_WINDOW) )  //Don't apply trade window layer item weight on character weight.
 		OnWeightChange(pItem->GetWeight());
 
-	if (auto pThisObj = dynamic_cast<const CObjBase*>(this))
+	if (const auto pThisObj = dynamic_cast<const CObjBase*>(this))
 	{
 		if (pThisObj->IsItem())
 		{
@@ -228,7 +228,7 @@ CItem *CContainer::ContentFind(CResourceID const& rid, const dword dwArg, const 
         if ( iDescendLevels <= 0 )
 			continue;
 
-        if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )
+        if (const auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )
 		{
 			if ( !pCont->IsSearchable() )
 				continue;
@@ -253,7 +253,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 			if ( pItem->IsResourceMatch(rid, dwArg) )
 			{
 				s.SeekContext(StartContext);
-                TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
+                const TRIGRET_TYPE iRet = pItem->OnTriggerRun(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, pResult);
 				if (iRet == TRIGRET_BREAK || iRet == TRIGRET_RET_ABORTED)
 				{
 					EndContext = StartContext;
@@ -274,7 +274,7 @@ TRIGRET_TYPE CContainer::OnContTriggerForLoop(
 				if ( pCont->IsSearchable() )
 				{
 					CContainer *pContBase = pCont;
-                    if (TRIGRET_TYPE iRet =
+                    if (const TRIGRET_TYPE iRet =
                             pContBase->OnContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, rid, dwArg, iDescendLevels - 1);
                         iRet != TRIGRET_ENDIF )
 						return iRet;
@@ -536,7 +536,7 @@ size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, con
 		return sl::scont_bad_index();
 
 	size_t iMissing = sl::scont_bad_index();
-	size_t iQtyRes = pResources->size();
+    const size_t iQtyRes = pResources->size();
 	for ( size_t i = 0; i < iQtyRes; ++i )
 	{
         const int iResQty = static_cast<int>((*pResources)[i].GetResQty());
@@ -687,7 +687,7 @@ bool CContainer::r_WriteValContainer(const lpctstr ptcKey, CSString &sVal, CText
 		"RESTEST"
 	};
 
-	int i = FindTableHeadSorted(ptcKey, sm_szParams, std::size(sm_szParams));
+    const int i = FindTableHeadSorted(ptcKey, sm_szParams, std::size(sm_szParams));
 	if ( i < 0 )
 		return false;
 

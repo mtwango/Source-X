@@ -310,7 +310,7 @@ bool CServerDef::r_LoadVal( CScript & s )
 		case SC_ACCAPPS:
         {
             // Treat it as a value or a string.
-			if (lpctstr ptcArg = s.GetArgStr(); IsDigit(ptcArg[0]))
+			if (const lpctstr ptcArg = s.GetArgStr(); IsDigit(ptcArg[0]))
             {
 				m_eAccApp = static_cast<ACCAPP_TYPE>(s.GetArgVal());
             }
@@ -331,7 +331,7 @@ bool CServerDef::r_LoadVal( CScript & s )
 			break;
 		case SC_ADMINEMAIL:
         {
-            lpctstr ptcArg = s.GetArgStr();
+            const lpctstr ptcArg = s.GetArgStr();
 			if ( this != &g_Serv && !g_Serv.m_sEMail.IsEmpty() && strstr(ptcArg, g_Serv.m_sEMail) )
 				return false;
 			if ( !g_Cfg.IsValidEmailAddressFormat(ptcArg) )
@@ -368,7 +368,7 @@ bool CServerDef::r_LoadVal( CScript & s )
 
 		case SC_CLIENTS:
 			{
-				int iClients = s.GetArgVal();
+                const int iClients = s.GetArgVal();
 				if ( iClients < 0 )
 					return false;				// invalid
 				if ( iClients > FD_SETSIZE )	// Number is bugged !
@@ -510,7 +510,7 @@ bool CServerDef::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole *
 			    if (pszArgs != nullptr)
 				    GETNONWHITESPACE(pszArgs);
 
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init( pszArgs ? pszArgs : "" );
                 if ( r_Call( uiFunctionIndex, pScriptArgs, pSrc, &sVal ) )
 				    return true;

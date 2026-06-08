@@ -40,7 +40,7 @@ void CSStringSortArray::ClearFree()
 
 void CSStringSortArray::DestroyElements() noexcept
 {
-    for (tchar* elem : *this)
+    for (const tchar * elem : *this)
         delete[] elem;
 }
 

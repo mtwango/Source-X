@@ -108,7 +108,7 @@ void CItemMap::r_Write(CScript & s)
 void CItemMap::DupeCopy(const CObjBase *pItemObj)
 {
     ADDTOCALLSTACK("CItemMap::DupeCopy");
-    auto pItem = dynamic_cast<const CItem*>(pItemObj);
+    const auto pItem = dynamic_cast<const CItem*>(pItemObj);
     ASSERT(pItem);
 
     CItemVendable::DupeCopy(pItem);

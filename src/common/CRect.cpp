@@ -164,7 +164,7 @@ size_t CRect::Read(const lpctstr pszVal )
 	tchar *ptcTemp = Str_GetTemp();
 	Str_CopyLimitNull(ptcTemp, pszVal, Str_TempLength());
 	tchar * ppVal[5];
-	size_t i = Str_ParseCmds(ptcTemp, ppVal, std::size(ppVal), " ,\t");
+    const size_t i = Str_ParseCmds(ptcTemp, ppVal, std::size(ppVal), " ,\t");
 	switch (i)
 	{
 		case 5:
@@ -296,7 +296,7 @@ CSector * CRect::GetSectorAtIndex(const int i ) const noexcept
     if (g_MapList.IsMapSupported(m_map) == false)
         return nullptr;
 
-    SectIndexingHints_s hints = PrecomputeSectorIndexingHints();
+    const SectIndexingHints_s hints = PrecomputeSectorIndexingHints();
     return GetSectorAtIndexWithHints(i, hints);
 }
 

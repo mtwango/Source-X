@@ -276,8 +276,8 @@ static void FormatDateTime(tchar * pszTemp, const lpctstr pszFormat, const tm * 
 #ifdef _WIN32
 #ifdef MSVC_COMPILER
 	// on windows we need to set the invalid parameter handler, or else the program will terminate when a bad format is encountered
-    _invalid_parameter_handler newHandler = invalidParameterHandler;
-	_invalid_parameter_handler oldHandler = _set_invalid_parameter_handler(newHandler);
+    const _invalid_parameter_handler newHandler = invalidParameterHandler;
+    const _invalid_parameter_handler oldHandler = _set_invalid_parameter_handler(newHandler);
 #endif // MSVC_COMPILER
 	try
 	{
@@ -335,7 +335,7 @@ bool CSTime::Read(tchar *pszVal)
 	// Read the full date format.
 
 	tchar *ppCmds[10];
-    if (size_t iQty = Str_ParseCmds(pszVal, ppCmds, std::size(ppCmds), "/,: \t"); iQty < 6 )
+    if (const size_t iQty = Str_ParseCmds(pszVal, ppCmds, std::size(ppCmds), "/,: \t"); iQty < 6 )
 		return false;
 
     tm atm;

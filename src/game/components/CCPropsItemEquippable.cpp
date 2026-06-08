@@ -99,7 +99,7 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, 
 
     if (iPropIndex == PROPIEQUIP_SLAYER_GROUP)
     {
-        auto group = _faction.GetGroup();
+        const auto group = _faction.GetGroup();
         if (group == CFactionDef::Group::NONE)
             return false;
         *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(group));
@@ -107,7 +107,7 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, 
     }
     if (iPropIndex == PROPIEQUIP_SLAYER_SPECIES)
     {
-        auto species = _faction.GetSpecies();
+        const auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)
             return false;
         *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(species));
@@ -259,8 +259,8 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
     // Numeric properties
     for (const auto &[fst, snd] : _mPropsNum)
     {
-        PropertyIndex_t prop = fst;
-        PropertyValNum_t iVal = snd;
+        const PropertyIndex_t prop = fst;
+        const PropertyValNum_t iVal = snd;
 
         if (iVal == 0)
             continue;
@@ -630,7 +630,7 @@ void CCPropsItemEquippable::AddPropsTooltipData(CObjBase* pLinkedObj)
     // String properties
     for (const auto &[fst, snd] : _mPropsStr)
     {
-        PropertyIndex_t prop = fst;
+        const PropertyIndex_t prop = fst;
         lpctstr ptcVal = snd.GetBuffer();
 
         switch (prop)

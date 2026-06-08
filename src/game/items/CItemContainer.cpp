@@ -157,10 +157,10 @@ void CItemContainer::Trade_Status(const bool bCheck )
 
 	if ( IsTrigUsed(TRIGGER_TRADEACCEPTED) || IsTrigUsed(TRIGGER_CHARTRADEACCEPTED) )
 	{
-        CScriptTriggerArgsPtr pScriptArgsPlayer1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgsPlayer1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgsPlayer1->Init(pChar1);
 
-        CScriptTriggerArgsPtr pScriptArgsPlayer2 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgsPlayer2 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgsPlayer2->Init(pChar2);
 
 		ushort i = 1;
@@ -263,7 +263,7 @@ void CItemContainer::Trade_UpdateGold( dword platinum, dword gold )
 		return;
 
 	bool bUpdateChar1 = false;
-	bool bUpdateChar2 = pChar2->GetClientActive()->GetNetState()->isClientVersionNumber(MINCLIVER_NEWSECURETRADE);
+    const bool bUpdateChar2 = pChar2->GetClientActive()->GetNetState()->isClientVersionNumber(MINCLIVER_NEWSECURETRADE);
 
 	// To prevent cheating, check if the char really have these gold/platinum values
     if (const int64 iMaxValue = pChar1->m_virtualGold; gold + (platinum * 1000000000LL) > iMaxValue )
@@ -318,7 +318,7 @@ bool CItemContainer::Trade_Delete()
 
 	if ( IsTrigUsed(TRIGGER_TRADECLOSE) )
 	{
-        CScriptTriggerArgsPtr pScriptArgsPlayer1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgsPlayer1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgsPlayer1->Init(pChar);
 
         if (const auto pChar2 = dynamic_cast<CChar *>(pPartner->GetParent()))
@@ -582,7 +582,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 	}
 
 	// check for custom values in TDATA3/TDATA4
-	CItemBase *pContDef = Item_GetDef();
+    const CItemBase *pContDef = Item_GetDef();
 
     // Default rectangle defining size of container (best to define them in scripts as tdata3/4 to avoid visual stripping).
     short minValX = 0;
@@ -830,7 +830,7 @@ void CItemContainer::DupeCopy( const CObjBase *pItemObj )
 {
 	ADDTOCALLSTACK("CItemContainer::DupeCopy");
 	// Copy the contents of this item.
-    auto pItem = dynamic_cast<const CItem*>(pItemObj);
+    const auto pItem = dynamic_cast<const CItem*>(pItemObj);
     ASSERT(pItem);
 
 	CItemVendable::DupeCopy(pItem);
@@ -877,7 +877,7 @@ void CItemContainer::SetKeyRing()
 	if ( iQty >= std::size(sm_Item_Keyrings))
 		iQty = std::size(sm_Item_Keyrings) - 1;
 
-    if (ITEMID_TYPE id = sm_Item_Keyrings[iQty]; id != GetID() )
+    if (const ITEMID_TYPE id = sm_Item_Keyrings[iQty]; id != GetID() )
 	{
 		SetID(id);	// change the type as well.
 		Update();
@@ -1097,7 +1097,7 @@ void CItemContainer::OnOpenEvent(const CChar *pCharOpener, const CObjBaseTemplat
 		if ( !pCharTop )
 			return;
 
-		int iStones = GetWeight() / WEIGHT_UNITS;
+        const int iStones = GetWeight() / WEIGHT_UNITS;
 		tchar *pszMsg = Str_GetTemp();
 		if ( pCharTop == pCharOpener )
 			snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_BVBOX_OPEN_SELF), iStones, GetName());
@@ -1353,7 +1353,7 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 		case ICV_OPEN:
 			if ( pSrc->GetChar() )
 			{
-                if (CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
+                if (const CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
 				{
 					CClient *pClient = pChar->GetClientActive();
 					ASSERT(pClient);
@@ -1373,9 +1373,9 @@ bool CItemContainer::r_Verb( CScript &s, CTextConsole *pSrc )
 		case ICV_CLOSE:
 			if ( pSrc->GetChar() )
 			{
-                if (CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
+                if (const CChar *pChar = pSrc->GetChar(); pChar->IsClientActive() )
 				{
-					CClient *pClient = pChar->GetClientActive();
+                    const CClient *pClient = pChar->GetClientActive();
 					ASSERT(pClient);
 					pClient->closeContainer(this);
 				}

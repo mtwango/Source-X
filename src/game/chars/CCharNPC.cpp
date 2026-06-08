@@ -187,13 +187,13 @@ bool CCharNPC::r_WriteVal( CChar * pChar, const lpctstr ptcKey, CSString & sVal 
 			break;
 		case CNC_VENDCAP:
 		{
-            if ( CItemContainer *pBank = pChar->GetBank() )
+            if (const CItemContainer *pBank = pChar->GetBank() )
 				sVal.FormatVal( pBank->m_itEqBankBox.m_Check_Restock );
 		}
 		break;
 		case CNC_VENDGOLD:
 		{
-            if ( CItemContainer *pBank = pChar->GetBank() )
+            if (const CItemContainer *pBank = pChar->GetBank() )
 				sVal.FormatVal( pBank->m_itEqBankBox.m_Check_Amount );
 		}
 		break;
@@ -273,7 +273,7 @@ void CChar::NPC_LoadScript(const bool fRestock )
 	    // 1) CHARDEF trigger
 	    if ( m_pPlayer == nullptr ) //	CHARDEF triggers (based on body type)
 	    {
-		    CUID uidOldAct = pChar->m_Act_UID;
+            const CUID uidOldAct = pChar->m_Act_UID;
 		    pChar->m_Act_UID = GetUID();
 		    pChar->ReadScriptReducedTrig(pCharDef, CTRIG_Create);
 		    pChar->m_Act_UID = uidOldAct;

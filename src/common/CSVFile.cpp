@@ -118,7 +118,7 @@ bool CSVFile::_ReadRowContent(const int rowIndex, CSVRowData& target)
 	ADDTOCALLSTACK("CSVFile::_ReadRowContent");
 	// get row data
 	tchar * ppRowContent[kuiMaxColumns];
-	int columns = _ReadRowContent(ppRowContent, rowIndex);
+    const int columns = _ReadRowContent(ppRowContent, rowIndex);
 	if ( columns != _iColumnCount )
 		return false;
 

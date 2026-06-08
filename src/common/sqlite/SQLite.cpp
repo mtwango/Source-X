@@ -23,7 +23,7 @@ int CSQLite::Open(const lpctstr strFileName )
 {
 	Close();
 
-	int iErr=sqlite3_open(UTF8MBSTR(strFileName), &m_sqlite3);
+    const int iErr=sqlite3_open(UTF8MBSTR(strFileName), &m_sqlite3);
 
 	if (iErr!=SQLITE_OK)
     {
@@ -62,7 +62,7 @@ int CSQLite::QuerySQL(const lpctstr strSQL,  CVarDefMap & mapQueryResult )
 	mapQueryResult.Clear();
 	mapQueryResult.SetNumNew("NUMROWS", 0);
 
-	SQLiteTablePtr retTable = QuerySQLPtr(strSQL);
+    const SQLiteTablePtr retTable = QuerySQLPtr(strSQL);
     if (retTable.m_pTable == nullptr)
         goto err_and_ret;
 
@@ -101,7 +101,7 @@ SQLiteTable CSQLite::QuerySQL(const lpctstr strSQL )
 		return SQLiteTable();
 	}
 
-    SQLiteTablePtr ret(QuerySQLPtr(strSQL));
+    const SQLiteTablePtr ret(QuerySQLPtr(strSQL));
     const SQLiteTable tableCopy(std::move(*ret.m_pTable));
     return tableCopy;
 }
@@ -119,7 +119,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr(const lpctstr strSQL )
     lptstr errmsg = nullptr;
 	int iRows=0, iCols=0;
 
-	int iErr=sqlite3_get_table(m_sqlite3, UTF8MBSTR(strSQL), &retStrings,
+    const int iErr=sqlite3_get_table(m_sqlite3, UTF8MBSTR(strSQL), &retStrings,
 		&iRows, &iCols, &errmsg);
 
 	if (iErr!=SQLITE_OK)
@@ -144,7 +144,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr(const lpctstr strSQL )
 	for (; iPos<iCols; ++iPos)
 	{
         stdvtstring &curColRef = retTable->m_strlstCols[iPos];
-        if (lpctstr curStringPtr = retStrings[iPos])
+        if (const lpctstr curStringPtr = retStrings[iPos])
             ConvertUTF8ToVString( curStringPtr, &curColRef );
 		else
             curColRef.emplace_back('\0');
@@ -158,7 +158,7 @@ SQLiteTablePtr CSQLite::QuerySQLPtr(const lpctstr strSQL )
 		for (int iCol=0; iCol<iCols; ++iCol)
 		{
             stdvtstring &curColRef = curRowRef[iCol];
-            if (lpctstr curStringPtr = retStrings[iPos])
+            if (const lpctstr curStringPtr = retStrings[iPos])
                 ConvertUTF8ToVString( curStringPtr, &curColRef );
 			else
                 curColRef.emplace_back('\0');
@@ -194,7 +194,7 @@ int CSQLite::ExecuteSQL(const lpctstr strSQL )
 
 	char * errmsg = nullptr;
 
-	int iErr = sqlite3_exec( m_sqlite3, UTF8MBSTR(strSQL), nullptr, nullptr, &errmsg );
+    const int iErr = sqlite3_exec( m_sqlite3, UTF8MBSTR(strSQL), nullptr, nullptr, &errmsg );
 
 	if (iErr!=SQLITE_OK)
 	{
@@ -419,7 +419,7 @@ bool CSQLite::r_WriteVal(lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, con
 	ADDTOCALLSTACK("CSQLite::r_WriteVal");
 	EXC_TRY("WriteVal");
 
-    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
+    switch (const int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case LDBO_CONNECTED:
 			sVal.FormatVal(IsOpen());

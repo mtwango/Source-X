@@ -89,7 +89,7 @@ static int bcrypt_gensalt(const char* prefix, const int factor, char salt[BCRYPT
  */
 static int bcrypt_hashpw(const char *passwd, const char salt[BCRYPT_HASHSIZE], char hash[BCRYPT_HASHSIZE])
 {
-    char *aux = crypt_rn(passwd, salt, hash, BCRYPT_HASHSIZE);
+    char const * aux = crypt_rn(passwd, salt, hash, BCRYPT_HASHSIZE);
 	return (aux == nullptr)?1:0;
 }
 
@@ -106,7 +106,7 @@ static int bcrypt_checkpw(const char *passwd, const char hash[BCRYPT_HASHSIZE])
 {
     char outhash[BCRYPT_HASHSIZE];
 
-    if (int ret = bcrypt_hashpw(passwd, hash, outhash); ret != 0)
+    if (const int ret = bcrypt_hashpw(passwd, hash, outhash); ret != 0)
 		return -1;
 
 	return timing_safe_strcmp(hash, outhash);

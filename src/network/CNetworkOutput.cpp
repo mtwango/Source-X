@@ -208,11 +208,11 @@ size_t CNetworkOutput::processPacketQueue(CNetState* state, const uint priority)
 		(state->m_outgoing.queue[priority].empty() && state->m_outgoing.currentTransaction == nullptr))
 		return 0;
 
-	CClient* client = state->getClient();
+    const CClient * client = state->getClient();
 	ASSERT(client != nullptr);
 
-	size_t maxPacketsToProcess = NETWORK_MAXPACKETS;
-	size_t maxLengthToProcess = NETWORK_MAXPACKETLEN;
+    const size_t maxPacketsToProcess = NETWORK_MAXPACKETS;
+    const size_t maxLengthToProcess = NETWORK_MAXPACKETLEN;
 	size_t packetsProcessed = 0;
 	size_t lengthProcessed = 0;
 
@@ -340,7 +340,7 @@ bool CNetworkOutput::processByteQueue(CNetState* state)
 	if (state->isWriteClosed() || state->m_outgoing.bytes.GetDataQty() <= 0)
 		return false;
 
-	size_t result = sendData(state, state->m_outgoing.bytes.RemoveDataLock(), state->m_outgoing.bytes.GetDataQty());
+    const size_t result = sendData(state, state->m_outgoing.bytes.RemoveDataLock(), state->m_outgoing.bytes.GetDataQty());
 	if (result == _failed_result())
 	{
 		// error occurred
@@ -410,7 +410,7 @@ bool CNetworkOutput::sendPacketData(CNetState* state, PacketSend* packet)
 	}
 
 	EXC_SET_BLOCK("prepare data");
-	byte* sendBuffer = nullptr;
+    const byte * sendBuffer = nullptr;
 	uint sendBufferLength = 0;
 
 	if (client->GetConnectType() == CONNECT_GAME)
@@ -419,7 +419,7 @@ bool CNetworkOutput::sendPacketData(CNetState* state, PacketSend* packet)
 		EXC_SET_BLOCK("compress and encrypt");
 
 		// compress
-		uint compressLength = client->xCompress(m_encryptBuffer, packet->getData(), MAX_BUFFER, packet->getLength());
+        const uint compressLength = client->xCompress(m_encryptBuffer, packet->getData(), MAX_BUFFER, packet->getLength());
         if (compressLength == 0)
         {
             g_Log.EventError("NET-OUT: Trying to compress (Huffman) too much data. Packet will not be sent. (Probably it's a dialog with a lot of data inside).\n");
@@ -522,7 +522,7 @@ size_t CNetworkOutput::sendData(CNetState* state, const byte* data, const size_t
 	if (result <= 0)
 	{
 		EXC_SET_BLOCK("error parse");
-		int errorCode = CSocket::GetLastError(true);
+        const int errorCode = CSocket::GetLastError(true);
 
 #if defined(_WIN32) && !defined(_LIBEV)
 		if (state->isAsyncMode() && errorCode == WSA_IO_PENDING)
@@ -600,7 +600,7 @@ void CNetworkOutput::QueuePacket(PacketSend* packet, const bool appendTransactio
 	ASSERT(packet != nullptr);
 
 	// don't bother queuing packets for invalid sockets
-	CNetState* state = packet->m_target;
+    const CNetState * state = packet->m_target;
 	if (state == nullptr || state->canReceive(packet) == false)
 	{
 		delete packet;
@@ -631,7 +631,7 @@ void CNetworkOutput::QueuePacketTransaction(PacketTransaction* transaction)
 	ASSERT(priority >= PacketSend::PRI_IDLE && priority < PacketSend::PRI_QTY);
 
 	// limit by max number of packets in queue
-    if (size_t maxQueueSize = NETWORK_MAXQUEUESIZE; maxQueueSize > 0)
+    if (const size_t maxQueueSize = NETWORK_MAXQUEUESIZE; maxQueueSize > 0)
 	{
 		while ((priority > PacketSend::PRI_IDLE) && (state->m_outgoing.queue[priority].size() >= maxQueueSize))
 		{

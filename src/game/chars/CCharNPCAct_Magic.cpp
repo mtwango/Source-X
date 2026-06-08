@@ -68,7 +68,7 @@ bool CCharNPC::Spells_Add(const SPELL_TYPE spell)
     ADDTOCALLSTACK("CCharNPC::Spells_Add");
     if (Spells_FindSpell(spell) >= 0)
         return false;
-    if (CSpellDef *pSpell = g_Cfg.GetSpellDef(spell); !pSpell)
+    if (const CSpellDef *pSpell = g_Cfg.GetSpellDef(spell); !pSpell)
         return false;
     Spells refSpell;
     refSpell.id = spell;
@@ -121,7 +121,7 @@ void CChar::NPC_AddSpellsFromBook(const CItem * pBook)
     ADDTOCALLSTACK("CChar::NPC_AddSpellsFromBook");
     ASSERT(m_pNPC);
 
-    CItemBase *pBookDef = pBook->Item_GetDef();
+    const CItemBase *pBookDef = pBook->Item_GetDef();
     if (!pBookDef)
         return;
 
@@ -149,7 +149,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
         return false;
     }
 
-    uchar iSpellCount = static_cast<uchar>(m_pNPC->Spells_GetCount());
+    const uchar iSpellCount = static_cast<uchar>(m_pNPC->Spells_GetCount());
     CItem * pWand = LayerFind(LAYER_HAND1);		//Try to get a working wand.
     CObjBase * pTarg = pChar;
     if (pWand)
@@ -161,7 +161,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     if ((iSpellCount < 1) && !pWand)
         return false;
 
-    int iDist = GetTopDist3D(pChar);
+    const int iDist = GetTopDist3D(pChar);
     if (iDist > ((UO_MAP_VIEW_SIGHT * 3) / 4))	// way too far away . close in.
         return false;
 
@@ -172,11 +172,11 @@ bool CChar::NPC_FightMagery(CChar * pChar)
         return false;
     }
     int skill = SKILL_NONE;
-    ushort uiStatInt = Stat_GetBase(STAT_INT);
-    ushort uiMana = Stat_GetVal(STAT_INT);
-    int iChance = ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
+    const ushort uiStatInt = Stat_GetBase(STAT_INT);
+    const ushort uiMana = Stat_GetVal(STAT_INT);
+    const int iChance = ((uiMana >= (uiStatInt / 2)) ? uiMana : (uiStatInt - uiMana));
 
-    CObjBase * pSrc = this;
+    const CObjBase * pSrc = this;
     if (g_Rand.GetVal(iChance) < uiStatInt / 4)
     {
         // we failed this test, but we could be casting next time
@@ -319,7 +319,7 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
                         if (!pTarget)
                             break;
 
-                        if (CItemMemory *pMemory = pTarget->Memory_FindObj(pTarg);
+                        if (const CItemMemory *pMemory = pTarget->Memory_FindObj(pTarg);
                             pMemory && pMemory->IsMemoryTypes(MEMORY_FIGHT | MEMORY_HARMEDBY | MEMORY_IRRITATEDBY))
                         {
                             pFriend[iFriendIndex++] = pTarget;
@@ -358,7 +358,7 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
                     }
                     if (pSpellDef->IsSpellType(SPELLFLAG_BLESS))
                     {
-                        if (LAYER_TYPE layer = pSpellDef->m_idLayer; layer != LAYER_NONE)	// If the spell applies an effect.
+                        if (const LAYER_TYPE layer = pSpellDef->m_idLayer; layer != LAYER_NONE)	// If the spell applies an effect.
                         {
                             if (!pTarget->LayerFind(layer))	// and target doesn't have this effect already...
                             {

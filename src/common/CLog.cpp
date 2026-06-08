@@ -18,7 +18,7 @@ int CEventLog::VEvent(const dword dwMask, const lpctstr pszFormat, const Console
         return 0;
 
 	tchar* pszTemp = Str_GetTemp();
-    if (size_t len = vsnprintf(pszTemp, (Str_TempLength() - 1), pszFormat, args); ! len)
+    if (const size_t len = vsnprintf(pszTemp, (Str_TempLength() - 1), pszFormat, args); ! len)
         Str_CopyLimitNull(pszTemp, pszFormat, (Str_TempLength() - 1));
 
     // This get rids of exploits done sending 0x0C to the log subsytem.
@@ -33,7 +33,7 @@ int CEventLog::Event(const dword dwMask, lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(dwMask, pszFormat, CTCOL_DEFAULT, vargs);
+    const int iret = VEvent(dwMask, pszFormat, CTCOL_DEFAULT, vargs);
     va_end(vargs);
     return iret;
 }
@@ -42,7 +42,7 @@ int CEventLog::EventDebug(lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(LOGM_DEBUG|LOGM_NOCONTEXT, pszFormat, CTCOL_DEFAULT, vargs);
+    const int iret = VEvent(LOGM_DEBUG|LOGM_NOCONTEXT, pszFormat, CTCOL_DEFAULT, vargs);
     va_end(vargs);
     return iret;
 }
@@ -51,7 +51,7 @@ int CEventLog::EventError(lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(LOGL_ERROR, pszFormat, CTCOL_DEFAULT, vargs);
+    const int iret = VEvent(LOGL_ERROR, pszFormat, CTCOL_DEFAULT, vargs);
     va_end(vargs);
     return iret;
 }
@@ -60,7 +60,7 @@ int CEventLog::EventWarn(lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(LOGL_WARN, pszFormat, CTCOL_DEFAULT, vargs);
+    const int iret = VEvent(LOGL_WARN, pszFormat, CTCOL_DEFAULT, vargs);
     va_end(vargs);
     return iret;
 }
@@ -69,7 +69,7 @@ int CEventLog::EventCustom(const ConsoleTextColor iColor, const dword dwMask, lp
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(dwMask, pszFormat, iColor, vargs);
+    const int iret = VEvent(dwMask, pszFormat, iColor, vargs);
     va_end(vargs);
     return iret;
 }
@@ -78,7 +78,7 @@ int CEventLog::EventEvent(lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
-    int iret = VEvent(LOGL_EVENT, pszFormat, CTCOL_DEFAULT, vargs);
+    const int iret = VEvent(LOGL_EVENT, pszFormat, CTCOL_DEFAULT, vargs);
     va_end(vargs);
     return iret;
 }
@@ -203,7 +203,7 @@ bool CLog::_OpenLog(const lpctstr pszName )	// name set previously.
 		m_dateStamp.GetYear(), m_dateStamp.GetMonth(), m_dateStamp.GetDay());
 
     // Use the OF_READWRITE to append to an existing file.
-	if (CSString sFileName = GetMergedFileName(m_sBaseDir, pszTemp); CSFileText::_Open( sFileName.GetBuffer(), OF_SHARE_DENY_NONE|OF_READWRITE|OF_TEXT ) )
+	if (const CSString sFileName = GetMergedFileName(m_sBaseDir, pszTemp); CSFileText::_Open( sFileName.GetBuffer(), OF_SHARE_DENY_NONE|OF_READWRITE|OF_TEXT ) )
 	{
 		setvbuf(_pStream, nullptr, _IONBF, 0);
 		return true;
@@ -235,7 +235,7 @@ int CLog::EventStr(const dword dwMask, const lpctstr pszMsg, const ConsoleTextCo
         ConsoleTextColor iLogTypeColor = CTCOL_DEFAULT;
 
 		// Put up the date/time.
-		CSTime datetime = CSTime::GetCurrentTime();	// last real time stamp.
+        const CSTime datetime = CSTime::GetCurrentTime();	// last real time stamp.
 
 		tchar szTime[32];
 		snprintf(szTime, sizeof(szTime), "%02d:%02d:", datetime.GetHour(), datetime.GetMinute());
@@ -264,7 +264,7 @@ int CLog::EventStr(const dword dwMask, const lpctstr pszMsg, const ConsoleTextCo
 		tchar szScriptContext[ SPHERE_MAX_PATH + 16 ];
 		if ( !(dwMask & LOGM_NOCONTEXT) && m_pScriptContext )
 		{
-			CScriptLineContext LineContext = m_pScriptContext->GetContext();
+            const CScriptLineContext LineContext = m_pScriptContext->GetContext();
 			snprintf( szScriptContext, sizeof(szScriptContext),"(%s,%d)", m_pScriptContext->GetFileTitle(), LineContext.m_iLineNum );
 		}
 		else
@@ -358,7 +358,7 @@ CSTime CLog::sm_prevCatchTick;
 
 void CLog::CatchEvent( const CSError * pErr, lpctstr pszCatchContext, ... )
 {
-	CSTime timeCurrent = CSTime::GetCurrentTime();
+    const CSTime timeCurrent = CSTime::GetCurrentTime();
 	if ( sm_prevCatchTick.GetTime() == timeCurrent.GetTime() )	// prevent message floods.
 		return;
 	// Keep a record of what we catch.

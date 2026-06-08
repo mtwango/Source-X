@@ -37,7 +37,7 @@ void CEntity::ClearComponents()
         return;
     for (auto it = _lComponents.begin(), itEnd = _lComponents.end(); it != itEnd; ++it)
     {
-        CComponent *pComponent = it->second;
+        const CComponent *pComponent = it->second;
         ASSERT(pComponent);
         delete pComponent;
     }
@@ -66,7 +66,7 @@ void CEntity::UnsubscribeComponent(const CComponent *pComponent)
         return;
     }
     const COMP_TYPE compType = pComponent->GetType();
-    auto it = _lComponents.find(compType);
+    const auto it = _lComponents.find(compType);
     if (it == _lComponents.end())
     {
         g_Log.EventError("Trying to unsuscribe not suscribed component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
@@ -91,7 +91,7 @@ CComponent * CEntity::GetComponent(const COMP_TYPE type) const
     {
         return nullptr;
     }
-    auto it = _lComponents.find(type);
+    const auto it = _lComponents.find(type);
     return (it != _lComponents.end()) ? it->second : nullptr;
 }
 
@@ -187,7 +187,7 @@ void CEntity::Copy(const CEntity *target)
         return;
     for (auto it = target->_lComponents.begin(), itEnd = target->_lComponents.end(); it != itEnd; ++it)
     {
-        CComponent *pTarget = it->second;    // the CComponent to copy from
+        const CComponent *pTarget = it->second;    // the CComponent to copy from
         ASSERT(pTarget);
         if (CComponent *pCopy = GetComponent(pTarget->GetType()))
         {
@@ -206,7 +206,7 @@ CCRET_TYPE CEntity::_OnTick()
     {
         CComponent *pComponent = it->second;
         ASSERT(pComponent);
-        if (CCRET_TYPE iRet = pComponent->OnTickComponent(); iRet != CCRET_CONTINUE)
+        if (const CCRET_TYPE iRet = pComponent->OnTickComponent(); iRet != CCRET_CONTINUE)
         {
             return iRet;    // Stop the loop and return whatever return is needed.
         }

@@ -177,8 +177,8 @@ bool AbstractString::startsWithHead(const char *s) const noexcept
 {
 	for ( int i = 0; ; ++i )
 	{
-		char ch1 = static_cast<uchar>(tolower(m_buf[i]));
-		char ch2 = static_cast<uchar>(tolower(s[i]));
+		char const ch1 = static_cast<uchar>(tolower(m_buf[i]));
+		char const ch2 = static_cast<uchar>(tolower(s[i]));
 		if( ch2 == '\0' )
 		{
 			if( !isalnum(ch1) )
@@ -192,19 +192,19 @@ bool AbstractString::startsWithHead(const char *s) const noexcept
 
 size_t AbstractString::indexOf(const char c) const noexcept
 {
-	char *pos = strchr(m_buf, c);
+	char const * pos = strchr(m_buf, c);
 	return static_cast<size_t>(pos == nullptr ? -1 : pos - m_buf);
 }
 
 size_t AbstractString::indexOf(const char *s) const noexcept
 {
-	char *pos = strstr(m_buf, s);
+    const char *pos = strstr(m_buf, s);
 	return static_cast<size_t>(pos == nullptr ? -1 : pos - m_buf);
 }
 
 size_t AbstractString::lastIndexOf(const char c) const noexcept
 {
-	char *pos = strrchr(m_buf, c);
+	char const * pos = strrchr(m_buf, c);
 	return static_cast<size_t>(pos == nullptr ? -1 : pos - m_buf);
 }
 

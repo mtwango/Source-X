@@ -285,7 +285,7 @@ bool CScriptObj::r_Call(const size_t uiFunctionIndex, CScriptTriggerArgsPtr cons
             TIME_PROFILE_START;
         }
 
-        TRIGRET_TYPE iRet = OnTriggerRun(sFunction, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, psVal);
+        const TRIGRET_TYPE iRet = OnTriggerRun(sFunction, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc, psVal);
 
         if ( IsSetEF(EF_Script_Profiler) )
         {
@@ -337,7 +337,7 @@ bool CScriptObj::r_LoadVal( CScript & s )
 	lpctstr ptcKey = s.GetKey();
 
 	// ignore these.
-	int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
+    const int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
 	if ( index < 0 )
 	{
 		return ParseError_UndefinedKeyword(s.GetKey());
@@ -350,7 +350,7 @@ bool CScriptObj::r_LoadVal( CScript & s )
         {
             const bool fZero = (index == SSC_VAR0);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             g_ExprGlobals.mtEngineLockedWriter()->m_VarGlobals.SetStr(ptcKey + (fZero ? 5 : 4), fQuoted, ptcArg, fZero);
             return true;
         }
@@ -370,7 +370,7 @@ bool CScriptObj::r_LoadVal( CScript & s )
                 if ( !strcmpi(ptcKey, rw->sm_szDefMsgNames[l]) )
 				{
 					bool fQuoted = false;
-                    tchar * args = s.GetArgStr(&fQuoted);
+                    const tchar * args = s.GetArgStr(&fQuoted);
                     Str_CopyLimitNull(rw->sm_szDefMessages[l], args, CExprGlobals::m_kiDefmsgMaxLen);
 					return true;
 				}
@@ -395,7 +395,7 @@ static void StringFunction(const int iFunc, lpctstr ptcKey, CSString &sVal )
 		++ptcKey;
 
 	tchar * ppCmd[4];
-    if (int iCount = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ")"); iCount <= 0 )
+    if (const int iCount = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppCmd, std::size(ppCmd), ")"); iCount <= 0 )
 	{
 		DEBUG_ERR(( "Bad string function usage. missing )\n" ));
 		return;
@@ -1500,12 +1500,12 @@ bool CScriptObj::Execute_Call(const CScript & s, CScriptTriggerArgsPtr const& pS
 
 		if (z && *z)
 		{
-            int64 iN1 = pScriptArgs->m_iN1;
-            int64 iN2 = pScriptArgs->m_iN2;
-            int64 iN3 = pScriptArgs->m_iN3;
+            const int64 iN1 = pScriptArgs->m_iN1;
+            const int64 iN2 = pScriptArgs->m_iN2;
+            const int64 iN3 = pScriptArgs->m_iN3;
             CScriptObj* pO1 = pScriptArgs->m_pO1;
-            CSString s1 = pScriptArgs->m_s1;
-            CSString s1_raw = pScriptArgs->m_s1_buf_vec;
+            const CSString s1 = pScriptArgs->m_s1;
+            const CSString s1_raw = pScriptArgs->m_s1_buf_vec;
             pScriptArgs->m_v.clear();
             pScriptArgs->Init(z);
 
@@ -1539,7 +1539,7 @@ bool CScriptObj::Execute_FullTrigger(const CScript & s, CScriptTriggerArgsPtr co
     auto pRef = this;
 	if (iArgQty == 2)
 	{
-        std::optional<dword> iconv = Str_ToU(piCmd[1]);
+        const std::optional<dword> iconv = Str_ToU(piCmd[1]);
         if (!iconv.has_value())
             return false;
 
@@ -1572,12 +1572,12 @@ bool CScriptObj::Execute_FullTrigger(const CScript & s, CScriptTriggerArgsPtr co
 
 		if (z && *z)
 		{
-            int64 iN1 = pScriptArgs->m_iN1;
-            int64 iN2 = pScriptArgs->m_iN2;
-            int64 iN3 = pScriptArgs->m_iN3;
+            const int64 iN1 = pScriptArgs->m_iN1;
+            const int64 iN2 = pScriptArgs->m_iN2;
+            const int64 iN3 = pScriptArgs->m_iN3;
             CScriptObj* pO1 = pScriptArgs->m_pO1;
-            CSString s1 = pScriptArgs->m_s1;
-            CSString s1_raw = pScriptArgs->m_s1_buf_vec;
+            const CSString s1 = pScriptArgs->m_s1;
+            const CSString s1_raw = pScriptArgs->m_s1_buf_vec;
             pScriptArgs->m_v.clear();
             pScriptArgs->Init(z);
 
@@ -1680,7 +1680,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerScript( CScript & s, const lpctstr pszTrigName
 		TIME_PROFILE_START;
 	}
 
-    TRIGRET_TYPE iRet = OnTriggerRunVal(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc);
+    const TRIGRET_TYPE iRet = OnTriggerRunVal(s, TRIGRUN_SECTION_TRUE, pScriptArgs, pSrc);
 
 	if ( IsSetEF(EF_Script_Profiler) && pTrig != nullptr )
 	{
@@ -2182,7 +2182,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
 	{
 		tchar* ppArgs[2];
 
-        if (int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), " \t,"); iArgQty > 1)
+        if (const int iArgQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), " \t,"); iArgQty > 1)
 		{
 			TemporaryString tsOrigValue;
 			tchar* ptcOrigValue = tsOrigValue.buffer();
@@ -2192,7 +2192,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCont(CScript& s, CScriptTriggerArgsPtr 
             CScriptExprContext context = {._pScriptObjI = this};
             expr_parser.ParseScriptText(ptcOrigValue, context, pScriptArgs, pSrc, 0);
 
-            if (CUID pCurUid(Exp_GetDWVal(ptcOrigValue)); pCurUid.IsValidUID())
+            if (const CUID pCurUid(Exp_GetDWVal(ptcOrigValue)); pCurUid.IsValidUID())
 			{
                 if (CObjBase *pObj = pCurUid.ObjFind(); pObj && pObj->IsContainer())
 				{

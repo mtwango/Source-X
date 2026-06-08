@@ -40,7 +40,7 @@ void CExprGlobals::UpdateDefMsgDependentData()
 
     //std::lock_guard<MT_DEFAULT_CMUTEX_TYPE> _lock_me(MT_CMUTEX);
     auto gwriter  = g_ExprGlobals.mtEngineLockedWriter();
-    auto& vardefs = gwriter->m_VarDefs;
+    const auto & vardefs = gwriter->m_VarDefs;
 
     // TODO: get rid of this associative system... what about using a plain simple map/hash map?
 
@@ -307,7 +307,7 @@ int Str_ParseCmds(tchar * pszCmdLine, int64 * piCmd, int iMax, const tchar * psz
     if (iMax > static_cast<int>(std::size(ppTmp)))
         iMax = static_cast<int>(std::size(ppTmp));
 
-    int iQty = Str_ParseCmds(pszCmdLine, ppTmp, iMax, pszSep);
+    const int iQty = Str_ParseCmds(pszCmdLine, ppTmp, iMax, pszSep);
     int i;
     for (i = 0; i < iQty; ++i)
         piCmd[i] = Exp_GetVal(ppTmp[i]);
@@ -356,7 +356,7 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
 
     for (; ; ++pLine)
     {
-        tchar * pLineNext = pLine;
+        const tchar * pLineNext = pLine;
         ++pLineNext;
         ch = *pLine;
         tchar chNext = *pLineNext;
@@ -613,7 +613,7 @@ int Calc_GetSCurve(const int iValDiff, const int iVariance )
 	// NOTE:
 	//   Chance of skill gain is inverse to chance of success.
 	//
-	int iChance = Calc_GetBellCurve( iValDiff, iVariance );
+    const int iChance = Calc_GetBellCurve( iValDiff, iVariance );
 	if ( iValDiff > 0 )
 		return ( 1000 - iChance );
 	return iChance;
@@ -629,7 +629,7 @@ CExpression::CExpression() noexcept :
 
 CExpression& CExpression::GetExprParser() // static
 {
-    auto thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().current());
+    const auto thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().current());
     return *(thread->m_pExpr.get());
     /*
     // If we need to use it at startup (or deep shutdown?) when there's no AbstractSphereThread instance.
@@ -1633,7 +1633,7 @@ CExpression::GetConditionalSubexpressions(
             uint uiOpenedCurlyBrackets = 1;
             while (uiOpenedCurlyBrackets != 0)	// i'm interested only to the outermost range, not eventual sub-sub-sub-blah ranges
             {
-                if (tchar ch_ = *(++pExpr_); ch_ == '(')
+                if (const tchar ch_ = *(++pExpr_); ch_ == '(')
                     ++uiOpenedCurlyBrackets;
                 else if (ch_ == ')')
                     --uiOpenedCurlyBrackets;
@@ -1652,8 +1652,8 @@ CExpression::GetConditionalSubexpressions(
         // This ensures that we begin every parsing loop without any open curly bracket.
 
         // Start of a expression within curved brackets?
-        lptstr ptcCurSubexprStart = refStrExpr;
-        lptstr ptcTopBracket = (ch == '(') ? refStrExpr : nullptr;
+        const lptstr ptcCurSubexprStart = refStrExpr;
+        const lptstr ptcTopBracket = (ch == '(') ? refStrExpr : nullptr;
 
         // -- Done with preliminar expression analysis. Now look for subexpressions.
         lptstr ptcLastClosingBracket = nullptr; // Needs to be preserved in the subexpression parsing.
@@ -1671,7 +1671,7 @@ CExpression::GetConditionalSubexpressions(
                     sCurSubexpr.ptcEnd = refStrExpr;
                     if (ptcTopBracket && ptcLastClosingBracket)
                     {
-                        lptstr ptcLineLastClosingBracket = findLastClosingBracket(ptcCurSubexprStart);
+                        const lptstr ptcLineLastClosingBracket = findLastClosingBracket(ptcCurSubexprStart);
                         // ptcLastClosingBracket: the last closing bracket found while parsing the subexpression (might not be at the end of the line).
                         // ptcExprLastclosingBracket: the last closing bracket ')', if any, of the string. The function used does NOT check if that's a valid closing bracket
                         //  (eg. if in the string for every opening bracket there is a closing bracket).
@@ -1961,7 +1961,7 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 	//	of the elements and then only the element which was randomly chosen.
 
 	lpctstr pElementsStart[kiRangeMaxArgs][2] {};
-    int iQty = GetRangeArgsPos( refStrExpr, pElementsStart, false );	// number of arguments (not of value-weight couples)
+    const int iQty = GetRangeArgsPos( refStrExpr, pElementsStart, false );	// number of arguments (not of value-weight couples)
 
 	if (iQty == 0)
 		return 0;
@@ -2084,7 +2084,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
     //	of the elements and then only the element which was randomly chosen.
 
 	lpctstr pElementsStart[kiRangeMaxArgs][2]{};
-    int iQty = GetRangeArgsPos( refStrExpr, pElementsStart, true );	// number of arguments (not of value-weight couples)
+    const int iQty = GetRangeArgsPos( refStrExpr, pElementsStart, true );	// number of arguments (not of value-weight couples)
     if (iQty <= 0)
         return {};
 
@@ -2260,7 +2260,7 @@ bool CExpression::EvaluateConditionalWhole(lptstr ptcExpr, CScriptExprContext& r
     if (uiQty == 1)
     {
         // We don't have subexpressions, but only a simple expression.
-        CScriptSubExprState& sCur = parsingSubexprsStates[0];
+        const CScriptSubExprState & sCur = parsingSubexprsStates[0];
         ASSERT((sCur.uiType & SType::None) ||  (sCur.uiType & SType::BinaryNonLogical));
 
         const bool fVal = EvaluateConditionalSingle(sCur, refExprContext, pScriptArgs, pSrc);
@@ -2281,7 +2281,7 @@ bool CExpression::EvaluateConditionalWhole(lptstr ptcExpr, CScriptExprContext& r
             continue;
         }
 
-        CScriptSubExprState& sPrev = parsingSubexprsStates[i - 1];
+        const CScriptSubExprState & sPrev = parsingSubexprsStates[i - 1];
         if (sPrev.uiType & SType::Or)
         {
             if (fWholeExprVal)
@@ -2513,7 +2513,7 @@ int CExpression::ParseScriptText(
             {
                 // Nested angular brackets? like: <<SKILL>>
                 lptstr ptcTestNested = ptcResponse + i;
-                lpctstr ptcTestOrig = ptcTestNested;
+                const lpctstr ptcTestOrig = ptcTestNested;
                 Str_SkipEnclosedAngularBrackets(ptcTestNested);
                 // If i have matching closing brackets, so it must be nested angular brackets.
                 if (ptcTestNested == ptcTestOrig)

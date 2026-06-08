@@ -653,11 +653,11 @@ int CSString::lastIndexOf(const CSString& str, const int from) noexcept
 	if (from >= len)
 		return -1;
 
-	int slen = str.GetLength();
+    const int slen = str.GetLength();
 	if (slen > len)
 		return -1;
 
-	lpctstr str_value = str.GetBuffer();
+    const lpctstr str_value = str.GetBuffer();
 	const tchar firstChar = str_value[0];
 	for (int i = (len - 1); i >= from; --i)
 	{

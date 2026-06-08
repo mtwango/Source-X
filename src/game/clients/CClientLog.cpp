@@ -230,7 +230,7 @@ bool CClient::addRelay( const CServerDef * pServ )
 	}
 
 	EXC_SET_BLOCK("customer id");
-	dword dwAddr = ipAddr.GetAddrIP();
+    const dword dwAddr = ipAddr.GetAddrIP();
 	dword dwCustomerId = 0x7f000001;
 	if ( g_Cfg.m_fUseAuthID )
 	{
@@ -301,14 +301,14 @@ byte CClient::Login_ServerList( const char * pszAccount, const char * pszPasswor
 	// If the messages are garbled make sure they are terminated to correct length.
 
 	tchar szAccount[MAX_ACCOUNT_NAME_SIZE+3];
-	size_t iLenAccount = Str_GetBare( szAccount, pszAccount, sizeof(szAccount)-1 );
+    const size_t iLenAccount = Str_GetBare( szAccount, pszAccount, sizeof(szAccount)-1 );
 	if ( iLenAccount > MAX_ACCOUNT_NAME_SIZE )
 		return( PacketLoginError::BadAccount );
 	if ( iLenAccount != strlen(pszAccount))
 		return( PacketLoginError::BadAccount );
 
 	tchar szPassword[MAX_NAME_SIZE+3];
-	size_t iLenPassword = Str_GetBare( szPassword, pszPassword, sizeof( szPassword )-1 );
+    const size_t iLenPassword = Str_GetBare( szPassword, pszPassword, sizeof( szPassword )-1 );
 	if ( iLenPassword > MAX_NAME_SIZE )
 		return( PacketLoginError::BadPassword );
 	if ( iLenPassword != strlen(pszPassword))
@@ -319,7 +319,7 @@ byte CClient::Login_ServerList( const char * pszAccount, const char * pszPasswor
 	// if ( LogIn( pszAccount, pszPassword ) )
 	//   return( PacketLoginError::BadPass );
 	CSString sMsg;
-    if (byte lErr = LogIn(pszAccount, pszPassword, sMsg); lErr != PacketLoginError::Success )
+    if (const byte lErr = LogIn(pszAccount, pszPassword, sMsg); lErr != PacketLoginError::Success )
 	{
 		return( lErr );
 	}
@@ -359,7 +359,7 @@ bool CClient::OnRxConsole( const byte * pData, uint iLen )
 
 	if ( IsSetEF( EF_AllowTelnetPacketFilter ) )
 	{
-        if ( bool fFiltered = xPacketFilter(pData, iLen) )
+        if (const bool fFiltered = xPacketFilter(pData, iLen) )
 			return fFiltered;
 	}
 
@@ -387,7 +387,7 @@ bool CClient::OnRxConsole( const byte * pData, uint iLen )
 				}
 				else
 				{
-                    if (CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Admin ))
+                    if (const CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Admin ))
 					{
 						SysMessagef("%s\n", g_Cfg.GetDefaultMsg(DEFMSG_CONSOLE_NOT_PRIV));
 						m_Targ_Text.Clear();
@@ -429,7 +429,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 
 	while ( iLen -- )
 	{
-		int iRet = OnConsoleKey( m_Targ_Text, *pData++, GetAccount() != nullptr );
+        const int iRet = OnConsoleKey( m_Targ_Text, *pData++, GetAccount() != nullptr );
 		if ( ! iRet )
 			return false;
 		if ( iRet == 2 )
@@ -446,7 +446,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 				}
 				else
 				{
-                    if (CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Counsel ))
+                    if (const CAccount *pAccount = g_Accounts.Account_Find(m_zLogin); ( pAccount == nullptr ) || ( pAccount->GetPrivLevel() < PLEVEL_Counsel ))
 					{
 						SysMessagef("\"MSG:%s\"", g_Cfg.GetDefaultMsg(DEFMSG_AXIS_NOT_PRIV));
 						m_Targ_Text.Clear();
@@ -464,7 +464,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 						}
 						if (GetPeer().IsValidAddr())
 						{
-                            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                             pScriptArgs->m_VarsLocal.SetStrNew("Account",GetName());
                             pScriptArgs->m_VarsLocal.SetStrNew("IP",GetPeer().GetAddrStr());
 
@@ -497,7 +497,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 							PacketWeb packet;
 							for (;;)
 							{
-								int iLength = FileRead.Read( szTmp, sizeof( szTmp ) );
+                                const int iLength = FileRead.Read( szTmp, sizeof( szTmp ) );
 								if ( iLength <= 0 )
 									break;
 								packet.setData(reinterpret_cast<byte *>(szTmp), static_cast<uint>(iLength));
@@ -565,7 +565,7 @@ bool CClient::OnRxPing( const byte * pData, uint iLen )
 					if ( pAccount )
 					{
 						CSString sMsg;
-                        if (byte lErr = LogIn(pAccount, sMsg); lErr != PacketLoginError::Success )
+                        if (const byte lErr = LogIn(pAccount, sMsg); lErr != PacketLoginError::Success )
 						{
 							if ( lErr != PacketLoginError::Invalid )
 								SysMessage( sMsg );
@@ -688,14 +688,14 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 		return false;
 
 	tchar * ppLines[16];
-	int iQtyLines = Str_ParseCmds(reinterpret_cast<char *>(pRequest), ppLines, std::size(ppLines), "\r\n");
+    const int iQtyLines = Str_ParseCmds(reinterpret_cast<char *>(pRequest), ppLines, std::size(ppLines), "\r\n");
 	if (( iQtyLines < 1 ) || ( iQtyLines >= 15 ))	// too long request
 		return false;
 
 	// Look for what they want to do with the connection.
 	bool fKeepAlive = false;
 	CSTime dateIfModifiedSince;
-	tchar * pszReferer = nullptr;
+    const tchar * pszReferer = nullptr;
 	uint uiContentLength = 0;
 	for ( int j = 1; j < iQtyLines; ++j )
 	{
@@ -729,7 +729,7 @@ bool CClient::OnRxWebPageRequest( byte * pRequest, size_t uiLen )
 	}
 
 	tchar * ppRequest[4];
-    if (int iQtyArgs = Str_ParseCmds(ppLines[0], ppRequest, std::size(ppRequest), " "); ( iQtyArgs < 2 ) || ( strlen(ppRequest[1]) >= SPHERE_MAX_PATH ))
+    if (const int iQtyArgs = Str_ParseCmds(ppLines[0], ppRequest, std::size(ppRequest), " "); ( iQtyArgs < 2 ) || ( strlen(ppRequest[1]) >= SPHERE_MAX_PATH ))
 		return false;
 
 	if ( strchr(ppRequest[1], '\r') || strchr(ppRequest[1], 0x0c) )

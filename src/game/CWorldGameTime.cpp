@@ -37,10 +37,10 @@ int64 CWorldGameTime::GetNextNewMoon(const bool fMoonIndex ) // static
 	ADDTOCALLSTACK("CWorldGameTime::GetNextNewMoon");
 	// "Predict" the next new moon for this moon
 	// Get the period
-	int64 iSynodic = fMoonIndex ? FELUCCA_SYNODIC_PERIOD : TRAMMEL_SYNODIC_PERIOD;
+	int64 const iSynodic = fMoonIndex ? FELUCCA_SYNODIC_PERIOD : TRAMMEL_SYNODIC_PERIOD;
 
 	// Add a "month" to the current game time
-	int64 iNextMonth = GetCurrentTimeInGameMinutes() + iSynodic;
+	int64 const iNextMonth = GetCurrentTimeInGameMinutes() + iSynodic;
 
 	// Get the game time when this cycle will start
     const int64 iNewStart = static_cast<int64>(iNextMonth - static_cast<double>(iNextMonth % iSynodic));
@@ -63,7 +63,7 @@ uint CWorldGameTime::GetMoonPhase(const bool fMoonIndex) // static
 	//			              SynodicPeriod
 	//
 
-	int64 iCurrentTime = GetCurrentTimeInGameMinutes();	// game world time in minutes
+	int64 const iCurrentTime = GetCurrentTimeInGameMinutes();	// game world time in minutes
 
 	if (!fMoonIndex)	// Trammel
 		return IMulDiv( iCurrentTime % TRAMMEL_SYNODIC_PERIOD, 8, TRAMMEL_SYNODIC_PERIOD );

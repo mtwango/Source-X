@@ -811,7 +811,7 @@ bool CWorld::Import(const lpctstr pszFilename, const CChar * pSrc, const word wM
 	// NOTE: We need to set the IsLoading() for this ???
 
 	// ??? What if i want to just import into the local area ?
-	size_t iLen = strlen( pszFilename );
+    const size_t iLen = strlen( pszFilename );
 	if ( iLen <= 4 )
 		return false;
 	CScript s;
@@ -870,7 +870,7 @@ bool CWorld::DumpAreas(const CTextConsole * pSrc, lpctstr pszFilename )
 	if ( ! s.Open( pszFilename, OF_WRITE|OF_TEXT|OF_DEFAULTMODE ))
 		return false;
 
-	size_t iMax = g_Cfg.m_RegionDefs.size();
+    const size_t iMax = g_Cfg.m_RegionDefs.size();
 	for ( size_t i = 0; i < iMax; i++ )
 	{
 		CRegion * pRegion = g_Cfg.m_RegionDefs.at(i);
@@ -895,7 +895,7 @@ bool CWorld::Export(const lpctstr pszFilename, const CChar * pSrc, const word wM
 	if ( pSrc == nullptr )
 		return false;
 
-	size_t iLen = strlen( pszFilename );
+    const size_t iLen = strlen( pszFilename );
 	if ( iLen <= 4 )
 		return false;
 

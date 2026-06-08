@@ -61,7 +61,7 @@ void CSFileObjContainer::ResizeContainer(const size_t iNewRange )
             return;
         }
 
-        CSFileObj * pObjHolder = nullptr;
+        const CSFileObj * pObjHolder = nullptr;
 
         for ( size_t i = (sFileList.size() - 1); howMuch > 0; --howMuch, --i )
         {
@@ -189,7 +189,7 @@ bool CSFileObjContainer::r_LoadVal( CScript & s )
     ADDTOCALLSTACK("CSFileObjContainer::r_LoadVal");
     EXC_TRY("LoadVal");
 
-    switch (lpctstr ptcKey = s.GetKey(); FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
+    switch (const lpctstr ptcKey = s.GetKey(); FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
     {
         case CFO_OBJECTPOOL:
             SetFilenumber(s.GetArgVal());
@@ -240,13 +240,13 @@ bool CSFileObjContainer::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
         return false;
     }
 
-    int iIndex = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const int iIndex = FindTableHeadSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 
     if ( iIndex < 0 )
     {
         if (!fNoCallParent)
         {
-            uint nNumber = Exp_GetUVal(ptcKey);
+            const uint nNumber = Exp_GetUVal(ptcKey);
             SKIP_SEPARATORS(ptcKey);
 
             if ( nNumber >= sFileList.size() )
@@ -313,13 +313,13 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
         return false;
     }
 
-    int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
+    const int index = FindTableSorted( ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 
     if ( index < 0 )
     {
         if ( strchr( ptcKey, '.') ) // 0.blah format
         {
-            if (size_t nNumber = Exp_GetSTVal(ptcKey); nNumber < sFileList.size() )
+            if (const size_t nNumber = Exp_GetSTVal(ptcKey); nNumber < sFileList.size() )
             {
                 if (CSFileObj *pFile = sFileList.at(nNumber); pFile != nullptr )
                 {
@@ -344,7 +344,7 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
         case CFOV_CLOSEOBJECT:
         case CFOV_RESETOBJECT:
         {
-            bool bResetObject = ( index == CFOV_RESETOBJECT );
+            const bool bResetObject = ( index == CFOV_RESETOBJECT );
             if ( s.HasArgs() )
             {
                 const size_t nNumber = static_cast<size_t>(s.GetArgVal());

@@ -446,7 +446,7 @@ void CServerMapBlock::Load(const int bx, const int by )
 	if ( g_Cfg.m_fUseMapDiffs && g_MapList.m_pMapDiffCollection )
 	{
 		// Check to see if the terrain or statics in this block is patched
-        if ( CServerMapDiffBlock *pDiffBlock = g_MapList.m_pMapDiffCollection->GetAtBlock(uiBlockIndex, g_MapList.GetMapFileNum(m_map)) )
+        if (const CServerMapDiffBlock *pDiffBlock = g_MapList.m_pMapDiffCollection->GetAtBlock(uiBlockIndex, g_MapList.GetMapFileNum(m_map)) )
 		{
 			if ( pDiffBlock->m_pTerrainBlock )
 			{
@@ -835,7 +835,7 @@ CServerMapDiffBlock * CServerMapDiffCollection::GetNewBlock(const dword dwBlockI
 CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(const int bx, const int by, const int map)
 {
 	// See GetAtBlock(dword,int)
-	dword dwBlockId = (bx * (g_MapList.GetMapSizeY( map ) / UO_BLOCK_SIZE)) + by;
+    const dword dwBlockId = (bx * (g_MapList.GetMapSizeY( map ) / UO_BLOCK_SIZE)) + by;
 	return GetAtBlock( dwBlockId, map );
 }
 
@@ -847,7 +847,7 @@ CServerMapDiffBlock * CServerMapDiffCollection::GetAtBlock(const dword dwBlockId
 		return nullptr;
 
 	// Locate the requested block
-	size_t index = m_pMapDiffBlocks[map].FindKey( dwBlockId );
+    const size_t index = m_pMapDiffBlocks[map].FindKey( dwBlockId );
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 

@@ -73,7 +73,7 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 		}
 	}
 
-	bool fRet = pObj->r_Verb( sCmd, this );
+    const bool fRet = pObj->r_Verb( sCmd, this );
 	if ( ! fRet )
 	{
 		SysMessageDefault( DEFMSG_MSG_ERR_INVSET );
@@ -95,11 +95,11 @@ bool CClient::OnTarg_Obj_Function( CObjBase * pObj, const CPointMap & pt, const 
 	if ( pSpace )
 		GETNONWHITESPACE( pSpace );
 
-    lpctstr ptcFunction = m_Targ_Text.GetBuffer();
+    const lpctstr ptcFunction = m_Targ_Text.GetBuffer();
     if (const size_t uiFunctionIndex = r_GetFunctionIndex(ptcFunction); r_CanCall(uiFunctionIndex) )
     {
         // It's a scripted FUNCTION
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(pSpace ? pSpace : "");
         pScriptArgs->m_VarsLocal.SetNum( "ID", id, true );
         pScriptArgs->m_pO1 = pObj;
@@ -135,7 +135,7 @@ bool CClient::OnTarg_Obj_Info(const CObjBase * pObj, const CPointMap & pt, const
 			len = snprintf( pszTemp, Str_TempLength(), "[Static z=%d, 0%x=", pt.m_z, id );
 
 			// static items have no uid's but we can still use them.
-            if ( CItemBase *pItemDef = CItemBase::FindItemBase(id) )
+            if (const CItemBase *pItemDef = CItemBase::FindItemBase(id) )
 			{
 				len += snprintf( pszTemp+len, Str_TempLength() - len, "%s->%s], ", pItemDef->GetResourceName(),
 					g_Cfg.ResourceGetName( CResourceID( RES_TYPEDEF, pItemDef->GetType() )));
@@ -151,7 +151,7 @@ bool CClient::OnTarg_Obj_Info(const CObjBase * pObj, const CPointMap & pt, const
 			len = Str_CopyLimitNull( pszTemp, "[No static tile], ", Str_TempLength());
 		}
 
-        if ( std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted(pt) )
+        if (const std::optional<CUOMapMeter> pMeter = CWorldMap::GetMapMeterAdjusted(pt) )
 		{
 			len += snprintf( pszTemp+len, Str_TempLength() - len, "TERRAIN=0%x   TYPE=%s",
 				pMeter->m_wTerrainIndex,
@@ -181,8 +181,8 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 	ASSERT(m_pChar);
 	CChar * pChar1 = m_pChar;
 
-	//Switch their home position to avoid the pChar1 corpse teleport to his home(far away)
-	CPointMap homeP1 = pChar1->m_ptHome;
+	// Switch their home position to avoid the pChar1 corpse teleport to his home(far away)
+    const CPointMap homeP1 = pChar1->m_ptHome;
 	pChar1->m_ptHome.Set(pChar2->m_ptHome);
 	pChar2->m_ptHome.Set(homeP1);
 
@@ -208,7 +208,7 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 	}
 
 	// Put my GM pack stuff in it's inventory.
-	CItemContainer *pPack1 = pChar1->GetPack();
+    const CItemContainer *pPack1 = pChar1->GetPack();
     if (CItemContainer *pPack2 = pChar2->GetPackSafe(); pPack1 && pPack2 )
 	{
 		for (CSObjContRec* pObjRec : pPack1->GetIterationSafeContReverse())
@@ -376,7 +376,7 @@ bool CClient::OnTarg_Item_Add(const CObjBase * pObj, CPointMap & pt )
 
 	if ( pItem->IsTypeMulti() )
 	{
-		CItem *pMulti = OnTarg_Use_Multi(pItem->Item_GetDef(), pt, pItem);
+        const CItem *pMulti = OnTarg_Use_Multi(pItem->Item_GetDef(), pt, pItem);
 		pItem->Delete();
 		return pMulti ? true : false;
 	}
@@ -463,7 +463,7 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 {
 	ADDTOCALLSTACK("CClient::Cmd_Extract");
 	// RETURN: Number of statics here.
-	CPointMap ptCtr = rect.GetCenter();
+    const CPointMap ptCtr = rect.GetCenter();
 
 	int iCount = 0;
 	for ( int mx = rect.m_left; mx <= rect.m_right; mx++)
@@ -474,12 +474,12 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 			const CServerMapBlock * pBlock = CWorldMap::GetMapBlock( ptCur );
 			if ( pBlock == nullptr )
 				continue;
-			size_t iQty = pBlock->m_Statics.GetStaticQty();
+            const size_t iQty = pBlock->m_Statics.GetStaticQty();
 			if ( iQty <= 0 )  // no static items here.
 				continue;
 
-			int x2 = pBlock->GetOffsetX(mx);
-			int y2 = pBlock->GetOffsetY(my);
+            const int x2 = pBlock->GetOffsetX(mx);
+            const int y2 = pBlock->GetOffsetY(my);
 			for ( uint i = 0; i < iQty; ++i )
 			{
 				if ( ! pBlock->m_Statics.IsStaticPoint( i, x2, y2 ))
@@ -509,20 +509,20 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 
 	// Extract dynamics as well.
 
-	int rx = 1 + abs( rect.m_right - rect.m_left ) / 2;
-	int ry = 1 + abs( rect.m_bottom - rect.m_top ) / 2;
+    const int rx = 1 + abs( rect.m_right - rect.m_left ) / 2;
+    const int ry = 1 + abs( rect.m_bottom - rect.m_top ) / 2;
 
 	auto AreaItem = CWorldSearchHolder::GetInstance( ptCtr, maximum( rx, ry ));
 	AreaItem->SetSearchSquare( true );
 	for (;;)
 	{
-		CItem * pItem = AreaItem->GetItem();
+        const CItem * pItem = AreaItem->GetItem();
 		if ( pItem == nullptr )
 			break;
 		if ( ! rect.IsInside2d( pItem->GetTopPoint()))
 			continue;
 
-		CPointMap pt = pItem->GetTopPoint();
+        const CPointMap pt = pItem->GetTopPoint();
 		iCount ++;
 		if ( pScript )
 		{
@@ -764,7 +764,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 	// Other "lore" type things about a creature ?
 	// ex. liche = the remnants of a powerful wizard
 
-	CChar * pChar = uid.CharFind();
+    const CChar * pChar = uid.CharFind();
 	if ( pChar == nullptr )
 	{
 		SysMessageDefault( DEFMSG_NON_ALIVE );
@@ -778,7 +778,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 
 		if ( m_pChar->IsStatFlag( STATF_ONHORSE ) )
 		{
-            if (CItem *pItem = m_pChar->LayerFind(LAYER_HORSE); pItem && pItem->m_itFigurine.m_UID == uid)
+            if (const CItem *pItem = m_pChar->LayerFind(LAYER_HORSE); pItem && pItem->m_itFigurine.m_UID == uid)
 				return 1;
 		}
 
@@ -787,8 +787,8 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 		return g_Rand.GetVal(60);
 	}
 
-	lpctstr pszHe = pChar->GetPronoun();
-	lpctstr pszHis = pChar->GetPossessPronoun();
+    const lpctstr pszHe = pChar->GetPronoun();
+    const lpctstr pszHis = pChar->GetPossessPronoun();
 
 	tchar *pszTemp = Str_GetTemp();
 
@@ -801,7 +801,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 	}
 
 	// Who is master ?
-    CChar * pCharOwner = nullptr;
+    const CChar * pCharOwner = nullptr;
     if (pChar->IsNPC())
     {
         pCharOwner = pChar->NPC_PetGetOwner();
@@ -814,7 +814,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 	}
 	else
 	{
-        lpctstr ptcMasterName = ( pCharOwner == m_pChar ) ? g_Cfg.GetDefaultMsg( DEFMSG_ANIMALLORE_MASTER_YOU ) : pCharOwner->GetName();
+        const lpctstr ptcMasterName = ( pCharOwner == m_pChar ) ? g_Cfg.GetDefaultMsg( DEFMSG_ANIMALLORE_MASTER_YOU ) : pCharOwner->GetName();
         snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_ANIMALLORE_MASTER ),
             pszHe, ptcMasterName);
 		// How loyal to master ?
@@ -823,7 +823,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 
 	// How well fed ?
 	// Food count = 30 minute intervals.
-	lpctstr pszText = pChar->IsStatFlag(STATF_CONJURED) ?
+    const lpctstr pszText = pChar->IsStatFlag(STATF_CONJURED) ?
 						g_Cfg.GetDefaultMsg(DEFMSG_ANIMALLORE_CONJURED) :
 						pChar->Food_GetLevelMessage(pCharOwner ? true : false, true);
 
@@ -886,7 +886,7 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 
 	// Whats it made of ?
 
-	CItemBase * pItemDef = pItem->Item_GetDef();
+    const CItemBase * pItemDef = pItem->Item_GetDef();
 	ASSERT(pItemDef);
 
 	if ( (iSkillLevel > 40) && !pItemDef->m_BaseResources.empty())
@@ -909,7 +909,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 	ADDTOCALLSTACK("CClient::OnSkill_EvalInt");
 	// SKILL_EVALINT
 	// iSkillLevel = 0 to 1000
-	CChar * pChar = uid.CharFind();
+    const CChar * pChar = uid.CharFind();
 	if ( pChar == nullptr )
 	{
 		SysMessageDefault( DEFMSG_NON_ALIVE );
@@ -937,7 +937,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_10 )
 	};
 
-	int iIntVal = pChar->Stat_GetAdjusted(STAT_INT);
+    const int iIntVal = pChar->Stat_GetAdjusted(STAT_INT);
 	int iIntEntry = (iIntVal-1) / 10;
 	if ( iIntEntry < 0 )
 		iIntEntry = 0;
@@ -968,9 +968,9 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 
 	if ( iSkillLevel > 400 )	// magery skill and mana level ?
 	{
-		int iMagerySkill = pChar->Skill_GetAdjusted(SKILL_MAGERY);
-		int iNecroSkill = pChar->Skill_GetAdjusted(SKILL_NECROMANCY);
-		int iMagicSkill = maximum(iMagerySkill,iNecroSkill);
+        const int iMagerySkill = pChar->Skill_GetAdjusted(SKILL_MAGERY);
+        const int iNecroSkill = pChar->Skill_GetAdjusted(SKILL_NECROMANCY);
+        const int iMagicSkill = maximum(iMagerySkill,iNecroSkill);
 
 		int iMagicEntry = iMagicSkill / 200;
 		if ( iMagicEntry < 0 )
@@ -998,7 +998,7 @@ int CClient::OnSkill_ArmsLore(const CUID &uid, int iSkillLevel, const bool fTest
 	ADDTOCALLSTACK("CClient::OnSkill_ArmsLore");
 
 	// SKILL_ARMSLORE
-	CItem * pItem = uid.ItemFind();
+    const CItem * pItem = uid.ItemFind();
 	if ( pItem == nullptr || ! pItem->IsTypeArmorWeapon())
 	{
 		SysMessageDefault( DEFMSG_ARMSLORE_UNABLE );
@@ -1106,7 +1106,7 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 {
 	ADDTOCALLSTACK("CClient::OnSkill_Anatomy");
 	// SKILL_ANATOMY
-	CChar * pChar = uid.CharFind();
+    const CChar * pChar = uid.CharFind();
 	if ( pChar == nullptr )
 	{
 		addObjMessage( g_Cfg.GetDefaultMsg( DEFMSG_NON_ALIVE ), pChar );
@@ -1150,14 +1150,14 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_10 )
 	};
 
-	int iStrVal = pChar->Stat_GetAdjusted(STAT_STR);
+    const int iStrVal = pChar->Stat_GetAdjusted(STAT_STR);
 	int iStrEntry = (iStrVal-1)/10;
 	if ( iStrEntry < 0 )
 		iStrEntry = 0;
 	if ( static_cast<uint>(iStrEntry) >= std::size(sm_szStrEval))
 		iStrEntry = std::size(sm_szStrEval) - 1;
 
-	int iDexVal = pChar->Stat_GetAdjusted(STAT_DEX);
+    const int iDexVal = pChar->Stat_GetAdjusted(STAT_DEX);
 	int iDexEntry = (iDexVal-1)/10;
 	if ( iDexEntry < 0 )
 		iDexEntry = 0;
@@ -1196,8 +1196,8 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 	if (fTest)
 		return (pCorpse->m_uidLink == m_pChar->GetUID()) ? 2 : g_Rand.GetVal(60);
 
-	CChar * pCharKiller = pCorpse->m_itCorpse.m_uidKiller.CharFind();
-	lpctstr pName = pCharKiller ? pCharKiller->GetName() : nullptr;
+    const CChar * pCharKiller = pCorpse->m_itCorpse.m_uidKiller.CharFind();
+    const lpctstr pName = pCharKiller ? pCharKiller->GetName() : nullptr;
 
 	if ( pCorpse->IsCorpseSleeping() )
 	{
@@ -1208,7 +1208,7 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 	tchar * pszTemp = Str_GetTemp();
 	if ( pCorpse->m_itCorpse.m_carved )
 	{
-		int len = snprintf( pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_FORENSICS_CARVE_1), pCorpse->GetName() );
+        const int len = snprintf( pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_FORENSICS_CARVE_1), pCorpse->GetName() );
 		if ( pName )
 			snprintf( pszTemp + len, Str_TempLength() - len, g_Cfg.GetDefaultMsg(DEFMSG_FORENSICS_CARVE_2), pName );
 		else
@@ -1217,7 +1217,7 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 	}
 	else if ( pCorpse->GetTimeStampS() > 0 )
 	{
-		int len = snprintf( pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_FORENSICS_TIMER),
+        const int len = snprintf( pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_FORENSICS_TIMER),
             pCorpse->GetName(),
             (CWorldGameTime::GetCurrentTime().GetTimeDiff(pCorpse->GetTimeStampS()) / MSECS_PER_SEC));
 
@@ -1238,7 +1238,7 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 	// Maybe taste what it is made of for ingredients ?
 	// Differntiate potion types ?
 
-	CItem * pItem = uid.ItemFind();
+    const CItem * pItem = uid.ItemFind();
 	if ( pItem == nullptr )
 	{
 		if ( uid == m_pChar->GetUID())
@@ -1541,7 +1541,7 @@ bool CClient::OnTarg_Pet_Command( CObjBase * pObj, const CPointMap & pt )
 	if ( m_tmPetCmd.m_fAllPets )
 	{
 		// All the pets that could hear me.
-		bool fGhostSpeak = m_pChar->IsSpeakAsGhost();
+        const bool fGhostSpeak = m_pChar->IsSpeakAsGhost();
 
 		auto AreaChars = CWorldSearchHolder::GetInstance( m_pChar->GetTopPoint(), UO_MAP_VIEW_SIGHT );
 		for (;;)
@@ -1603,7 +1603,7 @@ bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
 		return false;
 	}
 
-    if ( CItemContainer *pPack = pCharPet->GetPack() )
+    if (const CItemContainer *pPack = pCharPet->GetPack() )
 	{
 		if ( ! pPack->IsContainerEmpty() )
 		{
@@ -1622,7 +1622,7 @@ bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
 
 	if ( IsSetOF(OF_PetSlots) )
 	{
-        short iFollowerSlots = pCharPet->GetFollowerSlots();
+        const short iFollowerSlots = pCharPet->GetFollowerSlots();
 		m_pChar->FollowersUpdate(pCharPet,(-maximum(0, iFollowerSlots)));
 	}
 
@@ -1719,7 +1719,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 
 	if (( IsTrigUsed(CItem::sm_szTrigName[trigtype]) ) || ( IsTrigUsed(CChar::sm_szTrigName[(CTRIG_itemAfterClick - 1) + trigtype]) )) //ITRIG_TARGON_GROUND, ITRIG_TARGON_CHAR, ITRIG_TARGON_ITEM
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(id, 0, 0, pObjTarg);
         if ( pItemUse->OnTrigger( trigtype, pScriptArgs, m_pChar ) == TRIGRET_RET_TRUE )
 			return true;
@@ -2081,7 +2081,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		}
 
 		CItem * pKey = nullptr;
-		bool fLockable = pItemTarg->IsTypeLockable();
+        const bool fLockable = pItemTarg->IsTypeLockable();
 
 		if ( fLockable && pItemTarg->m_itContainer.m_UIDLock.IsValidUID())
 		{
@@ -2150,7 +2150,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			{
 				CItem * pItemNew = CItem::CreateBase( iOutID );
 				ASSERT(pItemNew);
-				HUE_TYPE hue = pItemTarg->GetHue();
+                const HUE_TYPE hue = pItemTarg->GetHue();
 				pItemTarg->Delete();
 				pItemNew->SetHue( hue ) ;
 				pItemNew->SetAmount( iOutQty );
@@ -2206,7 +2206,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 
 		int iUsed = 0;
 		int iNeed = std::size(sm_Txt_LoomUse) - 1;
-		int iHave = pItemTarg->m_itLoom.m_iClothQty;
+        const int iHave = pItemTarg->m_itLoom.m_iClothQty;
 		if ( iHave < iNeed )
 		{
 			iNeed -= iHave;
@@ -2460,7 +2460,7 @@ bool CClient::OnTarg_Party_Add( CChar * pChar )
 		return false;
 	}
 
-    if (CVarDefCont *pTagInvitetime = m_pChar->m_TagDefs.GetKey("PARTY_LASTINVITETIME");
+    if (const CVarDefCont *pTagInvitetime = m_pChar->m_TagDefs.GetKey("PARTY_LASTINVITETIME");
         pTagInvitetime && (CWorldGameTime::GetCurrentTime().GetTimeDiff(pTagInvitetime->GetValNum()) <= 0) )
 	{
 		SysMessageDefault( DEFMSG_PARTY_ADD_TOO_FAST );
@@ -2527,7 +2527,7 @@ bool CClient::OnTarg_GlobalChat_Add(const CChar * pChar)
 		return true;
 	}
 
-    if (CVarDefCont *pTagInviteTime = m_pChar->m_TagDefs.GetKey("GLOBALCHAT_LASTINVITETIME");
+    if (CVarDefCont const * pTagInviteTime = m_pChar->m_TagDefs.GetKey("GLOBALCHAT_LASTINVITETIME");
         pTagInviteTime && (CWorldGameTime::GetCurrentTime().GetTimeRaw() < pTagInviteTime->GetValNum()))
 	{
 		SysMessage("You are unable to add new friends at this time. Please try again in a moment.");

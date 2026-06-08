@@ -18,7 +18,7 @@ bool CChar::Noto_IsMurderer() const noexcept
 bool CChar::Noto_IsEvil() const
 {
 	ADDTOCALLSTACK("CChar::Noto_IsEvil");
-	short iKarma = GetKarma();
+    const short iKarma = GetKarma();
 
 	//	guarded areas could be both RED and BLUE ones.
 	if ( m_pArea && m_pArea->IsGuarded() && m_pArea->m_TagDefs.GetKeyNum("RED") )
@@ -78,7 +78,7 @@ bool CChar::Noto_IsNeutral() const
 {
 	ADDTOCALLSTACK("CChar::Noto_IsNeutral");
 	// Should neutrality change in guarded areas ?
-	short iKarma = GetKarma();
+    const short iKarma = GetKarma();
 	switch ( GetNPCBrainGroup() )
 	{
 		case NPCBRAIN_MONSTER:
@@ -337,7 +337,7 @@ int CChar::Noto_GetLevel() const
 	ADDTOCALLSTACK("CChar::Noto_GetLevel");
 
 	size_t i = 0;
-    for (short iKarma = GetKarma(); i < g_Cfg.m_NotoKarmaLevels.size() && iKarma < g_Cfg.m_NotoKarmaLevels[i]; ++i )
+    for (const short iKarma = GetKarma(); i < g_Cfg.m_NotoKarmaLevels.size() && iKarma < g_Cfg.m_NotoKarmaLevels[i]; ++i )
 		;
 
 	size_t j = 0;
@@ -351,7 +351,7 @@ lpctstr CChar::Noto_GetTitle() const
 {
 	ADDTOCALLSTACK("CChar::Noto_GetTitle");
 
-	lpctstr pTitle = Noto_IsMurderer() ? g_Cfg.GetDefaultMsg( DEFMSG_TITLE_MURDERER ) : ( IsStatFlag(STATF_CRIMINAL) ? g_Cfg.GetDefaultMsg( DEFMSG_TITLE_CRIMINAL ) :  g_Cfg.GetNotoTitle(Noto_GetLevel(), Char_GetDef()->IsFemale()) );
+    const lpctstr pTitle = Noto_IsMurderer() ? g_Cfg.GetDefaultMsg( DEFMSG_TITLE_MURDERER ) : ( IsStatFlag(STATF_CRIMINAL) ? g_Cfg.GetDefaultMsg( DEFMSG_TITLE_CRIMINAL ) :  g_Cfg.GetNotoTitle(Noto_GetLevel(), Char_GetDef()->IsFemale()) );
 	lpctstr pFameTitle = GetKeyStr("NAME.PREFIX");
 	if ( !*pFameTitle )
 		pFameTitle = Noto_GetFameTitle();
@@ -389,7 +389,7 @@ bool CChar::Noto_Criminal( CChar * pCharViewer, const bool fFromSawCrime )
     TRIGRET_TYPE retCriminal = TRIGRET_RET_DEFAULT;
 	if ( IsTrigUsed(TRIGGER_CRIMINAL) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = decay / (60*MSECS_PER_SEC);   // convert in minutes
         pScriptArgs->m_iN2 = fFromSawCrime;
         pScriptArgs->m_pO1 = pCharViewer;
@@ -443,7 +443,7 @@ void CChar::Noto_ChangeDeltaMsg(const int iDelta, const lpctstr pszType )
 		DEFMSG_MSG_NOTO_CHANGE_8		// 300 = huge
 	};
 
-	int iDegree = minimum(abs(iDelta) / NOTO_FACTOR, 7);
+    const int iDegree = minimum(abs(iDelta) / NOTO_FACTOR, 7);
 
 	tchar *pszMsg = Str_GetTemp();
 	snprintf( pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_MSG_NOTO_CHANGE_0 ),
@@ -550,7 +550,7 @@ void CChar::Noto_Kill(CChar * pKill, const int iTotalKillers)
         return;
 
     // What was their noto to me ?
-    NOTO_TYPE NotoThem = pKill->Noto_GetFlag( this, false );
+    const NOTO_TYPE NotoThem = pKill->Noto_GetFlag( this, false );
 
     // Fight is over now that i have won. (if i was fighting at all )
     // ie. Magery cast might not be a "fight"
@@ -574,7 +574,7 @@ void CChar::Noto_Kill(CChar * pKill, const int iTotalKillers)
         // I'm a murderer !
         if (!IsPriv(PRIV_GM))
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = m_pPlayer->m_wMurders + 1LL;
             pScriptArgs->m_iN2 = true;
             pScriptArgs->m_iN3 = false;
@@ -603,7 +603,7 @@ void CChar::Noto_Kill(CChar * pKill, const int iTotalKillers)
     if (NotoThem == NOTO_GUILD_SAME || pKill->IsStatFlag(STATF_CONJURED))
         return;
 
-    int iPrvLevel = Noto_GetLevel();	// store title before fame/karma changes to check if it got changed
+    const int iPrvLevel = Noto_GetLevel();	// store title before fame/karma changes to check if it got changed
     Noto_Fame(g_Cfg.Calc_FameKill(pKill) / iTotalKillers, pKill);
     Noto_Karma(g_Cfg.Calc_KarmaKill(pKill, NotoThem) / iTotalKillers, INT32_MIN, false, pKill);
 
@@ -679,7 +679,7 @@ NOTO_TYPE CChar::NotoSave_GetValue(const int id, const bool fGetColor )
 		return NOTO_INVALID;
 	if ( static_cast<int>(m_notoSaves.size()) <= id )
 		return NOTO_INVALID;
-	NotoSaves & refNotoSave = m_notoSaves[id];
+    const NotoSaves & refNotoSave = m_notoSaves[id];
     if (fGetColor && refNotoSave.color != 0 )	// retrieving color if requested... only if a color is greater than 0 (to avoid possible crashes).
 		return refNotoSave.color;
 
@@ -695,7 +695,7 @@ int64 CChar::NotoSave_GetTime(const int id )
 		return NOTO_INVALID;
 	if ( static_cast<int>(m_notoSaves.size()) <= id )
 		return -1;
-	NotoSaves & refNotoSave = m_notoSaves[id];
+    const NotoSaves & refNotoSave = m_notoSaves[id];
 	return refNotoSave.time;
 }
 

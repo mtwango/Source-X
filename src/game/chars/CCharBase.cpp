@@ -54,7 +54,7 @@ CCharBase::CCharBase(const CREID_TYPE id ) :
 lpctstr CCharBase::GetTradeName() const
 {
 	ADDTOCALLSTACK("CCharBase::GetTradeName");
-	lpctstr pName = GetTypeName();
+    const lpctstr pName = GetTypeName();
 	if ( pName[0] != '#' )
 		return pName;
 
@@ -118,7 +118,7 @@ bool CCharBase::SetDispID(const CREID_TYPE id )
 	}
 
 	// Copy the rest of the stuff from the display base.
-	CCharBase * pCharDef = FindCharBase( id );
+	CCharBase const * pCharDef = FindCharBase( id );
 	if ( pCharDef == nullptr )
 	{
 		DEBUG_ERR(( "Creating char SetDispID(0%x) BAD\n", id ));
@@ -502,7 +502,7 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
         return nullptr;
 
 	const CResourceID rid( RES_CHARDEF, baseID );
-	size_t index = g_Cfg.m_ResHash.FindKey(rid);
+    const size_t index = g_Cfg.m_ResHash.FindKey(rid);
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 

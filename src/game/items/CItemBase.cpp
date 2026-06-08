@@ -130,7 +130,7 @@ word CItemBase::GetMaxAmount()
 	if (!IsStackableType())
 		return 0;
 
-    if (int64 iMax = GetDefNum("MaxAmount"))
+    if (const int64 iMax = GetDefNum("MaxAmount"))
 		return static_cast<word>(minimum(iMax, UINT16_MAX));
 
     return static_cast<word>(minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX));
@@ -811,7 +811,7 @@ height_t CItemBase::GetItemHeight(const ITEMID_TYPE id, uint64 *uiBlockFlags ) /
 	// used for walk block checking.
 
 	const CResourceID rid( RES_ITEMDEF, id );
-    if (size_t index = g_Cfg.m_ResHash.FindKey(rid); index != sl::scont_bad_index() ) // already loaded ?
+    if (const size_t index = g_Cfg.m_ResHash.FindKey(rid); index != sl::scont_bad_index() ) // already loaded ?
 	{
 		CResourceDef * pBaseStub = g_Cfg.m_ResHash.GetBarePtrAt( rid, index );
 		ASSERT(pBaseStub);
@@ -886,7 +886,7 @@ ITEMID_TYPE CItemBase::GetNextFlipID(const ITEMID_TYPE id ) const
 		ITEMID_TYPE idprev = GetDispID();
 		for ( size_t i = 0; i < m_flip_id.size(); ++i )
 		{
-			ITEMID_TYPE idnext = m_flip_id[i];
+            const ITEMID_TYPE idnext = m_flip_id[i];
 			if ( idprev == id )
 				return idnext;
 			idprev = idnext;
@@ -980,7 +980,7 @@ int CItemBase::CalculateMakeValue( int iQualityLevel ) const
 
 		// this is the normal skill required.
 		// if iQuality is much less than iSkillNeed then something is wrong.
-        if (int iSkillNeed = static_cast<int>(m_SkillMake[i].GetResQty()); iQualityLevel < iSkillNeed )
+        if (const int iSkillNeed = static_cast<int>(m_SkillMake[i].GetResQty()); iQualityLevel < iSkillNeed )
 			iQualityLevel = iSkillNeed;
 
 		lValue += pSkillDef->m_Values.GetLinear( iQualityLevel );
@@ -1137,7 +1137,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 		{
 			if (!IsType(IT_SHIP))
 				return false;
-            auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
+            const auto *const pItemMulti = dynamic_cast<CItemBaseMulti*>(this);
 			ASSERT(pItemMulti);
 			sVal.FormatVal(pItemMulti->m_SpeedMode);
 		}
@@ -1301,7 +1301,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 					bool	fQtyOnly	= false;
 					bool	fKeyOnly	= false;
 					SKIP_SEPARATORS( ptcKey );
-					int		index	= Exp_GetVal( ptcKey );
+                    const int index = Exp_GetVal( ptcKey );
 					SKIP_SEPARATORS( ptcKey );
 
 					if ( !strnicmp( ptcKey, "KEY", 3 ))
@@ -1370,8 +1370,8 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 		case IBC_TYPE:
 			// sVal.FormatVal( m_type );
 			{
-				CResourceID	rid( RES_TYPEDEF, m_type );
-                if (CResourceDef *pRes = g_Cfg.RegisteredResourceGetDef(rid); !pRes )
+                const CResourceID rid( RES_TYPEDEF, m_type );
+                if (const CResourceDef *pRes = g_Cfg.RegisteredResourceGetDef(rid); !pRes )
 					sVal.FormatVal( m_type );
 				else
 					sVal = pRes->GetResourceName();
@@ -1503,7 +1503,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                 }
 
                 int64 piVal[2];
-                if (size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
+                if (const size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
 				{
 					pItemMulti->_shipSpeed.period = static_cast<uchar>(piVal[0]);
 					pItemMulti->_shipSpeed.tiles = static_cast<uchar>(piVal[1]);
@@ -1536,7 +1536,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 		case IBC_DUPELIST:
 			{
 				tchar * ppArgs[512];
-				int iArgQty = Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
+                const int iArgQty = Str_ParseCmds( s.GetArgStr(), ppArgs, std::size(ppArgs));
 				if ( iArgQty <= 0 )
 					return false;
 				m_flip_id.clear();
@@ -1719,7 +1719,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			m_SkillMake.Load( s.GetArgStr() );
             for (const CResourceQty& res : m_SkillMake)
             {
-                if (RES_TYPE type = res.GetResType(); (type != RES_SKILL) && (type != RES_TYPEDEF) && (type != RES_ITEMDEF))
+                if (const RES_TYPE type = res.GetResType(); (type != RES_SKILL) && (type != RES_TYPEDEF) && (type != RES_ITEMDEF))
                 {
                     g_Log.EventWarn("Invalid requirement in SKILLMAKE (allowed: skill, typedef, itemdef).\n");
                     break;
@@ -1762,7 +1762,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 		case IBC_WEIGHT:
 			// Read in the weight but it may not be decimalized correctly
 			{
-				bool fDecimal = ( strchr( s.GetArgStr(), '.' ) != nullptr );
+                const bool fDecimal = ( strchr( s.GetArgStr(), '.' ) != nullptr );
 				m_weight = s.GetArgWVal();
 				if ( ! fDecimal )
 					m_weight *= WEIGHT_UNITS;
@@ -1788,7 +1788,7 @@ void CItemBase::ReplaceItemBase(const CItemBase * pOld, CResourceDef * pNew ) //
 	ASSERT(pOld);
 	ASSERT(pOld->GetRefInstances() == 0);
 	CResourceID const& rid = pOld->GetResourceID();
-	size_t index = g_Cfg.m_ResHash.FindKey(rid);
+    const size_t index = g_Cfg.m_ResHash.FindKey(rid);
 	ASSERT( index != sl::scont_bad_index() );
 	g_Cfg.m_ResHash.SetAt( rid, index, pNew );
 }
@@ -1932,7 +1932,7 @@ void CItemBaseMulti::SetMultiRegion( tchar * pArgs )
 	ADDTOCALLSTACK("CItemBaseMulti::SetMultiRegion");
 	// inclusive region.
 	int64 piArgs[5];
-    if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
+    if (const size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return;
 	m_Components.clear();	// might be after a resync
 	m_rect.SetRect( static_cast<int>(piArgs[0]), static_cast<int>(piArgs[1]), static_cast<int>(piArgs[2] + 1), static_cast<int>(piArgs[3] + 1), static_cast<int>(piArgs[4]) );
@@ -1942,7 +1942,7 @@ bool CItemBaseMulti::AddComponent( tchar * pArgs )
 {
 	ADDTOCALLSTACK("CItemBaseMulti::AddComponent");
 	int64 piArgs[4];
-    if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
+    if (const size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return false;
 	return AddComponent(static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(piArgs[0]))), static_cast<short>(piArgs[1]), static_cast<short>(piArgs[2]), static_cast<char>(piArgs[3]) );
 }
@@ -2051,7 +2051,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 		case MLC_MULTIOFFSET:
 		{
 			int64 ppArgs[3];
-            if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs)); iQty < 1)
+            if (const size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs)); iQty < 1)
 				return false;
 
 			m_Offset.m_dx = static_cast<short>(ppArgs[0]);
@@ -2071,7 +2071,7 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
 
             // SHIPSPEED x[,y]
             int64 ppArgs[2];
-            size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs));
+            const size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs));
             if (iQty < 1)
                 return false;
 
@@ -2125,7 +2125,7 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
             else if (*ptcKey == '.')
             {
                 SKIP_SEPARATORS(ptcKey);
-                size_t index = Exp_GetVal(ptcKey);
+                const size_t index = Exp_GetVal(ptcKey);
                 if (index >= pMulti->GetItemCount())
                     return false;
                 SKIP_SEPARATORS(ptcKey);
@@ -2299,7 +2299,7 @@ CItemBase * CItemBase::FindItemBase(const ITEMID_TYPE id ) // static
 
 	// Scan the item definition for keywords such as DUPEITEM and
 	// MULTIREGION, as these will adjust how our definition is processed
-	CScriptLineContext scriptStartContext = s.GetContext();
+    const CScriptLineContext scriptStartContext = s.GetContext();
 	while ( s.ReadKeyParse())
 	{
 		if (s.IsKey("DUPEITEM"))

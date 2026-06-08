@@ -701,7 +701,7 @@ void CItemMulti::SetGuild(const CUID& uidGuild)
 {
     ADDTOCALLSTACK("CItemMulti::SetGuild");
 
-    auto *pGuildStone = dynamic_cast<CItemStone*>(GetGuildStone().ItemFind());
+    const auto *pGuildStone = dynamic_cast<CItemStone*>(GetGuildStone().ItemFind());
     _uidGuild.InitUID();
     if (pGuildStone)  // Old Guild may not exist, was it removed...?
     {
@@ -749,7 +749,7 @@ void CItemMulti::AddCoowner(const CUID& uidCoowner)
             return;
         }
     }
-    CChar *pCoowner = uidCoowner.CharFind();
+    const CChar *pCoowner = uidCoowner.CharFind();
     if (!pCoowner || !pCoowner->m_pPlayer)
     {
         return;
@@ -773,7 +773,7 @@ void CItemMulti::DeleteCoowner(const CUID& uidCoowner, const bool fRemoveFromLis
                 _lCoowners.erase(_lCoowners.begin() + i);
             }
 
-            CChar *pCoowner = uidCoowner.CharFind();
+            const CChar *pCoowner = uidCoowner.CharFind();
             if (!pCoowner || !pCoowner->m_pPlayer)
             {
                 continue;
@@ -825,7 +825,7 @@ void CItemMulti::AddFriend(const CUID& uidFriend)
             return;
         }
     }
-    CChar *pFriend = uidFriend.CharFind();
+    const CChar *pFriend = uidFriend.CharFind();
     if (!pFriend || !pFriend->m_pPlayer)
     {
         return;
@@ -849,7 +849,7 @@ void CItemMulti::DeleteFriend(const CUID& uidFriend, const bool fRemoveFromList)
                 _lFriends.erase(_lFriends.begin() + i);
             }
 
-            CChar *pFriend = uidFriend.CharFind();
+            const CChar *pFriend = uidFriend.CharFind();
             if (!pFriend || !pFriend->m_pPlayer)
             {
                 continue;
@@ -998,7 +998,7 @@ void CItemMulti::DeleteAccess(const CUID& uidAccess, const bool fRemoveFromList)
                 _lAccesses.erase(_lAccesses.begin() + i);
             }
 
-            if (CChar *pAccess = uidAccess.CharFind(); pAccess && pAccess->m_pPlayer)
+            if (const CChar *pAccess = uidAccess.CharFind(); pAccess && pAccess->m_pPlayer)
             {
                 if (CMultiStorage *pMultiStorage = pAccess->m_pPlayer->GetMultiStorage())
                 {
@@ -1478,7 +1478,7 @@ void CItemMulti::RedeedAddons()
     {
         return;
     }
-    if (auto *const pCrate = dynamic_cast<CItemContainer *>(GetMovingCrate(true).ItemFind()); !pCrate)
+    if (const auto *const pCrate = dynamic_cast<CItemContainer *>(GetMovingCrate(true).ItemFind()); !pCrate)
     {
         return;
     }
@@ -1521,7 +1521,7 @@ void CItemMulti::AddAddon(const CUID& uidAddon)
     {
         return;
     }
-    auto *const pAddon = dynamic_cast<CItemMulti*>(uidAddon.ItemFind());
+    const auto *const pAddon = dynamic_cast<CItemMulti*>(uidAddon.ItemFind());
     if (!pAddon)
     {
         return;
@@ -1774,7 +1774,7 @@ void CItemMulti::UnlockAllItems()
     ADDTOCALLSTACK("CItemMulti::UnlockAllItems");
     for (const CUID& uidLockeddown : _lLockDowns)
     {
-        if (CItem *pItem = uidLockeddown.ItemFind(true); !pItem)
+        if (const CItem *pItem = uidLockeddown.ItemFind(true); !pItem)
             continue;
 
         UnlockItem(uidLockeddown, false);
@@ -1874,7 +1874,7 @@ int16 CItemMulti::GetSecuredItemsCount() const
     size_t iCount = 0;
     for (size_t i = 0; i < _lSecureContainers.size(); ++i)
     {
-        if (auto *const pContainer = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))
+        if (const auto *const pContainer = static_cast<CItemContainer *>(_lSecureContainers[i].ItemFind()))
         {
             iCount += pContainer->GetContentCount();
         }
@@ -2661,7 +2661,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
         case SHL_PRIV:
         {
             ASSERT(pSrc);
-            if (CChar* pSrcChar = pSrc->GetChar())
+            if (const CChar * pSrcChar = pSrc->GetChar())
             {
                 if (pSrcChar->m_pPlayer)
                 {
@@ -2747,7 +2747,7 @@ bool CItemMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
         }
         case SHL_GETFRIENDPOS:
         {
-            CUID uidFriend(Exp_GetVal(ptcKey));
+            const CUID uidFriend(Exp_GetVal(ptcKey));
             sVal.FormatVal(GetFriendIndex(uidFriend));
             break;
         }
@@ -3248,7 +3248,7 @@ CItem *CItemMulti::Multi_Create(CChar *pChar, const CItemBase * pItemDef, CPoint
             Area->SetSearchSquare(true);
             for (;;)
             {
-                CChar * pCharSearch = Area->GetChar();
+                const CChar * pCharSearch = Area->GetChar();
                 if (pCharSearch == nullptr)
                 {
                     break;

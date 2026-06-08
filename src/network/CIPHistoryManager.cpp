@@ -34,7 +34,7 @@ void HistoryIP::setBlocked(const bool isBlocked, int64 timeoutSeconds)
     ADDTOCALLSTACK("HistoryIP:setBlocked");
     if (isBlocked == true)
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(m_ip.GetAddrStr());
         pScriptArgs->m_iN1 = timeoutSeconds;
         g_Serv.r_Call("f_onserver_blockip", pScriptArgs, &g_Serv );
@@ -142,6 +142,6 @@ HistoryIP& IPHistoryManager::getHistoryForIP(const char* ip)
     // get history for an ip
     ADDTOCALLSTACK("IPHistoryManager::getHistoryForIP");
 
-    CSocketAddressIP me(ip);
+    const CSocketAddressIP me(ip);
     return getHistoryForIP(me);
 }

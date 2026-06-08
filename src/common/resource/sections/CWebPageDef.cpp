@@ -409,13 +409,13 @@ void CWebPageDef::WebPageLog()
 	if ( ! FileRead.Open( m_sDstFilePath, OF_READ|OF_TEXT ))
 		return;
 
-	lpctstr pszExt = FileRead.GetFileExt();
+    const lpctstr pszExt = FileRead.GetFileExt();
 
 	tchar szName[ SPHERE_MAX_PATH ];
 	Str_CopyLimitNull( szName, m_sDstFilePath, SPHERE_MAX_PATH);
 	szName[ m_sDstFilePath.GetLength() - strlen(pszExt) ] = '\0';
 
-	CSTime datetime = CSTime::GetCurrentTime();
+    const CSTime datetime = CSTime::GetCurrentTime();
 
 	tchar *pszTemp = Str_GetTemp();
 	snprintf(pszTemp, Str_TempLength(), "%s%d%02d%02d%s", szName, datetime.GetYear()%100, datetime.GetMonth(), datetime.GetDay(), pszExt);
@@ -468,10 +468,10 @@ bool CWebPageDef::SetSourceFile( lpctstr pszName, const CClient * pClient )
 
 	// attempt to set this to a source file.
 	// test if it exists.
-    if (size_t iLen = strlen(pszName); iLen <= 3 )
+    if (const size_t iLen = strlen(pszName); iLen <= 3 )
 		return false;
 
-	lpctstr pszExt = CSFile::GetFilesExt( pszName );
+    const lpctstr pszExt = CSFile::GetFilesExt( pszName );
 	if ( pszExt == nullptr || pszExt[0] == '\0' )
 		return false;
 
@@ -514,7 +514,7 @@ bool CWebPageDef::IsMatch(const lpctstr pszMatch ) const
 	if ( pszMatch == nullptr )	// match all.
 		return true;
 
-	lpctstr pszDstName = GetDstName();
+    const lpctstr pszDstName = GetDstName();
 	lpctstr pszTry;
 
 	if ( pszDstName[0] )
@@ -709,7 +709,7 @@ static int HtmlDeCode( tchar * pszDst, lpctstr pszSrc )
 		else if ( ch == '%' )
 		{
 			ch = *pszSrc++;
-			int iVal = GetHexDigit(ch);
+            const int iVal = GetHexDigit(ch);
 			if ( ch )
 			{
 				ch = *pszSrc++;
@@ -745,7 +745,7 @@ bool CWebPageDef::ServPagePost( CClient * pClient, const lpctstr pszURLArgs, tch
 	// Parse the data.
 	pContentData[uiContentLength] = 0;
 	tchar * ppArgs[64];
-	int iArgs = Str_ParseCmds(pContentData, ppArgs, std::size(ppArgs), "&");
+    const int iArgs = Str_ParseCmds(pContentData, ppArgs, std::size(ppArgs), "&");
 	if (( iArgs <= 0 ) || ( iArgs >= 63 ))
 		return false;
 
@@ -755,15 +755,15 @@ bool CWebPageDef::ServPagePost( CClient * pClient, const lpctstr pszURLArgs, tch
 
     // TODO: just split CDialogResponseArgs into two objects (CScriptTriggerArgs and a struct for other data?)
     //  Or just make CScriptTriggerArgs a member of CDialogResponseArgs... Favor composition over inheritance!
-    auto resp = std::make_shared<CDialogResponseArgs>();
+    const auto resp = std::make_shared<CDialogResponseArgs>();
 	dword dwButtonID = UINT32_MAX;
 	for ( int i = 0; i < iArgs; ++i )
 	{
-		tchar * pszNum = ppArgs[i];
+        const tchar * pszNum = ppArgs[i];
 		while ( IsAlpha(*pszNum) )
 			++pszNum;
 
-		int iNum = atoi(pszNum);
+        const int iNum = atoi(pszNum);
 		while ( *pszNum )
 		{
 			if ( *pszNum == '=' )
@@ -871,7 +871,7 @@ void CWebPageDef::ServPage( CClient * pClient, const tchar * pszPage, CSTime * p
 		default: pszErrText = "Unknown Error"; break;
 	}
 
-	CSTime datetime = CSTime::GetCurrentTime();
+    const CSTime datetime = CSTime::GetCurrentTime();
 	const char *sDate = datetime.FormatGmt(nullptr);
 	CSString sMsgHead;
 	CSString sText;

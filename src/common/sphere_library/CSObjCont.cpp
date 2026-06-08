@@ -104,8 +104,8 @@ void CSObjCont::InsertContentHead(CSObjContRec* pNewRec)
 void CSObjCont::InsertContentTail(CSObjContRec* pNewRec)
 {
 #ifdef _DEBUG
-	const_iterator itEnd = cend();
-	const_iterator itObjRec = std::find(cbegin(), itEnd, pNewRec);
+    const auto itEnd = cend();
+    const auto itObjRec = std::find(cbegin(), itEnd, pNewRec);
 	ASSERT(itObjRec == itEnd);
 	// Avoid duplicates, thus delete-ing objects multiple times
 #endif

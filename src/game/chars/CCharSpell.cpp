@@ -130,7 +130,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, const bool fTakePets, const bool fC
         // Is it a valid teleport location that allows this ?
         if ( fCheckAntiMagic && !IsPriv(PRIV_GM) )
         {
-            CRegion * pArea = CheckValidMove(ptNew, nullptr, DIR_QTY, nullptr);
+            const CRegion * pArea = CheckValidMove(ptNew, nullptr, DIR_QTY, nullptr);
             if ( !pArea )
             {
                 SysMessageDefault(DEFMSG_SPELL_TELE_CANT);
@@ -145,7 +145,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, const bool fTakePets, const bool fC
 
         if ( IsPriv(PRIV_JAILED) )
         {
-            if (CRegion *pJail = g_Cfg.GetRegion("jail"); !pJail || !pJail->IsInside2d(ptNew) )
+            if (const CRegion *pJail = g_Cfg.GetRegion("jail"); !pJail || !pJail->IsInside2d(ptNew) )
             {
                 // Must be /PARDONed to leave jail area
                 static lpctstr const sm_szPunishMsg[] =
@@ -222,7 +222,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, const bool fTakePets, const bool fC
 	MoveToChar(ptNew, true, false); 	// move character
 
 	CClient *pClient = GetClientActive();
-	CClient *pClientIgnore = nullptr;
+    const CClient *pClientIgnore = nullptr;
 	if ( pClient && (ptNew.m_map != ptOld.m_map) )
 	{
 		pClient->addReSync();
@@ -252,11 +252,11 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, const bool fCheckAntiMagic)
     // Create moongate between current pt and destination pt
     // RETURN: true = it worked.
 
-    CRegion *pArea = GetRegion();
+    const CRegion *pArea = GetRegion();
     if ( !pArea || !ptDest.IsValidPoint() )
         return false;
 
-    CRegion *pAreaDest = ptDest.GetRegion(REGION_TYPE_AREA|REGION_TYPE_ROOM|REGION_TYPE_MULTI);
+    const CRegion *pAreaDest = ptDest.GetRegion(REGION_TYPE_AREA|REGION_TYPE_ROOM|REGION_TYPE_MULTI);
     if ( !pAreaDest )
         return false;
 
@@ -343,7 +343,7 @@ CChar * CChar::Spell_Summon_Place( CChar * pChar, const CPointMap &ptTarg, const
 	// Finally place the NPC in the world.
 	int iSkill;
 
-    if (CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr) || !pChar)
+    if (const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr) || !pChar)
 	{
 		return nullptr;
 	}
@@ -383,7 +383,7 @@ bool CChar::Spell_Recall(CItem * pRune, const bool fGate)
 	ADDTOCALLSTACK("CChar::Spell_Recall");
 	if (pRune && (IsTrigUsed(TRIGGER_SPELLEFFECT) || IsTrigUsed(TRIGGER_ITEMSPELL)))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = fGate ? SPELL_Gate_Travel : SPELL_Recall;
 
         if (pRune->OnTrigger(ITRIG_SPELLEFFECT, pScriptArgs, this) == TRIGRET_RET_FALSE)
@@ -457,7 +457,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 
 	if (IsTrigUsed(TRIGGER_RESURRECT))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(uiHits, 0, 0, pCorpse);
 
         if (OnTrigger(CTRIG_Resurrect, pScriptArgs, pCharSrc) == TRIGRET_RET_TRUE)
@@ -535,7 +535,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 template<typename T> void _CheckLimitEffectSkill(T& varEffect, const CChar* pCaster, const SKILL_TYPE skill)
 {
     // The bonus effect shouldn't set the skill above the skill max value
-    ushort uiSkillMax = pCaster->Skill_GetMax(skill, true);
+    const ushort uiSkillMax = pCaster->Skill_GetMax(skill, true);
     ushort uiSkillVal = pCaster->Skill_GetBase(skill);
     int iSkillValNew = uiSkillVal + varEffect;
     if (iSkillValNew > uiSkillMax)
@@ -558,25 +558,25 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 
 	CClient *pClient = GetClientActive();
 	CChar *pCaster = pSpell->m_uidLink.CharFind();
-	ushort uiStatEffect = (ushort)(pSpell->m_itSpell.m_spelllevel);
+    const ushort uiStatEffect = pSpell->m_itSpell.m_spelllevel;
 
 	if (IsTrigUsed(TRIGGER_SPELLEFFECTREMOVE))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pSpell;
         pScriptArgs->m_iN1 = spell;
 
-        if (TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellEffectRemove, pScriptArgs, pCaster);
+        if (const TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellEffectRemove, pScriptArgs, pCaster);
             iRet == TRIGRET_RET_FALSE)	// Return 0: remove the spell memory item but don't execute the default spell behaviour.
 			return;
 	}
 	if (IsTrigUsed(TRIGGER_EFFECTREMOVE))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pSpell;
         pScriptArgs->m_iN1 = spell;
 
-        if (TRIGRET_TYPE iRet = Spell_OnTrigger(spell, SPTRIG_EFFECTREMOVE, pScriptArgs, pCaster);
+        if (const TRIGRET_TYPE iRet = Spell_OnTrigger(spell, SPTRIG_EFFECTREMOVE, pScriptArgs, pCaster);
             iRet == TRIGRET_RET_FALSE)		// Return 0: remove the spell memory item but don't execute the default spell behaviour.
 			return;
 	}
@@ -620,7 +620,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 
 			BUFF_ICONS iBuffIcon = BI_START;
 			CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-			CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+            const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
 			switch (spell)
 			{
 				case SPELL_Polymorph:
@@ -668,9 +668,11 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			{
 				Stat_AddMod(STAT_STR, -pSpell->m_itSpell.m_PolyStr);
 				Stat_AddMod(STAT_DEX, -pSpell->m_itSpell.m_PolyDex);
-				ushort iValStr = Stat_GetVal(STAT_STR), iMaxStr = Stat_GetMaxAdjusted(STAT_STR);
-				ushort iValDex = Stat_GetVal(STAT_DEX), iMaxDex = Stat_GetMaxAdjusted(STAT_DEX);
-				Stat_SetVal(STAT_STR, minimum(iValStr, iMaxStr));
+                const ushort iValStr = Stat_GetVal(STAT_STR);
+                const ushort iMaxStr = Stat_GetMaxAdjusted(STAT_STR);
+                const ushort iValDex = Stat_GetVal(STAT_DEX);
+                const ushort iMaxDex = Stat_GetMaxAdjusted(STAT_DEX);
+                Stat_SetVal(STAT_STR, minimum(iValStr, iMaxStr));
 				Stat_SetVal(STAT_DEX, minimum(iValDex, iMaxDex));
 			}
 			StatFlag_Clear(STATF_POLYMORPH);
@@ -771,14 +773,14 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 		{
 			if (pClient)
 				pClient->removeBuff(BI_BLOODOATHCURSE);
-            if (CChar *pSrc = pSpell->m_uidLink.CharFind(); pSrc && pSrc->IsClientActive())
+            if (const CChar *pSrc = pSpell->m_uidLink.CharFind(); pSrc && pSrc->IsClientActive())
 				pSrc->GetClientActive()->removeBuff(BI_BLOODOATHCASTER);
 			return;
 		}
 		case LAYER_SPELL_Corpse_Skin:
         {
 			CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-			CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+            const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
             ModPropNum(pCCPChar, PROPCH_RESPHYSICAL, - pSpell->m_itSpell.m_PolyStr, pBaseCCPChar);
             ModPropNum(pCCPChar, PROPCH_RESFIRE,   + pSpell->m_itSpell.m_PolyDex, pBaseCCPChar);
             ModPropNum(pCCPChar, PROPCH_RESCOLD,   - pSpell->m_itSpell.m_PolyStr, pBaseCCPChar);
@@ -833,7 +835,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			if (m_pPlayer && IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE) && !pSpellDef->IsSpellType(SPELLFLAG_NO_ELEMENTALENGINE))
 			{
 				CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-				CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+                const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
                 ModPropNum(pCCPChar, PROPCH_RESFIREMAX,   + 10, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESCOLDMAX,   + 10, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESPOISONMAX, + 10, pBaseCCPChar);
@@ -880,7 +882,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE) && !pSpellDef->IsSpellType(SPELLFLAG_NO_ELEMENTALENGINE))
 			{
 				CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-				CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+                const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
                 ModPropNum(pCCPChar, PROPCH_RESPHYSICAL, - pSpell->m_itSpell.m_spelllevel, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESFIRE,   +5, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESCOLD,   +5, pBaseCCPChar);
@@ -899,7 +901,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
 			if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE) && !pSpellDef->IsSpellType(SPELLFLAG_NO_ELEMENTALENGINE))
 			{
 				CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-				CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+                const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
                 ModPropNum(pCCPChar, PROPCH_RESPHYSICAL, + pSpell->m_itSpell.m_spelllevel, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESFIRE,   -10, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_RESCOLD,   -10, pBaseCCPChar);
@@ -917,7 +919,7 @@ void CChar::Spell_Effect_Remove(CItem * pSpell)
             if (IsSetCombatFlags(COMBAT_ELEMENTAL_ENGINE) && !pSpellDef->IsSpellType(SPELLFLAG_NO_ELEMENTALENGINE))
             {
                 CCPropsChar* pCCPChar = GetComponentProps<CCPropsChar>();
-                CCPropsChar* pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
+                const CCPropsChar * pBaseCCPChar = Base_GetDef()->GetComponentProps<CCPropsChar>();
                 ModPropNum(pCCPChar, PROPCH_RESPHYSICAL, +pSpell->m_itSpell.m_PolyStr, pBaseCCPChar);
                 ModPropNum(pCCPChar, PROPCH_FASTERCASTING, +2, pBaseCCPChar);
                 _CheckLimitEffectSkill(pSpell->m_itSpell.m_PolyDex, this, SKILL_MAGICRESISTANCE);
@@ -1975,7 +1977,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 					break;
 			}
 
-			int iSpellPower = static_cast<int>(g_Rand.GetLLVal2(static_cast<int64>(iLevel) - 2, static_cast<int64>(iLevel) + 1));
+            const int iSpellPower = static_cast<int>(g_Rand.GetLLVal2(static_cast<int64>(iLevel) - 2, static_cast<int64>(iLevel) + 1));
 			iEffect = iSpellPower * ( 3 - ( (Stat_GetBase(STAT_DEX) / Stat_GetAdjusted(STAT_DEX) ) * 2));
 			iDmgType = DAMAGE_MAGIC | DAMAGE_POISON | DAMAGE_NOREVEAL;
 		}
@@ -1998,8 +2000,8 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 		break;
 	}
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-    pScriptArgs->Init((int)spell, iLevel, 0, pItem);
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    pScriptArgs->Init(spell, iLevel, 0, pItem);
     pScriptArgs->m_VarsLocal.SetNum("Charges", iCharges);
     pScriptArgs->m_VarsLocal.SetNum("Delay", iSecondsDelay);
     pScriptArgs->m_VarsLocal.SetNum("DamageType", iDmgType);
@@ -2147,7 +2149,7 @@ void CChar::Spell_Area(const CPointMap &pntTarg, const int iDist, int iSkillLeve
 	// iSkillLevel = 0-1000
 	//
 
-	SPELL_TYPE spelltype = m_atMagery.m_iSpell;
+    const SPELL_TYPE spelltype = m_atMagery.m_iSpell;
 	const CSpellDef * pSpellDef = g_Cfg.GetSpellDef(spelltype);
 	if ( pSpellDef == nullptr )
 		return;
@@ -2201,15 +2203,15 @@ void CChar::Spell_Field(const CPointMap &pntTarg, const ITEMID_TYPE idEW, const 
 		Noto_Criminal();
 
 	// get the dir of the field.
-	int dx = abs( pntTarg.m_x - GetTopPoint().m_x );
-	int dy = abs( pntTarg.m_y - GetTopPoint().m_y );
-	ITEMID_TYPE id = (dx > dy) ? (idnewNS ? idnewNS : idNS) : (idnewEW ? idnewEW : idEW);
+    const int dx = abs( pntTarg.m_x - GetTopPoint().m_x );
+    const int dy = abs( pntTarg.m_y - GetTopPoint().m_y );
+    const ITEMID_TYPE id = (dx > dy) ? (idnewNS ? idnewNS : idNS) : (idnewEW ? idnewEW : idEW);
 
 	int minX = static_cast<int>((fieldWidth - 1) / 2) - (fieldWidth - 1);
 	int maxX = minX + (fieldWidth - 1);
 
-	int minY = static_cast<int>((fieldGauge - 1) / 2) - (fieldGauge - 1);
-	int maxY = minY + (fieldGauge - 1);
+    const int minY = static_cast<int>((fieldGauge - 1) / 2) - (fieldGauge - 1);
+    const int maxY = minY + (fieldGauge - 1);
 
 	if ( IsSetMagicFlags( MAGICF_NOFIELDSOVERWALLS ) )
 	{
@@ -2395,7 +2397,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 	ushort uiManaUse = g_Cfg.Calc_SpellManaCost(this, pSpellDef, pSrc);
 	ushort uiTithingUse = g_Cfg.Calc_SpellTithingCost(this, pSpellDef, pSrc);
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(spellRef, uiManaUse, 0, pSrc);
 	if ( fTest )
         pScriptArgs->m_iN3 |= 0x0001;
@@ -2405,7 +2407,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 
 	if ( IsTrigUsed(TRIGGER_SELECT) )
 	{
-        TRIGRET_TYPE iRet = Spell_OnTrigger( spellRef, SPTRIG_SELECT, pScriptArgs, this );
+        const TRIGRET_TYPE iRet = Spell_OnTrigger( spellRef, SPTRIG_SELECT, pScriptArgs, this );
 		if ( iRet == TRIGRET_RET_TRUE )
 			return false;
 
@@ -2418,7 +2420,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 
 	if ( IsTrigUsed(TRIGGER_SPELLSELECT) )
 	{
-        TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellSelect, pScriptArgs, this );
+        const TRIGRET_TYPE iRet = OnTrigger(CTRIG_SpellSelect, pScriptArgs, this );
 		if ( iRet == TRIGRET_RET_TRUE )
 			return false;
 
@@ -2450,7 +2452,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 			return false;
 		}
 
-        if (CObjBaseTemplate *pObjTop = pSrc->GetTopLevelObj(); pObjTop != this )		// magic items must be on your person to use.
+        if (const CObjBaseTemplate *pObjTop = pSrc->GetTopLevelObj(); pObjTop != this )		// magic items must be on your person to use.
 		{
 			if ( fFailMsg )
 				SysMessageDefault( DEFMSG_SPELL_ENCHANT_ACTIVATE );
@@ -2501,7 +2503,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 			}
 
 			// check the spellbook for it.
-			CItem * pBook = GetSpellbook( spellRef );
+            const CItem * pBook = GetSpellbook( spellRef );
 			if ( pBook == nullptr )
 			{
 				if ( fFailMsg )
@@ -2529,7 +2531,7 @@ bool CChar::Spell_CanCast( SPELL_TYPE &spellRef, const bool fTest, CObjBase * pS
 
 			// Check for Tithing
 			CVarDefContNum* pVarTithing = GetDefKeyNum("Tithing", false);
-			int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
+            const int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
 			if (iValTithing < uiTithingUse)
 			{
 				if (fFailMsg)
@@ -2574,7 +2576,7 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 	//Create the NPC and check if we can actually place it in the world, but do not place it yet.
 
 	int iSkill;
-    if (CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr))
+    if (const CSpellDef *pSpellDef = g_Cfg.GetSpellDef(m_atMagery.m_iSpell); !pSpellDef || !pSpellDef->GetPrimarySkill(&iSkill, nullptr))
 		return nullptr;
 
 	if (uiCreature)//if iC1 is set that means we are overriding the default summoned creature.
@@ -2687,7 +2689,7 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 
 		if (IsSetOF(OF_PetSlots))
 		{
-            if (short iFollowerSlots = iFollowerSlotsOverride.has_value() ? iFollowerSlotsOverride.value() : pChar->GetFollowerSlots();
+            if (const short iFollowerSlots = iFollowerSlotsOverride.has_value() ? iFollowerSlotsOverride.value() : pChar->GetFollowerSlots();
                 !FollowersUpdate(pChar, iFollowerSlots, true))
 			{
 				SysMessageDefault(DEFMSG_PETSLOTS_TRY_SUMMON);
@@ -2713,7 +2715,7 @@ bool CChar::Spell_TargCheck_Face()
 		UpdateDir(m_Act_p);
 
 	// Check if target in on anti-magic region
-    if (CRegion *pArea = m_Act_p.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA); !IsPriv(PRIV_GM) && pArea && pArea->CheckAntiMagic(m_atMagery.m_iSpell) )
+    if (const CRegion *pArea = m_Act_p.GetRegion(REGION_TYPE_MULTI | REGION_TYPE_AREA); !IsPriv(PRIV_GM) && pArea && pArea->CheckAntiMagic(m_atMagery.m_iSpell) )
 	{
 		SysMessageDefault( DEFMSG_SPELL_TRY_AM );
 		m_Act_Difficulty = -1;	// Give very little credit for failure !
@@ -2735,7 +2737,7 @@ bool CChar::Spell_TargCheck()
 	}
 
 	CObjBase * pObj = m_Act_UID.ObjFind();
-	CObjBaseTemplate * pObjTop = nullptr;
+    const CObjBaseTemplate * pObjTop = nullptr;
 	if ( pObj != nullptr )
 	{
 		pObjTop = pObj->GetTopLevelObj();
@@ -2782,8 +2784,8 @@ bool CChar::Spell_TargCheck()
             {
                 // Check if the item is in my bankbox, and i'm not in the same position from which I opened it the last time.
                 const CPointMap& ptTop = GetTopPoint();
-                CItemContainer* pBank = GetBank();
-                if (bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
+                const CItemContainer * pBank = GetBank();
+                if (const bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
                     fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
                     return false;
             }
@@ -2818,7 +2820,7 @@ bool CChar::Spell_TargCheck()
 		}
 
 		//Check if the pos for tp is valid to make sure spellsuccess trigger not trigger unnecessarily.
-        if (SPELL_TYPE spell = m_atMagery.m_iSpell; spell == SPELL_Teleport && !IsPriv(PRIV_GM))
+        if (const SPELL_TYPE spell = m_atMagery.m_iSpell; spell == SPELL_Teleport && !IsPriv(PRIV_GM))
 		{
 			if (g_Cfg.m_iMountHeight)
 			{
@@ -2830,7 +2832,7 @@ bool CChar::Spell_TargCheck()
 			}
 
 			// Is it a valid teleport location that allows this ?
-			CRegion* pArea = CheckValidMove(m_Act_p, nullptr, DIR_QTY, nullptr);
+            const CRegion * pArea = CheckValidMove(m_Act_p, nullptr, DIR_QTY, nullptr);
 			if (!pArea)
 			{
 				SysMessageDefault(DEFMSG_SPELL_TELE_CANT);
@@ -2950,7 +2952,7 @@ bool CChar::Spell_CastDone()
     uint uiFieldGauge = 0;
     uint uiAreaRadius = 0;
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(spell, iSkillLevel, 0, pObjSrc);
     pScriptArgs->m_VarsLocal.SetNum("Duration", GetSpellDuration(spell, iSkillLevel, this), true);  // tenths of second
 
@@ -3011,7 +3013,7 @@ bool CChar::Spell_CastDone()
 
     uiSummonedCreatureID = static_cast<CREID_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("CreateObject1") & 0xFFFF);
     uiAreaRadius = static_cast<uint>(pScriptArgs->m_VarsLocal.GetKeyNum("AreaRadius"));
-    int iDuration = static_cast<int>(std::max(static_cast<int64>(0), pScriptArgs->m_VarsLocal.GetKeyNum("Duration")));
+    const int iDuration = static_cast<int>(std::max(static_cast<int64>(0), pScriptArgs->m_VarsLocal.GetKeyNum("Duration")));
     uiColor = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
 
     if (fIsSpellSummon)
@@ -3192,7 +3194,7 @@ bool CChar::Spell_CastDone()
 						pChar = this;	// spell revereses !
 						iDiff = -iDiff;
 					}
-					int iMax = pChar->Stat_GetMaxAdjusted(STAT_STR) / 2;
+                    const int iMax = pChar->Stat_GetMaxAdjusted(STAT_STR) / 2;
 					pChar->OnSpellEffect(spell, this, minimum(iDiff, iMax), nullptr, false, iDuration);
 				}
 				break;
@@ -3361,7 +3363,7 @@ void CChar::Spell_CastFail(const bool fAbort)
 	ITEMID_TYPE iT1 = ITEMID_FX_SPELL_FAIL;
 
 	ushort iManaLoss = 0, iTithingLoss = 0;
-	CSpellDef *pSpell = g_Cfg.GetSpellDef(m_atMagery.m_iSpell);
+    const CSpellDef *pSpell = g_Cfg.GetSpellDef(m_atMagery.m_iSpell);
  	if (!pSpell)
 		return;
 
@@ -3382,7 +3384,7 @@ void CChar::Spell_CastFail(const bool fAbort)
 			iTithingLoss = g_Cfg.Calc_SpellTithingCost(this, pSpell, m_Act_Prv_UID.ObjFind());
 	}
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(m_atMagery.m_iSpell, iManaLoss, 0, m_Act_Prv_UID.ObjFind());
     pScriptArgs->m_VarsLocal.SetNum("CreateObject1",iT1);
     pScriptArgs->m_VarsLocal.SetNum("TithingLoss", iTithingLoss);
@@ -3402,8 +3404,8 @@ void CChar::Spell_CastFail(const bool fAbort)
     iManaLoss = static_cast<ushort>(pScriptArgs->m_iN2);
     iTithingLoss = static_cast<ushort>(pScriptArgs->m_VarsLocal.GetKeyNum("TithingLoss"));
 
-    HUE_TYPE iColor = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
-    dword dwRender = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
+    const HUE_TYPE iColor = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
+    const dword dwRender = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
 
     iT1 = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("CreateObject1"))));
 	if (iT1)
@@ -3423,7 +3425,7 @@ void CChar::Spell_CastFail(const bool fAbort)
 			if (iTithingLoss > 0)
 			{
 				CVarDefContNum* pVarTithing = GetDefKeyNum("Tithing", false);
-				int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
+                const int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
 				pVarTithing->SetValNum(iValTithing - iTithingLoss);
 			}
 		}
@@ -3441,7 +3443,7 @@ void CChar::Spell_CastFail(const bool fAbort)
 			if (iTithingLoss > 0)
 			{
 				CVarDefContNum* pVarTithing = GetDefKeyNum("Tithing", false);
-				int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
+                const int64 iValTithing = pVarTithing ? pVarTithing->GetValNum() : 0;
 				pVarTithing->SetValNum(iValTithing - iTithingLoss);
 			}
 		}
@@ -3546,8 +3548,8 @@ int CChar::Spell_CastStart()
 	if ( iWaitTime < 1 )
 		iWaitTime = 1;
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-    pScriptArgs->Init((int)m_atMagery.m_iSpell, iDifficulty, 0, pItem);
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    pScriptArgs->Init(m_atMagery.m_iSpell, iDifficulty, 0, pItem);
     pScriptArgs->m_iN3 = iWaitTime;
     pScriptArgs->m_VarsLocal.SetNum("WOP", fWOP);
 	int64 WOPFont = g_Cfg.m_iWordsOfPowerFont;
@@ -3626,7 +3628,7 @@ int CChar::Spell_CastStart()
 			size_t len = 0;
 			for ( int i = 0; ; ++i )
 			{
-				tchar ch = pSpellDef->m_sRunes[i];
+                const tchar ch = pSpellDef->m_sRunes[i];
 				if ( !ch )
 					break;
 				len += Str_CopyLen(pszTemp + len, g_Cfg.GetRune(ch));
@@ -3678,7 +3680,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 	SOUND_TYPE iSound = pSpellDef->m_sound;
 	bool fExplode = (pSpellDef->IsSpellType(SPELLFLAG_FX_BOLT) && !pSpellDef->IsSpellType(SPELLFLAG_GOOD));		// bolt (chasing) spells have explode = 1 by default (if not good spell)
-	bool fPotion = (pSourceItem && pSourceItem->IsType(IT_POTION));
+    const bool fPotion = (pSourceItem && pSourceItem->IsType(IT_POTION));
 	if ( fPotion )
 	{
 		static constexpr SOUND_TYPE sm_DrinkSounds[] = { 0x030, 0x031 };
@@ -3693,18 +3695,18 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	if ( pSpellDef->IsSpellType(SPELLFLAG_RESIST) && pCharSrc && !fPotion )
 	{
 		uiResist = Skill_GetBase(SKILL_MAGICRESISTANCE) / 10;
-		ushort uiFirst = uiResist / 5;
+        const ushort uiFirst = uiResist / 5;
 		ushort uiSecond = (((pCharSrc->Skill_GetBase(SKILL_MAGERY) - 200) / 50) + static_cast<ushort>((1 + (spell / 8)) * 50));
 		if (uiResist >= uiSecond)
 			uiSecond = uiResist  - uiSecond;
 		else
 			uiSecond = 0;
-		uchar uiResistChance = static_cast<uchar>((maximum(uiFirst, uiSecond)));
+        const uchar uiResistChance = static_cast<uchar>((maximum(uiFirst, uiSecond)));
 		uiResist = Skill_UseQuick(SKILL_MAGICRESISTANCE, uiResistChance, true, false) ? 25 : 0;	// If we successfully resist then we have a 25% damage reduction, 0 if we don't.
 
 		if ( IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 		{
-            if (CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen); pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
+            if (const CItem *pEvilOmen = LayerFind(LAYER_SPELL_Evil_Omen); pEvilOmen && !g_Cfg.GetSpellDef(SPELL_Evil_Omen)->IsSpellType(SPELLFLAG_SCRIPTED))
 				uiResist /= 2;	// Effect 3: Only 50% of magic resistance used in next resistable spell.
 		}
 	}
@@ -3734,7 +3736,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
             // Racial Bonus (Berserk), gargoyles gains +3% Spell Damage Increase per each 20 HP lost
             if ((g_Cfg.m_iRacialFlags & RACIALF_GARG_BERSERK) && IsGargoyle())
             {
-                int iInc = 3 * ((Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR)) / 20);
+                const int iInc = 3 * ((Stat_GetMaxAdjusted(STAT_STR) - Stat_GetVal(STAT_STR)) / 20);
                 DamageBonus += minimum(iInc, 12);		// value is capped at 12%
             }
 
@@ -3742,7 +3744,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
         }
 	}
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init((int)spell, iSkillLevel, 0, pSourceItem);
     pScriptArgs->m_VarsLocal.SetNum("DamageType", 0);
     pScriptArgs->m_VarsLocal.SetNum("CreateObject1", pSpellDef->m_idEffect);
@@ -3785,8 +3787,8 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
     iDuration = static_cast<int>(pScriptArgs->m_VarsLocal.GetKeyNum("Duration"));
     fBypassMagicReflection = pScriptArgs->m_VarsLocal.GetKeyNum("BypassMagicReflection") > 0;
 
-    HUE_TYPE iColor = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
-    dword dwRender = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
+    const HUE_TYPE iColor = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
+    const dword dwRender = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
 
 	if ( iEffectID > ITEMID_QTY )
 		iEffectID = pSpellDef->m_idEffect;
@@ -4028,7 +4030,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 
 		case SPELL_Mana_Vamp:
 		{
-			int iMax = Stat_GetVal(STAT_INT);
+            const int iMax = Stat_GetVal(STAT_INT);
 			if ( IsSetMagicFlags(MAGICF_OSIFORMULAS) )
 			{
 				// AOS formula
@@ -4081,7 +4083,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 			if ( fPotion )
 				pSourceItem->Delete();
 
-            if ( CItem *pItem = NPC_Shrink() )
+            if (const CItem *pItem = NPC_Shrink() )
 				pCharSrc->m_Act_UID = pItem->GetUID();
 		}
 		break;
@@ -4106,7 +4108,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		case SPELL_Gender_Swap:	// permanently changes your gender.
 			if ( IsPlayableCharacter())
 			{
-				CCharBase * pCharDef = Char_GetDef();
+                const CCharBase * pCharDef = Char_GetDef();
 				ASSERT(pCharDef);
 
 				if ( IsHuman() )

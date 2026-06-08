@@ -307,7 +307,7 @@ void CCSpawn::GenerateItem()
 
     if (IsTrigUsed(TRIGGER_PRESPAWN))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(rid.GetResIndex(), 0, 0, nullptr);
         if (pSpawnItem->OnTrigger(ITRIG_PreSpawn, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
         {
@@ -337,7 +337,7 @@ void CCSpawn::GenerateItem()
     //pItem->SetDecayTime(g_Cfg.m_iDecay_Item);	// it will decay eventually to be replaced later
     if (IsTrigUsed(TRIGGER_SPAWN))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pItem;
         if (pSpawnItem->OnTrigger(ITRIG_Spawn, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
         {
@@ -381,7 +381,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
     }
     if (IsTrigUsed(TRIGGER_PRESPAWN))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = rid.GetResIndex();
         if (pSpawnItem->OnTrigger(ITRIG_PreSpawn, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
         {
@@ -412,7 +412,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
 
     if (IsTrigUsed(TRIGGER_SPAWN))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pChar;
         if (pSpawnItem->OnTrigger(ITRIG_Spawn, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
         {
@@ -469,7 +469,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
 CResourceIDBase CCSpawn::GetCharRid()
 {
     ADDTOCALLSTACK("CCSpawn::GetCharRid");
-    auto pSpawnItem = static_cast<const CItem*>(GetLink());
+    const auto pSpawnItem = static_cast<const CItem*>(GetLink());
 
     CResourceIDBase rid;
     const CResourceDef* pDef = FixDef();
@@ -481,11 +481,11 @@ CResourceIDBase CCSpawn::GetCharRid()
     }
 
     rid = pDef->GetResourceID();
-    if (RES_TYPE iRidType = rid.GetResType(); iRidType == RES_SPAWN)
+    if (const RES_TYPE iRidType = rid.GetResType(); iRidType == RES_SPAWN)
     {
-        auto pSpawnGroup = dynamic_cast<const CRandGroupDef*>(pDef);
+        const auto pSpawnGroup = dynamic_cast<const CRandGroupDef*>(pDef);
         ASSERT(pSpawnGroup);
-        if (size_t i = pSpawnGroup->GetRandMemberIndex(); i != sl::scont_bad_index())
+        if (const size_t i = pSpawnGroup->GetRandMemberIndex(); i != sl::scont_bad_index())
         {
             rid = pSpawnGroup->GetMemberID(i);
         }
@@ -517,7 +517,7 @@ void CCSpawn::DelObj(const CUID& uid)
         return;
     }
 
-    auto itObj = std::ranges::find(_uidList, uid);
+    const auto itObj = std::ranges::find(_uidList, uid);
 
     if (itObj == _uidList.end())
     {
@@ -560,7 +560,7 @@ void CCSpawn::DelObj(const CUID& uid)
 
     if (IsTrigUsed(TRIGGER_DELOBJ))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pSpawnItem;
         pScriptArgs->m_iN1 = pSpawnItem->_GetTimerAdjusted() / MSECS_PER_SEC;
         pSpawnItem->OnTrigger(ITRIG_DELOBJ, pScriptArgs, &g_Serv);
@@ -585,8 +585,8 @@ void CCSpawn::AddObj(const CUID& uid)
         return;
     }
 
-    bool fIsSpawnChar = (pSpawnItem->IsType(IT_SPAWN_CHAR) || pSpawnItem->IsType(IT_SPAWN_CHAMPION));
-    bool fIsSpawnChampion = pSpawnItem->IsType(IT_SPAWN_CHAMPION);
+    const bool fIsSpawnChar = (pSpawnItem->IsType(IT_SPAWN_CHAR) || pSpawnItem->IsType(IT_SPAWN_CHAMPION));
+    const bool fIsSpawnChampion = pSpawnItem->IsType(IT_SPAWN_CHAMPION);
 
     if (!g_Serv.IsLoadingGeneric())
     {
@@ -635,7 +635,7 @@ void CCSpawn::AddObj(const CUID& uid)
 
         if (IsTrigUsed(TRIGGER_ADDOBJ))
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_pO1 = pSpawnedObj;
             const int64 iTimer= pSpawnItem->_GetTimerAdjusted();
             pScriptArgs->m_iN1 = (iTimer < 0) ? -1 : iTimer/MSECS_PER_SEC;
@@ -722,7 +722,7 @@ void CCSpawn::KillChildren()
         if (auto *const pChar = dynamic_cast<CChar *>(pObj))
         {
 #ifdef _DEBUG
-            auto parent = pChar->GetParent();
+            const auto parent = pChar->GetParent();
             const auto sector = pChar->GetTopSector();
             DEBUG_ASSERT(parent == &sector->m_Chars_Active || parent == &sector->m_Chars_Disconnect);
 #endif
@@ -735,7 +735,7 @@ void CCSpawn::KillChildren()
         if (auto *const pItem = dynamic_cast<CItem *>(pObj))
         {
 #ifdef _DEBUG
-            auto parent = pItem->GetParent();
+            const auto parent = pItem->GetParent();
             const auto sector = pItem->GetTopSector();
             DEBUG_ASSERT(parent == &sector->m_Items);
 #endif
@@ -825,12 +825,12 @@ bool CCSpawn::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *pS
     UnreferencedParameter(pSrc);
     EXC_TRY("WriteVal");
 
-    int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
+    const int iCmd = FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iCmd < 0)
     {
         return false;
     }
-    CItem *pSpawnItem = GetLink();
+    const CItem *pSpawnItem = GetLink();
     switch (iCmd)
     {
         case ISPW_AMOUNT:
@@ -905,12 +905,12 @@ bool CCSpawn::r_LoadVal(CScript & s)
     ADDTOCALLSTACK("CCSpawn::r_LoadVal");
     EXC_TRY("LoadVal");
 
-    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
+    const int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1);
     if (iCmd < 0)
     {
         return false;
     }
-    CItem *pSpawnItem = GetLink();
+    const CItem *pSpawnItem = GetLink();
 
     switch (iCmd)
     {
@@ -933,7 +933,7 @@ bool CCSpawn::r_LoadVal(CScript & s)
             {
                 return true;
             }
-            CResourceIDBase ridArg(dwPrivateUID);    // Not using CResourceID because res_chardef, spawn, itemdef, template do not use the "page" arg
+            const CResourceIDBase ridArg(dwPrivateUID);    // Not using CResourceID because res_chardef, spawn, itemdef, template do not use the "page" arg
             const uint iRidIndex = ridArg.GetResIndex();
             const uint iRidType  = ridArg.GetResType();
             switch (pSpawnItem->GetType())
@@ -1077,7 +1077,7 @@ void CCSpawn::r_Write(CScript & s)
     ADDTOCALLSTACK("CCSpawn:r_Write");
     EXC_TRY("Write");
 
-    CItem *pItem = GetLink();
+    const CItem *pItem = GetLink();
     if (_fIsChampion == false)
     {
         if (!FixDef())
@@ -1090,11 +1090,11 @@ void CCSpawn::r_Write(CScript & s)
         }
     }
 
-    if (uint16 uiAmount = GetAmount(); uiAmount != 1)
+    if (const uint16 uiAmount = GetAmount(); uiAmount != 1)
     {
         s.WriteKeyVal("AMOUNT", uiAmount);
     }
-    if (uint16 uiPile = GetPile(); (uiPile > 1) && (pItem->GetType() == IT_SPAWN_ITEM))
+    if (const uint16 uiPile = GetPile(); (uiPile > 1) && (pItem->GetType() == IT_SPAWN_ITEM))
     {
         s.WriteKeyVal("PILE", uiPile);
     }
@@ -1156,7 +1156,7 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
     {
         case ISPR_AT:
         {
-            int objIndex = Exp_GetVal(ptcKey);
+            const int objIndex = Exp_GetVal(ptcKey);
             if (objIndex < 0)
                 return false;
             SKIP_SEPARATORS(ptcKey);
@@ -1209,7 +1209,7 @@ bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CCSpawn::r_Verb");
     UnreferencedParameter(pSrc);
-    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
+    const int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1);
     if (iCmd < 0)
     {
         return false;

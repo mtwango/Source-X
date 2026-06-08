@@ -378,7 +378,7 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 			return false;
 	}
 
-	tchar oldChar = *pszSep;
+    const tchar oldChar = *pszSep;
 	*pszSep = '\0';
 
 	int iResType = FindTableSorted( ptcKey, sm_szResourceBlocks, RES_QTY );
@@ -431,7 +431,7 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	else if ( iResType == RES_SPELL && *ptcKey == '-' )
 	{
 		++ptcKey;
-        if (size_t uiOrder = Exp_GetSTVal(ptcKey); !m_SpellDefs_Sorted.valid_index( uiOrder ) )
+        if (const size_t uiOrder = Exp_GetSTVal(ptcKey); !m_SpellDefs_Sorted.valid_index( uiOrder ) )
 			pRef = nullptr;
 		else
 			pRef = m_SpellDefs_Sorted[uiOrder].get();
@@ -440,7 +440,7 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	{
 
         // check the found resource type matches what we searched for
-		if (CResourceID rid = ResourceGetID(static_cast<RES_TYPE>(iResType), ptcKey, RES_PAGE_ANY); rid.GetResType() == iResType )
+		if (const CResourceID rid = ResourceGetID(static_cast<RES_TYPE>(iResType), ptcKey, RES_PAGE_ANY); rid.GetResType() == iResType )
 			pRef = RegisteredResourceGetDef( rid );
 	}
 
@@ -2425,15 +2425,15 @@ bool CServerConfig::IsValidEmailAddressFormat( lpctstr pszEmail ) // static
 	// what are the invalid email name chars ?
 	// Valid characters are, numbers, letters, underscore "_", dash "-" and the dot ".").
 
-	size_t len1 = strlen( pszEmail );
+    const size_t len1 = strlen( pszEmail );
 	if ( len1 <= 0 || len1 > 128 )
 		return false;
 
 	tchar szEmailStrip[256];
-    if (size_t len2 = Str_GetBare(szEmailStrip, pszEmail, sizeof(szEmailStrip), " !\"#%&()*,/:;<=>?[\\]^{|}'`+"); len2 != len1 )
+    if (const size_t len2 = Str_GetBare(szEmailStrip, pszEmail, sizeof(szEmailStrip), " !\"#%&()*,/:;<=>?[\\]^{|}'`+"); len2 != len1 )
 		return false;
 
-	lpctstr pszAt =strchr( pszEmail, '@' );
+    const lpctstr pszAt =strchr( pszEmail, '@' );
 	if ( ! pszAt )
 		return false;
 	if ( pszAt == pszEmail )
@@ -2463,7 +2463,7 @@ CWebPageDef * CServerConfig::FindWebPage(const lpctstr pszPath ) const
 		return static_cast <CWebPageDef*>( m_WebPages[0].get() );
 	}
 
-	lpctstr pszTitle = CSFile::GetFilesTitle(pszPath);
+    const lpctstr pszTitle = CSFile::GetFilesTitle(pszPath);
 
 	if ( pszTitle == nullptr || pszTitle[0] == '\0' )
 	{
@@ -2501,7 +2501,7 @@ bool CServerConfig::IsObscene(const lpctstr pszText ) const
         const auto ptcMatch = const_cast<lptstr>(match.GetBuffer()); // Do that just because we know that the buffer has the right size and we won't write past the buffer's end.
 		snprintf(ptcMatch, match.GetCapacity(), "%s%s%s", "*", m_Obscene[i], "*");
 
-        if (MATCH_TYPE ematch = Str_Match(ptcMatch, pszText); ematch == MATCH_VALID )
+        if (const MATCH_TYPE ematch = Str_Match(ptcMatch, pszText); ematch == MATCH_VALID )
 			return true;
 	}
 	return false;
@@ -2524,7 +2524,7 @@ bool CServerConfig::SetKRDialogMap(const dword rid, const dword idKRDialog)
 	}
 
 	// prevent double mapping of KR dialog
-	KRGumpsMap::const_iterator end = m_mapKRGumps.end();
+    const KRGumpsMap::const_iterator end = m_mapKRGumps.end();
 	for (it = m_mapKRGumps.begin(); it != end; ++it)
 	{
 		if (it->second != idKRDialog)
@@ -2559,7 +2559,7 @@ dword CServerConfig::GetKRDialog(const dword rid)
 	ADDTOCALLSTACK("CServerConfig::GetKRDialog");
 	// Translates the given ResourceID into it's equivalent KR DialogID.
 	// Returns 0 on failure
-    if (KRGumpsMap::const_iterator it = m_mapKRGumps.find(rid); it != m_mapKRGumps.end())
+    if (const KRGumpsMap::const_iterator it = m_mapKRGumps.find(rid); it != m_mapKRGumps.end())
 		return it->second;
 
 	return 0;
@@ -2583,7 +2583,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs(const ITEMID_TYPE itemid )
 	if ( !CItemBase::IsID_Multi(itemid) )
 		return nullptr;
 
-	MULTI_TYPE id = static_cast<MULTI_TYPE>(itemid - ITEMID_MULTI);
+    const MULTI_TYPE id = static_cast<MULTI_TYPE>(itemid - ITEMID_MULTI);
 	size_t index = m_MultiDefs.FindKey(id);
 	if ( index == sl::scont_bad_index() )
 		index = m_MultiDefs.AddSortKey(new CUOMulti(id), id);
@@ -2606,7 +2606,7 @@ PLEVEL_TYPE CServerConfig::GetPrivCommandLevel(const lpctstr pszCmd ) const
 	{
 		--ilevel;
 		lpctstr const * pszTable = m_PrivCommands[ilevel].data();
-        if (int iCount = static_cast<int>(m_PrivCommands[ilevel].size()); FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
+        if (const int iCount = static_cast<int>(m_PrivCommands[ilevel].size()); FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
 			return static_cast<PLEVEL_TYPE>(ilevel);
 	}
 
@@ -2668,7 +2668,7 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr p
 	PLEVEL_TYPE ilevel;
 	tchar *myCmd = Str_GetTemp();
 
-	size_t pOs = strcspn(pszCmd," "); //position of space :)
+    const size_t pOs = strcspn(pszCmd," "); //position of space :)
 	Str_CopyLimit( myCmd, pszCmd, pOs );
 	myCmd[pOs] = '\0';
 
@@ -2705,7 +2705,7 @@ CPointMap CServerConfig::GetRegionPoint( lpctstr pCmd ) const // Decode a telepo
             return CPointMap();
 
         SKIP_NONNUM(pCmd);
-        std::optional<uint> iconv = Str_ToU(pCmd);
+        const std::optional<uint> iconv = Str_ToU(pCmd);
         if (!iconv.has_value())
             return CPointMap();
 
@@ -2801,7 +2801,7 @@ CRegion * CServerConfig::GetRegion( lpctstr pKey ) const
 
 void CServerConfig::LoadSortSpells()
 {
-	size_t iQtySpells = m_SpellDefs.size();
+    const size_t iQtySpells = m_SpellDefs.size();
 	if ( iQtySpells <= 0 )
 		return;
 
@@ -2993,14 +2993,14 @@ CResourceScript * CServerConfig::FindResourceFile( lpctstr pszPath )
     ADDTOCALLSTACK("CResourceHolder::FindResourceFile");
     // Just match the titles ( not the whole path)
 
-    lpctstr pszTitle = CScript::GetFilesTitle( pszPath );
+    const lpctstr pszTitle = CScript::GetFilesTitle( pszPath );
 
     for ( size_t i = 0; ; ++i )
     {
         CResourceScript * pResFile = GetResourceFile(i);
         if ( pResFile == nullptr )
             break;
-        if (lpctstr pszTitle2 = pResFile->GetFileTitle(); ! strcmpi( pszTitle2, pszTitle ))
+        if (const lpctstr pszTitle2 = pResFile->GetFileTitle(); ! strcmpi( pszTitle2, pszTitle ))
             return pResFile;
     }
     return nullptr;
@@ -3033,7 +3033,7 @@ bool CServerConfig::OpenResourceFind( CScript &s, lpctstr pszFilename, const boo
     }
 
     // finally, strip the directory and re-check script file path
-    lpctstr pszTitle = CSFile::GetFilesTitle(pszFilename);
+    const lpctstr pszTitle = CSFile::GetFilesTitle(pszFilename);
     sPathName = CSFile::GetMergedFileName( m_sSCPBaseDir, pszTitle );
     if (CSFile::FileExists(sPathName))
     {
@@ -3058,7 +3058,7 @@ CResourceScript * CServerConfig::AddResourceFile(const lpctstr pszName )
     Str_CopyLimitNull(szName, pszName, sizeof(szName));
 
     tchar szTitle[SPHERE_MAX_PATH];
-    lpctstr ptcTitle = CScript::GetFilesTitle(szName);
+    const lpctstr ptcTitle = CScript::GetFilesTitle(szName);
     ASSERT_ALWAYS(strlen(ptcTitle) < sizeof(szTitle));
     Str_CopyLimitNull(szTitle, ptcTitle, sizeof(szTitle));
 
@@ -3068,7 +3068,7 @@ CResourceScript * CServerConfig::AddResourceFile(const lpctstr pszName )
         return nullptr;
     }
 
-    if (lpctstr pszExt = CScript::GetFilesExt(szTitle); pszExt == nullptr )
+    if (const lpctstr pszExt = CScript::GetFilesExt(szTitle); pszExt == nullptr )
     {
         // No file extension provided, so append .scp to the filename
         Str_ConcatLimitNull( szName,  SPHERE_SCRIPT_EXT, sizeof(szName) );
@@ -3132,8 +3132,8 @@ void CServerConfig::AddResourceDir(const lpctstr pszDirName )
     std::vector<lpctstr> vecFileNames;
 
     // Collect them from the list
-    CSStringListRec *psFileNext = nullptr;
-    for (CSStringListRec *psFile = filelist.GetHead(); psFile; psFile = psFileNext )
+    const CSStringListRec *psFileNext = nullptr;
+    for (const CSStringListRec *psFile = filelist.GetHead(); psFile; psFile = psFileNext )
     {
         psFileNext = psFile->GetNext();
         vecFileNames.push_back(*psFile);
@@ -3144,7 +3144,7 @@ void CServerConfig::AddResourceDir(const lpctstr pszDirName )
         [](const lpctstr ptcFirst, const lpctstr ptcSecond) noexcept {return strcmp(ptcFirst, ptcSecond) < 0;}
         );
 
-    for (lpctstr elem : vecFileNames)
+    for (const lpctstr elem : vecFileNames)
     {
         sFilePath = CSFile::GetMergedFileName(pszDirName, elem);
         AddResourceFile( sFilePath );
@@ -4236,7 +4236,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			{
 				// For a book the page is... the page number
 				// For a REGIONTYPE block, the page (pArg2) is the landtile type associated with the REGIONTYPE
-                if (int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2)); iArgPage < RES_PAGE_MAX )
+                if (const int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2)); iArgPage < RES_PAGE_MAX )
                     wPage = static_cast<word>(iArgPage);
                 else
                     DEBUG_ERR(( "Bad resource index page %d for Resource named %s\n", iArgPage, pszName ));
@@ -5215,7 +5215,7 @@ lpctstr CServerConfig::GetDefaultMsg(const int lKeyNum)
 lpctstr CServerConfig::GetDefaultMsg(const lpctstr ptcKey)
 {
     ADDTOCALLSTACK("CServerConfig::GetDefaultMsg(lpctstr)");
-    auto gReader = g_ExprGlobals.mtEngineLockedReader();
+    const auto gReader = g_ExprGlobals.mtEngineLockedReader();
 
     uint i;
     for (i = 0; i < DEFMSG_QTY; ++i )
@@ -5290,10 +5290,10 @@ bool CServerConfig::GenerateDefname(const tchar *pObjectName, const size_t iInpu
 	if (bCheckConflict == true)
 	{
 		// check for conflicts
-		size_t iEnd = iOut;
+        const size_t iEnd = iOut;
 		int iAttempts = 1;
 
-        auto gReader = g_ExprGlobals.mtEngineLockedReader();
+        const auto gReader = g_ExprGlobals.mtEngineLockedReader();
 		for (;;)
 		{
 			bool isValid = true;

@@ -720,7 +720,7 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 
 		// Trammel
         // Check to see if Trammel is up here...
-		if (uint iTrammelPhase = CWorldGameTime::GetMoonPhase(false); IsMoonVisible( iTrammelPhase, localtime ))
+		if (const uint iTrammelPhase = CWorldGameTime::GetMoonPhase(false); IsMoonVisible( iTrammelPhase, localtime ))
 		{
 			static constexpr byte sm_TrammelPhaseBrightness[] =
 			{
@@ -739,7 +739,7 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 		}
 
 		// Felucca
-        if (uint iFeluccaPhase = CWorldGameTime::GetMoonPhase(true); IsMoonVisible( iFeluccaPhase, localtime ))
+        if (const uint iFeluccaPhase = CWorldGameTime::GetMoonPhase(true); IsMoonVisible( iFeluccaPhase, localtime ))
 		{
 			static constexpr byte sm_FeluccaPhaseBrightness[] =
 			{
@@ -786,12 +786,12 @@ void CSector::SetLightNow(const bool fFlash )
 
 		if ( pChar->m_pPlayer && pChar->IsClientActive())
 		{
-			CClient * pClient = pChar->GetClientActive();
+            const CClient * pClient = pChar->GetClientActive();
 			ASSERT(pClient);
 
 			if ( fFlash )	// This does not seem to work predicably ! too fast?
 			{
-				byte bPrvLight = pChar->m_pPlayer->m_LocalLight;
+                const byte bPrvLight = pChar->m_pPlayer->m_LocalLight;
 				pChar->m_pPlayer->m_LocalLight = LIGHT_BRIGHT;	// full bright.
 				pClient->addLight();
 				pChar->m_pPlayer->m_LocalLight = bPrvLight;	// back to previous.
@@ -853,7 +853,7 @@ WEATHER_TYPE CSector::GetWeatherCalc() const
 		return( WEATHER_DRY );
 
 	// Rain chance also controls the chance of snow. If it isn't possible to rain then it cannot snow either
-	int iPercentRoll = g_Rand.GetValFast( 100 );
+    const int iPercentRoll = g_Rand.GetValFast( 100 );
 	if ( iPercentRoll < GetRainChance() )
 	{
 		// It is precipitating... but is it rain or snow?
@@ -941,7 +941,7 @@ bool CSector::IsInDungeon() const
     ADDTOCALLSTACK("CSector::IsInDungeon");
     // What part of the maps are filled with dungeons.
     // Used for light / weather calcs.
-    CRegion *pRegion = GetRegion(GetBasePointMapUnits(), REGION_TYPE_AREA);
+    const CRegion *pRegion = GetRegion(GetBasePointMapUnits(), REGION_TYPE_AREA);
 
     return ( pRegion && pRegion->IsFlag(REGION_FLAG_UNDERGROUND) );
 }
@@ -1221,7 +1221,7 @@ bool CSector::_OnTick()
 	bool fLightChange = false;
 
 	// check for local light level change ?
-	byte bLightPrv = m_Env.m_Light;
+    const byte bLightPrv = m_Env.m_Light;
 	m_Env.m_Light = GetLightCalc( false );
 	if ( m_Env.m_Light != bLightPrv )
 	{
@@ -1247,7 +1247,7 @@ bool CSector::_OnTick()
 	bool fWeatherChange = false;
 	int iRegionPeriodic = 0;
 
-	WEATHER_TYPE weatherprv = m_Env.m_Weather;
+    const WEATHER_TYPE weatherprv = m_Env.m_Weather;
 	if ( ! g_Rand.GetValFast( 30 ))	// change less often
 	{
 		m_Env.m_Weather = GetWeatherCalc();
@@ -1280,7 +1280,7 @@ bool CSector::_OnTick()
 
 			case WEATHER_RAIN:
 				{
-                if (int iVal = g_Rand.GetValFast(30); iVal < 5 )
+                if (const int iVal = g_Rand.GetValFast(30); iVal < 5 )
 					{
 						// Mess up the light levels for a sec..
 						LightFlash();

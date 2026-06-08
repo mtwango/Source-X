@@ -40,7 +40,7 @@ void CItemMessage::r_Write(CScript & s)
     for ( word i = 0; i < GetPageCount(); ++i )
     {
         snprintf(tsTemp.buffer(), tsTemp.capacity(), "BODY.%" PRIu16, i);
-        lpctstr pszText = GetPageText(i);
+        const lpctstr pszText = GetPageText(i);
         s.WriteKeyStr(tsTemp.buffer(), ((pszText != nullptr) ? pszText : ""));
     }
 }
@@ -60,7 +60,7 @@ bool CItemMessage::r_LoadVal(CScript &s)
         {
             case CIC_AUTHOR:
             {
-                if (tchar *ptcArg = s.GetArgStr(); ptcArg[0] != '0')
+                if (const tchar *ptcArg = s.GetArgStr(); ptcArg[0] != '0')
                     m_sAuthor = ptcArg;
             }
                 return true;
@@ -135,9 +135,9 @@ bool CItemMessage::r_Verb(CScript & s, CTextConsole *pSrc)
         ASSERT(pSrc);
         if ( s.IsKey(sm_szVerbKeys[0]) )
         {
-            lpctstr ptcStr = s.GetArgStr();
+            const lpctstr ptcStr = s.GetArgStr();
             // 1 based pages
-            word wPage = (ptcStr[0] && toupper(s.GetArgStr()[0]) != 'A') ? s.GetArgWVal() : 0;
+            const word wPage = (ptcStr[0] && toupper(s.GetArgStr()[0]) != 'A') ? s.GetArgWVal() : 0;
             if ( wPage <= 0 )
             {
                 m_sBodyLines.ClearFree();
@@ -170,7 +170,7 @@ bool CItemMessage::r_Verb(CScript & s, CTextConsole *pSrc)
 void CItemMessage::DupeCopy(const CObjBase *pItemObj)
 {
     ADDTOCALLSTACK("CItemMessage::DupeCopy");
-    auto pItem = dynamic_cast<const CItem*>(pItemObj);
+    const auto pItem = dynamic_cast<const CItem*>(pItemObj);
     ASSERT(pItem);
 
     CItemVendable::DupeCopy(pItem);

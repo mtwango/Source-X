@@ -49,11 +49,11 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 				}
 				else
 				{
-                    if (auto itContainerFound = m_openedContainers.find(pContainer->GetUID().GetPrivateUID()); itContainerFound != m_openedContainers.cend() )
+                    if (const auto itContainerFound = m_openedContainers.find(pContainer->GetUID().GetPrivateUID()); itContainerFound != m_openedContainers.cend() )
 					{
-						dword dwTopContainerUID = ((itContainerFound->second).first).first;
-						dword dwTopMostContainerUID = ((itContainerFound->second).first).second;
-						CPointMap ptOpenedContainerPosition = (itContainerFound->second).second;
+                        const dword dwTopContainerUID = ((itContainerFound->second).first).first;
+                        const dword dwTopMostContainerUID = ((itContainerFound->second).first).second;
+                        const CPointMap ptOpenedContainerPosition = (itContainerFound->second).second;
 
 						dword dwTopContainerUID_ToCheck = 0;
 						if ( pContainer->GetContainer() )
@@ -106,8 +106,8 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 			return true;
 	}
 
-	CItemBase *pItemDef = pItem->Item_GetDef();
-	bool bIsEquipped = pItem->IsItemEquipped();
+    const CItemBase *pItemDef = pItem->Item_GetDef();
+    const bool bIsEquipped = pItem->IsItemEquipped();
 	if (!IsSetOF(OF_NoDclickEquip) && pItemDef->IsTypeEquippable() && !bIsEquipped && pItemDef->GetEquipLayer())
 	{
 		bool fMustEquip = true;
@@ -145,7 +145,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 	{
 		case IT_TRACKER:
 		{
-            if (auto dir = static_cast<DIR_TYPE>(DIR_QTY + 1); !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
+            if (constexpr auto dir = static_cast<DIR_TYPE>(DIR_QTY + 1); !m_pChar->Skill_Tracking(pItem->m_uidLink, dir) )
 			{
 				if ( pItem->m_uidLink.IsValidUID() )
 					SysMessageDefault(DEFMSG_TRACKING_UNABLE);
@@ -246,7 +246,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 
 		case IT_SIGN_GUMP:
 		{
-			GUMP_TYPE gumpid = pItemDef->m_ttContainer.m_idGump;
+            const GUMP_TYPE gumpid = pItemDef->m_ttContainer.m_idGump;
 			if ( !gumpid )
 				return false;
 			addGumpTextDisp(pItem, gumpid, pItem->GetName(), pItem->IsIndividualName() ? pItem->GetName() : nullptr);
@@ -638,7 +638,7 @@ bool CClient::Skill_Menu(const SKILL_TYPE skill, lpctstr skillmenu, const ITEMID
 	// Default menu is d_craft_menu
 	// Open in page 0, args is skill used.
 	// LPCTSTR dSkillMenu = "d_CraftingMenu";
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_VarsLocal.SetStrNew("SkillMenu", skillmenu);
     pScriptArgs->m_VarsLocal.SetNumNew("Skill", skill);
     pScriptArgs->m_VarsLocal.SetNumNew("ItemUsed", itemused);
@@ -650,13 +650,13 @@ bool CClient::Skill_Menu(const SKILL_TYPE skill, lpctstr skillmenu, const ITEMID
         skillmenu = pScriptArgs->m_VarsLocal.GetKeyStr("Skillmenu", false);
 	}
 
-	lpctstr SkillUsed = g_Cfg.GetSkillKey(skill);
-    if (CResourceID ridDialog = g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu); ridDialog.IsValidUID())
+    const lpctstr SkillUsed = g_Cfg.GetSkillKey(skill);
+    if (const CResourceID ridDialog = g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu); ridDialog.IsValidUID())
 	{
 		return Dialog_Setup(CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, skillmenu), 0, m_pChar, SkillUsed);
 	}
 
-    if (CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu); ridMenu.IsValidUID())
+    if (const CResourceID ridMenu = g_Cfg.ResourceGetIDType(RES_SKILLMENU, skillmenu); ridMenu.IsValidUID())
     {
         return Cmd_Skill_Menu(ridMenu);
     }
@@ -697,7 +697,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 
     ASSERT(ARRAY_COUNT(m_tmMenu.m_Item) == MAX_MENU_ITEMS);
 	CMenuItem item[MAX_MENU_ITEMS];
-	int iShowCount = Cmd_Skill_Menu_Build(rid, iSelect, item, MAX_MENU_ITEMS, &fShowMenu, &fLimitReached);
+    const int iShowCount = Cmd_Skill_Menu_Build(rid, iSelect, item, MAX_MENU_ITEMS, &fShowMenu, &fLimitReached);
 
 	if ( iSelect < -1 )		// just a test
 		return iShowCount ? true : false;
@@ -723,7 +723,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 			++sm_iReentrant;
 
 			// If there is just one menu then select it.
-			bool fSuccess = Cmd_Skill_Menu(rid, m_tmMenu.m_Item[1]); // first entry
+            const bool fSuccess = Cmd_Skill_Menu(rid, m_tmMenu.m_Item[1]); // first entry
 
 			--sm_iReentrant;
 			return fSuccess;
@@ -905,7 +905,7 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CM
 		if ( iOnCount == iSelect )
 		{
 			// Execute command from script
-            if (TRIGRET_TYPE tRet = m_pChar->OnTriggerRunVal(s, TRIGRUN_SINGLE_EXEC, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
+            if (const TRIGRET_TYPE tRet = m_pChar->OnTriggerRunVal(s, TRIGRUN_SINGLE_EXEC, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
                 tRet != TRIGRET_RET_DEFAULT )
 				return (tRet == TRIGRET_RET_TRUE) ? 0 : 1;
 
@@ -1005,7 +1005,7 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
 		{
 			if ( IsTrigUsed(TRIGGER_SKILLMENU) )
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init("sm_polymorph");
                 if ( m_pChar->OnTrigger("@SkillMenu", pScriptArgs, m_pChar) == TRIGRET_RET_TRUE )
 					return true;
@@ -1017,7 +1017,7 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
 		{
 			if ( IsTrigUsed(TRIGGER_SKILLMENU) )
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init("sm_summon");
                 if ( m_pChar->OnTrigger("@SkillMenu", pScriptArgs, m_pChar) == TRIGRET_RET_TRUE )
 					return true;
@@ -1029,7 +1029,7 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
 		{
 			if ( IsTrigUsed(TRIGGER_SKILLMENU) )
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init("sm_summon_familiar");
                 if ( m_pChar->OnTrigger("@SkillMenu", pScriptArgs, m_pChar) == TRIGRET_RET_TRUE )
 					return true;
@@ -1132,7 +1132,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 		if ( track_sel >= std::size(sm_Track_Brain))
 			track_sel = std::size(sm_Track_Brain) - 1;
 
-		NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
+        const NPCBRAIN_TYPE track_type = sm_Track_Brain[track_sel];
         ASSERT(ARRAY_COUNT(m_tmMenu.m_Item) == MAX_MENU_ITEMS);
         CMenuItem item[MAX_MENU_ITEMS];
 		uint count = 0;
@@ -1157,7 +1157,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 		auto AreaChars = CWorldSearchHolder::GetInstance(m_pChar->GetTopPoint(), m_pChar->m_atTracking.m_dwDistMax);
 		for (;;)
 		{
-			CChar *pChar = AreaChars->GetChar();
+			CChar const * pChar = AreaChars->GetChar();
 			if ( !pChar )
 				break;
 			if ( m_pChar == pChar )
@@ -1182,13 +1182,13 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 
 				// Check action difficulty when trying to track players
 				int tracking = m_pChar->Skill_GetBase(SKILL_TRACKING);
-				int detectHidden = m_pChar->Skill_GetBase(SKILL_DETECTINGHIDDEN);
+                const int detectHidden = m_pChar->Skill_GetBase(SKILL_DETECTINGHIDDEN);
 				if ( (g_Cfg.m_iRacialFlags & RACIALF_ELF_DIFFTRACK) && pChar->IsElf() )
 					tracking /= 2;			// elves are more difficult to track (Difficult to Track racial trait)
 
-				int hiding = pChar->Skill_GetBase(SKILL_HIDING);
-				int stealth = pChar->Skill_GetBase(SKILL_STEALTH);
-				int divisor = maximum(hiding + stealth, 1);
+                const int hiding = pChar->Skill_GetBase(SKILL_HIDING);
+                const int stealth = pChar->Skill_GetBase(SKILL_STEALTH);
+                const int divisor = maximum(hiding + stealth, 1);
 
 				int chance;
 				if ( g_Cfg.m_iFeatureSE & FEATURE_SE_UPDATE )
@@ -1254,7 +1254,7 @@ bool CClient::Cmd_Skill_Smith( CItem *pIngots )
 	}
 
 	// Must have smith hammer equipped
-    if (CItem *pSmithHammer = m_pChar->LayerFind(LAYER_HAND1); !pSmithHammer || !pSmithHammer->IsType(IT_WEAPON_MACE_SMITH) )
+    if (CItem const * pSmithHammer = m_pChar->LayerFind(LAYER_HAND1); !pSmithHammer || !pSmithHammer->IsType(IT_WEAPON_MACE_SMITH) )
 	{
 		SysMessageDefault(DEFMSG_SMITHING_HAMMER);
 		return false;
@@ -1284,7 +1284,7 @@ bool CClient::Cmd_Skill_Inscription()
 
 	ASSERT(m_pChar);
 
-    if (CItem *pBlankScroll = m_pChar->ContentFind(CResourceID(RES_TYPEDEF, IT_SCROLL_BLANK)); !pBlankScroll )
+    if (CItem const * pBlankScroll = m_pChar->ContentFind(CResourceID(RES_TYPEDEF, IT_SCROLL_BLANK)); !pBlankScroll )
 	{
 		SysMessageDefault(DEFMSG_INSCRIPTION_FAIL);
 		return false;
@@ -1307,7 +1307,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 
 	if ( pItem && (IsTrigUsed(TRIGGER_DROPON_CHAR) || IsTrigUsed(TRIGGER_ITEMDROPON_CHAR)) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pChar;
         if ( pItem->OnTrigger(ITRIG_DROPON_CHAR, pScriptArgs, m_pChar) == TRIGRET_RET_TRUE )
 			return false;
@@ -1331,7 +1331,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		if ( !pItemCont->IsType(IT_EQ_TRADE_WINDOW) )
 			continue;
 
-		CItem *pItemPartner = pItemCont->m_uidLink.ItemFind();
+		CItem const * pItemPartner = pItemCont->m_uidLink.ItemFind();
 		if ( !pItemPartner )
 			continue;
 
@@ -1342,7 +1342,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		{
 			if ( IsTrigUsed(TRIGGER_DROPON_TRADE) )
 			{
-                CScriptTriggerArgsPtr pScriptArgs1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs1 = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs1->m_pO1 = pChar;
                 if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs1, this) == TRIGRET_RET_TRUE )
 					return false;
@@ -1356,7 +1356,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	// Open new trade window
 	if ( IsTrigUsed(TRIGGER_TRADECREATE) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pItem;
         if ( (m_pChar->OnTrigger(CTRIG_TradeCreate, pScriptArgs, pChar)   == TRIGRET_RET_TRUE)
             || (pChar->OnTrigger(CTRIG_TradeCreate, pScriptArgs, m_pChar) == TRIGRET_RET_TRUE) )
@@ -1365,7 +1365,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 
 	if ( IsTrigUsed(TRIGGER_DROPON_TRADE) && pItem )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pChar;
         if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs, this) == TRIGRET_RET_TRUE )
 			return false;
@@ -1426,7 +1426,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	{
 		if ( IsTrigUsed(TRIGGER_DROPON_TRADE) )
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_pO1 = pChar;
             if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs, this) == TRIGRET_RET_TRUE )
 			{

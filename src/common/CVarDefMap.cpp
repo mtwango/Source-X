@@ -20,7 +20,7 @@ lpctstr CVarDefCont::GetValStrZeroed(const CVarDefCont* pVar, const bool fZero) 
 	ADDTOCALLSTACK_DEBUG("CVarDefCont::GetValStrZeroed");
 	if (pVar)
 	{
-        lpctstr ptcValStr = pVar->GetValStr();
+        const lpctstr ptcValStr = pVar->GetValStr();
 		return ptcValStr;
 	}
 	return (fZero ? "0" : "");
@@ -270,7 +270,7 @@ bool CVarDefMap::Compare( const CVarDefMap * pArray )
 	{
         for (const CVarDefCont* pVar : pArray->m_Container)
 		{
-			lpctstr sKey = pVar->GetKey();
+            const lpctstr sKey = pVar->GetKey();
 			if (!GetKey(sKey))
 				return false;
 
@@ -294,7 +294,7 @@ bool CVarDefMap::CompareAll( const CVarDefMap * pArray )
         for (const CVarDefCont* pVar : pArray->m_Container)
 		{
 
-            if (lpctstr sKey = pVar->GetKey(); strcmpi(GetKeyStr(sKey, true),pVar->GetValStr()))
+            if (const lpctstr sKey = pVar->GetKey(); strcmpi(GetKeyStr(sKey, true),pVar->GetValStr()))
 				return false;
 		}
 	}
@@ -303,7 +303,7 @@ bool CVarDefMap::CompareAll( const CVarDefMap * pArray )
         for (const CVarDefCont* pVar : m_Container)
 		{
 
-            if (lpctstr sKey = pVar->GetKey(); strcmpi(pArray->GetKeyStr(sKey, true),pVar->GetValStr()))
+            if (const lpctstr sKey = pVar->GetKey(); strcmpi(pArray->GetKeyStr(sKey, true),pVar->GetValStr()))
 				return false;
 		}
 	}
@@ -485,7 +485,7 @@ CVarDefCont* CVarDefMap::SetStr(const lpctstr pszName, const bool fQuoted, lpcts
     bool fShouldWarn = fWarnOverwrite && g_Serv.IsStartupLoadingScripts();
     if ( pVarStr )
     {
-        lpctstr ptcOldVal = pVarStr->GetValStr();
+        const lpctstr ptcOldVal = pVarStr->GetValStr();
         fShouldWarn = (fShouldWarn || (fWarnOverwrite && fResync)) && strncmp(ptcVal, ptcOldVal, SCRIPT_MAX_LINE_LEN) != 0;
         if ( fShouldWarn )
         {
@@ -573,7 +573,7 @@ CVarDefCont * CVarDefMap::GetParseKey_Advance( lpctstr & pszArgs ) const
 bool CVarDefMap::GetParseVal_Advance( lpctstr & pszArgs, int64 * piVal ) const
 {
 	ADDTOCALLSTACK_DEBUG("CVarDefMap::GetParseVal_Advance");
-	CVarDefCont * pVarBase = GetParseKey_Advance( pszArgs );
+	CVarDefCont const* pVarBase = GetParseKey_Advance( pszArgs );
 	if ( pVarBase == nullptr )
 		return false;
     *piVal = pVarBase->GetValNum();
@@ -617,7 +617,7 @@ void CVarDefMap::ClearKeys(const lpctstr mask)
         auto it = m_Container.begin();
 		while ( it != m_Container.end() )
 		{
-            CVarDefCont *pVarBase = (*it);
+            CVarDefCont const *pVarBase = (*it);
 			if (!pVarBase)
 				goto skip_cur;
 

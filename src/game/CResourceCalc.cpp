@@ -332,7 +332,7 @@ int CServerConfig::Calc_CombatChanceToParry(const CChar * pChar, CItem*& pItemPa
 	if (iParryChance < 0)
 		return 0;
 
-    if (int iDex = pChar->Stat_GetAdjusted(STAT_DEX); iDex < 80)
+    if (const int iDex = pChar->Stat_GetAdjusted(STAT_DEX); iDex < 80)
 	{
 		const float fDexMod = (80 - iDex) / 100.0f;
 		iParryChance = static_cast<int>(static_cast<float>(iParryChance) * (1.0f - fDexMod));
@@ -436,9 +436,9 @@ int CServerConfig::Calc_StealingItem(const CChar * pCharThief, const CItem * pIt
 	ASSERT(pCharThief);
 	ASSERT(pCharMark);
 
-	int iDexMark = pCharMark->Stat_GetAdjusted(STAT_DEX);
-	int iSkillMark = pCharMark->Skill_GetAdjusted( SKILL_STEALING );
-	int iWeightItem = pItem->GetWeight();
+    const int iDexMark = pCharMark->Stat_GetAdjusted(STAT_DEX);
+    const int iSkillMark = pCharMark->Skill_GetAdjusted( SKILL_STEALING );
+    const int iWeightItem = pItem->GetWeight();
 
 	// int iDifficulty = iDexMark/2 + (iSkillMark/5) + g_Rand.GetVal(iDexMark/2) + IMulDivLL( iWeightItem, 4, WEIGHT_UNITS );
 	// Melt mod:
@@ -510,9 +510,9 @@ lpctstr CServerConfig::Calc_MaptoSextant(const CPointMap &pntCoords)
 	// Conversion from map square to degrees, minutes
 	tchar *z = Str_GetTemp();
 	Str_CopyLimitNull(z, g_Cfg.m_sZeroPoint.GetBuffer(), Str_TempLength());
-	CPointMap zeroPoint(z);
+    const CPointMap zeroPoint(z);
 
-	int iLat = (pntCoords.m_y - zeroPoint.m_y) * 360 * 60 / g_MapList.GetMapSizeY(zeroPoint.m_map);
+    const int iLat = (pntCoords.m_y - zeroPoint.m_y) * 360 * 60 / g_MapList.GetMapSizeY(zeroPoint.m_map);
 	int iLong;
 	if ( pntCoords.m_map <= 1 )
 		iLong = (pntCoords.m_x - zeroPoint.m_x) * 360 * 60 / UO_SIZE_X_REAL;
@@ -612,9 +612,10 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, const int iCureL
 	if (fIsGm)
 		return true;
 
-	int iCureChance = 0, iPoisonLevel = pPoison->m_itSpell.m_spelllevel;
+	int iCureChance = 0;
+    const int iPoisonLevel = pPoison->m_itSpell.m_spelllevel;
 
-	//Override the Cure Poison Chance.
+    // Override the Cure Poison Chance.
     if (const CVarDefCont *pTagStorage = pPoison->GetKey("OVERRIDE.CUREPOISONCHANCE", true))
 	{
 		iCureChance = static_cast<int>(pTagStorage->GetValNum());

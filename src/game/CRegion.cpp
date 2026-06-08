@@ -176,13 +176,13 @@ bool CRegion::MakeRegionDefname()
     *(++pszDef)	= '\0';
 
 
-    size_t iMax = g_Cfg.m_RegionDefs.size();
+    const size_t iMax = g_Cfg.m_RegionDefs.size();
     int iVar = 1;
-    size_t iLen = strlen( pbuf );
+    const size_t iLen = strlen( pbuf );
 
     for ( size_t i = 0; i < iMax; ++i )
     {
-        CRegion * pRegion = g_Cfg.m_RegionDefs[i];
+        const CRegion * pRegion = g_Cfg.m_RegionDefs[i];
         if ( !pRegion )
             continue;
         ptcKey = pRegion->GetResourceName();
@@ -203,7 +203,7 @@ bool CRegion::MakeRegionDefname()
         {
             if (std::optional<int> iconv = Str_ToI(ptcKey); iconv.has_value())
             {
-                if (int iVarThis = iconv.value(); iVarThis >= iVar )
+                if (const int iVarThis = iconv.value(); iVarThis >= iVar )
                     iVar = iVarThis + 1;
             }
         }
@@ -322,7 +322,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
             int iClients = 0;
             for (int i = 0; ; ++i)
             {
-                CSector	*pSector = GetSectorAtIndex(i);
+                const CSector * pSector = GetSectorAtIndex(i);
                 if (pSector == nullptr)
                     break;
                 iClients += pSector->m_Chars_Active.GetClientsNumber();
@@ -386,7 +386,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 			break;
 		case RC_RECT:
 			{
-				size_t iQty = m_Rects.size();
+                const size_t iQty = m_Rects.size();
 				ptcKey += 4;
 				if ( *ptcKey == '\0' )
 				{
@@ -422,7 +422,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 				if ( *ptcKey == '.' ) // do we have an argument?
 				{
 					SKIP_SEPARATORS( ptcKey );
-					size_t uiQty = Exp_GetSTVal( ptcKey );
+                    const size_t uiQty = Exp_GetSTVal( ptcKey );
 					if ( uiQty >= m_TagDefs.GetCount() )
 						return false; // trying to get non-existant tag
 
@@ -510,7 +510,7 @@ bool CRegion::r_LoadVal( CScript & s )
             const bool fZero = (ptcKey[3] == '0');
             ptcKey = ptcKey + (fZero ? 5 : 4);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             m_TagDefs.SetStr(ptcKey, fQuoted, ptcArg, false); // don't change fZero to true! it would break some scripts!
             return true;
         }
@@ -668,7 +668,7 @@ void CRegion::r_WriteModified( CScript &s )
 void CRegion::r_WriteBase( CScript &s )
 {
 	ADDTOCALLSTACK("CRegion::r_WriteBase");
-    if (lpctstr ptcName = GetName(); ptcName && ptcName[0] )
+    if (const lpctstr ptcName = GetName(); ptcName && ptcName[0] )
 		s.WriteKeyStr("NAME", ptcName);
 
 	if ( ! m_sGroup.IsEmpty() )
@@ -681,7 +681,7 @@ void CRegion::r_WriteBase( CScript &s )
 	else if ( m_pt.m_map )
 		s.WriteKeyVal("MAP", m_pt.m_map);
 
-	size_t iQty = GetRegionRectCount();
+    const size_t iQty = GetRegionRectCount();
 	for ( size_t i = 0; i < iQty; ++i )
 	{
 		s.WriteKeyStr("RECT", GetRegionRect(i).Write() );
@@ -1076,7 +1076,7 @@ const CRandGroupDef * CRegionWorld::FindNaturalResource(const int type) const
 
 	for ( size_t i = 0; i < m_Events.size(); ++i )
 	{
-		CResourceLink * pLink = m_Events[i].GetRef();
+        const CResourceLink * pLink = m_Events[i].GetRef();
 		if ( !pLink || ( pLink->GetResType() != RES_REGIONTYPE ))
 			continue;
 

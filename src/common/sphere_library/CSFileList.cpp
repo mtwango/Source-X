@@ -25,7 +25,7 @@ bool CSFileList::ReadFileInfo(const lpctstr pszFilePath, time_t & dwDateChange, 
 	// WIN32
     _finddata_t fileinfo;
 	fileinfo.attrib = _A_NORMAL;
-	intptr_t lFind = _findfirst( pszFilePath, &fileinfo );
+    const intptr_t lFind = _findfirst( pszFilePath, &fileinfo );
 
 	if ( lFind == -1 )
 #else
@@ -69,7 +69,7 @@ int CSFileList::ReadDir(const lpctstr pszFilePath, const bool bShowError )
 
 #ifdef _WIN32
     _finddata_t fileinfo;
-	intptr_t lFind = _findfirst(szFileDir, &fileinfo);
+    const intptr_t lFind = _findfirst(szFileDir, &fileinfo);
 
 	if ( lFind == -1 )
 #else

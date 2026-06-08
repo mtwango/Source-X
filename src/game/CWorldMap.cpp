@@ -120,7 +120,7 @@ CItem * CWorldMap::CheckNaturalResource(const CPointMap & pt, const IT_TYPE iTyp
 	}
 	else
 	{
-		CResourceID rid	= pResGroup->GetMemberID( id );
+        const CResourceID rid	= pResGroup->GetMemberID( id );
         pOreDef = dynamic_cast <CRegionResourceDef *>( g_Cfg.RegisteredResourceGetDef( rid ));
 	}
 
@@ -1632,10 +1632,10 @@ void CWorldMap::GetHeightPoint2( const CPointMap & pt, CServerMapBlockingState &
 				continue;
 			const CUOStaticItemRec * pStatic = pMapBlock->m_Statics.GetStatic( i );
 
-			char z = pStatic->m_z;
+            const char z = pStatic->m_z;
             uiBlockThis = 0;
             const ITEMID_TYPE iDispID = pStatic->GetDispID();
-            height_t zHeight = CItemBase::GetItemHeight(iDispID, &uiBlockThis);
+            const height_t zHeight = CItemBase::GetItemHeight(iDispID, &uiBlockThis);
 
 			// This static is at the coordinates in question.
 			// enough room for me to stand here ?

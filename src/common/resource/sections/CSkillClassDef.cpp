@@ -101,7 +101,7 @@ bool CSkillClassDef::r_LoadVal( CScript &s )
             break;
         default:
         {
-            lpctstr ptcKey = s.GetKey();
+            const lpctstr ptcKey = s.GetKey();
             int i = g_Cfg.FindSkillKey(ptcKey);
             if ( i != SKILL_NONE )
             {

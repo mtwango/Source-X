@@ -39,13 +39,13 @@ bool CLocalFloatVars::Insert( const char* VarName, const char* VarValue, const b
 	if (!VarValue || !VarName)
 		return false;
 
-    if (MapType::const_iterator i = m_VarMap.find(VarName); i != m_VarMap.end() && !fForceSet)
+    if (const MapType::const_iterator i = m_VarMap.find(VarName); i != m_VarMap.end() && !fForceSet)
 		return false;
 
 	SKIP_ARGSEP(VarValue);
 	SKIP_ARGSEP(VarName);
 	char* pEnd;
-	realtype Real = strtod(VarValue, &pEnd);
+    const realtype Real = strtod(VarValue, &pEnd);
 	m_VarMap[CSString(VarName)] = Real;
 	return true;
 }
@@ -57,7 +57,7 @@ realtype CLocalFloatVars::GetVal( const char* VarName )
 		return 0.0;
 
 	SKIP_ARGSEP(VarName);
-	MapType::const_iterator i = m_VarMap.find(VarName);
+    const MapType::const_iterator i = m_VarMap.find(VarName);
 	if ( i == m_VarMap.end())
 		return 0.0;
 	return i->second;
@@ -73,7 +73,7 @@ CSString CLocalFloatVars::Get( const char* VarName )
 	if ( strlen(VarName) > VARDEF_FLOAT_MAXBUFFERSIZE )
 		return CSString();
 
-	realtype Real = GetVal(VarName);
+    const realtype Real = GetVal(VarName);
 	char szReal[VARDEF_FLOAT_MAXBUFFERSIZE];
 	snprintf(szReal, sizeof(szReal), "%f", Real);
 
@@ -94,7 +94,7 @@ CObjBase * CLocalObjMap::Get(const ushort Number )
 	if ( !Number )
 		return nullptr;
 
-	ObjMap::const_iterator i = m_ObjMap.find(Number);
+    const ObjMap::const_iterator i = m_ObjMap.find(Number);
 	if ( i == m_ObjMap.end() )
 		return nullptr;
 
@@ -107,7 +107,7 @@ bool CLocalObjMap::Insert(const ushort Number, CObjBase * pObj, const bool fForc
 	if ( !Number )
 		return false;
 
-    if (ObjMap::const_iterator i = m_ObjMap.find(Number); i != m_ObjMap.end() && !fForceSet )
+    if (const ObjMap::const_iterator i = m_ObjMap.find(Number); i != m_ObjMap.end() && !fForceSet )
 		return false;
 
 	m_ObjMap[Number] = pObj;

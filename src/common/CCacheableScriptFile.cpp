@@ -40,7 +40,7 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
 
     _Close(); // make sure it's closed first
     _strFileName = ptcFilename;
-    lpctstr ptcModeStr = _GetModeStr();
+    const lpctstr ptcModeStr = _GetModeStr();
     _pStream = fopen(ptcFilename, ptcModeStr);
     if (_pStream == nullptr)
     {
@@ -96,7 +96,7 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
             auto _SkipOneEndline = [](lpctstr &str_end) -> size_t // return how much i have moved past
             {
                 bool fDoneN = false, fDoneR = false;
-                lpctstr before = str_end;
+                const lpctstr before = str_end;
                 while (true)
                 {
                     if (const char ch = *str_end; ch == '\n' && !fDoneN)
@@ -132,7 +132,7 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
                 if (iStrLen < 1 /*|| (fileCursor[iStrLen] != '\n') It can also be a '\0' value, but it might not be necessary to check for either of the two...*/)
                 {
                     lpctstr str_end = fileCursor;
-                    size_t uiSkip = _SkipOneEndline(str_end);
+                    const size_t uiSkip = _SkipOneEndline(str_end);
                     ASSERT(uiSkip > 0);
                     //iStrLen = (ssize_t)std::max((size_t)1, uiSkip);
                     iStrLen = static_cast<ssize_t>(uiSkip);
@@ -267,7 +267,7 @@ tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, const int sizemax)
         bytes_to_copy = static_cast<size_t>(sizemax) - 1;
     //if (!cur_line.empty())
     //{
-        size_t copied = Str_CopyLimit(pBuffer, cur_line.data(), bytes_to_copy);
+        const size_t copied = Str_CopyLimit(pBuffer, cur_line.data(), bytes_to_copy);
         pBuffer[copied] = '\0';
     //}
 

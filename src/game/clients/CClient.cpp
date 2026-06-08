@@ -191,7 +191,7 @@ void CClient::CharDisconnect()
 
 	if ( IsTrigUsed(TRIGGER_LOGOUT) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iLingerTime, fCanInstaLogOut, 0, nullptr);
 
         m_pChar->OnTrigger(CTRIG_LogOut, pScriptArgs, m_pChar);
@@ -360,7 +360,7 @@ void CClient::Announce(const bool fArrive ) const
 	tchar *pszMsg = Str_GetTemp();
 	if ( (g_Cfg.m_iArriveDepartMsg == 2) && (GetPrivLevel() > PLEVEL_Player) )		// notify of GMs
 	{
-		lpctstr zTitle = m_pChar->Noto_GetFameTitle();
+        const lpctstr zTitle = m_pChar->Noto_GetFameTitle();
 		snprintf(pszMsg, Str_TempLength(), "@231 STAFF: %s%s logged %s.", zTitle, m_pChar->GetName(), (fArrive ? "in" : "out"));
 	}
 	else if ( g_Cfg.m_iArriveDepartMsg == 1 )		// notify of players
@@ -374,7 +374,7 @@ void CClient::Announce(const bool fArrive ) const
 	if ( pszMsg )
 	{
 		ClientIterator it;
-		for (CClient *pClient = it.next(); pClient != nullptr; pClient = it.next())
+		for (const CClient *pClient = it.next(); pClient != nullptr; pClient = it.next())
 		{
 			if ( (pClient == this) || (GetPrivLevel() > pClient->GetPrivLevel()) )
 				continue;
@@ -469,7 +469,7 @@ void CClient::addTargetVerb( lpctstr pszCmd, lpctstr ptcArg )
 	}
 
 	// priv here
-    if (PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel(pszCmd); ilevel > GetPrivLevel() )
+    if (const PLEVEL_TYPE ilevel = g_Cfg.GetPrivCommandLevel(pszCmd); ilevel > GetPrivLevel() )
 		return;
 
 	m_Targ_Text.Format( "%s%s%s", pszCmd, ( ptcArg[0] && pszCmd[0] ) ? " " : "", ptcArg );
@@ -545,7 +545,7 @@ lpctstr const CClient::sm_szRefKeys[CLIR_QTY+1] =
 bool CClient::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CClient::r_GetRef");
-    if (int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
+    if (const int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
 		SKIP_SEPARATORS(ptcKey);
@@ -563,18 +563,18 @@ bool CClient::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				pRef = m_pHouseDesign;
 				return true;
 			case CLIR_PARTY:
-				if (CChar* pCharThis = GetChar())
+				if (const CChar * pCharThis = GetChar())
 				{
 					if (!strnicmp(ptcKey, "CREATE", 7))
 					{
 						if (pCharThis->m_pParty)
 							return false;
 
-						lpctstr oldKey = ptcKey;
+                        const lpctstr oldKey = ptcKey;
 						ptcKey += 7;
 
 						// Do i want to send the "joined" message to the party members?
-						bool fSendMsgs = (Exp_GetSingle(ptcKey) != 0);
+                        const bool fSendMsgs = (Exp_GetSingle(ptcKey) != 0);
 
 						// Add all the UIDs to the party
 						for (int ip = 0; ip < 10; ++ip)
@@ -716,7 +716,7 @@ bool CClient::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 				ptcKey += strlen(sm_szLoadKeys[index]);
 				GETNONWHITESPACE(ptcKey);
 
-				dword uiCliVer = GetNetState()->getReportedVersion();
+                const dword uiCliVer = GetNetState()->getReportedVersion();
 				if ( ptcKey[0] == '\0' )
 				{
 					// Return full version string (eg: 5.0.2d)
@@ -793,7 +793,7 @@ bool CClient::r_LoadVal( CScript & s )
             const bool fZero = ptcKey[4] == '0';
             ptcKey = ptcKey + (fZero ? 6 : 5);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             m_TagDefs.SetStr(ptcKey, fQuoted, ptcArg, fZero);
             return true;
         }

@@ -202,8 +202,8 @@ bool CRegionBase::IsOverlapped( const CRegionBase * pRegionTest ) const
 	// Does the region overlap this rectangle.
 	if ( ! m_rectUnion.IsOverlapped( pRegionTest->m_rectUnion ))
 		return false;
-	size_t iQty = m_Rects.size();
-	size_t iQtyTest = pRegionTest->m_Rects.size();
+    const size_t iQty = m_Rects.size();
+    const size_t iQtyTest = pRegionTest->m_Rects.size();
 	if ( iQty == 0 )
 	{
 		if ( iQtyTest == 0 )

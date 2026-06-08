@@ -25,8 +25,8 @@ void CCrypto::InitTwoFish()
 	memset(tf_cipher, 0, sizeof(cipherInstance));
 	tf_position = 0;
 	// ---------------------------------------------
-    auto key_casted_ptr = static_cast<keyInstance*>(tf_key);
-    auto cipher_casted_ptr = static_cast<cipherInstance*>(tf_cipher);
+    const auto key_casted_ptr = static_cast<keyInstance*>(tf_key);
+    const auto cipher_casted_ptr = static_cast<cipherInstance*>(tf_cipher);
 
     makeKey(key_casted_ptr, 1 /*DIR_DECRYPT*/, 0x80); //, nullptr );
     cipherInit( cipher_casted_ptr, 1/*MODE_ECB*/, nullptr );
@@ -53,8 +53,8 @@ bool CCrypto::DecryptTwoFish( byte * pOutput, const byte * pInput, const size_t 
 {
 	ADDTOCALLSTACK("CCrypto::DecryptTwoFish");
 	byte tmpBuff[TFISH_RESET];
-    auto key_casted_ptr = static_cast<keyInstance*>(tf_key);
-    auto cipher_casted_ptr = static_cast<cipherInstance*>(tf_cipher);
+    const auto key_casted_ptr = static_cast<keyInstance*>(tf_key);
+    const auto cipher_casted_ptr = static_cast<cipherInstance*>(tf_cipher);
 
 	for ( size_t i = 0; i < inLen; ++i )
 	{

@@ -213,13 +213,13 @@ bool CResourceLink::ResourceLock( CResourceLock &s )
     ASSERT(m_pScript);
 
     //	Give several tryes to lock the script while multithreading
-    if (int iRet = s.OpenLock(m_pScript, m_Context); ! iRet )
+    if (const int iRet = s.OpenLock(m_pScript, m_Context); ! iRet )
         return true;
 
     s.AttachObj( this );
 
     // ret = -2 or -3
-    lpctstr pszName = GetResourceName();
+    const lpctstr pszName = GetResourceName();
     DEBUG_ERR(("ResourceLock '%s':%d id=%s FAILED\n", s.GetFilePath(), m_Context.m_iOffset, pszName));
 
     return false;

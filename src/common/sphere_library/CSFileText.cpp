@@ -50,7 +50,7 @@ bool CSFileText::_Open(lpctstr ptcFilename, const uint uiModeFlags)
         return false;
 
     _uiMode = uiModeFlags;
-    lpctstr ptcModeStr = _GetModeStr();
+    const lpctstr ptcModeStr = _GetModeStr();
 
     _pStream = fopen( ptcFilename, ptcModeStr );
     if ( _pStream == nullptr )
@@ -106,7 +106,7 @@ int CSFileText::_Seek(const int iOffset, const int iOrigin )
     if ( fseek(_pStream, iOffset, iOrigin) != 0 )
         return 0;
 
-    long iPos = ftell(_pStream);
+    const long iPos = ftell(_pStream);
     if ( iPos < 0 )
     {
         return 0;
@@ -167,7 +167,7 @@ int CSFileText::_Printf(lpctstr pFormat, ...)
 
     va_list vargs;
     va_start(vargs, pFormat);
-    int iRet = _VPrintf(pFormat, vargs);
+    const int iRet = _VPrintf(pFormat, vargs);
     va_end(vargs);
 
     return iRet;
@@ -181,7 +181,7 @@ int CSFileText::Printf( lpctstr pFormat, ... )
 
     va_list vargs;
     va_start( vargs, pFormat );
-    int iRet = _VPrintf( pFormat, vargs );
+    const int iRet = _VPrintf( pFormat, vargs );
     va_end( vargs );
 
     return iRet;
@@ -198,7 +198,7 @@ int CSFileText::Read( void * pBuffer, const int sizemax ) const
         return 0;	// LINUX will ASSERT if we read past end.
 
     MT_UNIQUE_LOCK_SET(this);
-    size_t ret = fread( pBuffer, 1, sizemax, _pStream );
+    const size_t ret = fread( pBuffer, 1, sizemax, _pStream );
     if (ret > INT_MAX)
     {
         _NotifyIOError("CSFileText::Read (length)");
@@ -260,7 +260,7 @@ bool CSFileText::_Write( const void * pData, const int iLen )
         _fNoBuffer = true;
     }
 #endif
-    size_t uiStatus = fwrite( pData, iLen, 1, _pStream );
+    const size_t uiStatus = fwrite( pData, iLen, 1, _pStream );
 #ifndef _WIN32	// However, in unix, it works
     fflush( _pStream );
 #endif

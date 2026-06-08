@@ -94,7 +94,7 @@ void CChatChanMember::DontIgnore(const lpctstr pszName)
 void CChatChanMember::ToggleIgnore(const lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChanMember::ToggleIgnore");
-    if (size_t i = FindIgnoringIndex(pszName); i != sl::scont_bad_index() )
+    if (const size_t i = FindIgnoringIndex(pszName); i != sl::scont_bad_index() )
     {
         ASSERT( m_IgnoredMembers.IsValidIndex(i) );
         m_IgnoredMembers.erase_at(i);
@@ -104,7 +104,7 @@ void CChatChanMember::ToggleIgnore(const lpctstr pszName)
         // Resend the un ignored member to the client's local list of members (but only if they are currently in the same channel!)
         if (m_pChannel)
         {
-            if (CChatChanMember *pMember = m_pChannel->FindMember(pszName))
+            if (const CChatChanMember *pMember = m_pChannel->FindMember(pszName))
                 m_pChannel->SendMember(pMember, this);
         }
     }

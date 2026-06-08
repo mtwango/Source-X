@@ -138,8 +138,8 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
     if (!pItemThis->IsTopLevel())
         return 0;
 
-    int iMaxDist = pMulti->Multi_GetDistanceMax();
-    int iShipHeight = pItemThis->GetTopZ() + maximum(3, pItemThis->GetHeight());
+    const int iMaxDist = pMulti->Multi_GetDistanceMax();
+    const int iShipHeight = pItemThis->GetTopZ() + maximum(3, pItemThis->GetHeight());
 
     // always list myself first. All other items must see my new region !
     uint uiCount = 0;
@@ -172,7 +172,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
         if (pChar->IsDisconnected() && pChar->m_pNPC)
             continue;
 
-        if (int zdiff = pChar->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
+        if (const int zdiff = pChar->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
             continue;
 
         ppObjList[uiCount++] = pChar;
@@ -199,7 +199,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
         if (pItem->IsAttr(ATTR_STATIC))
             continue;
 
-        if (int zdiff = pItem->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
+        if (const int zdiff = pItem->GetTopZ() - iShipHeight; (zdiff < -2) || (zdiff > PLAYER_HEIGHT))
             continue;
 
         ppObjList[uiCount++] = pItem;
@@ -218,7 +218,7 @@ void CCMultiMovable::SetPilot(CChar *pChar)
 	Stop();
 
 	// Remove memory on previous pilot
-    if (CChar *pCharPrev = pItemThis->m_itShip.m_Pilot.CharFind(); pCharPrev && (pCharPrev == pChar))
+    if (const CChar *pCharPrev = pItemThis->m_itShip.m_Pilot.CharFind(); pCharPrev && (pCharPrev == pChar))
 	{
         if (CItem *pMemoryPrev = pCharPrev->ContentFind(CResourceID(RES_ITEMDEF, ITEMID_SHIP_PILOT)))
 		{
@@ -294,7 +294,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
 
     // Move the ship and everything on the deck
     CObjBase * ppObjs[MAX_MULTI_LIST_OBJS + 1];
-    uint iCount = ListObjs(ppObjs);
+    const uint iCount = ListObjs(ppObjs);
     ASSERT(iCount > 0);
 
     for (uint i = 0; i < iCount; ++i)
@@ -316,7 +316,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
     ClientIterator it;
     for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
     {
-        CChar * pCharClient = pClient->GetChar();
+        const CChar * pCharClient = pClient->GetChar();
         if (pCharClient == nullptr)
             continue;
 
@@ -440,7 +440,7 @@ bool CCMultiMovable::MoveToRegion(CRegionWorld * pRegionOld, CRegionWorld *pRegi
 
             if (IsTrigUsed(TRIGGER_REGIONLEAVE))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pRegionOld;
                 if (pMulti->OnTrigger(ITRIG_RegionLeave, pScriptArgs, pMulti->GetCaptain()) == TRIGRET_RET_TRUE)
                 {
@@ -460,7 +460,7 @@ bool CCMultiMovable::MoveToRegion(CRegionWorld * pRegionOld, CRegionWorld *pRegi
 
             if (IsTrigUsed(TRIGGER_REGIONENTER))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pRegionNew;
                 if (pMulti->OnTrigger(ITRIG_RegionEnter, pScriptArgs, pMulti->GetCaptain()) == TRIGRET_RET_TRUE)
                 {
@@ -518,7 +518,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
         return false;
     }
 
-    int iTurn = dir - sm_FaceDir[iFaceOffset];
+    const int iTurn = dir - sm_FaceDir[iFaceOffset];
 
     // ?? Are there blocking items in the way of the turn ?
     const CPointMap ptThis(pMultiThis->GetTopPoint());
@@ -555,15 +555,15 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
 
     // Reorient everything on the deck
     CObjBase * ppObjs[MAX_MULTI_LIST_OBJS + 1];
-    size_t iCount = ListObjs(ppObjs);
+    const size_t iCount = ListObjs(ppObjs);
 
     for (size_t i = 0; i < iCount; ++i)
     {
         CObjBase *pObj = ppObjs[i];
         CPointMap pt = pObj->GetTopPoint();
 
-        int xdiff = pt.m_x - ptThis.m_x;
-        int ydiff = pt.m_y - ptThis.m_y;
+        const int xdiff = pt.m_x - ptThis.m_x;
+        const int ydiff = pt.m_y - ptThis.m_y;
         int xd = xdiff;
         int yd = ydiff;
         switch (iTurn)
@@ -602,7 +602,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
                         (xdiff == component.m_dx) && (ydiff == component.m_dy) && ((pItem->GetTopZ() - pMultiThis->GetTopZ()) == component.m_dz))
                     {
                         const auto &[m_id, m_dx, m_dy, m_dz] = pMultiNew->m_Components[j];
-                        IT_TYPE oldType = pItem->GetType();
+                        const IT_TYPE oldType = pItem->GetType();
                         pItem->SetID(m_id);
                         pItem->SetType(oldType);
                         if ( oldType == IT_SHIP_PLANK && pItem->m_itShipPlank.m_wSideType == IT_SHIP_SIDE_LOCKED)
@@ -667,7 +667,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
     ptDelta.m_map = pItemThis->GetTopMap();
 
     CPointMap ptFore(pMultiRegion->GetRegionCorner(dir));
-	CPointMap ptBack(pMultiRegion->GetRegionCorner(GetDirTurn(dir, 4)));
+    const CPointMap ptBack(pMultiRegion->GetRegionCorner(GetDirTurn(dir, 4)));
     CPointMap ptLeft(pMultiRegion->GetRegionCorner(GetDirTurn(dir, -1 - (dir % 2))));	// acquiring the flat edges requires two 'turns' for diagonal movement
     CPointMap ptRight(pMultiRegion->GetRegionCorner(GetDirTurn(dir, 1 + (dir % 2))));
     CPointMap ptTest(ptLeft.m_x, ptLeft.m_y, pItemThis->GetTopZ(), pItemThis->GetTopMap());
@@ -685,7 +685,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 		{
 			if (ptFore.m_x < 0)
 			{
-				short iDelta = iMapBoundX - ptBack.m_x;
+                const short iDelta = iMapBoundX - ptBack.m_x;
 				ptDelta.m_x += iDelta;
 				ptFore.m_x += iDelta;
 				ptLeft.m_x += iDelta;
@@ -695,7 +695,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 			}
 			else if (ptFore.m_y < 0)
 			{
-				short iDelta = iMapBoundY - ptBack.m_y;
+                const short iDelta = iMapBoundY - ptBack.m_y;
 				ptDelta.m_y += iDelta;
 				ptFore.m_y += iDelta;
 				ptLeft.m_y += iDelta;
@@ -705,7 +705,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 			}
 			else if (ptFore.m_x >= iMapBoundX)
 			{
-				short iDelta = ptBack.m_x + 1;
+                const short iDelta = ptBack.m_x + 1;
 				ptDelta.m_x -= iDelta;
 				ptFore.m_x -= iDelta;
 				ptLeft.m_x -= iDelta;
@@ -715,7 +715,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 			}
 			else if (ptFore.m_y >= iMapBoundY)
 			{
-				short iDelta = ptBack.m_y + 1;
+                const short iDelta = ptBack.m_y + 1;
 				ptDelta.m_y -= iDelta;
 				ptFore.m_y -= iDelta;
 				ptLeft.m_y -= iDelta;
@@ -856,7 +856,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 
 	if (IsTrigUsed(TRIGGER_SHIP_MOVE))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(dir, fStopped, 0, nullptr);
         pItemThis->OnTrigger(ITRIG_Ship_Move, pScriptArgs, &g_Serv);
     }
@@ -908,7 +908,7 @@ void CCMultiMovable::Stop()
 
 	if (IsTrigUsed(TRIGGER_SHIP_STOP))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pItemThis;
         pItemThis->OnTrigger(ITRIG_Ship_Stop, pScriptArgs, &g_Serv);
     }
@@ -995,7 +995,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
     ASSERT(pTiller);
 
     // Get current facing dir.
-    DIR_TYPE DirFace = sm_FaceDir[GetFaceOffset()];
+    const DIR_TYPE DirFace = sm_FaceDir[GetFaceOffset()];
     int DirMoveChange;
     lpctstr pszSpeak = nullptr;
 
@@ -1213,12 +1213,12 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
         {
             if (!pItemThis->IsAttr(ATTR_MAGIC))
                 return false;
-            char zold = pItemThis->GetTopZ();
+            const char zold = pItemThis->GetTopZ();
             CPointMap pt = pItemThis->GetTopPoint();
             pt.m_z = zold;
             pItemThis->SetTopZ(-UO_SIZE_Z);	// bottom of the world where i won't get in the way.
             uint64 uiBlockFlags = CAN_I_WATER;
-            char z = CWorldMap::GetHeightPoint2(pt, uiBlockFlags);
+            const char z = CWorldMap::GetHeightPoint2(pt, uiBlockFlags);
             pItemThis->SetTopZ(zold);	// restore z for now.
             pt.InitPoint();
             pt.m_z = z - zold;

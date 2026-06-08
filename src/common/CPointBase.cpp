@@ -827,11 +827,11 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 bool CPointBase::r_LoadVal(const lpctstr ptcKey, lpctstr pszArgs )
 {
 	ADDTOCALLSTACK("CPointBase::r_LoadVal");
-	int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	if ( index < 0 )
 		return false;
 
-	int iVal = Exp_GetVal(pszArgs);
+    const int iVal = Exp_GetVal(pszArgs);
 	switch (index)
 	{
 		case 0: m_map = static_cast<uchar>(iVal); break;
@@ -968,7 +968,7 @@ int CPointBase::Read( tchar * pszVal )
     bool fError = false;
 
 	tchar * ppVal[4];
-	int iArgs = Str_ParseCmds( pszVal, ppVal, std::size(ppVal), " ,\t" );
+    const int iArgs = Str_ParseCmds( pszVal, ppVal, std::size(ppVal), " ,\t" );
 	switch ( iArgs )
 	{
 		default:
@@ -1019,7 +1019,7 @@ int CPointBase::Read( tchar * pszVal )
 		case 1:
 			if (IsDigit(ppVal[0][0]))
 			{
-                std::optional<short> from = Str_ToI16(ppVal[0]);
+                const std::optional<short> from = Str_ToI16(ppVal[0]);
                 if (!from.has_value())
                 {
                     fError = true;

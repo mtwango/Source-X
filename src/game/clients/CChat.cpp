@@ -41,7 +41,7 @@ bool CChat::CreateChannel(lpctstr pszName, lpctstr pszPassword, CChatChanMember*
     if (!pszPassword)
         pszPassword = TSTRING_NULL;
 
-	auto &pChannel = m_Channels.emplace_back(std::make_unique<CChatChannel>(pszName, pszPassword, !pMember));
+    const auto &pChannel = m_Channels.emplace_back(std::make_unique<CChatChannel>(pszName, pszPassword, !pMember));
 
     if (pMember && (g_Cfg.m_iChatFlags & CHATF_CHANNELMODERATION))
 		pChannel->SetModerator(pMember->GetChatName());
@@ -176,7 +176,7 @@ void CChat::Action(CClient* pClient, const nachar* pszText, const int len, const
 				break;
 		}
 		szMsg[i] = '\0';
-		tchar* pszPassword = szMsg + i + 1;
+        const tchar * pszPassword = szMsg + i + 1;
 		if (pszPassword[0] == ' ')	// skip whitespaces
 			pszPassword += 1;
 		JoinChannel(szMsg + 1, pszPassword, pMe);
@@ -185,14 +185,14 @@ void CChat::Action(CClient* pClient, const nachar* pszText, const int len, const
 	case CHATACT_CreateChannel:				// client shortcut: /newconf
 	{
 		tchar* pszPassword = nullptr;
-		size_t iMsgLength = strlen(szMsg);
+        const size_t iMsgLength = strlen(szMsg);
 		for (size_t i = 0; i < iMsgLength; ++i)
 		{
 			if (szMsg[i] == '{')	// there's a password here
 			{
 				szMsg[i] = 0;
 				pszPassword = szMsg + i + 1;
-				size_t iPasswordLength = strlen(pszPassword);
+                const size_t iPasswordLength = strlen(pszPassword);
 				for (i = 0; i < iPasswordLength; ++i)
 				{
 					if (pszPassword[i] == '}')
@@ -224,7 +224,7 @@ void CChat::Action(CClient* pClient, const nachar* pszText, const int len, const
 		// Split the recipient from the message (look for a space)
 		tchar buffer[2048];
 		strcpy(buffer, szMsg);
-		size_t bufferLength = strlen(buffer);
+        const size_t bufferLength = strlen(buffer);
 		size_t i = 0;
 		for (; i < bufferLength; ++i)
 		{
@@ -414,9 +414,9 @@ void CChat::FormatName(CSString& sName, const CChatChanMember* pMember, const bo
 	int iColor = 0;
 	if (pMember)
 	{
-        if (CChatChannel *pChannel = pMember->GetChannel())
+        if (CChatChannel const * pChannel = pMember->GetChannel())
 		{
-			lpctstr pszName = pMember->GetChatName();
+            const lpctstr pszName = pMember->GetChatName();
 			if (pChannel->IsModerator(pszName))
 				iColor = 1;
 			else if (!pChannel->HasVoice(pszName))
@@ -439,7 +439,7 @@ bool CChat::IsValidName(const lpctstr pszName, const bool fPlayer ) // static
 	if ((strlen(pszName) < 1) || g_Cfg.IsObscene(pszName) || (strcmpi(pszName, "SYSTEM") == 0))
 		return false;
 
-	size_t length = strlen(pszName);
+    const size_t length = strlen(pszName);
 	for (size_t i = 0; i < length; i++)
 	{
 		if ( pszName[i] == ' ' )

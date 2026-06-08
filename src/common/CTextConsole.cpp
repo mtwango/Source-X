@@ -66,8 +66,10 @@ int CTextConsole::OnConsoleKey( CSString & sText, const tchar nChar, const bool 
         inputLen = strlen(p);
 
         // search in the auto-complete list for starting on P, and save coords of 1st and Last matched
-        CSStringListRec *firstmatch = nullptr, *lastmatch = nullptr;
-        CSStringListRec *curmatch = nullptr, *nextmatch = nullptr; // the one that should be set
+        CSStringListRec const * firstmatch = nullptr;
+        CSStringListRec const * lastmatch = nullptr;
+        CSStringListRec const * curmatch  = nullptr;
+        CSStringListRec const * nextmatch = nullptr; // the one that should be set
         for (curmatch = g_AutoComplete.GetHead(); curmatch != nullptr; curmatch = nextmatch)
         {
             nextmatch = curmatch->GetNext();

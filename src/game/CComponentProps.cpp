@@ -53,7 +53,7 @@ bool CComponentProps::BaseProp_WritePropVal(const PropertyIndex_t iPropIndex, co
     }
 
     PropertyValNum_t iVal = 0;
-    bool fRet = GetPropertyNumPtr(iPropIndex, &iVal);
+    const bool fRet = GetPropertyNumPtr(iPropIndex, &iVal);
     sVal.FormatLLVal(iVal);
     return fRet;
 }
@@ -72,7 +72,7 @@ void CComponentProps::BaseCont_Write_ContStr(const BaseContStr_t* container, con
 {
     for (const auto &[fst, snd] : *container)
     {
-        lpctstr ptcVal = snd.GetBuffer();
+        const lpctstr ptcVal = snd.GetBuffer();
         ASSERT(ptcVal);
         if (ptcVal[0] == '\0')
             continue;

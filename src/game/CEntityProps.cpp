@@ -23,7 +23,7 @@ void CEntityProps::ClearPropComponents()
 #ifdef _DEBUG
     for (auto it = _lComponentProps.begin(), itEnd = _lComponentProps.end(); it != itEnd; ++it)
     {
-        CComponentProps *pComponent = it->second.get();
+        const CComponentProps *pComponent = it->second.get();
         ASSERT(pComponent);
     }
 #endif
@@ -38,7 +38,7 @@ void CEntityProps::UnsubscribeComponentProps(const CComponentProps *pComponent)
         return;
     }
     const COMPPROPS_TYPE compType = pComponent->GetType();
-    auto it = _lComponentProps.find(compType);
+    const auto it = _lComponentProps.find(compType);
     if (it == _lComponentProps.end())
     {
         g_Log.EventError("Trying to unsuscribe not suscribed prop component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
@@ -54,7 +54,7 @@ CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE type)
     {
         return nullptr;
     }
-    auto it = _lComponentProps.find(type);
+    const auto it = _lComponentProps.find(type);
     return (it == _lComponentProps.end()) ? nullptr : it->second.get();
 }
 
@@ -62,7 +62,7 @@ const CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE typ
 {
     if (!_lComponentProps.empty())
     {
-        auto it = _lComponentProps.find(type);
+        const auto it = _lComponentProps.find(type);
         return (it == _lComponentProps.end()) ? nullptr : it->second.get();
     }
     return nullptr;
@@ -157,7 +157,7 @@ bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, const lpctstr ptcKey, CSStri
 {
     for (const auto &val : _lComponentProps | std::views::values)
     {
-        if (CComponentProps* pComponent = val.get())
+        if (const CComponentProps * pComponent = val.get())
         {
             const auto [pptcTable, iTableSize] = pComponent->GetPropertyKeysData();
             pRet->iPropIndex = static_cast<COMPPROPS_TYPE>(FindTableSorted(ptcKey, pptcTable, iTableSize - 1));
@@ -240,7 +240,7 @@ void CEntityProps::Copy(const CEntityProps *target)
         return;
     for (auto it = target->_lComponentProps.begin(), itEnd = target->_lComponentProps.end(); it != itEnd; ++it)
     {
-        CComponentProps *pTarget = it->second.get();    // the CComponent to copy from
+        const CComponentProps *pTarget = it->second.get();    // the CComponent to copy from
         ASSERT(pTarget);
         if (CComponentProps *pCopy = GetComponentProps(pTarget->GetType()))
         {
@@ -271,7 +271,7 @@ void CEntityProps::DumpComponentProps(CTextConsole *pSrc, lpctstr ptcPrefix) con
         const CComponentProps* pCCP = GetComponentProps(static_cast<COMPPROPS_TYPE>(iCCP));
         if (!pCCP)
             continue;
-        lpctstr ptcCCPName = pCCP->GetName();
+        const lpctstr ptcCCPName = pCCP->GetName();
         const CComponentProps::PropertyIndex_t iCCPQty = pCCP->GetPropsQty();
         for (CComponentProps::PropertyIndex_t iPropIndex = 0; iPropIndex < iCCPQty; ++iPropIndex)
         {
@@ -289,7 +289,7 @@ void CEntityProps::DumpComponentProps(CTextConsole *pSrc, lpctstr ptcPrefix) con
 
             if (fPropFound)
             {
-                lpctstr ptcPropName = pCCP->GetPropertyName(iPropIndex);
+                const lpctstr ptcPropName = pCCP->GetPropertyName(iPropIndex);
                 if (fIsClient)
                     pSrc->SysMessagef("%s[%s]%s=%s", ptcPrefix, ptcCCPName, ptcPropName, sPropVal.GetBuffer());
                 else

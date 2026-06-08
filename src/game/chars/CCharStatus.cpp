@@ -234,7 +234,7 @@ TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr co
 	if ( EndContext.m_iOffset <= StartContext.m_iOffset )
 	{
 		// just skip to the end.
-        if (TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
+        if (const TRIGRET_TYPE iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult); iRet != TRIGRET_ENDIF )
 			return iRet;
 	}
 	else
@@ -249,7 +249,7 @@ int CChar::GetWeightLoadPercent(const int iWeight) const
 	if (IsPriv(PRIV_GM))
 		return 1;
 
-	int	MaxCarry = g_Cfg.Calc_MaxCarryWeight(this);
+    const int MaxCarry = g_Cfg.Calc_MaxCarryWeight(this);
 	if (!MaxCarry)
 		return 1000;	// suppose self extra-overloaded
 
@@ -295,7 +295,7 @@ bool CChar::CanEquipStr(const CItem *pItem ) const
 		return true;
 
     const CItemBase *pItemDef = pItem->Item_GetDef();
-    if (LAYER_TYPE layer = pItemDef->GetEquipLayer(); !pItemDef->IsTypeEquippable() || !CItemBase::IsVisibleLayer(layer) )
+    if (const LAYER_TYPE layer = pItemDef->GetEquipLayer(); !pItemDef->IsTypeEquippable() || !CItemBase::IsVisibleLayer(layer) )
 		return true;
 
 	if ( Stat_GetAdjusted(STAT_STR) >= pItemDef->m_ttEquippable.m_iStrReq * (100 - pItem->GetPropNum(COMP_PROPS_ITEMEQUIPPABLE, PROPIEQUIP_LOWERREQ, true)) / 100 )
@@ -475,7 +475,7 @@ LAYER_TYPE CChar::CanEquipLayer(const CItem *pItem, LAYER_TYPE layer, const CCha
 int CChar::GetStatPercent(const STAT_TYPE i) const
 {
 	ADDTOCALLSTACK("CChar::GetStatPercent");
-	ushort maxval = Stat_GetMaxAdjusted(i);
+    const ushort maxval = Stat_GetMaxAdjusted(i);
 	if (!maxval)
 		return 0;
 	return IMulDiv(Stat_GetVal(i), 100, maxval);
@@ -507,12 +507,12 @@ bool CChar::IsSwimming() const
 	if ( !pt.IsValidPoint() )
 		return false;
 
-    if (short iDistZ = ptTop.m_z - pt.m_z; iDistZ < -PLAYER_HEIGHT )	// far under the water somehow
+    if (const short iDistZ = ptTop.m_z - pt.m_z; iDistZ < -PLAYER_HEIGHT )	// far under the water somehow
 		return false;
 
 	// Is there a solid surface under us?
 	uint64 uiBlockFlags = GetCanMoveFlags(GetCanFlags());
-    if (char iSurfaceZ = CWorldMap::GetHeightPoint2(ptTop, uiBlockFlags, true); (iSurfaceZ == pt.m_z) && (uiBlockFlags & CAN_I_WATER))
+    if (const char iSurfaceZ = CWorldMap::GetHeightPoint2(ptTop, uiBlockFlags, true); (iSurfaceZ == pt.m_z) && (uiBlockFlags & CAN_I_WATER))
 		return true;
 
 	return false;
@@ -809,7 +809,7 @@ CItem * CChar::GetSpellbookLayer() const //Retrieve a Spellbook from Layer 1 or 
 short CChar::Food_GetLevelPercent() const
 {
 	ADDTOCALLSTACK("CChar::Food_GetLevelPercent");
-	ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
+    const ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
 	if ( max == 0 )
 		return 100;
 	return static_cast<short>(IMulDiv(Stat_GetVal(STAT_FOOD), 100, max));
@@ -818,7 +818,7 @@ short CChar::Food_GetLevelPercent() const
 lpctstr CChar::Food_GetLevelMessage(const bool fPet, const bool fHappy) const
 {
 	ADDTOCALLSTACK("CChar::Food_GetLevelMessage");
-	ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
+    const ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
 	if ( max == 0 )
 		return g_Cfg.GetDefaultMsg(DEFMSG_PET_HAPPY_UNAFFECTED);
 
@@ -954,8 +954,8 @@ lpctstr CChar::GetTradeTitle() const // Paperdoll title for character p (2)
 		if ( !IsIndividualName() )
 			return "";	// same as type anyhow.
 
-        //auto gReader = g_ExprGlobals.mtEngineLockedReader();
-        lpctstr ptcArticle = g_Cfg.GetDefaultMsg(
+        // auto gReader = g_ExprGlobals.mtEngineLockedReader();
+        const lpctstr ptcArticle = g_Cfg.GetDefaultMsg(
             pCharDef->IsFemale()
                 ? DEFMSG_TRADETITLE_ARTICLE_FEMALE
                 : DEFMSG_TRADETITLE_ARTICLE_MALE);
@@ -969,7 +969,7 @@ lpctstr CChar::GetTradeTitle() const // Paperdoll title for character p (2)
 
     const SKILL_TYPE skill = Skill_GetBest();
     const uint uiSkVal = Skill_GetBase(skill);
-    int len                = snprintf(pTemp, Str_TempLength(), "%s ", g_ExprGlobals.mtEngineLockedReader()->SkillTitle(skill, uiSkVal));
+    const int len                = snprintf(pTemp, Str_TempLength(), "%s ", g_ExprGlobals.mtEngineLockedReader()->SkillTitle(skill, uiSkVal));
 
 	snprintf(pTemp + len, Str_TempLength() - len, "%s", g_Cfg.GetSkillDef(skill)->m_sTitle.GetBuffer());
 	return pTemp;
@@ -989,7 +989,7 @@ bool CChar::CanDisturb( const CChar *pChar ) const
 bool CChar::CanSeeAsDead( const CChar *pChar) const
 {
 	ADDTOCALLSTACK("CChar::CanSeeAsDead");
-    if (int iDeadCannotSee = g_Cfg.m_fDeadCannotSeeLiving; iDeadCannotSee && !pChar->IsStatFlag(STATF_DEAD) && !IsPriv(PRIV_GM) )
+    if (const int iDeadCannotSee = g_Cfg.m_fDeadCannotSeeLiving; iDeadCannotSee && !pChar->IsStatFlag(STATF_DEAD) && !IsPriv(PRIV_GM) )
 	{
 		if ( pChar->m_pPlayer )
 		{
@@ -1279,7 +1279,7 @@ bool CChar::CanTouch( const CObjBase *pObj )
 
     const CItem *pItem = nullptr;
 	const CObjBaseTemplate *pObjTop = pObj->GetTopLevelObj();
-	int iDist = GetTopDist3D(pObjTop);
+    const int iDist = GetTopDist3D(pObjTop);
 
 	if ( pObj->IsItem() )	// some objects can be used anytime. (even by the dead.)
 	{
@@ -1307,7 +1307,7 @@ bool CChar::CanTouch( const CObjBase *pObj )
         {
             if (const CItem *pWeapon = m_uidWeapon.ItemFind())
             {
-                if (IT_TYPE iType = pWeapon->GetType(); (iType == IT_WEAPON_BOW) || (iType == IT_WEAPON_XBOW) || (iType == IT_WEAPON_THROWING))
+                if (const IT_TYPE iType = pWeapon->GetType(); (iType == IT_WEAPON_BOW) || (iType == IT_WEAPON_XBOW) || (iType == IT_WEAPON_THROWING))
                     return (iDist <= pWeapon->GetRangeH());
             }
             break;
@@ -1375,7 +1375,7 @@ bool CChar::CanTouch( const CObjBase *pObj )
 	{
 		// Check if the item is in my bankbox, and i'm not in the same position from which I opened it the last time.
 		const CPointMap& ptTop = GetTopPoint();
-        CItemContainer* pBank = GetBank();
+        const CItemContainer * pBank = GetBank();
         if (const bool fItemContIsInsideBankBox = pBank->IsItemInside(pObj->GetUID().ItemFind());
             fItemContIsInsideBankBox && (pBank->m_itEqBankBox.m_pntOpen != ptTop))
 			return false;
@@ -1433,10 +1433,10 @@ IT_TYPE CChar::CanTouchStatic( CPointMap *pPt, const ITEMID_TYPE id, const CItem
 	if ( !pMapBlock )
 		return IT_JUNK;
 
-	int x2 = pMapBlock->GetOffsetX(pPt->m_x);
-	int y2 = pMapBlock->GetOffsetY(pPt->m_y);
+    const int x2 = pMapBlock->GetOffsetX(pPt->m_x);
+    const int y2 = pMapBlock->GetOffsetY(pPt->m_y);
 
-	uint iQty = pMapBlock->m_Statics.GetStaticQty();
+    const uint iQty = pMapBlock->m_Statics.GetStaticQty();
 	for ( uint i = 0; i < iQty; ++i )
 	{
 		if ( !pMapBlock->m_Statics.IsStaticPoint(i, x2, y2) )
@@ -1484,7 +1484,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, const TALKMODE_TYPE mode ) co
                 return false;
             if (g_Cfg.m_iDistanceYell == 0)
             {
-                int dist = GetVisualRange();
+                const int dist = GetVisualRange();
                 if (dist == 0)
                     return true;
                 iHearRange = dist;
@@ -1501,7 +1501,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, const TALKMODE_TYPE mode ) co
                 return false;
             else if ( g_Cfg.m_iDistanceWhisper == 0 )
             {
-                int dist = GetVisualRange();
+                const int dist = GetVisualRange();
                 if ( dist == 0 )
                     return true;
                 iHearRange = dist;
@@ -1516,7 +1516,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, const TALKMODE_TYPE mode ) co
                 return false;
             else if ( g_Cfg.m_iDistanceTalk == 0 )
             {
-                int dist = GetVisualRange();
+                const int dist = GetVisualRange();
                 if ( dist == 0 )
                     return true;
                 iHearRange = dist;
@@ -1526,7 +1526,7 @@ bool CChar::CanHear( const CObjBaseTemplate *pSrc, const TALKMODE_TYPE mode ) co
             break;
     }
 
-    if (int iDist = GetTopDist3D(pSrc); iDist > iHearRange )	// too far away
+    if (const int iDist = GetTopDist3D(pSrc); iDist > iHearRange )	// too far away
         return false;
 
     if ( IsPriv(PRIV_GM) )
@@ -1637,7 +1637,7 @@ bool CChar::CanMoveItem( const CItem *pItem, const bool fMsg ) const
 
 		if ( pItem->IsItemEquipped() )
 		{
-            switch ( LAYER_TYPE layer = pItem->GetEquipLayer() )
+            switch (const LAYER_TYPE layer = pItem->GetEquipLayer() )
 			{
 				case LAYER_DRAGGING:
 					return true;
@@ -1677,13 +1677,13 @@ bool CChar::IsTakeCrime( const CItem *pItem, CChar ** ppCharMark ) const
 		if ( pItem->IsAttr(ATTR_OWNED) && pItem->m_uidLink != GetUID() )
 			return true;
 
-        if (auto *const pCont = dynamic_cast<CItemContainer *>(pObjTop) )
+        if (const auto *const pCont = dynamic_cast<CItemContainer *>(pObjTop) )
 		{
 			if ( pCont->IsAttr(ATTR_OWNED) )
 				return true;
 		}
 
-        if (auto *const pCorpseItem = dynamic_cast<CItemCorpse *>(pObjTop) )		// taking stuff off someones corpse can be a crime
+        if (const auto *const pCorpseItem = dynamic_cast<CItemCorpse *>(pObjTop) )		// taking stuff off someones corpse can be a crime
 			return const_cast<CChar*>(this)->CheckCorpseCrime(pCorpseItem, true, true);     // const_cast is BAD!
 
 		return false;	// I guess it's not a crime

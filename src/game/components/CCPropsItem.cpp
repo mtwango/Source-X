@@ -186,8 +186,8 @@ void CCPropsItem::AddPropsTooltipData(CObjBase* pLinkedObj)
     // Numeric properties
     for (const auto &[fst, snd] : _mPropsNum)
     {
-        PropertyIndex_t prop = fst;
-        PropertyValNum_t iVal = snd;
+        const PropertyIndex_t prop = fst;
+        const PropertyValNum_t iVal = snd;
 
         if (iVal == 0)
             continue;

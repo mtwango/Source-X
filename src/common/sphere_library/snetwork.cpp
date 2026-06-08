@@ -48,10 +48,10 @@ auto hostname_resolve_with_timeout_v4(std::string_view name, const int timeout_m
                 rr.canon = res->ai_canonname;
 
             // Collect IPv4 addresses in network byte order (like hostent->h_addr_list)
-            for (addrinfo* p = res; p; p = p->ai_next)
+            for (addrinfo const* p = res; p; p = p->ai_next)
             {
                 if (p->ai_family != AF_INET || !p->ai_addr) continue;
-                auto sin = reinterpret_cast<const sockaddr_in*>(p->ai_addr);
+                const auto sin = reinterpret_cast<const sockaddr_in*>(p->ai_addr);
                 rr.addrs_v4.push_back(static_cast<uint32_t>(sin->sin_addr.s_addr));
             }
 

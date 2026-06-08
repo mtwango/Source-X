@@ -36,7 +36,7 @@ size_t CPartyDef::AttachChar( CChar *pChar )
 	ADDTOCALLSTACK("CPartyDef::AttachChar");
 	// RETURN:
 	//  index of the char in the group. BadIndex = not in group.
-	size_t i = m_Chars.AttachChar(pChar);
+    const size_t i = m_Chars.AttachChar(pChar);
 	pChar->NotoSave_Update();
     UpdateWaypointAll(pChar, MAPWAYPOINT_PartyMember);
 	return i;
@@ -47,7 +47,7 @@ size_t CPartyDef::DetachChar( CChar *pChar )
 	ADDTOCALLSTACK("CPartyDef::DetachChar");
 	// RETURN:
 	//  index of the char in the group. BadIndex = not in group.
-	size_t i = m_Chars.DetachChar(pChar);
+    const size_t i = m_Chars.DetachChar(pChar);
 	if ( i != sl::scont_bad_index() )
 	{
         UpdateWaypointAll(pChar, MAPWAYPOINT_Remove);
@@ -66,7 +66,7 @@ bool CPartyDef::SetMaster(const CChar *pNewMaster )
     if (!IsInParty(pNewMaster) || IsPartyMaster(pNewMaster))
         return false;
 
-    size_t i = m_Chars.InsertChar(pNewMaster, 0);
+    const size_t i = m_Chars.InsertChar(pNewMaster, 0);
 	SendAddList(nullptr);
 	return (i == 0);
 }
@@ -96,13 +96,13 @@ bool CPartyDef::GetLootFlag( const CChar *pChar )
 void CPartyDef::AddStatsUpdate(const CChar *pChar, PacketSend *pPacket )
 {
 	ADDTOCALLSTACK("CPartyDef::AddStatsUpdate");
-	size_t iQty = m_Chars.GetCharCount();
+    const size_t iQty = m_Chars.GetCharCount();
 	if ( iQty <= 0 )
 		return;
 
 	for ( size_t i = 0; i < iQty; ++i )
 	{
-        if (CChar *pCharNow = m_Chars.GetChar(i).CharFind(); pCharNow && pCharNow != pChar )
+        if (const CChar *pCharNow = m_Chars.GetChar(i).CharFind(); pCharNow && pCharNow != pChar )
 		{
 			if ( pCharNow->IsClientActive() && pCharNow->CanSee(pChar) )
 				pPacket->send(pCharNow->GetClientActive());
@@ -115,10 +115,10 @@ void CPartyDef::SysMessageAll(const lpctstr pText )
 {
 	ADDTOCALLSTACK("CPartyDef::SysMessageAll");
 	// SysMessage to all members of the party.
-	size_t iQty = m_Chars.GetCharCount();
+    const size_t iQty = m_Chars.GetCharCount();
 	for ( size_t i = 0; i < iQty; i++ )
 	{
-        if (CChar *pChar = m_Chars.GetChar(i).CharFind(); pChar != nullptr)
+        if (const CChar *pChar = m_Chars.GetChar(i).CharFind(); pChar != nullptr)
 	    {
 		    pChar->SysMessage(pText);
 	    }
@@ -129,11 +129,11 @@ void CPartyDef::UpdateWaypointAll(const CChar * pCharSrc, const MAPWAYPOINT_TYPE
 {
     ADDTOCALLSTACK("CPartyDef::UpdateWaypointAll");
     // Send pCharSrc map waypoint location to all party members (enhanced client only)
-    size_t iQty = m_Chars.GetCharCount();
+    const size_t iQty = m_Chars.GetCharCount();
     if (iQty <= 0)
         return;
 
-    CChar *pChar = nullptr;
+    const CChar *pChar = nullptr;
     for (size_t i = 0; i < iQty; i++)
     {
         pChar = m_Chars.GetChar(i).CharFind();
@@ -253,7 +253,7 @@ bool CPartyDef::MessageEvent(const CUID &uidDst, const CUID &uidSrc, const nacha
 	if ( !m_pSpeechFunction.IsEmpty() )
 	{
 		TRIGRET_TYPE tr = TRIGRET_RET_FALSE;
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = uidSrc.GetObjUID();
         pScriptArgs->m_iN2 = uidDst.GetObjUID();
         pScriptArgs->m_s1 = szText;
@@ -333,7 +333,7 @@ bool CPartyDef::RemoveMember(const CUID& uidRemove, const CUID &uidCommand, cons
             return Disband(uidMaster);
 
         const CUID newMaster(m_Chars.GetChar(1));
-        CChar *pCharNewMaster(newMaster.CharFind());
+        const CChar *pCharNewMaster(newMaster.CharFind());
 
         // Cannot find new leader's character, disband it.
         if (!pCharNewMaster)
@@ -390,7 +390,7 @@ bool CPartyDef::Disband(const CUID &uidMaster)
 	SysMessageAll(g_Cfg.GetDefaultMsg(DEFMSG_PARTY_DISBANDED));
 
 	CChar *pSrc = uidMaster.CharFind();
-	size_t iQty = m_Chars.GetCharCount();
+    const size_t iQty = m_Chars.GetCharCount();
 	ASSERT(iQty > 0);
 	for ( size_t i = iQty; i > 0; --i )
 	{
@@ -557,7 +557,7 @@ bool CPartyDef::r_GetRef( lpctstr &ptcKey, CScriptObj *&pRef )
 	else if ( !strnicmp("MEMBER.", ptcKey, 7) )
 	{
 		ptcKey += 7;
-		size_t nNumber = Exp_GetSTVal(ptcKey);
+        const size_t nNumber = Exp_GetSTVal(ptcKey);
 		SKIP_SEPARATORS(ptcKey);
 		if ( !m_Chars.IsValidIndex(nNumber) )
 			return false;
@@ -577,7 +577,7 @@ bool CPartyDef::r_LoadVal( CScript &s )
 	EXC_TRY("LoadVal");
 	lpctstr ptcKey = s.GetKey();
 
-    switch ( int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
+    switch (const int index = FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1) )
 	{
 		case PDC_SPEECHFILTER:
 		{
@@ -601,7 +601,7 @@ bool CPartyDef::r_LoadVal( CScript &s )
             const bool fZero = (index == PDC_TAG0);
             ptcKey += (fZero ? 5 : 4);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             m_TagDefs.SetStr(ptcKey, fQuoted, ptcArg, fZero);
 		} break;
 
@@ -651,7 +651,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 			GETNONWHITESPACE(ptcKey);
 			if ( ptcKey[0] != '\0' )
 			{
-				CChar *pCharToCheck = CUID::CharFindFromUID(Exp_GetDWVal(ptcKey));
+                const CChar *pCharToCheck = CUID::CharFindFromUID(Exp_GetDWVal(ptcKey));
 				sVal.FormatVal(pCharToCheck && (pCharToCheck->m_pParty == this));
 			}
 			else
@@ -687,7 +687,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 			if ( *ptcKey == '.' )	// do we have an argument?
 			{
 				SKIP_SEPARATORS(ptcKey);
-				size_t iQty = Exp_GetSTVal(ptcKey);
+                const size_t iQty = Exp_GetSTVal(ptcKey);
 				if ( iQty >= m_TagDefs.GetCount() )
 					return false;	// trying to get non-existant tag
 
@@ -751,13 +751,13 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 		}
 	}
 
-    switch ( int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
+    switch (const int iIndex = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1) )
 	{
 		case PDV_ADDMEMBER:
 		case PDV_ADDMEMBERFORCED:
 		{
 			const bool fForced = (iIndex == PDV_ADDMEMBERFORCED);
-			CUID toAdd(s.GetArgDWVal());
+            const CUID toAdd(s.GetArgDWVal());
 			CChar *pCharAdd = toAdd.CharFind();
 			CChar *pCharMaster = GetMaster().CharFind();
 			if ( !pCharAdd || IsInParty(pCharAdd) )
@@ -839,7 +839,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 				++ptcArg;
 				if ( *ptcArg != '@' )
 				{
-					lpctstr __pszArg = ptcArg;
+                    const lpctstr __pszArg = ptcArg;
 					while ( *ptcArg != ' ' )
 					{
 						++ptcArg;
@@ -856,7 +856,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 			}
 			else
 			{
-				lpctstr __pszArg = ptcArg;
+                const lpctstr __pszArg = ptcArg;
 				while ( *ptcArg != ' ' )
 				{
 					++ptcArg;
@@ -871,7 +871,7 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 
 			if ( toSysmessage.IsValidUID() )
 			{
-                if (CChar *pSend = toSysmessage.CharFind(); pSend != nullptr)
+                if (const CChar *pSend = toSysmessage.CharFind(); pSend != nullptr)
 			    {
 				    pSend->SysMessage(ptcArg);
 			    }

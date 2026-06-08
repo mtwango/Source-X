@@ -345,7 +345,7 @@ int CChar::NPC_GetVendorMarkup() const
 		return 0;
 
 	// Use char value
-	CVarDefCont	*pVar = nullptr;
+    const CVarDefCont * pVar = nullptr;
 	pVar = m_TagDefs.GetKey("VENDORMARKUP");
 	if ( pVar )
 		return static_cast<int>(pVar->GetValNum());
@@ -356,7 +356,7 @@ int CChar::NPC_GetVendorMarkup() const
 		return static_cast<int>(pVar->GetValNum());
 
 	// Use chardef value
-    if ( CCharBase *pCharDef = Char_GetDef() )
+    if (const CCharBase * pCharDef = Char_GetDef() )
 		pVar = pCharDef->m_TagDefs.GetKey("VENDORMARKUP");
 	if ( pVar )
 		return static_cast<int>(pVar->GetValNum());
@@ -392,7 +392,7 @@ size_t CChar::NPC_OnHearName(const lpctstr pszText ) const
 			return 7;
 	}
 
-	CCharBase * pCharDef = Char_GetDef();
+    const CCharBase * pCharDef = Char_GetDef();
 
 	// Named the chars type ? (must come first !)
 	pszName = pCharDef->GetTradeName();
@@ -420,7 +420,7 @@ bool CChar::NPC_CanSpeak() const
 	if ( m_pNPC == nullptr || m_pNPC->m_Speech.size() > 0 )
 		return true;
 
-	CCharBase * pCharDef = Char_GetDef();
+    const CCharBase * pCharDef = Char_GetDef();
 	return ( pCharDef != nullptr && (pCharDef->m_Speech.size() > 0) );
 }
 
@@ -476,7 +476,7 @@ CChar * CChar::NPC_PetGetOwner() const
 	if ( !IsStatFlag(STATF_PET) )
 		return nullptr;
 
-	CItemMemory	*pMemory = Memory_FindTypes(MEMORY_IPET);
+    const CItemMemory * pMemory = Memory_FindTypes(MEMORY_IPET);
 	if ( !pMemory )
 		return nullptr;
 
@@ -519,7 +519,7 @@ ushort CChar::NPC_GetTrainMax( const CChar * pStudent, const SKILL_TYPE Skill ) 
 	ushort uiMax;
 	ushort uiMaxAllowed;
 
-	CVarDefCont * pValue = GetKey("OVERRIDE.TRAINSKILLMAXPERCENT",true);
+    const CVarDefCont * pValue = GetKey("OVERRIDE.TRAINSKILLMAXPERCENT",true);
 	if ( pValue )
 		uiMax = static_cast<ushort>(IMulDiv(static_cast<ushort>(pValue->GetValNum()), Skill_GetBase(Skill), 100));
 	else
@@ -574,7 +574,7 @@ bool CChar::NPC_CheckWalkHere( const CPointMap & pt, const CRegion * pArea ) con
 	auto AreaItems = CWorldSearchHolder::GetInstance(pt);
 	for (;;)
 	{
-		CItem * pItem = AreaItems->GetItem();
+        const CItem * pItem = AreaItems->GetItem();
 		if ( pItem == nullptr )
 			break;
 
@@ -641,13 +641,13 @@ int CChar::NPC_WantThisItem( CItem * pItem ) const
 	if ( !CanMoveItem(pItem, false) )
 		return 0;
 
-	CCharBase * pCharDef = Char_GetDef();
+    const CCharBase * pCharDef = Char_GetDef();
 	ASSERT(pCharDef != nullptr);
     if (const size_t iRet = pCharDef->m_Desires.FindResourceMatch(pItem); iRet != sl::scont_bad_index() )
 		return static_cast<int>(pCharDef->m_Desires[iRet].GetResQty());
 
 	// I'm hungry and this is food ?
-    if (int iFoodLevel = Food_GetLevelPercent(); Food_CanEat(pItem) && iFoodLevel < 100 )
+    if (const int iFoodLevel = Food_GetLevelPercent(); Food_CanEat(pItem) && iFoodLevel < 100 )
 		return 100 - iFoodLevel;
 
 	if ( NPC_IsVendor() )
@@ -688,8 +688,8 @@ int CChar::NPC_GetWeaponUseScore(const CItem * pWeapon )
 		// How much damage could I do with this ?
 	}
 
-	int iDmg = Fight_CalcDamage( pWeapon );
-	int iSkillLevel = Skill_GetAdjusted( skill );
+    const int iDmg = Fight_CalcDamage( pWeapon );
+    const int iSkillLevel = Skill_GetAdjusted( skill );
 
 	return (iSkillLevel + (iDmg * 50));
 }
@@ -725,7 +725,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 	int iHostility = 0;
 
 	// if it is a pet - register it the same as it's master.
-    if (CChar *pCharOwn = pCharTarg->GetOwner(); pCharOwn != nullptr && pCharOwn != this )
+    if (const CChar *pCharOwn = pCharTarg->GetOwner(); pCharOwn != nullptr && pCharOwn != this )
 	{
 		static int sm_iReentrant = 0;
         if (sm_iReentrant > 16)
@@ -741,7 +741,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 		return iHostility;
 	}
 
-	short iKarma = GetKarma();
+    const short iKarma = GetKarma();
 
 	bool fDoMemBase = false;
 
@@ -769,7 +769,7 @@ int CChar::NPC_GetHostilityLevelToward( const CChar * pCharTarg ) const
 	else
 	{
 		// Base hostility on karma diff.
-		int iKarmaTarg = pCharTarg->GetKarma();
+        const int iKarmaTarg = pCharTarg->GetKarma();
 
 		if ( Noto_IsEvil())
 		{

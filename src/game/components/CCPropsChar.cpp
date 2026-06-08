@@ -95,7 +95,7 @@ bool CCPropsChar::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyVa
 
     if (iPropIndex == PROPCH_FACTION_GROUP)
     {
-        auto group = _faction.GetGroup();
+        const auto group = _faction.GetGroup();
         if (group == CFactionDef::Group::NONE)
             return false;
         *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(group));
@@ -103,7 +103,7 @@ bool CCPropsChar::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyVa
     }
     if (iPropIndex == PROPCH_FACTION_SPECIES)
     {
-        auto species = _faction.GetSpecies();
+        const auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)
             return false;
         *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(species));
@@ -255,7 +255,7 @@ bool CCPropsChar::FindLoadPropVal(CScript & s, CObjBase* pLinkedObj, const RESDI
         // Special case if it has empty args: Keep old 'switch' from 0 to 1 and viceversa behaviour
         if (!s.HasArgs())
         {
-            int iVal = ! static_cast <CChar*>(pLinkedObj)->IsStatFlag(STATF_NIGHTSIGHT);
+            const int iVal = ! static_cast <CChar*>(pLinkedObj)->IsStatFlag(STATF_NIGHTSIGHT);
             SetPropertyNum(iPropIndex, iVal, pLinkedObj);
             return true;
         }

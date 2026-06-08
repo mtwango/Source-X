@@ -80,7 +80,7 @@ bool CCPropsItemChar::SetPropertyNum(const PropertyIndex_t iPropIndex, const Pro
     ASSERT(!IsPropertyStr(iPropIndex));
     ASSERT((iLimitToExpansion >= RDS_PRET2A) && (iLimitToExpansion < RDS_QTY));
 
-    auto itOldVal = _mPropsNum.find(iPropIndex);
+    const auto itOldVal = _mPropsNum.find(iPropIndex);
 
     const bool fOldValExistant = itOldVal != _mPropsNum.end();
     PropertyValNum_t iOldVal = 0;
@@ -221,8 +221,8 @@ void CCPropsItemChar::AddPropsTooltipData(CObjBase* pLinkedObj)
     // Numeric properties
     for (const auto &[fst, snd] : _mPropsNum)
     {
-        PropertyIndex_t prop = fst;
-        PropertyValNum_t iVal = snd;
+        const PropertyIndex_t prop = fst;
+        const PropertyValNum_t iVal = snd;
 
         if (iVal == 0)
             continue;

@@ -70,8 +70,8 @@ bool CAccounts::Account_LoadAll(const bool fChanges, const bool fClearChanges )
 	ADDTOCALLSTACK("CAccounts::Account_LoadAll");
     char *z = Str_GetTemp();
 
-	lpctstr pszBaseDir  = g_Cfg.m_sAcctBaseDir.IsEmpty() ? g_Cfg.m_sWorldBaseDir : g_Cfg.m_sAcctBaseDir;
-	lpctstr pszBaseName = (fChanges) ? (SPHERE_FILE "acct" SPHERE_SCRIPT_EXT) : (SPHERE_FILE "accu" SPHERE_SCRIPT_EXT);
+    const lpctstr pszBaseDir  = g_Cfg.m_sAcctBaseDir.IsEmpty() ? g_Cfg.m_sWorldBaseDir : g_Cfg.m_sAcctBaseDir;
+    const lpctstr pszBaseName = (fChanges) ? (SPHERE_FILE "acct" SPHERE_SCRIPT_EXT) : (SPHERE_FILE "accu" SPHERE_SCRIPT_EXT);
 
 	Str_CopyLimitNull(z, pszBaseDir, Str_TempLength());
 	Str_ConcatLimitNull(z, pszBaseName, Str_TempLength());
@@ -174,7 +174,7 @@ CAccount * CAccounts::Account_Find(const lpctstr pszName )
 	if ( !CAccount::NameStrip(szName, pszName) )
 		return nullptr;
 
-    if (size_t i = m_Accounts.FindKey(szName); i != sl::scont_bad_index() )
+    if (const size_t i = m_Accounts.FindKey(szName); i != sl::scont_bad_index() )
 		return Account_Get(i);
 
 	return nullptr;
@@ -189,7 +189,7 @@ CAccount * CAccounts::Account_FindCreate(const lpctstr pszName, bool fAutoCreate
 
 	if ( fAutoCreate )	// Create if not found.
 	{
-		bool fGuest = ( g_Serv.m_eAccApp == ACCAPP_GuestAuto || g_Serv.m_eAccApp == ACCAPP_GuestTrial || ! strnicmp( pszName, "GUEST", 5 ));
+        const bool fGuest = ( g_Serv.m_eAccApp == ACCAPP_GuestAuto || g_Serv.m_eAccApp == ACCAPP_GuestTrial || ! strnicmp( pszName, "GUEST", 5 ));
 		tchar szName[ MAX_ACCOUNT_NAME_SIZE ];
 
 		if (( pszName[0] >= '0' ) && ( pszName[0] <= '9' ))
@@ -207,7 +207,7 @@ bool CAccounts::Account_Delete( CAccount * pAccount )
 	ADDTOCALLSTACK("CAccounts::Account_Delete");
 	ASSERT(pAccount != nullptr);
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(pAccount->GetName());
     TRIGRET_TYPE tr = TRIGRET_RET_FALSE;
     g_Serv.r_Call("f_onaccount_delete", pScriptArgs, &g_Serv, nullptr, &tr);
@@ -227,7 +227,7 @@ void CAccounts::Account_Add( CAccount * pAccount )
 	ASSERT(pAccount != nullptr);
 	if ( !g_Serv.IsLoadingGeneric() )
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(pAccount->GetName());
 		//Accounts are 'created' in server startup so we don't fire the function.
 		TRIGRET_TYPE tRet = TRIGRET_RET_FALSE;
@@ -389,7 +389,7 @@ void CAccount::SetBlockStatus(const bool fNewStatus)
     {
         if (IsPriv(PRIV_BLOCKED) && fNewStatus == false) {
 
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(GetName());
             TRIGRET_TYPE iRet = TRIGRET_RET_FALSE;
             g_Serv.r_Call("f_onaccount_unblock", pScriptArgs, &g_Serv, nullptr, &iRet);
@@ -399,7 +399,7 @@ void CAccount::SetBlockStatus(const bool fNewStatus)
         }
         else if (!IsPriv(PRIV_BLOCKED) && fNewStatus == true)
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(GetName());
             TRIGRET_TYPE iRet = TRIGRET_RET_FALSE;
             g_Serv.r_Call("f_onaccount_block", pScriptArgs, &g_Serv, nullptr, &iRet);
@@ -419,7 +419,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 		return false;
 
 	tchar * ppCmd[5];
-	size_t iQty = Str_ParseCmds( pszArgs, ppCmd, std::size(ppCmd));
+    const size_t iQty = Str_ParseCmds( pszArgs, ppCmd, std::size(ppCmd));
 
 	VACS_TYPE index;
 	if ( iQty <= 0 ||
@@ -523,7 +523,7 @@ bool CAccount::NameStrip( tchar * pszNameOut, const lpctstr pszNameInp )
 {
 	ADDTOCALLSTACK("CAccount::NameStrip");
 
-    if (size_t iLen = Str_GetBare(pszNameOut, pszNameInp, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR); iLen <= 0 )
+    if (const size_t iLen = Str_GetBare(pszNameOut, pszNameInp, MAX_ACCOUNT_NAME_SIZE, ACCOUNT_NAME_VALID_CHAR); iLen <= 0 )
 		return false;
 	// Check for newline characters.
 	if ( strchr(pszNameOut, 0x0A) || strchr(pszNameOut, 0x0C) || strchr(pszNameOut, 0x0D) )
@@ -597,7 +597,7 @@ CAccount::CAccount(const lpctstr pszName, const bool fGuest )
 void CAccount::DeleteChars()
 {
 	ADDTOCALLSTACK("CAccount::DeleteChars");
-    if (CClient *pClient = FindClient(); pClient != nullptr )
+    if (const CClient *pClient = FindClient(); pClient != nullptr )
 	{	// we have no choice but to kick them.
 		pClient->GetNetState()->markReadClosed();
 	}
@@ -714,10 +714,10 @@ size_t CAccount::AttachChar(const CChar * pChar )
 	ASSERT( IsMyAccountChar( pChar ));
 
 	// is it already linked ?
-	size_t i = m_Chars.AttachChar( pChar );
+    const size_t i = m_Chars.AttachChar( pChar );
 	if ( i != sl::scont_bad_index() )
 	{
-        if (size_t iQty = m_Chars.GetCharCount(); iQty > MAX_CHARS_PER_ACCT )
+        if (const size_t iQty = m_Chars.GetCharCount(); iQty > MAX_CHARS_PER_ACCT )
 		{
 			g_Log.Event( LOGM_ACCOUNTS|LOGL_ERROR, "Account '%s' has %" PRIuSIZE_T " characters\n", GetName(), iQty );
 		}
@@ -757,7 +757,7 @@ void CAccount::OnLogin( CClient * pClient )
 	}
 
 	// Get the real world time/date.
-	CSTime datetime = CSTime::GetCurrentTime();
+    const CSTime datetime = CSTime::GetCurrentTime();
 
 	if ( !_iTimeConnectedTotal )	// first time - save first ip and timestamp
 	{
@@ -816,7 +816,7 @@ bool CAccount::Kick( CTextConsole * pSrc, const bool fBlock )
 		pSrc->SysMessagef( g_Cfg.GetDefaultMsg(DEFMSG_MSG_ACC_BLOCK), GetName() );
 	}
 
-	lpctstr pszAction = fBlock ? "KICK" : "DISCONNECT";
+    const lpctstr pszAction = fBlock ? "KICK" : "DISCONNECT";
 
 	tchar * z = Str_GetTemp();
 	snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_ACC_KICK), GetName(), pszAction, pSrc->GetName());
@@ -832,9 +832,9 @@ bool CAccount::CheckPasswordTries(const CSocketAddress csaPeerName)
 		return true;
 	}
 
-	int iAccountMaxTries = g_Cfg.m_iClientLoginMaxTries;
+    const int iAccountMaxTries = g_Cfg.m_iClientLoginMaxTries;
 	bool bReturn = true;
-	dword dwCurrentIP = csaPeerName.GetAddrIP();
+    const dword dwCurrentIP = csaPeerName.GetAddrIP();
 	int64 const timeCurrent = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
     if (auto const itData = m_BlockIP.find(dwCurrentIP); itData != m_BlockIP.end() )
@@ -927,7 +927,7 @@ bool CAccount::CheckPassword(const lpctstr pszPassword )
 			return false;
 	}
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_VarsLocal.SetStrNew("Account",GetName());
     pScriptArgs->m_VarsLocal.SetStrNew("Password",pszPassword);
 	TRIGRET_TYPE tr = TRIGRET_RET_FALSE;
@@ -972,12 +972,12 @@ bool CAccount::SetPassword(const lpctstr pszPassword, const bool isMD5Hash )
     if ( Str_Untrusted_InvalidTermination( pszPassword ) )	// Prevents exploits
 		return false;
 
-	bool useMD5 = g_Cfg.m_fMd5Passwords;
+    const bool useMD5 = g_Cfg.m_fMd5Passwords;
 
 	//Accounts are 'created' in server startup so we don't fire the function.
 	if ( !g_Serv.IsLoadingGeneric() )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(GetName());
         pScriptArgs->m_VarsLocal.SetStrNew("password",pszPassword);
         pScriptArgs->m_VarsLocal.SetStrNew("oldPassword",m_sCurPassword.GetBuffer());
@@ -988,7 +988,7 @@ bool CAccount::SetPassword(const lpctstr pszPassword, const bool isMD5Hash )
 			return false;
 		}
 	}
-	size_t enteredPasswordLength = strlen(pszPassword);
+    const size_t enteredPasswordLength = strlen(pszPassword);
 	if ( isMD5Hash && useMD5 ) // If it is a hash, check length and set it directly
 	{
 		if ( enteredPasswordLength == 32 )
@@ -1183,7 +1183,7 @@ bool CAccount::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	{
 		// How many chars.
 		ptcKey += 5;
-        if (size_t i = Exp_GetSTVal(ptcKey); m_Chars.IsValidIndex(i) )
+        if (const size_t i = Exp_GetSTVal(ptcKey); m_Chars.IsValidIndex(i) )
 		{
 			pRef = m_Chars.GetChar(i).CharFind();
 		}
@@ -1224,7 +1224,7 @@ bool CAccount::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, 
  				if ( *ptcKey == '.' )	// do we have an argument?
  				{
  					SKIP_SEPARATORS( ptcKey );
- 					size_t iQty = Exp_GetSTVal( ptcKey );
+                    const size_t iQty = Exp_GetSTVal( ptcKey );
 					if ( iQty >= m_TagDefs.GetCount() )
  						return false; // trying to get non-existant tag
 
@@ -1352,7 +1352,7 @@ bool CAccount::r_LoadVal( CScript & s )
 	ADDTOCALLSTACK("CAccount::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-	int i = FindTableHeadSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const int i = FindTableHeadSorted( s.GetKey(), sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	if ( i < 0 )
 	{
 		return false;
@@ -1377,7 +1377,7 @@ bool CAccount::r_LoadVal( CScript & s )
 			if ( ! g_Serv.IsLoadingGeneric())
 			{
 				const CUID uid( s.GetArgVal());
-				CChar * pChar = uid.CharFind();
+                const CChar * pChar = uid.CharFind();
 				if (pChar == nullptr)
 				{
 					DEBUG_ERR(( "Invalid CHARUID 0%x for account '%s'\n", static_cast<dword>(uid), GetName()));
@@ -1477,7 +1477,7 @@ bool CAccount::r_LoadVal( CScript & s )
             lpctstr ptcKey = s.GetKey();
             ptcKey += (fZero ? 5 : 4);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             m_TagDefs.SetStr(ptcKey, fQuoted, ptcArg, fZero);
         }
         break;
@@ -1631,7 +1631,7 @@ bool CAccount::r_Verb( CScript &s, CTextConsole * pSrc )
 		return true;
 	}
 
-	int i = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
+    const int i = FindTableSorted( s.GetKey(), sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
 	if ( i < 0 )
 	{
 		bool fLoad = CScriptObj::r_Verb( s, pSrc );
@@ -1639,7 +1639,7 @@ bool CAccount::r_Verb( CScript &s, CTextConsole * pSrc )
 		{
             // RES_FUNCTION call
 			CSString sVal;
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(s.GetArgRaw());
             fLoad = r_Call( ptcKey, pScriptArgs, pSrc, &sVal );
 		}
@@ -1651,7 +1651,7 @@ bool CAccount::r_Verb( CScript &s, CTextConsole * pSrc )
 		case AV_DELETE: // "DELETE"
 			{
 				CClient * pClient = FindClient();
-				lpctstr sCurrentName = GetName();
+                const lpctstr sCurrentName = GetName();
 
 				if ( pClient )
 				{

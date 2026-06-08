@@ -766,17 +766,17 @@ bool CChar::NPC_LookAtCharMonster( CChar * pChar )
 	//
 
     // Attacks those not of my kind.
-	if (int iFoodLevel = Food_GetLevelPercent(); ! Noto_IsCriminal() && (iFoodLevel > 40) )	// Am I not evil ?
+	if (const int iFoodLevel = Food_GetLevelPercent(); ! Noto_IsCriminal() && (iFoodLevel > 40) )	// Am I not evil ?
 		return NPC_LookAtCharHuman( pChar );
 
     // Attack if I am stronger, if it's the same target I was attacking, or I'm just stupid.
-    int iActMotivation = NPC_GetAttackMotivation(pChar);
+    const int iActMotivation = NPC_GetAttackMotivation(pChar);
     if (iActMotivation <= 0)
         return false;
 	if ( iActMotivation < m_pNPC->m_Act_Motivation )
 		return false;
 
-    if (int iDist = GetTopDist3D(pChar); IsStatFlag( STATF_HIDDEN ) && ! NPC_FightMayCast() && (iDist > 1) )
+    if (const int iDist = GetTopDist3D(pChar); IsStatFlag( STATF_HIDDEN ) && ! NPC_FightMayCast() && (iDist > 1) )
 		return false;	// element of surprise.
 
 	if ( Fight_Attack( pChar ) == false )
@@ -943,7 +943,7 @@ bool CChar::NPC_LookAtItem( CItem * pItem, const int iDist )
 	{
 		if ( IsTrigUsed(TRIGGER_NPCLOOKATITEM) && !pItem->IsAttr(ATTR_MOVE_NEVER|ATTR_LOCKEDDOWN|ATTR_SECURE) )
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(iDist, iWantThisItem, 0, pItem);
             switch ( OnTrigger(CTRIG_NPCLookAtItem, pScriptArgs, this) )
 			{
@@ -1069,7 +1069,7 @@ bool CChar::NPC_LookAtChar( CChar * pChar, const int iDist )
 			// Attack everyone you see!
 			if ( Fight_IsActive()) // Is this a better target than my last ?
 			{
-                if (CChar *pCharTarg = m_Act_UID.CharFind(); pCharTarg && (GetTopDist3D(pCharTarg) <= iDist) )
+                if (const CChar *pCharTarg = m_Act_UID.CharFind(); pCharTarg && (GetTopDist3D(pCharTarg) <= iDist) )
 						return true;
 			}
 			if ( Fight_Attack( pChar ) )
@@ -1109,7 +1109,7 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
 	// RETURN:
 	//   true = found something better to do.
 
-	CSector *pSector = GetTopSector();
+    const CSector *pSector = GetTopSector();
 	if ( !m_pNPC || !pSector )
 		return false;
 
@@ -1255,7 +1255,7 @@ void CChar::NPC_Act_Wander()
 
 	if (IsTrigUsed(TRIGGER_NPCACTWANDER))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iStopWandering, iReturnToHome, 0, nullptr);
         if (OnTrigger(CTRIG_NPCActWander, pScriptArgs, this) == TRIGRET_RET_TRUE)
 			return;
@@ -1281,7 +1281,7 @@ void CChar::NPC_Act_Guard()
 	ASSERT(m_pNPC);
 	// Protect our target or owner. (m_Act_UID)
 
-    if (CChar *pChar = m_Act_UID.CharFind(); pChar != nullptr && pChar != this && CanSeeLOS(pChar, LOS_NB_WINDOWS) )
+    if (const CChar *pChar = m_Act_UID.CharFind(); pChar != nullptr && pChar != this && CanSeeLOS(pChar, LOS_NB_WINDOWS) )
 	{
 		if ( pChar->Fight_IsActive() )	// protect the target if they're in a fight
 		{
@@ -1342,7 +1342,7 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 	EXC_SET_BLOCK("Trigger");
 	if (IsTrigUsed(TRIGGER_NPCACTFOLLOW))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(fFlee, maxDistance, fMoveAway, nullptr);
         switch (OnTrigger(CTRIG_NPCActFollow, pScriptArgs, pChar))
 		{
@@ -1383,7 +1383,7 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 
 	EXC_SET_BLOCK("Distance checks");
 	const CPointMap& ptMe = GetTopPoint();
-	int dist = ptMe.GetDist(m_Act_p);
+    const int dist = ptMe.GetDist(m_Act_p);
     if (dist > g_Cfg.m_iMapViewRadar)		// too far away ?
     {
         return false;
@@ -1414,10 +1414,10 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 	EXC_SET_BLOCK("Fleeing");
 	if (fFlee)
 	{
-		CPointMap ptOld = m_Act_p;
+        const CPointMap ptOld = m_Act_p;
 		m_Act_p = ptMe;
 		m_Act_p.Move(GetDirTurn(m_Act_p.GetDir(ptOld), 4 + 1 - g_Rand.GetValFast(3)));
-		int iRet = NPC_WalkToPoint(dist > 3);
+        const int iRet = NPC_WalkToPoint(dist > 3);
 		m_Act_p = ptOld;	// last known point of the enemy.
 		return (iRet < 2);  // 2 = fail
 	}
@@ -1439,12 +1439,12 @@ bool CChar::NPC_Act_Talk()
 	//  false = do something else. go Idle
 	//  true = just keep waiting.
 
-	CChar * pChar = m_Act_UID.CharFind();
+    const CChar * pChar = m_Act_UID.CharFind();
 	if ( pChar == nullptr )	// they are gone ?
 		return false;
 
 	// too far away.
-	int iDist = GetTopDist3D( pChar );
+    const int iDist = GetTopDist3D( pChar );
 	if (( iDist >= UO_MAP_VIEW_SIGHT ) || ( m_ptHome.GetDist3D( pChar->GetTopPoint() ) > m_pNPC->m_Home_Dist_Wander ))	// give up.
 		return false;
 
@@ -1535,7 +1535,7 @@ void CChar::NPC_Act_GoHome()
 		{
 			if ( IsTrigUsed(TRIGGER_NPCLOSTTELEPORT) )
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_iN1 = iDistance;	// ARGN1 - distance
                 if ( OnTrigger(CTRIG_NPCLostTeleport, pScriptArgs, this) != TRIGRET_RET_TRUE )
 					Spell_Teleport(m_ptHome, true, false);
@@ -1614,7 +1614,7 @@ void CChar::NPC_Act_Looting()
 
 	if ( IsTrigUsed(TRIGGER_NPCSEEWANTITEM) )
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_pO1 = pItem;
         if ( OnTrigger(CTRIG_NPCSeeWantItem, pScriptArgs, this) == TRIGRET_RET_TRUE )
 			return;
@@ -1832,7 +1832,7 @@ bool CChar::NPC_Act_Food()
 		if ( iClosestFood <= 1 )
 		{
 			//	can take and eat just in place
-			ushort uiEaten = pClosestFood->ConsumeAmount(uiEatAmount);
+            const ushort uiEaten = pClosestFood->ConsumeAmount(uiEatAmount);
 			EatAnim(pClosestFood, uiEaten);
 			if ( !pClosestFood->GetAmount() )
 			{
@@ -1894,7 +1894,7 @@ bool CChar::NPC_Act_Food()
             if (CItem *pResBit = CWorldMap::CheckNaturalResource(GetTopPoint(), IT_GRASS, true, this);
                 pResBit && pResBit->GetAmount() && ( pResBit->GetTopPoint().m_z == iMyZ ) )
 			{
-				ushort uiEaten = pResBit->ConsumeAmount(10);
+                const ushort uiEaten = pResBit->ConsumeAmount(10);
                 pResBit->SetName(g_Cfg.GetDefaultMsg(DEFMSG_NPC_EAT_GRASS));
 				EatAnim(pResBit, uiEaten/10);
 
@@ -1979,7 +1979,7 @@ void CChar::NPC_Act_Idle()
 
 			default:
 				// TAG.OVERRIDE.SPIDERWEB
-				CVarDefCont * pValue = GetKey("OVERRIDE.SPIDERWEB",true);
+                const CVarDefCont * pValue = GetKey("OVERRIDE.SPIDERWEB",true);
 				if ( pValue )
 				{
 					if ( GetDispID() != CREID_GIANT_SPIDER )
@@ -2042,7 +2042,7 @@ bool CChar::NPC_OnItemGive( CChar *pCharSrc, CItem *pItem )
 	if ( !pCharSrc )
 		return false;
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->m_pO1 = pItem;
 	if ( IsTrigUsed(TRIGGER_RECEIVEITEM) )
 	{
@@ -2463,13 +2463,13 @@ void CChar::NPC_Food()
 	EXC_TRY("FoodAI");
 
 	const CPointMap& ptMe = GetTopPoint();
-	int		iFood = Stat_GetVal(STAT_FOOD);
-	int		iFoodLevel = Food_GetLevelPercent();
+    const int iFood = Stat_GetVal(STAT_FOOD);
+    const int iFoodLevel = Food_GetLevelPercent();
 	ushort	uiEatAmount = 1;
 	int		iSearchDistance = 2;
 	CItem	*pClosestFood = nullptr;
 	int		iClosestFood = 100;
-	int		iMyZ = ptMe.m_z;
+    const int iMyZ = ptMe.m_z;
 	bool	fSearchGrass = false;
 
 	if ( iFood >= 10 )
@@ -2511,7 +2511,7 @@ void CChar::NPC_Food()
 
 		if ( (uiEatAmount = Food_CanEat(pItem)) > 0 )
 		{
-			int iDist = GetDist(pItem);
+            const int iDist = GetDist(pItem);
 			if ( pClosestFood )
 			{
 				if ( iDist < iClosestFood )
@@ -2534,7 +2534,7 @@ void CChar::NPC_Food()
 		{
 			//	can take and eat just in place
 			EXC_SET_BLOCK("eating nearby");
-			ushort uiEaten = pClosestFood->ConsumeAmount(uiEatAmount);
+            const ushort uiEaten = pClosestFood->ConsumeAmount(uiEatAmount);
 			EatAnim(pClosestFood, uiEaten);
 			if ( !pClosestFood->GetAmount() )
 			{
@@ -2663,7 +2663,7 @@ void CChar::NPC_ExtraAI()
 	EXC_SET_BLOCK("weapon/shield");
 	if ( IsStatFlag(STATF_WAR) )
 	{
-        if (CItem *pWeapon = LayerFind(LAYER_HAND1); !pWeapon || !pWeapon->IsTypeWeapon() )
+        if (const CItem *pWeapon = LayerFind(LAYER_HAND1); !pWeapon || !pWeapon->IsTypeWeapon() )
 			ItemEquipWeapon(false);
 
         if (CItem *pShield = LayerFind(LAYER_HAND2); !pShield || !pShield->IsTypeArmor() )

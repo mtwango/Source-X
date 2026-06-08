@@ -322,7 +322,7 @@ void CCChampion::SpawnNPC()
 
     if (CCSpawn *pSpawn = GetSpawnItem())
     {
-        if (CChar *pChar = pSpawn->GenerateChar(rid))
+        if (const CChar *pChar = pSpawn->GenerateChar(rid))
         {
             AddObj(pChar->GetUID());
             if (_fChampionSummoned)
@@ -349,7 +349,7 @@ void CCChampion::AddWhiteCandle(const CUID& uid)
     _iSpawnsNextWhite = _iSpawnsNextRed / (CANDLESNEXTRED + 1);
 
     CItem* pCandle = nullptr;
-    CItem* pLink = GetLink();
+    const CItem * pLink = GetLink();
     if (uid.IsValidUID())
     {
         _pWhiteCandles.emplace_back(uid);
@@ -389,7 +389,7 @@ void CCChampion::AddWhiteCandle(const CUID& uid)
         {
             if (IsTrigUsed(TRIGGER_ADDWHITECANDLE))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pCandle;
                 if (OnTrigger(ITRIG_ADDWHITECANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
                 {
@@ -414,7 +414,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
     ADDTOCALLSTACK("CCChampion::AddRedCandle");
 
     CItem* pCandle = nullptr;
-    CItem* pLink = GetLink();
+    const CItem * pLink = GetLink();
     if (uid.IsValidUID())
     {
         _pRedCandles.emplace_back(uid);
@@ -509,7 +509,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
         {
             if (IsTrigUsed(TRIGGER_ADDREDCANDLE))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_pO1 = pCandle;
                 if (OnTrigger(ITRIG_ADDREDCANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
                 {
@@ -541,12 +541,12 @@ void CCChampion::SetLevel(const byte iLevel)
     if (_iLevel < 1)
         _iLevel = 1;
 
-    ushort iLevelMonsters = GetMonstersCount();
+    const ushort iLevelMonsters = GetMonstersCount();
     _iCandlesNextLevel += GetCandlesCount();
 
     if (IsTrigUsed(TRIGGER_LEVEL))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(_iLevel, iLevelMonsters, _iCandlesNextLevel, nullptr);
         OnTrigger(ITRIG_LEVEL, pScriptArgs, &g_Serv);
     }
@@ -561,8 +561,8 @@ void CCChampion::SetLevel(const byte iLevel)
     }
 
     // TODO: As the level increases, the light on the area decreases.
-    ushort iRedMonsters = iLevelMonsters / _iCandlesNextLevel;
-    ushort iWhiteMonsters = iRedMonsters / (CANDLESNEXTRED + 1);
+    const ushort iRedMonsters = iLevelMonsters / _iCandlesNextLevel;
+    const ushort iWhiteMonsters = iRedMonsters / (CANDLESNEXTRED + 1);
     _iSpawnsNextWhite = iWhiteMonsters;
     _iSpawnsNextRed = iRedMonsters;
     GetLink()->SetTimeoutS(60 * 10);
@@ -580,7 +580,7 @@ void CCChampion::InitializeLists()
     _MonstersList.clear();
     _CandleList.clear();
 
-    uchar uiPerc = 100 / _iLevelMax;
+    const uchar uiPerc = 100 / _iLevelMax;
     uchar uiMonsterTotal = 0;
     uchar uiCandleTotal = 0;
     for (uchar i = (_iLevelMax - 2); i > 0; --i)
@@ -635,7 +635,7 @@ ushort CCChampion::GetMonstersCount()
 
     if (_iLevel <= _MonstersList.size())
     {
-        ushort ucPerc = _MonstersList[_iLevel - 1];
+        const ushort ucPerc = _MonstersList[_iLevel - 1];
         return (ucPerc * _iSpawnsMax) / 100;
     }
     return 1;
@@ -649,11 +649,11 @@ void CCChampion::DelWhiteCandle(CANDLEDELREASON_TYPE reason)
         return;
 
     CItem* pCandle;
-    if (CUID uidLastWhiteCandle = _pWhiteCandles.back(); (pCandle = uidLastWhiteCandle.ItemFind()))
+    if (const CUID uidLastWhiteCandle = _pWhiteCandles.back(); (pCandle = uidLastWhiteCandle.ItemFind()))
     {
         if (IsTrigUsed(TRIGGER_DELWHITECANDLE))
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = reason;
             pScriptArgs->m_pO1 = pCandle;
             if (OnTrigger(ITRIG_DELWHITECANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
@@ -674,11 +674,11 @@ void CCChampion::DelRedCandle(const CANDLEDELREASON_TYPE reason)
         return;
 
     CItem* pCandle;
-    if (CUID uidLastRedCandle = _pRedCandles.back(); (pCandle = uidLastRedCandle.ItemFind()))
+    if (const CUID uidLastRedCandle = _pRedCandles.back(); (pCandle = uidLastRedCandle.ItemFind()))
     {
         if (IsTrigUsed(TRIGGER_DELREDCANDLE))
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = reason;
             pScriptArgs->m_pO1 = pCandle;
             if (OnTrigger(ITRIG_DELREDCANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
@@ -810,7 +810,7 @@ void CCChampion::r_Write(CScript& s)
             {
                 continue;
             }
-            for (CREID_TYPE npc : vec)
+            for (const CREID_TYPE npc : vec)
             {
                 groupStream << g_Cfg.ResourceGetName(CResourceID(RES_CHARDEF, npc)) << ",";
             }
@@ -998,9 +998,9 @@ bool CCChampion::r_LoadVal(CScript& s)
         break;
     case ICHMPL_NPCGROUP:
         {
-            uchar iGroup = Exp_GetUCVal(ptcKey);
+            const uchar iGroup = Exp_GetUCVal(ptcKey);
             tchar* piCmd[UCHAR_MAX];
-            size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
+            const size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
             _spawnGroupsId[iGroup].clear();
             for (uint i = 0; i < iArgQty; ++i)
             {
@@ -1040,7 +1040,7 @@ bool CCChampion::r_LoadVal(CScript& s)
             if (!uid.IsValidResource())
                 return true;
 
-            CResourceIDBase rid(uid.GetPrivateUID());
+            const CResourceIDBase rid(uid.GetPrivateUID());
             _idSpawn = (rid.GetResType() == RES_CHAMPION ? rid : CResourceIDBase(RES_CHAMPION, rid.GetResIndex()));
 
             if (!_idSpawn.IsValidUID())
@@ -1072,7 +1072,7 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
     if (!strnicmp(ptcKey, "WHITECANDLE", 11))
     {
         ptcKey += 11;
-        size_t uiCandle = Exp_GetSTVal(ptcKey);
+        const size_t uiCandle = Exp_GetSTVal(ptcKey);
         SKIP_SEPARATORS(ptcKey);
         if (CItem *pCandle = _pWhiteCandles[uiCandle].ItemFind())
         {
@@ -1083,7 +1083,7 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
     if (!strnicmp(ptcKey, "REDCANDLE", 9))
     {
         ptcKey += 9;
-        size_t uiCandle = Exp_GetSTVal(ptcKey);
+        const size_t uiCandle = Exp_GetSTVal(ptcKey);
         SKIP_SEPARATORS(ptcKey);
         if (CItem *pCandle = _pRedCandles[uiCandle].ItemFind())
         {
@@ -1117,7 +1117,7 @@ bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
     {
         case ICHMPV_ADDOBJ:
         {
-            if (CUID uid(s.GetArgVal()); uid.ObjFind())
+            if (const CUID uid(s.GetArgVal()); uid.ObjFind())
                 AddObj(uid);
             return true;
         }
@@ -1126,7 +1126,7 @@ bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
             return true;
         case ICHMPV_DELOBJ:
         {
-            if (CUID uid(s.GetArgVal()); uid.ObjFind())
+            if (const CUID uid(s.GetArgVal()); uid.ObjFind())
                 DelObj(uid);
             return true;
         }
@@ -1159,7 +1159,7 @@ bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
 
 TRIGRET_TYPE CCChampion::OnTrigger(const ITRIG_TYPE trig, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc)
 {
-    lpctstr pszTrigName = CItem::sm_szTrigName[trig];
+    const lpctstr pszTrigName = CItem::sm_szTrigName[trig];
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
     const auto pChampDef = dynamic_cast<CCChampionDef*>(pRes);
@@ -1254,7 +1254,7 @@ bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * p
             }
             if ( uiNPC < npcCount )
             {
-                if (auto npc = _idSpawn[uiGroup].at(uiNPC); npc != CREID_INVALID)
+                if (const auto npc = _idSpawn[uiGroup].at(uiNPC); npc != CREID_INVALID)
                 {
                     sVal = g_Cfg.ResourceGetName(CResourceID(RES_CHARDEF, npc));
                     return true;
@@ -1300,9 +1300,9 @@ bool CCChampionDef::r_LoadVal(CScript& s)
         break;
     case CHAMPIONDEF_NPCGROUP:
     {
-        uchar iGroup = Exp_GetUCVal(ptcKey);
+        const uchar iGroup = Exp_GetUCVal(ptcKey);
         tchar* piCmd[UCHAR_MAX];
-        size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
+        const size_t iArgQty = Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd), ",");
         _idSpawn[iGroup].clear();
         for (uint i = 0; i < iArgQty; ++i)
         {

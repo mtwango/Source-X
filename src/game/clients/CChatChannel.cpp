@@ -50,7 +50,7 @@ void CChatChannel::WhoIs(const lpctstr pszBy, const lpctstr pszMember)
     }
 
     CChatChanMember * pMember = FindMember(pszMember);
-    if (CChar *pChar = pMember ? pMember->GetClientActive()->GetChar() : nullptr; !pMember||!pChar)
+    if (const CChar *pChar = pMember ? pMember->GetClientActive()->GetChar() : nullptr; !pMember||!pChar)
     {
         pBy->SendChatMsg(CHATMSG_NoPlayer, pszMember);
     }
@@ -117,7 +117,7 @@ void CChatChannel::SendPrivateMessage(CChatChanMember * pFrom, const lpctstr psz
         return;
     }
     // Can always send private messages to moderators (but only if they are receiving)
-    if (bool fHasVoice = HasVoice(pFrom->GetChatName()); !fHasVoice && !IsModerator(pszTo))
+    if (const bool fHasVoice = HasVoice(pFrom->GetChatName()); !fHasVoice && !IsModerator(pszTo))
     {
         pFrom->SendChatMsg(CHATMSG_RevokedSpeaking);
         return;
@@ -170,7 +170,7 @@ void CChatChannel::SendMember(const CChatChanMember * pMember, CChatChanMember* 
     CSString sName;
     g_Serv.m_Chats.FormatName(sName, pMember);
 
-    CClient* pClient = nullptr;
+    const CClient * pClient = nullptr;
     if (pToMember)
     {
         // If pToMember is specified, send only to this member
@@ -233,7 +233,7 @@ void CChatChannel::RemoveMember(CChatChanMember * pMember)
 CChatChanMember* CChatChannel::FindMember(const lpctstr pszName) const
 {
     ADDTOCALLSTACK("CChatChannel::FindMember");
-    size_t i = FindMemberIndex( pszName );
+    const size_t i = FindMemberIndex( pszName );
     if ( i == sl::scont_bad_index() )
         return nullptr;
 
@@ -314,7 +314,7 @@ void CChatChannel::KickMember(CChatChanMember* pByMember, CChatChanMember* pMemb
         }
     }
 
-    lpctstr pszName = pMember->GetChatName();
+    const lpctstr pszName = pMember->GetChatName();
     // Kicking this person...remove from list of moderators first
     if (IsModerator(pszName))
     {
@@ -340,13 +340,13 @@ void CChatChannel::AddMember(CChatChanMember * pMember)
     pMember->SetChannel(this);
     m_Members.emplace_back(pMember);
     // See if only moderators have a voice by default
-    if (lpctstr pszName = pMember->GetChatName(); !IsModerator(pszName))
+    if (const lpctstr pszName = pMember->GetChatName(); !IsModerator(pszName))
     {
         if (!GetVoiceDefault())
             SetVoice(pszName);
 
         // GMs always have moderation privs
-        if (CClient *pClient = pMember->GetClientActive(); pClient && pClient->IsPriv(PRIV_GM))
+        if (const CClient *pClient = pMember->GetClientActive(); pClient && pClient->IsPriv(PRIV_GM))
             SetModerator(pszName);
     }
 }
@@ -487,7 +487,7 @@ size_t CChatChannel::FindMemberIndex(const lpctstr pszName) const
     ADDTOCALLSTACK("CChatChannel::FindMemberIndex");
     for (size_t i = 0; i < m_Members.size(); ++i)
     {
-        lpctstr ptcName = m_Members[i]->GetChatName();
+        const lpctstr ptcName = m_Members[i]->GetChatName();
         ASSERT(ptcName);
         if ( strcmp( ptcName, pszName) == 0)
             return i;
@@ -615,7 +615,7 @@ void CChatChannel::AddVoice(CChatChanMember* pByMember, lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::AddVoice");
 
-    lpctstr pszByName = pByMember->GetChatName();
+    const lpctstr pszByName = pByMember->GetChatName();
     if (!IsModerator(pszByName))
     {
         pByMember->SendChatMsg(CHATMSG_MustHaveOps);
@@ -642,7 +642,7 @@ void CChatChannel::RemoveVoice(CChatChanMember* pByMember, lpctstr pszName)
 {
     ADDTOCALLSTACK("CChatChannel::RemoveVoice");
 
-    lpctstr pszByName = pByMember->GetChatName();
+    const lpctstr pszByName = pByMember->GetChatName();
     if (!IsModerator(pszByName))
     {
         pByMember->SendChatMsg(CHATMSG_MustHaveOps);

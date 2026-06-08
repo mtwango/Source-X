@@ -42,8 +42,8 @@
 static void dword_q_sort(dword *numbers, dword left, dword right)
 {
 
-    dword l_hold = left;
-    dword r_hold = right;
+    const dword l_hold = left;
+    const dword r_hold = right;
     dword pivot  = numbers[left];
     while (left < right)
     {
@@ -254,15 +254,15 @@ static void defragSphere(const char *path)
             //	here we definitely know that this is very uid-like
             if ( str_ptr )
             {
-                char c = *str_ptr_2;
+                const char c = *str_ptr_2;
 
                 *str_ptr_2 = 0;
                 //	here in p we have the current value of the line.
                 //	check if it is a valid UID
 
                 //	prepare converting 0.. to 0x..
-                char c1      = *(str_ptr - 1);
-                char c2      = *str_ptr;
+                const char c1 = *(str_ptr - 1);
+                const char c2 = *str_ptr;
                 *(str_ptr-1) = '0';
                 *str_ptr = 'x';
                 --str_ptr;
@@ -403,7 +403,7 @@ bool CServer::SetProcessPriority(const int iPriorityLevel)
 {
     bool fSuccess;
 #ifdef _WIN32
-    HANDLE hCurrentProcess = GetCurrentProcess();
+    const HANDLE hCurrentProcess = GetCurrentProcess();
     DWORD dwPri;
     switch (iPriorityLevel)
     {
@@ -557,7 +557,7 @@ void CServer::PrintTelnet(const lpctstr pszMsg ) const
 		return;
 
 	ClientIterator it;
-	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
+	for (const CClient * pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
 		if (( pClient->GetConnectType() == CONNECT_TELNET ) && pClient->GetAccount() )
 		{
@@ -638,15 +638,15 @@ lpctstr CServer::GetStatusString(const byte iIndex ) const
 	// 0 or 0x21 = main status.
 
 	tchar * pTemp = Str_GetTemp();
-	size_t iClients = StatGet(SERV_STAT_CLIENTS);
-	int64 iHours = GetAgeHours() / 24;
+    const size_t iClients = StatGet(SERV_STAT_CLIENTS);
+    const int64 iHours = GetAgeHours() / 24;
 
 	switch ( iIndex )
 	{
 		case 0x21:	// '!'
 			// typical (first time) poll response.
 			{
-				std::string cliver = m_ClientVersion.GetClientVer();
+                const std::string cliver = m_ClientVersion.GetClientVer();
                 snprintf(pTemp, Str_TempLength(),
                     SPHERE_TITLE ", Name=%s, Port=%d, Ver=" SPHERE_BUILD_INFO_STR ", TZ=%d, EMail=%s, URL=%s, Lang=%s, CliVer=%s\n",
 					GetName(), m_ip.GetPort(), m_TimeZone, m_sEMail.GetBuffer(), m_sURL.GetBuffer(), m_sLang.GetBuffer(), cliver.c_str());
@@ -1398,7 +1398,7 @@ void CServer::ProfileDump(const CTextConsole * pSrc, const bool bDump )
         ftDump->Printf("Profiles %s: (%d sec total)\n", GetCurrentProfileData().IsActive() ? "ON" : "OFF", GetCurrentProfileData().GetActiveWindow());
     }
 
-	size_t uiThreadCount = ThreadHolder::get().getActiveThreads();
+    const size_t uiThreadCount = ThreadHolder::get().getActiveThreads();
 	for ( size_t iThreads = 0; iThreads < uiThreadCount; ++iThreads)
 	{
 		AbstractThread* thrCurrent = ThreadHolder::get().getThreadAt(iThreads);
@@ -1586,7 +1586,7 @@ bool CServer::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 
 		if ( ptcKey[i] == '.' )
 		{
-			size_t index = atoi( ptcKey );	// must use this to stop at .
+            const size_t index = atoi( ptcKey );	// must use this to stop at .
 			pRef = g_Cfg.Server_GetDef(index);
 			ptcKey += i + 1;
 			return true;
@@ -1636,7 +1636,7 @@ bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		//	try to fetch using indexes
 		if (( *pszTemp >= '0' ) && ( *pszTemp <= '9' ))
 		{
-            if (uint num = Exp_GetUVal(pszTemp); *pszTemp == '\0' && num < g_Accounts.Account_GetCount())
+            if (const uint num = Exp_GetUVal(pszTemp); *pszTemp == '\0' && num < g_Accounts.Account_GetCount())
 				pAccount = g_Accounts.Account_Get(num);
 		}
 
@@ -1663,7 +1663,7 @@ bool CServer::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
     if (!strnicmp(ptcKey, "GMPAGE.", 7))
     {
         ptcKey += 7;
-        size_t uiNum = Exp_GetSTVal(ptcKey);
+        const size_t uiNum = Exp_GetSTVal(ptcKey);
         if (uiNum >= g_World.m_GMPages.size())
             return false;
 
@@ -2303,7 +2303,7 @@ bool CServer::CommandLinePreLoad(const int argc, tchar * argv[] )
 
     for ( int argn = 1; argn < argc; ++argn )
     {
-        tchar * pArg = argv[argn];
+        const tchar * pArg = argv[argn];
         if ( ! _IS_SWITCH(pArg[0]))
             continue;
 
@@ -2360,7 +2360,7 @@ bool CServer::CommandLinePostLoad(const int argc, tchar * argv[] )
 
 	for ( int argn = 1; argn < argc; ++argn )
 	{
-		tchar * pArg = argv[argn];
+        const tchar * pArg = argv[argn];
 		if ( ! _IS_SWITCH(pArg[0]))
 			continue;
 
@@ -2404,7 +2404,7 @@ bool CServer::CommandLinePostLoad(const int argc, tchar * argv[] )
 						return false;
                     }
 
-                    auto r = g_ExprGlobals.mtEngineLockedReader();
+                    const auto r = g_ExprGlobals.mtEngineLockedReader();
                     ssize_t count = static_cast<ssize_t>(r->m_VarDefs.GetCount());
                     ssize_t i = 0;
                     for ( const CVarDefCont * pCont : r->m_VarDefs )
@@ -2536,11 +2536,11 @@ bool CServer::SocketsInit( CSocket & socket )
 	}
 #endif
 	// Bind to just one specific port if they say so.
-	CSocketAddress SockAddr = m_ip;
+    const CSocketAddress SockAddr = m_ip;
 	// if ( fGod )
 	//	SockAddr.SetPort(( g_Cfg.m_iUseGodPort > 1 ) ? g_Cfg.m_iUseGodPort : m_ip.GetPort()+1000);
 
-    if (int iRet = socket.Bind(SockAddr); iRet < 0 )			// Probably already a server running.
+    if (const int iRet = socket.Bind(SockAddr); iRet < 0 )			// Probably already a server running.
 	{
 		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Unable to bind listen socket %s port %d (error code: %i)\n", SockAddr.GetAddrStr(), SockAddr.GetPort(), iRet);
 		return false;
@@ -2784,7 +2784,7 @@ nowinsock:		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Winsock 1.1 not found!\n");
     if (g_Cfg.m_iAutoProcessPriority != 0)
     {
         EXC_SET_BLOCK("setting process priority");
-        bool fPrioritySuccess = SetProcessPriority(g_Cfg.m_iAutoProcessPriority);
+        const bool fPrioritySuccess = SetProcessPriority(g_Cfg.m_iAutoProcessPriority);
         g_Log.Event(LOGM_INIT, "Setting process priority... %s.\n", fPrioritySuccess ? "Success" : "Failed");
     }
 
@@ -2799,7 +2799,7 @@ nowinsock:		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Winsock 1.1 not found!\n");
 	EXC_SET_BLOCK("init encryption");
 	if ( m_ClientVersion.GetClientVerNumber() )
 	{
-        std::string cliverstr = m_ClientVersion.GetClientVer();
+        const std::string cliverstr = m_ClientVersion.GetClientVer();
 		g_Log.Event(LOGM_INIT, "ClientVersion=%s\n", cliverstr.c_str());
 		if ( !m_ClientVersion.IsValid() )
 		{

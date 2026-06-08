@@ -372,7 +372,7 @@ SOCKET CSocket::Accept( CSocketAddress & SockAddr ) const
 {
 	// RETURN: Error = hSocketClient < 0 || hSocketClient == INVALID_SOCKET
     sockaddr_in SockAddrIn;
-	SOCKET hSocket = Accept( &SockAddrIn );
+    const SOCKET hSocket = Accept( &SockAddrIn );
 	SockAddr.SetAddrPort( SockAddrIn );
 	return( hSocket );
 }
@@ -505,7 +505,7 @@ void CSocket::CloseSocket( SOCKET hClose )
 short CSocket::GetProtocolIdByName(const lpctstr pszName )
 {
 
-    protoent *ppe = getprotobyname(pszName);
+    const protoent *ppe = getprotobyname(pszName);
 	if ( !ppe )
 		return 0;
 

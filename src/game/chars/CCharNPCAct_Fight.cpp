@@ -26,7 +26,7 @@ bool CChar::NPC_FightArchery(const CChar * pChar)
     int iMaxDist = 0;
 
     // determine how far we can shoot with this bow
-    if (CItem *pWeapon = m_uidWeapon.ItemFind(); pWeapon != nullptr)
+    if (const CItem *pWeapon = m_uidWeapon.ItemFind(); pWeapon != nullptr)
     {
         iMinDist = GetRangeL();
         iMaxDist = GetRangeH();
@@ -38,7 +38,7 @@ bool CChar::NPC_FightArchery(const CChar * pChar)
     if (!iMinDist)
         iMinDist = g_Cfg.m_iArcheryMinDist;
 
-    int iDist = GetTopDist3D(pChar);
+    const int iDist = GetTopDist3D(pChar);
     if (iDist > iMaxDist)	// way too far away . close in.
         return false;
 
@@ -69,13 +69,13 @@ CChar * CChar::NPC_FightFindBestTarget(const std::vector<CChar*>* pvExcludeList)
         int iClosest = INT32_MAX;
         CChar *pChar = nullptr;
         CChar *pClosest = nullptr;
-        SKILL_TYPE skillWeapon = Fight_GetWeaponSkill();
+        const SKILL_TYPE skillWeapon = Fight_GetWeaponSkill();
 
         // Do NOT use iterators here, since in this loop the m_lastAttackers vector can be altered, and so the iterator, making it invalid
         //for (std::vector<LastAttackers>::iterator it = m_lastAttackers.begin(); it != m_lastAttackers.end(); ++it)
         for (size_t i = 0; i < m_lastAttackers.size(); )
         {
-            LastAttackers &refAttacker = m_lastAttackers[i];
+            const LastAttackers &refAttacker = m_lastAttackers[i];
             pChar = CUID::CharFindFromUID(refAttacker.charUID);
             if (!pChar)
             {
@@ -115,7 +115,7 @@ CChar * CChar::NPC_FightFindBestTarget(const std::vector<CChar*>* pvExcludeList)
             if (!pClosest)
                 pClosest = pChar;
 
-            int iDist = GetDist(pChar);
+            const int iDist = GetDist(pChar);
             /*if (iDist > GetVisualRange())     // does this cause a deadlock sometimes?
             {
                 Attacker_Delete(i, false, ATTACKER_CLEAR_DISTANCE);
@@ -221,7 +221,7 @@ void CChar::NPC_Act_Fight()
     bool fSkipHardcoded = false;
     if (IsTrigUsed(TRIGGER_NPCACTFIGHT))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iDist, iMotivation, 0, nullptr);
         switch (OnTrigger(CTRIG_NPCActFight, pScriptArgs, pChar))
         {
@@ -298,7 +298,7 @@ void CChar::NPC_Act_Fight()
         int iRangeMax = 9;
         if (const CVarDefCont *pRange = GetDefKey("THROWRANGE", true))
         {
-            int iRangeTot = CBaseBaseDef::ConvertRangeStr(pRange->GetValStr());
+            const int iRangeTot = CBaseBaseDef::ConvertRangeStr(pRange->GetValStr());
             iRangeMin = RANGE_GET_LO(iRangeTot);
             iRangeMax = RANGE_GET_HI(iRangeTot);
         }
@@ -346,7 +346,7 @@ void CChar::NPC_Act_Fight()
     }
 
     // Move in for melee type combat.
-    if (int iRange = Fight_CalcRange(m_uidWeapon.ItemFind()); !NPC_Act_Follow(false, iRange, false))
+    if (const int iRange = Fight_CalcRange(m_uidWeapon.ItemFind()); !NPC_Act_Follow(false, iRange, false))
     {
         // Enemy gone?
         m_Act_UID.InitUID();

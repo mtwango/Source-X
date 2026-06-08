@@ -132,7 +132,7 @@ bool CGMPage::r_LoadVal(CScript& s)
 		break;
 	case GC_HANDLED:
 	{
-        if (CChar *pChar = CUID::CharFindFromUID(s.GetArgDWVal()); pChar && pChar->IsClientActive())
+        if (const CChar *pChar = CUID::CharFindFromUID(s.GetArgDWVal()); pChar && pChar->IsClientActive())
 			SetHandler(pChar->GetClientActive());
 		else
 			ClearHandler();

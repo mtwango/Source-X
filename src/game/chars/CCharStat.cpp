@@ -33,7 +33,7 @@ void CChar::Stat_SetMod(const STAT_TYPE i, int iVal )
 	{
 		if ( i >= STAT_STR && i <= STAT_DEX )
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = i + 8LL;	// shift by 8 to indicate modSTR, modINT, modDEX
             pScriptArgs->m_iN2 = iStatVal;
             pScriptArgs->m_iN3 = iVal;
@@ -83,12 +83,12 @@ void CChar::Stat_SetMaxMod(const STAT_TYPE i, int iVal )
     ADDTOCALLSTACK("CChar::Stat_SetMaxMod");
 	ASSERT((i >= 0) && (i < STAT_QTY)); // allow for food
 
-    int iStatVal = Stat_GetMaxMod(i);
+    const int iStatVal = Stat_GetMaxMod(i);
     if ( IsTrigUsed(TRIGGER_STATCHANGE) && !IsTriggerActive("CREATE") )
     {
         if ( (i >= STAT_STR) && (i <= STAT_DEX) )
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = i + 12LL;	// shift by 12 to indicate modMaxHits, modMaxMana, modMaxStam
             pScriptArgs->m_iN2 = iStatVal;
             pScriptArgs->m_iN3 = iVal;
@@ -238,7 +238,7 @@ void CChar::Stat_SetMax(const STAT_TYPE i, ushort uiVal )
 		{
 			if ( i > STAT_NONE && i < STAT_QTY )		// only STR, DEX, INT, FOOD fire MaxHits, MaxMana, MaxStam, MaxFood for @StatChange
 			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->m_iN1 = i + 4LL;		// shift by 4 to indicate MaxHits, etc..
                 pScriptArgs->m_iN2 = Stat_GetMax(i);
                 pScriptArgs->m_iN3 = uiVal;
@@ -338,13 +338,13 @@ void CChar::Stat_SetBase(const STAT_TYPE i, ushort uiVal )
 	ADDTOCALLSTACK("CChar::Stat_SetBase");
 	ASSERT(i >= 0 && i < STAT_QTY);
 
-	ushort uiStatVal = Stat_GetBase(i);
+    const ushort uiStatVal = Stat_GetBase(i);
 	if (IsTrigUsed(TRIGGER_STATCHANGE) && !g_Serv.IsLoadingGeneric() && !IsTriggerActive("CREATE"))
 	{
 		// Only Str, Dex, Int, Food fire @StatChange here
 		if (i >= STAT_STR && i <= STAT_FOOD)
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = i;
             pScriptArgs->m_iN2 = uiStatVal;
             pScriptArgs->m_iN3 = uiVal;
@@ -448,7 +448,7 @@ ushort CChar::Stat_GetLimit(const STAT_TYPE i ) const
 
 		if ( m_pPlayer->Stat_GetLock(i) >= SKILLLOCK_DOWN )
 		{
-            if (ushort uiStatLevel = Stat_GetBase(i); uiStatLevel < uiStatMax )
+            if (const ushort uiStatLevel = Stat_GetBase(i); uiStatLevel < uiStatMax )
 				uiStatMax = uiStatLevel;
 		}
 		return uiStatMax;
@@ -661,7 +661,7 @@ void CChar::SetKarma(short iNewKarma, CChar* pNPC)
 
 	if (IsTrigUsed(TRIGGER_KARMACHANGE))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iKarmaChange, iOldKarma, 0, pNPC);
         if (const TRIGRET_TYPE retType = OnTrigger(CTRIG_KarmaChange, pScriptArgs, this); retType == TRIGRET_RET_TRUE)
 			return;
@@ -698,9 +698,9 @@ void CChar::SetFame(ushort uiNewFame, CChar* pNPC)
 
 	if (IsTrigUsed(TRIGGER_FAMECHANGE))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(iFameChange, iOldFame, 0, pNPC);
-        if (TRIGRET_TYPE retType = OnTrigger(CTRIG_FameChange, pScriptArgs, this); retType == TRIGRET_RET_TRUE)
+        if (const TRIGRET_TYPE retType = OnTrigger(CTRIG_FameChange, pScriptArgs, this); retType == TRIGRET_RET_TRUE)
 			return;
         iFameChange = static_cast<short>(pScriptArgs->m_iN1);
         uiNewFame = static_cast<short>((maximum(0, minimum(g_Cfg.m_iMaxFame, iOldFame + iFameChange))));
@@ -733,7 +733,7 @@ bool CChar::Stat_Decrease(const STAT_TYPE stat, const SKILL_TYPE skill)
         uiMinval = Stat_GetAdjusted(stat);
 
 	// We are at a point where our skills can degrade a bit.
-	uint uiStatSumMax = uiStatSumLimit + uiStatSumLimit / 4;
+    const uint uiStatSumMax = uiStatSumLimit + uiStatSumLimit / 4;
     if (const int iChanceForLoss = Calc_GetSCurve(uiStatSumMax - uiStatSumLimit, (uiStatSumMax - uiStatSumLimit) / 4); iChanceForLoss > g_Rand.GetVal(1000) )
 	{
 		// Find the stat that was used least recently and degrade it.

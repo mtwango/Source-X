@@ -31,7 +31,7 @@ DIR_TYPE GetDirStr(const lpctstr pszDir)
 {
     char iDir2;
 
-    switch (char iDir = static_cast<char>(toupper(pszDir[0])))
+    switch (const char iDir = static_cast<char>(toupper(pszDir[0])))
     {
         case 'E':
         return DIR_E;
@@ -62,10 +62,10 @@ DIR_TYPE GetDirStr(const lpctstr pszDir)
 static bool GetDeltaStr( CPointMap & pt, tchar * pszDir )
 {
 	tchar * ppCmd[3];
-    if (size_t iQty = Str_ParseCmds(pszDir, ppCmd, std::size(ppCmd)); iQty <= 0)
+    if (const size_t iQty = Str_ParseCmds(pszDir, ppCmd, std::size(ppCmd)); iQty <= 0)
 		return false;
 
-	tchar chDir = static_cast<tchar>(toupper(ppCmd[0][0]));
+    const tchar chDir = static_cast<tchar>(toupper(ppCmd[0][0]));
 	int iTmp = Exp_GetVal( ppCmd[1] );
 
 	if ( IsDigit( chDir ) || chDir == '-' )
@@ -78,7 +78,7 @@ static bool GetDeltaStr( CPointMap & pt, tchar * pszDir )
 	{
 		if ( iTmp == 0 )
 			iTmp = 1;
-		DIR_TYPE eDir = GetDirStr( ppCmd[0] );
+        const DIR_TYPE eDir = GetDirStr( ppCmd[0] );
 		if ( eDir >= DIR_QTY )
 			return false;
 		pt.MoveN( eDir, iTmp );
@@ -335,12 +335,12 @@ void CObjBase::SetHue(const HUE_TYPE wHue, const bool fAvoidTrigger, CTextConsol
 		Sanity checks are recommended and if possible, avoid using it on universal events. */
 	if (!fAvoidTrigger)
 	{
-        if (lpctstr ptcTrig = (IsChar() ? CChar::sm_szTrigName[CTRIG_DYE] : CItem::sm_szTrigName[ITRIG_DYE]); IsTrigUsed(ptcTrig))
+        if (const lpctstr ptcTrig = (IsChar() ? CChar::sm_szTrigName[CTRIG_DYE] : CItem::sm_szTrigName[ITRIG_DYE]); IsTrigUsed(ptcTrig))
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(wHue, iSound, 0, pSourceObj);
 
-            if (TRIGRET_TYPE iRet = OnTrigger(ptcTrig, pScriptArgs, pSrc); iRet == TRIGRET_RET_TRUE)
+            if (const TRIGRET_TYPE iRet = OnTrigger(ptcTrig, pScriptArgs, pSrc); iRet == TRIGRET_RET_TRUE)
 				return;
 
             if (pScriptArgs->m_iN2 > 0) // No sound? No checks for who can hear, packets...
@@ -370,7 +370,7 @@ HUE_TYPE CObjBase::GetHue() const
 int CObjBase::IsWeird() const
 {
 	ADDTOCALLSTACK_DEBUG("CObjBase::IsWeird");
-    if ( int iResultCode = CObjBaseTemplate::IsWeird() )
+    if (const int iResultCode = CObjBaseTemplate::IsWeird() )
 	{
 		return( iResultCode );
 	}
@@ -481,7 +481,7 @@ bool CObjBase::SetNamePool( lpctstr pszName )
 		}
 
 		// Can't be a dupe name with type ?
-        if (lpctstr pszTypeName = Base_GetDef()->GetTypeName(); ! strcmpi( pszTypeName, pszTmp ))
+        if (const lpctstr pszTypeName = Base_GetDef()->GetTypeName(); ! strcmpi( pszTypeName, pszTmp ))
 			pszTmp = "";
 
 		if ( CObjBaseTemplate::SetName( pszTmp ) == false )
@@ -544,7 +544,7 @@ void CObjBase::Sound(const SOUND_TYPE id, int iOnce ) const // Play sound effect
 		return;
 
 	ClientIterator it;
-	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
+	for (const CClient * pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
 		if ( ! pClient->CanHear( this, TALKMODE_SOUND ) )
 			continue;
@@ -571,7 +571,7 @@ void CObjBase::Effect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CObj
     }
 
 	ClientIterator it;
-	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
+	for (const CClient * pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
 		if ( ! pClient->CanSee( this ) )
 			continue;
@@ -606,7 +606,7 @@ void CObjBase::EffectLocation(const EFFECT_TYPE motion, const ITEMID_TYPE id, co
 
     // show for everyone nearby
 	ClientIterator it;
-	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
+	for (const CClient * pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
 		if (!pClient->CanSee(this))
 			continue;
@@ -768,7 +768,7 @@ bool CObjBase::MoveNear(CPointMap pt, const ushort iSteps )
 	// Actually move it within +/- iSteps
 
     // TODO: check this again...
-	CPointMap ptOld(pt);
+    const CPointMap ptOld(pt);
 	for ( uint i = 0; i < iSteps; ++i )
 	{
 		pt = ptOld;
@@ -785,7 +785,7 @@ bool CObjBase::MoveNear(CPointMap pt, const ushort iSteps )
 	if ( IsChar() )
 	{
 		// Don't move to an position that we can't walk to
-        auto pChar = static_cast<CChar *>(this);
+        const auto pChar = static_cast<CChar *>(this);
 		ASSERT(pChar);
 
 		pChar->m_zClimbHeight = 0;
@@ -852,7 +852,7 @@ TRIGRET_TYPE CObjBase::OnHearTrigger( CResourceLock & s, lpctstr pszCmd, CChar *
 		{
 			// Look for some key word.
             //_strupr(ptcOn); // Str_Match is already case insensitive
-			if (tchar *ptcOn = s.GetArgStr(); Str_Match( ptcOn, pszCmd ) == MATCH_VALID )
+			if (const tchar *ptcOn = s.GetArgStr(); Str_Match( ptcOn, pszCmd ) == MATCH_VALID )
 				fMatch = true;
 			continue;
 		}
@@ -865,7 +865,7 @@ TRIGRET_TYPE CObjBase::OnHearTrigger( CResourceLock & s, lpctstr pszCmd, CChar *
     pScriptArgs->m_iN1 = iModeRef;
     pScriptArgs->m_iN2 = wHue;
 
-    if (TRIGRET_TYPE iRet = OnTriggerRunVal(s, TRIGRUN_SECTION_EXEC, pScriptArgs, pSrc); iRet != TRIGRET_RET_FALSE )
+    if (const TRIGRET_TYPE iRet = OnTriggerRunVal(s, TRIGRUN_SECTION_EXEC, pScriptArgs, pSrc); iRet != TRIGRET_RET_FALSE )
 			return iRet;
 
 		fMatch = false;
@@ -899,7 +899,7 @@ lpctstr const CObjBase::sm_szRefKeys[OBR_QTY+1] =
 bool CObjBase::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CObjBase::r_GetRef");
-    if (int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
+    if (const int i = FindTableHeadSorted(ptcKey, sm_szRefKeys, std::size(sm_szRefKeys) - 1); i >= 0 )
 	{
 		ptcKey += strlen( sm_szRefKeys[i] );
 		SKIP_SEPARATORS(ptcKey);
@@ -1771,13 +1771,13 @@ bool CObjBase::r_LoadVal( CScript & s )
             const bool fZero = (ptcKey[3] == '0');
             ptcKey = ptcKey + (fZero ? 5 : 4);
             bool fQuoted = false;
-            lpctstr ptcArg = s.GetArgStr(&fQuoted);
+            const lpctstr ptcArg = s.GetArgStr(&fQuoted);
             m_TagDefs.SetStr(ptcKey, fQuoted, ptcArg, fZero);
             return true;
         }
     }
 
-	int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
+    const int index = FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 );
 	if ( index < 0 )
 	{
         return CScriptObj::r_LoadVal(s);
@@ -1943,7 +1943,7 @@ bool CObjBase::r_LoadVal( CScript & s )
 		{
 			if (!IsItem())
 				return false;
-            auto pItem = static_cast<CItem*>(this);
+            const auto pItem = static_cast<CItem*>(this);
 			pItem->m_speed = s.GetArgBVal();
 			fResendTooltip = true;
 			break;
@@ -3036,9 +3036,9 @@ void CObjBase::RemoveFromView(const CClient * pClientExclude, const bool fHardco
 	if ( IsDisconnected())
 		return;	// not in the world.
 
-	CObjBaseTemplate * pObjTop = GetTopLevelObj();
-	CItem * pItem = fHardcoded ? (dynamic_cast<CItem*>(this)) : (nullptr);
-	CChar * pChar = nullptr;
+    const CObjBaseTemplate * pObjTop = GetTopLevelObj();
+    const CItem * pItem = fHardcoded ? (dynamic_cast<CItem*>(this)) : (nullptr);
+    const CChar * pChar = nullptr;
 
 	ClientIterator it;
 	for (CClient* pClient = it.next(); pClient != nullptr; pClient = it.next())
@@ -3187,7 +3187,7 @@ void CObjBase::OnTickStatusUpdate()
 
 	if (IsItem())
 	{
-		if (auto pItemDmg = static_cast<CCItemDamageable*>(GetComponent(COMP_ITEMDAMAGEABLE)))
+		if (const auto pItemDmg = static_cast<CCItemDamageable*>(GetComponent(COMP_ITEMDAMAGEABLE)))
 		{
 			pItemDmg->OnTickStatsUpdate();
 		}
@@ -3200,7 +3200,7 @@ void CObjBase::_GoAwake()
 {
 	ADDTOCALLSTACK("CObjBase::_GoAwake");
 	CTimedObject::_GoAwake();
-	if (auto pContainer = dynamic_cast<CContainer*>(this))
+	if (const auto pContainer = dynamic_cast<CContainer*>(this))
 	{
 		pContainer->_GoAwake(); // This method isn't virtual
     }
@@ -3268,7 +3268,7 @@ bool CObjBase::_CanTick(const bool fParentGoingToSleep) const
 {
     EXC_TRY("Can tick?");
 
-    bool fTickable = !_IsSleeping() && !fParentGoingToSleep;
+    const bool fTickable = !_IsSleeping() && !fParentGoingToSleep;
     if (!fTickable)
     {
         // Can we ignore the sleeping state?
@@ -3310,7 +3310,7 @@ void CObjBase::ResendTooltip(const bool fSendFull, const bool fUseCache)
 	ClientIterator it;
 	for (CClient *pClient = it.next(); pClient != nullptr; pClient = it.next())
 	{
-        CChar *pChar = pClient->GetChar();
+        const CChar *pChar = pClient->GetChar();
 		if ( pChar == nullptr )
 			continue;
 		if ( !pChar->CanSee( this ) )
@@ -3647,13 +3647,13 @@ bool CObjBase::CallPersonalTrigger(tchar * pArgs, CTextConsole * pSrc, TRIGRET_T
 
     if (size_t iResultArgs = Str_ParseCmds(pArgs, ppCmdTrigger, std::size(ppCmdTrigger), ","); iResultArgs > 0 )
 	{
-		lpctstr callTrigger = ppCmdTrigger[0];
-        CScriptTriggerArgsPtr pTriggerArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const lpctstr callTrigger = ppCmdTrigger[0];
+        const CScriptTriggerArgsPtr pTriggerArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
 
 		if ( iResultArgs == 3 )
 		{
 
-            if (int iTriggerArgType = atoi(ppCmdTrigger[1]); iTriggerArgType == 1 ) // 3 ARGNs
+            if (const int iTriggerArgType = atoi(ppCmdTrigger[1]); iTriggerArgType == 1 ) // 3 ARGNs
 			{
 				int64 Arg_piCmd[3];
 				iResultArgs = Str_ParseCmds(ppCmdTrigger[2], Arg_piCmd, std::size(Arg_piCmd), ",");
@@ -3674,7 +3674,7 @@ bool CObjBase::CallPersonalTrigger(tchar * pArgs, CTextConsole * pSrc, TRIGRET_T
 			}
 			else if ( iTriggerArgType == 3 ) // ARGO
 			{
-				CUID guTriggerArg(Exp_GetVal(ppCmdTrigger[2]));
+                const CUID guTriggerArg(Exp_GetVal(ppCmdTrigger[2]));
                 if ( CObjBase *pTriggerArgObj = guTriggerArg.ObjFind() )
                     pTriggerArgs->m_pO1 = pTriggerArgObj;
 			}

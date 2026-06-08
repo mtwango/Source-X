@@ -43,7 +43,7 @@ static LPTSTR GetLastErrorText(const LPTSTR lpszBuf, const DWORD dwSize)
 	//	RETURN VALUE:
 	//		destination buffer
 
-	int nChars = CSError::GetSystemErrorMessage( GetLastError(), lpszBuf, dwSize );
+    const int nChars = CSError::GetSystemErrorMessage( GetLastError(), lpszBuf, dwSize );
 	sprintf( lpszBuf+nChars, " (0x%lX)", GetLastError());
 	return lpszBuf;
 }
@@ -88,7 +88,7 @@ BOOL CNTService::SetServiceStatus(const DWORD dwCurrentState, const DWORD dwWin3
 		m_sStatus.dwCheckPoint = dwCheckPoint++;
 
 	// Report the status of the service to the Service Control Manager
-	BOOL fResult = ::SetServiceStatus(m_hStatusHandle, &m_sStatus);
+    const BOOL fResult = ::SetServiceStatus(m_hStatusHandle, &m_sStatus);
 	if ( !fResult && m_fIsNTService )
 	{
 		// if fResult is not 0, then an error occurred.  Throw this in the event log.
@@ -175,7 +175,7 @@ bailout2:
 	}
 
 	// Create a security descriptor that allows anyone to write to the pipe
-	PSECURITY_DESCRIPTOR pSD = malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
+    const PSECURITY_DESCRIPTOR pSD = malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
 	if ( !pSD )
 		goto bailout2;
 
@@ -207,7 +207,7 @@ bailout3:
 	char szErr[256];
 
 	// Open the named pipe
-	HANDLE hPipe = CreateNamedPipe(lpszPipeName,
+    const HANDLE hPipe = CreateNamedPipe(lpszPipeName,
 		FILE_FLAG_OVERLAPPED|PIPE_ACCESS_DUPLEX,
 		PIPE_TYPE_MESSAGE|PIPE_READMODE_MESSAGE|PIPE_WAIT,
 		1, 0, 0, 1000, &sa);
@@ -265,7 +265,7 @@ void CNTService::CmdInstallService()
 	}
 
 	// Try to open the Service Control Manager
-	SC_HANDLE schSCManager = OpenSCManager(nullptr, nullptr, SC_MANAGER_ALL_ACCESS);
+    const SC_HANDLE schSCManager = OpenSCManager(nullptr, nullptr, SC_MANAGER_ALL_ACCESS);
 	if ( !schSCManager )
 	{
 		ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Install OpenSCManager", GetLastErrorText(szErr, sizeof(szErr)));
@@ -276,7 +276,7 @@ void CNTService::CmdInstallService()
 	char szInternalName[MAX_PATH];
 	sprintf(szInternalName, SPHERE_TITLE " - %s", g_Serv.GetName());
 
-	SC_HANDLE schService = CreateService(
+    const SC_HANDLE schService = CreateService(
 		schSCManager,					// handle of the Service Control Manager
 		szInternalName,				// Internal name of the service (used when controlling the service using "net start" or "netsvc")
 		szInternalName,			// Display name of the service (displayed in the Control Panel | Services page)
@@ -379,7 +379,7 @@ void CNTService::CmdRemoveService()
 
 	ReportEvent(EVENTLOG_INFORMATION_TYPE, 0, "Removing Service.");
 
-	SC_HANDLE schSCManager = OpenSCManager(nullptr, nullptr, SC_MANAGER_ALL_ACCESS);
+    const SC_HANDLE schSCManager = OpenSCManager(nullptr, nullptr, SC_MANAGER_ALL_ACCESS);
 	if ( !schSCManager )
 	{
 		ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Remove OpenSCManager failed", GetLastErrorText(szErr, sizeof(szErr)));
@@ -390,7 +390,7 @@ void CNTService::CmdRemoveService()
 	char szInternalName[MAX_PATH];
 	sprintf(szInternalName, SPHERE_TITLE " - %s", g_Serv.GetName());
 
-	SC_HANDLE schService = OpenService(schSCManager, szInternalName, SERVICE_ALL_ACCESS);
+    const SC_HANDLE schService = OpenService(schSCManager, szInternalName, SERVICE_ALL_ACCESS);
 	if ( !schService )
 	{
 		ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Remove OpenService failed", GetLastErrorText(szErr, sizeof(szErr)));
@@ -435,7 +435,7 @@ void CNTService::CmdMainStart()
 
 	char szTmp[256];
 	sprintf(szTmp, SPHERE_TITLE " - %s", g_Serv.GetName());
-	SERVICE_TABLE_ENTRY dispatchTable[] =
+    const SERVICE_TABLE_ENTRY dispatchTable[] =
 	{
 		{ szTmp, static_cast<LPSERVICE_MAIN_FUNCTIONA>(service_main) },
 		{ nullptr, nullptr },
@@ -464,7 +464,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	TCHAR	*argv[32];
 	argv[0] = nullptr;
-	int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " =\t") + 1;
+    const int argc = Str_ParseCmds(lpCmdLine, &argv[1], std::size(argv) - 1, " =\t") + 1;
 
     // Process the command line arguments.
     if (argc > 1 && _IS_SWITCH(*argv[1]))
@@ -515,7 +515,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         g_NTWindow._NTWInitParams = {hInstance, lpCmdLine, nShowCmd};
         g_NTWindow.start();
 
-        int iRet = Sphere_MainEntryPoint(argc, argv);
+        const int iRet = Sphere_MainEntryPoint(argc, argv);
 
         TerminateProcess(GetCurrentProcess(), iRet);
         return iRet;

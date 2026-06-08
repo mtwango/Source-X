@@ -207,13 +207,13 @@ bool CUOInstall::OpenFile(const VERFILE_TYPE i )
 	if ( pFile->IsFileOpen())
 		return true;
 
-    if (lpctstr ptcFilePath = pFile->GetFilePath(); !ptcFilePath || !strlen(ptcFilePath) )
+    if (const lpctstr ptcFilePath = pFile->GetFilePath(); !ptcFilePath || !strlen(ptcFilePath) )
 	{
 		if ( pFile->Open(pFile->GetFilePath(), OF_READ|OF_SHARE_DENY_WRITE) )
 			return true;
 	}
 
-	lpctstr pszTitle = GetBaseFileName(i);
+    const lpctstr pszTitle = GetBaseFileName(i);
 	if ( !pszTitle )
         return false;
 
@@ -298,7 +298,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 									m_Maps[index].Seek(sizeof(dword), SEEK_CUR);
 									m_Maps[index].Read(&dwTotalFiles, sizeof(dword));
 									m_Maps[index].Seek(static_cast<int>(qwUOPPtr), SEEK_SET);
-									dword dwLoop = dwTotalFiles;
+                                    const dword dwLoop = dwTotalFiles;
 
 									while (qwUOPPtr > 0)
 									{
@@ -323,7 +323,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 											m_Maps[index].Seek(sizeof(dword), SEEK_CUR);
 											m_Maps[index].Read(&dwHashLo, sizeof(dword));
 											m_Maps[index].Read(&dwHashHi, sizeof(dword));
-											uint64 qwHash = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo;
+                                            const uint64 qwHash = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo;
 											m_Maps[index].Seek(sizeof(dword) + sizeof(word), SEEK_CUR);
 
 											for (dword x = 0; x < dwLoop; ++x)
@@ -597,7 +597,7 @@ void CVerDataMul::QSort(const size_t left, const size_t right)
 	size_t j = left;
 	size_t i = right;
 
-	dword dwRefIndex = GetEntry((left + right) / 2)->GetIndex();
+    const dword dwRefIndex = GetEntry((left + right) / 2)->GetIndex();
 
 	do
 	{
@@ -671,7 +671,7 @@ void CVerDataMul::Load(CSFile & file)
 #ifdef _DEBUG
 	for (size_t i = 0; i < (dwQty - 1); ++i)
 	{
-		dword dwIndex1 = GetEntry(i)->GetIndex();
+        const dword dwIndex1 = GetEntry(i)->GetIndex();
         if (const dword dwIndex2 = GetEntry(i + 1)->GetIndex(); dwIndex1 > dwIndex2)
 		{
 			DEBUG_ERR(("VerData Array is NOT sorted !\n"));
@@ -710,14 +710,14 @@ bool CVerDataMul::FindVerDataBlock(const VERFILE_TYPE type, const dword id, CUOI
 		return false;
 	}
 
-	dword dwIndex = VERDATA_MAKE_INDEX(type, id);
+    const dword dwIndex = VERDATA_MAKE_INDEX(type, id);
 	const CUOVersionBlock * pArray = m_Data.data();
 	int iLow = 0;
 	while (iLow <= iHigh)
 	{
-		int i = (iHigh + iLow) / 2;
-		dword dwIndex2 = pArray[i].GetIndex();
-		int iCompare = dwIndex - dwIndex2;
+        const int i = (iHigh + iLow) / 2;
+        const dword dwIndex2 = pArray[i].GetIndex();
+        const int iCompare = dwIndex - dwIndex2;
 		if (iCompare == 0)
 		{
 			Index.CopyIndex(&(pArray[i]));

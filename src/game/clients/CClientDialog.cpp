@@ -128,7 +128,7 @@ bool CClient::addGumpDialogProps( const CUID& uid )
         (pObj->IsItem() ? "D_ITEMPROP1" : "D_CHARPROP1"),
         Str_TempLength());
 
-	CResourceID rid = g_Cfg.ResourceGetIDType(RES_DIALOG, pszMsg);
+    const CResourceID rid = g_Cfg.ResourceGetIDType(RES_DIALOG, pszMsg);
 	if ( ! rid.IsValidUID())
 		return false;
 
@@ -200,7 +200,7 @@ bool CClient::Dialog_Close( CObjBase * pObj, const dword dwRid, const int button
 	{
         if ( dynamic_cast<CChar *>(pObj) )
 		{
-            if (OpenedGumpsMap_t::const_iterator itGumpFound = m_mapOpenedGumps.find(dwRid);
+            if (const OpenedGumpsMap_t::const_iterator itGumpFound = m_mapOpenedGumps.find(dwRid);
                 ( itGumpFound != m_mapOpenedGumps.end() ) && ( itGumpFound->second > 0 ))
 			{
 				PacketGumpDialogRet packet;
@@ -244,7 +244,7 @@ TRIGRET_TYPE CClient::Menu_OnSelect( const CResourceID& rid, const int iSelect, 
 
 		while ( s.ReadKeyParse() )
 		{
-            lpctstr ptcStr = s.GetArgStr();
+            const lpctstr ptcStr = s.GetArgStr();
 			if ( !s.IsKey( "ON" ) || ( *ptcStr != '@' ) )
 				continue;
 

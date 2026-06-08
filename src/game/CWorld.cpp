@@ -207,7 +207,7 @@ static void ReportGarbageCollection(const CObjBase * pObj, const int iResultCode
 	if ( (pObj->_iCreatedResScriptIdx != -1) && (pObj->_iCreatedResScriptLine != -1) )
 	{
 		// Object was created via NEWITEM or NEWNPC in scripts, tell me where
-		CResourceScript* pResFile = g_Cfg.GetResourceFile(static_cast<size_t>(pObj->_iCreatedResScriptIdx));
+        const CResourceScript * pResFile = g_Cfg.GetResourceFile(static_cast<size_t>(pObj->_iCreatedResScriptIdx));
 		if (pResFile == nullptr)
 			return;
 		DEBUG_ERR(("GC:\t Object was created in '%s', line %d.\n", static_cast<lpctstr>(pResFile->GetFilePath()), pObj->_iCreatedResScriptLine));
@@ -314,7 +314,7 @@ void CWorldThread::FreeUID(const dword dwIndex)
 dword CWorldThread::AllocUID( dword dwIndex, CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CWorldThread::AllocUID");
-	dword dwCountTotal = GetUIDCount();
+    const dword dwCountTotal = GetUIDCount();
 
 	if ( !dwIndex )					// auto-select tbe suitable hole
 	{
@@ -375,7 +375,7 @@ setcount:
 
 successalloc:
 	_dwUIDIndexLast = dwIndex; // start from here next time so we have even distribution of allocation.
-    if ( CObjBase *pObjPrv = _ppUIDObjArray[dwIndex] )
+    if (const CObjBase *pObjPrv = _ppUIDObjArray[dwIndex] )
 	{
 		//NOTE: We cannot use Delete() in here because the UID will
 		//	still be assigned til the async cleanup time. Delete() will not work here!
@@ -502,7 +502,7 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 		// is it a real error ?
 		if ( pObj->IsItem())
 		{
-            if (auto *const pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
+            if (const auto *const pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
 			{
                 ReportGarbageCollection(pObj, iResultCode);
 				pObj->Delete();
@@ -538,7 +538,7 @@ void CWorldThread::GarbageCollection_NewObjs()
 	ADDTOCALLSTACK("CWorldThread::GarbageCollection_NewObjs");
 	EXC_TRY("GarbageCollection_NewObjs");
 	// Clean up new objects that are never placed.
-    if (size_t iObjCount = m_ObjNew.GetContentCount(); iObjCount > 0 )
+    if (const size_t iObjCount = m_ObjNew.GetContentCount(); iObjCount > 0 )
 	{
 		g_Log.Event(LOGL_ERROR, "GC: %" PRIuSIZE_T " unplaced objects!\n", iObjCount);
 
@@ -566,7 +566,7 @@ void CWorldThread::GarbageCollection_NewObjs()
 	// Clean up GM pages not linked to an valid char/account
 	for (auto it = g_World.m_GMPages.begin(); it != g_World.m_GMPages.end();)
 	{
-        if (std::unique_ptr<CGMPage> &pGMPage = *it; !pGMPage->m_uidChar.CharFind())
+        if (const std::unique_ptr<CGMPage> &pGMPage = *it; !pGMPage->m_uidChar.CharFind())
 		{
 			DEBUG_ERR(("GC: Deleted GM Page linked to invalid char (UID=0%x)\n", static_cast<dword>(pGMPage->m_uidChar)));
 			it = g_World.m_GMPages.erase(it);
@@ -650,7 +650,7 @@ void CWorldThread::GarbageCollection_UIDs()
 		for ( dword d = 1; d < GetUIDCount(); ++d )
 		{
 
-            if (CObjBase *pObj = _ppUIDObjArray[d]; !pObj )
+            if (const CObjBase *pObj = _ppUIDObjArray[d]; !pObj )
 			{
 				if ( _dwFreeUIDOffset >= ( FREE_UIDS_SIZE - 1 ))
 					break;
@@ -831,7 +831,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 
 		m_FileData.WriteSection("GLOBALS");
         {
-            auto gReader = g_ExprGlobals.mtEngineLockedReader();
+            const auto gReader = g_ExprGlobals.mtEngineLockedReader();
             gReader->m_VarGlobals.r_WritePrefix(m_FileData, nullptr);
             gReader->m_ListGlobals.r_WriteSave(m_FileData);
         }
@@ -848,7 +848,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 		}
 
 		// GM_Pages.
-		for (auto& sptrGMPage : g_World.m_GMPages)
+		for (const auto & sptrGMPage : g_World.m_GMPages)
 		{
 			sptrGMPage->r_Write(m_FileData);
 		}
@@ -879,7 +879,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 		g_Log.Event(LOGM_SAVE, "Context data saved (%s).\n", m_FileData.GetFilePath());
 
 		llong	llTicksEnd;
-		llong	llTicksStart = _iSaveTimer;
+        const llong	llTicksStart = _iSaveTimer;
 		TIME_PROFILE_END;
 
         tchar * ptcTime = Str_GetTemp();
@@ -887,7 +887,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 
         g_Log.Event(LOGM_SAVE, "World save completed, took %s seconds.\n", ptcTime);
 
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(ptcTime);
         g_Serv.r_Call("f_onserver_save_finished", pScriptArgs, &g_Serv);
 
@@ -1095,7 +1095,7 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
     auto CalcPrevSavesSize = [=, &fSizeErr, &uiPreviousSaveSize](const lpctstr ptcSaveName) -> void
     {
         struct stat st;
-        if (CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
+        if (const CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
 		{
             if (const ullong uiCurSavefileSize = static_cast<ullong>(st.st_size); uiCurSavefileSize == 0)
 				fSizeErr = true;
@@ -1120,7 +1120,7 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
 
     uiPreviousSaveSize /= 1024;
     uiPreviousSaveSize += (uiPreviousSaveSize*20)/100;  // Just to be sure increase the space requirement by 20%
-    ullong uiServMem = g_Serv.StatGet(SERV_STAT_MEM);   // In KB
+    const ullong uiServMem = g_Serv.StatGet(SERV_STAT_MEM);   // In KB
 #ifdef _DEBUG
     constexpr ullong mem_adjust_build = 2;
 #else
@@ -1368,7 +1368,7 @@ bool CWorld::LoadWorld() // Load world from script
 	CSString sDataName;
 	sDataName.Format("%s" SPHERE_FILE "data" SPHERE_SCRIPT_EXT,	static_cast<lpctstr>(g_Cfg.m_sWorldBaseDir));
 
-	int iPrevSaveCount = m_iSaveCountID;
+    const int iPrevSaveCount = m_iSaveCountID;
 	for (;;)
 	{
         g_Log.Event(LOGM_INIT, "\n");
@@ -1596,7 +1596,7 @@ bool CWorld::r_LoadVal( CScript &s )
 	ADDTOCALLSTACK("CWorld::r_LoadVal");
 	EXC_TRY("LoadVal");
 
-    switch (lpctstr ptcKey = s.GetKey(); FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
+    switch (const lpctstr ptcKey = s.GetKey(); FindTableSorted( ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1 ))
 	{
 		case WC_PREVBUILD:
 			m_iPrevBuild = s.GetArgVal();
@@ -1816,7 +1816,7 @@ void CWorld::_OnTick()
 		{
 			EXC_SET_BLOCK("f_onserver_timer");
 			_iTimeLastCallUserFunc = iCurTime + g_Cfg._iTimerCall;
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = g_Cfg._iTimerCall /
                 (g_Cfg._iTimerCallUnit ? (MSECS_PER_SEC) : (60 * MSECS_PER_SEC));
             g_Serv.r_Call("f_onserver_timer", pScriptArgs, &g_Serv);

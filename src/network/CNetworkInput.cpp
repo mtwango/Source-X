@@ -111,7 +111,7 @@ void CNetworkInput::receiveData()
 
         // our objective here is to take the received data and separate it into packets to
         // be stored in CNetState::m_incoming.rawPackets
-        byte* buffer = m_receiveBuffer;
+        const byte * buffer = m_receiveBuffer;
         while (received > 0)
         {
             // currently we just take the data and push it into a queue for the main thread
@@ -177,9 +177,9 @@ void CNetworkInput::processData()
 
         EXC_SET_BLOCK("messages - process");
         // we've already received some raw data, we just need to add it to any existing data we have
-        while (state->m_incoming.rawPackets.empty() == false)
+        while (!state->m_incoming.rawPackets.empty())
         {
-            Packet* packet = state->m_incoming.rawPackets.front();
+            const Packet * packet = state->m_incoming.rawPackets.front();
             state->m_incoming.rawPackets.pop();
             ASSERT(packet != nullptr);
 
@@ -192,7 +192,7 @@ void CNetworkInput::processData()
             else
             {
                 // append to buffer
-                uint pos = state->m_incoming.rawBuffer->getPosition();
+                const uint pos = state->m_incoming.rawBuffer->getPosition();
                 state->m_incoming.rawBuffer->seek(state->m_incoming.rawBuffer->getLength());
                 state->m_incoming.rawBuffer->writeData(packet->getData(), packet->getLength());
                 state->m_incoming.rawBuffer->seek(pos);
@@ -247,7 +247,7 @@ bool CNetworkInput::checkForData(fd_set& fds)
     FD_ZERO(&fds);
 
     NetworkThreadStateIterator states(m_thread);
-    while (CNetState* state = states.next())
+    while (const CNetState * state = states.next())
     {
         EXC_SET_BLOCK("check socket");
         if (state->isReadClosed())
@@ -315,7 +315,7 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
     else
     {
         // append to buffer
-        uint pos = state->m_incoming.buffer->getPosition();
+        const uint pos = state->m_incoming.buffer->getPosition();
         state->m_incoming.buffer->seek(state->m_incoming.buffer->getLength());
         state->m_incoming.buffer->writeData(m_decryptBuffer, buffer->getRemainingLength());
         state->m_incoming.buffer->seek(pos);
@@ -333,7 +333,7 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
     while (remainingLength > 0 && state->isClosing() == false)
     {
         ASSERT(remainingLength == packet->getRemainingLength());
-        byte packetId = packet->getRemainingData()[0];
+        const byte packetId = packet->getRemainingData()[0];
         Packet* handler = m_thread->m_manager->getPacketManager().getHandler(packetId);
 
         if (g_Cfg.m_iDebugFlags & DEBUGF_PACKETS)
@@ -349,7 +349,7 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
 
         if (handler != nullptr)
         {
-            uint packetLength = handler->checkLength(state, packet);
+            const uint packetLength = handler->checkLength(state, packet);
             if (packetLength <= 0)
             {
                 DEBUGNETWORK(("%x:Game packet (0x%x) does not match the expected length, waiting for more data...\n", state->id(), packetId));
@@ -477,7 +477,7 @@ bool CNetworkInput::processOtherClientData(const CNetState * state, Packet* buff
             EXC_SET_BLOCK("encryption reply");
 
             // receiving response to 0xE3 packet
-            uint iEncKrLen = evt->EncryptionReply.m_len;
+            const uint iEncKrLen = evt->EncryptionReply.m_len;
             if (buffer->getRemainingLength() < iEncKrLen)
                 return false; // need more data
 

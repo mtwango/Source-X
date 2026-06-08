@@ -66,7 +66,7 @@ bool CItemCorpse::IsCorpseResurrectable(const CChar * pCharHealer, const CChar *
 		return false;
 	}
 
-	CRegion* pRegion = GetTopPoint().GetRegion(REGION_TYPE_AREA | REGION_TYPE_MULTI);
+    const CRegion * pRegion = GetTopPoint().GetRegion(REGION_TYPE_AREA | REGION_TYPE_MULTI);
 	if (pRegion == nullptr)
 	{
 		return false;
@@ -168,7 +168,7 @@ CItemCorpse * CChar::MakeCorpse(const bool fFrontFall )
 {
 	ADDTOCALLSTACK("CChar::MakeCorpse");
 
-    uint uiFlags = n64_narrow_n32_checked(m_TagDefs.GetKeyNum("DEATHFLAGS"));
+    const uint uiFlags = n64_narrow_n32_checked(m_TagDefs.GetKeyNum("DEATHFLAGS"));
 	if (uiFlags & DEATH_NOCORPSE)
 		return nullptr;
 	if (IsStatFlag(STATF_CONJURED) && !(uiFlags & (DEATH_NOCONJUREDEFFECT|DEATH_HASCORPSE)))

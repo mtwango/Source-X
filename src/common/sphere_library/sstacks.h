@@ -494,7 +494,7 @@ void tsstack<T, S>::clear() {
 template<typename T, class S>
 bool tsstack<T, S>::empty() const {
     _mutex.lock_shared();
-    bool b = _s.empty();
+    const bool b = _s.empty();
     _mutex.unlock_shared();
     return b;
 }
@@ -502,7 +502,7 @@ bool tsstack<T, S>::empty() const {
 template<typename T, class S>
 size_t tsstack<T, S>::size() const {
     _mutex.lock_shared();
-    size_t s = _s.size();
+    const size_t s = _s.size();
     _mutex.unlock_shared();
     return s;
 }

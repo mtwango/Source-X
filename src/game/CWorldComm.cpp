@@ -225,7 +225,7 @@ void CWorldComm::Broadcast(lpctstr pMsg) // static
 	// System broadcast in bold text
 	ADDTOCALLSTACK("CWorldComm::Broadcast");
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(pMsg);
     TRIGRET_TYPE iRet = TRIGRET_RET_FALSE;
     g_Serv.r_Call("f_onserver_broadcast", pScriptArgs, &g_Serv, nullptr, &iRet);

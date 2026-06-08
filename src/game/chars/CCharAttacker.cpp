@@ -16,19 +16,19 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
     {
         for (auto it = m_lastAttackers.begin(), end = m_lastAttackers.end(); it != end; ++it)
         {
-            if (LastAttackers &refAttacker = *it; refAttacker.charUID == uid)
+            if (const LastAttackers &refAttacker = *it; refAttacker.charUID == uid)
                 return true;	// found one, no actions needed so we skip
         }
     }
     else if (IsTrigUsed(TRIGGER_COMBATSTART))
     {
-        if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatStart, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar); tRet == TRIGRET_RET_TRUE)
+        if (const TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatStart, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar); tRet == TRIGRET_RET_TRUE)
             return false;
         if (pChar->IsNPC())
             UpdateAnimate(ANIM_ALERT);
     }
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     bool fIgnore = false;
     pScriptArgs->m_iN1 = iThreat;
     pScriptArgs->m_iN2 = fIgnore;
@@ -53,7 +53,7 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
     if (!fIgnore)
     {
         tchar *z = Str_GetTemp();
-        CClient *pClient = pChar->GetClientActive();
+        CClient const* pClient = pChar->GetClientActive();
         //if ( GetTopSector()->GetCharComplexity() < 7 )
         //{
         if (!( g_Cfg.m_iEmoteFlags & EMOTEF_ATTACKER ))
@@ -372,7 +372,7 @@ void CChar::Attacker_RemoveChar()
     {
         for (auto it = m_lastAttackers.begin(), end = m_lastAttackers.end(); it != end; ++it)
         {
-            LastAttackers & refAttacker = *it;
+            LastAttackers const& refAttacker = *it;
             CChar * pSrc = CUID::CharFindFromUID(refAttacker.charUID);
             if (!pSrc)
                 continue;

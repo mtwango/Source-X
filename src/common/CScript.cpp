@@ -348,7 +348,7 @@ bool CScriptKeyAlloc::ParseKey( lpctstr ptcKey )
     tchar * pBuffer = _GetKeyBufferRaw();
 	ASSERT(pBuffer);
 
-    size_t iLen = sizeof(CScriptKeyArgBuf);
+    const size_t iLen = sizeof(CScriptKeyArgBuf);
     Str_CopyLimitNull( pBuffer, ptcKey, iLen );
 
 	Str_Parse( pBuffer, &m_pszArg );
@@ -360,7 +360,7 @@ bool CScriptKeyAlloc::ParseKey(const lpctstr ptcKey, lpctstr pszVal )
 	//ADDTOCALLSTACK("CScriptKeyAlloc::ParseKey");
 	ASSERT(ptcKey);
 
-	size_t lenkey = strlen( ptcKey );
+    const size_t lenkey = strlen( ptcKey );
 	if ( ! lenkey )
 		return ParseKey(pszVal);
 
@@ -400,7 +400,7 @@ size_t CScriptKeyAlloc::ParseKeyEnd()
 	int len = 0;
 	for ( ; len < SCRIPT_MAX_LINE_LEN; ++len )
 	{
-		tchar ch = m_pszKey[len];
+        const tchar ch = m_pszKey[len];
 		if ( ch == '\0' )
 			break;
 		if ( ch == '/' && m_pszKey[len + 1] == '/' )
@@ -484,10 +484,10 @@ bool CScript::_Open( lpctstr ptcFilename, uint uiFlags )
 		_SetFilePath(ptcFilename);
 	}
 
-    if (lpctstr ptcTitle = _GetFileTitle(); !ptcTitle || (ptcTitle[0] == '\0') )
+    if (const lpctstr ptcTitle = _GetFileTitle(); !ptcTitle || (ptcTitle[0] == '\0') )
 		return false;
 
-    if (lpctstr ptcExt = GetFilesExt(ptcFilename); !ptcExt )
+    if (const lpctstr ptcExt = GetFilesExt(ptcFilename); !ptcExt )
 	{
         tchar ptcTemp[SPHERE_MAX_PATH];
         const size_t uiCopied = Str_CopyLimit(ptcTemp, ptcFilename, sizeof(ptcTemp) - SPHERE_SCRIPT_EXT_LEN);
@@ -553,7 +553,7 @@ bool CScript::FindTextHeader(const lpctstr pszName ) // Find a section in the cu
 
 	SeekToBegin();
 
-	size_t len = strlen( pszName );
+    const size_t len = strlen( pszName );
 	ASSERT(len);
 	do
 	{
@@ -622,7 +622,7 @@ bool CScript::FindNextSection()
 foundit:
 	// Parse up the section name.
 	++m_pszKey;
-	size_t len = strlen( m_pszKey );
+    const size_t len = strlen( m_pszKey );
 	for ( size_t i = 0; i < len; ++i )
 	{
 		if ( m_pszKey[i] == ']' )
@@ -691,7 +691,7 @@ bool CScript::ReadKey(const bool fRemoveBlanks )
 	if ( ! _ReadTextLine(fRemoveBlanks))	// Assume it's an internal method or, if interface, i already acquired the lock
 		return false;
 
-    tchar* ptcKey = m_pszKey;
+    const tchar * ptcKey = m_pszKey;
     GETNONWHITESPACE(ptcKey);
 	if ( ptcKey[0] == '[' )	// hit the end of our section.
 	{
@@ -846,7 +846,7 @@ CScriptLineContext CScript::GetContext() const
     LineContext.m_iOffset = _GetPosition();
     return LineContext;
     */
-    auto ret = CScriptLineContext(_GetPosition(), m_iLineNum);
+    const auto ret = CScriptLineContext(_GetPosition(), m_iLineNum);
     return ret;
 }
 
@@ -924,7 +924,7 @@ bool CScript::WriteKeyStr(const lpctstr ptcKey, lpctstr ptcVal)
 	if (const tchar* ptcSep = strpbrk(ptcVal, "\n\r"))
 	{
 		g_Log.Event(LOGL_WARN | LOGM_CHEAT, "Carriage return in value string - truncating.\n");
-		lptstr ptcTruncated = Str_GetTemp();
+        const lptstr ptcTruncated = Str_GetTemp();
 		Str_CopyLimitNull(ptcTruncated, ptcVal, static_cast<size_t>(ptcSep - ptcVal));
 		ptcVal = ptcTruncated;
 	}

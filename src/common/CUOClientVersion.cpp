@@ -229,7 +229,7 @@ void CUOClientVersion::ApplyVersionFromStringOldFormat(const lptstr ptcVersion) 
     }
 
     tchar *piVer[3]{};
-    lptstr ptcVersionParsed = ptcVersion;
+    const lptstr ptcVersionParsed = ptcVersion;
     Str_ParseCmds(ptcVersionParsed, piVer, std::size(piVer), ".");
 
     // Don't rely on all values reported by client, because it can be easily faked. Injection users can report any

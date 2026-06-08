@@ -58,7 +58,7 @@ void CCharsActiveList::AddCharActive( CChar * pChar )
 	ASSERT( pChar );
 	// ASSERT( pChar->m_pt.IsValid());
 
-    if (CSObjCont *pParent = pChar->GetParent(); pParent != this)
+    if (const CSObjCont *pParent = pChar->GetParent(); pParent != this)
 	{
 		InsertContentTail(pChar); // this also removes the Char from the old sector
 		if (pChar->IsClientActive())
@@ -102,7 +102,7 @@ void CItemsList::AddItemToSector( CItem * pItem )
 	ASSERT( pItem );
     //DEBUG_ASSERT(nullptr != dynamic_cast<const CItem*>(pItem));
 
-    if (CSObjCont *pParent = pItem->GetParent(); pParent != this)
+    if (CSObjCont const * pParent = pItem->GetParent(); pParent != this)
 	{
 #ifdef _DEBUG
         if (!pParent)
@@ -111,19 +111,19 @@ void CItemsList::AddItemToSector( CItem * pItem )
         if (const auto *pNewWorldObjCont = g_World.GetObjectsNew(); pParent == pNewWorldObjCont)
         {
             // Just created, unplaced yet.
-            auto itNew = std::ranges::find(*pNewWorldObjCont, pItem);
+            const auto itNew = std::ranges::find(*pNewWorldObjCont, pItem);
             DEBUG_ASSERT(itNew != pNewWorldObjCont->cend());
         }
         else if (dynamic_cast<const CSectorObjCont*>(pParent))
         {
             // I'm moving it here from another sector.
-            auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
+            const auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
             DEBUG_ASSERT(itOldParent != pParent->cend());
         }
         else if (dynamic_cast<const CContainer*>(pParent))
         {
             // CItemContainer, CChar...
-            auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
+            const auto itOldParent = std::find(pParent->cbegin(), pParent->cend(), pItem);
             DEBUG_ASSERT(itOldParent != pParent->cend());
         }
         else
@@ -379,7 +379,7 @@ bool CSectorBase::UnLinkRegion( CRegion * pRegionOld )
 	ADDTOCALLSTACK("CSectorBase::UnLinkRegion");
 	if ( !pRegionOld )
 		return false;
-    auto it = std::ranges::find(m_RegionLinks, pRegionOld);
+    const auto it = std::ranges::find(m_RegionLinks, pRegionOld);
     if (it == m_RegionLinks.end())
         return false;
     m_RegionLinks.erase(it);
@@ -399,7 +399,7 @@ bool CSectorBase::LinkRegion( CRegion * pRegionNew )
 
     for ( size_t i = 0; i < uiQty; ++i )
 	{
-		CRegion * pRegion = m_RegionLinks[i];
+		CRegion const* pRegion = m_RegionLinks[i];
 		ASSERT(pRegion);
 		if ( pRegionNew == pRegion )
 		{

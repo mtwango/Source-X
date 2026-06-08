@@ -125,7 +125,7 @@ int CSError::GetSystemErrorMessage(const dword dwError, const lptstr lpszError, 
     //	RETURN VALUE:
     //		destination buffer
 
-    LPCVOID lpSource = nullptr;
+    const LPCVOID lpSource = nullptr;
     va_list* Arguments = nullptr;
     DWORD nChars = ::FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
         lpSource,

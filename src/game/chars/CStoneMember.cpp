@@ -173,8 +173,8 @@ bool CStoneMember::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 
 	ASSERT(pSrc);
 
-	lpctstr ptcKey = s.GetKey();
-    if (int index = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1); index < 0 )
+    const lpctstr ptcKey = s.GetKey();
+    if (const int index = FindTableSorted(ptcKey, sm_szVerbKeys, std::size(sm_szVerbKeys) - 1); index < 0 )
 	{
 		if ( r_LoadVal(s) ) // if it's successful all ok, else go on verb.
 			return true;
@@ -424,7 +424,7 @@ CStoneMember::~CStoneMember()
 	if ( m_iPriv == STONEPRIV_ENEMY )
 	{
 		// same as declaring peace.
-        if (auto *const pStoneEnemy = dynamic_cast<CItemStone *>(GetLinkUID().ItemFind()); pStoneEnemy != nullptr )
+        if (const auto *const pStoneEnemy = dynamic_cast<CItemStone *>(GetLinkUID().ItemFind()); pStoneEnemy != nullptr )
 		{
 			pStoneEnemy->TheyDeclarePeace( pStone, true );
 		}
@@ -450,13 +450,13 @@ CItemStone * CStoneMember::GetParentStone() const
 lpctstr CStoneMember::GetPrivName() const
 {
 	ADDTOCALLSTACK("CStoneMember::GetPrivName");
-	STONEPRIV_TYPE iPriv = GetPriv();
+    const STONEPRIV_TYPE iPriv = GetPriv();
 
 	TemporaryString tsDefname;
 	snprintf(tsDefname.buffer(), tsDefname.capacity(), "STONECONFIG_PRIVNAME_PRIVID-%d", static_cast<int>(iPriv));
 
-    auto gReader = g_ExprGlobals.mtEngineLockedReader();
-    CVarDefCont * pResult = gReader->m_VarDefs.GetKey(tsDefname);
+    const auto gReader = g_ExprGlobals.mtEngineLockedReader();
+    const CVarDefCont * pResult = gReader->m_VarDefs.GetKey(tsDefname);
 	if (pResult)
 		return pResult->GetValStr();
 
@@ -467,7 +467,7 @@ lpctstr CStoneMember::GetPrivName() const
 bool CStoneMember::SetLoyalTo( const CChar * pCharLoyal )
 {
 	ADDTOCALLSTACK("CStoneMember::SetLoyalTo");
-	CChar * pCharMe = GetLinkUID().CharFind();
+    const CChar * pCharMe = GetLinkUID().CharFind();
 	if ( pCharMe == nullptr )	// on shutdown
 		return false;
 
@@ -486,7 +486,7 @@ bool CStoneMember::SetLoyalTo( const CChar * pCharLoyal )
 	if ( !pStone )
 		return false;
 
-    if (CStoneMember *pNewLOYALTO = pStone->GetMember(pCharLoyal); pNewLOYALTO == nullptr || ! pNewLOYALTO->IsPrivMember())
+    if (const CStoneMember *pNewLOYALTO = pStone->GetMember(pCharLoyal); pNewLOYALTO == nullptr || ! pNewLOYALTO->IsPrivMember())
 	{
 		// you can't vote for candidates
 		pCharMe->SysMessage( "Can only vote for full members.");

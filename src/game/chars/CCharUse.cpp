@@ -53,16 +53,16 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 	if (!pItemCarving)
 		return;
 
-	CREID_TYPE CorpseID = pCorpse->m_itCorpse.m_BaseID;
-	CCharBase *pCorpseDef = CCharBase::FindCharBase(CorpseID);
+    const CREID_TYPE CorpseID = pCorpse->m_itCorpse.m_BaseID;
+    const CCharBase *pCorpseDef = CCharBase::FindCharBase(CorpseID);
 	if ( !pCorpseDef || pCorpse->m_itCorpse.m_carved )
 	{
 		SysMessageDefault(DEFMSG_CARVE_CORPSE_NOTHING);
 		return;
 	}
 
-	CChar *pChar = pCorpse->m_uidLink.CharFind();
-	CPointMap pnt = pCorpse->GetTopLevelObj()->GetTopPoint();
+    const CChar *pChar = pCorpse->m_uidLink.CharFind();
+    const CPointMap pnt = pCorpse->GetTopLevelObj()->GetTopPoint();
 
 	UpdateAnimate(ANIM_BOW);
 	if ( pCorpse->m_TagDefs.GetKeyNum("BLOOD") )
@@ -74,9 +74,9 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 	}
 
 	word iResourceQty = 0;
-	size_t iResourceTotalQty = pCorpseDef->m_BaseResources.size();
+    const size_t iResourceTotalQty = pCorpseDef->m_BaseResources.size();
 
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(iResourceTotalQty, 0, 0, pItemCarving);
 
 	for (size_t i = 0; i < iResourceTotalQty; ++i)
@@ -219,7 +219,7 @@ void CChar::Use_MoonGate(const CItem * pItem )
 		// RES_MOONGATES
 		// What gate are we at ?
 		size_t i = 0;
-		size_t iCount = g_Cfg.m_MoonGates.size();
+        const size_t iCount = g_Cfg.m_MoonGates.size();
         ASSERT(iCount != 0);
         const CPointMap& ptTop = GetTopPoint();
 		for ( ; i < iCount; ++i )
@@ -231,11 +231,11 @@ void CChar::Use_MoonGate(const CItem * pItem )
 		// Set it's current destination based on the moon phases.
 		// ensure iTrammelPhrase isn't smaller than iFeluccaPhase, to avoid uint underflow in next calculation
 		size_t iTrammelPhase = CWorldGameTime::GetMoonPhase(false) % iCount;
-		size_t iFeluccaPhase = CWorldGameTime::GetMoonPhase(true) % iCount;
+        const size_t iFeluccaPhase = CWorldGameTime::GetMoonPhase(true) % iCount;
 		if ( iTrammelPhase < iFeluccaPhase )
 			iTrammelPhase += iCount;
 
-		size_t iMoongateIndex = (i + (iTrammelPhase - iFeluccaPhase)) % iCount;
+        const size_t iMoongateIndex = (i + (iTrammelPhase - iFeluccaPhase)) % iCount;
 		ASSERT(g_Cfg.m_MoonGates.IsValidIndex(iMoongateIndex));
 		pt = g_Cfg.m_MoonGates[iMoongateIndex];
 	}
@@ -274,8 +274,8 @@ void CChar::Use_MoonGate(const CItem * pItem )
 		}
 	}
 
-	bool fCheckAntiMagic = pItem->IsAttr(ATTR_DECAY);
-	bool fDisplayEffect = !pItem->m_itTelepad.m_fQuiet;
+    const bool fCheckAntiMagic = pItem->IsAttr(ATTR_DECAY);
+    const bool fDisplayEffect = !pItem->m_itTelepad.m_fQuiet;
 	Spell_Teleport(pt, true, fCheckAntiMagic, fDisplayEffect);
 }
 
@@ -362,7 +362,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
         return false;
     }
 
-    SKILL_TYPE skill = Fight_GetWeaponSkill();
+    const SKILL_TYPE skill = Fight_GetWeaponSkill();
 	if ( g_Cfg.IsSkillFlag(skill, SKF_RANGED) )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_RANGED);
@@ -377,7 +377,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
 
 		char skilltag[38];
 		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", static_cast<int>(skill & ~0xD2000000));
-		CVarDefCont *pSkillTag = pItem->GetKey(skilltag, true);
+        const CVarDefCont *pSkillTag = pItem->GetKey(skilltag, true);
         if (const word iMaxSkill = pSkillTag ? static_cast<word>(pSkillTag->GetValNum()) : static_cast<word>(g_Cfg.m_iSkillPracticeMax); Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_SKILL);
@@ -466,7 +466,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 	ASSERT(pButte);
 
 	// If standing right next to the butte, gather the arrows/bolts
-	int iDist = GetDist(pButte);
+    const int iDist = GetDist(pButte);
 	if ( (iDist < 2) && pButte->m_itArcheryButte.m_iAmmoCount )
 	{
 		CItem *pRemovedAmmo = CItem::CreateBase(static_cast<ITEMID_TYPE>(pButte->m_itArcheryButte.m_ridAmmoType.GetResIndex()));
@@ -481,7 +481,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 	}
 
 	CItem *pWeapon = m_uidWeapon.ItemFind();
-	SKILL_TYPE skill = pWeapon ? pWeapon->Weapon_GetSkill() : SKILL_NONE;
+    const SKILL_TYPE skill = pWeapon ? pWeapon->Weapon_GetSkill() : SKILL_NONE;
 	if ( !pWeapon || !g_Cfg.IsSkillFlag(skill, SKF_RANGED) )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_RANGED);
@@ -501,8 +501,8 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
     }
 
     // Check position alignment
-	CPointMap ptChar = GetTopPoint();
-	CPointMap ptButte = pButte->GetTopPoint();
+    const CPointMap ptChar = GetTopPoint();
+    const CPointMap ptButte = pButte->GetTopPoint();
 	if ( pButte->GetDispID() == ITEMID_ARCHERYBUTTE_S )
 	{
 		if ( ptChar.m_x != ptButte.m_x )
@@ -538,7 +538,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 
 		char skilltag[38];
 		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", static_cast<int>(skill & ~0xD2000000));
-		CVarDefCont *pSkillTag = pButte->GetKey(skilltag, true);
+        const CVarDefCont *pSkillTag = pButte->GetKey(skilltag, true);
         if (const word iMaxSkill = pSkillTag ? static_cast<word>(pSkillTag->GetValNum()) : static_cast<word>(g_Cfg.m_iSkillPracticeMax); Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_SKILL);
@@ -732,7 +732,7 @@ int CChar::Use_PlayMusic(const CItem * pInstrument, const int iDifficultyToPlay 
 		}
 	}
 
-	bool fSuccess = Skill_UseQuick(SKILL_MUSICIANSHIP, iDifficultyToPlay, (Skill_GetActive() != SKILL_MUSICIANSHIP));
+    const bool fSuccess = Skill_UseQuick(SKILL_MUSICIANSHIP, iDifficultyToPlay, (Skill_GetActive() != SKILL_MUSICIANSHIP));
 	Sound(pInstrument->Use_Music(fSuccess));
 	if ( fSuccess )
 		return iDifficultyToPlay;	// success
@@ -770,7 +770,7 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	}
 
 	// Quickly use arms lore skill, but don't gain any skill until later on
-	int iArmsLoreDiff = g_Rand.GetVal(30);
+    const int iArmsLoreDiff = g_Rand.GetVal(30);
 	if ( !Skill_UseQuick(SKILL_ARMSLORE, iArmsLoreDiff, false) )
 	{
 		// apply arms lore skillgain for failure
@@ -792,15 +792,15 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 		return false;
 	}
 
-	CItemBase *pItemDef = pItemArmor->Item_GetDef();
+    const CItemBase *pItemDef = pItemArmor->Item_GetDef();
 	ASSERT(pItemDef);
 
 	// Use up some raw materials to repair.
-	int iTotalHits = pItemArmor->m_itArmor.m_wHitsMax;
-	int iDamageHits = pItemArmor->m_itArmor.m_wHitsMax - pItemArmor->m_itArmor.m_wHitsCur;
+    const int iTotalHits = pItemArmor->m_itArmor.m_wHitsMax;
+    const int iDamageHits = pItemArmor->m_itArmor.m_wHitsMax - pItemArmor->m_itArmor.m_wHitsCur;
 	int iDamagePercent = IMulDiv(100, iDamageHits, iTotalHits);
 
-    if (size_t iMissing = ResourceConsumePart(&(pItemDef->m_BaseResources), 1, iDamagePercent / 2, true); iMissing != sl::scont_bad_index() )
+    if (const size_t iMissing = ResourceConsumePart(&(pItemDef->m_BaseResources), 1, iDamagePercent / 2, true); iMissing != sl::scont_bad_index() )
 	{
 		// Need this to repair.
 		const CResourceDef *pCompDef = g_Cfg.RegisteredResourceGetDef(pItemDef->m_BaseResources.at(iMissing).GetResourceID());
@@ -815,7 +815,7 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	// + more damaged items should be harder to repair.
 	// higher the percentage damage the closer to the skills to make it.
 
-	size_t iRes = pItemDef->m_SkillMake.FindResourceType(RES_SKILL);
+    const size_t iRes = pItemDef->m_SkillMake.FindResourceType(RES_SKILL);
 	if ( iRes == sl::scont_bad_index() )
 		return false;
 
@@ -893,7 +893,7 @@ void CChar::Use_EatQty( CItem * pFood, ushort uiQty )
 	if ( uiRestore < 1 )
 		uiRestore = 1;
 
-	int iSpace = Stat_GetMaxAdjusted(STAT_FOOD) - Stat_GetVal(STAT_FOOD);
+    const int iSpace = Stat_GetMaxAdjusted(STAT_FOOD) - Stat_GetVal(STAT_FOOD);
 	if ( iSpace <= 0 )
 		return;
 
@@ -936,7 +936,7 @@ bool CChar::Use_Eat( CItem * pItemFood, const ushort uiQty )
 		return false;
 	}
 
-    ushort uiFoodMax = Stat_GetMaxAdjusted(STAT_FOOD);
+    const ushort uiFoodMax = Stat_GetMaxAdjusted(STAT_FOOD);
 	if ( uiFoodMax == 0 )
 	{
 		SysMessageDefault(DEFMSG_FOOD_CANTEAT);
@@ -1008,7 +1008,7 @@ void CChar::Use_Drink( CItem * pItem )
 
     if (IsTrigUsed(TRIGGER_DRINK))
     {
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(dwDelay, wConsume, 0, pItem);
         pScriptArgs->m_VarsLocal.SetNumNew("BottleId", idbottle);
 
@@ -1036,7 +1036,7 @@ void CChar::Use_Drink( CItem * pItem )
 	if ( pItem->IsType(IT_BOOZE) )
 	{
 		// Beer wine and liquor. vary strength of effect. m_itBooze.m_EffectStr
-		int iStrength = g_Rand.GetVal(300) + 10;
+        const int iStrength = g_Rand.GetVal(300) + 10;
 
 		// Create ITEMID_PITCHER if drink a pitcher.
 		// GLASS or MUG or Bottle ?
@@ -1069,7 +1069,7 @@ void CChar::Use_Drink( CItem * pItem )
 
 		// Convey the effect of the potion.
 		int iSkillQuality = pItem->m_itPotion.m_dwSkillQuality;
-        if ( int iEnhance = GetPropNum(COMP_PROPS_CHAR, PROPCH_ENHANCEPOTIONS, true) )
+        if (const int iEnhance = GetPropNum(COMP_PROPS_CHAR, PROPCH_ENHANCEPOTIONS, true) )
 			iSkillQuality += IMulDiv(iSkillQuality, iEnhance, 100);
 
 		OnSpellEffect(static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
@@ -1243,7 +1243,7 @@ bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, const boo
         // Arguments should be read only. Otherwise we have to call this trigger also if fCheckOnly == true and
         //  everyone scripts have to be changed to recognize this scenario.
 
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = (iPetFollowerSlots >= 0) ? 0 : 1;
         pScriptArgs->m_iN2 = abs(iPetFollowerSlots);
         //pScriptArgs->m_iN3 = fCheckOnly;
@@ -1300,7 +1300,7 @@ bool CChar::FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots, const boo
 	}
 	else
 	{
-        short iNewCurFollower = GetCurFollowers() + iPetFollowerSlots;
+        const short iNewCurFollower = GetCurFollowers() + iPetFollowerSlots;
         if (!fIgnoreMax && (iNewCurFollower > iMaxFollower))
             return false;
         if (!fCheckOnly)
@@ -1752,7 +1752,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 		case IT_TRAP_ACTIVE:
 		{
 			// Activate the trap (plus any linked traps)
-			int iDmg = pItem->Use_Trap();
+            const int iDmg = pItem->Use_Trap();
 			if (CanTouch(pItem->GetTopLevelObj()->GetTopPoint()))
 				OnTakeDamage(iDmg, nullptr, DAMAGE_HIT_BLUNT | DAMAGE_GENERAL);
 			break;
@@ -1786,7 +1786,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 					return false;
 				if (pItem->IsAttr(ATTR_MAGIC))    // show it's magic face
 				{
-					ITEMID_TYPE id = (GetDispID() & DOOR_NORTHSOUTH) ? ITEMID_DOOR_MAGIC_SI_NS
+                    const ITEMID_TYPE id = (GetDispID() & DOOR_NORTHSOUTH) ? ITEMID_DOOR_MAGIC_SI_NS
 					                                                 : ITEMID_DOOR_MAGIC_SI_EW;
 					CItem *pFace = CItem::CreateBase(id);
 					ASSERT(pFace);
@@ -1799,7 +1799,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 		case IT_DOOR_OPEN:
 		case IT_DOOR:
 		{
-            if (bool fOpen = pItem->Use_DoorNew(fLink); fLink || !fOpen)    // don't link if we are just closing the door
+            if (const bool fOpen = pItem->Use_DoorNew(fLink); fLink || !fOpen)    // don't link if we are just closing the door
 				return true;
 		}
 			break;
@@ -2020,7 +2020,7 @@ bool CChar::ItemEquipArmor(const bool fForce )
 			continue;
 
 		// Can I even equip this?
-		LAYER_TYPE layer = CanEquipLayer(pItem, LAYER_QTY, nullptr, true);
+        const LAYER_TYPE layer = CanEquipLayer(pItem, LAYER_QTY, nullptr, true);
 		if ((layer == LAYER_NONE) || (layer >= LAYER_HORSE))
 			continue;
 

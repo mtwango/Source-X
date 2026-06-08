@@ -81,7 +81,7 @@ bool CResourceRefArray::r_LoadVal( CScript & s, const RES_TYPE restype )
 
     tchar * pszCmd = s.GetArgStr();
     tchar * ppBlocks[128];	// max is arbitrary
-    int iArgCount = Str_ParseCmds( pszCmd, ppBlocks, std::size(ppBlocks));
+    const int iArgCount = Str_ParseCmds( pszCmd, ppBlocks, std::size(ppBlocks));
     for ( int i = 0; i < iArgCount; ++i )
     {
         CResourceLink* pResourceLink = nullptr;
@@ -163,7 +163,7 @@ size_t CResourceRefArray::FindResourceType(const RES_TYPE restype ) const
 {
     ADDTOCALLSTACK("CResourceRefArray::FindResourceType");
     // Is this resource already in the list ?
-    size_t iQty = size();
+    const size_t iQty = size();
     for ( size_t i = 0; i < iQty; ++i )
     {
         if (const CResourceID &ridtest = (*this)[i].GetRef()->GetResourceID(); ridtest.GetResType() == restype )
@@ -176,7 +176,7 @@ size_t CResourceRefArray::FindResourceID( const CResourceID & rid ) const
 {
     ADDTOCALLSTACK("CResourceRefArray::FindResourceID");
     // Is this resource already in the list ?
-    size_t iQty = size();
+    const size_t iQty = size();
     for ( size_t i = 0; i < iQty; ++i )
     {
         if (const CResourceID &ridtest = (*this)[i].GetRef()->GetResourceID(); ridtest == rid )

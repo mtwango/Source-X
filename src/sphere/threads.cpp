@@ -114,7 +114,7 @@ ThreadHolder& ThreadHolder::get() noexcept
 bool ThreadHolder::isSystemIdRegistered(threadid_t sysId, AbstractSphereThread** outExisting) const noexcept
 {
     std::shared_lock lock(m_mutex);
-    auto it = std::ranges::find_if(m_spherethreadpairs_systemid_ptr,
+    const auto it = std::ranges::find_if(m_spherethreadpairs_systemid_ptr,
         [sysId](const spherethreadpair_t& elem) noexcept {
             return elem.first == sysId;
         }
@@ -152,7 +152,7 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         std::unique_lock lock(m_mutex);
 
         // 1) Idempotency: same pointer already registered.
-        auto itExistingPtr = std::ranges::find_if(
+        const auto itExistingPtr = std::ranges::find_if(
             m_spherethreadpairs_systemid_ptr,
             [pSphereThread](const spherethreadpair_t& elem) noexcept {
                 return elem.second == pSphereThread;
@@ -161,7 +161,7 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         if (itExistingPtr != m_spherethreadpairs_systemid_ptr.end())
         {
             // Refresh holder id from current slot if present.
-            auto itSlot = std::ranges::find_if(
+            const auto itSlot = std::ranges::find_if(
                 m_threads,
                 [pAbstractThread](const SphereThreadData& s) noexcept { return s.m_ptr == pAbstractThread; }
                 );
@@ -183,7 +183,7 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         }
 
         // 2) System-id uniqueness: refuse a second Sphere context on the same OS thread.
-        auto itExistingSys = std::ranges::find_if(
+        const auto itExistingSys = std::ranges::find_if(
             m_spherethreadpairs_systemid_ptr,
             [pSphereThread](const spherethreadpair_t& elem) noexcept {
                 // Correct equality for pthread_t vs DWORD handled by threadid_t typedef.
@@ -193,7 +193,7 @@ void ThreadHolder::push(AbstractThread* pAbstractThread) noexcept
         if (itExistingSys != m_spherethreadpairs_systemid_ptr.end())
         {
             // Another object is already attached to this OS thread; refuse the second.
-            auto* other = itExistingSys->second;
+            const auto * other = itExistingSys->second;
             lock.unlock();
             g_Log.Event(LOGM_DEBUG | LOGL_EVENT | LOGF_CONSOLE_ONLY,
                 "THREADING: ThreadHolder: refusing to register %s on OS thread already owned by %s.\n",
@@ -240,14 +240,14 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
     AbstractSphereThread const* pSphereThread = dynamic_cast<AbstractSphereThread*>(pAbstractThread);
 
 #ifdef _DEBUG
-    threadid_t sysId = pSphereThread ? pSphereThread->m_threadSystemId : threadid_t{};
+    const threadid_t sysId = pSphereThread ? pSphereThread->m_threadSystemId : threadid_t{};
     const char* ptcName = pAbstractThread->getName();
 #endif
 
     std::unique_lock lock(m_mutex);
 
     // Remove from main list.
-    auto it = std::ranges::find_if(m_threads,
+    const auto it = std::ranges::find_if(m_threads,
         [pAbstractThread](const SphereThreadData& s) noexcept { return s.m_ptr == pAbstractThread; });
     if (it != m_threads.end())
         m_threads.erase(it);
@@ -294,7 +294,7 @@ void ThreadHolder::markThreadsClosing() CANTHROW
 
     for (auto& thread_data : m_threads)
     {
-        auto sphere_thread = static_cast<AbstractSphereThread*>(thread_data.m_ptr);
+        const auto sphere_thread = dynamic_cast<AbstractSphereThread*>(thread_data.m_ptr);
         if (!sphere_thread)
             continue;
 
@@ -818,7 +818,7 @@ void AbstractThread::setThreadName(const char* name)
 
 void AbstractThread::attachToCurrentThread(const char* osThreadName) noexcept
 {
-    lpctstr ptcThreadName = (osThreadName && osThreadName[0]) ? osThreadName : getName();
+    const lpctstr ptcThreadName = (osThreadName && osThreadName[0]) ? osThreadName : getName();
 
     // Refuse if another Sphere context already owns this OS thread.
     if (sg_tlsCurrentSphereThread && sg_tlsCurrentSphereThread != this)
@@ -847,7 +847,7 @@ void AbstractThread::attachToCurrentThread(const char* osThreadName) noexcept
 
 void AbstractThread::detachFromCurrentThread() noexcept
 {
-    if (auto* s = dynamic_cast<AbstractSphereThread*>(this))
+    if (const auto * s = dynamic_cast<AbstractSphereThread*>(this))
         if (sg_tlsCurrentSphereThread == s)
             sg_tlsCurrentSphereThread = nullptr;
 
@@ -934,7 +934,7 @@ void AbstractSphereThread::printStackTrace() noexcept
 {
     freezeCallStack(true);
 
-    uint64_t threadId = // static_cast<uint64_t>(getId());
+    const uint64_t threadId = // static_cast<uint64_t>(getId());
 #if defined(_WIN32) || defined(__APPLE__)
         n_alias_cast<uint64_t>(getId() ? getId() : os_current_tid());
 #else
@@ -942,7 +942,7 @@ void AbstractSphereThread::printStackTrace() noexcept
 #endif
 
     const lpctstr threadName = getName();
-    auto& stackInfo = (m_stackInfoCopy[0].functionName != nullptr) ? m_stackInfoCopy : m_stackInfo;
+    const auto & stackInfo = (m_stackInfoCopy[0].functionName != nullptr) ? m_stackInfoCopy : m_stackInfo;
 
     g_Log.EventDebug("Printing STACK TRACE for debugging purposes (thread id %" PRIx64 ").\n", threadId);
     g_Log.EventDebug("_ thread name _ |   # | _____________ function _____________ |\n");

@@ -36,7 +36,7 @@ void xRecordPacketData(const CClient* client, const byte* data, const uint lengt
         return;
 #endif
 
-    Packet packet(data, length);
+    const Packet packet(data, length);
     xRecordPacket(client, &packet, heading);
 }
 
@@ -69,7 +69,7 @@ void xRecordPacket(const CClient* client, const Packet * packet, const lpctstr h
 		snprintf(fname, sizeof(fname), "packets_(%s).log", client->GetPeerStr());
     }
 
-    CSString sFullFileName = CSFile::GetMergedFileName(g_Log.GetLogDir(), fname);
+    const CSString sFullFileName = CSFile::GetMergedFileName(g_Log.GetLogDir(), fname);
 
     // write to file
     if (CSFileText out; out.Open(sFullFileName, OF_READWRITE | OF_TEXT))
@@ -166,7 +166,7 @@ void Packet::expand(uint size)
 	if (size < PACKET_BUFFERGROWTH)
 		size = PACKET_BUFFERGROWTH;
 
-	uint oldPosition = m_position;
+    const uint oldPosition = m_position;
 	resize(maximum(m_bufferSize, m_position) + size);
 	m_position = oldPosition;
 }
@@ -714,7 +714,7 @@ wchar Packet::readCharUTF16()
 	if ((m_position + sizeof(wchar)) > m_length)
 		return '\0';
 
-	wchar wc = ((m_buffer[m_position + 1] << 8) |
+    const wchar wc = ((m_buffer[m_position + 1] << 8) |
 			   (m_buffer[m_position]));
 
 	m_position += 2;
@@ -726,7 +726,7 @@ wchar Packet::readCharNETUTF16()
 	if ((m_position + sizeof(wchar)) > m_length)
 		return '\0';
 
-	wchar wc = ((m_buffer[m_position] << 8) |
+    const wchar wc = ((m_buffer[m_position] << 8) |
 			   (m_buffer[m_position + 1]));
 
 	m_position += 2;
@@ -1072,8 +1072,8 @@ void Packet::dump(AbstractString& output) const
 	output.append("       -- -- -- -- -- -- -- --  -- -- -- -- -- -- -- --\n");
 
 	uint byteIndex = 0;
-	uint whole = m_length >> 4;
-	uint rem = m_length & 0x0f;
+    const uint whole = m_length >> 4;
+    const uint rem = m_length & 0x0f;
 	uint idx = 0;
 
 	tchar bytes[50];
@@ -1120,7 +1120,7 @@ void Packet::dump(AbstractString& output) const
 		{
 			if (j < rem)
 			{
-				byte c = m_buffer[idx++];
+                byte c = m_buffer[idx++];
 				PROTECT_BYTE(c);
 
 				snprintf(ts.buffer(), ts.capacity(), "%02x", static_cast<int>(c));
@@ -1163,7 +1163,7 @@ uint Packet::checkLength(CNetState* client, Packet* packet)
 		if (packet->getLength() < 3)
 			return 0;
 
-		uint pos = packet->getPosition();
+        const uint pos = packet->getPosition();
 		packet->skip(1);
 		packetLength = packet->readInt16();
 		packet->seek(pos);

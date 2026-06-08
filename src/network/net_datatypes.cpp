@@ -220,7 +220,7 @@ int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, const lpctstr pInp, int
             if (ch >= 0x80)	// special UTF8 encoded char.
             {
                 wchar wChar;
-                int iInpTmp = CvtSystemToUTF16(wChar, pInp + iInp, iSizeInBytes - iInp);
+                const int iInpTmp = CvtSystemToUTF16(wChar, pInp + iInp, iSizeInBytes - iInp);
                 if (iInpTmp <= 0)
                 {
                     break;
@@ -301,7 +301,7 @@ int CvtNETUTF16ToSystem(tchar* pOut, int iSizeOutBytes, const nachar* pInp, int 
         for (; iInp < iSizeInChars; ++iInp)
         {
             // Flip all from network order.
-            wchar wChar = pInp[iInp];
+            const wchar wChar = pInp[iInp];
             if (!wChar)
                 break;
 
@@ -309,7 +309,7 @@ int CvtNETUTF16ToSystem(tchar* pOut, int iSizeOutBytes, const nachar* pInp, int 
                 break;
             if (wChar >= 0x80)	// needs special UTF8 encoding.
             {
-                int iOutTmp = CvtUTF16ToSystem(pOut + iOut, iSizeOutBytes - iOut, wChar);
+                const int iOutTmp = CvtUTF16ToSystem(pOut + iOut, iSizeOutBytes - iOut, wChar);
                 if (iOutTmp <= 0)
                     break;
                 iOut += iOutTmp;

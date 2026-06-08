@@ -562,7 +562,7 @@ bool CDialogDef::GumpSetup(const int iPage, CClient * pClient, CObjBase * pObjSr
     m_fNoDispose	= false;
 
     CExpression& expr_parser = CExpression::GetExprParser();
-    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
     pScriptArgs->Init(iPage, 0, 0, pObjSrc);
     //DEBUG_ERR(("pScriptArgs->m_s1_buf_vec %s  pScriptArgs->m_s1 %s  Arguments 0x%x\n",pScriptArgs->m_s1_buf_vec, pScriptArgs->m_s1, Arguments));
     if (Arguments)

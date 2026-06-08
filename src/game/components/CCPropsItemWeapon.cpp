@@ -109,8 +109,8 @@ bool CCPropsItemWeapon::GetPropertyStrPtr(const PropertyIndex_t iPropIndex, CSSt
                 psOutVal->FormatVal(1);
                 return false;   // not set
             }
-            uchar iRangeH = RANGE_GET_HI(_uiRange);
-            if (uchar iRangeL = RANGE_GET_LO(_uiRange); iRangeL == 0 )
+            const uchar iRangeH = RANGE_GET_HI(_uiRange);
+            if (const uchar iRangeL = RANGE_GET_LO(_uiRange); iRangeL == 0 )
                 psOutVal->Format( "%hhd", iRangeH );
             else
                 psOutVal->Format( "%hhd,%hhd", iRangeL, iRangeH );
@@ -272,8 +272,8 @@ void CCPropsItemWeapon::AddPropsTooltipData(CObjBase* pLinkedObj)
     // Numeric properties
     for (const auto &[fst, snd] : _mPropsNum)
     {
-        PropertyIndex_t prop = fst;
-        PropertyValNum_t iVal = snd;
+        const PropertyIndex_t prop = fst;
+        const PropertyValNum_t iVal = snd;
 
         if (iVal == 0)
             continue;

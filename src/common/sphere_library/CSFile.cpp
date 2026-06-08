@@ -181,7 +181,7 @@ bool CSFile::_SetFilePath(const lpctstr pszName )
     if ( ! _strFileName.CompareNoCase( pszName ))
         return true;
 
-    bool fIsOpen = ( _fileDescriptor != _kInvalidFD);
+    const bool fIsOpen = ( _fileDescriptor != _kInvalidFD);
     if ( fIsOpen )
         _Close();
     _strFileName = pszName;
@@ -210,8 +210,8 @@ int CSFile::_GetLength()
         CSFile::_Open();
     }
 	// Get the size of the file.
-    int iPos = CSFile::_GetPosition();   // save current pos.
-    int iSize = _SeekToEnd();
+    const int iPos = CSFile::_GetPosition();   // save current pos.
+    const int iSize = _SeekToEnd();
 	CSFile::_Seek( iPos, SEEK_SET );     // restore previous pos.
     if (fOpenClose)
     {
@@ -230,7 +230,7 @@ int CSFile::_GetPosition() const
 {
     ADDTOCALLSTACK("CSFile::_GetPosition");
 #ifdef _WIN32
-    DWORD ret = SetFilePointer( _fileDescriptor, 0, nullptr, FILE_CURRENT );
+    const DWORD ret = SetFilePointer( _fileDescriptor, 0, nullptr, FILE_CURRENT );
     if (ret == INVALID_SET_FILE_POINTER)
     {
         _NotifyIOError("CSFile::GetPosition");
@@ -490,7 +490,7 @@ bool CSFile::FileExists(const lpctstr ptcFilePath) // static
     // WINDOWS
     _finddata_t fileinfo;
     fileinfo.attrib = _A_NORMAL;
-    intptr_t lFind = _findfirst( ptcFilePath, &fileinfo );
+    const intptr_t lFind = _findfirst( ptcFilePath, &fileinfo );
 
     return ( lFind != -1 );
 #else

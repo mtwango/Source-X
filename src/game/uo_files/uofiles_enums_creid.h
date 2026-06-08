@@ -534,7 +534,7 @@ enum CREID_TYPE	: uint32_t // enum the creature animations. (dont allow any othe
 	NPCID_SCRIPT	= 0x4000,	// Safe area for server specific NPC defintions.
 	NPCID_QTY		= 0x8000,	// Spawn types start here.
 
-	SPAWNTYPE_START = 0x8001
+	SPAWNTYPE_START = 0x8001,
 };
 
 

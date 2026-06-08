@@ -89,8 +89,8 @@ void AbstractString::ensureLengthHeap(const size_t newLength)
 	if (newLength >= m_realLength)
 	{
 		// always grow with 20% extra space to decrease number of future grows
-		m_realLength = newLength + newLength / 5;
-        const auto newBuf = new char[m_realLength + 1];
+		m_realLength = newLength + (newLength / 5);
+        auto *const newBuf = new char[m_realLength + 1];
 
 	    // Protection from use after freeing newBuf.
         const char *oldBuf = m_buf;
@@ -181,9 +181,7 @@ bool AbstractString::startsWithHead(const char *s) const noexcept
 		char const ch2 = static_cast<uchar>(tolower(s[i]));
 		if( ch2 == '\0' )
 		{
-			if( !isalnum(ch1) )
-				return true;
-			return false;
+			return isalnum(ch1) == 0;
 		}
 		if ( ch1 != ch2 )
 			return false;
@@ -327,7 +325,7 @@ void TemporaryString::resize(const size_t newLength)
         // 4. clear the state to allow the old buffer to be used elsewhere
         // 5. flag this string instance to use the heap (String::)
 
-        m_realLength = newLength + newLength / 5;
+        m_realLength = newLength + (newLength / 5);
         auto *const newBuf = new char[m_realLength + 1];
         Str_CopyLimitNull(newBuf, m_buf, m_length);
         newBuf[m_length] = '\0';

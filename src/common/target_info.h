@@ -4,7 +4,7 @@
 [[maybe_unused, nodiscard]]
 constexpr const char* get_target_os_str()
 {
-#if defined(_WIN32)
+#ifdef _WIN32
     return "Windows";
 #elif defined(_BSD)
     return "BSD";

@@ -36,10 +36,6 @@
 #include <memory>
 //#include <system_error>
 
-// External globals
-extern CServer g_Serv;
-extern CLog    g_Log;
-
 // Thread-local pointer for fast “current thread” lookup.
 static thread_local AbstractSphereThread* sg_tlsCurrentSphereThread = nullptr;
 // Avoid trying to get thread context while binding it.
@@ -290,11 +286,11 @@ void ThreadHolder::markThreadsClosing() CANTHROW
     // Flip fast-path flag first so concurrent readers immediately see “server is Closing”.
     markServClosing();
 
-    std::unique_lock lock(m_mutex);
+    std::unique_lock const lock(m_mutex);
 
     for (auto& thread_data : m_threads)
     {
-        const auto sphere_thread = dynamic_cast<AbstractSphereThread*>(thread_data.m_ptr);
+        auto *const sphere_thread = dynamic_cast<AbstractSphereThread*>(thread_data.m_ptr);
         if (!sphere_thread)
             continue;
 
@@ -308,7 +304,7 @@ void ThreadHolder::markThreadsClosing() CANTHROW
 
 AbstractThread * ThreadHolder::getThreadAt(const size_t at) noexcept
 {
-    std::shared_lock lock(m_mutex);
+    std::shared_lock const lock(m_mutex);
     if (at >= getActiveThreads())
         return nullptr;
     return m_threads[at].m_ptr;
@@ -379,7 +375,7 @@ static bool is_same_thread_id(threadid_t firstId, threadid_t secondId) noexcept
 
 static uint64_t os_current_tid() noexcept    // Equivalent to old getCurrentThreadSystemId()
 {
-#if defined(_WIN32)
+#ifdef _WIN32
     return GetCurrentThreadId(); // Ret type: DWORD.
 #elif defined(__APPLE__)
     uint64_t tid = 0;
@@ -412,7 +408,7 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
     }
     else
     {
-#   if defined(_MSC_VER)
+#   ifdef _MSC_VER
 #   pragma pack(push, 8)
         typedef struct tagTHREADNAME_INFO {
             DWORD  dwType;     // 0x1000
@@ -553,7 +549,7 @@ void AbstractThread::terminate(const bool ended)
 
     const bool wasCurrentThread = isCurrentThread();
 
-    if (ended == false)
+    if (!ended)
     {
         if (!wasCurrentThread)
         {
@@ -577,7 +573,7 @@ void AbstractThread::terminate(const bool ended)
     m_handle = std::nullopt;
     m_terminateEvent->set();
 
-    if (ended == false && wasCurrentThread)
+    if (!ended && wasCurrentThread)
     {
 #ifdef _WIN32
         _endthreadex(EXIT_SUCCESS);
@@ -637,7 +633,9 @@ void AbstractThread::run()
         if (gotException)
         {
             if (lastWasException)
+            {
                 ++exceptions;
+            }
             else
             {
                 lastWasException = true;
@@ -698,9 +696,13 @@ bool AbstractThread::checkStuck()
         return false;
 
     if (m_uiHangCheck == 0)
+    {
         m_uiHangCheck = 0xDEAD;
+    }
     else if (m_uiHangCheck == 0xDEAD)
+    {
         m_uiHangCheck = 0xDEADDEAD;
+    }
     else
     {
         g_Log.Event(LOGL_CRIT, "'%s' hang detected, restarting thread...\n", m_name);
@@ -1022,7 +1024,7 @@ getThreadRawStringBuffer() CANTHROW
             tsholder.g_tmpTemporaryStringIndex.store(index, std::memory_order_relaxed);
         }
 
-        if (auto *store = &(tsholder.g_tmpTemporaryStringStorage[index]); store->m_state == 0)
+        if (auto *store = &tsholder.g_tmpTemporaryStringStorage[index]; store->m_state == 0)
         {
             store->m_state = 1;
             store->m_buffer[0] = '\0';
@@ -1052,7 +1054,7 @@ char* AbstractSphereThread::Strings::allocateBuffer() noexcept
     if (!tsholder.g_tmpCStrings)
         RaiseImmediateAbort(20);
 
-    char* buffer = &(tsholder.g_tmpCStrings[index * THREAD_STRING_LENGTH]);
+    char* buffer = &tsholder.g_tmpCStrings[index * THREAD_STRING_LENGTH];
     buffer[0] = '\0';
     return buffer;
 }

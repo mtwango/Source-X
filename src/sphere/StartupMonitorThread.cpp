@@ -10,11 +10,6 @@
 #include "../game/CServerConfig.h"
 #include "StartupMonitorThread.h"
 
-// External globals used by the monitor loop
-extern CServer      g_Serv;
-extern CServerConfig g_Cfg;
-extern CLog         g_Log;
-
 StartupMonitorThread::StartupMonitorThread()
 : AbstractSphereThread("T_SphereStartup", ThreadPriority::Highest)
 {

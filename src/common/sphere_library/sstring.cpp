@@ -172,7 +172,7 @@ bool cstr_to_num(
                 if (acc > maxDiv || (acc == maxDiv && digit > maxRem))
                     return false;
 
-                acc = acc * 10u + digit;
+                acc = (acc * 10u) + digit;
                 ++ndigits;
                 ++str;
             }
@@ -210,7 +210,7 @@ bool cstr_to_num(
                 if (acc > maxDiv || (acc == maxDiv && digit > maxRem))
                     return false;
 
-                acc = acc * 16u + digit;
+                acc = (acc * 16u) + digit;
                 ++ndigits;
                 ++str;
             }
@@ -248,7 +248,7 @@ bool cstr_to_num(
                 if (acc > maxDiv || (acc == maxDiv && digit > maxRem))
                     return false;
 
-                acc = acc * base_casted + digit;
+                acc = (acc * base_casted) + digit;
                 ++ndigits;
                 ++str;
             }
@@ -422,7 +422,7 @@ static constexpr char hexdig_upper(uint32_t v) noexcept
 
 // Lowercase hex digit table
 static constexpr char DIGITS_LOWER[16] = {
-    '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'
+    '0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f',
 };
 
 // Map a nibble [0,15] to its lowercase hex character
@@ -460,9 +460,9 @@ static constexpr std::array<char, 200> DEC_00_99 = []{
     std::array<char, 200> a{};
     for (int i = 0; i < 100; ++i) {
         const int tens = i / 10;            // exact for 0..99
-        const int ones = i - tens * 10;     // exact for 0..99
-        a[2*i + 0] = static_cast<char>('0' + tens);
-        a[2*i + 1] = static_cast<char>('0' + ones);
+        const int ones = i - (tens * 10);     // exact for 0..99
+        a[(2 * i) + 0] = static_cast<char>('0' + tens);
+        a[(2 * i) + 1] = static_cast<char>('0' + ones);
     }
     return a;
 }();
@@ -762,7 +762,7 @@ size_t FindStrWord(const lpctstr_restrict pTextSearch, lpctstr_restrict pszKeyWo
         if ( pszKeyWord[j] == '\0' || pszKeyWord[j] == ',')
         {
             if ( pTextSearch[i]== '\0' || IsWhitespace(pTextSearch[i]))
-                return( i );
+                return i;
             j = 0;
         }
         if ( pTextSearch[i] == '\0' )
@@ -775,7 +775,9 @@ size_t FindStrWord(const lpctstr_restrict pTextSearch, lpctstr_restrict pszKeyWo
                 j = 0;
             }
             else
+            {
                 return 0;
+            }
         }
         if ( j == 0 && i > 0 )
         {
@@ -946,7 +948,7 @@ bool IsSimpleNumberString( lpctstr_restrict pszTest ) noexcept
         if ( ch == '/' && pszTest[1] != '/' )
             fMathSep = true;
         else
-            fMathSep = strchr("+-\\*~|&!%^()", ch ) ? true : false ;
+            fMathSep = strchr("+-\\*~|&!%^()", ch ) != nullptr ;
 
         if ( ! fMathSep )
             return false;
@@ -959,7 +961,7 @@ bool IsSimpleNumberString( lpctstr_restrict pszTest ) noexcept
 
 // strcpy doesn't have an argument to truncate the copy to the buffer length;
 // strncpy doesn't null-terminate if it truncates the copy, and if uiMaxlen is > than the source string length, the remaining space is filled with '\0'
-size_t Str_CopyLimit(const lptstr_restrict pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
+size_t Str_CopyLimit(lptstr_restrict const pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
 {
     if (uiMaxSize == 0) [[unlikely]]
         return 0;
@@ -981,7 +983,7 @@ size_t Str_CopyLimit(const lptstr_restrict pDst, const lpctstr_restrict pSrc, co
     return toCopy; // bytes copied in pDst string (CAN count the string terminator)
 }
 
-size_t Str_CopyLimitNull(const lptstr_restrict pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
+size_t Str_CopyLimitNull(lptstr_restrict const pDst, const lpctstr_restrict pSrc, const size_t uiMaxSize) noexcept
 {
     if (uiMaxSize == 0) [[unlikely]]
     {
@@ -1280,7 +1282,7 @@ int Str_GetBare(tchar * pszOut, const tchar * pszInp, int iMaxOutSize, const tch
 }
 */
 
-tchar * Str_MakeFiltered(const lptstr_restrict pStr) noexcept
+tchar * Str_MakeFiltered(lptstr_restrict const pStr) noexcept
 {
     int len = static_cast<int>(strlen(pStr));
     for (int i = 0; len; ++i, --len)
@@ -1438,7 +1440,8 @@ void Str_SkipEnclosedAngularBrackets(tchar*& ptcLine) noexcept
 {
     // Move past a < > statement. It can have ( ) inside, if it happens, ignore < > characters inside ().
     bool fOpenedOneAngular = false;
-    int iOpenAngular = 0, iOpenCurly = 0;
+    int iOpenAngular = 0;
+    int iOpenCurly = 0;
     tchar* ptcTest = ptcLine;
     while (const tchar ch = *ptcTest)
     {

@@ -69,7 +69,7 @@ void CEntity::UnsubscribeComponent(const CComponent *pComponent)
     auto it = _lComponents.find(compType);
     if (it == _lComponents.end())
     {
-        g_Log.EventError("Trying to unsuscribe not suscribed component (%d)\n", (int)pComponent->GetType());    // Should never happen?
+        g_Log.EventError("Trying to unsuscribe not suscribed component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
         delete pComponent;
         return;
     }

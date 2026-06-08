@@ -60,7 +60,7 @@ uint CHuffman::Compress( byte * pOutput, const byte * pInput, const uint outLen,
     for ( uint i = 0; i <= inLen; ++i )
 	{
         word value = kxCompress_Base[ ( i == inLen ) ? (COMPRESS_TREE_SIZE - 1) : pInput[i] ];
-		byte nBits = (byte)(value & (word)0xF);
+		byte nBits = static_cast<byte>(value & static_cast<word>(0xF));
 		value >>= 4u;
 		while ( nBits )
 		{
@@ -70,10 +70,10 @@ uint CHuffman::Compress( byte * pOutput, const byte * pInput, const uint outLen,
 			nBits -= 1u;
 
  			//xOutVal <<= 1;
-            xOutVal = (byte)((uint)xOutVal << 1u);
+            xOutVal = static_cast<byte>(static_cast<uint>(xOutVal) << 1u);
 
             //xOutVal |= ((value >> nBits) & 0x1);
-			xOutVal |= (((uint)value >> (uint)nBits) & 0x1u);
+			xOutVal |= ((static_cast<uint>(value) >> static_cast<uint>(nBits)) & 0x1u);
 
             if ( ++bitidx == 8)
 			{
@@ -88,7 +88,7 @@ uint CHuffman::Compress( byte * pOutput, const byte * pInput, const uint outLen,
             return 0;
 
         // pOutput[iLen++] = xOutVal << (8u - bitidx);
-		pOutput[iLen++] = (byte)((uint)xOutVal << (8u - bitidx));
+		pOutput[iLen++] = static_cast<byte>(static_cast<uint>(xOutVal) << (8u - bitidx));
 	}
 
 	return iLen;

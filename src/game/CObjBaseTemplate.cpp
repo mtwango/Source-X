@@ -53,14 +53,14 @@ void CObjBaseTemplate::SetEquipLayer(const LAYER_TYPE layer )
 	m_pt.m_x = 0;	// these don't apply.
 	m_pt.m_y = 0;
 	// future: strongly typed enums will remove the need for this cast
-	m_pt.m_z = (char)(layer); // layer equipped.
+	m_pt.m_z = static_cast<char>(layer); // layer equipped.
 	m_pt.m_map = 0;
 }
 
 void CObjBaseTemplate::SetContainedLayer(const byte layer ) noexcept
 {
 	// used for corpse or Restock count as well in Vendor container.
-	m_pt.m_z = (char)layer;
+	m_pt.m_z = static_cast<char>(layer);
 }
 
 void CObjBaseTemplate::SetContainedPoint( const CPointMap & pt ) noexcept

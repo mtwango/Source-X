@@ -53,7 +53,7 @@ llong CSTime::GetMonotonicSysTimeNano() noexcept // static
     LARGE_INTEGER liQPCStart;
     if (!QueryPerformanceCounter(&liQPCStart))
         return GetSupportedTickCount() * 1000; // GetSupportedTickCount has only millisecond precision
-    return (llong)((liQPCStart.QuadPart * 1.0e9) / _kllTimeProfileFrequency);
+    return static_cast<llong>(liQPCStart.QuadPart * 1.0e9 / _kllTimeProfileFrequency);
 
 #else
     struct timespec ts;
@@ -73,7 +73,7 @@ llong CSTime::GetMonotonicSysTimeMicro() noexcept // static
 	LARGE_INTEGER liQPCStart;
 	if (!QueryPerformanceCounter(&liQPCStart))
 		return GetSupportedTickCount() * 1000; // GetSupportedTickCount has only millisecond precision
-	return (llong)((liQPCStart.QuadPart * 1.0e6) / _kllTimeProfileFrequency);
+	return static_cast<llong>(liQPCStart.QuadPart * 1.0e6 / _kllTimeProfileFrequency);
 
 #else
 	struct timespec ts;
@@ -93,7 +93,7 @@ llong CSTime::GetMonotonicSysTimeMilli() noexcept // static
 	LARGE_INTEGER liQPCStart;
 	if (!QueryPerformanceCounter(&liQPCStart))
 		return GetSupportedTickCount();
-	return (llong)((liQPCStart.QuadPart * 1.0e3) / _kllTimeProfileFrequency);
+	return static_cast<llong>(liQPCStart.QuadPart * 1.0e3 / _kllTimeProfileFrequency);
 
 /*
     // Less precision, but faster (needs sysinfoapi.h).

@@ -13,7 +13,7 @@ lpctstr const CCPropsItemEquippable::_ptcPropertyKeys[PROPIEQUIP_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsItemEquippable::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
+    return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
 }
 
 RESDISPLAY_VERSION CCPropsItemEquippable::_iPropertyExpansion[PROPIEQUIP_QTY + 1] =
@@ -102,7 +102,7 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, 
         auto group = _faction.GetGroup();
         if (group == CFactionDef::Group::NONE)
             return false;
-        *piOutVal = (int32)enum_alias_cast<uint32>(group);
+        *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(group));
         return true;
     }
     if (iPropIndex == PROPIEQUIP_SLAYER_SPECIES)
@@ -110,7 +110,7 @@ bool CCPropsItemEquippable::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, 
         auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)
             return false;
-        *piOutVal = (int32)enum_alias_cast<uint32>(species);
+        *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(species));
         return true;
     }
 
@@ -138,12 +138,12 @@ bool CCPropsItemEquippable::SetPropertyNum(const PropertyIndex_t iPropIndex, con
 
     else if (iPropIndex == PROPIEQUIP_SLAYER_GROUP)
     {
-        _faction.SetGroup(enum_alias_cast<CFactionDef::Group>((uint32)iVal));
+        _faction.SetGroup(enum_alias_cast<CFactionDef::Group>(static_cast<uint32>(iVal)));
         return true;
     }
     else if (iPropIndex == PROPIEQUIP_SLAYER_SPECIES)
     {
-        _faction.SetSpecies(enum_alias_cast<CFactionDef::Species>((uint32)iVal));
+        _faction.SetSpecies(enum_alias_cast<CFactionDef::Species>(static_cast<uint32>(iVal)));
         return true;
     }
 

@@ -298,7 +298,7 @@ public:
 	LAYER_TYPE GetEquipLayer() const noexcept
 	{
 		// Is this item really equippable ?
-		return (LAYER_TYPE)m_layer;
+		return static_cast<LAYER_TYPE>(m_layer);
 	}
 
 	lpctstr GetName() const override;
@@ -306,11 +306,11 @@ public:
 
 	ITEMID_TYPE GetID() const noexcept
 	{
-		return (ITEMID_TYPE)(GetResourceID().GetResIndex());
+		return static_cast<ITEMID_TYPE>(GetResourceID().GetResIndex());
 	}
 	ITEMID_TYPE GetDispID() const noexcept
 	{
-		return (ITEMID_TYPE)(m_dwDispIndex);
+		return static_cast<ITEMID_TYPE>(m_dwDispIndex);
 	}
 	uint64 GetTFlags() const noexcept
 	{

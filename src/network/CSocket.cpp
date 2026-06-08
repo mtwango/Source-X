@@ -29,7 +29,7 @@ void CheckReportNetAPIErr(const int retval, const lpctstr ptcOperation)
 
 #if _DEBUG
 	g_Log.EventDebug("Socket operation: '%s' errored (code %d).\n", ptcOperation, retval);
-	g_Log.EventDebug("Errno: %d. Error string: '%s'.\n", (int)errno, strerror(errno));
+	g_Log.EventDebug("Errno: %d. Error string: '%s'.\n", static_cast<int>(errno), strerror(errno));
 #else
 	UnreferencedParameter(ptcOperation);
 #endif
@@ -124,7 +124,7 @@ bool CSocketAddressIP::SetHostStruct( const hostent * pHost )
 	{
 		return false;
 	}
-	SetAddrIP( *((dword*)( pHost->h_addr ))); // 0.1.2.3
+	SetAddrIP( *reinterpret_cast<dword *>(pHost->h_addr)); // 0.1.2.3
 	return true;
 }
 

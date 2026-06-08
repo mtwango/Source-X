@@ -10,12 +10,12 @@
 int CValueRangeDef::GetLinear(const int iPercent ) const
 {
     // ARGS: iPercent = 0-1000
-    return (int)m_iLo + IMulDiv( GetRange(), iPercent, 1000 );
+    return static_cast<int>(m_iLo) + IMulDiv( GetRange(), iPercent, 1000 );
 }
 
 int CValueRangeDef::GetRandom() const
 {
-    return ( (int)m_iLo + g_Rand.GetVal(GetRange()) );
+    return static_cast<int>(m_iLo) + g_Rand.GetVal(GetRange());
 }
 
 int CValueRangeDef::GetRandomLinear(const int iPercent ) const
@@ -82,7 +82,7 @@ bool CValueCurveDef::Load( tchar * pszDef )
     }
     for ( size_t i = 0; i < iQty; i++ )
     {
-        m_aiValues[i] = (int)(Arg_piCmd[i]);
+        m_aiValues[i] = static_cast<int>(Arg_piCmd[i]);
     }
     return true;
 }
@@ -101,7 +101,7 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
     int iSegSize;
     int iLoIdx;
 
-    switch (int iQty = (int)m_aiValues.size())
+    switch (int iQty = static_cast<int>(m_aiValues.size()))
     {
         case 0:
             return 0;	// no values defined !
@@ -137,7 +137,7 @@ int CValueCurveDef::GetLinear( int iSkillPercent ) const
 
     int iLoVal = m_aiValues[iLoIdx];
     int iHiVal = m_aiValues[iLoIdx + 1];
-    int iChance = iLoVal + (int)IMulDivLL( iHiVal - iLoVal, iSkillPercent, iSegSize );
+    int iChance = iLoVal + static_cast<int>(IMulDivLL(iHiVal - iLoVal, iSkillPercent, iSegSize));
 
     if ( iChance <= 0 )
         return 0; // less than no chance ?

@@ -34,7 +34,7 @@ CCharBase::CCharBase(const CREID_TYPE id ) :
 	_iEraLimitGear = g_Cfg._iEraLimitGear;		// Always latest by default
 	_iEraLimitLoot = g_Cfg._iEraLimitLoot;		// Always latest by default
 
-	m_iMoveRate = (short)(g_Cfg.m_iMoveRate);
+	m_iMoveRate = static_cast<short>(g_Cfg.m_iMoveRate);
 
 	if ( IsValidDispID(id))
 		m_dwDispIndex = id;	// in display range.
@@ -140,7 +140,7 @@ void CCharBase::SetFoodType(const lpctstr pszFood )
 	for ( size_t i = 0; i < m_FoodType.size(); ++i )
 	{
 		if ( m_MaxFood < m_FoodType[i].GetResQty())
-			m_MaxFood = (ushort)(m_FoodType[i].GetResQty());
+			m_MaxFood = static_cast<ushort>(m_FoodType[i].GetResQty());
 	}
 }
 
@@ -274,7 +274,7 @@ bool CCharBase::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *
             sVal.FormatBVal(GetRangeL());
             break;
 		case CBC_RESDISPDNID:
-			sVal = g_Cfg.ResourceGetName( CResourceID( RES_CHARDEF, (int)GetResDispDnId()) );
+			sVal = g_Cfg.ResourceGetName( CResourceID( RES_CHARDEF, static_cast<int>(GetResDispDnId())) );
 			break;
 		case CBC_SOUND:
 			sVal.FormatHex( m_soundBase );
@@ -359,13 +359,13 @@ bool CCharBase::r_LoadVal( CScript & s )
 			m_Aversions.Load( s.GetArgStr() );
 			break;
 		case CBC_BLOODCOLOR:
-			_wBloodHue = (HUE_TYPE)(s.GetArgVal());
+			_wBloodHue = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case CBC_ARMOR:
 			m_defense = s.GetArgWVal();
 			break;
 		case CBC_COLOR:
-			m_wColor = (HUE_TYPE)(s.GetArgVal());
+			m_wColor = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case CBC_DESIRES:
 			m_Desires.Load( s.GetArgStr() );
@@ -376,13 +376,13 @@ bool CCharBase::r_LoadVal( CScript & s )
 		case CBC_DISPID:
 			return false;
 		case CBC_ERALIMITGEAR:
-			_iEraLimitGear = (RESDISPLAY_VERSION)s.GetArgVal();
+			_iEraLimitGear = static_cast<RESDISPLAY_VERSION>(s.GetArgVal());
 			break;
 		case CBC_ERALIMITLOOT:
-			_iEraLimitLoot = (RESDISPLAY_VERSION)s.GetArgVal();
+			_iEraLimitLoot = static_cast<RESDISPLAY_VERSION>(s.GetArgVal());
 			break;
 		case CBC_ERALIMITPROPS:
-			_iEraLimitProps = (RESDISPLAY_VERSION)s.GetArgVal();
+			_iEraLimitProps = static_cast<RESDISPLAY_VERSION>(s.GetArgVal());
 			break;
 		case CBC_FOODTYPE:
 			SetFoodType( s.GetArgStr());
@@ -399,7 +399,7 @@ bool CCharBase::r_LoadVal( CScript & s )
 			}
 			break;
 		case CBC_ID:
-			return SetDispID((CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, s.GetArgStr())));
+			return SetDispID(static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType( RES_CHARDEF, s.GetArgStr())));
 		case CBC_INT:
 			m_Int = s.GetArgUSVal();
 			break;
@@ -418,25 +418,25 @@ bool CCharBase::r_LoadVal( CScript & s )
         case CBC_RANGEL:
             return false;
 		case CBC_RESDISPDNID:
-			SetResDispDnId((word)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
+			SetResDispDnId(static_cast<word>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
 			break;
 		case CBC_SOUND:
-			m_soundBase = (SOUND_TYPE)(s.GetArgVal());
+			m_soundBase = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_SOUNDDIE:
-			m_soundDie = (SOUND_TYPE)(s.GetArgVal());
+			m_soundDie = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_SOUNDGETHIT:
-			m_soundGetHit = (SOUND_TYPE)(s.GetArgVal());
+			m_soundGetHit = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_SOUNDHIT:
-			m_soundHit = (SOUND_TYPE)(s.GetArgVal());
+			m_soundHit = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_SOUNDIDLE:
-			m_soundIdle = (SOUND_TYPE)(s.GetArgVal());
+			m_soundIdle = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_SOUNDNOTICE:
-			m_soundNotice = (SOUND_TYPE)(s.GetArgVal());
+			m_soundNotice = static_cast<SOUND_TYPE>(s.GetArgVal());
 			break;
 		case CBC_STR:
 			m_Str = s.GetArgUSVal();
@@ -471,7 +471,7 @@ bool CCharBase::r_Load( CScript & s )
 
 	if ( !IsValidDispID(GetDispID()) )
 	{
- 		g_Log.Event(LOGL_WARN, "Char script '%s' has bad DISPID 0%x. Defaulting to 0%x.\n", GetResourceName(), GetDispID(), (int)(CREID_MAN));
+ 		g_Log.Event(LOGL_WARN, "Char script '%s' has bad DISPID 0%x. Defaulting to 0%x.\n", GetResourceName(), GetDispID(), static_cast<int>(CREID_MAN));
 		m_dwDispIndex = CREID_MAN;
 	}
 	if ( m_Can == 0 )
@@ -483,12 +483,12 @@ bool CCharBase::r_Load( CScript & s )
 
 byte CCharBase::GetRangeL() const noexcept
 {
-    return (byte)(RANGE_GET_LO(_uiRange));
+    return static_cast<byte>(RANGE_GET_LO(_uiRange));
 }
 
 byte CCharBase::GetRangeH() const noexcept
 {
-    return (byte)(RANGE_GET_HI(_uiRange));
+    return static_cast<byte>(RANGE_GET_HI(_uiRange));
 }
 
 

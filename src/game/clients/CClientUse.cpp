@@ -359,7 +359,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 
 				m_tmSkillMagery.m_iSpell = spell;	// m_atMagery.m_iSpell
 				m_pChar->m_atMagery.m_iSpell = spell;
-				m_pChar->Skill_Start((SKILL_TYPE)skill);
+				m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
 				return true;
 			}
 			return Cmd_Skill_Magery(spell, pItem);
@@ -611,8 +611,8 @@ void CClient::Cmd_EditItem( CObjBase *pObj, const int iSelect )
 		++count;
 		m_tmMenu.m_Item[count] = pItem->GetUID();
 		item[count].m_sText = pItem->GetName();
-		ITEMID_TYPE idi = pItem->GetDispID();
-		item[count].m_id = (word)(idi);
+        const ITEMID_TYPE idi = pItem->GetDispID();
+		item[count].m_id = static_cast<word>(idi);
 		item[count].m_color = 0;
 
 		if ( !pItem->IsType(IT_EQ_MEMORY_OBJ) )
@@ -734,7 +734,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 				g_Cfg.RegisteredResourceGetDef(rid)->GetResourceName());
 	}
 
-	ASSERT(iShowCount < (int)ARRAY_COUNT(item));
+	ASSERT(iShowCount < static_cast<int>(ARRAY_COUNT(item)));
 	addItemMenu(CLIMODE_MENU_SKILL, item, iShowCount);
 	return true;
 }
@@ -858,7 +858,7 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CM
                     // If iSelect == -2 "item" is not an array! And we don't even need to set a value, since with -2 it would just be a test!
                     ASSERT(item != nullptr);
                     item[iShowCount] = miTest;
-					m_tmMenu.m_Item[iShowCount] = (dword)iOnCount;
+					m_tmMenu.m_Item[iShowCount] = static_cast<dword>(iOnCount);
                     ASSERT(m_tmMenu.m_Item[iShowCount] < INT32_MAX);    // iOnCount is int but m_tmMenu.m_Item[x] is uint, don't overflow
                 }
 
@@ -947,7 +947,7 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CM
 			{
 				// test if i can make this item using m_Targ_UID.
 				// There should ALWAYS be a valid id here.
-				if ( !m_pChar->Skill_MakeItem((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())), m_Targ_UID, SKTRIG_SELECT) )
+				if ( !m_pChar->Skill_MakeItem(static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())), m_Targ_UID, SKTRIG_SELECT) )
 				{
                     fSkipNeedCleanup = true;
 				}
@@ -1073,7 +1073,7 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
     if (!pSpellDef->GetPrimarySkill(&skill, nullptr))
         return false;
 
-    return m_pChar->Skill_Start((SKILL_TYPE)(skill));
+    return m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
 }
 
 bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
@@ -1146,13 +1146,13 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 		*/
 
 		if (m_pChar->m_Act_Effect >= 0)
-			m_pChar->m_atTracking.m_dwDistMax = (dword)m_pChar->m_Act_Effect;
+			m_pChar->m_atTracking.m_dwDistMax = static_cast<dword>(m_pChar->m_Act_Effect);
 		else //This is default Sphere maximum tracking distance.
 		{
 			int iSkillLevel = m_pChar->Skill_GetAdjusted(SKILL_TRACKING);
 			if ((g_Cfg.m_iRacialFlags & RACIALF_HUMAN_JACKOFTRADES) && m_pChar->IsHuman())
 				iSkillLevel = maximum(iSkillLevel, 200);			// humans always have a 20.0 minimum skill (racial traits)
-			m_pChar->m_atTracking.m_dwDistMax = (dword)(iSkillLevel / 10 + 10);
+			m_pChar->m_atTracking.m_dwDistMax = static_cast<dword>(iSkillLevel / 10 + 10);
 		}
 		auto AreaChars = CWorldSearchHolder::GetInstance(m_pChar->GetTopPoint(), m_pChar->m_atTracking.m_dwDistMax);
 		for (;;)
@@ -1201,7 +1201,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 			}
 
 			++count;
-			item[count].m_id = (word)(pCharDef->m_trackID);
+			item[count].m_id = static_cast<word>(pCharDef->m_trackID);
 			item[count].m_color = 0;
 			item[count].m_sText = pChar->GetName();
 			m_tmMenu.m_Item[count] = pChar->GetUID();
@@ -1409,12 +1409,12 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		PacketTradeAction cmd2(SECURE_TRADE_UPDATELEDGER);
 		if ( GetNetState()->isClientVersionNumber(MINCLIVER_NEWSECURETRADE) )
 		{
-			cmd2.prepareUpdateLedger(pCont1, (dword)(m_pChar->m_virtualGold % 1000000000), (dword)(m_pChar->m_virtualGold / 1000000000));
+			cmd2.prepareUpdateLedger(pCont1, static_cast<dword>(m_pChar->m_virtualGold % 1000000000), static_cast<dword>(m_pChar->m_virtualGold / 1000000000));
 			cmd2.send(this);
 		}
 		if ( pChar->GetClientActive()->GetNetState()->isClientVersionNumber(MINCLIVER_NEWSECURETRADE) )
 		{
-			cmd2.prepareUpdateLedger(pCont2, (dword)(pChar->m_virtualGold % 1000000000), (dword)(pChar->m_virtualGold / 1000000000));
+			cmd2.prepareUpdateLedger(pCont2, static_cast<dword>(pChar->m_virtualGold % 1000000000), static_cast<dword>(pChar->m_virtualGold / 1000000000));
 			cmd2.send(pChar->GetClientActive());
 		}
 	}

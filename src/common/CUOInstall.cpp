@@ -61,7 +61,7 @@ bool CUOInstall::FindInstall()
 	tchar szValue[ SPHERE_MAX_PATH ];
 	DWORD lSize = sizeof( szValue );
 	DWORD dwType = REG_SZ;
-	lRet = RegQueryValueEx(hKey, "ExePath", nullptr, &dwType, (byte*)szValue, &lSize);
+	lRet = RegQueryValueEx(hKey, "ExePath", nullptr, &dwType, reinterpret_cast<byte *>(szValue), &lSize);
 
 	if ( lRet == ERROR_SUCCESS && dwType == REG_SZ )
 	{
@@ -70,7 +70,7 @@ bool CUOInstall::FindInstall()
 	}
 	else
 	{
-		lRet = RegQueryValueEx(hKey, "InstallDir", nullptr, &dwType, (byte*)szValue, &lSize);
+		lRet = RegQueryValueEx(hKey, "InstallDir", nullptr, &dwType, reinterpret_cast<byte *>(szValue), &lSize);
 		if ( lRet == ERROR_SUCCESS && dwType == REG_SZ )
 			m_sExePath = szValue;
 	}
@@ -78,7 +78,7 @@ bool CUOInstall::FindInstall()
 	// ??? Find CDROM install base as well, just in case.
 	// uo.cfg CdRomDataPath=e:\uo
 
-	lRet = RegQueryValueEx(hKey, "InstCDPath", nullptr, &dwType, (byte*)szValue, &lSize);
+	lRet = RegQueryValueEx(hKey, "InstCDPath", nullptr, &dwType, reinterpret_cast<byte *>(szValue), &lSize);
 
 	if ( lRet == ERROR_SUCCESS && dwType == REG_SZ )
 	{
@@ -229,16 +229,16 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
     int i;
 	for ( i = 0; i < VERFILE_QTY; ++i )
 	{
-		if ( ! ( ullMask & ( (ullong)1 << i )) )
+		if ( ! ( ullMask & ( static_cast<ullong>(1) << i )) )
 			continue;
-		if ( GetBaseFileName((VERFILE_TYPE)i) == nullptr )
+		if ( GetBaseFileName(static_cast<VERFILE_TYPE>(i)) == nullptr )
 			continue;
 
 		bool fFileLoaded = true;
 		switch (i)
 		{
 			default:
-				if ( !OpenFile((VERFILE_TYPE)i))
+				if ( !OpenFile(static_cast<VERFILE_TYPE>(i)))
 				{
 					//	make some MULs optional
 					switch ( i )
@@ -294,10 +294,10 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
                                     m_Maps[index].Seek(sizeof(dword) * 3, SEEK_SET);
 									m_Maps[index].Read(&dwHashLo, sizeof(dword));
 									m_Maps[index].Read(&dwHashHi, sizeof(dword));
-									uint64 qwUOPPtr = ((uint64)dwHashHi << 32) + dwHashLo;
+									uint64 qwUOPPtr = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo;
 									m_Maps[index].Seek(sizeof(dword), SEEK_CUR);
 									m_Maps[index].Read(&dwTotalFiles, sizeof(dword));
-									m_Maps[index].Seek((int)qwUOPPtr, SEEK_SET);
+									m_Maps[index].Seek(static_cast<int>(qwUOPPtr), SEEK_SET);
 									dword dwLoop = dwTotalFiles;
 
 									while (qwUOPPtr > 0)
@@ -305,7 +305,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 										m_Maps[index].Read(&dwFilesInBlock, sizeof(dword));
 										m_Maps[index].Read(&dwHashLo, sizeof(dword));
 										m_Maps[index].Read(&dwHashHi, sizeof(dword));
-										qwUOPPtr = ((uint64)dwHashHi << 32) + dwHashLo;
+										qwUOPPtr = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo;
 
 										while ((dwFilesInBlock > 0) && (dwTotalFiles > 0))
 										{
@@ -318,12 +318,12 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 											m_Maps[index].Read(&dwCompressedSize, sizeof(dword));
 
 											MapAddress pMapAddress;
-											pMapAddress.qwAdress = (((uint64)dwHashHi << 32) + dwHashLo) + dwHeaderLenght;
+											pMapAddress.qwAdress = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo + dwHeaderLenght;
 
 											m_Maps[index].Seek(sizeof(dword), SEEK_CUR);
 											m_Maps[index].Read(&dwHashLo, sizeof(dword));
 											m_Maps[index].Read(&dwHashHi, sizeof(dword));
-											uint64 qwHash = ((uint64)dwHashHi << 32) + dwHashLo;
+											uint64 qwHash = (static_cast<uint64>(dwHashHi) << 32) + dwHashLo;
 											m_Maps[index].Seek(sizeof(dword) + sizeof(word), SEEK_CUR);
 
 											for (dword x = 0; x < dwLoop; ++x)
@@ -339,7 +339,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 											}
 										}
 
-										m_Maps[index].Seek((int)qwUOPPtr, SEEK_SET);
+										m_Maps[index].Seek(static_cast<int>(qwUOPPtr), SEEK_SET);
 									}
 								}//End of UOP Map parsing
 								else if (index == 0) // neither file exists, map0 is required
@@ -436,7 +436,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
 
 		// stop if we hit a failure
 		if (fFileLoaded == false)
-			return (VERFILE_TYPE)i;
+			return static_cast<VERFILE_TYPE>(i);
 	}
 
     // --
@@ -490,7 +490,7 @@ VERFILE_TYPE CUOInstall::OpenFiles(const ullong ullMask )
         m_mobtypes.Load();
     }
 
-	return (VERFILE_TYPE)i;
+	return static_cast<VERFILE_TYPE>(i);
 }
 
 void CUOInstall::CloseFiles()
@@ -521,10 +521,10 @@ bool CUOInstall::ReadMulIndex(CSFile &file, const dword id, CUOIndexRec &Index)
 {
 	ADDTOCALLSTACK("CUOInstall::ReadMulIndex");
 
-    if (int iOffset = (int)(id * sizeof(CUOIndexRec)); file.Seek(iOffset, SEEK_SET) != iOffset )
+    if (const int iOffset = static_cast<int>(id * sizeof(CUOIndexRec)); file.Seek(iOffset, SEEK_SET) != iOffset )
 		return false;
 
-	if ( (uint)file.Read(&Index, sizeof(CUOIndexRec)) != sizeof(CUOIndexRec) )
+	if ( static_cast<uint>(file.Read(&Index, sizeof(CUOIndexRec))) != sizeof(CUOIndexRec) )
 		return false;
 
 	return Index.HasData();
@@ -533,10 +533,10 @@ bool CUOInstall::ReadMulIndex(CSFile &file, const dword id, CUOIndexRec &Index)
 bool CUOInstall::ReadMulData(CSFile &file, const CUOIndexRec &Index, void * pData)
 {
 	ADDTOCALLSTACK("CUOInstall::ReadMulData");
-	if ( (uint)file.Seek(Index.GetFileOffset(), SEEK_SET) != Index.GetFileOffset() )
+	if ( static_cast<uint>(file.Seek(Index.GetFileOffset(), SEEK_SET)) != Index.GetFileOffset() )
 		return false;
 
-    if (dword dwLength = Index.GetBlockLength(); (uint)file.Read(pData, dwLength) != dwLength )
+    if (const dword dwLength = Index.GetBlockLength(); static_cast<uint>(file.Read(pData, dwLength)) != dwLength )
 		return false;
 
 	return true;
@@ -672,11 +672,10 @@ void CVerDataMul::Load(CSFile & file)
 	for (size_t i = 0; i < (dwQty - 1); ++i)
 	{
 		dword dwIndex1 = GetEntry(i)->GetIndex();
-		dword dwIndex2 = GetEntry(i + 1)->GetIndex();
-		if (dwIndex1 > dwIndex2)
+        if (const dword dwIndex2 = GetEntry(i + 1)->GetIndex(); dwIndex1 > dwIndex2)
 		{
 			DEBUG_ERR(("VerData Array is NOT sorted !\n"));
-			throw CSError(LOGL_CRIT, (dword)-1, "VerData: NOT Sorted!");
+			throw CSError(LOGL_CRIT, static_cast<dword>(-1), "VerData: NOT Sorted!");
 		}
 	}
 #endif
@@ -705,7 +704,7 @@ bool CVerDataMul::FindVerDataBlock(const VERFILE_TYPE type, const dword id, CUOI
 	// search for a specific block.
 	// assume it is in sorted order.
 
-	int iHigh = (int)(GetCount()) - 1;
+	int iHigh = static_cast<int>(GetCount()) - 1;
 	if (iHigh < 0)
 	{
 		return false;
@@ -772,29 +771,29 @@ ullong HashFileName(CSString csFile)
 		switch ( csFile.GetLength() - i )
 		{
 			case 12:
-				esi += (int32) csFile[ i + 11 ] << 24;
+				esi += static_cast<int32>(csFile[i + 11]) << 24;
 			case 11:
-				esi += (int32) csFile[ i + 10 ] << 16;
+				esi += static_cast<int32>(csFile[i + 10]) << 16;
 			case 10:
-				esi += (int32) csFile[ i + 9 ] << 8;
+				esi += static_cast<int32>(csFile[i + 9]) << 8;
 			case 9:
-				esi += (int32) csFile[ i + 8 ];
+				esi += static_cast<int32>(csFile[i + 8]);
 			case 8:
-				edi += (int32) csFile[ i + 7 ] << 24;
+				edi += static_cast<int32>(csFile[i + 7]) << 24;
 			case 7:
-				edi += (int32) csFile[ i + 6 ] << 16;
+				edi += static_cast<int32>(csFile[i + 6]) << 16;
 			case 6:
-				edi += (int32) csFile[ i + 5 ] << 8;
+				edi += static_cast<int32>(csFile[i + 5]) << 8;
 			case 5:
-				edi += (int32) csFile[ i + 4 ];
+				edi += static_cast<int32>(csFile[i + 4]);
 			case 4:
-				ebx += (int32) csFile[ i + 3 ] << 24;
+				ebx += static_cast<int32>(csFile[i + 3]) << 24;
 			case 3:
-				ebx += (int32) csFile[ i + 2 ] << 16;
+				ebx += static_cast<int32>(csFile[i + 2]) << 16;
 			case 2:
-				ebx += (int32) csFile[ i + 1 ] << 8;
+				ebx += static_cast<int32>(csFile[i + 1]) << 8;
 			case 1:
-				ebx += (int32) csFile[ i ];
+				ebx += static_cast<int32>(csFile[i]);
 				break;
 		}
 
@@ -806,8 +805,8 @@ ullong HashFileName(CSString csFile)
 		edi = ( edi ^ edx ) - ( ( edx >> 18 ) ^ ( edx << 14 ) );
 		eax = ( esi ^ edi ) - ( ( edi >> 8 ) ^ ( edi << 24 ) );
 
-		return ( (int64) edi << 32 ) | eax;
+		return ( static_cast<int64>(edi) << 32 ) | eax;
 	}
 
-	return ( (int64) esi << 32 ) | eax;
+	return ( static_cast<int64>(esi) << 32 ) | eax;
 }

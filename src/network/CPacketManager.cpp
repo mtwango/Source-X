@@ -16,15 +16,15 @@ PacketManager::~PacketManager()
 {
     // delete standard packet handlers
     for (size_t i = 0; i < std::size(m_handlers); ++i)
-        unregisterPacket((uint)i);
+        unregisterPacket(static_cast<uint>(i));
 
     // delete extended packet handlers
     for (size_t i = 0; i < std::size(m_extended); ++i)
-        unregisterExtended((uint)i);
+        unregisterExtended(static_cast<uint>(i));
 
     // delete encoded packet handlers
     for (size_t i = 0; i < std::size(m_encoded); ++i)
-        unregisterEncoded((uint)i);
+        unregisterEncoded(static_cast<uint>(i));
 }
 
 void PacketManager::registerStandardPackets()

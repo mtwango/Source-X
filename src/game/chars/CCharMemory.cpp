@@ -17,14 +17,14 @@ CItemStone * CChar::Guild_Find( MEMORY_TYPE MemType ) const
 	ADDTOCALLSTACK("CChar::Guild_Find");
 	if ( ! m_pPlayer )
 		return nullptr;
-	CItemMemory * pMyGMem = Memory_FindTypes((word)(MemType));
+	CItemMemory * pMyGMem = Memory_FindTypes(static_cast<word>(MemType));
 	if ( ! pMyGMem )
 		return nullptr;
     const auto pMyStone = dynamic_cast <CItemStone*>( pMyGMem->m_uidLink.ItemFind());
 	if ( pMyStone == nullptr )
 	{
 		// Some sort of mislink ! fix it.
-		const_cast <CChar*>(this)->Memory_ClearTypes((word)(MemType)); 	// Make them forget they were ever in this guild....again!
+		const_cast <CChar*>(this)->Memory_ClearTypes(static_cast<word>(MemType)); 	// Make them forget they were ever in this guild....again!
 		return nullptr;
 	}
 	return pMyStone;
@@ -41,7 +41,7 @@ CStoneMember * CChar::Guild_FindMember( MEMORY_TYPE MemType ) const
 	if ( pMember == nullptr )
 	{
 		// Some sort of mislink ! fix it.
-		const_cast <CChar*>(this)->Memory_ClearTypes((word)(MemType)); 	// Make them forget they were ever in this guild....again!
+		const_cast <CChar*>(this)->Memory_ClearTypes(static_cast<word>(MemType)); 	// Make them forget they were ever in this guild....again!
 		return nullptr;
 	}
 	return pMember;

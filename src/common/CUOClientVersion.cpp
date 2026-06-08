@@ -72,7 +72,7 @@ std::string CUOClientVersion::GetVersionString() const noexcept
         if (m_build_sub)
         {
             // Append the number to the string buffer
-            Str_FromUI(m_build_sub, &ret[iWrittenChars], ret.capacity() - (size_t)iWrittenChars - 1);
+            Str_FromUI(m_build_sub, &ret[iWrittenChars], ret.capacity() - static_cast<size_t>(iWrittenChars) - 1);
         }
         // ret[iVer] = '\0'; // resize already zeroes everything
     }

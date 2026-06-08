@@ -232,7 +232,7 @@ protected:
 #else
     using file_descriptor_t = int;
 #endif
-    const file_descriptor_t _kInvalidFD = (file_descriptor_t)-1;
+    const file_descriptor_t _kInvalidFD = reinterpret_cast<file_descriptor_t>(-1);
 
 	CSString _strFileName;	            // File name (with path).
 	uint _uiMode;                       // MMSYSTEM may use 32 bit flags.

@@ -78,7 +78,7 @@ bool CChar::TeleportToObj(const int iType, tchar * pszArgs )
 			{
 				if (!pObj->IsItem())
 					continue;
-                if (const CItem *pItem = static_cast<CItem *>(pObj); !pItem->IsType((IT_TYPE)iArg))
+                if (const CItem *pItem = static_cast<CItem *>(pObj); !pItem->IsType(static_cast<IT_TYPE>(iArg)))
 					continue;
 			}
 			break;
@@ -229,7 +229,7 @@ void CChar::AddGoldToPack( int iAmount, CItemContainer * pPack, const bool fForc
 		if (!iMax)
 			iMax = pGold->GetMaxAmount();
 
-		word iGoldStack = (word)minimum(iAmount, iMax);
+		word iGoldStack = static_cast<word>(minimum(iAmount, iMax));
 		pGold->SetAmount( iGoldStack );
 
 		pPack->ContentAdd( pGold, fForceNoStack );
@@ -314,7 +314,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 			else if ( pItem->IsTypeArmor())
 			{
 				// Shield of some sort.
-				m_defense = (word)(CalcArmorDefense());
+				m_defense = static_cast<word>(CalcArmorDefense());
 				StatFlag_Set( STATF_HASSHIELD );
 				UpdateStatsFlag();
 			}
@@ -334,7 +334,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 		case LAYER_SKIRT:
 		case LAYER_LEGS:
 			// If armor or clothing = change in defense rating.
-			m_defense = (word)CalcArmorDefense();
+			m_defense = static_cast<word>(CalcArmorDefense());
 			UpdateStatsFlag();
 			break;
 
@@ -354,7 +354,7 @@ void CChar::LayerAdd( CItem * pItem, LAYER_TYPE layer )
 		case LAYER_FLAG_Stuck:
 			StatFlag_Set( STATF_FREEZE );
 			if ( IsClientActive() )
-				GetClientActive()->addBuff(BI_PARALYZE, 1075827, 1075828, (word)(pItem->GetTimerSAdjusted()));
+				GetClientActive()->addBuff(BI_PARALYZE, 1075827, 1075828, static_cast<word>(pItem->GetTimerSAdjusted()));
 			break;
 		default:
 			break;
@@ -421,7 +421,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 			else if ( pItem->IsTypeArmor())
 			{
 				// Shield
-				m_defense = (word)(CalcArmorDefense());
+				m_defense = static_cast<word>(CalcArmorDefense());
 				StatFlag_Clear( STATF_HASSHIELD );
 				UpdateStatsFlag();
 			}
@@ -443,7 +443,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 		case LAYER_ROBE:		// 22 = robe over all.
 		case LAYER_SKIRT:
 		case LAYER_LEGS:
-			m_defense = (word)(CalcArmorDefense());
+			m_defense = static_cast<word>(CalcArmorDefense());
 			UpdateStatsFlag();
 			break;
 
@@ -767,7 +767,7 @@ void CChar::UpdateStatVal(const STAT_TYPE type, const int iChange, ushort uiLimi
 	if (iVal > UINT16_MAX)
 		iVal = UINT16_MAX;
 
-	Stat_SetVal(type, (ushort)iVal);
+	Stat_SetVal(type, static_cast<ushort>(iVal));
 
 	switch ( type )
 	{
@@ -791,7 +791,7 @@ ANIM_TYPE CChar::GenerateAnimate( ANIM_TYPE action, const bool fTranslate, const
 	ADDTOCALLSTACK("CChar::UpdateAnimate");
 	UnreferencedParameter(iAnimLen);
 	if ( action < 0 || action >= ANIM_QTY )
-		return (ANIM_TYPE)-1;
+		return static_cast<ANIM_TYPE>(-1);
 
 	const CCharBase* pCharDef = Char_GetDef();
 
@@ -2635,7 +2635,7 @@ void CChar::SoundChar( CRESND_TYPE type )
 
 	if ((type < CRESND_RAND) || (type > CRESND_DIE))
 	{
-		DEBUG_WARN(("Invalid SoundChar type: %d.\n", (int)type));
+		DEBUG_WARN(("Invalid SoundChar type: %d.\n", static_cast<int>(type)));
 		return;
 	}
 
@@ -2733,7 +2733,7 @@ void CChar::SoundChar( CRESND_TYPE type )
 			default: break;
 		}
 
-		if (idOverride == (SOUND_TYPE)-1)
+		if (idOverride == static_cast<SOUND_TYPE>(-1))
 			return;		// if the override is = -1, the creature shouldn't play any sound for this action
 		if (idOverride != SOUND_NONE)
 			id = idOverride;
@@ -2791,7 +2791,7 @@ void CChar::SoundChar( CRESND_TYPE type )
 				// Every other sound
 				default:
 					if (id < 0x4D6)			// before the crane sound the sound IDs are ordered in a way...
-						id += (SOUND_TYPE)type;
+						id += static_cast<SOUND_TYPE>(type);
 					else if (id < 0x5D4)	// starting with the crane and ending before absymal infernal there's another scheme
 					{
 						switch (type)
@@ -3261,7 +3261,7 @@ bool CChar::ItemDrop( CItem * pItem, const CPointMap & pt )
 					continue;
 
 				const short iStackHeight = pStack->GetHeight();
-				ptStack.m_z += (char)maximum(iStackHeight, 1);
+				ptStack.m_z += static_cast<char>(maximum(iStackHeight, 1));
 				//DEBUG_ERR(("(%d > %d) || (%d > %d)\n", ptStack.m_z, iStackMaxZ, ptStack.m_z + maximum(iItemHeight, 1), iStackMaxZ + 3));
 				if ( (ptStack.m_z > iStackMaxZ) || (ptStack.m_z + maximum(iItemHeight, 1) > iStackMaxZ + 3) )
 				{
@@ -3370,7 +3370,7 @@ bool CChar::ItemEquip( CItem * pItem, const CChar * pCharMsg, const bool fFromDC
         if ( CVarDefCont *pVar = GetDefKey("EQUIPSOUND", true) )
         {
             if ( int64 iVal = pVar->GetValNum() )
-                iSound = (SOUND_TYPE)iVal;
+                iSound = static_cast<SOUND_TYPE>(iVal);
         }
         Sound(iSound);
     }
@@ -3461,7 +3461,7 @@ void CChar::EatAnim(CItem* pItem, const ushort uiQty)
 
 	ushort uiHits = 0;
 	ushort uiMana = 0;
-	ushort uiStam = (ushort)( g_Rand.GetVal2(3, 6) + (uiQty / 5) );
+	ushort uiStam = static_cast<ushort>(g_Rand.GetVal2(3, 6) + (uiQty / 5));
 	ushort uiFood = uiQty;
 	ushort uiStatsLimit = 0;
 	if (IsTrigUsed(TRIGGER_EAT))
@@ -3476,11 +3476,11 @@ void CChar::EatAnim(CItem* pItem, const ushort uiQty)
         if ( OnTrigger(CTRIG_Eat, pScriptArgs, this) == TRIGRET_RET_TRUE )
 			return;
 
-        uiHits = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Hits")) + Stat_GetVal(STAT_STR);
-        uiMana = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Mana")) + Stat_GetVal(STAT_INT);
-        uiStam = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Stam")) + Stat_GetVal(STAT_DEX);
-        uiFood = (ushort)(pScriptArgs->m_VarsLocal.GetKeyNum("Food")) + Stat_GetVal(STAT_FOOD);
-        uiStatsLimit = (ushort)(pScriptArgs->m_iN1);
+        uiHits = static_cast<ushort>(pScriptArgs->m_VarsLocal.GetKeyNum("Hits")) + Stat_GetVal(STAT_STR);
+        uiMana = static_cast<ushort>(pScriptArgs->m_VarsLocal.GetKeyNum("Mana")) + Stat_GetVal(STAT_INT);
+        uiStam = static_cast<ushort>(pScriptArgs->m_VarsLocal.GetKeyNum("Stam")) + Stat_GetVal(STAT_DEX);
+        uiFood = static_cast<ushort>(pScriptArgs->m_VarsLocal.GetKeyNum("Food")) + Stat_GetVal(STAT_FOOD);
+        uiStatsLimit = static_cast<ushort>(pScriptArgs->m_iN1);
 	}
 
 	if ( uiHits )
@@ -3757,8 +3757,8 @@ CItem* CChar::Horse_GetValidMountItem()
 			// Assume pMountItem->m_itFigurine.m_ID is correct?
 
 			g_Log.EventWarn("Mount (UID=0%x, id=0%x '%s'): Fixed mislinked figurine with UID=ACTARG1=0%x, id=0%x '%s'\n",
-                (dword)GetUID(), GetIDCommon(), GetName(),
-                (dword)(pMountItem->GetUID()), pMountItem->GetIDCommon(), pMountItem->GetName());
+                static_cast<dword>(GetUID()), GetIDCommon(), GetName(),
+                static_cast<dword>(pMountItem->GetUID()), pMountItem->GetIDCommon(), pMountItem->GetName());
 		}
 
 		return pMountItem;
@@ -3875,8 +3875,8 @@ CItem* CChar::Horse_GetValidMountItem()
 			pMountItem->m_itFigurine.m_ID = GetID();
 
 			g_Log.EventWarn("Mount (UID=0%x, id=0%x '%s'): Fixed mount item (mount item UID=ACTARG1=0%x) with UID=0%x, id=0%x '%s'\n",
-                (dword)GetUID(), GetIDCommon(), GetName(), (dword)m_atRidden.m_uidFigurine,
-                (dword)(pMountItem->GetUID()), pMountItem->GetIDCommon(), pMountItem->GetName());
+                static_cast<dword>(GetUID()), GetIDCommon(), GetName(), static_cast<dword>(m_atRidden.m_uidFigurine),
+                static_cast<dword>(pMountItem->GetUID()), pMountItem->GetIDCommon(), pMountItem->GetName());
 
 			lpctstr ptcFixString;
 			switch (iFixCode)
@@ -3895,7 +3895,7 @@ CItem* CChar::Horse_GetValidMountItem()
     if (iFailureCode)
     {
 		g_Log.EventError("Mount (UID=0%x, id=0%x '%s'): Can't auto-fix invalid mount item (mount item UID=ACTARG1=0%x)'\n",
-            (dword)GetUID(), GetIDCommon(), GetName(), (dword)m_atRidden.m_uidFigurine);
+            static_cast<dword>(GetUID()), GetIDCommon(), GetName(), static_cast<dword>(m_atRidden.m_uidFigurine));
 
         lpctstr ptcFailureString;
         switch (iFailureCode)
@@ -3942,7 +3942,7 @@ ITEMID_TYPE CChar::Horse_GetMountItemID() const
     lpctstr ptcMemoryID = g_ExprGlobals.mtEngineLockedReader()->m_VarDefs.GetKeyStr(ptcMountID);			// get the mount item defname from the mount_0x** defname
 
 	CResourceID memoryRid = g_Cfg.ResourceGetID(RES_ITEMDEF, ptcMemoryID);
-	return (ITEMID_TYPE)(memoryRid.GetResIndex());	// get the ID of the memory (mount item)
+	return static_cast<ITEMID_TYPE>(memoryRid.GetResIndex());	// get the ID of the memory (mount item)
 }
 
 // Remove horse char and give player a horse item
@@ -4144,7 +4144,7 @@ bool CChar::OnTickEquip( CItem * pItem )
                     if ( pScriptArgs->m_iN2 < 1 ) pScriptArgs->m_iN2 = g_Cfg.m_iMurderDecayTime;
 				}
 
-                m_pPlayer->m_wMurders = (word)(pScriptArgs->m_iN1);
+                m_pPlayer->m_wMurders = static_cast<word>(pScriptArgs->m_iN1);
 				NotoSave_Update();
 				if ( m_pPlayer->m_wMurders == 0 ) return false;
                 pItem->SetTimeout(pScriptArgs->m_iN2);	// update it's decay time.
@@ -4237,7 +4237,7 @@ bool CChar::SetPoison(const int iSkill, const int iHits, const CChar * pCharSrc 
 					iPoisonLevel = 0;
 			}
 		}
-		pPoison->m_itSpell.m_spelllevel = (word)iPoisonLevel;	// Overwrite the spell level
+		pPoison->m_itSpell.m_spelllevel = static_cast<word>(iPoisonLevel);	// Overwrite the spell level
 
 		switch (iPoisonLevel)
 		{
@@ -4262,7 +4262,7 @@ bool CChar::SetPoison(const int iSkill, const int iHits, const CChar * pCharSrc 
     if (CClient *pClient = GetClientActive(); pClient && IsSetOF(OF_Buffs) )
 	{
 		pClient->removeBuff(BI_POISON);
-		pClient->addBuff(BI_POISON, 1017383, 1070722, (word)(pPoison->m_itSpell.m_spellcharges));
+		pClient->addBuff(BI_POISON, 1017383, 1070722, static_cast<word>(pPoison->m_itSpell.m_spellcharges));
 	}
 
 	SysMessageDefault(DEFMSG_JUST_BEEN_POISONED);
@@ -4487,7 +4487,7 @@ CChar::DeathRequestResult CChar::Death()
 		++m_pPlayer->m_wDeaths;
 
 		SetHue( HUE_DEFAULT );	// get all pale
-		SetID( (CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, pszGhostName )) );
+		SetID( static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, pszGhostName)) );
 		LayerAdd( CItem::CreateScript( ITEMID_DEATHSHROUD, this ) );
 
         if ( CClient *pClient = GetClientActive() )
@@ -4656,7 +4656,7 @@ bool CChar::ShoveCharAtPosition(CPointMap const& ptDst, ushort *uiStaminaRequire
                 iRet = pChar->OnTrigger(CTRIG_PersonalSpace, pScriptArgs, this);
                 if (iRet == TRIGRET_RET_TRUE)
                     goto set_and_return_false;
-                uiLocalStamReq = (ushort)(pScriptArgs->m_iN1);
+                uiLocalStamReq = static_cast<ushort>(pScriptArgs->m_iN1);
                 fRequireFullStamina = static_cast<bool>(pScriptArgs->m_iN3);
             }
             if (IsTrigUsed(TRIGGER_CHARSHOVE))
@@ -4666,7 +4666,7 @@ bool CChar::ShoveCharAtPosition(CPointMap const& ptDst, ushort *uiStaminaRequire
                 iRet = this->OnTrigger(CTRIG_charShove, pScriptArgs, pChar);
                 if (iRet == TRIGRET_RET_TRUE)
                     goto set_and_return_false;
-                uiLocalStamReq = (ushort)(pScriptArgs->m_iN1);
+                uiLocalStamReq = static_cast<ushort>(pScriptArgs->m_iN1);
             }
         }
 
@@ -4811,14 +4811,14 @@ CRegion * CChar::CanMoveWalkTo( CPointMap & ptDst, const bool fCheckChars, const
 			if (IsStatFlag(STATF_FLY | STATF_HOVERING))
 			{
 				//FIXME: Running penality should be a percentage... For now, it adding a flat value take on the ini.
-				iWeightLoadPercent += (pVal ? (int)pVal->GetValNum() : g_Cfg.m_iStamRunningPenalty);
+				iWeightLoadPercent += (pVal ? static_cast<int>(pVal->GetValNum()) : g_Cfg.m_iStamRunningPenalty);
 			}
 
-            if (const int iChanceForStamLoss = Calc_GetSCurve(iWeightLoadPercent - (pVal ? (int)(pVal->GetValNum()) : g_Cfg.m_iStaminaLossAtWeight), 10); iChanceForStamLoss > g_Rand.GetValFast(1000))
+            if (const int iChanceForStamLoss = Calc_GetSCurve(iWeightLoadPercent - (pVal ? static_cast<int>(pVal->GetValNum()) : g_Cfg.m_iStaminaLossAtWeight), 10); iChanceForStamLoss > g_Rand.GetValFast(1000))
 			{
 
 				pVal = GetKey("OVERRIDE.STAMINAWALKINGPENALTY", true);
-				uiStamPenalty = (ushort)std::min(USHRT_MAX, static_cast<int>(pVal ? pVal->GetValNum() : 1));
+				uiStamPenalty = static_cast<ushort>(std::min(USHRT_MAX, static_cast<int>(pVal ? pVal->GetValNum() : 1)));
 
 			}
 			uiStamReq += uiStamPenalty;
@@ -4990,7 +4990,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(const bool fStanding)
                     Sound(0x15f); // fire noise
                     if (m_pNPC && fStanding)
                     {
-                        m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
+                        m_Act_p.Move(static_cast<DIR_TYPE>(g_Rand.GetVal(DIR_QTY)));
                         NPC_WalkToPoint(true); // run away from the threat
                     }
                 }
@@ -5009,10 +5009,10 @@ TRIGRET_TYPE CChar::CheckLocationEffects(const bool fStanding)
                     continue;
 
                 fSpellHit =
-                    OnSpellEffect((SPELL_TYPE)(ResGetIndex(pItem->m_itSpell.m_spell)), pItem->m_uidLink.CharFind(), pItem->m_itSpell.m_spelllevel, pItem);
+                    OnSpellEffect(static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itSpell.m_spell)), pItem->m_uidLink.CharFind(), pItem->m_itSpell.m_spelllevel, pItem);
                 if (fSpellHit && m_pNPC && fStanding)
                 {
-                    m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
+                    m_Act_p.Move(static_cast<DIR_TYPE>(g_Rand.GetVal(DIR_QTY)));
                     NPC_WalkToPoint(true); // run away from the threat
                 }
                 continue;
@@ -5022,7 +5022,7 @@ TRIGRET_TYPE CChar::CheckLocationEffects(const bool fStanding)
             {
                 if (int iDmg = OnTakeDamage(pItem->Use_Trap(), nullptr, DAMAGE_HIT_BLUNT | DAMAGE_GENERAL); (iDmg > 0) && m_pNPC && fStanding)
                 {
-                    m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
+                    m_Act_p.Move(static_cast<DIR_TYPE>(g_Rand.GetVal(DIR_QTY)));
                     NPC_WalkToPoint(true); // run away from the threat
                 }
                 continue;
@@ -5334,7 +5334,7 @@ bool CChar::MoveToChar(const CPointMap& pt, const bool fStanding, const bool fCh
             pScriptArgs->Init(
                          ptOld.m_x,
                          ptOld.m_y,
-                         ((uchar)ptOld.m_z << 16) | ptOld.m_map,
+                         (static_cast<uchar>(ptOld.m_z) << 16) | ptOld.m_map,
                          nullptr);
             OnTrigger(CTRIG_EnvironChange, pScriptArgs, this);
 		}
@@ -5420,7 +5420,7 @@ bool CChar::MoveToNearestShore(const bool fNoMsg)
 		int iDistNew = iDist + 20;
 		for (int iDir = DIR_NE; iDir <= DIR_NW; iDir += 2)	// try diagonal in all directions
 		{
-			if (MoveToValidSpot((DIR_TYPE)iDir, iDistNew, iDist))
+			if (MoveToValidSpot(static_cast<DIR_TYPE>(iDir), iDistNew, iDist))
 			{
 				i = 100;
 				break;
@@ -5473,7 +5473,8 @@ bool CChar::SetPrivLevel(const CTextConsole * pSrc, const lpctstr pszFlags)
         if ( CItem *pItem = CItem::CreateScript(ITEMID_GM_ROBE, this) )
 		{
 			pItem->SetAttr(ATTR_MOVE_NEVER|ATTR_NEWBIE|ATTR_MAGIC);
-			pItem->SetHue((HUE_TYPE)((PrivLevel >= PLEVEL_GM) ? HUE_RED : HUE_BLUE_NAVY));	// since sept/2014 OSI changed 'Counselor' plevel to 'Advisor', using GM Robe color 05f
+			pItem->SetHue(static_cast<HUE_TYPE>(
+                (PrivLevel >= PLEVEL_GM) ? HUE_RED : HUE_BLUE_NAVY));	// since sept/2014 OSI changed 'Counselor' plevel to 'Advisor', using GM Robe color 05f
 			ItemEquip(pItem);
 		}
 	}
@@ -5513,7 +5514,7 @@ void CChar::SetTriggerActive(const lpctstr trig)
     }
     if (const int iAction = FindTableSorted(trig, sm_szTrigName, std::size(CChar::sm_szTrigName) - 1); iAction != -1)
     {
-        _iRunningTriggerId = (short)iAction;
+        _iRunningTriggerId = static_cast<short>(iAction);
         _sRunningTrigger = sm_szTrigName[iAction];
         return;
     }
@@ -5699,7 +5700,7 @@ stopandret:
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
-	g_Log.EventDebug("trigger '%s' action '%d' [0%x]\n", pszTrigName, iAction, (dword)GetUID());
+	g_Log.EventDebug("trigger '%s' action '%d' [0%x]\n", pszTrigName, iAction, static_cast<dword>(GetUID()));
 	EXC_DEBUG_END;
 	return iRet;
 }
@@ -5760,7 +5761,7 @@ void CChar::OnTickFood(const ushort uiVal, const int HitsHungerLoss)
 	int iFood = Stat_GetVal(STAT_FOOD) - uiVal;
 	if ( iFood < 0 )
 		iFood = 0;
-	Stat_SetVal(STAT_FOOD, (ushort)iFood);
+	Stat_SetVal(STAT_FOOD, static_cast<ushort>(iFood));
 
 	// Show hunger message if food level is getting low
 	short iFoodLevel = Food_GetLevelPercent();
@@ -5956,7 +5957,7 @@ bool CChar::_OnTick()
         g_Log.EventDebug("[Temporary msg] Char '%s' (UID=0x%" PRIx32 ") at P=%s is in the ticking list with unusual CanTick=%d, SleepingState=%d.\n",
                          GetName(), GetUID().GetObjUID(),
                          GetTopPoint().WriteUsed(),
-                         (int)fTickableState, (int)fSleeping
+                         static_cast<int>(fTickableState), static_cast<int>(fSleeping)
                          );
     }
 //#endif
@@ -5968,7 +5969,7 @@ bool CChar::_OnTick()
         //  it should also be removed from the list (it happens in _GoSleep()).
         if (!fSleeping) {
             g_Log.EventDebug("[Temporary msg] CChar sleeping and not in tickable state but in the ticking list? Sector sleep status=%d.\n",
-                             (int)GetTopSector()->IsSleeping());
+                             static_cast<int>(GetTopSector()->IsSleeping()));
         }
         //ASSERT(!fSleeping);
 

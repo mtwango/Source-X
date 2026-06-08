@@ -103,7 +103,7 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		{ nullptr, INT32_MAX }
 	};
 
-    switch ((SC_TYPE)FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1))
+    switch (static_cast<SC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1)))
 	{
         case SC_CANSLEEP:
             {
@@ -122,7 +122,7 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 			if ( ptcKey[10] == '.' )
 			{
 				ptcKey += 11;
-				sVal = !strcmpi( ptcKey, sm_ComplexityTitles->FindName((int)GetCharComplexity()) ) ? "1" : "0";
+				sVal = !strcmpi( ptcKey, sm_ComplexityTitles->FindName(static_cast<int>(GetCharComplexity())) ) ? "1" : "0";
 				return true;
 			}
 			sVal.FormatSTVal( GetCharComplexity() );
@@ -269,9 +269,9 @@ void CSector::_GoAwake()
     if (!pCentral)
     {
         pCentral = this;
-        for (int i = 0; i < (int)DIR_QTY; ++i)
+        for (int i = 0; i < static_cast<int>(DIR_QTY); ++i)
         {
-            if (CSector *pSector = _GetAdjacentSector((DIR_TYPE)i); pSector && pSector->IsSleeping())
+            if (CSector *pSector = _GetAdjacentSector(static_cast<DIR_TYPE>(i)); pSector && pSector->IsSleeping())
             {
                 pSector->GoAwake();
             }
@@ -679,7 +679,7 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 		return m_Env.m_Light;
 
 	if ( IsInDungeon() )
-		return (uchar)std::clamp(g_Cfg.m_iLightDungeon, LIGHT_BRIGHT, LIGHT_DARK);
+		return static_cast<uchar>(std::clamp(g_Cfg.m_iLightDungeon, LIGHT_BRIGHT, LIGHT_DARK));
 
 	int localtime = GetLocalTime();
 
@@ -695,14 +695,14 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 
 		//	0...	y	...lightnight
 		//	0...	x	...12*60
-		int iTargLight = ((localtime * ( g_Cfg.m_iLightNight - g_Cfg.m_iLightDay ))/(12*60) + g_Cfg.m_iLightDay);
+        const int iTargLight = ((localtime * ( g_Cfg.m_iLightNight - g_Cfg.m_iLightDay ))/(12*60) + g_Cfg.m_iLightDay);
 
-		return (uchar)std::clamp(iTargLight, LIGHT_BRIGHT, LIGHT_DARK);
+		return static_cast<uchar>(std::clamp(iTargLight, LIGHT_BRIGHT, LIGHT_DARK));
 	}
 
 	const int hour = ( localtime / ( 60)) % 24;
 	const bool fNight = ( hour < 6 || hour > 12+8 );	// Is it night or day ?
-	byte uiTargLight = (byte)std::min((int)UINT8_MAX, (fNight) ? g_Cfg.m_iLightNight : g_Cfg.m_iLightDay);	// Target light level.
+	byte uiTargLight = static_cast<byte>(std::min(static_cast<int>(UINT8_MAX), (fNight) ? g_Cfg.m_iLightNight : g_Cfg.m_iLightDay));	// Target light level.
 
 	// Check for clouds...if it is cloudy, then we don't even need to check for the effects of the moons...
 	if ( GetWeather())
@@ -819,7 +819,7 @@ void CSector::SetLight(const int light )
 		m_Env.m_Light = GetLightCalc(true);
 	}
 	else
-		m_Env.m_Light = (byte) ( light | LIGHT_OVERRIDE );
+		m_Env.m_Light = static_cast<byte>(light | LIGHT_OVERRIDE);
 
 	SetLightNow(false);
 }
@@ -829,7 +829,7 @@ void CSector::SetDefaultWeatherChance()
 	ADDTOCALLSTACK("CSector::SetDefaultWeatherChance");
     const CSectorList& pSectors = CSectorList::Get();
     const MapSectorsData& sd = pSectors.GetMapSectorDataUnchecked(m_BasePointSectUnits.m_map);
-    if (byte iPercent = (byte)(IMulDiv(m_BasePointSectUnits.m_y, 100, sd.iSectorRows)); iPercent < 50 )
+    if (const byte iPercent = static_cast<byte>(IMulDiv(m_BasePointSectUnits.m_y, 100, sd.iSectorRows)); iPercent < 50 )
 	{
 		// Anywhere north of the Britain Moongate is a good candidate for snow
 		m_ColdChance = 1 + ( 49 - iPercent ) * 2;
@@ -925,11 +925,11 @@ void CSector::SetWeatherChance(const bool fRain, int iChance )
 	}
 	else if ( fRain )
 	{
-		m_RainChance = (uchar)(iChance | LIGHT_OVERRIDE);
+		m_RainChance = static_cast<uchar>(iChance | LIGHT_OVERRIDE);
 	}
 	else
 	{
-		m_ColdChance = (uchar)(iChance | LIGHT_OVERRIDE);
+		m_ColdChance = static_cast<uchar>(iChance | LIGHT_OVERRIDE);
 	}
 
 	// Recalc the weather immediatly.
@@ -1086,9 +1086,9 @@ bool CSector::_CanSleep(const bool fCheckAdjacents) const
 
     if (fCheckAdjacents)
     {
-        for (int i = 0; i < (int)DIR_QTY; ++i)// Check for adjacent's sectors sleeping allowance.
+        for (int i = 0; i < static_cast<int>(DIR_QTY); ++i)// Check for adjacent's sectors sleeping allowance.
         {
-            const CSector *pAdjacent = _GetAdjacentSector((DIR_TYPE)i);    // set this as the last sector to avoid this code in the adjacent one and return if it can sleep or not instead of searching its adjacents.
+            const CSector *pAdjacent = _GetAdjacentSector(static_cast<DIR_TYPE>(i));    // set this as the last sector to avoid this code in the adjacent one and return if it can sleep or not instead of searching its adjacents.
             /*
             * Only check if this sector exist and it's not the last checked (sectors in the edges of the map doesn't have adjacent on those directions)
             * && Only check if the sector isn't sleeping (IsSleeping()) and then check if CanSleep().
@@ -1342,7 +1342,7 @@ bool CSector::_OnTick()
 
 		EXC_DEBUGSUB_START;
         CPointMap const& pt = m_BasePointSectUnits;
-		g_Log.EventDebug("#0 char 0%x '%s'\n", (dword)(pChar->GetUID()), pChar->GetName());
+		g_Log.EventDebug("#0 char 0%x '%s'\n", static_cast<dword>(pChar->GetUID()), pChar->GetName());
 		g_Log.EventDebug("#0 sector #%d [%d,%d,%d,%d]\n", GetIndex(),  pt.m_x, pt.m_y, pt.m_z, pt.m_map);
         // TODO: add rect cords?
 		EXC_DEBUGSUB_END;

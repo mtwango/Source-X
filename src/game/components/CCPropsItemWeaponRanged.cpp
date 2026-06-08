@@ -12,7 +12,7 @@ lpctstr const CCPropsItemWeaponRanged::_ptcPropertyKeys[PROPIWEAPRNG_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsItemWeaponRanged::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
+    return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
 }
 
 RESDISPLAY_VERSION CCPropsItemWeaponRanged::_iPropertyExpansion[PROPIWEAPRNG_QTY + 1] =

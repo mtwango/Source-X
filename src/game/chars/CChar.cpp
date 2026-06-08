@@ -580,13 +580,13 @@ void CChar::ClearPlayer()
 
     if (CAccount *pAccount = m_pPlayer->GetAccount(); !pAccount)
 	{
-		g_Log.EventError("Player '%s' (UID 0%x) not attached to account?\n", GetName(), (dword)GetUID());
+		g_Log.EventError("Player '%s' (UID 0%x) not attached to account?\n", GetName(), static_cast<dword>(GetUID()));
 	}
 	else
 	{
 		if (g_Serv.GetServerMode() != ServMode::Exiting)
 		{
-			g_Log.EventWarn("Character '%s'(UID 0%x) on account '%s' as been deleted.\n", GetName(), (dword)GetUID(), pAccount->GetName());
+			g_Log.EventWarn("Character '%s'(UID 0%x) on account '%s' as been deleted.\n", GetName(), static_cast<dword>(GetUID()), pAccount->GetName());
 		}
 
 		pAccount->DetachChar(this);	// unlink me from my account.
@@ -993,9 +993,9 @@ int CChar::FixWeirdness()
 		{
 			for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 			{
-				const ushort uiSkillMax = Skill_GetMax((SKILL_TYPE)i);
-                if (const ushort uiSkillVal = Skill_GetBase((SKILL_TYPE)i); uiSkillVal > uiSkillMax * g_Cfg.m_iOverSkillMultiply )
-					Skill_SetBase((SKILL_TYPE)i, uiSkillMax);
+				const ushort uiSkillMax = Skill_GetMax(static_cast<SKILL_TYPE>(i));
+                if (const ushort uiSkillVal = Skill_GetBase(static_cast<SKILL_TYPE>(i)); uiSkillVal > uiSkillMax * g_Cfg.m_iOverSkillMultiply )
+					Skill_SetBase(static_cast<SKILL_TYPE>(i), uiSkillMax);
 			}
 
 			// ??? What if magically enhanced !!!
@@ -1003,8 +1003,8 @@ int CChar::FixWeirdness()
 			{
 				for ( int j = STAT_STR; j < STAT_BASE_QTY; ++j )
 				{
-                    if (const ushort uiStatMax = Stat_GetLimit((STAT_TYPE)j); Stat_GetAdjusted((STAT_TYPE)j) > (uiStatMax * g_Cfg.m_iOverSkillMultiply) )
-						Stat_SetBase((STAT_TYPE)j, uiStatMax);
+                    if (const ushort uiStatMax = Stat_GetLimit(static_cast<STAT_TYPE>(j)); Stat_GetAdjusted(static_cast<STAT_TYPE>(j)) > (uiStatMax * g_Cfg.m_iOverSkillMultiply) )
+						Stat_SetBase(static_cast<STAT_TYPE>(j), uiStatMax);
 				}
 			}
 		}
@@ -1021,7 +1021,7 @@ int CChar::FixWeirdness()
 		for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 		{
 			if ( m_Skill[i] > 0 && m_Skill[i] < g_Cfg.m_iSaveNPCSkills )
-				Skill_SetBase((SKILL_TYPE)i, 0);
+				Skill_SetBase(static_cast<SKILL_TYPE>(i), 0);
 		}
 	}
 
@@ -1503,12 +1503,12 @@ height_t CChar::GetHeight() const
     const uint uiDispID = pCharDef->GetDispID();
     char heightDef[20]{"height_"};
     Str_FromUI(uiDispID, heightDef + 7, sizeof(heightDef) - 7, 16);
-    tmpHeight = (height_t)(gReader->m_VarDefs.GetKeyNum(heightDef));
+    tmpHeight = static_cast<height_t>(gReader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_0a)
 		return tmpHeight;
 
 	Str_FromUI(uiDispID, heightDef + 7, sizeof(heightDef) - 7, 10);
-    tmpHeight = (height_t)(gReader->m_VarDefs.GetKeyNum(heightDef));
+    tmpHeight = static_cast<height_t>(gReader->m_VarDefs.GetKeyNum(heightDef));
 	if ( tmpHeight ) //set by a defname ([DEFNAME charheight]  height_10)
 		return tmpHeight;
 
@@ -1580,7 +1580,7 @@ void CChar::SetID( CREID_TYPE id )
         if ( id != CREID_INVALID )
 			DEBUG_ERR(("Setting invalid char ID 0%x\n", id));
 
-		id = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, "DEFAULTCHAR"));
+		id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, "DEFAULTCHAR"));
 		if ( id < CREID_INVALID )
 			id = CREID_MAN;
 
@@ -1741,7 +1741,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 	for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
 		if ( g_Cfg.m_SkillIndexDefs.valid_index(i) )
-			Skill_SetBase((SKILL_TYPE)i, (ushort)g_Rand.GetVal(g_Cfg.m_iMaxBaseSkill));
+			Skill_SetBase(static_cast<SKILL_TYPE>(i), static_cast<ushort>(g_Rand.GetVal(g_Cfg.m_iMaxBaseSkill)));
 	}
 
 	if ( wStr > 60 )		wStr = 60;
@@ -1801,9 +1801,9 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 		default:
 		case RACETYPE_HUMAN:
 			if ( wSkinHue < HUE_SKIN_LOW )
-				wSkinHue = (HUE_TYPE)(HUE_SKIN_LOW);
+				wSkinHue = static_cast<HUE_TYPE>(HUE_SKIN_LOW);
 			if ( wSkinHue > HUE_SKIN_HIGH )
-				wSkinHue = (HUE_TYPE)(HUE_SKIN_HIGH);
+				wSkinHue = static_cast<HUE_TYPE>(HUE_SKIN_HIGH);
 			break;
 
 		case RACETYPE_ELF:
@@ -1824,15 +1824,15 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 				}
 			}
 			if ( !isValid )
-				wSkinHue = (HUE_TYPE)(sm_ElfSkinHues[0]);
+				wSkinHue = static_cast<HUE_TYPE>(sm_ElfSkinHues[0]);
 		}
 		break;
 
 		case RACETYPE_GARGOYLE:
 			if ( wSkinHue < HUE_GARGSKIN_LOW )
-				wSkinHue = (HUE_TYPE)(HUE_GARGSKIN_LOW);
+				wSkinHue = static_cast<HUE_TYPE>(HUE_GARGSKIN_LOW);
 			if ( wSkinHue > HUE_GARGSKIN_HIGH )
-				wSkinHue = (HUE_TYPE)(HUE_GARGSKIN_HIGH);
+				wSkinHue = static_cast<HUE_TYPE>(HUE_GARGSKIN_HIGH);
 			break;
 	}
 	SetHue((wSkinHue|HUE_UNDERWEAR));
@@ -1882,9 +1882,9 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 				default:
 				case RACETYPE_HUMAN:
 					if ( wHairHue < HUE_HAIR_LOW )
-						wHairHue = (HUE_TYPE)(HUE_HAIR_LOW);
+						wHairHue = static_cast<HUE_TYPE>(HUE_HAIR_LOW);
 					if ( wHairHue > HUE_HAIR_HIGH )
-						wHairHue = (HUE_TYPE)(HUE_HAIR_HIGH);
+						wHairHue = static_cast<HUE_TYPE>(HUE_HAIR_HIGH);
 					break;
 
 				case RACETYPE_ELF:
@@ -1908,7 +1908,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						}
 					}
 					if ( !isValid )
-						wHairHue = (HUE_TYPE)(sm_ElfHairHues[0]);
+						wHairHue = static_cast<HUE_TYPE>(sm_ElfHairHues[0]);
 				}
 				break;
 
@@ -1930,7 +1930,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						}
 					}
 					if ( !isValid )
-						wHairHue = (HUE_TYPE)(sm_GargoyleHornHues[0]);
+						wHairHue = static_cast<HUE_TYPE>(sm_GargoyleHornHues[0]);
 				}
 				break;
 			}
@@ -1975,9 +1975,9 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 			{
 				case RACETYPE_HUMAN:
 					if ( wBeardHue < HUE_HAIR_LOW )
-						wBeardHue = (HUE_TYPE)(HUE_HAIR_LOW);
+						wBeardHue = static_cast<HUE_TYPE>(HUE_HAIR_LOW);
 					if ( wBeardHue > HUE_HAIR_HIGH )
-						wBeardHue = (HUE_TYPE)(HUE_HAIR_HIGH);
+						wBeardHue = static_cast<HUE_TYPE>(HUE_HAIR_HIGH);
 					break;
 
 				case RACETYPE_GARGOYLE:
@@ -1998,7 +1998,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 						}
 					}
 					if ( !isValid )
-                        wBeardHue = (HUE_TYPE)(sm_GargoyleBeardHues[0]);
+                        wBeardHue = static_cast<HUE_TYPE>(sm_GargoyleBeardHues[0]);
 				}
 				break;
 
@@ -2072,14 +2072,14 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 	}
 
 	CResourceLock s;
-	if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, fFemale ? RES_NEWBIE_FEMALE_DEFAULT : RES_NEWBIE_MALE_DEFAULT, (word)rtRace)) )
+	if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, fFemale ? RES_NEWBIE_FEMALE_DEFAULT : RES_NEWBIE_MALE_DEFAULT, static_cast<word>(rtRace))) )
 		ReadScriptReduced(s);
 	else if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, fFemale ? RES_NEWBIE_FEMALE_DEFAULT : RES_NEWBIE_MALE_DEFAULT)) )
 		ReadScriptReduced(s);
 
     if (iProfession != INT32_MAX)
     {
-        if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iProfession, (word)rtRace)) )
+        if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iProfession, static_cast<word>(rtRace))) )
             ReadScriptReduced(s);
         else if ( g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iProfession)) )
             ReadScriptReduced(s);
@@ -2106,7 +2106,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 					break;
 			}
 
-			if ( !g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iSkill, (word)rtRace)) )
+			if ( !g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iSkill, static_cast<word>(rtRace))) )
 			{
 				if ( !g_Cfg.ResourceLock(s, CResourceID(RES_NEWBIE, iSkill)) )
 					continue;
@@ -2192,13 +2192,13 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				pRef = m_Act_UID.ObjFind();
 				return true;
 			case CHR_FINDLAYER:	// Find equipped layers.
-				pRef = LayerFind( (LAYER_TYPE) Exp_GetSingle( ptcKey ));
+				pRef = LayerFind( static_cast<LAYER_TYPE>(Exp_GetSingle( ptcKey )));
 				SKIP_SEPARATORS(ptcKey);
 				return true;
             case CHR_HOUSE:
 				if (m_pPlayer)
 				{
-					const int16 iPos = (int16)Exp_GetSingle(ptcKey);
+					const int16 iPos = static_cast<int16>(Exp_GetSingle(ptcKey));
 					CMultiStorage* pMultiStorage = m_pPlayer->GetMultiStorage();
 					if (pMultiStorage == nullptr || pMultiStorage->GetHouseCountReal() <= iPos)
 					{
@@ -2212,7 +2212,7 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
             case CHR_SHIP:
 				if (m_pPlayer)
 				{
-					const int16 iPos = (int16)Exp_GetSingle(ptcKey);
+					const int16 iPos = static_cast<int16>(Exp_GetSingle(ptcKey));
 					CMultiStorage* pMultiStorage = m_pPlayer->GetMultiStorage();
 					if (pMultiStorage == nullptr || pMultiStorage->GetShipCountReal() <= iPos)
 					{
@@ -2224,11 +2224,11 @@ bool CChar::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 				}
 				return false;
 			case CHR_MEMORYFINDTYPE:	// FInd a type of memory.
-				pRef = Memory_FindTypes((word)(Exp_GetSingle(ptcKey)));
+				pRef = Memory_FindTypes(static_cast<word>(Exp_GetSingle(ptcKey)));
 				SKIP_SEPARATORS(ptcKey);
 				return true;
 			case CHR_MEMORYFIND:	// Find a memory of a UID
-				pRef = Memory_FindObj( (CUID) Exp_GetSingle( ptcKey ));
+				pRef = Memory_FindObj( CUID(Exp_GetSingle( ptcKey )));
 				SKIP_SEPARATORS(ptcKey);
 				return true;
 			case CHR_OWNER:
@@ -2421,7 +2421,7 @@ do_default:
                     }
                     if ( !m_lastAttackers.empty() )
 					{
-						int attackerIndex = (int)m_lastAttackers.size();
+						int attackerIndex = static_cast<int>(m_lastAttackers.size());
 						if( !strnicmp(ptcKey, "MAX", 3) )
 						{
 							ptcKey += 3;
@@ -2433,7 +2433,7 @@ do_default:
 								if ( iCurDmg > iMaxDmg )
 								{
 									iMaxDmg = iCurDmg;
-									attackerIndex = (int)iAttacker;
+									attackerIndex = static_cast<int>(iAttacker);
 								}
 							}
 						}
@@ -2448,7 +2448,7 @@ do_default:
 								if ( iCurTime <= iLastTime )
 								{
 									iLastTime = iCurTime;
-									attackerIndex = (int)iAttacker;
+									attackerIndex = static_cast<int>(iAttacker);
 								}
 							}
 						}
@@ -2458,9 +2458,9 @@ do_default:
 						}
 
 						SKIP_SEPARATORS(ptcKey);
-						if ( attackerIndex < (int)m_lastAttackers.size() )
+						if ( attackerIndex < static_cast<int>(m_lastAttackers.size()) )
 						{
-							const auto &[elapsed, charUID, amountDone, threat, ignore] = m_lastAttackers[(size_t)attackerIndex];
+							const auto &[elapsed, charUID, amountDone, threat, ignore] = m_lastAttackers[static_cast<size_t>(attackerIndex)];
 
 							if( !strnicmp(ptcKey, "DAM", 3) )
 							{
@@ -2505,7 +2505,7 @@ do_default:
                 if (!strnicmp(ptcKey, "BREATH.HUE", 10) || !strnicmp(ptcKey, "BREATH.ANIM", 11) || !strnicmp(ptcKey, "BREATH.TYPE", 11) || !strnicmp(ptcKey, "BREATH.DAMTYPE", 14))
                 {
                     CVarDefCont *pVar = GetDefKey(ptcKey, true);
-                    sVal.FormatHex(pVar ? (dword)(pVar->GetValNum()) : 0);
+                    sVal.FormatHex(pVar ? static_cast<dword>(pVar->GetValNum()) : 0);
                     return true;
                 }
                 return false;
@@ -2611,7 +2611,7 @@ do_default:
 					}
 					else if ( iFame >= Str_ToI(ppLevel_sep[ i ]) )
 					{
-						sVal = ( !g_Cfg.m_Fame[(size_t)i + 1]->CompareNoCase( ptcKey + 5 )) ? "1" : "0";
+						sVal = ( !g_Cfg.m_Fame[static_cast<size_t>(i) + 1]->CompareNoCase( ptcKey + 5 )) ? "1" : "0";
 						delete[] pszFameAt0;
 						return true;
 					}
@@ -2708,7 +2708,7 @@ do_default:
 					}
 					else if ( iKarma >= Str_ToI(ppLevel_sep[ i ]) )
 					{
-						sVal = ( !g_Cfg.m_Karma[(size_t)i + 1]->CompareNoCase( ptcKey + 6 )) ? "1" : "0";
+						sVal = ( !g_Cfg.m_Karma[static_cast<size_t>(i) + 1]->CompareNoCase( ptcKey + 6 )) ? "1" : "0";
 						delete[] pszKarmaAt0;
 						return true;
 					}
@@ -3367,7 +3367,7 @@ bool CChar::r_LoadVal( CScript & s )
                 piVals[1] = 1;
             }
 
-            const CUID uidPet((dword)piVals[0]);
+            const CUID uidPet(static_cast<dword>(piVals[0]));
             const short iFollowerSlots = n64_narrow_n16(piVals[1]);
 
             // If i'm loading the world, this char might not exist yet!
@@ -3412,10 +3412,10 @@ bool CChar::r_LoadVal( CScript & s )
 		}
 
         // special load values
-        if (int i = g_Cfg.FindSkillKey(ptcKey); IsSkillBase((SKILL_TYPE)i) )
+        if (int i = g_Cfg.FindSkillKey(ptcKey); IsSkillBase(static_cast<SKILL_TYPE>(i)) )
 		{
 			// Check some skill name.
-			Skill_SetBase((SKILL_TYPE)i, s.GetArgUSVal() );
+			Skill_SetBase(static_cast<SKILL_TYPE>(i), s.GetArgUSVal() );
 			return true;
 		}
 
@@ -3598,7 +3598,7 @@ bool CChar::r_LoadVal( CScript & s )
 			break;
 
 		case CHC_BLOODCOLOR:
-			_wBloodHue = (HUE_TYPE)(s.GetArgVal());
+			_wBloodHue = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
         case CHC_MODSTR:
             Stat_SetMod(STAT_STR, s.GetArgSVal());
@@ -3777,7 +3777,7 @@ bool CChar::r_LoadVal( CScript & s )
 			return false;
 		}
 		case CHC_BODY:
-			SetID( (CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, s.GetArgStr())) );
+			SetID( static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType( RES_CHARDEF, s.GetArgStr())) );
 			break;
 		case CHC_BREATH:
 			{
@@ -3809,7 +3809,7 @@ bool CChar::r_LoadVal( CScript & s )
 			Horse_UnMount();
 			break;
 		case CHC_DISPID:
-			return SetDispID((CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
+			return SetDispID(static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
 		case CHC_EMOTEACT:
 		{
 			bool fSet = IsStatFlag(STATF_EMOTEACTION);
@@ -3825,7 +3825,7 @@ bool CChar::r_LoadVal( CScript & s )
 			if (g_Serv.IsLoadingGeneric())
 			{
 				// Don't set STATF_SAVEPARITY at server startup, otherwise the first worldsave will not save these chars
-				_uiStatFlag = s.GetArgLLVal() & ~ (uint64)STATF_SAVEPARITY;
+				_uiStatFlag = s.GetArgLLVal() & ~ static_cast<uint64>(STATF_SAVEPARITY);
 				break;
 			}
 			// Don't modify STATF_SAVEPARITY, STATF_PET, STATF_SPAWNED here
@@ -3843,7 +3843,7 @@ bool CChar::r_LoadVal( CScript & s )
 		}
 		case CHC_FONT:
 		{
-			m_fonttype = (FONT_TYPE)s.GetArgVal();
+			m_fonttype = static_cast<FONT_TYPE>(s.GetArgVal());
 			if (m_fonttype >= FONT_QTY)
 				m_fonttype = FONT_NORMAL;
 			break;
@@ -3862,16 +3862,16 @@ bool CChar::r_LoadVal( CScript & s )
 			break;
 		case CHC_HITPOINTS:
 		case CHC_HITS:
-			Stat_SetVal(STAT_STR, (ushort)std::max(s.GetArgVal(), 0));
+			Stat_SetVal(STAT_STR, static_cast<ushort>(std::max(s.GetArgVal(), 0)));
 			UpdateHitsFlag();
 			break;
 		case CHC_MANA:
-			Stat_SetVal(STAT_INT, (ushort)std::max(s.GetArgVal(), 0));
+			Stat_SetVal(STAT_INT, static_cast<ushort>(std::max(s.GetArgVal(), 0)));
 			UpdateManaFlag();
 			break;
 		case CHC_STAM:
 		case CHC_STAMINA:
-			Stat_SetVal(STAT_DEX, (ushort)std::max(s.GetArgVal(), 0));
+			Stat_SetVal(STAT_DEX, static_cast<ushort>(std::max(s.GetArgVal(), 0)));
 			UpdateStamFlag();
 			break;
 
@@ -3879,7 +3879,7 @@ bool CChar::r_LoadVal( CScript & s )
 			m_StepStealth = s.GetArgVal();
 			break;
 		case CHC_HEIGHT:
-			m_height = (height_t)(s.GetArgVal());
+			m_height = static_cast<height_t>(s.GetArgVal());
 			break;
 		case CHC_HOME:
 			if ( ! s.HasArgs() )
@@ -3934,14 +3934,14 @@ bool CChar::r_LoadVal( CScript & s )
                 if (int iArgQty = Str_ParseCmds(s.GetArgStr(), piCmd, std::size(piCmd)); iArgQty < 2 )
 					return false;
 
-				const CUID uid((dword)piCmd[0]);
-				const word wFlags = (word)piCmd[1];
+				const CUID uid(static_cast<dword>(piCmd[0]));
+				const word wFlags = static_cast<word>(piCmd[1]);
 
 				Memory_AddObjTypes( uid, wFlags );
 			}
 			break;
 		case CHC_NPC:
-			return SetNPCBrain((NPCBRAIN_TYPE)(s.GetArgVal()));
+			return SetNPCBrain(static_cast<NPCBRAIN_TYPE>(s.GetArgVal()));
 		case CHC_OBODY:
 			{
                 const auto id = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
@@ -4002,7 +4002,7 @@ bool CChar::r_LoadVal( CScript & s )
                 int iVal = s.GetArgVal();
 				if ( iVal && ((iVal < -1) || (iVal > WAR_SWING_SWINGING) ) )
 					return false;
-				m_atFight.m_iWarSwingState = (WAR_SWING_TYPE)iVal;
+				m_atFight.m_iWarSwingState = static_cast<WAR_SWING_TYPE>(iVal);
 			}
 			break;
 		case CHC_TITLE:
@@ -4205,11 +4205,11 @@ void CChar::r_Write( CScript & s )
     for (int j = 0; j < STAT_BASE_QTY; ++j)
 	{
 		// this is VERY important, saving the MOD first
-		if ((iVal = Stat_GetMod((STAT_TYPE)j)) != 0)
+		if ((iVal = Stat_GetMod(static_cast<STAT_TYPE>(j))) != 0)
 		{
 			s.WriteKeyVal(_ptcKeyModStat[j], iVal);
 		}
-		if ((iVal = Stat_GetBase((STAT_TYPE)j)) != 0)
+		if ((iVal = Stat_GetBase(static_cast<STAT_TYPE>(j))) != 0)
 		{
 			s.WriteKeyVal(_ptcKeyOStat[j], iVal);
 		}
@@ -4242,7 +4242,7 @@ void CChar::r_Write( CScript & s )
 	};
 	for (ushort j = 0; j < STAT_QTY; ++j)
 	{
-        if (const int64 iRegen = Stats_GetRegenRate((STAT_TYPE)j); (iRegen >= 1) && (iRegen != g_Cfg.m_iRegenRate[j]))
+        if (const int64 iRegen = Stats_GetRegenRate(static_cast<STAT_TYPE>(j)); (iRegen >= 1) && (iRegen != g_Cfg.m_iRegenRate[j]))
 			s.WriteKeyVal(_ptcKeyRegen[j], iRegen / MSECS_PER_SEC);
 	}
     static constexpr lpctstr _ptcKeyRegenVal[STAT_QTY] =
@@ -4254,7 +4254,7 @@ void CChar::r_Write( CScript & s )
     };
     for (ushort j = 0; j < STAT_QTY; ++j)
     {
-        if (const ushort uiRegenVal = Stats_GetRegenVal((STAT_TYPE)j); uiRegenVal > 1)
+        if (const ushort uiRegenVal = Stats_GetRegenVal(static_cast<STAT_TYPE>(j)); uiRegenVal > 1)
             s.WriteKeyVal(_ptcKeyRegenVal[j], uiRegenVal);
     }
 
@@ -4262,10 +4262,10 @@ void CChar::r_Write( CScript & s )
 	{
 		if ( !g_Cfg.m_SkillIndexDefs.valid_index(j) )
 			continue;
-        const ushort uiSkillVal = Skill_GetBase((SKILL_TYPE)j);
+        const ushort uiSkillVal = Skill_GetBase(static_cast<SKILL_TYPE>(j));
         if (uiSkillVal == 0)
             continue;
-		s.WriteKeyVal(g_Cfg.GetSkillDef((SKILL_TYPE)j)->GetKey(), uiSkillVal );
+		s.WriteKeyVal(g_Cfg.GetSkillDef(static_cast<SKILL_TYPE>(j))->GetKey(), uiSkillVal );
 	}
     CEntity::r_Write(s);
     CEntityProps::r_Write(s);
@@ -4308,7 +4308,7 @@ bool CChar::r_Load( CScript & s ) // Load a character from script
 	}
     if ( int iResultCode = CObjBase::IsWeird() )
 	{
-		DEBUG_ERR(( "Char 0%x Invalid, id='%s', code=0%x\n", (dword)GetUID(), GetResourceName(), iResultCode ));
+		DEBUG_ERR(( "Char 0%x Invalid, id='%s', code=0%x\n", static_cast<dword>(GetUID()), GetResourceName(), iResultCode ));
 		Delete();
         return true;
 	}
@@ -4406,7 +4406,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 					if ( !g_Cfg.m_SkillIndexDefs.valid_index(i) )
 						continue;
 
-					Skill_SetBase((SKILL_TYPE)i, uiVal );
+					Skill_SetBase(static_cast<SKILL_TYPE>(i), uiVal );
 				}
 			}
 			break;
@@ -4417,9 +4417,9 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				int Arg_Qty = Str_ParseCmds(s.GetArgRaw(), Arg_piCmd, std::size(Arg_piCmd));
 				if ( !Arg_Qty )
 					return false;
-				return UpdateAnimate((ANIM_TYPE)(Arg_piCmd[0]), true, false,
-					(Arg_Qty > 1) ? (uchar)(Arg_piCmd[1]) : (byte)0,
-					(Arg_Qty > 2) ? (uchar)(Arg_piCmd[2]) : (byte)7);
+				return UpdateAnimate(static_cast<ANIM_TYPE>(Arg_piCmd[0]), true, false,
+					(Arg_Qty > 1) ? static_cast<uchar>(Arg_piCmd[1]) : static_cast<byte>(0),
+					(Arg_Qty > 2) ? static_cast<uchar>(Arg_piCmd[2]) : static_cast<byte>(7));
 			}
 			break;
 		case CHV_ATTACK:
@@ -4429,10 +4429,10 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			// Open the bank box for this person
 			if ( pCharSrc == nullptr || ! pCharSrc->IsClientActive() )
 				return false;
-			pCharSrc->GetClientActive()->addBankOpen( this, ((s.HasArgs()) ? (LAYER_TYPE)(s.GetArgVal()) : LAYER_BANKBOX ) );
+			pCharSrc->GetClientActive()->addBankOpen( this, ((s.HasArgs()) ? static_cast<LAYER_TYPE>(s.GetArgVal()) : LAYER_BANKBOX ) );
 			break;
 		case CHV_BARK:	// This plays creature-specific sounds (CRESND_TYPE). Use CHV_SOUND to play a precise sound ID (SOUND_TYPE) instead.
-			SoundChar(s.HasArgs() ? (CRESND_TYPE)s.GetArgVal() : CRESND_RAND);
+			SoundChar(s.HasArgs() ? static_cast<CRESND_TYPE>(s.GetArgVal()) : CRESND_RAND);
 			break;
 		case CHV_BOUNCE: // uid
 			return ItemBounce( CUID::ItemFindFromUID( s.GetArgVal()) );
@@ -4479,7 +4479,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			{
                 bool fCureHallucination = false;
 				if (s.HasArgs())
-                    fCureHallucination = (bool)s.GetArgVal();
+                    fCureHallucination = static_cast<bool>(s.GetArgVal());
                 SetPoisonCure(fCureHallucination);
 			}
 			break;
@@ -4673,7 +4673,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				m_Act_UID = m_pClient->m_Targ_UID;
 
 			return Skill_MakeItem(
-				(ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, ttVal[0] )),
+				static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, ttVal[0] )),
 				m_Act_UID, SKTRIG_START, false, iTmp );
 		}
 
@@ -4707,8 +4707,8 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
             if (iGold > INT32_MAX)
                 iGold = INT32_MAX;
 
-            const bool fStackNewPile = (iQty >= 2) ? !((bool)piCmd[1]) : true;
-			AddGoldToPack((int)iGold, GetPackSafe(), fStackNewPile);
+            const bool fStackNewPile = (iQty >= 2) ? !(static_cast<bool>(piCmd[1])) : true;
+			AddGoldToPack(static_cast<int>(iGold), GetPackSafe(), fStackNewPile);
         }
 			break;
 
@@ -4759,7 +4759,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			int iTicks = iSkill / 50;
 			int64 piCmd[2];
 			if (Str_ParseCmds(s.GetArgRaw(), piCmd, std::size(piCmd)) > 1)
-				iTicks = (int)(piCmd[1]);
+				iTicks = static_cast<int>(piCmd[1]);
 
 			SetPoison(iSkill, iTicks, pSrc->GetChar());
 		}
@@ -4772,7 +4772,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 				return false;
 
 			m_atMagery.m_iSpell = SPELL_Polymorph;
-			m_atMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
+			m_atMagery.m_uiSummonID = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 			m_Act_UID = GetUID();
 			m_Act_Prv_UID = GetUID();
 
@@ -4786,7 +4786,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 			if ( !pSpellDef->GetPrimarySkill(&skill, nullptr) )
 				return false;
 
-			Skill_Start((SKILL_TYPE)skill);
+			Skill_Start(static_cast<SKILL_TYPE>(skill));
 			break;
 		}
 
@@ -5076,14 +5076,14 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 			if (g_Cfg.m_fLevelSystem && g_Cfg.m_iExperienceMode&EXP_MODE_DOWN_NOLEVEL)
 			{
                 if (uint exp = Calc_ExpGet_Exp(m_level); iExpDelta + m_exp < exp)
-                    iExpDelta = (llong)exp - m_exp;
+                    iExpDelta = static_cast<llong>(exp) - m_exp;
 			}
 		}
 
         if ((g_Cfg.m_iDebugFlags & DEBUGF_EXP) && (iExpDelta != 0))
 		{
 			g_Log.EventDebug("%s %s experience change (was %u, delta %lld, now %u)\n",
-                (m_pNPC ? "NPC" : "Player"), GetName(), m_exp, iExpDelta, (uint)(m_exp + iExpDelta));
+                (m_pNPC ? "NPC" : "Player"), GetName(), m_exp, iExpDelta, static_cast<uint>(m_exp + iExpDelta));
 		}
 
 		bool fShowMsg = (m_pClient != nullptr);
@@ -5103,7 +5103,7 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
         if( iExpDelta < 0 && m_exp < abs(iExpDelta) )
 			m_exp = 0;
 		else
-            m_exp = (uint)(m_exp + iExpDelta);
+            m_exp = static_cast<uint>(m_exp + iExpDelta);
 
         if (m_pClient && fShowMsg && iExpDelta)
 		{
@@ -5161,9 +5161,9 @@ void CChar::ChangeExperience(llong iExpDelta, CChar *pCharDead)
 			if (g_Cfg.m_iDebugFlags & DEBUGF_LEVEL)
 			{
 				g_Log.EventDebug("%s %s level change (was %u, delta %lld, now %u)\n",
-                    (m_pNPC ? "NPC" : "Player"), GetName(), m_level, iExpDelta, (uint)level);
+                    (m_pNPC ? "NPC" : "Player"), GetName(), m_level, iExpDelta, static_cast<uint>(level));
 			}
-			m_level = (uint)level;
+			m_level = static_cast<uint>(level);
 
 			if (m_pClient && fShowMsg)
 			{
@@ -5253,7 +5253,7 @@ uint CChar::GetSkillTotal(const int what, const bool how)
 
     for ( size_t i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
-		ushort uiBase = Skill_GetBase((SKILL_TYPE)i);
+		ushort uiBase = Skill_GetBase(static_cast<SKILL_TYPE>(i));
 		if ( how )
 		{
 			if ( what < 0 )
@@ -5267,7 +5267,7 @@ uint CChar::GetSkillTotal(const int what, const bool how)
 		else
 		{
 			// check group flags
-			const CSkillDef * pSkill = g_Cfg.GetSkillDef((SKILL_TYPE)i);
+			const CSkillDef * pSkill = g_Cfg.GetSkillDef(static_cast<SKILL_TYPE>(i));
 			if ( !pSkill )
 				continue;
 			if ( !( pSkill->m_dwGroup & what ) )

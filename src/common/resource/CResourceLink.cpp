@@ -114,7 +114,7 @@ void CResourceLink::ScanSection(const RES_TYPE restype )
 void CResourceLink::DelRefInstance()
 {
 #ifdef _DEBUG
-    ASSERT(_dwRefInstances != (dword)-1);    // catching underflows
+    ASSERT(_dwRefInstances != static_cast<dword>(-1));    // catching underflows
 #endif
     --_dwRefInstances;
 }

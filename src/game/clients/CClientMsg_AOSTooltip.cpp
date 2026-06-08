@@ -21,7 +21,7 @@ static uint HashString(lpctstr str, const size_t length)   // integer overflow i
 {
 	uint hash = 5381;
 	for (size_t i = 0; i < length; ++i)
-		hash = ((hash << 5) + hash) + (uint)(*(str++));
+		hash = ((hash << 5) + hash) + static_cast<uint>(*(str++));
 
 	return hash;
 }
@@ -80,7 +80,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 		//DEBUG_MSG(("Preparing tooltip for 0%x (%s)\n", (dword)pObj->GetUID(), pObj->GetName()));
 		if (fNameOnly) // if we only want to display the name
 		{
-            if (dword ClilocName = (dword)(pObj->GetDefNum("NAMELOC", false)))
+            if (const dword ClilocName = static_cast<dword>(pObj->GetDefNum("NAMELOC", false)))
                 PUSH_FRONT_TOOLTIP(pObj, new CClientTooltip(ClilocName));
 			else
 			{
@@ -217,8 +217,8 @@ void CClient::AOSTooltip_addName(CObjBase* pObj)
 	CChar *pChar = pObj->IsChar() ? static_cast<CChar *>(pObj) : nullptr;
 	CClientTooltip* t = nullptr;
 
-	dword dwClilocName = (dword)(pObj->GetDefNum("NAMELOC", true));
-	lpctstr lpHue = pObj->GetKeyStr("NAMELOC.HUE");
+    const dword dwClilocName = static_cast<dword>(pObj->GetDefNum("NAMELOC", true));
+    const lpctstr lpHue = pObj->GetKeyStr("NAMELOC.HUE");
 
 	if (pItem)
 	{
@@ -535,7 +535,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061169, Range)); // range ~1_val~
 		}
 
-        if (int64 StrengthRequirement = (int64)(pItem->Item_GetDef()->m_ttEquippable.m_iStrReq) - pItem->GetPropNum(pCCPItemEquip, PROPIEQUIP_LOWERREQ, pBaseCCPItemEquip);
+        if (const int64 StrengthRequirement = static_cast<int64>(pItem->Item_GetDef()->m_ttEquippable.m_iStrReq) - pItem->GetPropNum(pCCPItemEquip, PROPIEQUIP_LOWERREQ, pBaseCCPItemEquip);
             StrengthRequirement > 0)
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1061170, StrengthRequirement)); // strength requirement ~1_val~

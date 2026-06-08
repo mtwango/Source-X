@@ -91,7 +91,7 @@ int64 CVarDefContStr::GetValNum() const
 void CVarDefContStr::SetValStr(const lpctstr pszVal )
 {
     if (const size_t uiLen = strlen(pszVal); uiLen <= SCRIPT_MAX_LINE_LEN/2)
-		m_sVal.CopyLen( pszVal, (int)uiLen );
+		m_sVal.CopyLen( pszVal, static_cast<int>(uiLen) );
 	else
 		g_Log.EventWarn("Setting max length of %d was exceeded on (VAR,TAG,LOCAL).%s \r", SCRIPT_MAX_LINE_LEN/2, GetKey() );
 }

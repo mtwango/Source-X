@@ -47,7 +47,7 @@ bool CResourceDef::SetResourceName(const lpctstr pszName )
     auto gwriter = g_ExprGlobals.mtEngineLockedWriter();
     if ( const CVarDefCont *pExistingVarKey = gwriter->m_VarResDefs.GetKey(pszName) )
     {
-        const dword dwKeyVal = (dword)pExistingVarKey->GetValNum();
+        const dword dwKeyVal = static_cast<dword>(pExistingVarKey->GetValNum());
         if ( dwKeyVal == dwResPrivateUID )
         {
             // DEBUG_WARN(("DEFNAME=%s: redefinition (new value same as previous)\n", pszName));
@@ -55,7 +55,7 @@ bool CResourceDef::SetResourceName(const lpctstr pszName )
             return true;
         }
 
-        if (const int iKeyIndex = (int)ResGetIndex(dwKeyVal); iKeyIndex == iResIndex)
+        if (const int iKeyIndex = static_cast<int>(ResGetIndex(dwKeyVal)); iKeyIndex == iResIndex)
             g_Log.EventWarn( "DEFNAME=%s: redefinition with a strange type mismatch? (0%" PRIx32 "!=0%" PRIx32 ")\n",
                              pszName, dwKeyVal, dwResPrivateUID );
         else

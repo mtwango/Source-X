@@ -249,7 +249,7 @@ int CSFile::_GetPosition() const
         _NotifyIOError("CSFile::GetPosition (length)");
         return 0;
     }
-    return (int)ret;
+    return static_cast<int>(ret);
 }
 
 int CSFile::GetPosition() const
@@ -265,7 +265,7 @@ int CSFile::Read( void * pData, int iLength ) const
 
 #ifdef _WIN32
 	DWORD ret;
-	if ( !ReadFile( _fileDescriptor, pData, (DWORD)iLength, &ret, nullptr ) )
+	if ( !ReadFile( _fileDescriptor, pData, static_cast<DWORD>(iLength), &ret, nullptr ) )
 	{
 		_NotifyIOError("CFile::Read");
 		return 0;
@@ -283,7 +283,7 @@ int CSFile::Read( void * pData, int iLength ) const
         _NotifyIOError("CFile::Read (length)");
         return 0;
     }
-    return (int)ret;
+    return static_cast<int>(ret);
 }
 
 int CSFile::_Seek( int iOffset, int iOrigin )
@@ -296,7 +296,7 @@ int CSFile::_Seek( int iOffset, int iOrigin )
     }
 
 #ifdef _WIN32
-	DWORD ret = SetFilePointer( _fileDescriptor, iOffset, nullptr, (DWORD)iOrigin );
+    const DWORD ret = SetFilePointer( _fileDescriptor, iOffset, nullptr, static_cast<DWORD>(iOrigin) );
 #else
 	off_t ret = lseek( _fileDescriptor, iOffset, iOrigin );
 #endif
@@ -305,7 +305,7 @@ int CSFile::_Seek( int iOffset, int iOrigin )
         _NotifyIOError("CFile::Seek (length)");
         return 0;
     }
-    return (int)ret;
+    return static_cast<int>(ret);
 }
 
 int CSFile::Seek(const int iOffset, const int iOrigin )
@@ -351,7 +351,7 @@ bool CSFile::_Write( const void * pData, int iLength )
 
 #ifdef _WIN32
 	DWORD dwWritten;
-    if (BOOL ret = WriteFile(_fileDescriptor, pData, (DWORD)iLength, &dwWritten, nullptr); ret == FALSE )
+    if (const BOOL ret = WriteFile(_fileDescriptor, pData, static_cast<DWORD>(iLength), &dwWritten, nullptr); ret == FALSE )
 	{
 		_NotifyIOError("CFile::Write");
 		return false;

@@ -366,7 +366,7 @@ void CNetState::beginTransaction(const int priority)
 
     //DEBUGNETWORK(("%x:Starting a new packet transaction.\n", id()));
 
-    m_outgoing.pendingTransaction = new ExtendedPacketTransaction(this, g_Cfg.m_fUsePacketPriorities ? priority : (int)(PacketSend::PRI_NORMAL));
+    m_outgoing.pendingTransaction = new ExtendedPacketTransaction(this, g_Cfg.m_fUsePacketPriorities ? priority : static_cast<int>(PacketSend::PRI_NORMAL));
 }
 
 void CNetState::endTransaction()

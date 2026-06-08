@@ -96,13 +96,13 @@ lpctstr CServerMapBlockingState::GetTileName( dword dwID )	// static
 	tchar * pStr = Str_GetTemp();
 	if ( dwID < TERRAIN_QTY )
 	{
-		const CUOTerrainInfo land( (TERRAIN_TYPE)dwID );
+		const CUOTerrainInfo land( static_cast<TERRAIN_TYPE>(dwID) );
 		strncpy( pStr, land.m_name, Str_TempLength() );
 	}
 	else
 	{
 		dwID -= TERRAIN_QTY;
-		const CUOItemInfo item((ITEMID_TYPE)dwID);
+		const CUOItemInfo item(static_cast<ITEMID_TYPE>(dwID));
 		strncpy( pStr, item.m_name, Str_TempLength());
 	}
 	return pStr;
@@ -203,7 +203,7 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, const int
 
 	if ( zTop < m_Lowest.m_z )
 	{
-        m_Lowest = {uiItemBlockFlags, dwID, (int8)zTop, zHeight};
+        m_Lowest = {uiItemBlockFlags, dwID, static_cast<int8>(zTop), zHeight};
 	}
 
     // Why was this block of code added? By returning, it blocks the m_Bottom state to be updated
@@ -231,7 +231,7 @@ bool CServerMapBlockingState::CheckTile_Item( uint64 uiItemBlockFlags, const int
                 else if ( m_Bottom.m_uiBlockFlags & CAN_I_PLATFORM ) //than items with CAN_I_PLATFORM
 				    return true;
 			}
-            m_Bottom = {uiItemBlockFlags, dwID, (int8)zTop, zHeight};
+            m_Bottom = {uiItemBlockFlags, dwID, static_cast<int8>(zTop), zHeight};
 
 			if (uiItemBlockFlags & CAN_I_CLIMB) // return climb height
 				m_zClimbHeight = (( zHeight + 1 )/2); //if height is an odd number, then we need to add 1; if it isn't, this does nothing
@@ -377,7 +377,7 @@ void CServerStaticsBlock::LoadStatics(const dword dwBlockIndex, const int map )
 			snprintf(pszTemp, Str_TempLength(), "CServerStaticsBlock: Read Statics - Block Length of %u", index.GetBlockLength());
 			throw CSError(LOGL_CRIT, CSFile::GetLastError(), pszTemp);
 		}
-		m_iStatics = (uint)(index.GetBlockLength()/sizeof(CUOStaticItemRec));
+		m_iStatics = static_cast<uint>(index.GetBlockLength() / sizeof(CUOStaticItemRec));
 		ASSERT(m_iStatics);
 		m_pStatics = new CUOStaticItemRec[m_iStatics];
 		if ( ! g_Install.ReadMulData(g_Install.m_Statics[g_MapList.GetMapFileNum(map)], index, m_pStatics) )
@@ -482,7 +482,7 @@ void CServerMapBlock::Load(const int bx, const int by )
                 if (auto [dwFirstBlock, dwLastBlock, qwAdress] = g_Install.m_UopMapAddress[iMapNumber][i];
                     (uiBlockIndex <= dwLastBlock ) && (uiBlockIndex >= dwFirstBlock ))
 				{
-					fileOffset = (dword)(qwAdress + ((uiBlockIndex - dwFirstBlock)*196LL));
+					fileOffset = static_cast<dword>(qwAdress + (uiBlockIndex - dwFirstBlock) * 196LL);
 					break;
 				}
 			}
@@ -510,7 +510,7 @@ void CServerMapBlock::Load(const int bx, const int by )
 		}
 
 		// seek to position in file
-		if ( (uint)pFile->Seek( fileOffset, SEEK_SET ) != fileOffset )
+		if ( static_cast<uint>(pFile->Seek(fileOffset, SEEK_SET)) != fileOffset )
 		{
 			memset( &m_Terrain, 0, sizeof(m_Terrain));
 			throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CServerMapBlock: Seek Ver");
@@ -615,7 +615,7 @@ size_t CUOMulti::Load(const MULTI_TYPE id)
 	switch (g_Install.GetMulFormat(VERFILE_MULTIIDX))
 	{
 	case VERFORMAT_HIGHSEAS: // high seas multi format (CUOMultiItemRec_HS)
-		m_iItemQty = (uint)(Index.GetBlockLength() / sizeof(CUOMultiItemRec_HS));
+		m_iItemQty = static_cast<uint>(Index.GetBlockLength() / sizeof(CUOMultiItemRec_HS));
 		m_pItems = new CUOMultiItemRec_HS[m_iItemQty];
 
 		ASSERT((sizeof(m_pItems[0]) * m_iItemQty) >= Index.GetBlockLength());
@@ -705,13 +705,13 @@ void CServerMapDiffCollection::LoadMapDiffs()
 				const int iLength = pFileMapdifl->GetLength();
 				if (iLength <= 0)
 					continue;
-				dword dwLength = (dword)iLength;
+                const dword dwLength = static_cast<dword>(iLength);
 				dword dwOffset = 0;
 
 				for (dword dwRead = 0; dwRead < dwLength; dwOffset += sizeof(CUOMapBlock) )
 				{
 					dword dwBlockId = 0;
-					dwRead += (dword)pFileMapdifl->Read( &dwBlockId, sizeof(dwBlockId) );
+					dwRead += static_cast<dword>(pFileMapdifl->Read(&dwBlockId, sizeof(dwBlockId)));
 					pMapDiffBlock = GetNewBlock( dwBlockId, map );
 
 					if ( pMapDiffBlock->m_pTerrainBlock )
@@ -724,7 +724,7 @@ void CServerMapDiffCollection::LoadMapDiffs()
 						delete pTerrain;
 						break;
 					}
-                    if ((uint)pFileMapdif->Read(pTerrain, sizeof(CUOMapBlock)) != sizeof(CUOMapBlock))
+                    if (static_cast<uint>(pFileMapdif->Read(pTerrain, sizeof(CUOMapBlock))) != sizeof(CUOMapBlock))
                     {
                         g_Log.EventError("Reading mapdif%d.mul FAILED. [index=%" PRIu32 " offset=%" PRIu32 "]\n", map, dwBlockId, dwOffset);
                         delete pTerrain;
@@ -754,13 +754,13 @@ void CServerMapDiffCollection::LoadMapDiffs()
 			const int iLength = pFileStadifl->GetLength();
 			if (iLength <= 0)
 				continue;
-			dword dwLength = (dword)iLength;
+            const dword dwLength = static_cast<dword>(iLength);
 			dword dwOffset = 0;
 
 			for (dword dwRead = 0; dwRead < dwLength; dwOffset += sizeof(CUOIndexRec) )
 			{
 				dword dwBlockId = 0;
-				dwRead += (dword)pFileStadifl->Read( &dwBlockId, sizeof(dwBlockId) );
+				dwRead += static_cast<dword>(pFileStadifl->Read(&dwBlockId, sizeof(dwBlockId)));
 
 				pMapDiffBlock = GetNewBlock( dwBlockId, map );
 				if ( pMapDiffBlock->m_pStaticsBlock )
@@ -769,7 +769,7 @@ void CServerMapDiffCollection::LoadMapDiffs()
 				pMapDiffBlock->m_iStaticsCount = 0;
 				pMapDiffBlock->m_pStaticsBlock = nullptr;
 
-				if ( (uint)pFileStadifi->Seek( dwOffset ) != dwOffset )
+				if ( static_cast<uint>(pFileStadifi->Seek(dwOffset)) != dwOffset )
 				{
 					g_Log.EventError("Reading stadifi%d.mul FAILED.\n", map);
 					break;

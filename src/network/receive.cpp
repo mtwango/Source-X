@@ -73,16 +73,16 @@ bool PacketCreate::onReceive(CNetState* net)
     const byte strength = readByte();
     const byte dexterity = readByte();
     const byte intelligence = readByte();
-	skill1 = (SKILL_TYPE)readByte();
+	skill1 = static_cast<SKILL_TYPE>(readByte());
 	skillval1 = readByte();
-	skill2 = (SKILL_TYPE)readByte();
+	skill2 = static_cast<SKILL_TYPE>(readByte());
 	skillval2 = readByte();
-	skill3 = (SKILL_TYPE)readByte();
+	skill3 = static_cast<SKILL_TYPE>(readByte());
 	skillval3 = readByte();
     const auto hue = readInt16();
-    const auto hairid = (ITEMID_TYPE)(readInt16());
+    const auto hairid = static_cast<ITEMID_TYPE>(readInt16());
     const auto hairhue = readInt16();
-    const auto beardid = (ITEMID_TYPE)(readInt16());
+    const auto beardid = static_cast<ITEMID_TYPE>(readInt16());
     const auto beardhue = readInt16();
 	skip(1); // shard index
     const byte startloc = readByte();
@@ -184,9 +184,9 @@ bool PacketCreate::doCreate(const CNetState * net, const lpctstr charname, const
 
 	// make sure they don't already have too many characters
 	byte iMaxChars = account->GetMaxChars();
-    if (uint iQtyChars = (uint)account->m_Chars.GetCharCount(); iQtyChars >= iMaxChars)
+    if (uint iQtyChars = static_cast<uint>(account->m_Chars.GetCharCount()); iQtyChars >= iMaxChars)
 	{
-		client->SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_MAXCHARS), (int)(iQtyChars));
+		client->SysMessagef(g_Cfg.GetDefaultMsg(DEFMSG_MSG_MAXCHARS), static_cast<int>(iQtyChars));
 		if (client->GetPrivLevel() < PLEVEL_Seer)
 		{
 			client->addLoginErr(PacketLoginError::TooManyChars);
@@ -216,8 +216,8 @@ bool PacketCreate::doCreate(const CNetState * net, const lpctstr charname, const
         goto block_creation;
 
     //uiFlags = (uint)pScriptArgs->.m_iN1;  // unused at this point
-    prProf = (PROFESSION_TYPE)pScriptArgs->m_iN2;
-    rtRace = (RACE_TYPE)pScriptArgs->m_iN3;
+    prProf = static_cast<PROFESSION_TYPE>(pScriptArgs->m_iN2);
+    rtRace = static_cast<RACE_TYPE>(pScriptArgs->m_iN3);
 
 	// Creating the pChar
 	pChar->InitPlayer(client, charname, fFemale, rtRace, wStr, wDex, wInt,
@@ -237,7 +237,7 @@ block_creation:
 		return false;
 	}
 
-	g_Log.Event(LOGM_CLIENTS_LOG|LOGM_NOCONTEXT, "%x:Account '%s' created new char '%s' [0%" PRIx32 "]\n", net->id(), account->GetName(), pChar->GetName(), (dword)pChar->GetUID() );
+	g_Log.Event(LOGM_CLIENTS_LOG|LOGM_NOCONTEXT, "%x:Account '%s' created new char '%s' [0%" PRIx32 "]\n", net->id(), account->GetName(), pChar->GetName(), static_cast<dword>(pChar->GetUID()) );
 	client->Setup_Start(pChar);
 	return true;
 }
@@ -448,7 +448,7 @@ bool PacketItemDropReq::onReceive(CNetState* net)
 	}
 
 	CUID container(readInt32());
-    CPointMap pt((int16_t)x, (int16_t)y, (int8_t)z, character->GetTopMap());
+    CPointMap pt(static_cast<int16_t>(x), static_cast<int16_t>(y), static_cast<int8_t>(z), character->GetTopMap());
 
 	client->Event_Item_Drop(serial, pt, container, grid);
 	return true;
@@ -1777,7 +1777,7 @@ bool PacketAllNamesReq::onReceive(CNetState* net)
 	if (character == nullptr)
 		return false;
 
-	for (int length = readInt16(); length > (int)sizeof(dword); length -= sizeof(dword))
+	for (int length = readInt16(); length > static_cast<int>(sizeof(dword)); length -= sizeof(dword))
 	{
 		const CObjBase* object = CUID::ObjFindFromUID(readInt32());
 		if (object == nullptr)
@@ -2067,7 +2067,7 @@ bool PacketGumpValueInputResponse::onReceive(CNetState* net)
 			object->Update();
 		}
 
-		g_Log.Event(LOGM_GM_CMDS|LOGM_NOCONTEXT, "%x:'%s' tweak uid=0%x (%s) to '%s %s'=%d\n", net->id(), client->GetName(), (dword)(object->GetUID()), object->GetName(), static_cast<lpctstr>(client->m_Targ_Text), static_cast<lpctstr>(text), ret);
+		g_Log.Event(LOGM_GM_CMDS|LOGM_NOCONTEXT, "%x:'%s' tweak uid=0%x (%s) to '%s %s'=%d\n", net->id(), client->GetName(), static_cast<dword>(object->GetUID()), object->GetName(), static_cast<lpctstr>(client->m_Targ_Text), static_cast<lpctstr>(text), ret);
 	}
 
 	return true;
@@ -2125,7 +2125,7 @@ bool PacketSpeakReqUNICODE::onReceive(CNetState* net)
 		if (toskip > (packetLength * 2))
 			return true;
 
-		skip((int)(toskip));
+		skip(static_cast<int>(toskip));
 		tchar text[MAX_TALK_BUFFER];
 		readStringNullASCII(text, std::size(text));
 		client->Event_Talk(text, hue, mode, true);
@@ -2134,7 +2134,7 @@ bool PacketSpeakReqUNICODE::onReceive(CNetState* net)
 	{
 		nachar text[MAX_TALK_BUFFER];
 		readStringUTF16(reinterpret_cast<wchar *>(text), packetLength, false);
-		client->Event_TalkUNICODE(text, (int)(packetLength), hue, mode, font, language);
+		client->Event_TalkUNICODE(text, static_cast<int>(packetLength), hue, mode, font, language);
 	}
 
 	return true;
@@ -2202,7 +2202,7 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
                 if (pFace)
                     pFace->Delete();
 
-                pFace = CItem::CreateBase((ITEMID_TYPE)button);
+                pFace = CItem::CreateBase(static_cast<ITEMID_TYPE>(button));
                 if (pFace)
                 {
                     if (pFace->GetEquipLayer() != LAYER_FACE)
@@ -2221,16 +2221,14 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 #ifdef _DEBUG
     if (g_Cfg.m_iDebugFlags & DEBUGF_SCRIPTS)
 	{
-        const CResourceDef* resource = g_Cfg.RegisteredResourceGetDef(CResourceID(RES_DIALOG, ResGetIndex(context)));
-		if (resource == nullptr)
-			g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, "undefined resource", (dword)serial, button);
+        if (const CResourceDef *resource = g_Cfg.RegisteredResourceGetDef(CResourceID(RES_DIALOG, ResGetIndex(context))); resource == nullptr)
+			g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, "undefined resource", static_cast<dword>(serial), button);
 		else
 		{
-			const CDialogDef* dialog = dynamic_cast<const CDialogDef*>(resource);
-			if (dialog == nullptr)
-				g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, "undefined dialog", (dword)serial, button);
+            if (const auto dialog = dynamic_cast<const CDialogDef *>(resource); dialog == nullptr)
+				g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, "undefined dialog", static_cast<dword>(serial), button);
 			else
-				g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, dialog->GetName(), (dword)serial, button);
+				g_Log.Event(LOGM_DEBUG|LOGL_EVENT|LOGM_NOCONTEXT, "[DEBUG_SCRIPTS] Gump context: %x (%s), UID: 0x%x, Button: %u.\n", context, dialog->GetName(), static_cast<dword>(serial), button);
 		}
 	}
 #endif
@@ -2277,18 +2275,18 @@ bool PacketGumpDialogRet::onReceive(CNetState* net)
 		context = g_Cfg.GetKRDialogMap(context);
 
 	CResourceID	ridContext;
-    if ((RES_TYPE)ResGetType(context) == RES_DIALOG)
+    if (static_cast<RES_TYPE>(ResGetType(context)) == RES_DIALOG)
     {
         ridContext = CResourceID(context, 0);
     }
     else
     {
         ridContext = CResourceID(RES_DIALOG, context);
-        DEBUG_MSG(("Gump: Received dialog context (%x) without restype from UID=0%x.\n", (uint)context, (uint)character->GetUID().GetObjUID()));
+        DEBUG_MSG(("Gump: Received dialog context (%x) without restype from UID=0%x.\n", static_cast<uint>(context), static_cast<uint>(character->GetUID().GetObjUID())));
     }
     if (!ridContext.IsValidUID())
     {
-        g_Log.EventWarn("Gump: Received wrong dialog context (%x) from UID=0%x.\n", (uint)context, (uint)character->GetUID().GetObjUID());
+        g_Log.EventWarn("Gump: Received wrong dialog context (%x) from UID=0%x.\n", static_cast<uint>(context), static_cast<uint>(character->GetUID().GetObjUID()));
         return false;
     }
 	//
@@ -2331,7 +2329,7 @@ bool PacketChatCommand::onReceive(CNetState* net)
 	nachar text[MAX_TALK_BUFFER];
 	readStringUTF16(reinterpret_cast<wchar *>(text), textLength, false);
 
-	client->Event_ChatText(text, (int)(textLength), CLanguageID(language));
+	client->Event_ChatText(text, static_cast<int>(textLength), CLanguageID(language));
 	return true;
 }
 
@@ -2484,7 +2482,7 @@ bool PacketClientVersion::onReceive(CNetState* net)
 	if (length < getPosition())
 		return false;
 
-	length -= (word)getPosition();
+	length -= static_cast<word>(getPosition());
 	if (length > 20)
 		length = 20;
 
@@ -2497,7 +2495,7 @@ bool PacketClientVersion::onReceive(CNetState* net)
 	if (strstr(versionStr, "UO:3D") != nullptr)
 		net->m_clientType = CLIENTTYPE_3D;
 
-    length = (word)Str_GetBare(versionStr, versionStr, length, " '`-+!\"#$%&()*,/:;<=>?@[\\]^{|}~");
+    length = static_cast<word>(Str_GetBare(versionStr, versionStr, length, " '`-+!\"#$%&()*,/:;<=>?@[\\]^{|}~"));
 	if (length > 0)
 	{
 		CClient* client = net->getClient();
@@ -3110,7 +3108,7 @@ bool PacketSpellSelect::onReceive(CNetState* net)
 	int skill;
 	if (spellDef->GetPrimarySkill(&skill, nullptr) == false)
 		return true;
-	if ( !character->Skill_CanUse((SKILL_TYPE)skill) )
+	if ( !character->Skill_CanUse(static_cast<SKILL_TYPE>(skill)) )
 		return true;
 
 	if (IsSetMagicFlags(MAGICF_PRECAST))
@@ -3121,7 +3119,7 @@ bool PacketSpellSelect::onReceive(CNetState* net)
 			character->m_atMagery.m_iSpell = spell;
 			client->m_Targ_UID = character->GetUID();
 			client->m_Targ_Prv_UID = character->GetUID();
-			character->Skill_Start((SKILL_TYPE)skill);
+			character->Skill_Start(static_cast<SKILL_TYPE>(skill));
 			return true;
 		}
 	}
@@ -3284,14 +3282,13 @@ bool PacketTargetedSkill::onReceive(CNetState* net)
     word  wSkillID    = readInt16();    // if SkillID = 0, it means that is lastskill
     dword dwTargetUID = readInt32();
 
-    if ((wSkillID != 0) && !CChar::IsSkillBase((SKILL_TYPE)wSkillID))
+    if ((wSkillID != 0) && !CChar::IsSkillBase(static_cast<SKILL_TYPE>(wSkillID)))
     {
-        DEBUG_MSG(("PacketTargetedSkill::onReceive invalid SkillID=%d.\n", (int)wSkillID));
+        DEBUG_MSG(("PacketTargetedSkill::onReceive invalid SkillID=%d.\n", static_cast<int>(wSkillID)));
         return true;
     }
 
-    const CUID uidTarget(dwTargetUID);
-    if (uidTarget.ObjFind())
+    if (const CUID uidTarget(dwTargetUID); uidTarget.ObjFind())
     {
         CClient* pClient = net->getClient();
         ASSERT(pClient);
@@ -3300,11 +3297,11 @@ bool PacketTargetedSkill::onReceive(CNetState* net)
             return true;
 
         pChar->m_Act_UID = uidTarget;
-        pChar->Skill_Start((SKILL_TYPE)wSkillID);
+        pChar->Skill_Start(static_cast<SKILL_TYPE>(wSkillID));
     }
     else
     {
-        DEBUG_MSG(("PacketTargetedSkill::onReceive invalid uidTarget=0%x.\n", (uint)dwTargetUID));
+        DEBUG_MSG(("PacketTargetedSkill::onReceive invalid uidTarget=0%x.\n", static_cast<uint>(dwTargetUID)));
     }
 
     return true;
@@ -3367,7 +3364,7 @@ bool PacketGargoyleFly::onReceive(CNetState* net)
 
 	// Sending this packet here instead of calling UpdateAnimate because of conversions, NANIM_TAKEOFF = 9 and the function
 	// is reading 9 from old ANIM_TYPE to know when the character is attacking and modifying its animation accordingly
-    const auto cmd = new PacketActionBasic(character, character->IsStatFlag(STATF_HOVERING) ? NANIM_TAKEOFF : NANIM_LANDING, static_cast<ANIM_TYPE_NEW>(0), (byte)(0));
+    const auto cmd = new PacketActionBasic(character, character->IsStatFlag(STATF_HOVERING) ? NANIM_TAKEOFF : NANIM_LANDING, static_cast<ANIM_TYPE_NEW>(0), static_cast<byte>(0));
 	ClientIterator it;
 	for (const CClient *pClient = it.next(); pClient != nullptr; pClient = it.next() )
 	{
@@ -3431,7 +3428,7 @@ bool PacketWheelBoatMove::onReceive(CNetState* net)
 			if ((facing == DIR_N || facing == DIR_E || facing == DIR_S || facing == DIR_W) && pShipItem->m_itShip.m_DirFace != facing) //boat cannot face intermediate directions
 				pShipItem->Face(moving);
 
-			if (pShipItem->SetMoveDir(facing, (ShipMovementType)bMovementType, true)) //pShipItem->m_itShip.m_DirMove = (byte)(facing);
+			if (pShipItem->SetMoveDir(facing, static_cast<ShipMovementType>(bMovementType), true)) //pShipItem->m_itShip.m_DirMove = (byte)(facing);
 				pShipItem->Move(moving, bMovementType);
 		}
 		else
@@ -3783,11 +3780,11 @@ bool PacketHouseDesignDestroyItem::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = (word)(readInt32());
+	word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = (word)(readInt32());
+	word z = static_cast<word>(readInt32());
 
-	house->RemoveItem(client, id, x, y, (char)z);
+	house->RemoveItem(client, id, x, y, static_cast<char>(z));
 	return true;
 }
 
@@ -3819,7 +3816,7 @@ bool PacketHouseDesignPlaceItem::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = (word)(readInt32());
+	word y = static_cast<word>(readInt32());
 
 	house->AddItem(client, id, x, y);
 	return true;
@@ -3880,7 +3877,7 @@ bool PacketHouseDesignPlaceStair::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = (word)(readInt32());
+	word y = static_cast<word>(readInt32());
 
 	house->AddStairs(client, id, x, y);
 	return true;
@@ -3966,7 +3963,7 @@ bool PacketHouseDesignSwitch::onReceive(CNetState* net)
 	skip(1); // 0x00
 	dword level = readInt32();
 
-	house->SwitchToLevel(client, (uchar)(level));
+	house->SwitchToLevel(client, static_cast<uchar>(level));
 	return true;
 }
 
@@ -3998,11 +3995,11 @@ bool PacketHouseDesignPlaceRoof::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = (word)(readInt32());
+	word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = (word)(readInt32());
+	word z = static_cast<word>(readInt32());
 
-	house->AddRoof(client, id, x, y, (char)(z));
+	house->AddRoof(client, id, x, y, static_cast<char>(z));
 	return true;
 }
 
@@ -4034,11 +4031,11 @@ bool PacketHouseDesignDestroyRoof::onReceive(CNetState* net)
 	skip(1); // 0x00
     const word x = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word y = (word)(readInt32());
+	word y = static_cast<word>(readInt32());
 	skip(1); // 0x00
-	word z = (word)(readInt32());
+	word z = static_cast<word>(readInt32());
 
-	house->RemoveRoof(client, id, x, y, (char)(z));
+	house->RemoveRoof(client, id, x, y, static_cast<char>(z));
 	return true;
 }
 
@@ -4273,7 +4270,7 @@ bool PacketBugReport::onReceive(CNetState* net)
     const auto type = static_cast<BUGREPORT_TYPE>(readInt16());
 
 	tchar text[MAX_TALK_BUFFER];
-	int textLength = (int)readStringNullNETUTF16(text, MAX_TALK_BUFFER, MAX_TALK_BUFFER-1);
+	int textLength = static_cast<int>(readStringNullNETUTF16(text, MAX_TALK_BUFFER, MAX_TALK_BUFFER - 1));
 
 	net->getClient()->Event_BugReport(text, textLength, type, CLanguageID(language));
 	return true;
@@ -4627,13 +4624,13 @@ bool PacketCreateHS::onReceive(CNetState* net)
 	byte strength = readByte();
 	byte dexterity = readByte();
 	byte intelligence = readByte();
-	skill1 = (SKILL_TYPE)readByte();
+	skill1 = static_cast<SKILL_TYPE>(readByte());
 	skillval1 = readByte();
-	skill2 = (SKILL_TYPE)readByte();
+	skill2 = static_cast<SKILL_TYPE>(readByte());
 	skillval2 = readByte();
-	skill3 = (SKILL_TYPE)readByte();
+	skill3 = static_cast<SKILL_TYPE>(readByte());
 	skillval3 = readByte();
-	skill4 = (SKILL_TYPE)readByte();
+	skill4 = static_cast<SKILL_TYPE>(readByte());
 	skillval4 = readByte();
     const HUE_TYPE hue = readInt16();
     const auto hairid = static_cast<ITEMID_TYPE>(readInt16());

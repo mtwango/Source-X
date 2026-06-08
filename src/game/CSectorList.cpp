@@ -58,7 +58,7 @@ void CSectorList::Init()
         uint32 sector_shift = 0;
         for (uint sz = sd.iSectorSize; sz > 1; sz >>= 1)
             ++sector_shift;
-        sd.uiSectorSizeDivShift = (uint16)sector_shift;
+        sd.uiSectorSizeDivShift = static_cast<uint16>(sector_shift);
 
 
 		short iSectorX = 0, iSectorY = 0;
@@ -73,7 +73,7 @@ void CSectorList::Init()
             }
 
 			CSector* pSector = &(sd._pSectors[iSectorIndex]);
-			pSector->Init(iSectorIndex, (uchar)iMap, iSectorX, iSectorY);
+			pSector->Init(iSectorIndex, static_cast<uchar>(iMap), iSectorX, iSectorY);
 
             ++iSectorX;
 		}

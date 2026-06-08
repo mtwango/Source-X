@@ -98,11 +98,11 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 	    }
 
 		tchar* pszTmp = Str_GetTemp();
-		snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", (int)i);
+		snprintf(pszTmp, Str_TempLength(), "resource.%u.ID", static_cast<int>(i));
         pScriptArgs->m_VarsLocal.SetNum(pszTmp, (int64)id);
 
-		iResourceQty = (word)pCorpseDef->m_BaseResources[i].GetResQty();
-		snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", (int)i);
+		iResourceQty = static_cast<word>(pCorpseDef->m_BaseResources[i].GetResQty());
+		snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", static_cast<int>(i));
         pScriptArgs->m_VarsLocal.SetNum(pszTmp, iResourceQty);
 	}
 	if (IsTrigUsed(TRIGGER_CARVECORPSE) || IsTrigUsed(TRIGGER_ITEMCARVECORPSE))
@@ -136,8 +136,8 @@ void CChar::Use_CarveCorpse( CItemCorpse * pCorpse, CItem * pItemCarving )
 			continue;
 		}
 
-		snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", (int)i);
-        iResourceQty =(word)pScriptArgs->m_VarsLocal.GetKeyNum(pszTmp);
+		snprintf(pszTmp, Str_TempLength(), "resource.%u.amount", static_cast<int>(i));
+        iResourceQty = static_cast<word>(pScriptArgs->m_VarsLocal.GetKeyNum(pszTmp));
 
 		++ iItems;
 		CItem *pPart = CItem::CreateTemplate(id, nullptr, this);
@@ -297,7 +297,7 @@ bool CChar::Use_Kindling( CItem * pKindling )
 
 	pKindling->SetID(ITEMID_CAMPFIRE);
 	pKindling->SetAttr(ATTR_MOVE_NEVER|ATTR_CAN_DECAY);
-	pKindling->SetTimeoutS((4 + (int64)pKindling->GetAmount()) * 60);
+	pKindling->SetTimeoutS((4 + static_cast<int64>(pKindling->GetAmount())) * 60);
 	pKindling->SetAmount(1);	// all kindling is set to one fire
 	pKindling->m_itLight.m_pattern = LIGHT_LARGE;
 	pKindling->Update();
@@ -376,16 +376,16 @@ bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
 			return true;
 
 		char skilltag[38];
-		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", (int)(skill & ~0xD2000000));
+		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", static_cast<int>(skill & ~0xD2000000));
 		CVarDefCont *pSkillTag = pItem->GetKey(skilltag, true);
-        if (word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax; Skill_GetBase(skill) > iMaxSkill )
+        if (const word iMaxSkill = pSkillTag ? static_cast<word>(pSkillTag->GetValNum()) : static_cast<word>(g_Cfg.m_iSkillPracticeMax); Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_TRAININGDUMMY_SKILL);
 			return false;
 		}
 
-		int iAnimDelay = g_Cfg.Calc_CombatAttackSpeed(this, m_uidWeapon.ItemFind());
-		UpdateAnimate(ANIM_ATTACK_WEAPON, true, false, (byte)maximum(0,(iAnimDelay-1) / 10));
+        const int iAnimDelay = g_Cfg.Calc_CombatAttackSpeed(this, m_uidWeapon.ItemFind());
+		UpdateAnimate(ANIM_ATTACK_WEAPON, true, false, static_cast<byte>(maximum(0, (iAnimDelay - 1) / 10)));
 		m_Act_Prv_UID = m_uidWeapon;
 		m_Act_UID = pItem->GetUID();
 		Skill_Start(NPCACT_TRAINING);
@@ -396,7 +396,7 @@ bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
 	if ( Skill_GetActive() != NPCACT_TRAINING )
 		return false;
 
-	pItem->SetAnim((ITEMID_TYPE)(pItem->GetDispID() + 1), 3 * 1000);
+	pItem->SetAnim(static_cast<ITEMID_TYPE>(pItem->GetDispID() + 1), 3 * 1000);
 	static const SOUND_TYPE sm_TrainingDummySounds[] = { 0x3A4, 0x3A6, 0x3A9, 0x3AE, 0x3B4, 0x3B6 };
 	pItem->Sound(sm_TrainingDummySounds[g_Rand.GetVal(std::size(sm_TrainingDummySounds))]);
 	Skill_Experience(skill, g_Rand.GetVal(40));
@@ -453,7 +453,7 @@ bool CChar::Use_Train_PickPocketDip( CItem * pItem, const bool fSetup )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_PICKPOCKET_FAIL);
 		pItem->Sound(SOUND_GLASS_BREAK4);
-		pItem->SetAnim((ITEMID_TYPE)(pItem->GetDispID() + 1), 3 * 1000);
+		pItem->SetAnim(static_cast<ITEMID_TYPE>(pItem->GetDispID() + 1), 3 * 1000);
 	}
 	Skill_Experience(SKILL_STEALING, g_Rand.GetVal(40));
 	return true;
@@ -469,9 +469,9 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 	int iDist = GetDist(pButte);
 	if ( (iDist < 2) && pButte->m_itArcheryButte.m_iAmmoCount )
 	{
-		CItem *pRemovedAmmo = CItem::CreateBase((ITEMID_TYPE)pButte->m_itArcheryButte.m_ridAmmoType.GetResIndex());
+		CItem *pRemovedAmmo = CItem::CreateBase(static_cast<ITEMID_TYPE>(pButte->m_itArcheryButte.m_ridAmmoType.GetResIndex()));
 		ASSERT(pRemovedAmmo);
-		pRemovedAmmo->SetAmount((word)pButte->m_itArcheryButte.m_iAmmoCount);
+		pRemovedAmmo->SetAmount(static_cast<word>(pButte->m_itArcheryButte.m_iAmmoCount));
 		ItemBounce(pRemovedAmmo, g_Cfg.m_iBounceMessage);
 		SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_GATHER);
 
@@ -537,16 +537,16 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 			return true;
 
 		char skilltag[38];
-		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", (int)(skill & ~0xD2000000));
+		snprintf(skilltag, sizeof(skilltag), "OVERRIDE.PracticeMax.SKILL_%d", static_cast<int>(skill & ~0xD2000000));
 		CVarDefCont *pSkillTag = pButte->GetKey(skilltag, true);
-        if (word iMaxSkill = pSkillTag ? (word)pSkillTag->GetValNum() : (word)g_Cfg.m_iSkillPracticeMax; Skill_GetBase(skill) > iMaxSkill )
+        if (const word iMaxSkill = pSkillTag ? static_cast<word>(pSkillTag->GetValNum()) : static_cast<word>(g_Cfg.m_iSkillPracticeMax); Skill_GetBase(skill) > iMaxSkill )
 		{
 			SysMessageDefault(DEFMSG_ITEMUSE_ARCHBUTTE_SKILL);
 			return false;
 		}
 
-		int iAnimDelay = g_Cfg.Calc_CombatAttackSpeed(this, pWeapon);
-		UpdateAnimate(ANIM_ATTACK_WEAPON, true, false, (byte)maximum(0,(iAnimDelay-1) / 10) );
+        const int iAnimDelay = g_Cfg.Calc_CombatAttackSpeed(this, pWeapon);
+		UpdateAnimate(ANIM_ATTACK_WEAPON, true, false, static_cast<byte>(maximum(0, (iAnimDelay - 1) / 10)) );
 		m_Act_Prv_UID = m_uidWeapon;
 		m_Act_UID = pButte->GetUID();
 		Skill_Start(NPCACT_TRAINING);
@@ -611,7 +611,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 
 		if ( WeaponAmmoID )
 		{
-			pButte->m_itArcheryButte.m_ridAmmoType = CResourceIDBase(RES_ITEMDEF, (int)WeaponAmmoID);
+			pButte->m_itArcheryButte.m_ridAmmoType = CResourceIDBase(RES_ITEMDEF, static_cast<int>(WeaponAmmoID));
 			++ pButte->m_itArcheryButte.m_iAmmoCount;
 		}
 	}
@@ -692,7 +692,7 @@ bool CChar::Use_Item_Web( CItem * pItemWeb )
 		pFlag->m_uidLink = pItemWeb->GetUID();
 
         int iStuckTimerSeconds = 2; // Mininum stuck timer value is 2 seconds.
-        iCharStr = ((100 - minimum(100, iCharStr)) * (int)pItemWeb->m_itWeb.m_wHitsCur) / 10;
+        iCharStr = ((100 - minimum(100, iCharStr)) * static_cast<int>(pItemWeb->m_itWeb.m_wHitsCur)) / 10;
         iStuckTimerSeconds = minimum(10, iStuckTimerSeconds + iCharStr); //Maximum stuck timer value is 10 seconds
 
 		pFlag->SetTimeout(iStuckTimerSeconds * MSECS_PER_SEC);
@@ -819,8 +819,8 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	if ( iRes == sl::scont_bad_index() )
 		return false;
 
-	CResourceQty RetMainSkill = pItemDef->m_SkillMake[iRes];
-	int iSkillLevel = (int)(RetMainSkill.GetResQty()) / 10;
+    const CResourceQty RetMainSkill = pItemDef->m_SkillMake[iRes];
+    const int iSkillLevel = static_cast<int>(RetMainSkill.GetResQty()) / 10;
 	int iDifficulty = IMulDiv(iSkillLevel, iDamagePercent, 100);
 	if ( iDifficulty < iSkillLevel / 4 )
 		iDifficulty = iSkillLevel / 4;
@@ -828,10 +828,10 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	// apply arms lore skillgain now
 	lpctstr pszText;
 	Skill_Experience(SKILL_ARMSLORE, iArmsLoreDiff);
-	bool fSuccess = Skill_UseQuick((SKILL_TYPE)(RetMainSkill.GetResIndex()), iDifficulty);
+    const bool fSuccess = Skill_UseQuick(static_cast<SKILL_TYPE>(RetMainSkill.GetResIndex()), iDifficulty);
 	if ( fSuccess )
 	{
-		pItemArmor->m_itArmor.m_wHitsCur = (word)(iTotalHits);
+		pItemArmor->m_itArmor.m_wHitsCur = static_cast<word>(iTotalHits);
 		pszText = g_Cfg.GetDefaultMsg(DEFMSG_REPAIR_1);
 	}
 	else
@@ -1012,11 +1012,11 @@ void CChar::Use_Drink( CItem * pItem )
         pScriptArgs->Init(dwDelay, wConsume, 0, pItem);
         pScriptArgs->m_VarsLocal.SetNumNew("BottleId", idbottle);
 
-        TRIGRET_TYPE iRet = OnTrigger(CTRIG_Drink, pScriptArgs, this);
+        const TRIGRET_TYPE iRet = OnTrigger(CTRIG_Drink, pScriptArgs, this);
 
-        idbottle = (ITEMID_TYPE)pScriptArgs->m_VarsLocal.GetKeyNum("BottleId");
-        dwDelay = (dword)(pScriptArgs->m_iN1 > 0 ? pScriptArgs->m_iN1 : 1); //0 causes stays memory infinitely.
-        wConsume = (word)pScriptArgs->m_iN2;
+        idbottle = static_cast<ITEMID_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("BottleId"));
+        dwDelay = static_cast<dword>(pScriptArgs->m_iN1 > 0 ? pScriptArgs->m_iN1 : 1); //0 causes stays memory infinitely.
+        wConsume = static_cast<word>(pScriptArgs->m_iN2);
         wBottleAmount = wConsume;
 
         if (iRet == TRIGRET_RET_TRUE)
@@ -1048,7 +1048,7 @@ void CChar::Use_Drink( CItem * pItem )
 			Spell_Effect_Remove(pDrunkLayer);
 			pDrunkLayer->m_itSpell.m_spellcharges += 10;
 			if ( pDrunkLayer->m_itSpell.m_spelllevel < 500 )
-				pDrunkLayer->m_itSpell.m_spelllevel += (word)(iStrength);
+				pDrunkLayer->m_itSpell.m_spelllevel += static_cast<word>(iStrength);
 			Spell_Effect_Add(pDrunkLayer);
 		}
 		else
@@ -1072,7 +1072,7 @@ void CChar::Use_Drink( CItem * pItem )
         if ( int iEnhance = GetPropNum(COMP_PROPS_CHAR, PROPCH_ENHANCEPOTIONS, true) )
 			iSkillQuality += IMulDiv(iSkillQuality, iEnhance, 100);
 
-		OnSpellEffect((SPELL_TYPE)(ResGetIndex(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
+		OnSpellEffect(static_cast<SPELL_TYPE>(ResGetIndex(pItem->m_itPotion.m_Type)), this, iSkillQuality, pItem);
 
 		// Give me the marker that i've used a potion.
 		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_PotionUsed, g_Cfg.GetSpellEffect(SPELL_NONE, iSkillQuality), (int64)dwDelay, this);
@@ -1081,7 +1081,7 @@ void CChar::Use_Drink( CItem * pItem )
 	{
 		ushort uiRestore = 0;
 		if ( pItem->m_itDrink.m_foodval )
-			uiRestore = (ushort)(pItem->m_itDrink.m_foodval);
+			uiRestore = static_cast<ushort>(pItem->m_itDrink.m_foodval);
 		else
 			uiRestore = (ushort)(pItem->Item_GetDef()->GetVolume());
 
@@ -1223,7 +1223,7 @@ short CChar::GetCurFollowers() const
     return std::accumulate(
         m_followers.cbegin(),
         m_followers.cend(),
-        (short)0,
+        static_cast<short>(0),
         [](short accumulator, auto const& input_struct) -> short
         {
             return accumulator + input_struct.followerslots;
@@ -1646,7 +1646,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 				id += 1;
 				break;
 			}
-			pItem->SetAnim((ITEMID_TYPE)id, 2 * 1000);
+			pItem->SetAnim(static_cast<ITEMID_TYPE>(id), 2 * 1000);
 			SysMessageDefault(DEFMSG_ITEMUSE_SPINWHEEL);
 			return true;
 		}
@@ -2006,7 +2006,7 @@ bool CChar::ItemEquipArmor(const bool fForce )
 		// Block those layers that are already used
 		for ( size_t i = 0; i < std::size(iBestScore); ++i )
 		{
-			pBestArmor[i] = LayerFind((LAYER_TYPE)i);
+			pBestArmor[i] = LayerFind(static_cast<LAYER_TYPE>(i));
 			if ( pBestArmor[i] != nullptr )
 				iBestScore[i] = INT32_MAX;
 		}

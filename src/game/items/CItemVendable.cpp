@@ -228,7 +228,7 @@ bool CItemVendable::IsValidSaleItem(const bool fBuyFromVendor ) const
 	{
 		if ( fBuyFromVendor )
 		{
-			DEBUG_ERR(( "Vendor uid=0%x selling unmovable item %s='%s'\n", (dword)(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
+			DEBUG_ERR(( "Vendor uid=0%x selling unmovable item %s='%s'\n", static_cast<dword>(GetTopLevelObj()->GetUID()), GetResourceName(), GetName()));
 		}
 		return false;
 	}

@@ -530,7 +530,7 @@ bool SQLiteTable::GoLast()
 {
 	if (m_lstRows.size())
 	{
-		m_iPos=(int)m_lstRows.size()-1;
+		m_iPos= static_cast<int>(m_lstRows.size()) -1;
 		return true;
 	}
 	return false;
@@ -538,7 +538,7 @@ bool SQLiteTable::GoLast()
 
 bool SQLiteTable::GoNext()
 {
-	if (m_iPos+1<(int)m_lstRows.size())
+	if (m_iPos+1< static_cast<int>(m_lstRows.size()))
 	{
 		++m_iPos;
 		return true;

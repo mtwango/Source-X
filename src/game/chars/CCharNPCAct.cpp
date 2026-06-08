@@ -86,8 +86,8 @@ void CChar::Action_StartSpecial(const CREID_TYPE id )
             pItem = CItem::CreateScript( g_Rand.Get16ValFast(2) ? ITEMID_FX_FIRE_F_EW : ITEMID_FX_FIRE_F_NS, this );
 			ASSERT(pItem);
 			pItem->SetType(IT_FIRE);
-			pItem->m_itSpell.m_spell = (word)(SPELL_Fire_Field);
-			pItem->m_itSpell.m_spelllevel = (word)(100 + g_Rand.Get16ValFast(500));
+			pItem->m_itSpell.m_spell = static_cast<word>(SPELL_Fire_Field);
+			pItem->m_itSpell.m_spelllevel = static_cast<word>(100 + g_Rand.Get16ValFast(500));
 			pItem->m_itSpell.m_spellcharges = 1;
 			pItem->m_uidLink = GetUID();
             iMaxTimeoutS = 50;
@@ -97,7 +97,7 @@ void CChar::Action_StartSpecial(const CREID_TYPE id )
 		case CREID_GIANT_SPIDER:
 		{
 			// Leave a web path
-            pItem = CItem::CreateScript( (ITEMID_TYPE)(g_Rand.GetVal2Fast(ITEMID_WEB1_1, ITEMID_WEB1_4)), this );
+            pItem = CItem::CreateScript( static_cast<ITEMID_TYPE>(g_Rand.GetVal2Fast(ITEMID_WEB1_1, ITEMID_WEB1_4)), this );
 			ASSERT(pItem);
 			pItem->SetType(IT_WEB);
             iMaxTimeoutS = 170;
@@ -626,8 +626,7 @@ int CChar::NPC_WalkToPoint( bool fRun )
         else
             iTickNext = MSECS_PER_SEC + g_Rand.GetValFast((100 - iDex) / 3) * MSECS_PER_SEC / 10;
 
-        CVarDefCont *pValue = GetKey("OVERRIDE.MOVERATE", true);
-        if (pValue)
+        if (CVarDefCont *pValue = GetKey("OVERRIDE.MOVERATE", true))
         {
             int64 tTick = pValue->GetValNum();
             if (tTick < 1)
@@ -643,9 +642,7 @@ int CChar::NPC_WalkToPoint( bool fRun )
     }
     else
     {
-        int64 tTick;
-        CVarDefCont * pVal = GetKey("OVERRIDE.MOVEDELAY", true);
-        if (pVal)
+        if (CVarDefCont *pVal = GetKey("OVERRIDE.MOVEDELAY", true))
         {
             iTickNext = pVal->GetValNum();  // foot walking speed
             if (IsStatFlag(STATF_ONHORSE | STATF_HOVERING)) // On Mount
@@ -665,8 +662,8 @@ int CChar::NPC_WalkToPoint( bool fRun )
         }
         else
         {
-            CVarDefCont * pValue = GetKey("OVERRIDE.MOVERATE", true);
-            if (pValue)
+            int64 tTick;
+            if (CVarDefCont *pValue = GetKey("OVERRIDE.MOVERATE", true))
                 tTick = pValue->GetValNum();	//Taking value from tag.override.moverate
             else
                 tTick = pCharDef->m_iMoveRate;	//no tag.override.moverate, we get default moverate (created from ini's one).
@@ -785,7 +782,7 @@ bool CChar::NPC_LookAtCharMonster( CChar * pChar )
 	if ( Fight_Attack( pChar ) == false )
 		return false;
 
-	m_pNPC->m_Act_Motivation = (uchar)iActMotivation;
+	m_pNPC->m_Act_Motivation = static_cast<uchar>(iActMotivation);
 	return true;
 }
 
@@ -954,7 +951,7 @@ bool CChar::NPC_LookAtItem( CItem * pItem, const int iDist )
 				case  TRIGRET_RET_FALSE:	return false;
 				default:					break;
 			}
-            iWantThisItem = (int)(pScriptArgs->m_iN2);
+            iWantThisItem = static_cast<int>(pScriptArgs->m_iN2);
 		}
 	}
 
@@ -1136,7 +1133,7 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
 		{
 			// I should move. Someone lit a fire under me.
 			m_Act_p = ptTop;
-			m_Act_p.Move((DIR_TYPE)(iRand % DIR_QTY));
+			m_Act_p.Move(static_cast<DIR_TYPE>(iRand % DIR_QTY));
 			NPC_WalkToPoint(true);
 			SoundChar(CRESND_NOTICE);
 			return true;
@@ -1231,7 +1228,7 @@ void CChar::NPC_Act_Wander()
 
     const CVarDefCont* pTagOverride = GetKey("OVERRIDE.LOOKAROUNDCHANCE", true);
     uint uiLookAroundChance = pTagOverride
-                                          ? (uint)pTagOverride->GetValNum()
+                                          ? static_cast<uint>(pTagOverride->GetValNum())
                                           : g_Cfg.m_iNPCWanderLookAroundChance;
     uiLookAroundChance = maximum(uiLookAroundChance, 100);
 
@@ -1263,8 +1260,8 @@ void CChar::NPC_Act_Wander()
         if (OnTrigger(CTRIG_NPCActWander, pScriptArgs, this) == TRIGRET_RET_TRUE)
 			return;
 
-        iStopWandering = (int)pScriptArgs->m_iN1;
-        iReturnToHome = (int)pScriptArgs->m_iN2;
+        iStopWandering = static_cast<int>(pScriptArgs->m_iN1);
+        iReturnToHome = static_cast<int>(pScriptArgs->m_iN2);
 	}
 
 	if (iStopWandering)
@@ -1511,7 +1508,7 @@ void CChar::NPC_Act_GoHome()
 		}
 		else if (!IsSetOF(OF_GuardOutsideGuardedArea))
 		{
-			g_Log.Event( LOGL_WARN, "Guard 0%x '%s' has no guard post (%s)! Removing it.\n", (dword)GetUID(), GetName(), GetTopPoint().WriteUsed());
+			g_Log.Event( LOGL_WARN, "Guard 0%x '%s' has no guard post (%s)! Removing it.\n", static_cast<dword>(GetUID()), GetName(), GetTopPoint().WriteUsed());
 
 			// If we aren't conjured and still got no valid home
 			// then set our status to conjured and take our life.
@@ -1607,7 +1604,7 @@ void CChar::NPC_Act_Looting()
 
     const auto pCorpse = dynamic_cast<CItemCorpse *>(pItem);
 	if ( pCorpse && !pCorpse->IsContainerEmpty() )
-		pItem = static_cast<CItem*>( pCorpse->GetContentIndex(g_Rand.GetValFast( (int)pCorpse->GetContentCount() )) );
+		pItem = static_cast<CItem*>( pCorpse->GetContentIndex(g_Rand.GetValFast( static_cast<int>(pCorpse->GetContentCount()) )) );
 
 	if ( !CanTouch(pItem) || !CanMoveItem(pItem) || !CanCarry(pItem) )
 	{
@@ -1757,7 +1754,7 @@ bool CChar::NPC_Act_Food()
 	if ( iFoodLevel > 40 )
 		return false;							// and it is at least 60% hungry
 
-	m_pNPC->m_Act_Motivation = (byte)(50 - (iFoodLevel / 2));
+	m_pNPC->m_Act_Motivation = static_cast<byte>(50 - (iFoodLevel / 2));
 
     const int   iMyZ = GetTopPoint().m_z;
 	ushort  uiEatAmount = 1;
@@ -1768,8 +1765,7 @@ bool CChar::NPC_Act_Food()
 	bool    fSearchGrass = false;
 	CItem   *pCropItem = nullptr;
 
-	CItemContainer	*pPack = GetPack();
-	if ( pPack )
+    if ( CItemContainer *pPack = GetPack() )
 	{
 		for (CSObjContRec* pObjRec : *pPack)
 		{
@@ -2078,7 +2074,7 @@ bool CChar::NPC_OnItemGive( CChar *pCharSrc, CItem *pItem )
 			if ( pItem->IsType(IT_GOLD) )
 			{
                 uint uiWage = Char_GetDef()->GetHireDayWage();
-                uiWage = (uint)pCharSrc->PayGold(this, uiWage, nullptr, PAYGOLD_HIRE);
+                uiWage = static_cast<uint>(pCharSrc->PayGold(this, uiWage, nullptr, PAYGOLD_HIRE));
                 if (uiWage > 0)
                 {
                     Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_PET_MONEY));
@@ -2378,7 +2374,7 @@ void CChar::NPC_OnTickAction()
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
-	g_Log.EventDebug("'%s' [0%x]\n", GetName(), (dword)GetUID());
+	g_Log.EventDebug("'%s' [0%x]\n", GetName(), static_cast<dword>(GetUID()));
 	EXC_DEBUG_END;
 }
 
@@ -2456,7 +2452,7 @@ void CChar::NPC_Pathfinding()
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
-	g_Log.EventDebug("'%s' point '%d,%d,%d,%d' [0%x]\n", GetName(), ptLocal.m_x, ptLocal.m_y, ptLocal.m_z, ptLocal.m_map, (dword)GetUID());
+	g_Log.EventDebug("'%s' point '%d,%d,%d,%d' [0%x]\n", GetName(), ptLocal.m_x, ptLocal.m_y, ptLocal.m_z, ptLocal.m_map, static_cast<dword>(GetUID()));
 	EXC_DEBUG_END;
 }
 
@@ -2481,8 +2477,7 @@ void CChar::NPC_Food()
 	if ( iFoodLevel > 40 )
         return;						// and it is at least 60% hungry
 
-	CItemContainer	*pPack = GetPack();
-	if ( pPack )
+    if ( CItemContainer *pPack = GetPack() )
 	{
 		EXC_SET_BLOCK("searching in pack");
 		for (CSObjContRec* pObjRec : *pPack)

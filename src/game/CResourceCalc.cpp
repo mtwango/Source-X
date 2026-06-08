@@ -552,7 +552,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	const int iLowerManaCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERMANACOST, pBaseCCPChar);
 	ushort iCost = pSpell->m_wManaUse;
 	if (iLowerManaCost != 0) //LowerManaCost can be negative, and thus increasing the mana cost!
-		iCost = (ushort)(iCost - ((iCost * iLowerManaCost) / 100));
+		iCost = static_cast<ushort>(iCost - (iCost * iLowerManaCost) / 100);
 
 	if ( fScroll )
 		return iCost / 2; //spells cast from scrolls consume half of the mana.
@@ -617,7 +617,7 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, const int iCureL
 	//Override the Cure Poison Chance.
     if (const CVarDefCont *pTagStorage = pPoison->GetKey("OVERRIDE.CUREPOISONCHANCE", true))
 	{
-		iCureChance = (int)pTagStorage->GetValNum();
+		iCureChance = static_cast<int>(pTagStorage->GetValNum());
 		return (g_Rand.GetVal(100) <= iCureChance);
 	}
 

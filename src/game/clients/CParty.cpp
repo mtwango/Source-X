@@ -26,7 +26,7 @@ CPartyDef::CPartyDef( CChar *pCharInvite, CChar *pCharAccept)
 	AttachChar(pCharInvite);
 	AttachChar(pCharAccept);
 	SendAddList(nullptr);		// send full list to all
-	m_sName.Format("Party_0%x", (dword)pCharAccept->GetUID());
+	m_sName.Format("Party_0%x", static_cast<dword>(pCharAccept->GetUID()));
     //UpdateWaypointAll(pCharInvite, PartyMember);
 }
 
@@ -243,9 +243,9 @@ bool CPartyDef::MessageEvent(const CUID &uidDst, const CUID &uidSrc, const nacha
 	if ( uidDst.IsValidUID() && !IsInParty(uidDst.CharFind()) )
 		return false;
 
-    CChar *pFrom = uidSrc.CharFind();
+    const CChar *pFrom = uidSrc.CharFind();
     ASSERT(pFrom);
-    CChar *pTo = (uidDst == (dword)0) ? nullptr : uidDst.CharFind();
+    CChar *pTo = (uidDst == static_cast<dword>(0)) ? nullptr : uidDst.CharFind();
 
 	tchar *szText = Str_GetTemp();
 	CvtNETUTF16ToSystem(szText, MAX_TALK_BUFFER, pText, MAX_TALK_BUFFER);
@@ -424,7 +424,7 @@ bool CPartyDef::DeclineEvent(const CChar *pCharDecline, const CUID &uidInviter)	
 	if ( !pCharInviter || !pCharDecline || uidInviter == pCharDecline->GetUID() )
 		return false;
 
-    if (CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE"); !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharDecline->GetUID() )
+    if (const CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE"); !sTempVal || static_cast<dword>(sTempVal->GetValNum()) != static_cast<dword>(pCharDecline->GetUID()) )
 		return false;
 
 	pCharInviter->DeleteKey("PARTY_LASTINVITE");
@@ -452,8 +452,8 @@ bool CPartyDef::AcceptEvent(CChar *pCharAccept, const CUID &uidInviter, const bo
 	CPartyDef *pParty = pCharInviter->m_pParty;
 	if ( !bForced )
 	{
-        if (CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE");
-            !sTempVal || (dword)sTempVal->GetValNum() != (dword)pCharAccept->GetUID() )
+        if (const CVarDefCont *sTempVal = pCharInviter->m_TagDefs.GetKey("PARTY_LASTINVITE");
+            !sTempVal || static_cast<dword>(sTempVal->GetValNum()) != static_cast<dword>(pCharAccept->GetUID()) )
 			return false;
 
 		pCharInviter->DeleteKey("PARTY_LASTINVITE");

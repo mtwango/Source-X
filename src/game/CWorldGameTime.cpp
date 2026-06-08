@@ -43,7 +43,7 @@ int64 CWorldGameTime::GetNextNewMoon(const bool fMoonIndex ) // static
 	int64 iNextMonth = GetCurrentTimeInGameMinutes() + iSynodic;
 
 	// Get the game time when this cycle will start
-	int64 iNewStart = (int64)(iNextMonth - (double)(iNextMonth % iSynodic));
+    const int64 iNewStart = static_cast<int64>(iNextMonth - static_cast<double>(iNextMonth % iSynodic));
 	return iNewStart * g_Cfg.m_iGameMinuteLength;
 
 }

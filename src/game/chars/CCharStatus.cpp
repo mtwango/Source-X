@@ -30,7 +30,7 @@ bool CChar::IsResourceMatch( const CResourceID& rid, dword dwAmount, const dword
 	switch ( rid.GetResType() )
 	{
 		case RES_SKILL:			// do I have this skill level?
-			if ( Skill_GetBase((SKILL_TYPE)(rid.GetResIndex())) < dwAmount )
+			if ( Skill_GetBase(static_cast<SKILL_TYPE>(rid.GetResIndex())) < dwAmount )
 				return false;
 			return true;
 
@@ -253,7 +253,7 @@ int CChar::GetWeightLoadPercent(const int iWeight) const
 	if (!MaxCarry)
 		return 1000;	// suppose self extra-overloaded
 
-	return (int)IMulDivLL(iWeight, 100, MaxCarry);
+	return static_cast<int>(IMulDivLL(iWeight, 100, MaxCarry));
 }
 
 bool CChar::CanCarry( const CItem *pItem ) const
@@ -696,7 +696,7 @@ byte CChar::GetModeFlag( const CClient *pViewer ) const
 byte CChar::GetDirFlag(const bool fSquelchForwardStep) const
 {
 	// future: strongly typed enums will remove the need for this cast
-	byte dir = (byte)(m_dirFace);
+	byte dir = static_cast<byte>(m_dirFace);
 	ASSERT( dir<DIR_QTY );
 
 	if ( fSquelchForwardStep )
@@ -812,7 +812,7 @@ short CChar::Food_GetLevelPercent() const
 	ushort max = Stat_GetMaxAdjusted(STAT_FOOD);
 	if ( max == 0 )
 		return 100;
-	return (short)(IMulDiv(Stat_GetVal(STAT_FOOD), 100, max));
+	return static_cast<short>(IMulDiv(Stat_GetVal(STAT_FOOD), 100, max));
 }
 
 lpctstr CChar::Food_GetLevelMessage(const bool fPet, const bool fHappy) const
@@ -822,7 +822,7 @@ lpctstr CChar::Food_GetLevelMessage(const bool fPet, const bool fHappy) const
 	if ( max == 0 )
 		return g_Cfg.GetDefaultMsg(DEFMSG_PET_HAPPY_UNAFFECTED);
 
-	uint index = (uint)IMulDiv(Stat_GetVal(STAT_FOOD), 8, max);
+	uint index = static_cast<uint>(IMulDiv(Stat_GetVal(STAT_FOOD), 8, max));
 
 	if ( fPet )
 	{
@@ -888,8 +888,8 @@ ushort CChar::Food_CanEat(const CObjBase *pObj ) const
     const CCharBase *pCharDef = Char_GetDef();
 	ASSERT(pCharDef);
 
-    if (size_t iRet = pCharDef->m_FoodType.FindResourceMatch(pObj); iRet != sl::scont_bad_index() )
-		return (ushort)(pCharDef->m_FoodType[iRet].GetResQty());	// how bad do i want it?
+    if (const size_t iRet = pCharDef->m_FoodType.FindResourceMatch(pObj); iRet != sl::scont_bad_index() )
+		return static_cast<ushort>(pCharDef->m_FoodType[iRet].GetResQty());	// how bad do i want it?
 
 	return 0;
 }
@@ -1248,7 +1248,7 @@ bool CChar::CanSeeItem( const CItem * pItem ) const
 			return true;
 
 		tchar *uidCheck = Str_GetTemp();
-		sprintf(uidCheck, "SeenBy_0%x", (dword)(GetUID()));
+		sprintf(uidCheck, "SeenBy_0%x", static_cast<dword>(GetUID()));
 		if (!pItem->m_TagDefs.GetKeyNum(uidCheck))
 			return false;
 	}
@@ -1793,7 +1793,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, const uint64 uiM
         if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
         {
             g_Log.EventWarn("block.m_Top.m_z (%hhd) - block.m_Bottom.m_z (%hhd) < m_zClimbHeight (%hhu) + (block.m_Top.m_dwTile (0x%" PRIx32 ") > TERRAIN_QTY ? iHeightMount : iHeightMount/2 )(%hhu).\n",
-                blockingState->m_Top.m_z, blockingState->m_Bottom.m_z, m_zClimbHeight, blockingState->m_Top.m_dwTile, (height_t)(m_zClimbHeight + uiHeightReq));
+                blockingState->m_Top.m_z, blockingState->m_Bottom.m_z, m_zClimbHeight, blockingState->m_Top.m_dwTile, static_cast<height_t>(m_zClimbHeight + uiHeightReq));
         }
         if ((iHeightDiff < uiHeightReq) && !Can(CAN_C_NOBLOCKHEIGHT) && !pArea->IsFlag(REGION_FLAG_WALK_NOBLOCKHEIGHT))
         {
@@ -1987,7 +1987,7 @@ CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, const D
 	{
 		//if (g_Cfg.m_iDebugFlags & DEBUGF_WALK && IsPlayer())
 		g_Log.EventWarn("WalkCheck: failed to get the destination region at P=%d,%d,%d,%d (UID: 0%x, name: %s).\n",
-            ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map, (dword)GetUID(), GetName());
+            ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map, static_cast<dword>(GetUID()), GetName());
 		return nullptr;
 	}
 

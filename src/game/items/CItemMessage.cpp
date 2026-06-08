@@ -151,7 +151,7 @@ bool CItemMessage::r_Verb(CScript & s, CTextConsole *pSrc)
         }
         if ( s.IsKeyHead("PAGE", 4) )
         {
-            word wPage = (word)atoi(s.GetKey() + 4);
+            const word wPage = static_cast<word>(atoi(s.GetKey() + 4));
             if ( wPage <= 0 )
                 return false;
 
@@ -186,9 +186,9 @@ void CItemMessage::DupeCopy(const CObjBase *pItemObj)
 
 word CItemMessage::GetPageCount() const
 {
-    size_t sz = m_sBodyLines.size();
+    const size_t sz = m_sBodyLines.size();
     ASSERT(sz < RES_PAGE_MAX);
-    return (word)sz;
+    return static_cast<word>(sz);
 }
 
 lpctstr CItemMessage::GetPageText(const word wPage ) const

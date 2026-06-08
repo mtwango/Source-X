@@ -521,17 +521,17 @@ ushort CChar::NPC_GetTrainMax( const CChar * pStudent, const SKILL_TYPE Skill ) 
 
 	CVarDefCont * pValue = GetKey("OVERRIDE.TRAINSKILLMAXPERCENT",true);
 	if ( pValue )
-		uiMax = (ushort)IMulDiv( (ushort)pValue->GetValNum(), Skill_GetBase(Skill), 100 );
+		uiMax = static_cast<ushort>(IMulDiv(static_cast<ushort>(pValue->GetValNum()), Skill_GetBase(Skill), 100));
 	else
-		uiMax = (ushort)IMulDiv( g_Cfg.m_iTrainSkillPercent, Skill_GetBase(Skill), 100 );
+		uiMax = static_cast<ushort>(IMulDiv(g_Cfg.m_iTrainSkillPercent, Skill_GetBase(Skill), 100));
 
 	pValue = GetKey("OVERRIDE.TRAINSKILLMAX",true);
 	if ( pValue )
-		uiMaxAllowed = (ushort)pValue->GetValNum();
+		uiMaxAllowed = static_cast<ushort>(pValue->GetValNum());
 	else
-		uiMaxAllowed = (ushort)g_Cfg.m_iTrainSkillMax;
+		uiMaxAllowed = static_cast<ushort>(g_Cfg.m_iTrainSkillMax);
 
-	ushort uiStudentMax = pStudent->Skill_GetMax(Skill);
+    const ushort uiStudentMax = pStudent->Skill_GetMax(Skill);
 
 	if ( uiMax > uiMaxAllowed )
 		return minimum(uiMaxAllowed, uiStudentMax);
@@ -643,8 +643,8 @@ int CChar::NPC_WantThisItem( CItem * pItem ) const
 
 	CCharBase * pCharDef = Char_GetDef();
 	ASSERT(pCharDef != nullptr);
-    if (size_t iRet = pCharDef->m_Desires.FindResourceMatch(pItem); iRet != sl::scont_bad_index() )
-		return (int)(pCharDef->m_Desires[iRet].GetResQty());
+    if (const size_t iRet = pCharDef->m_Desires.FindResourceMatch(pItem); iRet != sl::scont_bad_index() )
+		return static_cast<int>(pCharDef->m_Desires[iRet].GetResQty());
 
 	// I'm hungry and this is food ?
     if (int iFoodLevel = Food_GetLevelPercent(); Food_CanEat(pItem) && iFoodLevel < 100 )

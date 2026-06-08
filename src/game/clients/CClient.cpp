@@ -196,7 +196,7 @@ void CClient::CharDisconnect()
 
         m_pChar->OnTrigger(CTRIG_LogOut, pScriptArgs, m_pChar);
 
-        iLingerTime = (int)(pScriptArgs->m_iN1);
+        iLingerTime = static_cast<int>(pScriptArgs->m_iN1);
         fCanInstaLogOut = (pScriptArgs->m_iN2 != 0);
 	}
 
@@ -390,7 +390,7 @@ void CClient::Announce(const bool fArrive ) const
 			pMurders->SetTimeoutS(pMurders->m_itEqMurderCount.m_dwDecayBalance);
 		else			// or make it inactive on logout
 		{
-			pMurders->m_itEqMurderCount.m_dwDecayBalance = (dword)(pMurders->GetTimerSAdjusted());
+			pMurders->m_itEqMurderCount.m_dwDecayBalance = static_cast<dword>(pMurders->GetTimerSAdjusted());
 			pMurders->SetTimeout(-1);
 		}
 	}
@@ -959,15 +959,15 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 }
 
                 m_tmAdd.m_id = rid.GetResIndex();
-                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max((word)1, (word)atoi(ppszArgs[1])) : 1;
+                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max(static_cast<word>(1), static_cast<word>(atoi(ppszArgs[1]))) : 1;
 
                 if ((rid.GetResType() == RES_CHARDEF) || (rid.GetResType() == RES_SPAWN))
                 {
                     m_Targ_Prv_UID.InitUID();
-                    return addTargetChars(CLIMODE_TARG_ADDCHAR, (CREID_TYPE)m_tmAdd.m_id, false);
+                    return addTargetChars(CLIMODE_TARG_ADDCHAR, static_cast<CREID_TYPE>(m_tmAdd.m_id), false);
                 }
 
-                return addTargetItems(CLIMODE_TARG_ADDITEM, (ITEMID_TYPE)m_tmAdd.m_id);
+                return addTargetItems(CLIMODE_TARG_ADDITEM, static_cast<ITEMID_TYPE>(m_tmAdd.m_id));
             }
             if (IsValidResourceDef("D_ADD"))
                 Dialog_Setup(CLIMODE_DIALOG, g_Cfg.ResourceGetIDType(RES_DIALOG, "D_ADD"), 0, this->GetChar());
@@ -1003,9 +1003,9 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 }
 
                 m_tmAdd.m_id = rid.GetResIndex();
-                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max((word)1, (word)atoi(ppszArgs[1])) : 1;
+                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max(static_cast<word>(1), static_cast<word>(atoi(ppszArgs[1]))) : 1;
 
-                return addTargetItems(CLIMODE_TARG_ADDITEM, (ITEMID_TYPE)m_tmAdd.m_id);
+                return addTargetItems(CLIMODE_TARG_ADDITEM, static_cast<ITEMID_TYPE>(m_tmAdd.m_id));
             }
         case CV_ADDCHAR:
             if (!s.HasArgs())
@@ -1034,10 +1034,10 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 }
 
                 m_tmAdd.m_id = rid.GetResIndex();
-                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max((word)1, (word)atoi(ppszArgs[1])) : 1;
+                m_tmAdd.m_vcAmount = (iQty > 1) ? std::max(static_cast<word>(1), static_cast<word>(atoi(ppszArgs[1]))) : 1;
 
                 m_Targ_Prv_UID.InitUID();
-                return addTargetChars(CLIMODE_TARG_ADDCHAR, (CREID_TYPE)m_tmAdd.m_id, false);
+                return addTargetChars(CLIMODE_TARG_ADDCHAR, static_cast<CREID_TYPE>(m_tmAdd.m_id), false);
             }
 		case CV_ADDBUFF:
 			{
@@ -1069,7 +1069,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 						++ArgsCount;
 				}
 
-				addBuff((BUFF_ICONS)iArgs[0], iArgs[1], iArgs[2], (word)(iArgs[3]), Args, ArgsCount);
+				addBuff(static_cast<BUFF_ICONS>(iArgs[0]), iArgs[1], iArgs[2], static_cast<word>(iArgs[3]), Args, ArgsCount);
 			}
 			break;
 		case CV_REMOVEBUFF:
@@ -1116,14 +1116,14 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 					DEBUG_ERR(("Bad AddContextEntry usage: TextEntry < 100 is reserved for server usage!\n"));
 					return true;
 				}
-				m_pPopupPacket->addOption((word)entrytag, Exp_GetDWVal(ppLocArgs[1]), Exp_GetWVal(ppLocArgs[2]), Exp_GetWVal(ppLocArgs[3]) );
+				m_pPopupPacket->addOption(static_cast<word>(entrytag), Exp_GetDWVal(ppLocArgs[1]), Exp_GetWVal(ppLocArgs[2]), Exp_GetWVal(ppLocArgs[3]) );
 			}
 			break;
 		case CV_ARROWQUEST:
 			{
 				int64 piVal[3];
 				Str_ParseCmds( s.GetArgRaw(), piVal, std::size(piVal));
-				addArrowQuest( (int)piVal[0], (int)piVal[1], (int)piVal[2] );
+				addArrowQuest( static_cast<int>(piVal[0]), static_cast<int>(piVal[1]), static_cast<int>(piVal[2]) );
 #ifdef _ALPHASPHERE
 				// todo: should use a proper container for these, since the arrows are lost
 				// when the client logs out, and also newer clients support multiple
@@ -1190,7 +1190,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 						m_Targ_UID.InitUID();
 						m_Targ_Prv_UID.InitUID();
 					}
-					m_pChar->Skill_Start((SKILL_TYPE)skill);
+					m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
 					break;
 				}
 
@@ -1288,7 +1288,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
                 break;
             }
 
-            addCodexOfWisdom((dword)(piArgs[0]), (bool)(piArgs[1]));
+            addCodexOfWisdom(static_cast<dword>(piArgs[0]), static_cast<bool>(piArgs[1]));
             break;
         }
 
@@ -1403,9 +1403,9 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             int64 piVal[2];
             Str_ParseCmds(s.GetArgRaw(), piVal, std::size(piVal));
 
-            if (CObjBase *pObj = static_cast<CUID>((dword)piVal[0]).ObjFind())
+            if (CObjBase *pObj = static_cast<CUID>(static_cast<dword>(piVal[0])).ObjFind())
             {
-                addMapWaypoint(pObj, (MAPWAYPOINT_TYPE)((dword)piVal[1]));
+                addMapWaypoint(pObj, static_cast<MAPWAYPOINT_TYPE>(static_cast<dword>(piVal[1])));
             }
             break;
         }
@@ -1512,7 +1512,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			}
 			return false;
 		case CV_SHOWSKILLS:
-			addSkillWindow((SKILL_TYPE)(g_Cfg.m_iMaxSkill)); // Reload the real skills
+			addSkillWindow(static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill)); // Reload the real skills
 			break;
 		case CV_SKILLMENU:				// Just put up another menu.
 			Cmd_Skill_Menu( g_Cfg.ResourceGetIDType( RES_SKILLMENU, s.GetArgStr()));
@@ -1536,7 +1536,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			if ( pSpellDef->IsSpellType(SPELLFLAG_TARG_OBJ|SPELLFLAG_TARG_XYZ) )
 			{
 				m_tmSkillMagery.m_iSpell = SPELL_Summon;
-				m_tmSkillMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
+				m_tmSkillMagery.m_uiSummonID = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 
 				lpctstr pPrompt = g_Cfg.GetDefaultMsg(DEFMSG_SELECT_MAGIC_TARGET);
 				if ( !pSpellDef->m_sTargetPrompt.IsEmpty() )
@@ -1551,7 +1551,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			}
 
 		    m_pChar->m_atMagery.m_iSpell = SPELL_Summon;
-            m_pChar->m_atMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
+            m_pChar->m_atMagery.m_uiSummonID = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 
             if (IsSetMagicFlags(MAGICF_PRECAST) && !pSpellDef->IsSpellType(SPELLFLAG_NOPRECAST))
             {
@@ -1563,7 +1563,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
             if (!pSpellDef->GetPrimarySkill(&skill, nullptr))
                 return false;
 
-            m_pChar->Skill_Start((SKILL_TYPE)skill);
+            m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
             break;
 		}
 		case CV_SMSG:
@@ -1611,7 +1611,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 				// anyway.. I'd like to keep the syntax similar to SAYUA
                 nachar szBuffer[MAX_TALK_BUFFER];
                 CvtSystemToNETUTF16(szBuffer, std::size(szBuffer), pszArgs[4], -1);
-                addBarkUNICODE(szBuffer, nullptr, (HUE_TYPE)(Exp_GetVal(pszArgs[0])), TALKMODE_SAY, FONT_NORMAL, pszArgs[3]);
+                addBarkUNICODE(szBuffer, nullptr, static_cast<HUE_TYPE>((Exp_GetVal(pszArgs[0]))), TALKMODE_SAY, FONT_NORMAL, pszArgs[3]);
 			}
 			break;
 		case CV_SMSGL:
@@ -1636,7 +1636,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 						CArgs += ( !strncmp(ppArgs[i], "NULL", 4) ? " " : ppArgs[i] );
 					}
 
-					addBarkLocalized(iClilocId, nullptr, (HUE_TYPE)(hue), TALKMODE_SAY, FONT_NORMAL, CArgs.GetBuffer());
+					addBarkLocalized(iClilocId, nullptr, static_cast<HUE_TYPE>(hue), TALKMODE_SAY, FONT_NORMAL, CArgs.GetBuffer());
 				}
 			}
 			break;
@@ -1665,7 +1665,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 						CArgs += ( !strncmp(ppArgs[i], "NULL", 4) ? " " : ppArgs[i] );
 					}
 
-					addBarkLocalizedEx( iClilocId, nullptr, (HUE_TYPE)(hue), TALKMODE_SAY, FONT_NORMAL, (AFFIX_TYPE)(affix), ppArgs[3], CArgs.GetBuffer() );
+					addBarkLocalizedEx( iClilocId, nullptr, static_cast<HUE_TYPE>(hue), TALKMODE_SAY, FONT_NORMAL, static_cast<AFFIX_TYPE>(affix), ppArgs[3], CArgs.GetBuffer() );
 				}
 			}
 			break;

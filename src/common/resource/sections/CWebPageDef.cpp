@@ -628,7 +628,7 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 		tchar *pszTemp = Str_GetTemp();
 		snprintf(pszTemp, Str_TempLength(),
 			"HTTP/1.1 304 Not Modified\r\nDate: %s\r\nServer: " SPHERE_TITLE " " SPHERE_BUILD_NAME_VER_PREFIX SPHERE_BUILD_INFO_STR "\r\nContent-Length: 0\r\n\r\n", pcDate);
-		new PacketWeb(pClient, (byte*)pszTemp, (uint)strlen(pszTemp));
+		new PacketWeb(pClient, reinterpret_cast<byte *>(pszTemp), static_cast<uint>(strlen(pszTemp)));
 		return 0;
 	}
 
@@ -664,7 +664,7 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 		);
 
 	PacketWeb packet;
-	packet.setData((byte*)szTmp, (uint)iLen);
+	packet.setData(reinterpret_cast<byte *>(szTmp), static_cast<uint>(iLen));
 	packet.send(pClient);
 
 	for (;;)
@@ -672,10 +672,10 @@ int CWebPageDef::ServPageRequest( CClient * pClient, lpctstr pszURLArgs, CSTime 
 		iLen = FileRead.Read( szTmp, uiWebDataBufSize);
 		if ( iLen <= 0 )
 			break;
-		packet.setData((byte*)szTmp, (uint)iLen);
+		packet.setData(reinterpret_cast<byte *>(szTmp), static_cast<uint>(iLen));
 		packet.send(pClient);
 		//dwSize -= iLen;
-		if ( iLen < (int)uiWebDataBufSize)
+		if ( iLen < static_cast<int>(uiWebDataBufSize))
 		{
 			// memset( szTmp+iLen, 0, uiWebDataBufSize-iLen );
 			break;
@@ -716,7 +716,7 @@ static int HtmlDeCode( tchar * pszDst, lpctstr pszSrc )
 				if ( ch )
 				{
 					ch = static_cast<tchar>(iVal*0x10 + GetHexDigit(ch));
-					if ((uchar)(ch) == 0xa0)
+					if (static_cast<uchar>(ch) == 0xa0)
 						ch = '\0';
 				}
 			}
@@ -791,7 +791,7 @@ bool CWebPageDef::ServPagePost( CClient * pClient, const lpctstr pszURLArgs, tch
 				{
 					tchar *pszData = Str_GetTemp();
 					HtmlDeCode( pszData, pszNum );
-                    resp->AddText((word)(iNum), pszData);
+                    resp->AddText(static_cast<word>(iNum), pszData);
 				}
 				break;
 		}
@@ -805,7 +805,7 @@ bool CWebPageDef::ServPagePost( CClient * pClient, const lpctstr pszURLArgs, tch
 	// Find the correct entry point.
 	while ( s.ReadKeyParse())
 	{
-		if ( !s.IsKeyHead("ON", 2) || ( (dword)s.GetArgVal() != dwButtonID ))
+		if ( !s.IsKeyHead("ON", 2) || static_cast<dword>(s.GetArgVal()) != dwButtonID)
 			continue;
         OnTriggerRunVal(s, TRIGRUN_SECTION_TRUE, resp, pClient);
 		return true;

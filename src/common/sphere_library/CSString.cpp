@@ -223,7 +223,7 @@ void CSString::SetAt(const int nIndex, const tchar ch)
 	m_pchData[nIndex] = ch;
 	if (!ch)
 	{
-		m_iLength = (int)strlen(m_pchData);	// \0 inserted. line truncated
+		m_iLength = static_cast<int>(strlen(m_pchData));	// \0 inserted. line truncated
 	}
 }
 
@@ -240,10 +240,10 @@ void CSString::Add(const tchar ch)
 void CSString::Add(const lpctstr pszStr)
 {
     ASSERT(pszStr);
-    if (const int iLenCat = (int)strlen(pszStr))
+    if (const int iLenCat = static_cast<int>(strlen(pszStr)))
 	{
 		Resize(iLenCat + m_iLength);
-        m_iLength = (int)Str_ConcatLimitNull(m_pchData, pszStr, m_iLength + 1);
+        m_iLength = static_cast<int>(Str_ConcatLimitNull(m_pchData, pszStr, m_iLength + 1));
 	}
 }
 
@@ -274,7 +274,7 @@ void CSString::Copy(lpctstr pszStr)
         return;
     }
 
-    Resize((int)uiLen, true); // it adds a +1
+    Resize(static_cast<int>(uiLen), true); // it adds a +1
     Str_CopyLimitNull(m_pchData, pszStr, uiLen + 1);
 }
 
@@ -391,7 +391,7 @@ void CSString::FormatHex(const dword dwVal)
     // but in this case its bit representation would be considered as negative, yet we know it's a positive number.
     // So if it's negative we MUST hexformat it as 64 bit int or reinterpreting it in a
     // script WILL completely mess up
-    if (dwVal > (dword)INT32_MIN)			// if negative (remember two's complement)
+    if (dwVal > static_cast<dword>INT32_MIN)			// if negative (remember two's complement)
         return FormatULLHex(dwVal);
     //Format("0%" PRIx32, dwVal);
     FORMATNUM_WRAPPER(Str_FromUI_Fast, dwVal, 16);
@@ -567,7 +567,7 @@ int CSString::indexOf(const tchar c, const int offset) noexcept
 	if ((offset < 0) || !IsValid())
 		return -1;
 
-	int len = (int)strlen(m_pchData);
+    const int len = static_cast<int>(strlen(m_pchData));
 	if (offset >= len)
 		return -1;
 
@@ -584,7 +584,7 @@ int CSString::indexOf(const CSString& str, const int offset) noexcept
 	if ((offset < 0) || !IsValid())
 		return -1;
 
-	int len = (int)strlen(m_pchData);
+    const int len = static_cast<int>(strlen(m_pchData));
 	if (offset >= len)
 		return -1;
 
@@ -632,7 +632,7 @@ int CSString::lastIndexOf(const tchar c, const int from) noexcept
 	if ((from < 0) || !IsValid())
 		return -1;
 
-	int len = (int)strlen(m_pchData);
+    const int len = static_cast<int>(strlen(m_pchData));
 	if (from > len)
 		return -1;
 
@@ -649,7 +649,7 @@ int CSString::lastIndexOf(const CSString& str, const int from) noexcept
 	if ((from < 0) || !IsValid())
 		return -1;
 
-	int len = (int)strlen(m_pchData);
+    const int len = static_cast<int>(strlen(m_pchData));
 	if (from >= len)
 		return -1;
 

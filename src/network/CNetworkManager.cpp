@@ -293,7 +293,7 @@ void CNetworkManager::acceptNewConnection()
         return;
     }
 
-    DEBUGNETWORK(("%x:Allocated slot for client (socket %u).\n", state->id(), (uint)h));
+    DEBUGNETWORK(("%x:Allocated slot for client (socket %u).\n", state->id(), static_cast<uint>(h)));
 
     // assign slot and a CClient
     EXC_SET_BLOCK("assigning slot");

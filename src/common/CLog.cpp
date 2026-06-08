@@ -150,7 +150,7 @@ bool CLog::IsLoggedMask(const dword dwMask ) const
 
 LOG_TYPE CLog::GetLogLevel() const
 {
-	return (LOG_TYPE)(m_dwMsgMask & LOGL_QTY);
+	return static_cast<LOG_TYPE>(m_dwMsgMask & LOGL_QTY);
 }
 
 void CLog::SetLogLevel(const LOG_TYPE level )
@@ -166,7 +166,7 @@ bool CLog::IsLoggedLevel(const LOG_TYPE level ) const
 bool CLog::IsLogged( dword dwMask ) const
 {
 	const bool mask = IsLoggedMask(dwMask);
-	const bool lvl = IsLoggedLevel((LOG_TYPE)dwMask);
+	const bool lvl = IsLoggedLevel(static_cast<LOG_TYPE>(dwMask));
 	return mask || lvl;
 }
 

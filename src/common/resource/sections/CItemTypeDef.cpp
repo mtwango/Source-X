@@ -8,7 +8,7 @@
 int CItemTypeDef::GetItemType() const
 {
     ADDTOCALLSTACK("CItemTypeDef::GetItemType");
-    return (int)(GetResourceID().GetPrivateUID() & 0xFFFF);
+    return static_cast<int>(GetResourceID().GetPrivateUID() & 0xFFFF);
 }
 
 bool CItemTypeDef::r_LoadVal( CScript & s )
@@ -54,7 +54,7 @@ bool CItemTypeDef::r_LoadVal( CScript & s )
 
         if (iHi > UINT32_MAX)
         {
-            g_Log.EventError("TERRAIN with greatest ID 0x%" PRIx64 " (> 0xFFFF FFFF)?\n", (int64)iHi);
+            g_Log.EventError("TERRAIN with greatest ID 0x%" PRIx64 " (> 0xFFFF FFFF)?\n", static_cast<int64>(iHi));
             return false;
         }
 
@@ -62,7 +62,7 @@ bool CItemTypeDef::r_LoadVal( CScript & s )
         sl::smart_ptr_view<CResourceDef> def_registered = g_Cfg.RegisteredResourceGetDefRef(GetResourceID());
         for (llong i = iLo; i <= iHi; ++i )
         {
-            g_World.m_TileTypes.emplace_index_grow((size_t)i, def_registered);
+            g_World.m_TileTypes.emplace_index_grow(static_cast<size_t>(i), def_registered);
         }
         return true;
     }

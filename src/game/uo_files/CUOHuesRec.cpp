@@ -4,11 +4,11 @@ byte CUOHuesRec::GetRGB(const int rgb ) const
 {
     const short sColor = m_color[31];
     if ( rgb == 0 ) // R
-        return (byte)(((sColor & 0x7C00) >> 7));
+        return static_cast<byte>((sColor & 0x7C00) >> 7);
     if (rgb == 1)
-        return (byte)(((sColor & 0x3E0) >> 2));
+        return static_cast<byte>((sColor & 0x3E0) >> 2);
     if (rgb == 3)
-        return (byte)(((sColor & 0x1F) << 3));
+        return static_cast<byte>((sColor & 0x1F) << 3);
 
     return 0;
 }

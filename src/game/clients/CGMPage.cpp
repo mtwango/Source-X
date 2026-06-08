@@ -95,7 +95,7 @@ bool CGMPage::r_WriteVal(const lpctstr pszKey, CSString &sVal, CTextConsole *pSr
 			sVal.FormatHex(m_uidChar);
 			break;
 		case GC_HANDLED:
-			sVal.FormatHex((m_pClientHandling && m_pClientHandling->GetChar()) ? (dword)m_pClientHandling->GetChar()->GetUID() : (dword)0 );
+			sVal.FormatHex((m_pClientHandling && m_pClientHandling->GetChar()) ? static_cast<dword>(m_pClientHandling->GetChar()->GetUID()) : static_cast<dword>(0) );
 			break;
 		case GC_P:
 			sVal = m_pt.WriteUsed();

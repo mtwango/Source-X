@@ -189,7 +189,7 @@ INT_PTR CALLBACK CDialogBase::DialogProc(const HWND hWnd, const UINT message, co
     }
     else
     {
-        pDlg = static_cast<CDialogBase *>((LPVOID)::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        pDlg = static_cast<CDialogBase *>(reinterpret_cast<LPVOID>(::GetWindowLongPtr(hWnd, GWLP_USERDATA)));
     }
     if ( pDlg )
     {
@@ -221,14 +221,14 @@ LRESULT WINAPI CSWindowBase::WndProc(const HWND hWnd, const UINT message, const 
     CSWindowBase * pWnd;
     if ( message == WM_NCCREATE || message == WM_CREATE )
     {
-        const auto *const lpCreateStruct = (LPCREATESTRUCT)lParam;
+        const auto *const lpCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
         ASSERT(lpCreateStruct);
         pWnd = static_cast<CSWindowBase *>(lpCreateStruct->lpCreateParams);
         ASSERT( pWnd );
         pWnd->m_hWnd = hWnd;	// OnCreate()
         pWnd->SetWindowLongPtr(GWLP_USERDATA, reinterpret_cast<INT_PTR>(pWnd));
     }
-    pWnd = static_cast<CSWindowBase *>((LPVOID)::GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    pWnd = static_cast<CSWindowBase *>(reinterpret_cast<LPVOID>(::GetWindowLongPtr(hWnd, GWLP_USERDATA)));
     return ( pWnd ? pWnd->DefWindowProc(message, wParam, lParam) : ::DefWindowProc(hWnd, message, wParam, lParam) );
 }
 
@@ -312,12 +312,12 @@ void CEdit::SetSel(const size_t nStartChar, const size_t nEndChar, const BOOL bN
 {
     UnreferencedParameter(bNoScroll);
     ASSERT(IsWindow());
-    SendMessage(EM_SETSEL, nStartChar, (LPARAM)nEndChar);
+    SendMessage(EM_SETSEL, nStartChar, static_cast<LPARAM>(nEndChar));
 }
 size_t CEdit::GetSel() const
 {
     ASSERT(IsWindow());
-    return (size_t)(SendMessage(EM_GETSEL));
+    return static_cast<size_t>(SendMessage(EM_GETSEL));
 }
 void CEdit::GetSel(size_t& nStartChar, size_t& nEndChar) const
 {
@@ -330,7 +330,7 @@ void CEdit::GetSel(size_t& nStartChar, size_t& nEndChar) const
 void CEdit::ReplaceSel(lpctstr lpszNewText, const BOOL bCanUndo)
 {
     ASSERT(IsWindow());
-    SendMessage(EM_REPLACESEL, (WPARAM)bCanUndo, (LPARAM)lpszNewText);
+    SendMessage(EM_REPLACESEL, static_cast<WPARAM>(bCanUndo), reinterpret_cast<LPARAM>(lpszNewText));
 }
 
 
@@ -347,13 +347,13 @@ void CRichEditCtrl::SetSel(const int nStartChar, const int nEndChar)
     CHARRANGE range;
     range.cpMin = nStartChar;
     range.cpMax = nEndChar;
-    SendMessage(EM_EXSETSEL, 0, (LPARAM)&range);
+    SendMessage(EM_EXSETSEL, 0, reinterpret_cast<LPARAM>(&range));
 }
 void CRichEditCtrl::GetSel(int& nStartChar, int& nEndChar) const
 {
     ASSERT(IsWindow());
     CHARRANGE range;
-    SendMessage(EM_EXGETSEL, 0, (LPARAM)&range);
+    SendMessage(EM_EXGETSEL, 0, reinterpret_cast<LPARAM>(&range));
     nStartChar = range.cpMin;
     nEndChar = range.cpMax;
 }
@@ -375,40 +375,40 @@ void CRichEditCtrl::SetCaretHide(const BOOL val)
 
 DWORD CRichEditCtrl::ScrollLine()
 {
-    return (DWORD)PostMessage(EM_SCROLL, SB_LINEDOWN);
+    return static_cast<DWORD>(PostMessage(EM_SCROLL, SB_LINEDOWN));
 }
 
 DWORD CRichEditCtrl::ScrollPageDown()
 {
-    return (DWORD)PostMessage(EM_SCROLL, SB_PAGEDOWN);
+    return static_cast<DWORD>(PostMessage(EM_SCROLL, SB_PAGEDOWN));
 }
 
 DWORD CRichEditCtrl::ScrollBottomRight()
 {
-    return (DWORD)PostMessage(WM_VSCROLL, SB_BOTTOM);
+    return static_cast<DWORD>(PostMessage(WM_VSCROLL, SB_BOTTOM));
 }
 
 // Formatting.
 BOOL CRichEditCtrl::SetDefaultCharFormat(CHARFORMAT& cf)
 {
-    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, (LPARAM)&cf);
+    return static_cast<BOOL>(static_cast<DWORD>(SendMessage(EM_SETCHARFORMAT, SCF_DEFAULT, reinterpret_cast<LPARAM>(&cf))));
 }
 
 BOOL CRichEditCtrl::SetSelectionCharFormat(CHARFORMAT& cf)
 {
-    return (BOOL)(DWORD)SendMessage(EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
+    return static_cast<BOOL>(static_cast<DWORD>(SendMessage(EM_SETCHARFORMAT, SCF_SELECTION, reinterpret_cast<LPARAM>(&cf))));
 }
 
 // Events.
 int CRichEditCtrl::GetEventMask() const
 {
-    return (DWORD)SendMessage(EM_GETEVENTMASK);
+    return static_cast<DWORD>(SendMessage(EM_GETEVENTMASK));
 }
 
 DWORD CRichEditCtrl::SetEventMask(const DWORD dwEventMask)
 {
     // ENM_NONE = default.
-    return (DWORD)SendMessage(EM_SETEVENTMASK, 0, dwEventMask);
+    return static_cast<DWORD>(SendMessage(EM_SETEVENTMASK, 0, dwEventMask));
 }
 
 
@@ -421,11 +421,11 @@ void CListbox::ResetContent()
 }
 int CListbox::GetCount() const
 {
-    return (int)(DWORD)SendMessage(LB_GETCOUNT);
+    return static_cast<int>(static_cast<DWORD>(SendMessage(LB_GETCOUNT)));
 }
 int CListbox::AddString(LPCTSTR lpsz) const
 {
-    return (int)(DWORD)SendMessage(LB_ADDSTRING, 0L, (LPARAM)(lpsz));
+    return static_cast<int>(static_cast<DWORD>(SendMessage(LB_ADDSTRING, 0L, reinterpret_cast<LPARAM>(lpsz))));
 }
 
 

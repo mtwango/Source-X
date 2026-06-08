@@ -12,7 +12,7 @@ lpctstr const CCPropsChar::_ptcPropertyKeys[PROPCH_QTY + 1] =
     nullptr
 };
 KeyTableDesc_s CCPropsChar::GetPropertyKeysData() const {
-    return {_ptcPropertyKeys, (PropertyIndex_t)std::size(_ptcPropertyKeys) };
+    return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
 }
 
 RESDISPLAY_VERSION CCPropsChar::_iPropertyExpansion[PROPCH_QTY + 1] =
@@ -98,7 +98,7 @@ bool CCPropsChar::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyVa
         auto group = _faction.GetGroup();
         if (group == CFactionDef::Group::NONE)
             return false;
-        *piOutVal = (int32)enum_alias_cast<uint32>(group);
+        *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(group));
         return true;
     }
     if (iPropIndex == PROPCH_FACTION_SPECIES)
@@ -106,7 +106,7 @@ bool CCPropsChar::GetPropertyNumPtr(const PropertyIndex_t iPropIndex, PropertyVa
         auto species = _faction.GetSpecies();
         if (species == CFactionDef::Species::NONE)
             return false;
-        *piOutVal = (int32)enum_alias_cast<uint32>(species);
+        *piOutVal = static_cast<int32>(enum_alias_cast<uint32>(species));
         return true;
     }
     return BaseCont_GetPropertyNum(&_mPropsNum, iPropIndex, piOutVal);

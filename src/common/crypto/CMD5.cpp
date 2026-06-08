@@ -28,7 +28,7 @@ static void byteReverse( uchar *buffer, uint longs ) noexcept
 {
     do
 	{
-		const uint temp = ((uint)buffer[3] << 8 | buffer[2]) << 16 | ((uint)(buffer[1]) << 8 | buffer[0]);
+		const uint temp = (static_cast<uint>(buffer[3]) << 8 | buffer[2]) << 16 | (static_cast<uint>(buffer[1]) << 8 | buffer[0]);
 		reinterpret_cast<uint *>(buffer)[0] = temp;
 		buffer += 4;
     }
@@ -271,7 +271,7 @@ void CMD5::digest( char *digest ) noexcept
 void CMD5::fastDigest(char * digest, const char * message) noexcept // static
 {
     CMD5 ctx;
-    ctx.update(reinterpret_cast<const uchar *>(message), (uint)(strlen(message)));
+    ctx.update(reinterpret_cast<const uchar *>(message), static_cast<uint>(strlen(message)));
     ctx.finalize();
     ctx.digest(digest);
 }

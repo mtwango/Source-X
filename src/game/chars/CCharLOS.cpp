@@ -52,7 +52,7 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, const int iM
 			ptTest.Move(dirTest1);
 			uiBlockFlags = CAN_C_SWIM|CAN_C_WALK|CAN_C_FLY;
 			char z = CWorldMap::GetHeightPoint2(ptTest, uiBlockFlags, true);
-			short zDiff = (short)(abs(z - ptTest.m_z));
+			short zDiff = static_cast<short>(abs(z - ptTest.m_z));
 
 			if ( (zDiff > PLAYER_HEIGHT) || (uiBlockFlags & (CAN_I_BLOCK|CAN_I_DOOR)) )		// blocked
 			{
@@ -61,7 +61,7 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, const int iM
 				{
 					uiBlockFlags = CAN_C_SWIM|CAN_C_WALK|CAN_C_FLY;
 					z = CWorldMap::GetHeightPoint2(ptTest, uiBlockFlags, true);
-					zDiff = (short)(abs(z - ptTest.m_z));
+					zDiff = static_cast<short>(abs(z - ptTest.m_z));
 					if ( zDiff > PLAYER_HEIGHT )
 						goto blocked;
 
@@ -79,9 +79,9 @@ bool CChar::CanSeeLOS( const CPointMap &ptDst, CPointMap *pptBlock, const int iM
 		{
 			ptSrc.Move(dir);	// NOTE: The dir is very coarse and can change slightly.
 			uiBlockFlags = CAN_C_SWIM|CAN_C_WALK|CAN_C_FLY;
-			char z = CWorldMap::GetHeightPoint2(ptSrc, uiBlockFlags, true);
+            const char z = CWorldMap::GetHeightPoint2(ptSrc, uiBlockFlags, true);
 
-            if (short zDiff = (short)(abs(z - ptSrc.m_z)); (zDiff > PLAYER_HEIGHT) || (uiBlockFlags & (CAN_I_BLOCK|CAN_I_DOOR)) || (iDistTry > iMaxDist) )
+            if (const short zDiff = static_cast<short>(abs(z - ptSrc.m_z)); (zDiff > PLAYER_HEIGHT) || (uiBlockFlags & (CAN_I_BLOCK|CAN_I_DOOR)) || (iDistTry > iMaxDist) )
 				goto blocked;
 
 			ptSrc.m_z = z;
@@ -129,7 +129,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 		return true;
 
 	const short iTotalZ = ptSrc.m_z + GetHeightMount(true);
-	ptSrc.m_z = (char)minimum(iTotalZ, UO_SIZE_Z);	//true - substract one from the height because of eyes height
+	ptSrc.m_z = static_cast<char>(minimum(iTotalZ, UO_SIZE_Z));	//true - substract one from the height because of eyes height
 	WARNLOS(("Total Z: %d\n", ptSrc.m_z));
 
 	int dx, dy, dz;
@@ -138,15 +138,15 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 	dz = ptDst.m_z - ptSrc.m_z;
 
     float dist2d, dist3d;
-	dist2d = sqrt((float)(dx*dx + dy*dy));
+	dist2d = sqrt(static_cast<float>(dx * dx + dy * dy));
 	if ( dz )
 		dist3d = sqrt(dist2d * dist2d + dz * dz);
 	else
 		dist3d = dist2d;
 
-	if ( APPROX(dist2d) > (float)iMaxDist )
+	if ( APPROX(dist2d) > static_cast<float>(iMaxDist) )
 	{
-		WARNLOS(("( APPROX(dist2d)(%f) > ((double)iMaxDist)(%f) ) --> NOLOS\n", APPROX(dist2d), (float)iMaxDist));
+		WARNLOS(("( APPROX(dist2d)(%f) > ((double)iMaxDist)(%f) ) --> NOLOS\n", APPROX(dist2d), static_cast<float>(iMaxDist)));
 		return CanSeeLOS_New_Failed(pptBlock, ptNow);
 	}
 
@@ -163,18 +163,18 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 	std::vector<CPointMap> path;
 	while (BETWEENPOINT(nPx, ptDst.m_x, ptSrc.m_x) && BETWEENPOINT(nPy, ptDst.m_y, ptSrc.m_y) && BETWEENPOINT(nPz, ptDst.m_z, ptSrc.m_z))
 	{
-        dx = (int)APPROX(nPx);
-        dy = (int)APPROX(nPy);
-        dz = (int)APPROX(nPz);
+        dx = static_cast<int>(APPROX(nPx));
+        dy = static_cast<int>(APPROX(nPy));
+        dz = static_cast<int>(APPROX(nPz));
         // Add point to vector
         if (!path.empty())
         {
             if (const CPointMap &ptEnd = path.back(); ptEnd.m_x != dx || ptEnd.m_y != dy || ptEnd.m_z != dz)
-                path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
+                path.emplace_back(static_cast<word>(dx), static_cast<word>(dy), static_cast<char>(dz), ptSrc.m_map);
         }
         else
         {
-            path.emplace_back((word)dx, (word)dy, (char)dz, ptSrc.m_map);
+            path.emplace_back(static_cast<word>(dx), static_cast<word>(dy), static_cast<char>(dz), ptSrc.m_map);
         }
         WARNLOS(("PATH X:%d Y:%d Z:%d\n", dx, dy, dz));
         nPx += dFactorX;
@@ -494,12 +494,12 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 
 						if ( ((qwTFlags & (UFLAG1_WALL|UFLAG1_BLOCK|UFLAG2_PLATFORM)) || pItem->Can(CAN_I_BLOCKLOS_HEIGHT)) && !((qwTFlags & UFLAG2_WINDOW) && (flags & LOS_NB_WINDOWS)) )
 						{
-							WARNLOS(("pItem %0x(%0x) %d,%d,%d - %d\n", (dword)pItem->GetUID(), pItem->GetDispID(), pItem->GetUnkPoint().m_x, pItem->GetUnkPoint().m_y, pItem->GetUnkPoint().m_z, Height));
+							WARNLOS(("pItem %0x(%0x) %d,%d,%d - %d\n", static_cast<dword>(pItem->GetUID()), pItem->GetDispID(), pItem->GetUnkPoint().m_x, pItem->GetUnkPoint().m_y, pItem->GetUnkPoint().m_z, Height));
 							min_z = pItem->GetUnkPoint().m_z;
 							max_z = minimum(Height + min_z, UO_SIZE_Z);
 							WARNLOS(("qwTFlags(0%" PRIx64 ")\n", qwTFlags));
 
-							WARNLOS(("pItem %0x(%0x) Z check: %d,%d (Now: %d) (Dest: %d).\n", (dword)pItem->GetUID(), pItem->GetDispID(), min_z, max_z, ptNow.m_z, ptDst.m_z));
+							WARNLOS(("pItem %0x(%0x) Z check: %d,%d (Now: %d) (Dest: %d).\n", static_cast<dword>(pItem->GetUID()), pItem->GetDispID(), min_z, max_z, ptNow.m_z, ptDst.m_z));
 							if ( min_z <= ptNow.m_z && max_z >= ptNow.m_z )
 							{
 								if ( ptNow.m_x != ptDst.m_x || ptNow.m_y != ptDst.m_y || min_z > ptDst.m_z || max_z < ptDst.m_z )
@@ -604,7 +604,7 @@ bool CChar::CanSeeLOS_New( const CPointMap &ptDst, CPointMap *pptBlock, int iMax
 								if ( ((qwTFlags & (UFLAG1_WALL|UFLAG1_BLOCK|UFLAG2_PLATFORM) || pItemDef->Can(CAN_I_BLOCKLOS_HEIGHT))) && !((qwTFlags & UFLAG2_WINDOW) && (flags & LOS_NB_WINDOWS)) )
 								{
 									WARNLOS(("pMultiItem %0x %d,%d,%d - %d\n", pMultiItem->GetDispID(), pMultiItem->m_dx, pMultiItem->m_dy, pMultiItem->m_dz, Height));
-									min_z = (char)(pMultiItem->m_dz) + pItem->GetTopPoint().m_z;
+									min_z = static_cast<char>(pMultiItem->m_dz) + pItem->GetTopPoint().m_z;
 									max_z = minimum(Height + min_z, UO_SIZE_Z);
 									WARNLOS(("qwTFlags(0%" PRIx64 ")\n", qwTFlags));
 
@@ -666,7 +666,7 @@ bool CChar::CanSeeLOS( const CObjBaseTemplate *pObj, const word wFlags, const bo
         if (const auto pChar = dynamic_cast<const CChar *>(pObj) )
 		{
             const short iTotalZ = pt.m_z + pChar->GetHeightMount(true);
-			pt.m_z = (char)minimum(iTotalZ, UO_SIZE_Z);
+			pt.m_z = static_cast<char>minimum(iTotalZ, UO_SIZE_Z);
 		}
 		return CanSeeLOS_New(pt, nullptr, pObj->GetVisualRange(), wFlags, fCombatCheck);
 	}

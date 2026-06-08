@@ -132,7 +132,7 @@ int CSError::GetSystemErrorMessage(const dword dwError, const lptstr lpszError, 
         dwError, LANG_NEUTRAL,
         lpszError, dwErrorBufLength, Arguments);
 
-    if (nChars > (DWORD)0)
+    if (nChars > static_cast<DWORD>(0))
     {     // successful translation -- trim any trailing junk
         DWORD index = nChars - 1;      // index of last character
         while ((lpszError[index] == '\n') || (lpszError[index] == '\r'))

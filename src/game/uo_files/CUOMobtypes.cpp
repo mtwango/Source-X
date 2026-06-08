@@ -18,7 +18,7 @@ void CUOMobTypes::Load()
 
     _vMobTypesEntries.clear();
 
-    if (CSFileText csvMobTypes; g_Install.OpenFile(csvMobTypes, "mobtypes.txt", (word)(OF_READ | OF_TEXT | OF_DEFAULTMODE)))
+    if (CSFileText csvMobTypes; g_Install.OpenFile(csvMobTypes, "mobtypes.txt", static_cast<word>((OF_READ | OF_TEXT | OF_DEFAULTMODE))))
     {
         _vMobTypesEntries.resize(CREID_QTY);
         for (size_t i = 0; i < _vMobTypesEntries.size(); ++i)
@@ -36,7 +36,7 @@ void CUOMobTypes::Load()
             {
                 ++ uiLineCount;
 
-                int iLineLength = (int)strnlen(ptcTemp, Str_TempLength());
+                int iLineLength = static_cast<int>(strnlen(ptcTemp, Str_TempLength()));
                 iLineLength = Str_TrimEndWhitespace(ptcTemp, iLineLength);
 
                 //Empty line or commented

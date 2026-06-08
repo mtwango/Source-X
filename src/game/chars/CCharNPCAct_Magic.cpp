@@ -15,7 +15,7 @@ int CCharNPC::Spells_GetCount()
     ADDTOCALLSTACK("CCharNPC::Spells_GetAll");
     if (m_spells.empty())
         return -1;
-    return (int)m_spells.size();
+    return static_cast<int>(m_spells.size());
 
     // This code was meant to check if found spells does really exist
     /*
@@ -209,7 +209,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
             spell = m_pNPC->Spells_GetAt(iRandSpell);
         else
         {
-            spell = (SPELL_TYPE)pWand->m_itWeapon.m_spell;
+            spell = static_cast<SPELL_TYPE>(pWand->m_itWeapon.m_spell);
             bWandUse = false;
         }
         if (IsTrigUsed(TRIGGER_NPCACTCAST))
@@ -223,8 +223,8 @@ bool CChar::NPC_FightMagery(CChar * pChar)
             case TRIGRET_RET_TRUE: return false;
             default: break;
             }
-            spell = (SPELL_TYPE)pScriptArgs->m_iN1;
-            iHealThreshold = (int)pScriptArgs->m_VarsLocal.GetKeyNum("HealThreshold");
+            spell = static_cast<SPELL_TYPE>(pScriptArgs->m_iN1);
+            iHealThreshold = static_cast<int>(pScriptArgs->m_VarsLocal.GetKeyNum("HealThreshold"));
             if (CObjBase *pNewTarg = pScriptArgs->m_VarObjs.Get(1))
             {
                 pTarg = pNewTarg;
@@ -258,7 +258,7 @@ bool CChar::NPC_FightMagery(CChar * pChar)
     m_Act_p = pTarg->GetTopPoint();
 
     // Calculate the difficulty
-    return Skill_Start((SKILL_TYPE)skill);
+    return Skill_Start(static_cast<SKILL_TYPE>(skill));
 }
 
 // I'm able to use magery
@@ -283,10 +283,10 @@ bool CChar::NPC_FightCast(CObjBase * &pTarg, CObjBase * pSrc, SPELL_TYPE &spell,
         int iSkillTest = 0;
         if (!pSpellDef->GetPrimarySkill(&iSkillTest, nullptr))
             iSkillTest = SKILL_MAGERY;
-        skill = (SKILL_TYPE)iSkillTest;
+        skill = static_cast<SKILL_TYPE>(iSkillTest);
     }
 
-    if (Skill_GetBase((SKILL_TYPE)skill) < iSkillReq)
+    if (Skill_GetBase(static_cast<SKILL_TYPE>(skill)) < iSkillReq)
         return false;
 
     if (!Spell_CanCast(spell, true, pSrc, false))

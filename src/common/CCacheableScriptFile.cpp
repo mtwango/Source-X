@@ -50,7 +50,7 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
         return false;
     }
 
-    _fileDescriptor = (file_descriptor_t)STDFUNC_FILENO(_pStream);
+    _fileDescriptor = reinterpret_cast<file_descriptor_t>(STDFUNC_FILENO(_pStream));
     _fClosed = false;
     _fRealFile = true;  // this is the original CCacheableScriptFile that will be referenced from others
 
@@ -82,9 +82,9 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
             auto fileContentCopy = std::make_unique<char[]>((size_t)iFileLength + 1u);
             fread(fileContentCopy.get(), sizeof(char), (size_t)iFileLength, _pStream);
             */
-            auto fileContentCopy = std::make_unique_for_overwrite<char[]>((size_t)iFileLength + 1u);
-            fread(fileContentCopy.get(), sizeof(char), (size_t)iFileLength, _pStream);
-            fileContentCopy[(size_t)iFileLength] = '\0';
+            auto fileContentCopy = std::make_unique_for_overwrite<char[]>(static_cast<size_t>(iFileLength) + 1u);
+            fread(fileContentCopy.get(), sizeof(char), static_cast<size_t>(iFileLength), _pStream);
+            fileContentCopy[static_cast<size_t>(iFileLength)] = '\0';
             //if (iFileLength > 0) {
             //    fileContentCopy[(size_t)iFileLength] = '\0';
             //}
@@ -120,7 +120,7 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
             const char *fileCursor = fileContentCopy.get();
             size_t uiFileCursorRemainingLegth = iFileLength;
             ssize_t iStrLen = 0;
-            for (;; fileCursor += (size_t)iStrLen, uiFileCursorRemainingLegth -= (size_t)iStrLen)
+            for (;; fileCursor += static_cast<size_t>(iStrLen), uiFileCursorRemainingLegth -= static_cast<size_t>(iStrLen))
             {
                 if (uiFileCursorRemainingLegth == 0)
                     break;
@@ -135,22 +135,22 @@ bool CCacheableScriptFile::_Open(const lpctstr ptcFilename, const uint uiModeFla
                     size_t uiSkip = _SkipOneEndline(str_end);
                     ASSERT(uiSkip > 0);
                     //iStrLen = (ssize_t)std::max((size_t)1, uiSkip);
-                    iStrLen = (ssize_t)uiSkip;
+                    iStrLen = static_cast<ssize_t>(uiSkip);
                     _fileContent->emplace_back();
                     continue;
                 }
 
                 // first line may contain utf marker (byte order mark)
                 if (fFirstLine && iStrLen >= 3 &&
-                    (uchar)(fileCursor[0]) == 0xEF &&
-                    (uchar)(fileCursor[1]) == 0xBB &&
-                    (uchar)(fileCursor[2]) == 0xBF)
+                    static_cast<uchar>(fileCursor[0]) == 0xEF &&
+                    static_cast<uchar>(fileCursor[1]) == 0xBB &&
+                    static_cast<uchar>(fileCursor[2]) == 0xBF)
                 {
                     fUTF = true;
                 }
 
                 const lpctstr str_start = (fUTF ? &fileCursor[3] : fileCursor);
-                size_t len_to_copy = (size_t)iStrLen - (fUTF ? 3 : 0);
+                size_t len_to_copy = static_cast<size_t>(iStrLen) - (fUTF ? 3 : 0);
                 ASSERT(len_to_copy > 0);
 
                 // go past the end of this substring, there should be the delimiter/newline/etc, just skip it.
@@ -231,7 +231,7 @@ bool CCacheableScriptFile::_IsEOF() const
         return CSFileText::_IsEOF();
 
     const size_t uiFileSize = _fileContent->size(); // might be faster than empty() on some implementations
-    return (!uiFileSize || ((uint)_iCurrentLine == uiFileSize) );
+    return (!uiFileSize || (static_cast<uint>(_iCurrentLine) == uiFileSize) );
 }
 bool CCacheableScriptFile::IsEOF() const
 {
@@ -253,7 +253,7 @@ tchar * CCacheableScriptFile::_ReadString(tchar *pBuffer, const int sizemax)
     ASSERT(_fileContent);
 
     size_t uiSize = _fileContent->size(); // might be faster than empty() on some implementations
-    if (!uiSize || ((uint)_iCurrentLine >= uiSize))
+    if (!uiSize || (static_cast<uint>(_iCurrentLine) >= uiSize))
         return nullptr;
 
     const std::string_view cur_line = (*_fileContent)[_iCurrentLine];
@@ -329,7 +329,7 @@ int CCacheableScriptFile::_Seek(const int iOffset, const int iOrigin)
     if (iOrigin != SEEK_SET)
         iLinenum = 0;	//	do not support not SEEK_SET rotation
 
-    if ( _fileContent && ((uint)iLinenum <= _fileContent->size()) )
+    if ( _fileContent && (static_cast<uint>(iLinenum) <= _fileContent->size()) )
     {
         _iCurrentLine = iLinenum;
         return iLinenum;

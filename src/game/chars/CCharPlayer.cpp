@@ -123,7 +123,7 @@ SKILL_TYPE CCharPlayer::Skill_GetLockType(const lpctstr ptcKey ) const
 
 	if ( i >= g_Cfg.m_iMaxSkill )
 		return SKILL_NONE;
-	return (SKILL_TYPE)i;
+	return static_cast<SKILL_TYPE>(i);
 }
 
 SKILLLOCK_TYPE CCharPlayer::Skill_GetLock(const SKILL_TYPE skill ) const
@@ -135,7 +135,7 @@ SKILLLOCK_TYPE CCharPlayer::Skill_GetLock(const SKILL_TYPE skill ) const
 void CCharPlayer::Skill_SetLock(const SKILL_TYPE skill, const SKILLLOCK_TYPE state )
 {
 	ASSERT( skill >= 0 && (static_cast<uint>(skill) < ARRAY_COUNT(m_SkillLock)));
-	m_SkillLock[skill] = (uchar)(state);
+	m_SkillLock[skill] = static_cast<uchar>(state);
 }
 
 // only players can have stat locks.
@@ -158,7 +158,7 @@ STAT_TYPE CCharPlayer::Stat_GetLockType(const lpctstr ptcKey ) const
 
 	if ( i >= STAT_BASE_QTY )
 		return STAT_NONE;
-	return (STAT_TYPE)i;
+	return static_cast<STAT_TYPE>(i);
 }
 
 SKILLLOCK_TYPE CCharPlayer::Stat_GetLock(const STAT_TYPE stat ) const
@@ -170,7 +170,7 @@ SKILLLOCK_TYPE CCharPlayer::Stat_GetLock(const STAT_TYPE stat ) const
 void CCharPlayer::Stat_SetLock(const STAT_TYPE stat, const SKILLLOCK_TYPE state )
 {
 	ASSERT( stat >= 0 && (static_cast<uint>(stat) < ARRAY_COUNT(m_StatLock)));
-	m_StatLock[stat] = (uchar)state;
+	m_StatLock[stat] = static_cast<uchar>(state);
 }
 
 bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
@@ -306,7 +306,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		case CPC_GETHOUSEPOS:
 		{
 			ptcKey += 11;
-			sVal.Format16Val(GetMultiStorage()->GetHousePos((CUID)Exp_GetDWVal(ptcKey)));
+			sVal.Format16Val(GetMultiStorage()->GetHousePos(static_cast<CUID>(Exp_GetDWVal(ptcKey))));
 			return true;
 		}
 		case CPC_MAXSHIPS:
@@ -325,7 +325,7 @@ bool CCharPlayer::r_WriteVal( CChar * pChar, lpctstr ptcKey, CSString & sVal )
 		case CPC_GETSHIPPOS:
 		{
 			ptcKey += 11;
-			sVal.Format16Val(GetMultiStorage()->GetShipPos((CUID)Exp_GetDWVal(ptcKey)));
+			sVal.Format16Val(GetMultiStorage()->GetShipPos(static_cast<CUID>(Exp_GetDWVal(ptcKey))));
 			return true;
 		}
 
@@ -377,9 +377,9 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 			HOUSE_PRIV ePriv = HP_OWNER;
 			if (piCmd[1] > 0 && piCmd[1] < HP_QTY)
 			{
-				ePriv = (HOUSE_PRIV)piCmd[1];
+				ePriv = static_cast<HOUSE_PRIV>(piCmd[1]);
 			}
-			GetMultiStorage()->AddHouse(CUID((dword)piCmd[0]), ePriv);
+			GetMultiStorage()->AddHouse(CUID(static_cast<dword>(piCmd[0])), ePriv);
 			return true;
 		}
 		case CPC_DELHOUSE:
@@ -405,9 +405,9 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 			HOUSE_PRIV ePriv = HP_OWNER;
 			if (piCmd[1] > 0 && piCmd[1] < HP_QTY)
 			{
-				ePriv = (HOUSE_PRIV)piCmd[1];
+				ePriv = static_cast<HOUSE_PRIV>(piCmd[1]);
 			}
-			GetMultiStorage()->AddShip(CUID((dword)piCmd[0]), ePriv);
+			GetMultiStorage()->AddShip(CUID(static_cast<dword>(piCmd[0])), ePriv);
 			return true;
 		}
 		case CPC_DELSHIP:
@@ -443,12 +443,12 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
         	m_EmoteHue = s.GetArgWVal();
         	return true;
 		case CPC_DEATHS:
-			m_wDeaths = (word)(s.GetArgVal());
+			m_wDeaths = static_cast<word>(s.GetArgVal());
 			return true;
 		case CPC_DSPEECH:
 			return( m_Speech.r_LoadVal( s, RES_SPEECH ));
 		case CPC_KILLS:
-			m_wMurders = (word)(s.GetArgVal());
+			m_wMurders = static_cast<word>(s.GetArgVal());
 			pChar->NotoSave_Update();
 			return true;
 		case CPC_KRTOOLBARSTATUS:
@@ -487,7 +487,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 				int bState = s.GetArgVal();
 				if ( (bState < SKILLLOCK_UP) || (bState > SKILLLOCK_LOCK) )
 					return false;
-				Skill_SetLock(skill, (SKILLLOCK_TYPE)bState);
+				Skill_SetLock(skill, static_cast<SKILLLOCK_TYPE>(bState));
 				if ( pChar->IsClientActive() )
 					pChar->GetClientActive()->addSkillWindow(skill);
 			} return true;
@@ -504,7 +504,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 				int bState = s.GetArgVal();
 				if ( (bState < SKILLLOCK_UP) || (bState > SKILLLOCK_LOCK) )
 					return false;
-				Stat_SetLock(stat, (SKILLLOCK_TYPE)bState );
+				Stat_SetLock(stat, static_cast<SKILLLOCK_TYPE>(bState) );
 				if ( pChar->IsClientActive() )
 					pChar->GetClientActive()->addStatusWindow(pChar);
 			} return true;

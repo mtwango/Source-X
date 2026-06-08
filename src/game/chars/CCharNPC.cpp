@@ -121,7 +121,7 @@ bool CCharNPC::r_LoadVal( CChar * pChar, CScript &s )
 			if (count < 1)
 				return false;
 			for (int i = 0; i < count; ++i)
-				Spells_Add((SPELL_TYPE)(ppCmd[i]));
+				Spells_Add(static_cast<SPELL_TYPE>(ppCmd[i]));
 		}
 		break;
 
@@ -250,8 +250,8 @@ bool CCharNPC::IsVendor() const
 
 int CCharNPC::GetNpcAiFlags( const CChar *pChar ) const
 {
-    if (CVarDefCont *pVar = pChar->GetKey("OVERRIDE.NPCAI", true); pVar != nullptr)
-		return (int)(pVar->GetValNum());
+    if (const CVarDefCont *pVar = pChar->GetKey("OVERRIDE.NPCAI", true); pVar != nullptr)
+		return static_cast<int>(pVar->GetValNum());
 	return g_Cfg.m_iNpcAi;
 }
 

@@ -253,14 +253,14 @@ bool CImportFile::ImportSCP( CScript & s, const word wModeFlags )
             ImportFix();
             if (wModeFlags & IMPFLAGS_CHARS)
             {
-                m_pCurObj = CChar::CreateBasic((CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
+                m_pCurObj = CChar::CreateBasic(static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr())));
             }
         }
         else if (s.IsSectionType("WORLDITEM") || s.IsSectionType("WI"))
         {
             if (wModeFlags & IMPFLAGS_ITEMS)
             {
-                m_pCurObj = CItem::CreateTemplate((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
+                m_pCurObj = CItem::CreateTemplate(static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
             }
         }
         else
@@ -392,7 +392,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
 			{
 				if ( m_pCurObj != nullptr )
 					return false;
-				pItem = CItem::CreateTemplate((ITEMID_TYPE)atoi(pArg));
+				pItem = CItem::CreateTemplate(static_cast<ITEMID_TYPE>(atoi(pArg)));
                 if (!pItem)
                 {
                     DEBUG_ERR(("Import: Bad Item '%s'\n", pArg));

@@ -33,8 +33,8 @@ bool CItem::Plant_Use(CChar *pChar)
     auto iFruitID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridFruit.GetResIndex());
     ITEMID_TYPE iFruitIDOverride = ITEMID_NOTHING;
     if (!Can(CAN_I_SCRIPTEDMORE))
-        iFruitIDOverride = (ITEMID_TYPE)m_itCrop.m_ridFruitOverride.GetResIndex();
-    word iAmount = std::max(m_itCrop.m_ridAmount, (word)1);
+        iFruitIDOverride = static_cast<ITEMID_TYPE>(m_itCrop.m_ridFruitOverride.GetResIndex());
+    word iAmount = std::max(m_itCrop.m_ridAmount, static_cast<word>(1));
 
     if (IsTrigUsed(TRIGGER_RESOURCETEST))
     {
@@ -44,9 +44,9 @@ bool CItem::Plant_Use(CChar *pChar)
         if (TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceTest, pScriptArgs, pChar); iRet == TRIGRET_RET_TRUE)
             return true;
 
-        iGrowID = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_iN1));
-        iFruitID = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_iN2));
-        iFruitIDOverride = (ITEMID_TYPE)(ResGetIndex((dword)pScriptArgs->m_iN3));
+        iGrowID = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_iN1)));
+        iFruitID = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_iN2)));
+        iFruitIDOverride = static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(pScriptArgs->m_iN3)));
     }
 
 	if (iGrowID != ITEMID_NOTHING)	// If we set an override, we can reap this at every stage
@@ -72,9 +72,9 @@ bool CItem::Plant_Use(CChar *pChar)
                 CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(iAmount, 0, 0, pItemFruit);
 
-                TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceGather, pScriptArgs, pChar);
+                const TRIGRET_TYPE iRet = OnTrigger(ITRIG_ResourceGather, pScriptArgs, pChar);
 
-                iAmount = (word)((pScriptArgs->m_iN1 > 0) ? pScriptArgs->m_iN1 : 1);
+                iAmount = static_cast<word>((pScriptArgs->m_iN1 > 0) ? pScriptArgs->m_iN1 : 1);
                 if (iRet == TRIGRET_RET_TRUE)
                 {
                     pItemFruit->Delete(true);
@@ -129,9 +129,9 @@ bool CItem::Plant_OnTick()
 		// Some plants generate a fruit on the ground when ripe.
 		ITEMID_TYPE iFruitID = ITEMID_NOTHING;
 		if ( m_itCrop.m_ridFruitOverride.IsValidUID() && !Can(CAN_I_SCRIPTEDMORE))
-			iFruitID = (ITEMID_TYPE)m_itCrop.m_ridFruitOverride.GetResIndex();
+			iFruitID = static_cast<ITEMID_TYPE>(m_itCrop.m_ridFruitOverride.GetResIndex());
 		else
-			iFruitID = (ITEMID_TYPE)pItemDef->m_ttCrops.m_ridFruit.GetResIndex();
+			iFruitID = static_cast<ITEMID_TYPE>(pItemDef->m_ttCrops.m_ridFruit.GetResIndex());
 
 		if (iFruitID != ITEMID_NOTHING)
 		{

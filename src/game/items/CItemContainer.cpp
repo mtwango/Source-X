@@ -268,8 +268,8 @@ void CItemContainer::Trade_UpdateGold( dword platinum, dword gold )
 	// To prevent cheating, check if the char really have these gold/platinum values
     if (const int64 iMaxValue = pChar1->m_virtualGold; gold + (platinum * 1000000000LL) > iMaxValue )
 	{
-		gold = (dword)(iMaxValue % 1000000000);
-		platinum = (dword)(iMaxValue / 1000000000);
+		gold = static_cast<dword>(iMaxValue % 1000000000);
+		platinum = static_cast<dword>(iMaxValue / 1000000000);
 		bUpdateChar1 = true;
 	}
 
@@ -592,10 +592,10 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 
 	if (pContDef->m_ttContainer.m_dwMinXY && pContDef->m_ttContainer.m_dwMaxXY)
 	{
-		const short tmp_MinX = (short)( pContDef->m_ttContainer.m_dwMinXY >> 16 );
-        const short tmp_MinY = (short)( (pContDef->m_ttContainer.m_dwMinXY & 0x0000FFFF) );
-        const short tmp_MaxX = (short)( pContDef->m_ttContainer.m_dwMaxXY >> 16 );
-        const short tmp_MaxY = (short)( (pContDef->m_ttContainer.m_dwMaxXY & 0x0000FFFF) );
+		const short tmp_MinX = static_cast<short>(pContDef->m_ttContainer.m_dwMinXY >> 16);
+        const short tmp_MinY = static_cast<short>((pContDef->m_ttContainer.m_dwMinXY & 0x0000FFFF));
+        const short tmp_MaxX = static_cast<short>(pContDef->m_ttContainer.m_dwMaxXY >> 16);
+        const short tmp_MaxY = static_cast<short>((pContDef->m_ttContainer.m_dwMaxXY & 0x0000FFFF));
 
 	    // Rewrite default size.
 		if (minValX < tmp_MinX)
@@ -699,7 +699,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 				}
 
 				pItemVend->SetPlayerVendorPrice(0);	// unpriced yet.
-				pItemVend->SetContainedLayer((uchar)(pItem->GetAmount()));
+				pItemVend->SetContainedLayer(static_cast<uchar>(pItem->GetAmount()));
 			}
 			break;
 		case IT_GAME_BOARD:
@@ -892,8 +892,8 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 	if ( pCharMsg->IsPriv(PRIV_GM) )	// a gm can doing anything.
 		return true;
 
-	size_t pTagTmp = (size_t)(GetKeyNum("OVERRIDE.MAXITEMS"));
-    if (size_t iMaxItemsCont = pTagTmp ? pTagTmp : g_Cfg.m_iContainerMaxItems; GetContentCount() >= iMaxItemsCont )
+    const size_t pTagTmp = static_cast<size_t>(GetKeyNum("OVERRIDE.MAXITEMS"));
+    if (const size_t iMaxItemsCont = pTagTmp ? pTagTmp : g_Cfg.m_iContainerMaxItems; GetContentCount() >= iMaxItemsCont )
 	{
 		pCharMsg->SysMessageDefault(DEFMSG_CONT_FULL_ITEMS);
 		return false;
@@ -930,8 +930,8 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 			// Too many items or too much weight?
 
 			int iBankIMax = g_Cfg.m_iBankIMax;
-            if ( CVarDefCont *pTagTemp = GetKey("OVERRIDE.MAXITEMS", false) )
-				iBankIMax = (int)(pTagTemp->GetValNum());
+            if (const CVarDefCont *pTagTemp = GetKey("OVERRIDE.MAXITEMS", false) )
+				iBankIMax = static_cast<int>(pTagTemp->GetValNum());
 
 			if ( iBankIMax >= 0 )
 			{
@@ -943,7 +943,7 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 
 				// Check the total number of items in the bankbox and the ev.
 				// container put into it.
-				if ( (ContentCountAll() + iItemsInContainer) > (size_t)iBankIMax )
+				if ( (ContentCountAll() + iItemsInContainer) > static_cast<size_t>(iBankIMax) )
 				{
 					pCharMsg->SysMessageDefault(DEFMSG_BVBOX_FULL_ITEMS);
 					return false;

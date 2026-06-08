@@ -41,7 +41,7 @@ void CEntityProps::UnsubscribeComponentProps(const CComponentProps *pComponent)
     auto it = _lComponentProps.find(compType);
     if (it == _lComponentProps.end())
     {
-        g_Log.EventError("Trying to unsuscribe not suscribed prop component (%d)\n", (int)pComponent->GetType());    // Should never happen?
+        g_Log.EventError("Trying to unsuscribe not suscribed prop component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
         return;
     }
     _lComponentProps.erase(it);  // iterator invalidation!
@@ -91,8 +91,8 @@ bool CEntityProps::CEPLoopLoad(CEPLoopRet_t *pRet, CScript& s, CObjBase* pLinked
         if (CComponentProps* pComponent = val.get())
         {
             const auto [pptcTable, iTableSize] = pComponent->GetPropertyKeysData();
-            localRet.iPropIndex = (CComponentProps::PropertyIndex_t) FindTableSorted(ptcKey, pptcTable, iTableSize - 1);
-            if (localRet.iPropIndex == (CComponentProps::PropertyIndex_t) - 1)
+            localRet.iPropIndex = static_cast<CComponentProps::PropertyIndex_t>(FindTableSorted(ptcKey, pptcTable, iTableSize - 1));
+            if (localRet.iPropIndex == static_cast<CComponentProps::PropertyIndex_t>(-1))
             {
                 // The key doesn't belong to this CComponentProps.
                 continue;
@@ -121,7 +121,7 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
 
     ASSERT(pBaseEntityProps);
     const RESDISPLAY_VERSION iLimitToExpansion = pBaseEntityProps->_iEraLimitProps;
-    CEPLoopRet_t loopRet{ (CComponentProps::PropertyIndex_t) - 1, false, COMP_PROPS_INVALID };
+    CEPLoopRet_t loopRet{ static_cast<CComponentProps::PropertyIndex_t>(-1), false, COMP_PROPS_INVALID };
 
     if (pObjEntityProps == nullptr)    // I'm calling it from a base CEntityProps
     {
@@ -144,7 +144,7 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
         CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
         if (!pComp)
             return true; // The base doesn't have this component, but the obj did -> return true
-        ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
+        ASSERT(loopRet.iPropIndex != static_cast<CComponentProps::PropertyIndex_t>(-1));
         pComp->FindLoadPropVal(s, nullptr, iLimitToExpansion, loopRet.iPropIndex, loopRet.fPropStr);
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
@@ -160,8 +160,8 @@ bool CEntityProps::CEPLoopWrite(CEPLoopRet_t* pRet, const lpctstr ptcKey, CSStri
         if (CComponentProps* pComponent = val.get())
         {
             const auto [pptcTable, iTableSize] = pComponent->GetPropertyKeysData();
-            pRet->iPropIndex = (COMPPROPS_TYPE)FindTableSorted(ptcKey, pptcTable, iTableSize - 1);
-            if (pRet->iPropIndex == (CComponentProps::PropertyIndex_t) - 1)
+            pRet->iPropIndex = static_cast<COMPPROPS_TYPE>(FindTableSorted(ptcKey, pptcTable, iTableSize - 1));
+            if (pRet->iPropIndex == static_cast<CComponentProps::PropertyIndex_t>(-1))
             {
                 // The key doesn't belong to this CComponentProps.
                 continue;
@@ -186,7 +186,7 @@ bool CEntityProps::r_WritePropVal(const lpctstr ptcKey, CSString & sVal, const C
     // return false: invalid property for any of the subscribed components
     // return true: valid property, whether it has a defined value or not
 
-    CEPLoopRet_t loopRet{ (CComponentProps::PropertyIndex_t) - 1, false, COMP_PROPS_INVALID };
+    CEPLoopRet_t loopRet{ static_cast<CComponentProps::PropertyIndex_t>(-1), false, COMP_PROPS_INVALID };
 
     if (pObjEntityProps == nullptr)    // I'm calling it from a base CEntityProps
     {
@@ -212,7 +212,7 @@ bool CEntityProps::r_WritePropVal(const lpctstr ptcKey, CSString & sVal, const C
         const CComponentProps *pComp = pBaseEntityProps->GetComponentProps(loopRet.iCCPType);
         if (!pComp)
             return true; // The base doesn't have this component, but the obj did -> return true
-        ASSERT(loopRet.iPropIndex != (CComponentProps::PropertyIndex_t)-1);
+        ASSERT(loopRet.iPropIndex != static_cast<CComponentProps::PropertyIndex_t>(-1));
         pComp->FindWritePropVal(sVal, loopRet.iPropIndex, loopRet.fPropStr);
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
@@ -268,7 +268,7 @@ void CEntityProps::DumpComponentProps(CTextConsole *pSrc, lpctstr ptcPrefix) con
     CComponentProps::PropertyValNum_t iPropVal;
     for (CComponentProps::PropertyIndex_t iCCP = 0; iCCP < COMP_PROPS_QTY; ++iCCP)
     {
-        const CComponentProps* pCCP = GetComponentProps((COMPPROPS_TYPE)iCCP);
+        const CComponentProps* pCCP = GetComponentProps(static_cast<COMPPROPS_TYPE>(iCCP));
         if (!pCCP)
             continue;
         lpctstr ptcCCPName = pCCP->GetName();

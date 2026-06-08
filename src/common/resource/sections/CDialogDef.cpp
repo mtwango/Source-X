@@ -558,7 +558,7 @@ bool CDialogDef::GumpSetup(const int iPage, CClient * pClient, CObjBase * pObjSr
     m_pObj			= pObjSrc;
     m_iOriginX		= 0;
     m_iOriginY		= 0;
-    m_wPage			= (word)(iPage);
+    m_wPage			= static_cast<word>(iPage);
     m_fNoDispose	= false;
 
     CExpression& expr_parser = CExpression::GetExprParser();
@@ -598,8 +598,8 @@ bool CDialogDef::GumpSetup(const int iPage, CClient * pClient, CObjBase * pObjSr
     expr_parser.ParseScriptText( pszBuf, scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pClient->GetChar() );
 
     Str_ParseCmds( pszBuf, iSizes, std::size(iSizes));
-    m_x	= (int)(iSizes[0]);
-    m_y	= (int)(iSizes[1]);
+    m_x	= static_cast<int>(iSizes[0]);
+    m_y	= static_cast<int>(iSizes[1]);
 
     const auto trigRet = OnTriggerRunVal( s, TRIGRUN_SECTION_TRUE, pScriptArgs, pClient->GetChar() );
     m_sText.shrink_to_fit();

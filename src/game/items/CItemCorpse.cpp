@@ -29,7 +29,7 @@ bool CItemCorpse::IsCorpseResurrectable(const CChar * pCharHealer, const CChar *
 {
 	if (!IsType(IT_CORPSE))
 	{
-		DEBUG_ERR(("Corpse (0%x) doesn't have type T_CORPSE! (it has %d)\n", (dword)GetUID(), GetType()));
+		DEBUG_ERR(("Corpse (0%x) doesn't have type T_CORPSE! (it has %d)\n", static_cast<dword>(GetUID()), GetType()));
 		return false;
 	}
 
@@ -91,7 +91,7 @@ CChar *CItemCorpse::IsCorpseSleeping() const
 	// CItemCorpse
 	if ( !IsType(IT_CORPSE) )
 	{
-		DEBUG_ERR(("Corpse (0%x) doesn't have type T_CORPSE! (it has %d)\n", (dword)GetUID(), GetType()));
+		DEBUG_ERR(("Corpse (0%x) doesn't have type T_CORPSE! (it has %d)\n", static_cast<dword>(GetUID()), GetType()));
 		return nullptr;
 	}
 
@@ -193,7 +193,7 @@ CItemCorpse * CChar::MakeCorpse(const bool fFrontFall )
     pCorpse->m_ModMaxWeight = g_Cfg.Calc_MaxCarryWeight(this); // set corpse maxweight to prevent weird exploits like when someone place many items on an player corpse just to make this player get stuck on resurrect
 
 	if (fFrontFall)
-		pCorpse->m_itCorpse.m_facing_dir = (DIR_TYPE)(m_dirFace|DIR_MASK_RUNNING);
+		pCorpse->m_itCorpse.m_facing_dir = static_cast<DIR_TYPE>(m_dirFace | DIR_MASK_RUNNING);
 
 	int64 iDecayTimer = -1;	// never decay
 	if (IsStatFlag(STATF_DEAD))

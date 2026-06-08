@@ -64,7 +64,7 @@ bool CRegionResourceDef::r_LoadVal( CScript & s )
         case RMC_DEFNAME: // "DEFNAME",
             return SetResourceName( s.GetArgStr());
         case RMC_REAP: // "REAP",
-            m_ReapItem = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+            m_ReapItem = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
             break;
         case RMC_REAPAMOUNT:
             m_vcReapAmount.Load( s.GetArgRaw() );

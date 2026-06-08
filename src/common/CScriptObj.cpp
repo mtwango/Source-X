@@ -258,7 +258,7 @@ bool CScriptObj::r_Call(const size_t uiFunctionIndex, CScriptTriggerArgsPtr cons
             if ( g_profiler.initstate != 0xf1 )	// it is not initalised
             {
                 memset(&g_profiler, 0, sizeof(g_profiler));
-                g_profiler.initstate = (uchar)(0xf1); // ''
+                g_profiler.initstate = static_cast<uchar>(0xf1); // ''
             }
             for ( pFun = g_profiler.FunctionsHead; pFun != nullptr; pFun = pFun->next )
             {
@@ -805,7 +805,7 @@ badcmd:
                 if (lpctstr pszPos = strchr(ptcKey + iPos, ch); !pszPos )
 					sVal.FormatVal( -1 );
 				else
-					sVal.FormatVal((int)( pszPos - ptcKey ) );
+					sVal.FormatVal(static_cast<int>(pszPos - ptcKey) );
 			}
 			return true;
         case SSC_StrSub:
@@ -842,7 +842,7 @@ badcmd:
 				iCnt = iLen - iPos;
 
 			tchar* buf = Str_GetTemp();
-			Str_CopyLimitNull(buf, ppArgs[2] + iPos, (size_t)(iCnt + 1));
+			Str_CopyLimitNull(buf, ppArgs[2] + iPos, static_cast<size_t>(iCnt + 1));
 
 			sVal = buf;
             }
@@ -1652,7 +1652,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerScript( CScript & s, const lpctstr pszTrigName
 		if ( g_profiler.initstate != 0xf1 )	// it is not initalised
 		{
 			memset(&g_profiler, 0, sizeof(g_profiler));
-			g_profiler.initstate = (uchar)(0xf1); // ''
+			g_profiler.initstate = static_cast<uchar>(0xf1); // ''
 		}
 
 		for ( pTrig = g_profiler.TriggersHead; pTrig != nullptr; pTrig = pTrig->next )
@@ -2153,14 +2153,14 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForCharSpecial(CScript& s, const SK_TYPE i
 
             expr_parser.ParseScriptText(s.GetArgRaw(), context, pScriptArgs, pSrc, 0);
 			if (iCmd == SK_FORCHARLAYER)
-                iRet = pCharThis->OnCharTrigForLayerLoop(s, pScriptArgs, pSrc, pResult, (LAYER_TYPE)s.GetArgVal());
+                iRet = pCharThis->OnCharTrigForLayerLoop(s, pScriptArgs, pSrc, pResult, static_cast<LAYER_TYPE>(s.GetArgVal()));
 			else
                 iRet = pCharThis->OnCharTrigForMemTypeLoop(s, pScriptArgs, pSrc, pResult, s.GetArgWVal());
 		}
 		else
 		{
 			g_Log.EventError("FORCHAR[layer/memorytype] called on char 0%" PRIx32 " (%s) without arguments.\n",
-                             (dword)(pCharThis->GetUID()), pCharThis->GetName());
+                             static_cast<dword>(pCharThis->GetUID()), pCharThis->GetName());
             iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
 		}
 	}
@@ -2246,7 +2246,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, const SK_TYPE i
 
     if (!s.HasArgs())
     {
-        g_Log.EventError("FORCONT[id/type] called on container 0%x without arguments.\n", (dword)pObjCont->GetUID());
+        g_Log.EventError("FORCONT[id/type] called on container 0%x without arguments.\n", static_cast<dword>(pObjCont->GetUID()));
         iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
         return iRet;
     }
@@ -2257,7 +2257,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, const SK_TYPE i
     tchar* ppArgs[2];
     if (Str_ParseCmds(ptcKey, ppArgs, std::size(ppArgs), " \t,") < 1)
     {
-        g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect arguments.\n", (dword)pObjCont->GetUID());
+        g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect arguments.\n", static_cast<dword>(pObjCont->GetUID()));
         iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
         return iRet;
     }
@@ -2269,7 +2269,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, const SK_TYPE i
     Str_CopyLimitNull(tsParsedArg0.buffer(), ppArgs[0], tsParsedArg0.capacity());
     if (expr_parser.ParseScriptText(tsParsedArg0.buffer(), context, pScriptArgs, pSrc, 0) <= 0)
     {
-        g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect argument 0.\n", (dword)pObjCont->GetUID());
+        g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect argument 0.\n", static_cast<dword>(pObjCont->GetUID()));
         iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
         return iRet;
     }
@@ -2281,7 +2281,7 @@ TRIGRET_TYPE CScriptObj::OnTriggerLoopForContSpecial(CScript& s, const SK_TYPE i
         Str_CopyLimitNull(tsParsedArg1.buffer(), ppArgs[1], tsParsedArg0.capacity());
         if (expr_parser.ParseScriptText(tsParsedArg1.buffer(), context, pScriptArgs, pSrc, 0) <= 0)
         {
-            g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect argument 1.\n", (dword)pObjCont->GetUID());
+            g_Log.EventError("FORCONT[id/type] called on container 0%x with incorrect argument 1.\n", static_cast<dword>(pObjCont->GetUID()));
             iRet = OnTriggerRun(s, TRIGRUN_SECTION_FALSE, pScriptArgs, pSrc, pResult);
             return iRet;
         }

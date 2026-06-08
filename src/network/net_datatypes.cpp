@@ -43,7 +43,7 @@ static int CvtSystemToUTF16(wchar& wChar, const lpctstr pInp, const int iSizeInB
     // 3 16 1110bbbb 10bbbbbb 10bbbbbb
     // 4 21 11110bbb 10bbbbbb 10bbbbbb 10bbbbbb
 
-    byte ch = (byte)*pInp;
+    byte ch = static_cast<byte>(*pInp);
     ASSERT(ch >= 0x80);	// needs special UTF8 decoding.
 
     int iBytes;
@@ -74,7 +74,7 @@ static int CvtSystemToUTF16(wchar& wChar, const lpctstr pInp, const int iSizeInB
     wchar wCharTmp = ch & ((1 << iStartBits) - 1);
     for (int iInp = 1; iInp < iBytes; iInp++)
     {
-        ch = (byte)pInp[iInp];
+        ch = static_cast<byte>(pInp[iInp]);
         if ((ch & 0xc0) != 0x80)	// bad coding.
             return -1;
         wCharTmp <<= 6;
@@ -162,7 +162,7 @@ int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, const lpctstr pInp, int
 
     if (iSizeInBytes <= -1)
     {
-        iSizeInBytes = (int)strlen(pInp);
+        iSizeInBytes = static_cast<int>(strlen(pInp));
     }
     if (iSizeInBytes <= 0)
     {
@@ -210,7 +210,7 @@ int CvtSystemToNETUTF16(nachar* pOut, int iSizeOutChars, const lpctstr pInp, int
         // Win95 or Linux
         for (int iInp = 0; iInp < iSizeInBytes; )
         {
-            byte ch = (byte)pInp[iInp];
+            const byte ch = static_cast<byte>(pInp[iInp]);
             if (ch == 0)
                 break;
 
@@ -271,7 +271,7 @@ int CvtNETUTF16ToSystem(tchar* pOut, int iSizeOutBytes, const nachar* pInp, int 
 
         // Flip all from network order.
         wchar szBuffer[1024 * 6];
-        for (; iInp < (int)std::size(szBuffer) - 1 && iInp < iSizeInChars && pInp[iInp]; ++iInp)
+        for (; iInp < static_cast<int>(std::size(szBuffer)) - 1 && iInp < iSizeInChars && pInp[iInp]; ++iInp)
         {
             szBuffer[iInp] = pInp[iInp];
         }

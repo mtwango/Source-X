@@ -159,7 +159,7 @@ public:
 
     constexpr RES_TYPE GetResType() const noexcept
     {
-        return (RES_TYPE)(ResGetType(m_dwInternalVal));
+        return static_cast<RES_TYPE>(ResGetType(m_dwInternalVal));
     }
     constexpr uint GetResIndex() const noexcept
     {

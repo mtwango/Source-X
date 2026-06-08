@@ -47,8 +47,8 @@ void CSFileObjContainer::ResizeContainer(const size_t iNewRange )
         return;
     }
 
-    bool bDeleting = ( iNewRange < sFileList.size() );
-    int howMuch = (int)(iNewRange - sFileList.size());
+    const bool bDeleting = iNewRange < sFileList.size();
+    int howMuch = static_cast<int>(iNewRange - sFileList.size());
     if ( howMuch < 0 )
     {
         howMuch = (-howMuch);
@@ -168,7 +168,7 @@ bool CSFileObjContainer::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
     }
     else
     {
-        size_t nNumber = (size_t)( Exp_GetVal(ptcKey) );
+        const size_t nNumber = static_cast<size_t>((Exp_GetVal(ptcKey)));
         SKIP_SEPARATORS(ptcKey);
 
         if ( nNumber >= sFileList.size() )
@@ -347,7 +347,7 @@ bool CSFileObjContainer::r_Verb( CScript & s, CTextConsole * pSrc )
             bool bResetObject = ( index == CFOV_RESETOBJECT );
             if ( s.HasArgs() )
             {
-                size_t nNumber = (size_t)( s.GetArgVal() );
+                const size_t nNumber = static_cast<size_t>(s.GetArgVal());
                 if ( nNumber >= sFileList.size() )
                     return false;
 

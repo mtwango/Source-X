@@ -43,7 +43,7 @@ int CRandGroupDef::CalcTotalWeight()
     size_t iQty = m_Members.size();
     for ( size_t i = 0; i < iQty; ++i )
     {
-        iTotal += (int)(m_Members[i].GetResQty());
+        iTotal += static_cast<int>(m_Members[i].GetResQty());
     }
     return( m_iTotalWeight = iTotal );
 }
@@ -80,7 +80,7 @@ bool CRandGroupDef::r_LoadVal( CScript &s )
             rec.SetResourceID(
                 g_Cfg.ResourceGetID(RES_CHARDEF, ppCmd[0]),
                 ( iArgs > 1 && ppCmd[1][0] ) ? Exp_GetVal(ppCmd[1]) : 1 );
-            m_iTotalWeight += (int)(rec.GetResQty());
+            m_iTotalWeight += static_cast<int>(rec.GetResQty());
             m_Members.emplace_back(rec);
         }
         break;
@@ -228,7 +228,7 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger 
 
         for ( i = 0; iWeight > 0 && i < iCount; ++i )
         {
-            iWeight -= (int)(m_Members[i].GetResQty());
+            iWeight -= static_cast<int>(m_Members[i].GetResQty());
         }
         if ( i >= iCount && iWeight > 0 )
             return sl::scont_bad_index();
@@ -248,7 +248,7 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger 
         {
             if (int rid = pOreDef->m_ReapItem; rid != 0)
             {
-                if (!pCharSrc->Skill_MakeItem((ITEMID_TYPE)(rid), CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT))
+                if (!pCharSrc->Skill_MakeItem(static_cast<ITEMID_TYPE>(rid), CUID(UID_PLAIN_CLEAR), SKTRIG_SELECT))
                     continue;
 
                 if (IsTrigUsed(TRIGGER_RESOURCETEST))
@@ -259,14 +259,14 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger 
             }
         }
         members.emplace_back(i);
-        iTotalWeight += (int)(m_Members[i].GetResQty());
+        iTotalWeight += static_cast<int>(m_Members[i].GetResQty());
     }
     iWeight = g_Rand.GetVal( iTotalWeight ) + 1;
     iCount = members.size();
 
     for ( i = 0; iWeight > 0 && i < iCount; ++i )
     {
-        iWeight -= (int)(m_Members[members[i]].GetResQty());
+        iWeight -= static_cast<int>(m_Members[members[i]].GetResQty());
     }
     if ( i >= iCount && iWeight > 0 )
         return sl::scont_bad_index();

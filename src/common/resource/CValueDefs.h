@@ -39,7 +39,7 @@ struct CValueRangeDef
     */
     int GetRange() const
     {
-        return (int)(m_iHi - m_iLo);
+        return static_cast<int>(m_iHi - m_iLo);
     }
 
     /**

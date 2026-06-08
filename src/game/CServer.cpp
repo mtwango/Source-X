@@ -174,7 +174,7 @@ static void defragSphere(const char *path)
         size_t uiBytesRead = 0, uiTotalMb = 0;
         while ( inf.ReadString(file_buf, sizeof(file_buf)) )
         {
-            dwIdxUID = (dword)strlen(file_buf);
+            dwIdxUID = static_cast<dword>(strlen(file_buf));
             if (dwIdxUID > (std::size(file_buf) - 3))
                 dwIdxUID = std::size(file_buf) - 3;
 
@@ -327,7 +327,7 @@ static void defragSphere(const char *path)
                 }
             }
             //	output the resulting line
-            ouf.Write(file_buf, (int)strlen(file_buf));
+            ouf.Write(file_buf, static_cast<int>(strlen(file_buf)));
         }
         inf.Close();
         ouf.Close();
@@ -413,7 +413,7 @@ bool CServer::SetProcessPriority(const int iPriorityLevel)
         case 1:     dwPri = ABOVE_NORMAL_PRIORITY_CLASS;    break;
         case 2:     dwPri = HIGH_PRIORITY_CLASS;            break;
     }
-    fSuccess = (bool)SetPriorityClass(hCurrentProcess, dwPri);
+    fSuccess = static_cast<bool>(SetPriorityClass(hCurrentProcess, dwPri));
 #else
     int iPri;
     switch (iPriorityLevel)
@@ -593,7 +593,7 @@ ssize_t CServer::PrintPercent(const ssize_t iCount, const ssize_t iTotal ) const
 	if ( iTotal <= 0 )
 		return 100;
 
-	int iPercent = (int)IMulDivLL( iCount, 100, iTotal );
+    const int iPercent = static_cast<int>(IMulDivLL(iCount, 100, iTotal));
 	tchar *pszTemp = Str_GetTemp();
 	snprintf(pszTemp, Str_TempLength(), "%d%%", iPercent);
 	size_t len = strlen(pszTemp);
@@ -1014,7 +1014,7 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
                         pSrc->SysMessagef(
                             "%" PRIuSIZE_T " - Id: %" PRIu64 ", Priority: %d, Name: %s.\n",
                             (iThreads + 1),
-                            (uint64)thrCurrent->getId(),
+                            static_cast<uint64>(thrCurrent->getId()),
                             enum_alias_cast<int>(thrCurrent->getPriority()),
                             thrCurrent->getName()
                             );
@@ -1411,15 +1411,15 @@ void CServer::ProfileDump(const CTextConsole * pSrc, const bool bDump )
 
         if (pSrc != this)
         {
-            pSrc->SysMessagef("Thread %llu, Name=%s\n", (ullong)thrCurrent->getId(), thrCurrent->getName());
+            pSrc->SysMessagef("Thread %llu, Name=%s\n", static_cast<ullong>(thrCurrent->getId()), thrCurrent->getName());
         }
         else
         {
-            g_Log.Event(LOGL_EVENT, "Thread %llu, Name=%s\n", (ullong)thrCurrent->getId(), thrCurrent->getName());
+            g_Log.Event(LOGL_EVENT, "Thread %llu, Name=%s\n", static_cast<ullong>(thrCurrent->getId()), thrCurrent->getName());
         }
 		if (ftDump != nullptr)
 		{
-			ftDump->Printf("Thread %llu, Name=%s\n", (ullong)thrCurrent->getId(), thrCurrent->getName());
+			ftDump->Printf("Thread %llu, Name=%s\n", static_cast<ullong>(thrCurrent->getId()), thrCurrent->getName());
 		}
 
 		for (int i = 0; i < PROFILE_QTY; ++i)
@@ -1469,7 +1469,7 @@ void CServer::ProfileDump(const CTextConsole * pSrc, const bool bDump )
         }
 		else
 		{
-            const long double average = (long double)g_profiler.total / g_profiler.called;
+            const long double average = static_cast<long double>(g_profiler.total) / g_profiler.called;
 
             char tmpstring[255];
             snprintf(tmpstring, sizeof(tmpstring),
@@ -1922,14 +1922,14 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
                 // 1st arg: client version string
                 // 2nd arg (optional): client type (GAMECLIENT_TYPE enum)
 
-                GAMECLIENT_TYPE cliType = (iArgs >= 2) ? (GAMECLIENT_TYPE)atoi(ppArgs[1]) : CLIENTTYPE_2D;
+                GAMECLIENT_TYPE cliType = (iArgs >= 2) ? static_cast<GAMECLIENT_TYPE>(atoi(ppArgs[1])) : CLIENTTYPE_2D;
                 if ((cliType < CLIENTTYPE_2D) || (cliType > CLIENTTYPE_EC))
                 {
                     g_Log.EventError("Invalid client type, defaulting to 2D (Classic Client).\n");
                     cliType = CLIENTTYPE_2D;
                 }
 
-                ENCRYPTION_TYPE encTypeForce = (iArgs >= 3) ? (ENCRYPTION_TYPE)atoi(ppArgs[2]) : ENC_NONE;
+                ENCRYPTION_TYPE encTypeForce = (iArgs >= 3) ? static_cast<ENCRYPTION_TYPE>(atoi(ppArgs[2])) : ENC_NONE;
                 if ((encTypeForce < ENC_NONE) || (encTypeForce >= ENC_QTY))
                 {
                     g_Log.EventError("Invalid encryption type, defaulting to 'autodetect'.\n");
@@ -1973,7 +1973,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 					break;
 				// IMPFLAGS_ITEMS
 				if ( ! g_World.Export( Arg_ppCmd[0], pSrc->GetChar(),
-					(Arg_Qty >= 2) ? (word)atoi(Arg_ppCmd[1]) : (word)IMPFLAGS_ITEMS,
+					(Arg_Qty >= 2) ? static_cast<word>(atoi(Arg_ppCmd[1])) : static_cast<word>(IMPFLAGS_ITEMS),
 					(Arg_Qty >= 3) ? atoi(Arg_ppCmd[2]) : INT16_MAX ))
 				{
                     if (pSrc != this)
@@ -2052,7 +2052,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 				}
 				// IMPFLAGS_ITEMS
                 if (!g_World.Import(Arg_ppCmd[0], pSrc->GetChar(),
-                    (Arg_Qty >= 2) ? (word)(atoi(Arg_ppCmd[1])) : (word)IMPFLAGS_BOTH,
+                    (Arg_Qty >= 2) ? static_cast<word>(atoi(Arg_ppCmd[1])) : static_cast<word>(IMPFLAGS_BOTH),
                     (Arg_Qty >= 3) ? atoi(Arg_ppCmd[2]) : INT16_MAX))
                 {
                     if (pSrc != this)
@@ -2086,7 +2086,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 		case SV_LOG:
 			{
 				lpctstr	pszArgs = s.GetArgStr();
-                dword Args[] = { (dword)CTCOL_DEFAULT, (dword)LOGL_EVENT, (dword)0 };
+                dword Args[] = { static_cast<dword>(CTCOL_DEFAULT), static_cast<dword>(LOGL_EVENT), static_cast<dword>(0) };
                 dword mask = Args[1];
                 if (*pszArgs == '@')
                 {
@@ -2117,16 +2117,16 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
                             break;	// no more args here!
                     }
                     ++pszArgs;
-                    if (Args[0] > (dword)CTCOL_QTY /*|| Args[0] < (dword)0*/)
-                        Args[0] = (dword)CTCOL_DEFAULT;
-                    if (Args[1] > (dword)LOGL_QTY || Args[1] < (dword)1)
-                        Args[1] = (dword)LOGL_EVENT;
-                    if (Args[2] > (dword)LOGM_QTY)
-                        Args[2] = (dword)0;
+                    if (Args[0] > static_cast<dword>(CTCOL_QTY /*|| Args[0] < (dword)0*/) /*|| Args[0] < (dword)0*/)
+                        Args[0] = static_cast<dword>(CTCOL_DEFAULT);
+                    if (Args[1] > static_cast<dword>(LOGL_QTY) || Args[1] < static_cast<dword>(1))
+                        Args[1] = static_cast<dword>(LOGL_EVENT);
+                    if (Args[2] > static_cast<dword>(LOGM_QTY))
+                        Args[2] = static_cast<dword>(0);
                     mask = Args[1] | Args[2];
                 }
 log_cont:
-                g_Log.EventCustom((ConsoleTextColor)Args[0], mask, "%s\n", pszArgs);
+                g_Log.EventCustom(static_cast<ConsoleTextColor>(Args[0]), mask, "%s\n", pszArgs);
 			}
 			break;
 
@@ -2281,9 +2281,9 @@ log_cont:
 
 	EXC_DEBUG_START;
 	EXC_ADD_SCRIPTSRC;
-	g_Log.EventDebug("source '%s' char '%s' uid '0%x'\n", (pSrc && pSrc->GetName()) ? pSrc->GetName() : "",
+	g_Log.EventDebug("source '%s' char '%s' uid '0%x'\n", pSrc && pSrc->GetName() ? pSrc->GetName() : "",
 		(pSrc && pSrc->GetChar()) ? pSrc->GetChar()->GetName() : "",
-		(pSrc && pSrc->GetChar()) ? (dword)pSrc->GetChar()->GetUID() : 0 );
+		(pSrc && pSrc->GetChar()) ? static_cast<dword>(pSrc->GetChar()->GetUID()) : 0 );
 	EXC_DEBUG_END;
 	return false;
 }
@@ -2385,7 +2385,7 @@ bool CServer::CommandLinePostLoad(const int argc, tchar * argv[] )
 		    case 'I':
 		        continue;
 			case 'P':
-				m_ip.SetPort((word)(atoi(pArg + 1)));
+				m_ip.SetPort(static_cast<word>(atoi(pArg + 1)));
 				continue;
 			case 'N':
 				// Set the system name.

@@ -249,8 +249,8 @@ void CChar::NPC_Act_Fight()
             break;
         }
 
-        iDist = (int)(pScriptArgs->m_iN1);
-        iMotivation = (int)(pScriptArgs->m_iN2);
+        iDist = static_cast<int>(pScriptArgs->m_iN1);
+        iMotivation = static_cast<int>(pScriptArgs->m_iN2);
     }
 
     if (!IsStatFlag(STATF_PET))
@@ -358,7 +358,7 @@ void CChar::NPC_Act_Fight()
         NPC_LookAround();
         if (!_IsTimerSet())
         {
-            DEBUG_MSG(("%s [0x%04x] found nothing to do in the fight routines.\n", GetName(), (dword)GetUID()));
+            DEBUG_MSG(("%s [0x%04x] found nothing to do in the fight routines.\n", GetName(), static_cast<dword>(GetUID())));
             _SetTimeoutS(1);
         }
     }

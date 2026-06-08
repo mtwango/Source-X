@@ -131,9 +131,9 @@ word CItemBase::GetMaxAmount()
 		return 0;
 
     if (int64 iMax = GetDefNum("MaxAmount"))
-		return (word)minimum(iMax, UINT16_MAX);
+		return static_cast<word>(minimum(iMax, UINT16_MAX));
 
-    return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
+    return static_cast<word>(minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX));
 }
 
 bool CItemBase::SetMaxAmount(const word amount)
@@ -415,7 +415,7 @@ bool CItemBase::IsTypeEquippable(const IT_TYPE type, const LAYER_TYPE layer) noe
 
 bool CItemBase::IsTypeEquippable() const noexcept
 {
-	return IsTypeEquippable(m_type, (LAYER_TYPE)m_layer);
+	return IsTypeEquippable(m_type, static_cast<LAYER_TYPE>(m_layer));
 }
 
 bool CItemBase::IsID_Multi(const ITEMID_TYPE id ) noexcept // static
@@ -554,7 +554,7 @@ bool CItemBase::IsID_Chair(const ITEMID_TYPE id ) noexcept // static
 	// IT_CHAIR
 
 	// todo: consider enum values for these chairs
-	switch ((word)id)
+	switch (static_cast<word>(id))
 	{
 		case 0x0459: // 'marble bench'
 		case 0x045a: // 'marble bench'
@@ -718,17 +718,17 @@ void CItemBase::GetItemSpecificFlags( const CUOItemTypeRec_HS & tiledata, uint64
 	ADDTOCALLSTACK("CItemBase::GetItemSpecificFlags");
 	if ( type == IT_DOOR )
 	{
-        *uiBlockFlags &= ~ (uint64)CAN_I_BLOCK;
+        *uiBlockFlags &= ~ static_cast<uint64>(CAN_I_BLOCK);
 		if ( IsID_DoorOpen(id))
-            *uiBlockFlags &= ~ (uint64)CAN_I_DOOR;
+            *uiBlockFlags &= ~ static_cast<uint64>(CAN_I_DOOR);
 		else
             *uiBlockFlags |= CAN_I_DOOR;
 	}
 
-	if ( tiledata.m_flags & (uint64)UFLAG3_LIGHT )	// this may actually be a moon gate or fire ?
+	if ( tiledata.m_flags & static_cast<uint64>(UFLAG3_LIGHT) )	// this may actually be a moon gate or fire ?
         *uiBlockFlags |= CAN_I_LIGHT;	// normally of type IT_LIGHT_LIT;
 
-	if ( (tiledata.m_flags & (uint64)UFLAG2_STACKABLE) || type == IT_REAGENT || id == ITEMID_EMPTY_BOTTLE )
+	if ( (tiledata.m_flags & static_cast<uint64>(UFLAG2_STACKABLE)) || type == IT_REAGENT || id == ITEMID_EMPTY_BOTTLE )
         *uiBlockFlags |= CAN_I_PILE;
 }
 
@@ -961,11 +961,11 @@ int CItemBase::CalculateMakeValue( int iQualityLevel ) const
 		if ( rid.GetResType() != RES_ITEMDEF )
 			continue;
 
-		CItemBase * pItemDef = FindItemBase( (ITEMID_TYPE)rid.GetResIndex() );
+		CItemBase * pItemDef = FindItemBase( static_cast<ITEMID_TYPE>(rid.GetResIndex()) );
 		if ( pItemDef == nullptr )
 			continue;
 
-		lValue += pItemDef->GetMakeValue( iQualityLevel ) * (int)(m_BaseResources[i].GetResQty());
+		lValue += pItemDef->GetMakeValue( iQualityLevel ) * static_cast<int>(m_BaseResources[i].GetResQty());
 	}
 
 	// add some value based on the skill required to create it.
@@ -974,13 +974,13 @@ int CItemBase::CalculateMakeValue( int iQualityLevel ) const
 		const CResourceID rid = m_SkillMake[i].GetResourceID();
 		if ( rid.GetResType() != RES_SKILL )
 			continue;
-		const CSkillDef* pSkillDef = g_Cfg.GetSkillDef((SKILL_TYPE)(rid.GetResIndex()));
+		const CSkillDef* pSkillDef = g_Cfg.GetSkillDef(static_cast<SKILL_TYPE>(rid.GetResIndex()));
 		if ( pSkillDef == nullptr )
 			continue;
 
 		// this is the normal skill required.
 		// if iQuality is much less than iSkillNeed then something is wrong.
-        if (int iSkillNeed = (int)(m_SkillMake[i].GetResQty()); iQualityLevel < iSkillNeed )
+        if (int iSkillNeed = static_cast<int>(m_SkillMake[i].GetResQty()); iQualityLevel < iSkillNeed )
 			iQualityLevel = iSkillNeed;
 
 		lValue += pSkillDef->m_Values.GetLinear( iQualityLevel );
@@ -1001,20 +1001,20 @@ word CItemBase::GetWeight() const noexcept
 byte CItemBase::GetSpeed() const
 {
     if (const CVarDefCont *pVarDef = m_TagDefs.GetKey("OVERRIDE.SPEED"))
-		return (byte)pVarDef->GetValNum();
+		return static_cast<byte>(pVarDef->GetValNum());
 	return m_speed;
 }
 
 byte CItemBase::GetRangeL() const noexcept
 {
 	const auto pCCPItemWeapon = GetComponentProps<CCPropsItemWeapon>();
-    return (byte)pCCPItemWeapon->GetPropertyNum(PROPIWEAP_RANGEL);
+    return static_cast<byte>(pCCPItemWeapon->GetPropertyNum(PROPIWEAP_RANGEL));
 }
 
 byte CItemBase::GetRangeH() const noexcept
 {
     const auto pCCPItemWeapon = GetComponentProps<CCPropsItemWeapon>();
-    return (byte)pCCPItemWeapon->GetPropertyNum(PROPIWEAP_RANGEH);
+    return static_cast<byte>(pCCPItemWeapon->GetPropertyNum(PROPIWEAP_RANGEH));
 }
 
 int CItemBase::GetMakeValue( int iQualityLevel )
@@ -1196,7 +1196,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 					if ( i > 0 )
 						iLen += Str_CopyLimitNull( pszTemp + iLen, ",", SCRIPT_MAX_LINE_LEN - iLen);
 
-					iLen += snprintf(pszTemp + iLen, SCRIPT_MAX_LINE_LEN - iLen, "0%x", (uint)m_flip_id[i]);
+					iLen += snprintf(pszTemp + iLen, SCRIPT_MAX_LINE_LEN - iLen, "0%x", static_cast<uint>(m_flip_id[i]));
 				}
 				sVal = pszTemp;
 			}
@@ -1242,7 +1242,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 			break;
 		case IBC_SKILL:		// Skill to use.
 			{
-				if ( m_iSkill > SKILL_NONE && m_iSkill < (SKILL_TYPE)(g_Cfg.m_iMaxSkill) )
+				if ( m_iSkill > SKILL_NONE && m_iSkill < static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill) )
 				{
 					sVal.FormatVal(m_iSkill);
 					break;
@@ -1330,7 +1330,7 @@ bool CItemBase::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc
 			}
 			break;
 		case IBC_RESDISPDNID:
-			sVal = g_Cfg.ResourceGetName( CResourceID(RES_TYPEDEF, (int)GetResDispDnId()) );
+			sVal = g_Cfg.ResourceGetName( CResourceID(RES_TYPEDEF, static_cast<int>(GetResDispDnId())) );
 			break;
 		case IBC_RESMAKE:
 			// Print the resources need to make in nice format.
@@ -1493,20 +1493,20 @@ bool CItemBase::r_LoadVal( CScript &s )
 
 				if (!strnicmp(ptcKey, "TILES", 5))
 				{
-					pItemMulti->_shipSpeed.tiles = (uchar)(s.GetArgVal());
+					pItemMulti->_shipSpeed.tiles = static_cast<uchar>(s.GetArgVal());
 					return true;
 				}
                 if (!strnicmp(ptcKey, "PERIOD", 6))
                 {
-                    pItemMulti->_shipSpeed.tiles = (uchar)(s.GetArgVal());
+                    pItemMulti->_shipSpeed.tiles = static_cast<uchar>(s.GetArgVal());
                     return true;
                 }
 
                 int64 piVal[2];
                 if (size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
 				{
-					pItemMulti->_shipSpeed.period = (uchar)(piVal[0]);
-					pItemMulti->_shipSpeed.tiles = (uchar)(piVal[1]);
+					pItemMulti->_shipSpeed.period = static_cast<uchar>(piVal[0]);
+					pItemMulti->_shipSpeed.tiles = static_cast<uchar>(piVal[1]);
 					return true;
 				}
                 return false;
@@ -1703,7 +1703,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			break;
 
 		case IBC_RESDISPDNID:
-			SetResDispDnId((word)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
+			SetResDispDnId(static_cast<word>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
 			break;
 
 		case IBC_SPEED:
@@ -1749,7 +1749,7 @@ bool CItemBase::r_LoadVal( CScript &s )
 			}
 			break;
 		case IBC_TYPE:
-			SetType((IT_TYPE)(g_Cfg.ResourceGetIndexType( RES_TYPEDEF, s.GetArgStr())));
+			SetType(static_cast<IT_TYPE>(g_Cfg.ResourceGetIndexType(RES_TYPEDEF, s.GetArgStr())));
 			if ( m_type == IT_CONTAINER_LOCKED )
 			{
 				// At this level it just means to add a key for it.
@@ -1935,7 +1935,7 @@ void CItemBaseMulti::SetMultiRegion( tchar * pArgs )
     if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return;
 	m_Components.clear();	// might be after a resync
-	m_rect.SetRect( (int)(piArgs[0]), (int)(piArgs[1]), (int)(piArgs[2]+1), (int)(piArgs[3]+1), (int)(piArgs[4]) );
+	m_rect.SetRect( static_cast<int>(piArgs[0]), static_cast<int>(piArgs[1]), static_cast<int>(piArgs[2] + 1), static_cast<int>(piArgs[3] + 1), static_cast<int>(piArgs[4]) );
 }
 
 bool CItemBaseMulti::AddComponent( tchar * pArgs )
@@ -1944,7 +1944,7 @@ bool CItemBaseMulti::AddComponent( tchar * pArgs )
 	int64 piArgs[4];
     if (size_t iQty = Str_ParseCmds(pArgs, piArgs, std::size(piArgs)); iQty <= 1 )
 		return false;
-	return AddComponent((ITEMID_TYPE)(ResGetIndex((dword)piArgs[0])), (short)piArgs[1], (short)piArgs[2], (char)piArgs[3] );
+	return AddComponent(static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(piArgs[0]))), static_cast<short>(piArgs[1]), static_cast<short>(piArgs[2]), static_cast<char>(piArgs[3]) );
 }
 
 int CItemBaseMulti::GetDistanceMax() const
@@ -2054,9 +2054,9 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
             if (size_t iQty = Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs)); iQty < 1)
 				return false;
 
-			m_Offset.m_dx = (short)(ppArgs[0]);
-			m_Offset.m_dy = (short)(ppArgs[1]);
-			m_Offset.m_dz = (char)(ppArgs[2]);
+			m_Offset.m_dx = static_cast<short>(ppArgs[0]);
+			m_Offset.m_dy = static_cast<short>(ppArgs[1]);
+			m_Offset.m_dz = static_cast<char>(ppArgs[2]);
 		} break;
         case MLC_MULTIREGION:
             MakeMultiRegion(this, s);
@@ -2075,10 +2075,10 @@ bool CItemBaseMulti::r_LoadVal(CScript &s)
             if (iQty < 1)
                 return false;
 
-            _shipSpeed.period = (uchar)(ppArgs[0]);
+            _shipSpeed.period = static_cast<uchar>(ppArgs[0]);
 
             if (iQty >= 2)
-                _shipSpeed.tiles = (uchar)(ppArgs[1]);
+                _shipSpeed.tiles = static_cast<uchar>(ppArgs[1]);
         }
         break;
         case MLC_TSPEECH:
@@ -2191,11 +2191,11 @@ bool CItemBaseMulti::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				const llong iIndex = Exp_GetLLVal(ptcKey);
 				if (iIndex < 0)
 					return false;
-                if ((size_t)iIndex >= m_Components.size())
+                if (static_cast<size_t>(iIndex) >= m_Components.size())
                     return false;
 
                 SKIP_SEPARATORS(ptcKey);
-                const auto &[m_id, m_dx, m_dy, m_dz] = m_Components[(size_t)iIndex];
+                const auto &[m_id, m_dx, m_dy, m_dz] = m_Components[static_cast<size_t>(iIndex)];
 
                 if (!strnicmp(ptcKey, "ID", 2)) sVal.FormatVal(m_id);
                 else if (!strnicmp(ptcKey, "DX", 2)) sVal.FormatVal(m_dx);
@@ -2304,7 +2304,7 @@ CItemBase * CItemBase::FindItemBase(const ITEMID_TYPE id ) // static
 	{
 		if (s.IsKey("DUPEITEM"))
 		{
-			return MakeDupeReplacement(pBase, (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
+			return MakeDupeReplacement(pBase, static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
 		}
         if (s.IsKey("MULTIREGION"))
         {

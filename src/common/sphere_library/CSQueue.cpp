@@ -28,7 +28,7 @@ byte * CSQueueBytes::AddNewDataLock(const size_t iLen )
 		// re-alloc a bigger buffer. as needed.
 
 		ASSERT(m_iDataQty<=m_Mem.GetDataLength());
-		m_Mem.Resize( ( iLenNew + 0x1000u ) & (size_t)~0xFFF );
+		m_Mem.Resize( ( iLenNew + 0x1000u ) & static_cast<size_t>(~0xFFF) );
 	}
 
 	return ( m_Mem.GetData() + m_iDataQty );

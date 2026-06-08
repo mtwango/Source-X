@@ -34,9 +34,9 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
     pScriptArgs->m_iN2 = fIgnore;
     if (IsTrigUsed(TRIGGER_COMBATADD))
     {
-        if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatAdd, pScriptArgs, pChar); tRet == TRIGRET_RET_TRUE)
+        if (const TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatAdd, pScriptArgs, pChar); tRet == TRIGRET_RET_TRUE)
             return false;
-        iThreat = (int)pScriptArgs->m_iN1;
+        iThreat = static_cast<int>(pScriptArgs->m_iN1);
         fIgnore = (pScriptArgs->m_iN2 != 0);
     }
 
@@ -62,7 +62,7 @@ bool CChar::Attacker_Add(CChar * pChar, int iThreat)
 	       	if (m_EmoteHueOverride != 0) //Set EMOTECOLOROVERRIDE to ATTACKERS
        			emoteHue = m_EmoteHueOverride;
             else
-                emoteHue = (HUE_TYPE)(g_ExprGlobals.mtEngineLockedReader()->m_VarDefs.GetKeyNum("EMOTE_DEF_COLOR"));
+                emoteHue = static_cast<HUE_TYPE>(g_ExprGlobals.mtEngineLockedReader()->m_VarDefs.GetKeyNum("EMOTE_DEF_COLOR"));
 	        snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_COMBAT_ATTACKO), GetName(), pChar->GetName());
     	    UpdateObjMessage(z, nullptr, pClient, emoteHue, TALKMODE_EMOTE);
 		}
@@ -83,9 +83,9 @@ int CChar::Attacker_GetDam(const int attackerIndex) const
     ADDTOCALLSTACK("CChar::Attacker_GetDam");
     if (m_lastAttackers.empty())
         return -1;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return -1;
-    const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+    const LastAttackers & refAttacker = m_lastAttackers[static_cast<size_t>(attackerIndex)];
     return refAttacker.amountDone;
 }
 
@@ -95,9 +95,9 @@ int64 CChar::Attacker_GetElapsed(const int attackerIndex) const
     ADDTOCALLSTACK("CChar::Attacker_GetElapsed");
     if (m_lastAttackers.empty())
         return -1;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return -1;
-    const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+    const LastAttackers & refAttacker = m_lastAttackers[static_cast<size_t>(attackerIndex)];
     return refAttacker.elapsed;
 }
 
@@ -107,9 +107,9 @@ int CChar::Attacker_GetThreat(const int attackerIndex) const
     ADDTOCALLSTACK("CChar::Attacker_GetThreat");
     if (m_lastAttackers.empty())
         return -1;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return -1;
-    const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+    const LastAttackers & refAttacker = m_lastAttackers[static_cast<size_t>(attackerIndex)];
     return (refAttacker.threat > 0) ? refAttacker.threat : 0;
 }
 
@@ -160,7 +160,7 @@ void CChar::Attacker_SetElapsed(const int attackerIndex, const int64 value)
     ADDTOCALLSTACK("CChar::Attacker_SetElapsed(idx)");
     if (m_lastAttackers.empty())
         return;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return;
     LastAttackers & refAttacker = m_lastAttackers[attackerIndex];
     refAttacker.elapsed = value;
@@ -179,7 +179,7 @@ void CChar::Attacker_SetDam(const int attackerIndex, const int value)
     ADDTOCALLSTACK("CChar::Attacker_SetDam(idx)");
     if (m_lastAttackers.empty())
         return;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return;
     LastAttackers & refAttacker = m_lastAttackers[attackerIndex];
     refAttacker.amountDone = value;
@@ -200,7 +200,7 @@ void CChar::Attacker_SetThreat(const int attackerIndex, const int value)
         return;
     if (m_lastAttackers.empty())
         return;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return;
     LastAttackers & refAttacker = m_lastAttackers[attackerIndex];
     refAttacker.threat = value;
@@ -219,7 +219,7 @@ void CChar::Attacker_SetIgnore(int attackerIndex, const bool fIgnore)
     ADDTOCALLSTACK("CChar::Attacker_SetIgnore(idx)");
     if (m_lastAttackers.empty())
         return;
-    if (m_lastAttackers.size() <= (size_t)attackerIndex)
+    if (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex))
         return;
     LastAttackers & refAttacker = m_lastAttackers[attackerIndex];
     refAttacker.ignore = fIgnore;
@@ -238,9 +238,9 @@ bool CChar::Attacker_GetIgnore(int attackerIndex) const
     ADDTOCALLSTACK("CChar::Attacker_GetIgnore(idx)");
     if (m_lastAttackers.empty())
         return false;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return false;
-    const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+    const LastAttackers & refAttacker = m_lastAttackers[static_cast<size_t>(attackerIndex)];
     return (refAttacker.ignore != 0);
 }
 
@@ -300,9 +300,9 @@ CChar * CChar::Attacker_GetUID(const int attackerIndex) const
     ADDTOCALLSTACK("CChar::Attacker_GetUID");
     if (m_lastAttackers.empty())
         return nullptr;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return nullptr;
-    const LastAttackers & refAttacker = m_lastAttackers[(size_t)attackerIndex];
+    const LastAttackers & refAttacker = m_lastAttackers[static_cast<size_t>(attackerIndex)];
     CChar * pChar = CUID::CharFindFromUID(refAttacker.charUID);
     return pChar;
 }
@@ -319,10 +319,10 @@ bool CChar::Attacker_Delete(std::vector<LastAttackers>::iterator &itAttacker, co
     {
         if (IsTrigUsed(TRIGGER_COMBATDELETE))
         {
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = fForced;
-            pScriptArgs->m_iN2 = (int)type;
-            if (TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatDelete, pScriptArgs, pChar); (tRet == TRIGRET_RET_TRUE) && !fForced)
+            pScriptArgs->m_iN2 = static_cast<int>(type);
+            if (const TRIGRET_TYPE tRet = OnTrigger(CTRIG_CombatDelete, pScriptArgs, pChar); (tRet == TRIGRET_RET_TRUE) && !fForced)
                 return false;
         }
     }
@@ -348,7 +348,7 @@ bool CChar::Attacker_Delete(const int attackerIndex, const bool fForced, const A
     ADDTOCALLSTACK("CChar::Attacker_Delete(size_t)");
     if (m_lastAttackers.empty())
         return false;
-    if ((attackerIndex < 0) || (m_lastAttackers.size() <= (size_t)attackerIndex))
+    if ((attackerIndex < 0) || (m_lastAttackers.size() <= static_cast<size_t>(attackerIndex)))
         return false;
 
     auto it = m_lastAttackers.begin() + attackerIndex;
@@ -388,7 +388,7 @@ void CChar::Attacker_CheckTimeout()
     if (!m_lastAttackers.empty())
     {
         // do not iterate with an iterator here, since Attacker_Delete can invalidate both current and end iterators!
-        for (int count = 0; count < (int)m_lastAttackers.size(); )
+        for (int count = 0; count < static_cast<int>(m_lastAttackers.size()); )
         {
             if (LastAttackers &refAttacker = m_lastAttackers[count]; CUID::CharFindFromUID(refAttacker.charUID))
             {

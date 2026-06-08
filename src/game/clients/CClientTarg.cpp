@@ -44,14 +44,14 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 	{
         if (const CItem *pItem = static_cast<CItem *>(pObj); pItem->GetAmount() > 1 )
 			snprintf(pszLogMsg, Str_TempLength(), "'%s' commands uid=0%x (%s) [amount=%u] to '%s'",
-                     GetName(), (dword)(pObj->GetUID()), pObj->GetName(), pItem->GetAmount(), static_cast<lpctstr>(m_Targ_Text));
+                     GetName(), static_cast<dword>(pObj->GetUID()), pObj->GetName(), pItem->GetAmount(), static_cast<lpctstr>(m_Targ_Text));
 		else
 			snprintf(pszLogMsg, Str_TempLength(), "'%s' commands uid=0%x (%s) to '%s'", GetName(),
-                     (dword)(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
+                     static_cast<dword>(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
 	}
 	else
 		snprintf(pszLogMsg, Str_TempLength(), "'%s' commands uid=0%x (%s) to '%s'", GetName(),
-                 (dword)(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
+                 static_cast<dword>(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
 
 	// Check priv level for the new verb.
 	if ( ! g_Cfg.CanUsePrivVerb( pObj, m_Targ_Text, this ))
@@ -317,11 +317,11 @@ bool CClient::OnTarg_UnExtract( CObjBase * pObj, const CPointMap & pt )
 		int64 piCmd[4];		// Maximum parameters in one line
 		Str_ParseCmds( s.GetArgStr(), piCmd, std::size(piCmd));
 
-		CItem * pItem = CItem::CreateTemplate((ITEMID_TYPE)(atoi(s.GetKey())), nullptr, m_pChar);
+		CItem * pItem = CItem::CreateTemplate(static_cast<ITEMID_TYPE>(atoi(s.GetKey())), nullptr, m_pChar);
 		if ( pItem == nullptr )
 			return false;
 
-		CPointMap ptOffset( (word)(piCmd[0]), (word)(piCmd[1]), (char)(piCmd[2]) );
+		CPointMap ptOffset( static_cast<word>(piCmd[0]), static_cast<word>(piCmd[1]), static_cast<char>(piCmd[2]) );
 		ptOffset += pt;
 		ptOffset.m_map = pt.m_map;
 		pItem->MoveToUpdate( ptOffset );
@@ -370,7 +370,7 @@ bool CClient::OnTarg_Item_Add(const CObjBase * pObj, CPointMap & pt )
 	if ( pObj && pObj->IsItemInContainer() )
 		return false;
 
-	CItem *pItem = CItem::CreateTemplate((ITEMID_TYPE)m_tmAdd.m_id, nullptr, m_pChar);
+	CItem *pItem = CItem::CreateTemplate(static_cast<ITEMID_TYPE>(m_tmAdd.m_id), nullptr, m_pChar);
 	if ( !pItem )
 		return false;
 
@@ -470,7 +470,7 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 	{
 		for ( int my = rect.m_top; my <= rect.m_bottom; my++)
 		{
-			CPointMap ptCur((word)(mx), (word)(my), 0, (uchar)(rect.m_map));
+			CPointMap ptCur(static_cast<word>(mx), static_cast<word>(my), 0, static_cast<uchar>(rect.m_map));
 			const CServerMapBlock * pBlock = CWorldMap::GetMapBlock( ptCur );
 			if ( pBlock == nullptr )
 				continue;
@@ -619,7 +619,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 			int64 piArgs[3];		// Maximum parameters in one line
 			Str_ParseCmds( szTmp, piArgs, std::size(piArgs));
 
-			CPointMap ptNudge((word)(piArgs[0]),(word)(piArgs[1]),(char)(piArgs[2]) );
+			CPointMap ptNudge(static_cast<word>(piArgs[0]), static_cast<word>(piArgs[1]), static_cast<char>(piArgs[2]) );
 
 			auto Area = CWorldSearchHolder::GetInstance( ptCtr, iRadius );
 			Area->SetAllShow( IsPriv( PRIV_ALLSHOW ));
@@ -720,7 +720,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 			int64 piArgs[16];		// Maximum parameters in one line
 			int iArgQty = Str_ParseCmds( szTmp, piArgs, std::size(piArgs));
 
-			char z = (char)(piArgs[0]);	// z height is the first arg.
+			char z = static_cast<char>(piArgs[0]);	// z height is the first arg.
 			int iArg = 0;
 			for ( int mx = rect.m_left; mx <= rect.m_right; mx++)
 			{
@@ -728,11 +728,11 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 				{
 					if ( ++iArg >= iArgQty )
 						iArg = 1;
-                    CItem *pItem = CItem::CreateTemplate((ITEMID_TYPE)(ResGetIndex((dword)piArgs[iArg])), nullptr, m_pChar);
+                    CItem *pItem = CItem::CreateTemplate(static_cast<ITEMID_TYPE>(ResGetIndex(static_cast<dword>(piArgs[iArg]))), nullptr, m_pChar);
                     if (!pItem)
                         continue;
 					pItem->SetAttr( ATTR_MOVE_NEVER );
-					CPointMap ptCur((word)mx, (word)my, z, pt.m_map);
+					CPointMap ptCur(static_cast<word>(mx), static_cast<word>(my), z, pt.m_map);
 					pItem->MoveToUpdate( ptCur );
 					++iCount;
 				}
@@ -941,7 +941,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 	int iIntEntry = (iIntVal-1) / 10;
 	if ( iIntEntry < 0 )
 		iIntEntry = 0;
-	if ( (uint)iIntEntry >= std::size(sm_szIntDesc))
+	if ( static_cast<uint>(iIntEntry) >= std::size(sm_szIntDesc))
 		iIntEntry = std::size(sm_szIntDesc) - 1;
 
 	SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_RESULT ), pChar->GetName(), sm_szIntDesc[iIntEntry]);
@@ -975,7 +975,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		int iMagicEntry = iMagicSkill / 200;
 		if ( iMagicEntry < 0 )
 			iMagicEntry = 0;
-		if ( (uint)iMagicEntry >= std::size(sm_szMagicDesc))
+		if ( static_cast<uint>(iMagicEntry) >= std::size(sm_szMagicDesc))
 			iMagicEntry = std::size(sm_szMagicDesc) - 1;
 
 		int iManaEntry = 0;
@@ -984,7 +984,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 
 		if ( iManaEntry < 0 )
 			iManaEntry = 0;
-		if ( (uint)iManaEntry >= std::size(sm_szManaDesc))
+		if ( static_cast<uint>(iManaEntry) >= std::size(sm_szManaDesc))
 			iManaEntry = std::size(sm_szManaDesc) - 1;
 
 		SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_RESULT_2 ), static_cast<lpctstr>(sm_szMagicDesc[iMagicEntry]), static_cast<lpctstr>(sm_szManaDesc[iManaEntry]));
@@ -1092,10 +1092,7 @@ int CClient::OnSkill_ArmsLore(const CUID &uid, int iSkillLevel, const bool fTest
 	// Poisoned ?
 	if ( fWeapon && pItem->m_itWeapon.m_poison_skill )
 	{
-		uint iLevel = (uint)IMulDiv(
-			n_promote_n32(pItem->m_itWeapon.m_poison_skill),
-			usize_narrow_u32(std::size(sm_szPoisonMessages)),
-			100);
+		uint iLevel = static_cast<uint>(IMulDiv(n_promote_n32(pItem->m_itWeapon.m_poison_skill), usize_narrow_u32(std::size(sm_szPoisonMessages)), 100));
 		if ( iLevel >= std::size(sm_szPoisonMessages))
 			iLevel = usize_narrow_u32(std::size(sm_szPoisonMessages)) - 1;
 		len += snprintf( pszTemp+len, Str_TempLength() - len, " %s", sm_szPoisonMessages[iLevel] );
@@ -1157,14 +1154,14 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 	int iStrEntry = (iStrVal-1)/10;
 	if ( iStrEntry < 0 )
 		iStrEntry = 0;
-	if ( (uint)iStrEntry >= std::size(sm_szStrEval))
+	if ( static_cast<uint>(iStrEntry) >= std::size(sm_szStrEval))
 		iStrEntry = std::size(sm_szStrEval) - 1;
 
 	int iDexVal = pChar->Stat_GetAdjusted(STAT_DEX);
 	int iDexEntry = (iDexVal-1)/10;
 	if ( iDexEntry < 0 )
 		iDexEntry = 0;
-	if ( (uint)iDexEntry >= std::size(sm_szDexEval))
+	if ( static_cast<uint>(iDexEntry) >= std::size(sm_szDexEval))
 		iDexEntry = std::size(sm_szDexEval) - 1;
 
 	tchar * pszTemp = Str_GetTemp();
@@ -1311,7 +1308,7 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 
 	if ( iPoisonLevel )
 	{
-		uint iLevel = (uint)IMulDiv( iPoisonLevel, std::size(sm_szPoisonMessages), 1000 );
+		uint iLevel = static_cast<uint>(IMulDiv(iPoisonLevel, std::size(sm_szPoisonMessages), 1000));
 		if ( iLevel >= std::size(sm_szPoisonMessages))
 			iLevel = usize_narrow_u32(std::size(sm_szPoisonMessages) - 1);
 		SysMessage(sm_szPoisonMessages[iLevel] );
@@ -1529,7 +1526,7 @@ bool CClient::OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt )
 	if (!pSpell->GetPrimarySkill(&skill, nullptr))
 		return false;
 
-	return m_pChar->Skill_Start((SKILL_TYPE)skill);
+	return m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
 }
 
 bool CClient::OnTarg_Pet_Command( CObjBase * pObj, const CPointMap & pt )
@@ -1650,7 +1647,7 @@ bool CClient::OnTarg_Use_Deed( CItem * pDeed, CPointMap & pt )
         return false;
     }
 
-    if (const CItemBase *pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(pDeed->m_itDeed.m_Type))); !OnTarg_Use_Multi(pItemDef, pt, pDeed))
+    if (const CItemBase *pItemDef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(ResGetIndex(pDeed->m_itDeed.m_Type))); !OnTarg_Use_Multi(pItemDef, pt, pDeed))
     {
         return false;
     }
@@ -1948,8 +1945,8 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			if ( !pItemTarg || !m_pChar->CanUse( pItemTarg, true ))
 				return false;
 			{
-				CResourceID defaultseed = g_Cfg.ResourceGetIDType( RES_ITEMDEF, "DEFAULTSEED" );
-				pItemTarg->SetDispID((ITEMID_TYPE)(defaultseed.GetResIndex()));
+                const CResourceID defaultseed = g_Cfg.ResourceGetIDType( RES_ITEMDEF, "DEFAULTSEED" );
+				pItemTarg->SetDispID(static_cast<ITEMID_TYPE>(defaultseed.GetResIndex()));
 				pItemTarg->SetType(IT_SEED);
 				tchar *pszTemp = Str_GetTemp();
 				snprintf(pszTemp, Str_TempLength(), "%s seed", pItemTarg->GetName());
@@ -2042,7 +2039,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		if ( ! m_pChar->CanUse( pItemTarg, false ))
 			return false;
 
-		pItemTarg->SetAnim((ITEMID_TYPE)( pItemTarg->GetID() + 1 ), 2 * MSECS_PER_SEC);
+		pItemTarg->SetAnim(static_cast<ITEMID_TYPE>(pItemTarg->GetID() + 1), 2 * MSECS_PER_SEC);
 		pItemUse->ConsumeAmount( 1 );
 
 		{
@@ -2136,12 +2133,12 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 					break;
 				case IT_CLOTHING:
 					// Cut up for bandages.
-					iOutQty = (word)(pItemTarg->GetWeight()/WEIGHT_UNITS);
+					iOutQty = static_cast<word>(pItemTarg->GetWeight() / WEIGHT_UNITS);
 					break;
 				case IT_HIDE:
 					// IT_LEATHER
 					// Cut up the hides and create strips of leather
-					iOutID = (ITEMID_TYPE)(ResGetIndex(pItemTarg->Item_GetDef()->m_ttNormal.m_tData1));
+					iOutID = static_cast<ITEMID_TYPE>(ResGetIndex(pItemTarg->Item_GetDef()->m_ttNormal.m_tData1));
 					if ( ! iOutID )
 						iOutID = ITEMID_LEATHER_1;
 					iOutQty = pItemTarg->GetAmount();
@@ -2198,7 +2195,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 			CItem * pItemCloth = CItem::CreateTemplate( ClothID, nullptr, m_pChar );
             if (!pItemCloth)
                 return false;
-			pItemCloth->SetAmount( (word)pItemTarg->m_itLoom.m_iClothQty );
+			pItemCloth->SetAmount( static_cast<word>(pItemTarg->m_itLoom.m_iClothQty) );
 			pItemTarg->m_itLoom.m_iClothQty = 0;
 			pItemTarg->m_itLoom.m_ridCloth.Clear();
 			m_pChar->ItemBounce( pItemCloth );
@@ -2213,7 +2210,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 		if ( iHave < iNeed )
 		{
 			iNeed -= iHave;
-			iUsed = pItemUse->ConsumeAmount( (word)iNeed );
+			iUsed = pItemUse->ConsumeAmount( static_cast<word>(iNeed) );
 		}
 
 		if ( (iHave + iUsed) < static_cast<int>(std::size(sm_Txt_LoomUse) - 1) )
@@ -2483,7 +2480,7 @@ bool CClient::OnTarg_Party_Add( CChar * pChar )
 	snprintf(sTemp, Str_TempLength(), g_Cfg.GetDefaultMsg( DEFMSG_PARTY_INVITE_TARG ), m_pChar->GetName());
 	pChar->SysMessage( sTemp );
 
-	m_pChar->SetKeyNum("PARTY_LASTINVITE", (dword)(pChar->GetUID()));
+	m_pChar->SetKeyNum("PARTY_LASTINVITE", static_cast<dword>(pChar->GetUID()));
 	m_pChar->SetKeyNum("PARTY_LASTINVITETIME", CWorldGameTime::GetCurrentTime().GetTimeRaw() + (g_Rand.GetVal2(2,5) * MSECS_PER_SEC));
 
 	new PacketPartyInvite(pChar->GetClientActive(), m_pChar);

@@ -405,7 +405,7 @@ void CItemMultiCustom::CommitChanges(CClient * pClientSrc)
     {
         // items outside the region won't be noticed in los/movement checks,
         // so the region boundaries need to be stretched to fit all the components
-        g_Log.EventWarn("Building design for 0%x does not fit inside the MULTIREGION boundaries (design boundaries: %s). Attempting to resize region...\n", (dword)GetUID(), rectNew.Write());
+        g_Log.EventWarn("Building design for 0%x does not fit inside the MULTIREGION boundaries (design boundaries: %s). Attempting to resize region...\n", static_cast<dword>(GetUID()), rectNew.Write());
 
         const CRect rect = m_pRegion->GetRegionRect(0);
         rectNew.UnionRect(rect);
@@ -975,7 +975,7 @@ void CItemMultiCustom::SendStructureTo(CClient * pClientSrc)
                 else
                     index = (x * (iHeight - 1)) + y;
 
-                if ((GetPlaneZ(uiCompPlane) != (char)(pComp->m_item.m_dz)) ||
+                if ((GetPlaneZ(uiCompPlane) != static_cast<char>(pComp->m_item.m_dz)) ||
                     (pItemBase->GetHeight() == 0 || pComp->m_isFloor) ||
                     (x < 0 || y < 0 || x >= iWidth || y >= iHeight) ||
                     (index < 0 || index >= PLANEDATA_BUFFER))
@@ -990,7 +990,7 @@ void CItemMultiCustom::SendStructureTo(CClient * pClientSrc)
                     continue;
                 }
 
-                wPlaneBuffer[index] = (word)(pComp->m_item.GetDispID());
+                wPlaneBuffer[index] = static_cast<word>(pComp->m_item.GetDispID());
                 fFoundItems = true;
                 ++iItemCount;
                 iMaxIndex = maximum(iMaxIndex, index);
@@ -1000,7 +1000,7 @@ void CItemMultiCustom::SendStructureTo(CClient * pClientSrc)
                 continue;
 
             const int iPlaneSize = (iMaxIndex + 1) * sizeof(word);
-            cmd->writePlaneData(iCurrentPlane, iItemCount, (byte*)wPlaneBuffer, iPlaneSize);
+            cmd->writePlaneData(iCurrentPlane, iItemCount, reinterpret_cast<byte *>(wPlaneBuffer), iPlaneSize);
         }
 
         for (const CMultiComponent* pComp : vectorStairs)
@@ -1009,7 +1009,7 @@ void CItemMultiCustom::SendStructureTo(CClient * pClientSrc)
                 continue;
 
             // stair items can be sent in any order
-            cmd->writeStairData(pComp->m_item.GetDispID(), pComp->m_item.m_dx, pComp->m_item.m_dy, (char)(pComp->m_item.m_dz));
+            cmd->writeStairData(pComp->m_item.GetDispID(), pComp->m_item.m_dx, pComp->m_item.m_dy, static_cast<char>(pComp->m_item.m_dz));
         }
     }
 
@@ -1081,7 +1081,7 @@ void CItemMultiCustom::ResetStructure(CClient * pClientSrc)
             if (!pMultiItem->m_visible)
                 continue;
 
-            AddItem(nullptr, pMultiItem->GetDispID(), pMultiItem->m_dx, pMultiItem->m_dy, (char)(pMultiItem->m_dz));
+            AddItem(nullptr, pMultiItem->GetDispID(), pMultiItem->m_dx, pMultiItem->m_dy, static_cast<char>(pMultiItem->m_dz));
         }
     }
 
@@ -1158,7 +1158,7 @@ size_t CItemMultiCustom::GetComponentsAt(int16 x, int16 y, int8 z, CMultiCompone
 CPointMap CItemMultiCustom::GetComponentPoint(const CMultiComponent * pComp) const
 {
     ADDTOCALLSTACK("CItemMultiCustom::GetComponentPoint(ptr)");
-    return GetComponentPoint(pComp->m_item.m_dx, pComp->m_item.m_dy, (char)(pComp->m_item.m_dz));
+    return GetComponentPoint(pComp->m_item.m_dx, pComp->m_item.m_dy, static_cast<char>(pComp->m_item.m_dz));
 }
 
 CPointMap CItemMultiCustom::GetComponentPoint(const int16 dx, const int16 dy, const int8 dz) const
@@ -1363,7 +1363,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
     }
     int i = 0;
     // Removing Secured Containers.
-    int max = (int)_lSecureContainers.size();
+    int max = static_cast<int>(_lSecureContainers.size());
     if (max > 0)
     {
         for (i = 0; i < max; ++i)
@@ -1383,7 +1383,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
         }
     }
     // Removing Lockdowns
-    max = (int)_lLockDowns.size();
+    max = static_cast<int>(_lLockDowns.size());
     if (max > 0)
     {
         for (i = 0; i < max; ++i)
@@ -1403,7 +1403,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
         }
     }
     // Redeeding Addons.
-    max = (int)_lAddons.size();
+    max = static_cast<int>(_lAddons.size());
     if (max > 0)
     {
         for (i = 0; i < max; ++i)
@@ -1457,7 +1457,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
     }
 
     // Reset Main Design
-    i = (int)m_designMain.m_vectorComponents.size()-1;
+    i = static_cast<int>(m_designMain.m_vectorComponents.size()) -1;
 
     for (;i >= 0;--i)   //decreasing iteration.
     {
@@ -1556,7 +1556,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
             }
 
             AddItem(nullptr,
-                (ITEMID_TYPE)(Exp_GetVal(ppArgs[0])),
+                static_cast<ITEMID_TYPE>((Exp_GetVal(ppArgs[0]))),
                 (Exp_GetSVal(ppArgs[1])),
                 (Exp_GetSVal(ppArgs[2])),
                 (Exp_GetCVal(ppArgs[3])));
@@ -1595,7 +1595,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
             if (int8 iFloor = s.GetArg8Val(); iFloor == -1)
             {
                 ASSERT(_iMaxPlane < INT8_MAX);
-                for (int8 i = 0; i < (int8)_iMaxPlane; ++i)
+                for (int8 i = 0; i < static_cast<int8>(_iMaxPlane); ++i)
                 {
                     ClearFloor(i);
                 }
@@ -1654,7 +1654,7 @@ bool CItemMultiCustom::r_Verb(CScript & s, CTextConsole * pSrc) // Execute comma
                 return false;
 
             RemoveItem(nullptr,
-                (ITEMID_TYPE)(Exp_GetVal(ppArgs[0])),
+                static_cast<ITEMID_TYPE>((Exp_GetVal(ppArgs[0]))),
                 (Exp_GetSVal(ppArgs[1])),
                 (Exp_GetSVal(ppArgs[2])),
                 (Exp_GetCVal(ppArgs[3])));
@@ -1708,7 +1708,7 @@ void CItemMultiCustom::r_Write(CScript & s)
     for (auto i = m_designMain.m_vectorComponents.begin(); i != m_designMain.m_vectorComponents.end(); ++i)
     {
         CMultiComponent *comp = *i;
-        s.WriteKeyFormat("COMP", "%d,%d,%d,%d,%d", comp->m_item.GetDispID(), comp->m_item.m_dx, comp->m_item.m_dy, (char)(comp->m_item.m_dz), comp->m_isStair);
+        s.WriteKeyFormat("COMP", "%d,%d,%d,%d,%d", comp->m_item.GetDispID(), comp->m_item.m_dx, comp->m_item.m_dy, static_cast<char>(comp->m_item.m_dz), comp->m_isStair);
     }
 
     if (m_designMain.m_iRevision)
@@ -1848,11 +1848,11 @@ bool CItemMultiCustom::r_LoadVal(CScript & s)
                 return false;
 
             AddItem(nullptr,
-                (ITEMID_TYPE)(atoi(ppArgs[0])),
-                (short)(atoi(ppArgs[1])),
-                (short)(atoi(ppArgs[2])),
-                (char)(atoi(ppArgs[3])),
-                (short)(atoi(ppArgs[4])));
+                static_cast<ITEMID_TYPE>(atoi(ppArgs[0])),
+                static_cast<short>(atoi(ppArgs[1])),
+                static_cast<short>(atoi(ppArgs[2])),
+                static_cast<char>(atoi(ppArgs[3])),
+                static_cast<short>(atoi(ppArgs[4])));
             return true;
         }
         if (s.IsKey("REVISION"))
@@ -1917,7 +1917,7 @@ bool CItemMultiCustom::IsValidItem(const ITEMID_TYPE id, const CClient * pClient
         return false;
 
     // check if client enabled features contains the item FeatureMask
-    if (uint iFeatureFlag = g_Cfg.GetPacketFlag(false, (RESDISPLAY_VERSION)(pClientSrc->GetResDisp())); (iFeatureFlag & it->second) != it->second)
+    if (uint iFeatureFlag = g_Cfg.GetPacketFlag(false, static_cast<RESDISPLAY_VERSION>(pClientSrc->GetResDisp())); (iFeatureFlag & it->second) != it->second)
         return false;
 
     return true;
@@ -1987,7 +1987,7 @@ bool CItemMultiCustom::LoadValidItems()
 
                 if (fMultiFile)
                 {
-                    itemid = (ITEMID_TYPE)(itemid + ITEMID_MULTI);
+                    itemid = static_cast<ITEMID_TYPE>(itemid + ITEMID_MULTI);
                     if (itemid <= ITEMID_MULTI || itemid > ITEMID_MULTI_MAX)
                         continue;
                 }

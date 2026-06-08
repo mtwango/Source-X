@@ -316,7 +316,7 @@ public:
 
     /**
     * @brief Join a formated string (printf like) with values and copy into this.
-    * @param pStr formated string.
+    * @param pszFormat formated string.
     * @param args list of values.
     */
     void FormatV(lpctstr pszFormat, va_list args);

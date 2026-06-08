@@ -390,7 +390,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 				ptcKey += 4;
 				if ( *ptcKey == '\0' )
 				{
-					sVal.FormatVal( (int)(iQty));
+					sVal.FormatVal( static_cast<int>(iQty));
 					return true;
 				}
 				SKIP_SEPARATORS( ptcKey );

@@ -66,7 +66,7 @@ BOOL CNTWindow::CAboutDlg::DefDialogProc(const UINT message, const WPARAM wParam
 	case WM_INITDIALOG:
 		return( OnInitDialog());
 	case WM_COMMAND:
-		return( OnCommand(  HIWORD(wParam), LOWORD(wParam), (HWND) lParam ));
+		return( OnCommand(  HIWORD(wParam), LOWORD(wParam), reinterpret_cast<HWND>(lParam) ));
 	case WM_DESTROY:
 		OnDestroy();
 		return true;
@@ -112,10 +112,10 @@ void CNTWindow::CStatusDlg::FillStats()
 
 		for (int i = 0; i < PROFILE_QTY; ++i)
 		{
-			if (profile.IsEnabled( (PROFILE_TYPE)i ) == false)
+			if (profile.IsEnabled( static_cast<PROFILE_TYPE>(i) ) == false)
 				continue;
 
-			capture.SysMessagef("'%-14s' = %s\n", profile.GetName((PROFILE_TYPE)i), profile.GetDescription((PROFILE_TYPE)i));
+			capture.SysMessagef("'%-14s' = %s\n", profile.GetName(static_cast<PROFILE_TYPE>(i)), profile.GetDescription(static_cast<PROFILE_TYPE>(i)));
 		}
 	}
 }
@@ -153,7 +153,7 @@ BOOL CNTWindow::CStatusDlg::DefDialogProc(const UINT message, const WPARAM wPara
 	case WM_INITDIALOG:
 		return OnInitDialog();
 	case WM_COMMAND:
-		return OnCommand( HIWORD(wParam), LOWORD(wParam), (HWND) lParam );
+		return OnCommand( HIWORD(wParam), LOWORD(wParam), reinterpret_cast<HWND>(lParam) );
 	case WM_DESTROY:
 		m_wndListClients.OnDestroy();
 		m_wndListStats.OnDestroy();
@@ -271,7 +271,7 @@ void CNTWindow::List_AddSingle(const COLORREF color, const LPCTSTR ptcText)
 {
     constexpr int iMaxTextLen = (64 * 1024);
 
-	const int iTextLen = (int)strlen(ptcText);
+	const int iTextLen = static_cast<int>(strlen(ptcText));
 
     if (const int iNewLen = m_iLogTextLen + iTextLen; iNewLen > iMaxTextLen )
 	{
@@ -403,7 +403,7 @@ int CNTWindow::OnCreate(const HWND hWnd, const LPCREATESTRUCT lParam )
 		WS_CHILD | WS_VISIBLE | WS_VSCROLL,
 		0, 0, 10, 10,
 		m_hWnd,
-		(HMENU)(UINT) IDC_M_LOG, theApp.m_hInstance, nullptr );
+		reinterpret_cast<HMENU>(static_cast<UINT>(IDC_M_LOG)), theApp.m_hInstance, nullptr );
 	ASSERT( m_wndLog.m_hWnd );
 	m_wndLog.SetSel(0, 0);
 
@@ -425,7 +425,7 @@ int CNTWindow::OnCreate(const HWND hWnd, const LPCREATESTRUCT lParam )
 		ES_LEFT | ES_AUTOHSCROLL | WS_CHILD|WS_VISIBLE|WS_BORDER|WS_TABSTOP,
 		0, 0, 10, 10,
 		m_hWnd,
-		(HMENU)(UINT) IDC_M_INPUT, theApp.m_hInstance, nullptr );
+		reinterpret_cast<HMENU>(static_cast<UINT>(IDC_M_INPUT)), theApp.m_hInstance, nullptr );
 	ASSERT( m_wndInput.m_hWnd );
 
 	if ( Sphere_GetOSInfo()->dwPlatformId > VER_PLATFORM_WIN32s )
@@ -664,7 +664,7 @@ void CNTWindow::SetLogFont( const char * pszFont )
 	// use an even spaced font
 	if ( pszFont == nullptr )
 	{
-		m_hLogFont	= (HFONT) GetStockObject(SYSTEM_FONT);
+		m_hLogFont	= static_cast<HFONT>(GetStockObject(SYSTEM_FONT));
 	}
 	else
 	{
@@ -831,13 +831,13 @@ LRESULT WINAPI CNTWindow::WindowProc(const HWND hWnd, const UINT message, const 
 		switch( message )
 		{
 		case WM_CREATE:
-			return( theApp.m_wndMain.OnCreate( hWnd, (LPCREATESTRUCT) lParam ));
+			return( theApp.m_wndMain.OnCreate( hWnd, reinterpret_cast<LPCREATESTRUCT>(lParam) ));
 		case WM_SYSCOMMAND:
 			if ( theApp.m_wndMain.OnSysCommand( wParam &~ 0x0f, LOWORD(lParam), HIWORD(lParam)))
 				return 0;
 			break;
 		case WM_COMMAND:
-			if ( theApp.m_wndMain.OnCommand( HIWORD(wParam), LOWORD(wParam), (HWND) lParam ))
+			if ( theApp.m_wndMain.OnCommand( HIWORD(wParam), LOWORD(wParam), reinterpret_cast<HWND>(lParam) ))
 				return 0;
 			break;
 		case WM_CLOSE:
@@ -853,13 +853,13 @@ LRESULT WINAPI CNTWindow::WindowProc(const HWND hWnd, const UINT message, const 
 			theApp.m_wndMain.OnDestroy();
 			return 0;
 		case WM_SETFOCUS:
-			theApp.m_wndMain.OnSetFocus( (HWND) wParam );
+			theApp.m_wndMain.OnSetFocus( reinterpret_cast<HWND>(wParam) );
 			return 0;
 		case WM_NOTIFY:
-			theApp.m_wndMain.OnNotify( (int) wParam, (NMHDR *) lParam );
+			theApp.m_wndMain.OnNotify( static_cast<int>(wParam), reinterpret_cast<NMHDR *>(lParam) );
 			return 0;
 		case WM_USER_POST_MSG:
-			theApp.m_wndMain.OnUserPostMessage( (COLORREF) wParam, reinterpret_cast<CSString*>(lParam) );
+			theApp.m_wndMain.OnUserPostMessage( static_cast<COLORREF>(wParam), reinterpret_cast<CSString*>(lParam) );
 			return 1;
 		case WM_USER_TRAY_NOTIFY:
 			return theApp.m_wndMain.OnUserTrayNotify( wParam, lParam );

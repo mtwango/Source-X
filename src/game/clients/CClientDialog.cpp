@@ -91,7 +91,7 @@ CClient::addGumpDialog(const CLIMODE_TYPE mode, std::vector<CSString> const* vsC
 	if ( pObj == nullptr )
 		pObj = m_pChar;
 
-	uint context_mode = (uint)mode;
+	uint context_mode = static_cast<uint>(mode);
 	if ( mode == CLIMODE_DIALOG && dwRid != 0 )
 	{
 		context_mode = dwRid;
@@ -121,7 +121,7 @@ bool CClient::addGumpDialogProps( const CUID& uid )
 
 	m_Prop_UID = m_Targ_UID = uid;
 	if ( uid.IsChar() )
-		addSkillWindow((SKILL_TYPE)(g_Cfg.m_iMaxSkill), true);
+		addSkillWindow(static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill), true);
 
 	tchar *pszMsg = Str_GetTemp();
     Str_CopyLimitNull(pszMsg,
@@ -166,13 +166,13 @@ TRIGRET_TYPE CClient::Dialog_OnButton(const CResourceID& rid, dword dwButtonID, 
 		if ( iArgs == 1 )
 		{
 			// single button value
-			if ( (dword)piCmd[0] != dwButtonID )
+			if ( static_cast<dword>(piCmd[0]) != dwButtonID )
 				continue;
 		}
 		else
 		{
 			// range of button values
-			if ( dwButtonID < (dword)piCmd[0] || dwButtonID > (dword)piCmd[1] )
+			if ( dwButtonID < static_cast<dword>(piCmd[0]) || dwButtonID > static_cast<dword>(piCmd[1]) )
 				continue;
 		}
 
@@ -300,9 +300,9 @@ bool CMenuItem::ParseLine( tchar * pszArgs, CScriptObj * pObjBase, CTextConsole 
 	// The item id (if we want to have an item type menu) or 0
 	if ( strcmp( pszArgStart, "0" ) != 0 )
 	{
-        if (CItemBase *pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, pszArgStart))); pItemBase != nullptr )
+        if (CItemBase *pItemBase = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, pszArgStart))); pItemBase != nullptr )
 		{
-			m_id = (word)(pItemBase->GetDispID());
+			m_id = static_cast<word>(pItemBase->GetDispID());
 			pObjBase = pItemBase;
 		}
 		else
@@ -326,7 +326,7 @@ bool CMenuItem::ParseLine( tchar * pszArgs, CScriptObj * pObjBase, CTextConsole 
 	if ( *pszArgs == '@' )
 	{
 		++pszArgs;
-		HUE_TYPE wHue = (HUE_TYPE)(Exp_GetVal( pszArgs ));
+		HUE_TYPE wHue = static_cast<HUE_TYPE>((Exp_GetVal(pszArgs)));
 		if ( wHue != 0 )
 			wHue = (wHue == 1? 0x7FF: wHue-1);
 

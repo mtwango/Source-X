@@ -78,7 +78,7 @@ bool CElementDef::SetValStr(const void * pBase, lpctstr ptcVal ) const
 
 void * CElementDef::GetValPtr( const void * pBaseInst ) const
 {
-	return ( (byte *)pBaseInst + m_offset );
+	return (byte *)pBaseInst + m_offset;
 }
 
 int CElementDef::GetValLength() const

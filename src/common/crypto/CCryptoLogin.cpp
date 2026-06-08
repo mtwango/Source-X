@@ -15,8 +15,8 @@ bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, const size_t ou
 		{
             if (i >= outLen)
                 return false; // error: i'm trying to write more bytes than the output buffer length
-			pOutput[i] = pInput[i] ^ (byte) m_CryptMaskLo;
-			dword MaskLo = m_CryptMaskLo;
+			pOutput[i] = pInput[i] ^ static_cast<byte>(m_CryptMaskLo);
+            const dword MaskLo = m_CryptMaskLo;
 			dword MaskHi = m_CryptMaskHi;
 			m_CryptMaskLo = ((MaskLo >> 1) | (MaskHi << 31)) ^ m_MasterLo;
 			MaskHi = ((MaskHi >> 1) | (MaskLo << 31)) ^ m_MasterHi;
@@ -39,9 +39,9 @@ bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, const size_t ou
         {
             if (i >= outLen)
                 return false; // error: i'm trying to write more bytes than the output buffer length
-            pOutput[i]   = pInput[i] ^ (byte)m_CryptMaskLo;
-            dword MaskLo = m_CryptMaskLo;
-            dword MaskHi = m_CryptMaskHi;
+            pOutput[i]   = pInput[i] ^ static_cast<byte>(m_CryptMaskLo);
+            const dword MaskLo = m_CryptMaskLo;
+            const dword MaskHi = m_CryptMaskHi;
 
             dword MaskShiftOperand = ((5 * MaskHi * MaskHi) & 0xff);
             dword MaskShifted = (MaskShiftOperand >= 32u /*sizeof(dword)*/) ? 0u : (m_MasterHi >> MaskShiftOperand);
@@ -73,9 +73,9 @@ bool CCrypto::DecryptLogin( byte * pOutput, const byte * pInput, const size_t ou
         {
             if (i >= outLen)
                 return false; // error: i'm trying to write more bytes than the output buffer length
-            pOutput[i]    = pInput[i] ^ (byte)m_CryptMaskLo;
-            dword MaskLo  = m_CryptMaskLo;
-            dword MaskHi  = m_CryptMaskHi;
+            pOutput[i]    = pInput[i] ^ static_cast<byte>(m_CryptMaskLo);
+            const dword MaskLo  = m_CryptMaskLo;
+            const dword MaskHi  = m_CryptMaskHi;
             m_CryptMaskLo = ((MaskLo >> 1) | (MaskHi << 31)) ^ m_MasterLo;
             m_CryptMaskHi = ((MaskHi >> 1) | (MaskLo << 31)) ^ m_MasterHi;
         }

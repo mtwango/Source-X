@@ -112,7 +112,7 @@ bool CSkillClassDef::r_LoadVal( CScript &s )
             i = g_Cfg.GetStatKey(ptcKey);
             if ( i >= 0 )
             {
-                ASSERT( (uint)i < ARRAY_COUNT(m_StatMax));
+                ASSERT( static_cast<uint>(i) < ARRAY_COUNT(m_StatMax));
                 m_StatMax[i] = s.GetArgUSVal();
                 break;
             }

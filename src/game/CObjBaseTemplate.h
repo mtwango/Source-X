@@ -89,7 +89,7 @@ public:
 	// Location
     [[nodiscard]]
     LAYER_TYPE GetEquipLayer() const noexcept {
-        return (LAYER_TYPE)(m_pt.m_z);
+        return static_cast<LAYER_TYPE>(m_pt.m_z);
     }
 	void SetEquipLayer( LAYER_TYPE layer );
 

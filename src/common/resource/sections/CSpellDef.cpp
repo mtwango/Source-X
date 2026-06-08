@@ -230,7 +230,7 @@ bool CSpellDef::r_LoadVal( CScript &s )
             m_vcEffect.Load( s.GetArgRaw());
             break;
         case SPC_EFFECT_ID:
-            m_idEffect = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+            m_idEffect = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
             break;
         case SPC_FLAGS:
             m_uiFlags = s.GetArgULLVal();
@@ -242,10 +242,10 @@ bool CSpellDef::r_LoadVal( CScript &s )
             m_Interrupt.Load( s.GetArgRaw());
             break;
         case SPC_LAYER:
-            m_idLayer = (LAYER_TYPE)(s.GetArgVal());
+            m_idLayer = static_cast<LAYER_TYPE>(s.GetArgVal());
             break;
         case SPC_MANAUSE:
-            m_wManaUse = (word)(s.GetArgVal());
+            m_wManaUse = static_cast<word>(s.GetArgVal());
             break;
         case SPC_NAME:
             m_sName = s.GetArgStr();
@@ -257,23 +257,23 @@ bool CSpellDef::r_LoadVal( CScript &s )
             m_Reags.Load( s.GetArgStr());
             break;
         case SPC_RUNE_ITEM:
-            m_idSpell = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+            m_idSpell = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
             break;
         case SPC_RUNES:
             // This may only be basic chars !
             m_sRunes = s.GetArgStr();
             break;
         case SPC_SCROLL_ITEM:
-            m_idScroll = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+            m_idScroll = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr()));
             break;
         case SPC_SKILLREQ:
             m_SkillReq.Load( s.GetArgStr());
             break;
         case SPC_SOUND:
-            m_sound = (SOUND_TYPE)(s.GetArgVal());
+            m_sound = static_cast<SOUND_TYPE>(s.GetArgVal());
             break;
         case SPC_TITHINGUSE:
-            m_wTithingUse = (word)(s.GetArgVal());
+            m_wTithingUse = static_cast<word>(s.GetArgVal());
             break;
         default:
             return CResourceDef::r_LoadVal( s );
@@ -295,8 +295,8 @@ bool CSpellDef::GetPrimarySkill( int * piSkill, int * piQty ) const
         return false;
 
     if ( piQty != nullptr )
-        *piQty = (int)(m_SkillReq[i].GetResQty());
+        *piQty = static_cast<int>(m_SkillReq[i].GetResQty());
     if ( piSkill != nullptr )
         *piSkill = m_SkillReq[i].GetResIndex();
-    return (g_Cfg.GetSkillDef((SKILL_TYPE)(m_SkillReq[i].GetResIndex())) != nullptr);
+    return (g_Cfg.GetSkillDef(static_cast<SKILL_TYPE>(m_SkillReq[i].GetResIndex())) != nullptr);
 }

@@ -419,14 +419,14 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	else if ( iResType == RES_CHARDEF )
 	{
 		//pRef = CCharBase::FindCharBase(static_cast<CREID_TYPE>(Exp_GetVal(ptcKey)));
-		pRef = CCharBase::FindCharBase((CREID_TYPE)(ResourceGetIndexType(RES_CHARDEF, ptcKey)));
+		pRef = CCharBase::FindCharBase(static_cast<CREID_TYPE>(ResourceGetIndexType(RES_CHARDEF, ptcKey)));
 	}
 	else if ( iResType == RES_ITEMDEF )
 	{
 		if (fNewStyleDef && IsDigit(ptcKey[0]))
-			pRef = CItemBase::FindItemBase((ITEMID_TYPE)(Exp_GetVal(ptcKey) + ITEMID_MULTI));
+			pRef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>((Exp_GetVal(ptcKey) + ITEMID_MULTI)));
 		else
-			pRef = CItemBase::FindItemBase((ITEMID_TYPE)(ResourceGetIndexType(RES_ITEMDEF, ptcKey)));
+			pRef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(ResourceGetIndexType(RES_ITEMDEF, ptcKey)));
 	}
 	else if ( iResType == RES_SPELL && *ptcKey == '-' )
 	{
@@ -440,7 +440,7 @@ bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 	{
 
         // check the found resource type matches what we searched for
-		if (CResourceID rid = ResourceGetID((RES_TYPE)iResType, ptcKey, RES_PAGE_ANY); rid.GetResType() == iResType )
+		if (CResourceID rid = ResourceGetID(static_cast<RES_TYPE>(iResType), ptcKey, RES_PAGE_ANY); rid.GetResType() == iResType )
 			pRef = RegisteredResourceGetDef( rid );
 	}
 
@@ -1217,16 +1217,16 @@ bool CServerConfig::r_LoadVal( CScript &s )
                 m_iClientsMax = 0;
 			break;
 		case RC_COLORHIDDEN:
-			m_iColorHidden = (HUE_TYPE)(s.GetArgVal());
+			m_iColorHidden = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case RC_COLORINVIS:
-			m_iColorInvis = (HUE_TYPE)(s.GetArgVal());
+			m_iColorInvis = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case RC_COLORINVISITEM:
-			m_iColorInvisItem = (HUE_TYPE)(s.GetArgVal());
+			m_iColorInvisItem = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case RC_COLORINVISSPELL:
-			m_iColorInvisSpell = (HUE_TYPE)(s.GetArgVal());
+			m_iColorInvisSpell = static_cast<HUE_TYPE>(s.GetArgVal());
 			break;
 		case RC_COMBATARCHERYMOVEMENTDELAY:
 		{
@@ -1312,7 +1312,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
             m_iMapViewSizeMax = s.GetArgBVal();
             break;
 		case RC_MAXCHARSPERACCOUNT:
-			m_iMaxCharsPerAccount = (uchar)(s.GetArgVal());
+			m_iMaxCharsPerAccount = static_cast<uchar>(s.GetArgVal());
 			if ( m_iMaxCharsPerAccount > MAX_CHARS_PER_ACCT )
 				m_iMaxCharsPerAccount = MAX_CHARS_PER_ACCT;
 			break;
@@ -1335,7 +1335,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
         case RC_MAXPOLYSTATS:
         {
             int iMax = s.GetArgVal();
-            m_iMaxPolyStats = (ushort)minimum(iMax, UINT16_MAX);
+            m_iMaxPolyStats = static_cast<ushort>(minimum(iMax, UINT16_MAX));
             break;
         }
 		case RC_MINCHARDELETETIME:
@@ -1482,7 +1482,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 				//	iNetThreads = 0;
 				//else if (iNetThreads > 10)
 				//	iNetThreads = 10;
-				_uiNetworkThreads = (uint)iNetThreads;
+				_uiNetworkThreads = static_cast<uint>(iNetThreads);
 			}
 			else
 				g_Log.EventError("The value of NetworkThreads cannot be modified after the server has started\n");
@@ -1528,7 +1528,7 @@ const CSpellDef * CServerConfig::GetSpellDef(const SPELL_TYPE index ) const
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index <= SPELL_NONE)
         return nullptr;
-	const size_t uiIndex = (size_t)index;
+	const size_t uiIndex = static_cast<size_t>(index);
     if (!m_SpellDefs.valid_index(uiIndex))
         return nullptr;
     return m_SpellDefs[uiIndex].get();
@@ -1539,7 +1539,7 @@ CSpellDef * CServerConfig::GetSpellDef(const SPELL_TYPE index )
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index <= SPELL_NONE)
         return nullptr;
-    const size_t uiIndex = (size_t)index;
+    const size_t uiIndex = static_cast<size_t>(index);
     if (!m_SpellDefs.valid_index(uiIndex))
         return nullptr;
     return m_SpellDefs[uiIndex].get();
@@ -1550,7 +1550,7 @@ lpctstr CServerConfig::GetSkillKey(const SKILL_TYPE index ) const
     // future: underlying type for SPELL_TYPE to avoid casts
     if (index < 0)
         return nullptr;
-	const size_t uiIndex = (size_t)index;
+	const size_t uiIndex = static_cast<size_t>(index);
     if (!m_SkillIndexDefs.valid_index(uiIndex))
         return nullptr;
     return m_SkillIndexDefs[uiIndex]->GetKey();
@@ -1560,7 +1560,7 @@ const CSkillDef* CServerConfig::GetSkillDef(const SKILL_TYPE index ) const
 {
     if (index < 0)
         return nullptr;
-	const size_t uiIndex = (size_t)index;
+	const size_t uiIndex = static_cast<size_t>(index);
     if (!m_SkillIndexDefs.valid_index(uiIndex) )
         return nullptr;
     return m_SkillIndexDefs[uiIndex].get();
@@ -1570,7 +1570,7 @@ CSkillDef* CServerConfig::GetSkillDef(const SKILL_TYPE index )
 {
     if (index < 0)
         return nullptr;
-	const size_t uiIndex = (size_t)index;
+	const size_t uiIndex = static_cast<size_t>(index);
     if (!m_SkillIndexDefs.valid_index(uiIndex) )
         return nullptr;
     return m_SkillIndexDefs[uiIndex].get();
@@ -1659,25 +1659,25 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 					case 4:
 						if (IsDigit(ppVal[3][0]))
 						{
-							pt.m_map = (byte)(atoi(ppVal[3]));
+							pt.m_map = static_cast<byte>(atoi(ppVal[3]));
 						}
 						FALLTHROUGH;
 
 					case 3:
 						if ( IsDigit(ppVal[2][0]) || (( iArgs == 4 ) && ( ppVal[2][0] == '-' )) )
 						{
-							pt.m_z = (char)(( iArgs == 4 ) ? atoi(ppVal[2]) : 0);
+							pt.m_z = static_cast<char>((iArgs == 4) ? atoi(ppVal[2]) : 0);
 							if ( iArgs == 3 )
-								pt.m_map = (byte)(atoi(ppVal[2]));
+								pt.m_map = static_cast<byte>(atoi(ppVal[2]));
 						}
 						FALLTHROUGH;
 
 					case 2:
-						pt.m_y = (short)(atoi(ppVal[1]));
+						pt.m_y = static_cast<short>(atoi(ppVal[1]));
 						FALLTHROUGH;
 
 					case 1:
-						pt.m_x = (short)(atoi(ppVal[0]));
+						pt.m_x = static_cast<short>(atoi(ppVal[0]));
 						FALLTHROUGH;
 
 					case 0:
@@ -1843,7 +1843,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			SKIP_SEPARATORS(pszCmd);
 			sVal.SetValFalse();
 
-			if (iNumber < 0 || iNumber >= (int) m_Functions.size()) //invalid index can potentially crash the server, this check is strongly needed
+			if (iNumber < 0 || iNumber >= static_cast<int>(m_Functions.size())) //invalid index can potentially crash the server, this check is strongly needed
 			{
 				g_Log.EventError("Invalid command index %d\n",iNumber);
 				return false;
@@ -1991,7 +1991,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 					// Invalid attr
 					return false;
 				}
-				CUOTerrainInfo landInfo( (TERRAIN_TYPE)id );
+				CUOTerrainInfo landInfo( static_cast<TERRAIN_TYPE>(id) );
 				switch (iAttr)
 				{
 					case ITATTR_FLAGS:	sVal.FormatDWVal(landInfo.m_flags);		break;
@@ -2019,7 +2019,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 					// Invalid attr
 					return false;
 				}
-				CUOItemInfo itemInfo((ITEMID_TYPE)id);
+				CUOItemInfo itemInfo(static_cast<ITEMID_TYPE>(id));
 				switch (iAttr)
 				{
                     case TTATTR_FLAGS:	sVal.FormatULLHex(itemInfo.m_flags);    break;
@@ -2195,7 +2195,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
                         if (size_t iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), piVal, std::size(piVal)); iQty != 6 )
 							return false;
 
-                        if (CSTime datetime((int)(piVal[0]), (int)(piVal[1]), (int)(piVal[2]), (int)(piVal[3]), (int)(piVal[4]), (int)(piVal[5]));
+                        if (CSTime datetime(static_cast<int>(piVal[0]), static_cast<int>(piVal[1]), static_cast<int>(piVal[2]), static_cast<int>(piVal[3]), static_cast<int>(piVal[4]), static_cast<int>(piVal[5]));
                             datetime.GetTime() == -1 )
 							sVal.FormatVal(-1);
 						else
@@ -2347,7 +2347,7 @@ SKILL_TYPE CServerConfig::FindSkillKey( lpctstr ptcKey ) const
 	const CSkillDef * pSkillDef = FindSkillDef( ptcKey );
 	if ( pSkillDef == nullptr )
 		return SKILL_NONE;
-	return (SKILL_TYPE)(pSkillDef->GetResourceID().GetResIndex());
+	return static_cast<SKILL_TYPE>(pSkillDef->GetResourceID().GetResIndex());
 }
 
 
@@ -2415,7 +2415,7 @@ lpctstr CServerConfig::GetNotoTitle(const int iLevel, const bool bFemale ) const
 
     // copy string so that it can be null-terminated without modifying m_NotoTitles
     tchar *pTitle = Str_GetTemp();
-    Str_CopyLimitNull(pTitle, m_NotoTitles[iLevel]->GetBuffer(), (int)(m_NotoTitles[iLevel]->GetLength() - strlen(pFemaleTitle)));
+    Str_CopyLimitNull(pTitle, m_NotoTitles[iLevel]->GetBuffer(), static_cast<int>(m_NotoTitles[iLevel]->GetLength() - strlen(pFemaleTitle)));
     return pTitle;
 }
 
@@ -2583,7 +2583,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs(const ITEMID_TYPE itemid )
 	if ( !CItemBase::IsID_Multi(itemid) )
 		return nullptr;
 
-	MULTI_TYPE id = (MULTI_TYPE)(itemid - ITEMID_MULTI);
+	MULTI_TYPE id = static_cast<MULTI_TYPE>(itemid - ITEMID_MULTI);
 	size_t index = m_MultiDefs.FindKey(id);
 	if ( index == sl::scont_bad_index() )
 		index = m_MultiDefs.AddSortKey(new CUOMulti(id), id);
@@ -2606,13 +2606,13 @@ PLEVEL_TYPE CServerConfig::GetPrivCommandLevel(const lpctstr pszCmd ) const
 	{
 		--ilevel;
 		lpctstr const * pszTable = m_PrivCommands[ilevel].data();
-        if (int iCount = (int)m_PrivCommands[ilevel].size(); FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
-			return (PLEVEL_TYPE)ilevel;
+        if (int iCount = static_cast<int>(m_PrivCommands[ilevel].size()); FindTableHeadSorted( pszCmd, pszTable, iCount ) >= 0 )
+			return static_cast<PLEVEL_TYPE>(ilevel);
 	}
 
 	// A GM will default to use all commands.
 	// xcept those that are specifically named that i can't use.
-	return (PLEVEL_TYPE)m_iDefaultCommandLevel; // default level.
+	return static_cast<PLEVEL_TYPE>(m_iDefaultCommandLevel); // default level.
 }
 
 bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr pszCmd, CTextConsole * pSrc ) const
@@ -3248,7 +3248,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	}
     else
     {
-        restype = (RES_TYPE)FindTableSorted(pszSection, sm_szResourceBlocks, std::size(sm_szResourceBlocks));
+        restype = static_cast<RES_TYPE>(FindTableSorted(pszSection, sm_szResourceBlocks, std::size(sm_szResourceBlocks)));
     }
 
 
@@ -3265,7 +3265,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			return false;
 		}
 
-		rid = CResourceID( (dword)pVarNum->GetValNum(), 0 );
+		rid = CResourceID( static_cast<dword>(pVarNum->GetValNum()), 0 );
 
         // This value won't be read, since we return anyways once in this branch.
         //restype = rid.GetResType();
@@ -3460,7 +3460,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			// read karma levels
 			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, std::size(piNotoLevels));
 			for (i = 0; i < iQty; ++i)
-				m_NotoKarmaLevels.assign_at_grow(i, (int) (piNotoLevels[i]));
+				m_NotoKarmaLevels.assign_at_grow(i, static_cast<int>(piNotoLevels[i]));
 
 			m_NotoKarmaLevels.resize(i);
 
@@ -3473,7 +3473,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			// read fame levels
 			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, std::size(piNotoLevels));
 			for (i = 0; i < iQty; ++i)
-				m_NotoFameLevels.assign_at_grow(i, (int) (piNotoLevels[i]));
+				m_NotoFameLevels.assign_at_grow(i, static_cast<int>(piNotoLevels[i]));
 
 			m_NotoFameLevels.resize(i);
 
@@ -3506,7 +3506,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	case RES_PLEVEL:
 		{
 			int index = rid.GetResIndex();
-			if ( index < 0 || (uint)(index) >= std::size(m_PrivCommands))
+			if ( index < 0 || static_cast<uint>(index) >= std::size(m_PrivCommands))
 				return false;
 			while ( pScript->ReadKey() )
 			{
@@ -3548,7 +3548,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			if ( pPrvDef )
 				pSpell = dynamic_cast<CSpellDef*>(pPrvDef);
 			else
-				pSpell = new CSpellDef((SPELL_TYPE)(rid.GetResIndex()));
+				pSpell = new CSpellDef(static_cast<SPELL_TYPE>(rid.GetResIndex()));
 			ASSERT(pSpell);
 			pNewLink = pSpell;
 
@@ -3576,7 +3576,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
                     m_iMaxSkill = uiResIdx + 1;
 
 				// Just replace any previous CSkillDef
-                pSkill = new CSkillDef((SKILL_TYPE)uiResIdx);
+                pSkill = new CSkillDef(static_cast<SKILL_TYPE>(uiResIdx));
 			}
 
 			ASSERT(pSkill);
@@ -3940,7 +3940,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 				{
 					pServ->m_ip.SetHostPortStr( pScript->GetKey());
 					if ( pScript->ReadKey())
-						pServ->m_ip.SetPort( (word)(pScript->GetArgVal()));
+						pServ->m_ip.SetPort( static_cast<word>(pScript->GetArgVal()));
 				}
 
 				if ( ! strcmpi( pServ->GetName(), g_Serv.GetName()))
@@ -4237,7 +4237,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 				// For a book the page is... the page number
 				// For a REGIONTYPE block, the page (pArg2) is the landtile type associated with the REGIONTYPE
                 if (int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2)); iArgPage < RES_PAGE_MAX )
-                    wPage = (word)iArgPage;
+                    wPage = static_cast<word>(iArgPage);
                 else
                     DEBUG_ERR(( "Bad resource index page %d for Resource named %s\n", iArgPage, pszName ));
 			}
@@ -4253,16 +4253,16 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			tchar * pArg2;
 			Str_Parse( pArg1, &pArg2 );
 			if ( ! strcmpi( pArg2, "ELF" ))
-				wPage = (word)RACETYPE_ELF;
+				wPage = static_cast<word>(RACETYPE_ELF);
 			else if ( ! strcmpi( pArg2, "GARG" ))
-                wPage = (word)RACETYPE_GARGOYLE;
+                wPage = static_cast<word>(RACETYPE_GARGOYLE);
 			else if (*pArg2)
 			{
 				g_Log.EventWarn("Unrecognized race for a NEWBIE section. Defaulting to human.\n");
-                wPage = (word)RACETYPE_HUMAN;
+                wPage = static_cast<word>(RACETYPE_HUMAN);
 			}
 			else
-                wPage = (word)RACETYPE_HUMAN;
+                wPage = static_cast<word>(RACETYPE_HUMAN);
 
 			if ( ! strcmpi( pszName, "MALE_DEFAULT" ))
 				return CResourceID( RES_NEWBIE, RES_NEWBIE_MALE_DEFAULT, wPage );
@@ -4350,8 +4350,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			if ( g_Serv.GetServerMode() != ServMode::ResyncLoad )	// this really is ok.
 			{
 				// Warn of duplicates.
-				size_t duplicateIndex = m_ResHash.FindKey( rid );
-				if ( duplicateIndex != sl::scont_bad_index() )	// i found it. So i have to find something else.
+                if (const size_t duplicateIndex = m_ResHash.FindKey(rid); duplicateIndex != sl::scont_bad_index() )	// i found it. So i have to find something else.
 					ASSERT(m_ResHash.GetBarePtrAt(rid, duplicateIndex));
 			}
 #endif
@@ -4386,7 +4385,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 						return ridInvalid;
 				}
 			}
-			rid = CResourceID( (dword)pVarNum->GetValNum(), 0 );
+			rid = CResourceID( static_cast<dword>(pVarNum->GetValNum()), 0 );
 			if ( restype != rid.GetResType())
 			{
 				switch ( restype )
@@ -4405,7 +4404,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 						return ridInvalid;
 				}
 			}
-			else if ( fNewStyleDef && (dword)pVarNum->GetValNum() != rid.GetPrivateUID() )
+			else if ( fNewStyleDef && static_cast<dword>(pVarNum->GetValNum()) != rid.GetPrivateUID() )
 			{
 				DEBUG_ERR(( "WARNING: region redefines DEFNAME='%s' for another region!\n", pszName ));
 			}
@@ -4512,7 +4511,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
         iIndex = 10000;	// RES_SPAWN +10k, no reason to have 100k [SPAWN ] templates ... but leaving this huge margin.
         break;
 	case RES_WEBPAGE:		// Define a web page template.
-		iIndex = (int)m_WebPages.size() + 1;
+		iIndex = static_cast<int>(m_WebPages.size()) + 1;
 		break;
 
 	default:
@@ -4687,7 +4686,7 @@ lpctstr CServerConfig::ResourceGetName( const CResourceID& rid ) const
     tchar * pszTmp = Str_GetTemp();
     ASSERT(pszTmp);
     if ( !rid.IsValidUID() )
-        snprintf( pszTmp, Str_TempLength(), "%d", (int)rid.GetPrivateUID() );
+        snprintf( pszTmp, Str_TempLength(), "%d", static_cast<int>(rid.GetPrivateUID()) );
     else
         snprintf( pszTmp, Str_TempLength(), "0%" PRIx32, rid.GetResIndex() );
     return pszTmp;
@@ -5361,7 +5360,7 @@ bool CServerConfig::DumpUnscriptedItems(const CTextConsole * pSrc, lpctstr pszFi
 
 		// check item in tiledata
 		CUOItemTypeRec_HS tiledata;
-		if (CItemBase::GetItemData((ITEMID_TYPE)i, &tiledata) == false)
+		if (CItemBase::GetItemData(static_cast<ITEMID_TYPE>(i), &tiledata) == false)
 			continue;
 
 		// ensure there is actually some data here, treat "MissingName" as blank since some tiledata.muls
@@ -5385,7 +5384,7 @@ bool CServerConfig::DumpUnscriptedItems(const CTextConsole * pSrc, lpctstr pszFi
 			s.Printf("// (unnamed object)\n");
 		}
 
-		s.WriteKeyStr("TYPE", ResourceGetName(CResourceID(RES_TYPEDEF, CItemBase::GetTypeBase((ITEMID_TYPE)i, tiledata))));
+		s.WriteKeyStr("TYPE", ResourceGetName(CResourceID(RES_TYPEDEF, CItemBase::GetTypeBase(static_cast<ITEMID_TYPE>(i), tiledata))));
 	}
 
 	s.WriteSection("EOF");

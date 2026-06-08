@@ -57,7 +57,7 @@ bool CSFileText::_Open(lpctstr ptcFilename, const uint uiModeFlags)
         return false;
 
     // Get the file descriptor for it.
-    _fileDescriptor = (file_descriptor_t)STDFUNC_FILENO(_pStream);
+    _fileDescriptor = reinterpret_cast<file_descriptor_t>(STDFUNC_FILENO(_pStream));
 
     return true;
 }
@@ -204,7 +204,7 @@ int CSFileText::Read( void * pBuffer, const int sizemax ) const
         _NotifyIOError("CSFileText::Read (length)");
         return 0;
     }
-    return (int)ret;
+    return static_cast<int>(ret);
 }
 
 tchar * CSFileText::_ReadString( tchar * pBuffer, const int sizemax )
@@ -280,7 +280,7 @@ bool CSFileText::_WriteString(const lpctstr pStr )
     ADDTOCALLSTACK("CSFileText::_WriteString");
     ASSERT(pStr);
 
-    return _Write( pStr, (int)strlen( pStr ) );
+    return _Write( pStr, static_cast<int>(strlen(pStr)) );
 }
 
 bool CSFileText::WriteString(const lpctstr pStr)

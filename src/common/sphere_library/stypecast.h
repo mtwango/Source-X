@@ -520,44 +520,44 @@ uint32 usize_narrow_u32_checked(size_t source_val, bool should_assert = false);
 [[nodiscard]] constexpr
     int8 i8_from_u8_clamping(const uint8 source_val) noexcept
 {
-    return (source_val > (uint8_t)std::numeric_limits<int8_t>::max()) ? std::numeric_limits<int8_t>::max() : (int8_t)source_val;
+    return (source_val > static_cast<uint8_t>(std::numeric_limits<int8_t>::max())) ? std::numeric_limits<int8_t>::max() : static_cast<int8_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     int16 i16_from_u16_clamping(const uint16 source_val) noexcept
 {
-    return (source_val > (uint16_t)std::numeric_limits<int16_t>::max()) ? std::numeric_limits<int16_t>::max() : (int16_t)source_val;
+    return (source_val > static_cast<uint16_t>(std::numeric_limits<int16_t>::max())) ? std::numeric_limits<int16_t>::max() : static_cast<int16_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     int32 i32_from_u32_clamping(const uint32 source_val) noexcept
 {
-    return (source_val > (uint32_t)std::numeric_limits<int32_t>::max()) ? std::numeric_limits<int32_t>::max() : (int32_t)source_val;
+    return (source_val > static_cast<uint32_t>(std::numeric_limits<int32_t>::max())) ? std::numeric_limits<int32_t>::max() : static_cast<int32_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     int64 i64_from_u64_clamping(const uint64 source_val) noexcept
 {
-    return (source_val > (uint64_t)std::numeric_limits<int64_t>::max()) ? std::numeric_limits<int64_t>::max() : (int64_t)source_val;
+    return (source_val > static_cast<uint64_t>(std::numeric_limits<int64_t>::max())) ? std::numeric_limits<int64_t>::max() : static_cast<int64_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     int32 i32_from_usize_clamping(const size_t source_val) noexcept
 {
-    return (source_val > (size_t)std::numeric_limits<int32_t>::max()) ? std::numeric_limits<int32_t>::max() : (int32_t)source_val;
+    return (source_val > static_cast<size_t>(std::numeric_limits<int32_t>::max())) ? std::numeric_limits<int32_t>::max() : static_cast<int32_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     int64 i64_from_usize_clamping(const size_t source_val) noexcept
 {
-    return (source_val > (size_t)std::numeric_limits<int64_t>::max()) ? std::numeric_limits<int64_t>::max() : (int64_t)source_val;
+    return (source_val > static_cast<size_t>(std::numeric_limits<int64_t>::max())) ? std::numeric_limits<int64_t>::max() : static_cast<int64_t>(source_val);
 }
 
 [[nodiscard]] constexpr
     uint32 u32_from_usize_clamping(const size_t source_val) noexcept
 {
     if constexpr (sizeof(size_t) == 8)
-        return (source_val > (size_t)std::numeric_limits<uint32_t>::max()) ? std::numeric_limits<uint32_t>::max() : (uint32_t)source_val;
+        return (source_val > static_cast<size_t>(std::numeric_limits<uint32_t>::max())) ? std::numeric_limits<uint32_t>::max() : static_cast<uint32_t>(source_val);
     else
         return source_val;
 }

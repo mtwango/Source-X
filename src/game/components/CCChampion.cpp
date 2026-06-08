@@ -294,7 +294,7 @@ void CCChampion::SpawnNPC()
 
         if (uiSize > 0 && uiSize <= UCHAR_MAX)
         {
-            uchar ucRand = (uchar)g_Rand.GetVal((int)uiSize);
+            const uchar ucRand = static_cast<uchar>(g_Rand.GetVal(static_cast<int>(uiSize)));
             pNpc = idGroup[_iLevel][ucRand]; // Get the npc randomly from the list.
         }
         else
@@ -766,7 +766,7 @@ void CCChampion::r_Write(CScript& s)
 
     if (const CCChampionDef *pChampDef = dynamic_cast<CCChampionDef *>(pRes); !pChampDef)
     {
-        g_Log.EventDebug("Trying to save a champion spawn 0%" PRIx32 " with bad id 0%" PRIx32 ".\n", (dword)GetLink()->GetUID(), _idSpawn.GetPrivateUID());
+        g_Log.EventDebug("Trying to save a champion spawn 0%" PRIx32 " with bad id 0%" PRIx32 ".\n", static_cast<dword>(GetLink()->GetUID()), _idSpawn.GetPrivateUID());
         return;
     }
 
@@ -819,7 +819,7 @@ void CCChampion::r_Write(CScript& s)
             groupString.pop_back(); //Remove the last comma.
 
             std::stringstream finalStream;
-            finalStream << "npcgroup[" << (int)fst << "]";
+            finalStream << "npcgroup[" << static_cast<int>(fst) << "]";
             s.WriteKeyStr(finalStream.str().c_str(), groupString.c_str());
         }
     }
@@ -863,18 +863,18 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
         sVal.FormatUSVal(_iSpawnsNextWhite);
         break;
     case ICHMPL_REDCANDLES:
-        sVal.FormatVal((int)_pRedCandles.size());
+        sVal.FormatVal(static_cast<int>(_pRedCandles.size()));
         break;
     case ICHMPL_WHITECANDLES:
-        sVal.FormatVal((int)_pWhiteCandles.size());
+        sVal.FormatVal(static_cast<int>(_pWhiteCandles.size()));
         break;
     case ICHMPL_DEATHCOUNT:
         sVal.FormatUSVal(_iDeathCount);
         break;
     case ICHMPL_NPCGROUP:
         {
-            uchar uiGroup = (uchar)Exp_GetSingle(ptcKey);
-            int iSize = (int)_spawnGroupsId[uiGroup].size();    //Try to get custom spawngroups for this champion spawn.
+        const uchar uiGroup = static_cast<uchar>(Exp_GetSingle(ptcKey));
+            int iSize = static_cast<int>(_spawnGroupsId[uiGroup].size());    //Try to get custom spawngroups for this champion spawn.
             idSpawn spawnGroup;
             if (iSize > 0)
             {
@@ -898,8 +898,8 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
                 break;
             }
             ++ptcKey;
-            uchar uiNpc = (uchar)Exp_GetSingle(ptcKey);
-            size_t uiGroupSize = spawnGroup[uiGroup].size();
+            const uchar uiNpc = static_cast<uchar>(Exp_GetSingle(ptcKey));
+            const size_t uiGroupSize = spawnGroup[uiGroup].size();
             if (uiNpc && (uiNpc >= uiGroupSize))
             {
                 sVal.FormatVal(-1);
@@ -950,7 +950,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
 bool CCChampion::r_LoadVal(CScript& s)
 {
     ADDTOCALLSTACK("CCChampion::r_LoadVal");
-    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, (int)std::size(sm_szLoadKeys) - 1);
+    int iCmd = FindTableSorted(s.GetKey(), sm_szLoadKeys, static_cast<int>(std::size(sm_szLoadKeys)) - 1);
     lpctstr ptcKey = s.GetKey();
 
     if (iCmd < 0)
@@ -967,7 +967,7 @@ bool CCChampion::r_LoadVal(CScript& s)
         {
             if (g_Serv.IsLoadingGeneric() == true)    //Only when the server is loading.
             {
-                _fActive = (bool)s.GetArgBVal();
+                _fActive = static_cast<bool>(s.GetArgBVal());
             }
             break;
         }
@@ -1024,7 +1024,7 @@ bool CCChampion::r_LoadVal(CScript& s)
         _iSpawnsMax = s.GetArgUSVal();
         break;
     case ICHMPL_CHAMPIONID:
-        _idChampion = (CREID_TYPE)g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr());
+        _idChampion = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
         break;
     case ICHMPL_CHAMPIONSUMMONED:
         m_ChampionSummoned.SetObjUID(s.GetArgDWVal());
@@ -1045,7 +1045,7 @@ bool CCChampion::r_LoadVal(CScript& s)
 
             if (!_idSpawn.IsValidUID())
             {
-                g_Log.EventDebug("Invalid champion id, champion spawn stopped. uid=0%x\n", (dword)uid);
+                g_Log.EventDebug("Invalid champion id, champion spawn stopped. uid=0%x\n", static_cast<dword>(uid));
                 Stop();
                 return true;
             }
@@ -1109,8 +1109,8 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
 bool CCChampion::r_Verb(CScript & s, CTextConsole * pSrc)
 {
     ADDTOCALLSTACK("CCChampion::r_Verb");
-    //UnreferencedParameter(pSrc);
-    int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, (int)std::size(sm_szVerbKeys) - 1);
+    // UnreferencedParameter(pSrc);
+    const int iCmd = FindTableSorted(s.GetKey(), sm_szVerbKeys, static_cast<int>(std::size(sm_szVerbKeys)) - 1);
     CChar* pCharSrc = pSrc->GetChar();
 
     switch (iCmd)
@@ -1238,15 +1238,15 @@ bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * p
                 sVal.FormatVal(-1);
                 return true;
             }
-            uchar uiGroup = (uchar)Exp_GetSingle(ptcKey);
+            const uchar uiGroup = static_cast<uchar>(Exp_GetSingle(ptcKey));
             ++ptcKey;
-            uchar uiNPC = (uchar)Exp_GetSingle(ptcKey);
+            const uchar uiNPC = static_cast<uchar>(Exp_GetSingle(ptcKey));
             if (uiNPC && (!_idSpawn.contains(uiGroup)))
             {
                 sVal.FormatVal(-1);
                 return true;
             }
-            int npcCount = (int)_idSpawn.at(uiGroup).size();
+            const int npcCount = static_cast<int>(_idSpawn.at(uiGroup).size());
             if (npcCount == 0)
             {
                 sVal.FormatVal(-1);
@@ -1291,7 +1291,7 @@ bool CCChampionDef::r_LoadVal(CScript& s)
     switch (iCmd)
     {
     case CHAMPIONDEF_CHAMPIONID:
-        _idChampion = (CREID_TYPE)g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr());
+        _idChampion = static_cast<CREID_TYPE>(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
         break;
     case CHAMPIONDEF_DEFNAME:
         return SetResourceName(s.GetArgStr());

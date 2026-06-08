@@ -112,14 +112,14 @@ lpctstr const CItem::sm_szTrigName[ITRIG_QTY+1] =	// static
 CUID CItem::GetComponentOfMulti() const	// I'm a CMultiComponent of a CMulti
 {
 	if (CVarDefCont* pVarDef = m_TagDefs.GetKey("MultiComponent"))
-		return CUID((dword)pVarDef->GetValNum());
+		return CUID(static_cast<dword>(pVarDef->GetValNum()));
 	return CUID();
 }
 
 CUID CItem::GetLockDownOfMulti() const	// I'm locked down in a CMulti
 {
 	if (CVarDefCont* pVarDef = m_TagDefs.GetKey("MultiLockDown"))
-		return CUID((dword)pVarDef->GetValNum());
+		return CUID(static_cast<dword>(pVarDef->GetValNum()));
 	return CUID();
 }
 
@@ -292,7 +292,7 @@ CItem * CItem::CreateBase( ITEMID_TYPE id, IT_TYPE type )	// static
 	if ( pItemDef == nullptr )
 	{
 		idErrorMsg = id;
-		id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, "DEFAULTITEM" ));
+		id = static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, "DEFAULTITEM"));
 		if ( id <= 0 )
 			id = ITEMID_GOLD_C1;
 
@@ -374,8 +374,8 @@ CItem * CItem::CreateBase( ITEMID_TYPE id, IT_TYPE type )	// static
     ASSERT(pItem);
     pItem->SetType(type, false);
 
-    if (idErrorMsg && idErrorMsg != (ITEMID_TYPE)-1)
-		DEBUG_ERR(("CreateBase invalid item ID=0%" PRIx32 ", defaulting to ID=0%" PRIx32 ". Created UID=0%" PRIx32 "\n", idErrorMsg, id, (dword)pItem->GetUID()));
+    if (idErrorMsg && idErrorMsg != static_cast<ITEMID_TYPE>(-1))
+		DEBUG_ERR(("CreateBase invalid item ID=0%" PRIx32 ", defaulting to ID=0%" PRIx32 ". Created UID=0%" PRIx32 "\n", idErrorMsg, id, static_cast<dword>(pItem->GetUID())));
 
 	return pItem;
 }
@@ -431,7 +431,7 @@ CItem * CItem::GenerateScript( CChar * pSrc)
 				int iBlood = 0;
 				if ( pItemDef )
 				{
-					iBlood = (int)(pItemDef->m_TagDefs.GetKeyNum("MAXBLOOD"));
+					iBlood = static_cast<int>(pItemDef->m_TagDefs.GetKeyNum("MAXBLOOD"));
 				}
 				if ( !iBlood )
 					iBlood = 5;
@@ -515,7 +515,7 @@ CItem * CItem::CreateHeader( tchar * pArg, CObjBase * pCont, const bool fDupeChe
 		// Is the item movable ?
 		if ( ! pItem->IsMovableType() && pCont && pCont->IsItem())
 		{
-			g_Log.EventWarn("Script Warning: Created item 0%x, which is not of a movable type, inside cont=0%x\n", id, (dword)(pCont->GetUID()));
+			g_Log.EventWarn("Script Warning: Created item 0%x, which is not of a movable type, inside cont=0%x\n", id, static_cast<dword>(pCont->GetUID()));
             pItem->Delete();
 			return nullptr;
 		}
@@ -743,19 +743,19 @@ int CItem::GetVisualRange() const	// virtual
 byte CItem::GetSpeed() const
 {
     if (const CVarDefCont *pVarDef = GetKey("OVERRIDE.SPEED", true))
-		return (byte)pVarDef->GetValNum();
+		return static_cast<byte>(pVarDef->GetValNum());
 	const CItemBase * pItemDef = static_cast<CItemBase *>(Base_GetDef());
 	return pItemDef->GetSpeed();
 }
 
 byte CItem::GetRangeL() const
 {
-    return (byte)GetPropNum(COMP_PROPS_ITEMWEAPON, PROPIWEAP_RANGEL, true);
+    return static_cast<byte>(GetPropNum(COMP_PROPS_ITEMWEAPON, PROPIWEAP_RANGEL, true));
 }
 
 byte CItem::GetRangeH() const
 {
-    return (byte)GetPropNum(COMP_PROPS_ITEMWEAPON, PROPIWEAP_RANGEH, true);
+    return static_cast<byte>(GetPropNum(COMP_PROPS_ITEMWEAPON, PROPIWEAP_RANGEH, true));
 }
 
 int CItem::IsWeird() const
@@ -1084,7 +1084,7 @@ int CItem::FixWeirdness()
             // blank unlinked keys.
             if (m_itKey.m_UIDLock.IsValidUID() && !IsValidUID())
             {
-                g_Log.EventError("Key '%s' (UID=0%x) has bad link to 0%x: blanked out.\n", GetName(), (dword)GetUID(), (dword)(m_itKey.m_UIDLock));
+                g_Log.EventError("Key '%s' (UID=0%x) has bad link to 0%x: blanked out.\n", GetName(), static_cast<dword>(GetUID()), static_cast<dword>(m_itKey.m_UIDLock));
                 m_itKey.m_UIDLock.ClearUID();
             }
             break;
@@ -1378,9 +1378,9 @@ bool CItem::Stack( CItem * pItem )
 	const uint destMaxAmount = pItem->GetMaxAmount();
     const word destAmount = pItem->GetAmount();
     const word thisAmount = GetAmount();
-	if ( ((uint)destAmount + thisAmount) > destMaxAmount )
+	if ( (static_cast<uint>(destAmount) + thisAmount) > destMaxAmount )
 	{
-		word amount = (word)(destMaxAmount - destAmount);
+		word amount = static_cast<word>(destMaxAmount - destAmount);
 		pItem->SetAmountUpdate(destAmount + amount);
 		SetAmountUpdate(thisAmount - amount);
 		UpdatePropertyFlag();
@@ -1533,7 +1533,7 @@ SOUND_TYPE CItem::GetDropSound( const CObjBase * pObjOn ) const
     if ( CVarDefCont *pVar = GetDefKey("DROPSOUND", true) )
 	{
 		if (int64 iVal = pVar->GetValNum())
-			iSnd = (SOUND_TYPE)iVal;
+			iSnd = static_cast<SOUND_TYPE>(iVal);
 	}
 
 	// normal drop sound for what dropped in/on.
@@ -1729,7 +1729,7 @@ lpctstr CItem::GetName() const
 			{
 				if ( ResGetIndex(m_itPotion.m_Type) != SPELL_Explosion )
 				{
-                    if (const CSpellDef *pSpell = g_Cfg.GetSpellDef((SPELL_TYPE)(m_itSpell.m_spell)); pSpell != nullptr)
+                    if (const CSpellDef *pSpell = g_Cfg.GetSpellDef(static_cast<SPELL_TYPE>(m_itSpell.m_spell)); pSpell != nullptr)
 						pszNameBase	= pSpell->GetName();
 				}
 			}
@@ -2001,7 +2001,7 @@ int CItem::GetWeight(const word amount) const
 	int iWeight = m_weight * (amount ? amount : GetAmount());
     if (const int iReduction = GetPropNum(COMP_PROPS_ITEMCHAR, PROPITCH_WEIGHTREDUCTION, true))
 	{
-		iWeight -= (int)IMulDivLL( iWeight, iReduction, 100 );
+		iWeight -= static_cast<int>(IMulDivLL(iWeight, iReduction, 100));
 		if ( iWeight < 0)
 			iWeight = 0;
 	}
@@ -2219,10 +2219,10 @@ word CItem::GetMaxAmount()
 
     if (int64 iMax = GetDefNum("MaxAmount", true))
 	{
-		return (word)minimum(iMax, UINT16_MAX);
+		return static_cast<word>(minimum(iMax, UINT16_MAX));
 	}
 
-    return (word)minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX);
+    return static_cast<word>(minimum(g_Cfg.m_iItemsMaxAmount, UINT16_MAX));
 }
 
 bool CItem::SetMaxAmount(const word amount)
@@ -2264,7 +2264,7 @@ void CItem::WriteUOX( CScript & s, const int index, const int dx, const int dy )
 	ADDTOCALLSTACK("CItem::WriteUOX");
 	s.Printf( "SECTION WORLDITEM %d\n", index );
 	s.Printf( "{\n" );
-	s.Printf( "SERIAL %u\n", (dword) GetUID());
+	s.Printf( "SERIAL %u\n", static_cast<dword>(GetUID()));
 	s.Printf( "NAME %s\n", GetName());
 	s.Printf( "ID %d\n", GetDispID());
 	s.Printf( "X %d\n", GetTopPoint().m_x + dx );
@@ -2489,7 +2489,7 @@ bool CItem::LoadSetContainer(const CUID& uidCont, LAYER_TYPE layer )
 	CObjBase * pObjCont = uidCont.ObjFind();
 	if ( pObjCont == nullptr )
 	{
-		DEBUG_ERR(( "Invalid container 0%x\n", (dword)uidCont));
+		DEBUG_ERR(( "Invalid container 0%x\n", static_cast<dword>(uidCont)));
 		return false;	// not valid object.
 	}
 
@@ -2523,7 +2523,7 @@ bool CItem::LoadSetContainer(const CUID& uidCont, LAYER_TYPE layer )
 		}
 	}
 
-    DEBUG_ERR(( "Non container uid=0%x,id=0%x\n", (dword)uidCont, pObjCont->GetIDCommon() ));
+    DEBUG_ERR(( "Non container uid=0%x,id=0%x\n", static_cast<dword>(uidCont), pObjCont->GetIDCommon() ));
 	return false;		// not a container.
 }
 
@@ -2719,7 +2719,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, co
 		case IC_ADDSPELL:
 			ptcKey	+= 8;
 			SKIP_SEPARATORS( ptcKey );
-			sVal.FormatVal( IsSpellInBook((SPELL_TYPE)(g_Cfg.ResourceGetIndexType( RES_SPELL, ptcKey ))));
+			sVal.FormatVal( IsSpellInBook(static_cast<SPELL_TYPE>(g_Cfg.ResourceGetIndexType(RES_SPELL, ptcKey))));
 			break;
 		case IC_AMOUNT:
         {
@@ -2757,7 +2757,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, co
 					return CScriptObj::r_WriteVal( ptcKey, sVal, pSrc, false, false);
 
 				const CObjBase* pCont = GetContainer();
-				sVal.FormatHex(pCont ? (dword)pCont->GetUID() : 0);
+				sVal.FormatHex(pCont ? static_cast<dword>(pCont->GetUID()) : 0);
 			}
 			break;
 		case IC_TOPCONT:
@@ -2766,7 +2766,7 @@ bool CItem::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, co
 				return CScriptObj::r_WriteVal(ptcKey, sVal, pSrc, false, false);
 
 			const CObjBase* pCont = GetTopContainer();
-			sVal.FormatHex(pCont ? (dword)pCont->GetUID() : 0);
+			sVal.FormatHex(pCont ? static_cast<dword>(pCont->GetUID()) : 0);
 		}
 		break;
 		case IC_CONTGRID:
@@ -3183,7 +3183,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
                 for ( addCircle = atoi(ppVal[0]); addCircle; --addCircle )
 				{
 					for ( short i = 1; i < 9; ++i )
-						AddSpellbookSpell((SPELL_TYPE)(ResGetIndex(((addCircle - 1) * 8) + i)), false);
+						AddSpellbookSpell(static_cast<SPELL_TYPE>(ResGetIndex(((addCircle - 1) * 8) + i)), false);
 
 					if ( includeLower == false )
 						break;
@@ -3220,7 +3220,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
             break;
 		case IC_CONT:	// needs special processing.
 			{
-				bool normcont = LoadSetContainer(CUID(s.GetArgDWVal()), (LAYER_TYPE)GetUnkZ());
+				bool normcont = LoadSetContainer(CUID(s.GetArgDWVal()), static_cast<LAYER_TYPE>(GetUnkZ()));
 				if (!normcont)
 				{
                     if (ServMode iModeCode = g_Serv.GetServerMode(); (iModeCode == ServMode::StartupLoadingSaves) || (iModeCode == ServMode::GarbageCollection))
@@ -3255,10 +3255,10 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 						default:
 							FALLTHROUGH;
 						case 2:
-							pt.m_y = (short)(atoi(ppVal[1]));
+							pt.m_y = static_cast<short>(atoi(ppVal[1]));
 							FALLTHROUGH;
 						case 1:
-							pt.m_x = (short)(atoi(ppVal[0]));
+							pt.m_x = static_cast<short>(atoi(ppVal[0]));
 							FALLTHROUGH;
 						case 0:
 							break;
@@ -3279,7 +3279,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 			}
 		case IC_DISPID:
 		case IC_DISPIDDEC:
-			return SetDispID((ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr())));
+			return SetDispID(static_cast<ITEMID_TYPE>(g_Cfg.ResourceGetIndexType(RES_ITEMDEF, s.GetArgStr())));
 		case IC_HITS:
 			{
                 word hits = s.GetArgWVal();
@@ -3306,7 +3306,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 				// here we don't have to check if we are setting the ID in the script's header, because that is handled
 				//	by IBC_ID in CItemBase; here we are under @Create trigger or loading from saves (?)
 
-				CItem * pItemTemp = CreateTemplate((ITEMID_TYPE)rid.GetResIndex(), nullptr, nullptr);
+				CItem * pItemTemp = CreateTemplate(static_cast<ITEMID_TYPE>(rid.GetResIndex()), nullptr, nullptr);
 				if (!pItemTemp)
 					return false;
 
@@ -3324,7 +3324,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
             }
 
             if (const RES_TYPE resType = rid.GetResType(); resType == RES_ITEMDEF || resType == RES_QTY)
-                return SetID((ITEMID_TYPE)rid.GetResIndex());
+                return SetID(static_cast<ITEMID_TYPE>(rid.GetResIndex()));
 
 		    return false;
 		}
@@ -3392,17 +3392,17 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 						default:
 						case 4:	// m_map
 							if ( IsDigit(ppVal[3][0]))
-								pt.m_map = (uchar)(atoi(ppVal[3]));
+								pt.m_map = static_cast<uchar>(atoi(ppVal[3]));
 							FALLTHROUGH;
 						case 3: // m_z
 							if ( IsDigit(ppVal[2][0]) || ppVal[2][0] == '-' )
-								pt.m_z = (char)(atoi(ppVal[2]));
+								pt.m_z = static_cast<char>(atoi(ppVal[2]));
 							FALLTHROUGH;
 						case 2:
-							pt.m_y = (short)(atoi(ppVal[1]));
+							pt.m_y = static_cast<short>(atoi(ppVal[1]));
 							FALLTHROUGH;
 						case 1:
-							pt.m_x = (short)(atoi(ppVal[0]));
+							pt.m_x = static_cast<short>(atoi(ppVal[0]));
 							FALLTHROUGH;
 						case 0:
 							break;
@@ -3442,7 +3442,7 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
             }
             break;
 		case IC_TYPE:
-			if (! SetType( (IT_TYPE)(g_Cfg.ResourceGetIndexType( RES_TYPEDEF, s.GetArgStr() )) ))
+			if (! SetType( static_cast<IT_TYPE>(g_Cfg.ResourceGetIndexType(RES_TYPEDEF, s.GetArgStr())) ))
                 return false;
             // Need to UpdatePropertyFlag()
 			break;
@@ -3482,7 +3482,7 @@ bool CItem::r_Load( CScript & s ) // Load an item from script
 
     if ( int iResultCode = CObjBase::IsWeird() )
 	{
-		DEBUG_ERR(( "Item 0%x Invalid, id=%s, code=0%x\n", (dword)GetUID(), GetResourceName(), iResultCode ));
+		DEBUG_ERR(( "Item 0%x Invalid, id=%s, code=0%x\n", static_cast<dword>(GetUID()), GetResourceName(), iResultCode ));
 		Delete();
 		return true;
 	}
@@ -3663,7 +3663,7 @@ void CItem::SetTriggerActive(const lpctstr trig)
     }
     if (int iAction = FindTableSorted(trig, sm_szTrigName, std::size(CItem::sm_szTrigName) - 1); iAction != -1)
     {
-        _iRunningTriggerId = (short)iAction;
+        _iRunningTriggerId = static_cast<short>(iAction);
 		_sRunningTrigger = sm_szTrigName[iAction];
         return;
     }
@@ -3789,9 +3789,9 @@ standard_order:
 			if ( pResourceLink == nullptr )
 			{
                 if ( const CChar *pChar = pSrc->GetChar() )
-                    g_Log.EventError( "0%x '%s' has unhandled [TYPEDEF %d] for 0%x '%s'\n", (dword) GetUID(), GetName(), GetType(), (dword) pChar->GetUID(), pChar->GetName());
+                    g_Log.EventError( "0%x '%s' has unhandled [TYPEDEF %d] for 0%x '%s'\n", static_cast<dword>(GetUID()), GetName(), GetType(), static_cast<dword>(pChar->GetUID()), pChar->GetName());
 				else
-					g_Log.EventError( "0%x '%s' has unhandled [TYPEDEF %d]\n", (dword) GetUID(), GetName(), GetType() );
+					g_Log.EventError( "0%x '%s' has unhandled [TYPEDEF %d]\n", static_cast<dword>(GetUID()), GetName(), GetType() );
 				SetType(Item_GetDef()->GetType());
 				iRet = TRIGRET_RET_DEFAULT;
 				goto stopandret;
@@ -3834,7 +3834,7 @@ stopandret:
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
-    g_Log.EventDebug("trigger '%s' action '%d' char '0%x' [0%x]\n", pszTrigName, iAction, ((pSrc && pSrc->GetChar()) ? (dword)pSrc->GetChar()->GetUID() : 0), (dword)GetUID());
+    g_Log.EventDebug("trigger '%s' action '%d' char '0%x' [0%x]\n", pszTrigName, iAction, ((pSrc && pSrc->GetChar()) ? static_cast<dword>(pSrc->GetChar()->GetUID()) : 0), static_cast<dword>(GetUID()));
 	EXC_DEBUG_END;
 	return iRet;
 }
@@ -4229,8 +4229,8 @@ void CItem::ConvertBolttoCloth()
 
 	// We need to check all cloth_bolt items
 	bool correctID = false;
-	for (int i = ITEMID_CLOTH_BOLT1; i <= (int)(ITEMID_CLOTH_BOLT8); i++)
-		if ( IsSameDispID((ITEMID_TYPE)i) )
+	for (int i = ITEMID_CLOTH_BOLT1; i <= static_cast<int>(ITEMID_CLOTH_BOLT8); i++)
+		if ( IsSameDispID(static_cast<ITEMID_TYPE>(i)) )
 			correctID = true;
 
 	if ( !correctID )
@@ -4252,7 +4252,7 @@ void CItem::ConvertBolttoCloth()
 		if ( rid.GetResType() != RES_ITEMDEF )
 			continue;
 
-		const CItemBase * pBaseDef = CItemBase::FindItemBase((ITEMID_TYPE)(rid.GetResIndex()));
+		const CItemBase * pBaseDef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(rid.GetResIndex()));
 		if ( pBaseDef == nullptr )
 			continue;
 
@@ -4263,7 +4263,7 @@ void CItem::ConvertBolttoCloth()
         {
             pItemNew = CreateTemplate(pBaseDef->GetID());
             ASSERT(pItemNew);
-            word iStack = (word)minimum(iTotalAmount, pItemNew->GetMaxAmount());
+            word iStack = static_cast<word>(minimum(iTotalAmount, pItemNew->GetMaxAmount()));
             pItemNew->SetAmount(iStack);
 
             if (pItemNew->IsType(IT_CLOTH))
@@ -4306,14 +4306,14 @@ word CItem::ConsumeAmount(const word iQty )
 
 CREID_TYPE CItem::GetCorpseType() const
 {
-	return (CREID_TYPE)(GetAmount());	// What does the corpse look like ?
+	return static_cast<CREID_TYPE>(GetAmount());	// What does the corpse look like ?
 }
 
 void CItem::SetCorpseType(const CREID_TYPE id )
 {
 	// future: strongly typed enums will remove the need for this cast
     ASSERT(id <= UINT16_MAX);
-	m_wAmount = (word)id;	// m_corpse_DispID
+	m_wAmount = static_cast<word>(id);	// m_corpse_DispID
 }
 
 SPELL_TYPE CItem::GetScrollSpell() const
@@ -4322,11 +4322,11 @@ SPELL_TYPE CItem::GetScrollSpell() const
 	// Given a scroll type. what spell is this ?
 	for (size_t i = SPELL_Clumsy; i < g_Cfg.m_SpellDefs.size(); ++i)
 	{
-		const CSpellDef * pSpellDef = g_Cfg.GetSpellDef((SPELL_TYPE)i);
+		const CSpellDef * pSpellDef = g_Cfg.GetSpellDef(static_cast<SPELL_TYPE>(i));
 		if ( pSpellDef == nullptr || pSpellDef->m_idScroll == ITEMID_NOTHING )
 			continue;
 		if ( GetID() == pSpellDef->m_idScroll )
-			return (SPELL_TYPE)i;
+			return static_cast<SPELL_TYPE>(i);
 	}
 	return( SPELL_NONE );
 }
@@ -4368,7 +4368,7 @@ uint CItem::GetSpellcountInBook() const
 	uint count = 0;
 	for ( uint i = min; i <= max; ++i )
 	{
-		if ( IsSpellInBook((SPELL_TYPE)i) )
+		if ( IsSpellInBook(static_cast<SPELL_TYPE>(i)) )
 			++count;
 	}
 
@@ -4424,7 +4424,7 @@ uint CItem::AddSpellbookSpell(const SPELL_TYPE spell, const bool fUpdate )
 		return 1;
 
 	// Add spell to spellbook bitmask:
-    if (const uint i = (uint)spell - (pBookDef->m_ttSpellbook.m_iOffset + 1u);
+    if (const uint i = static_cast<uint>(spell) - (pBookDef->m_ttSpellbook.m_iOffset + 1u);
         i < 32u ) // Replaced the <= with < because of the formula above, the first 32 spells have an i value from 0 to 31 and are stored in more1.
 		m_itSpellbook.m_spells1 |= (1u << i);
 	else if ( i < 64u ) // Replaced the <= with < because of the formula above, the remaining 32 spells have an i value from 32 to 63 and are stored in more2.
@@ -4495,7 +4495,7 @@ void CItem::Flip()
 		ITEMID_TYPE id = GetDispID();
 		int doordir = CItemBase::IsID_Door( id ) - 1;
 		int iNewID = (id - doordir) + (( doordir & ~DOOR_OPENED ) + 2 ) % 16; // next closed door type.
-		SetDispID((ITEMID_TYPE)iNewID);
+		SetDispID(static_cast<ITEMID_TYPE>(iNewID));
 		Update();
 		return;
 	}
@@ -4527,9 +4527,9 @@ bool CItem::Use_Portculis()
 
 	CPointMap pt = GetTopPoint();
 	if ( pt.m_z == m_itPortculis.m_z1 )
-		pt.m_z = (char)(m_itPortculis.m_z2);
+		pt.m_z = static_cast<char>(m_itPortculis.m_z2);
 	else
-		pt.m_z = (char)(m_itPortculis.m_z1);
+		pt.m_z = static_cast<char>(m_itPortculis.m_z1);
 
 	if ( pt.m_z == GetTopZ())
 		return false;
@@ -4538,7 +4538,7 @@ bool CItem::Use_Portculis()
 
 	SOUND_TYPE iSnd = 0x21d;
 	if (GetDefNum("PORTCULISSOUND"))
-		iSnd = (SOUND_TYPE)(GetDefNum("PORTCULISSOUND"));
+		iSnd = static_cast<SOUND_TYPE>(GetDefNum("PORTCULISSOUND"));
 	/*CVarDefCont * pTagStorage = nullptr;
 	pTagStorage = GetKey("OVERRIDE.PORTCULISSOUND", true);
 	if ( pTagStorage )
@@ -4559,7 +4559,7 @@ SOUND_TYPE CItem::Use_Music(const bool fWell ) const
 {
 	ADDTOCALLSTACK("CItem::Use_Music");
 	const CItemBase * pItemDef = Item_GetDef();
-	return (SOUND_TYPE)(fWell ? ( pItemDef->m_ttMusical.m_iSoundGood ) : ( pItemDef->m_ttMusical.m_iSoundBad ));
+	return static_cast<SOUND_TYPE>(fWell ? (pItemDef->m_ttMusical.m_iSoundGood) : (pItemDef->m_ttMusical.m_iSoundBad));
 }
 
 bool CItem::IsDoorOpen() const
@@ -4583,13 +4583,13 @@ bool CItem::Use_DoorNew(const bool bJustOpen )
 
 	//default or override ID
 	int64 idOverride = GetDefNum("DOOROPENID");
-	ITEMID_TYPE idSwitch = idOverride ? (ITEMID_TYPE)idOverride : (ITEMID_TYPE)pItemDef->m_ttDoor.m_ridSwitch.GetResIndex();
+	ITEMID_TYPE idSwitch = idOverride ? static_cast<ITEMID_TYPE>(idOverride) : static_cast<ITEMID_TYPE>(pItemDef->m_ttDoor.m_ridSwitch.GetResIndex());
 	if (!idSwitch)
 		return Use_Door(bJustOpen);
 
 	//default or override locations
-	short sDifX = m_itNormal.m_morep.m_x ? m_itNormal.m_morep.m_x : (short)(pItemDef->m_ttDoor.m_iXChange);
-	short sDifY = m_itNormal.m_morep.m_y ? m_itNormal.m_morep.m_y : (short)(pItemDef->m_ttDoor.m_iYChange);
+	short sDifX = m_itNormal.m_morep.m_x ? m_itNormal.m_morep.m_x : static_cast<short>(pItemDef->m_ttDoor.m_iXChange);
+	short sDifY = m_itNormal.m_morep.m_y ? m_itNormal.m_morep.m_y : static_cast<short>(pItemDef->m_ttDoor.m_iYChange);
 
 
 	//default sounds
@@ -4598,9 +4598,9 @@ bool CItem::Use_DoorNew(const bool bJustOpen )
 
 	//override sounds
     if (int64 sndCloseOverride = GetDefNum("DOORCLOSESOUND"))
-		iCloseSnd = (SOUND_TYPE)sndCloseOverride;
+		iCloseSnd = static_cast<SOUND_TYPE>(sndCloseOverride);
     if (int64 sndOpenOverride = GetDefNum("DOOROPENSOUND"))
-		iOpenSnd = (SOUND_TYPE)sndOpenOverride;
+		iOpenSnd = static_cast<SOUND_TYPE>(sndOpenOverride);
 
 	CPointMap pt = GetTopPoint();
 	if (bClosing)
@@ -4637,7 +4637,7 @@ bool CItem::Use_Door(const bool fJustOpen )
 	if ( doordir < 0 || ! IsTopLevel())
 		return false;
 
-	id = (ITEMID_TYPE)(id - doordir);
+	id = static_cast<ITEMID_TYPE>(id - doordir);
 	// IT_TYPE typelock = m_type;
 
 	bool fClosing = ( doordir & DOOR_OPENED );	// currently open
@@ -4721,7 +4721,7 @@ bool CItem::Use_Door(const bool fJustOpen )
 			break;
 	}
 
-	SetDispID((ITEMID_TYPE)(id + doordir));
+	SetDispID(static_cast<ITEMID_TYPE>(id + doordir));
 	// SetType( typelock );	// preserve the fact that it was locked.
 	MoveToUpdate(pt);
 
@@ -4754,9 +4754,9 @@ bool CItem::Use_Door(const bool fJustOpen )
 
 	//override sounds
     if (int64 sndCloseOverride = GetDefNum("DOORCLOSESOUND"))
-		iCloseSnd = (SOUND_TYPE)sndCloseOverride;
+		iCloseSnd = static_cast<SOUND_TYPE>(sndCloseOverride);
     if (int64 sndOpenOverride = GetDefNum("DOOROPENSOUND"))
-		iOpenSnd = (SOUND_TYPE)sndOpenOverride;
+		iOpenSnd = static_cast<SOUND_TYPE>(sndOpenOverride);
 
 	/*pTagStorage = GetKey("OVERRIDE.DOORSOUND_CLOSE", true);
 	if ( pTagStorage )
@@ -4836,7 +4836,7 @@ int CItem::Armor_GetDefense() const
     if ( IsSetOF(OF_ScaleDamageByDurability) && m_itArmor.m_wHitsMax > 0 && m_itArmor.m_wHitsCur < m_itArmor.m_wHitsMax )
 	{
         int iRepairPercent = 50 + ((50 * m_itArmor.m_wHitsCur) / m_itArmor.m_wHitsMax);
-		iVal = (int)IMulDivLL( iVal, iRepairPercent, 100 );
+		iVal = static_cast<int>(IMulDivLL( iVal, iRepairPercent, 100 ));
 	}
 	if ( IsAttr(ATTR_MAGIC) )
 		iVal += g_Cfg.GetSpellEffect( SPELL_Enchant, m_itArmor.m_spelllevel );
@@ -4860,7 +4860,7 @@ int CItem::Weapon_GetAttack(bool fGetRange) const
     if ( IsSetOF(OF_ScaleDamageByDurability) && m_itArmor.m_wHitsMax > 0 && m_itArmor.m_wHitsCur < m_itArmor.m_wHitsMax )
 	{
         int iRepairPercent = 50 + ((50 * m_itArmor.m_wHitsCur) / m_itArmor.m_wHitsMax);
-		iVal = (int)IMulDivLL( iVal, iRepairPercent, 100 );
+		iVal = static_cast<int>(IMulDivLL( iVal, iRepairPercent, 100 ));
 	}
 	if ( IsAttr(ATTR_MAGIC) && ! IsType(IT_WAND))
 		iVal += g_Cfg.GetSpellEffect( SPELL_Enchant, m_itArmor.m_spelllevel );
@@ -4877,13 +4877,13 @@ SKILL_TYPE CItem::Weapon_GetSkill() const
 	CItemBase * pItemDef = Item_GetDef();
 	ASSERT(pItemDef);
 
-	int iSkillOverride = (int)(m_TagDefs.GetKeyNum("OVERRIDE_SKILL") - 1);
+	int iSkillOverride = static_cast<int>(m_TagDefs.GetKeyNum("OVERRIDE_SKILL") - 1);
 	if ( iSkillOverride == -1)
-		iSkillOverride = (int)(m_TagDefs.GetKeyNum("OVERRIDE.SKILL") - 1);
-	if ( (iSkillOverride > SKILL_NONE) && (iSkillOverride < (int)g_Cfg.m_iMaxSkill) )
-		return (SKILL_TYPE)(iSkillOverride);
+		iSkillOverride = static_cast<int>(m_TagDefs.GetKeyNum("OVERRIDE.SKILL") - 1);
+	if ( (iSkillOverride > SKILL_NONE) && (iSkillOverride < static_cast<int>(g_Cfg.m_iMaxSkill)) )
+		return static_cast<SKILL_TYPE>(iSkillOverride);
 
-	if ( (pItemDef->m_iSkill > SKILL_NONE) && (pItemDef->m_iSkill < (SKILL_TYPE)g_Cfg.m_iMaxSkill) )
+	if ( (pItemDef->m_iSkill > SKILL_NONE) && (pItemDef->m_iSkill < static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill)) )
 		return pItemDef->m_iSkill;
 
 	switch ( pItemDef->GetType() )
@@ -4919,10 +4919,10 @@ SOUND_TYPE CItem::Weapon_GetSoundHit() const
 	{
 		// Get ranged weapon ammo hit sound if present.
         if (int iAmmoSoundHit = GetPropNum(COMP_PROPS_ITEMWEAPONRANGED, PROPIWEAPRNG_AMMOSOUNDHIT, true); iAmmoSoundHit > 0)
-			return (SOUND_TYPE)iAmmoSoundHit;
+			return static_cast<SOUND_TYPE>(iAmmoSoundHit);
 	}
 	if (iWeaponSoundHit > 0)
-		return (SOUND_TYPE)iWeaponSoundHit;
+		return static_cast<SOUND_TYPE>(iWeaponSoundHit);
 	return SOUND_NONE;
 }
 
@@ -4935,10 +4935,10 @@ SOUND_TYPE CItem::Weapon_GetSoundMiss() const
 	{
 		// Get ranged weapon ammo miss sound if present.
         if (int iAmmoSoundMiss = GetPropNum(COMP_PROPS_ITEMWEAPONRANGED, PROPIWEAPRNG_AMMOSOUNDMISS, true); iAmmoSoundMiss > 0)
-			return (SOUND_TYPE)iAmmoSoundMiss;
+			return static_cast<SOUND_TYPE>(iAmmoSoundMiss);
 	}
 	if (iWeaponSoundMiss > 0)
-		return (SOUND_TYPE)iWeaponSoundMiss;
+		return static_cast<SOUND_TYPE>(iWeaponSoundMiss);
 	return SOUND_NONE;
 }
 
@@ -4950,12 +4950,12 @@ void CItem::Weapon_GetRangedAmmoAnim(ITEMID_TYPE &id, dword &hue, dword &render)
     if (CSString sAmmoAnim = GetPropStr(COMP_PROPS_ITEMWEAPONRANGED, PROPIWEAPRNG_AMMOANIM, true, true); !sAmmoAnim.IsEmpty())
 	{
 		CResourceID rid(g_Cfg.ResourceGetID(RES_ITEMDEF, sAmmoAnim));
-		id = (ITEMID_TYPE)rid.GetResIndex();
+		id = static_cast<ITEMID_TYPE>(rid.GetResIndex());
 	}
 	else
 	{
         if (const CItemBase *pWeaponDef = Item_GetDef())
-			id = (ITEMID_TYPE)(pWeaponDef->m_ttWeaponBow.m_ridAmmoX.GetResIndex());
+			id = static_cast<ITEMID_TYPE>(pWeaponDef->m_ttWeaponBow.m_ridAmmoX.GetResIndex());
 	}
 
     if (dword dwAmmoHue = GetPropNum(COMP_PROPS_ITEMWEAPONRANGED, PROPIWEAPRNG_AMMOANIMHUE, true); dwAmmoHue > 0)
@@ -5068,7 +5068,7 @@ lpctstr CItem::Use_SpyGlass(const CChar * pUser ) const
 	double rWeatherSight = wtWeather == WEATHER_RAIN ? (0.25 * bSight) : 0.0;
 	// Light level bonus
 	double rLightSight = (1.0 - (static_cast<double>(iLight) / 25.0)) * bSight * 0.25;
-	int iVisibility = (int) (bSight + rWeatherSight + rLightSight);
+	int iVisibility = static_cast<int>(bSight + rWeatherSight + rLightSight);
 
 	// Check for the nearest land, only check every 4th square for speed
 	const CUOMapMeter * pMeter = CWorldMap::GetMapMeter( ptCoords ); // Are we at sea?
@@ -5090,7 +5090,7 @@ lpctstr CItem::Use_SpyGlass(const CChar * pUser ) const
 			{
 				for (int y = ptCoords.m_y - iVisibility; y <= (ptCoords.m_y + iVisibility); y += 2)
 				{
-					CPointMap ptCur((word)(x), (word)(y), ptCoords.m_z);
+					CPointMap ptCur(static_cast<word>(x), static_cast<word>(y), ptCoords.m_z);
 					pMeter = CWorldMap::GetMapMeter( ptCur );
 					if ( pMeter == nullptr )
 						continue;
@@ -5272,7 +5272,7 @@ bool CItem::Use_Light()
     auto id = static_cast<ITEMID_TYPE>(m_TagDefs.GetKeyNum("OVERRIDE_LIGHTID"));
 	if ( !id )
 	{
-		id = (ITEMID_TYPE)Item_GetDef()->m_ttLightSource.m_ridLight.GetResIndex();
+		id = static_cast<ITEMID_TYPE>(Item_GetDef()->m_ttLightSource.m_ridLight.GetResIndex());
 		if ( !id )
 			return false;
 	}
@@ -5391,7 +5391,7 @@ void CItem::SetTrapState(const IT_TYPE state, ITEMID_TYPE id, int iTimeSec )
 	{
 		id = m_itTrap.m_AnimID;
 		if ( ! id )
-			id = (ITEMID_TYPE)( GetDispID() + 1 );
+			id = static_cast<ITEMID_TYPE>(GetDispID() + 1);
 	}
 	if ( ! iTimeSec )
 		iTimeSec = 3* MSECS_PER_SEC;
@@ -5551,20 +5551,20 @@ bool CItem::OnSpellEffect(SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, C
 		}
 	}
 
-    spell = (SPELL_TYPE)(pScriptArgs->m_iN1);
-    iSkillLevel = (int)(pScriptArgs->m_iN2);
+    spell = static_cast<SPELL_TYPE>(pScriptArgs->m_iN1);
+    iSkillLevel = static_cast<int>(pScriptArgs->m_iN2);
 	pSpellDef = g_Cfg.GetSpellDef( spell );
     ASSERT(pSpellDef);
 
 	if ( IsType(IT_WAND) )	// try to recharge the wand.
 	{
-		if ( !m_itWeapon.m_spell || ResGetIndex(m_itWeapon.m_spell) == (word)spell )
+		if ( !m_itWeapon.m_spell || ResGetIndex(m_itWeapon.m_spell) == static_cast<word>(spell) )
 		{
 			SetAttr(ATTR_MAGIC);
 			if ( !m_itWeapon.m_spell || ( pCharSrc && pCharSrc->IsPriv(PRIV_GM) ) )
 			{
-				m_itWeapon.m_spell = (word)(spell);
-				m_itWeapon.m_spelllevel = (word)(iSkillLevel);
+				m_itWeapon.m_spell = static_cast<word>(spell);
+				m_itWeapon.m_spelllevel = static_cast<word>(iSkillLevel);
 				m_itWeapon.m_spellcharges = 0;
 			}
 
@@ -5672,8 +5672,8 @@ bool CItem::OnSpellEffect(SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, C
     if ( (iEffectID > ITEMID_NOTHING) && (iEffectID < ITEMID_QTY) )
     {
         bool fExplode = (pSpellDef->IsSpellType(SPELLFLAG_FX_BOLT) && !pSpellDef->IsSpellType(SPELLFLAG_GOOD));		// bolt (chasing) spells have explode = 1 by default (if not good spell)
-        dword dwColor = (dword)(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
-        dword dwRender = (dword)(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
+        dword dwColor = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectColor"));
+        dword dwRender = static_cast<dword>(pScriptArgs->m_VarsLocal.GetKeyNum("EffectRender"));
 
         if ( pSpellDef->IsSpellType(SPELLFLAG_FX_BOLT) )
             Effect(EFFECT_BOLT, iEffectID, pCharSrc, 5, 1, fExplode, dwColor, dwRender);
@@ -5746,7 +5746,7 @@ int CItem::OnTakeDamage(const int iDmg, CChar * pSrc, const DAMAGE_TYPE uType )
 	if ( IsTrigUsed(TRIGGER_DAMAGE) || IsTrigUsed(TRIGGER_ITEMDAMAGE) )
 	{
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-        pScriptArgs->Init(iDmg, (int)uType, 0, nullptr);
+        pScriptArgs->Init(iDmg, static_cast<int>(uType), 0, nullptr);
         if ( OnTrigger( ITRIG_DAMAGE, pScriptArgs, pSrc ) == TRIGRET_RET_TRUE )
 			return 0;
 	}
@@ -5791,7 +5791,7 @@ int CItem::OnTakeDamage(const int iDmg, CChar * pSrc, const DAMAGE_TYPE uType )
 
 			if ( pSrc )
 				pItem->m_uidLink = pSrc->GetUID();
-			pItem->m_itExplode.m_iDamage = (word)(g_Cfg.GetSpellEffect(SPELL_Explosion, m_itPotion.m_dwSkillQuality));
+			pItem->m_itExplode.m_iDamage = static_cast<word>(g_Cfg.GetSpellEffect(SPELL_Explosion, m_itPotion.m_dwSkillQuality));
 			pItem->m_itExplode.m_wFlags = pSpell->IsSpellType(SPELLFLAG_NOUNPARALYZE) ? DAMAGE_FIRE|DAMAGE_NOUNPARALYZE : DAMAGE_FIRE;
 			pItem->m_itExplode.m_iDist = 2;
 			pItem->SetType(IT_EXPLOSION);
@@ -5811,7 +5811,7 @@ int CItem::OnTakeDamage(const int iDmg, CChar * pSrc, const DAMAGE_TYPE uType )
 			return 0;
 		}
 
-        if ( (dword)iDmg > m_itWeb.m_wHitsCur || ( uType & DAMAGE_FIRE ))
+        if ( static_cast<dword>(iDmg) > m_itWeb.m_wHitsCur || ( uType & DAMAGE_FIRE ))
 		{
 			if ( pSrc )
 				pSrc->SysMessage( g_Cfg.GetDefaultMsg( DEFMSG_WEB_DESTROY ) );
@@ -5857,7 +5857,7 @@ forcedamage:
 
 			if ( previousDefense != Armor_GetDefense() )
 			{
-				pChar->m_defense = (word)(pChar->CalcArmorDefense());
+				pChar->m_defense = static_cast<word>(pChar->CalcArmorDefense());
                 fUpdateStatsFlag = true;
 			}
 			else if ( previousDamage != Weapon_GetAttack() )
@@ -5965,7 +5965,7 @@ bool CItem::IsResourceMatch( const CResourceID& rid, const dword dwArg ) const
 
 		ITEMID_TYPE itemid = pItemDef->GetID();
 
-        switch ( (ITEMID_TYPE)(rid.GetResIndex()) )
+        switch ( static_cast<ITEMID_TYPE>(rid.GetResIndex()) )
 		{
 			case ITEMID_LOG_1:		// boards can be used as logs (but logs can't be used as boards)
 			{
@@ -6177,7 +6177,7 @@ bool CItem::_OnTick()
                     {
                         pClient->addMapWaypoint(this, MAPWAYPOINT_Remove);	// remove corpse map waypoint on enhanced clients
                     }
-					SetID((ITEMID_TYPE)(g_Rand.GetVal2(ITEMID_SKELETON_1, ITEMID_SKELETON_9)));
+					SetID(static_cast<ITEMID_TYPE>(g_Rand.GetVal2(ITEMID_SKELETON_1, ITEMID_SKELETON_9)));
 					SetHue(HUE_DEFAULT);
 					_SetTimeout(g_Cfg.m_iDecay_CorpsePlayer);
 					m_itCorpse.m_carved = 1;	// the corpse can't be carved anymore

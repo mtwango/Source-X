@@ -20,7 +20,7 @@ static ITEMID_TYPE GetMaxTiledataItem()
     CSFile* pTileData = g_Install.GetMulFile(VERFILE_TILEDATA);
     ASSERT(pTileData != nullptr);
 
-    dword dwLength = (dword)pTileData->GetLength();	// length of file
+    dword dwLength = static_cast<dword>(pTileData->GetLength());	// length of file
     dword dwEntrySize = 0;							// size of tiledata entry
     dword dwOffset = 0;								// offset to tiledata items
 
@@ -44,8 +44,8 @@ static ITEMID_TYPE GetMaxTiledataItem()
     // items are sorted in blocks of 32 with 4 byte padding between, so determine how
     // many blocks will fit in the file to find how many items there could be
     dwLength -= dwOffset;
-    dword dwBlocks = (dwLength / ((UOTILE_BLOCK_QTY * dwEntrySize) + 4)) + 1;
-    return (ITEMID_TYPE)(dwBlocks * UOTILE_BLOCK_QTY);
+    const dword dwBlocks = (dwLength / ((UOTILE_BLOCK_QTY * dwEntrySize) + 4)) + 1;
+    return static_cast<ITEMID_TYPE>(dwBlocks * UOTILE_BLOCK_QTY);
 }
 
 
@@ -91,7 +91,7 @@ void CUOTiledata::Load()
             }
         }
 
-        if ( (uint)g_Install.m_File[filedata].Seek( offset, SEEK_SET ) != offset )
+        if ( static_cast<uint>(g_Install.m_File[filedata].Seek(offset, SEEK_SET)) != offset )
         {
             throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.ReadInfo: TileData Seek");
         }
@@ -123,7 +123,7 @@ void CUOTiledata::Load()
 
     // Cache the Tiledata Item entries
 
-    idMax = (uint)GetMaxTiledataItem();
+    idMax = static_cast<uint>(GetMaxTiledataItem());
     _tiledataItemEntries.clear();
     _tiledataItemEntries.resize(idMax);
     for (uint id = 0; id < idMax; ++id)
@@ -152,7 +152,7 @@ void CUOTiledata::Load()
             }
         }
 
-        if ( (uint)g_Install.m_File[filedata].Seek( offset, SEEK_SET ) != offset )
+        if ( static_cast<uint>(g_Install.m_File[filedata].Seek(offset, SEEK_SET)) != offset )
         {
             throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.Load: TileData Seek");
         }

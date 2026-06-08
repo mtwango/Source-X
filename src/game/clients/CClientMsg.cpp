@@ -50,7 +50,7 @@ void CClient::resendBuffs() const
     if ( const CItem *pStuck = pChar->LayerFind(LAYER_FLAG_Stuck) )
 	{
 		removeBuff(BI_PARALYZE);
-		addBuff(BI_PARALYZE, 1075827, 1075828, (word)(pStuck->GetTimerSAdjusted()));
+		addBuff(BI_PARALYZE, 1075827, 1075828, static_cast<word>(pStuck->GetTimerSAdjusted()));
 	}
 
 	// Spells
@@ -365,7 +365,7 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 
 	// send item sound
 	if (pItem->IsType(IT_SOUND))
-		addSound((SOUND_TYPE)(pItem->m_itSound.m_dwSound), pItem, pItem->m_itSound.m_iRepeat );
+		addSound(static_cast<SOUND_TYPE>(pItem->m_itSound.m_dwSound), pItem, pItem->m_itSound.m_iRepeat );
 
 	// send corpse clothing
 	if ( !IsPriv(PRIV_DEBUG) && (fCorpse && CCharBase::IsPlayableID(pItem->GetCorpseType())) )	// cloths on corpse
@@ -783,17 +783,17 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 			break;
 	}
     {
-        auto gReader = g_ExprGlobals.mtEngineLockedReader();
+        const auto gReader = g_ExprGlobals.mtEngineLockedReader();
         if (iTalkmodeHue != UINT16_MAX)
-            defaultHue = (HUE_TYPE)(gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsColor[iTalkmodeHue]));
+            defaultHue = static_cast<HUE_TYPE>(gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsColor[iTalkmodeHue]));
         if (iTalkmodeFont != UINT16_MAX)
-            defaultFont = (FONT_TYPE)(gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsFont[iTalkmodeFont]));
+            defaultFont = static_cast<FONT_TYPE>(gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsFont[iTalkmodeFont]));
         if (iTalkmodeUnicode != UINT16_MAX)
             defaultUnicode = gReader->m_VarDefs.GetKeyNum(s_ptcTalkmodesDefsUnicode[iTalkmodeUnicode]) > 0;
     }
 
-	word Args[] = { wHue, (word)font, (word)fUnicode };
-    lptstr ptcBarkBuffer = Str_GetTemp();  // Be sure to init this before the goto instruction
+	word Args[] = { wHue, static_cast<word>(font), static_cast<word>(fUnicode) };
+    const lptstr ptcBarkBuffer = Str_GetTemp();  // Be sure to init this before the goto instruction
 
 	if ( *pszText == '@' )
 	{
@@ -825,18 +825,18 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 		}
 		++pszText;
 		if ( Args[1] > FONT_QTY )
-			Args[1] = (word)FONT_NORMAL;
+			Args[1] = static_cast<word>(FONT_NORMAL);
 	}
 
 	if (fUseSpeechHueOverride && pSrcChar)
 	{
         if (pSrcChar->m_SpeechHueOverride)
-            Args[0] = (word)pSrcChar->m_SpeechHueOverride;
+            Args[0] = static_cast<word>(pSrcChar->m_SpeechHueOverride);
 	}
 	else if (fUseEmoteHueOverride && pSrcChar)
 	{
 		if (pSrcChar->m_EmoteHueOverride)
-			Args[0] = (word)pSrcChar->m_EmoteHueOverride;
+			Args[0] = static_cast<word>(pSrcChar->m_EmoteHueOverride);
 	}
 	/*
 	else if (mode <= TALKMODE_YELL)
@@ -854,11 +854,11 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
     if (mode != TALKMODE_SPELL)
     {
         if ( Args[1] == FONT_NORMAL )
-            Args[1] = (word)defaultFont;
+            Args[1] = static_cast<word>(defaultFont);
     }
 
 	if ( Args[2] == 0 )
-		Args[2] = (word)defaultUnicode;
+		Args[2] = static_cast<word>(defaultUnicode);
 
     Str_CopyLimitNull(	ptcBarkBuffer, ptcName,	Str_TempLength());
 	Str_ConcatLimitNull(ptcBarkBuffer, pszText, Str_TempLength());
@@ -883,7 +883,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 				CArgs += ( !strcmp(ppArgs[i], "NULL") ? " " : ppArgs[i] );
 			}
 
-            addBarkLocalizedEx( iClilocId, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), (AFFIX_TYPE)(iAffixType), ppArgs[2], CArgs.GetBuffer());
+            addBarkLocalizedEx( iClilocId, pSrc, Args[0], mode, static_cast<FONT_TYPE>(Args[1]), static_cast<AFFIX_TYPE>(iAffixType), ppArgs[2], CArgs.GetBuffer());
 			break;
 		}
 
@@ -900,7 +900,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 				CArgs += ( !strcmp(ppArgs[i], "NULL") ? " " : ppArgs[i] );
 			}
 
-            addBarkLocalized( iClilocId, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), CArgs.GetBuffer());
+            addBarkLocalized( iClilocId, pSrc, Args[0], mode, static_cast<FONT_TYPE>(Args[1]), CArgs.GetBuffer());
 			break;
 		}
 
@@ -908,7 +908,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
 		{
 			nachar szBuffer[ MAX_TALK_BUFFER ];
 			CvtSystemToNETUTF16( szBuffer, std::size(szBuffer), ptcBarkBuffer, -1 );
-			addBarkUNICODE( szBuffer, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]), 0 );
+			addBarkUNICODE( szBuffer, pSrc, Args[0], mode, static_cast<FONT_TYPE>(Args[1]), 0 );
 			break;
 		}
 
@@ -922,7 +922,7 @@ bark_default:
 				Str_ConcatLimitNull(ptcBarkBuffer, pszText, Str_TempLength());
 			}
 
-			addBark(ptcBarkBuffer, pSrc, Args[0], mode, (FONT_TYPE)(Args[1]));
+			addBark(ptcBarkBuffer, pSrc, Args[0], mode, static_cast<FONT_TYPE>(Args[1]));
 			break;
 		}
 	}
@@ -967,7 +967,7 @@ void CClient::addObjMessage(
 	addBarkParse(pMsg, pSrc, wHue, mode);
 }
 
-void CClient::addEffect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CObjBaseTemplate * pDst, const CObjBaseTemplate * pSrc, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, word effectid, dword explodeid, word explodesound, dword effectuid, const byte type) const
+void CClient::addEffect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CObjBaseTemplate * pDst, const CObjBaseTemplate * pSrc, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, const word effectid, const dword explodeid, const word explodesound, const dword effectuid, const byte type) const
 {
 	ADDTOCALLSTACK("CClient::addEffect");
 	// bSpeedSeconds = tenths of second = 0=very fast, 7=slow.
@@ -987,7 +987,7 @@ void CClient::addEffect(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CO
 }
 
 /* Effect at a Map Point instead of an Object */
-void CClient::addEffectLocation(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CPointMap *ptSrc, const CPointMap *ptDest, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, word effectid, dword explodeid, word explodesound, dword effectuid, const byte type) const
+void CClient::addEffectLocation(const EFFECT_TYPE motion, const ITEMID_TYPE id, const CPointMap *ptSrc, const CPointMap *ptDest, const byte bSpeedMsecs, const byte bLoop, const bool fExplode, const dword color, const dword render, const word effectid, const dword explodeid, const word explodesound, const dword effectuid, const byte type) const
 {
 	ADDTOCALLSTACK("CClient::addEffect");
 	// bSpeedSeconds = tenth of second = 0=very fast, 7=slow.
@@ -1022,7 +1022,7 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 		CREID_TYPE idHorse = pItem->m_itFigurine.m_ID;
         if (const CCharBase *pCharDef = CCharBase::FindCharBase(idHorse); pCharDef && (uiResDisp < pCharDef->GetResLevel() ) )
 		{
-			idHorse = (CREID_TYPE)(pCharDef->GetResDispDnId());
+			idHorse = static_cast<CREID_TYPE>(pCharDef->GetResDispDnId());
 			wHue = pCharDef->GetResDispDnHue();
 
 			// adjust the item to display the mount item associated with
@@ -1034,8 +1034,8 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 
                 ITEMID_TYPE idMountItem;
                 {
-                    auto gReader = g_ExprGlobals.mtEngineLockedReader();
-                    idMountItem = (ITEMID_TYPE)(gReader->m_VarDefs.GetKeyNum(sMountDefname));
+                    const auto gReader = g_ExprGlobals.mtEngineLockedReader();
+                    idMountItem = static_cast<ITEMID_TYPE>(gReader->m_VarDefs.GetKeyNum(sMountDefname));
                 }
                 if ( idMountItem > ITEMID_NOTHING )
 				{
@@ -1047,7 +1047,7 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 	}
 
 	if ( m_pChar->IsStatFlag( STATF_HALLUCINATING ))
-		wHue = (HUE_TYPE)(g_Rand.GetVal( HUE_DYE_HIGH ));
+		wHue = static_cast<HUE_TYPE>(g_Rand.GetVal(HUE_DYE_HIGH));
 
 	else if ( pChar->IsStatFlag(STATF_STONE)) //Client do not have stone state. So we must send the hue we want. (Affect the paperdoll hue as well)
 		wHue = HUE_STONE;
@@ -1075,7 +1075,7 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 	}
 
 	if ( pItemDef && (uiResDisp < pItemDef->GetResLevel() ) )
-		id = (ITEMID_TYPE)(pItemDef->GetResDispDnId());
+		id = static_cast<ITEMID_TYPE>(pItemDef->GetResDispDnId());
 }
 
 void CClient::GetAdjustedCharID( const CChar * pChar, CREID_TYPE &id, HUE_TYPE &wHue ) const
@@ -1105,13 +1105,13 @@ void CClient::GetAdjustedCharID( const CChar * pChar, CREID_TYPE &id, HUE_TYPE &
 			pCharDef = nullptr;
 			while ( pCharDef == nullptr )
 			{
-				id = (CREID_TYPE)(g_Rand.GetVal(CREID_EQUIP_GM_ROBE));
+				id = static_cast<CREID_TYPE>(g_Rand.GetVal(CREID_EQUIP_GM_ROBE));
 				if ( id != CREID_SEA_CREATURE )		// skip this chardef, it can crash many clients
 					pCharDef = CCharBase::FindCharBase(id);
 			}
 		}
 
-		wHue = (HUE_TYPE)(g_Rand.GetVal(HUE_DYE_HIGH));
+		wHue = static_cast<HUE_TYPE>(g_Rand.GetVal(HUE_DYE_HIGH));
 	}
 	else
 	{
@@ -1139,7 +1139,7 @@ void CClient::GetAdjustedCharID( const CChar * pChar, CREID_TYPE &id, HUE_TYPE &
 
 	if ( pCharDef && (GetResDisp() < pCharDef->GetResLevel()) )
 	{
-		id = (CREID_TYPE)(pCharDef->GetResDispDnId());
+		id = static_cast<CREID_TYPE>(pCharDef->GetResDispDnId());
 		if ( pCharDef->GetResDispDnHue() != HUE_DEFAULT )
 			wHue = pCharDef->GetResDispDnHue();
 	}
@@ -1179,8 +1179,8 @@ void CClient::addChar( CChar * pChar, const bool fFull )
 
     if (fStatue)
     {
-        const int iAnim = (int)pChar->GetKeyNum("STATUE_ANIM", true);
-        const int iFrame = (int)pChar->GetKeyNum("STATUE_FRAME", true);
+        const int iAnim = static_cast<int>(pChar->GetKeyNum("STATUE_ANIM", true));
+        const int iFrame = static_cast<int>(pChar->GetKeyNum("STATUE_FRAME", true));
         new PacketStatueAnimation(this, pChar, iAnim, iFrame);
     }
 
@@ -1300,7 +1300,7 @@ void CClient::addItemName( CItem * pItem )
 		}
 	}
 	if ( IsPriv(PRIV_DEBUG) )
-		len += snprintf(szName+len, sizeof(szName) - len, " [0%x]", (dword) pItem->GetUID());
+		len += snprintf(szName+len, sizeof(szName) - len, " [0%x]", static_cast<dword>(pItem->GetUID()));
 
 	if (( IsTrigUsed(TRIGGER_AFTERCLICK) ) || ( IsTrigUsed(TRIGGER_ITEMAFTERCLICK) ))
 	{
@@ -1315,7 +1315,7 @@ void CClient::addItemName( CItem * pItem )
         if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(szName, pNewStr, std::size(szName));
 
-        wHue = (HUE_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
+        wHue = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
 	}
 
 	addObjMessage( szName, pItem, wHue, TALKMODE_ITEM );
@@ -1401,7 +1401,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 			if (IsPriv(PRIV_DEBUG))
 			{
 				const size_t uiSLen = strlen(pszTemp);
-				snprintf(pszTemp + uiSLen, Str_TempLength() - uiSLen, " [0%x]", (dword)pChar->GetUID());
+				snprintf(pszTemp + uiSLen, Str_TempLength() - uiSLen, " [0%x]", static_cast<dword>(pChar->GetUID()));
 			}
 		}
 	}
@@ -1437,7 +1437,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
         if (lpctstr pNewStr = pScriptArgs->m_VarsLocal.GetKeyStr("ClickMsgText"); pNewStr != nullptr )
 			Str_CopyLimitNull(pszTemp, pNewStr, Str_TempLength());
 
-        wHue = (HUE_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
+        wHue = static_cast<HUE_TYPE>(pScriptArgs->m_VarsLocal.GetKeyNum("ClickMsgHue"));
 	}
 
 	addObjMessage( pszTemp, pChar, wHue, TALKMODE_ITEM );
@@ -1580,9 +1580,9 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 	}
 
 	const size_t iAcctCharCount = pAccount->m_Chars.GetCharCount(), iAcctMaxChars = pAccount->GetMaxChars();
-	const uint iMax = (uint)minimum(maximum(iAcctCharCount,iAcctMaxChars), MAX_CHARS_PER_ACCT);
+	const uint iMax = static_cast<uint>(minimum(maximum(iAcctCharCount, iAcctMaxChars), MAX_CHARS_PER_ACCT));
 
-	uint iQty = (uint)iAcctCharCount;
+	uint iQty = static_cast<uint>(iAcctCharCount);
 	if (iQty > iMax)
 		iQty = iMax;
 
@@ -1617,10 +1617,10 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 		pPacket->writeStringFixedASCII("", MAX_NAME_SIZE);
 	}
 
-	return (uint)count;
+	return static_cast<uint>(count);
 }
 
-void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeout, const int iCliloc )
+void CClient::SetTargMode(const CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeout, const int iCliloc )
 {
 	ADDTOCALLSTACK("CClient::SetTargMode");
 	// ??? Get rid of menu stuff if previous targ mode.
@@ -1775,7 +1775,7 @@ void CClient::addPromptConsole(const CLIMODE_TYPE mode, lpctstr pPrompt, const C
 	new PacketAddPrompt(this, context1, context2, bUnicode);
 }
 
-void CClient::addTarget( CLIMODE_TYPE targmode, lpctstr pPrompt, const bool fAllowGround, const bool fCheckCrime, int64 iTimeout, const int iCliloc) // Send targetting cursor to client
+void CClient::addTarget(const CLIMODE_TYPE targmode, lpctstr pPrompt, const bool fAllowGround, const bool fCheckCrime, int64 iTimeout, const int iCliloc) // Send targetting cursor to client
 {
 	ADDTOCALLSTACK("CClient::addTarget");
 	// Send targetting cursor to client.
@@ -1814,7 +1814,7 @@ bool CClient::addTargetChars(const CLIMODE_TYPE mode, CREID_TYPE baseID, bool fN
 	return true;
 }
 
-bool CClient::addTargetItems( CLIMODE_TYPE targmode, const ITEMID_TYPE id, const HUE_TYPE color, const bool fAllowGround )
+bool CClient::addTargetItems(const CLIMODE_TYPE targmode, const ITEMID_TYPE id, const HUE_TYPE color, const bool fAllowGround )
 {
 	ADDTOCALLSTACK("CClient::addTargetItems");
 	// Add a list of items to place at target.
@@ -1903,7 +1903,7 @@ void CClient::addSkillWindow(const SKILL_TYPE skill, const bool fFromInfo) const
 	if (pChar == nullptr)
 		pChar = m_pChar;
 
-	bool fAllSkills = (skill >= (SKILL_TYPE)(g_Cfg.m_iMaxSkill));
+	bool fAllSkills = (skill >= static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill));
 	if (fAllSkills == false && g_Cfg.m_SkillIndexDefs.valid_index(skill) == false)
 		return;
 
@@ -2308,7 +2308,7 @@ void CClient::addSpellbookOpen( CItem * pBook )
 	if ( PacketSpellbookContent::CanSendTo(GetNetState()) && IsAosFlagEnabled(FEATURE_AOS_UPDATE_B) )
 	{
 		// Handle new AOS spellbook stuff (old packets no longer work)
-		new PacketSpellbookContent( this, pBook, (word)(pBook->Item_GetDef()->m_ttSpellbook.m_iOffset + 1) );
+		new PacketSpellbookContent( this, pBook, static_cast<word>(pBook->Item_GetDef()->m_ttSpellbook.m_iOffset + 1) );
 		return;
 	}
 
@@ -2681,7 +2681,7 @@ void CClient::addShowDamage( int damage, const dword uid_damage )
 		damage = 0;
 
 	if ( PacketCombatDamage::CanSendTo(GetNetState()) )
-		new PacketCombatDamage(this, (word)(damage), static_cast<CUID>(uid_damage));
+		new PacketCombatDamage(this, static_cast<word>(damage), static_cast<CUID>(uid_damage));
 	else if ( PacketCombatDamageOld::CanSendTo(GetNetState()) )
 		new PacketCombatDamageOld(this, static_cast<byte>(damage), static_cast<CUID>(uid_damage));
 }
@@ -2838,11 +2838,11 @@ byte CClient::Setup_Start( CChar * pChar ) // Send character startup stuff to pl
 
 	if ( IsPriv(PRIV_GM_PAGE) && !g_World.m_GMPages.empty() )
 	{
-		snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_GMPAGE_PENDING), (int)(g_World.m_GMPages.size()), g_Cfg.m_cCommandPrefix);
+		snprintf(z, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_GMPAGE_PENDING), static_cast<int>(g_World.m_GMPages.size()), g_Cfg.m_cCommandPrefix);
 		addSysMessage(z);
 	}
 	if ( IsPriv(PRIV_JAILED) )
-		m_pChar->Jail(&g_Serv, true, (int)(pAccount->m_TagDefs.GetKeyNum("JailCell")));
+		m_pChar->Jail(&g_Serv, true, static_cast<int>(pAccount->m_TagDefs.GetKeyNum("JailCell")));
 	if ( g_Serv.m_timeShutdown > 0 )
 		addBarkParse(g_Cfg.GetDefaultMsg(DEFMSG_MSG_SERV_SHUTDOWN_SOON), nullptr, HUE_TEXT_DEF, TALKMODE_SAY, FONT_BOLD);
 
@@ -3012,7 +3012,7 @@ byte CClient::Setup_ListReq( const char * pszAccName, const char * pszPassword, 
     }
     else
     {
-        uchar uiChars = (uchar)(maximum(m_pAccount->GetMaxChars(), m_pAccount->m_Chars.GetCharCount()));
+        const uchar uiChars = static_cast<uchar>((maximum(m_pAccount->GetMaxChars(), m_pAccount->m_Chars.GetCharCount())));
         dwFeatureFlags = g_Cfg.GetPacketFlag( false, m_pAccount->GetResDisp(), uiChars );
     }
 	new PacketEnableFeatures(this, dwFeatureFlags);
@@ -3096,7 +3096,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 		}
 	}
 	if ( (pAccount->GetPrivLevel() < PLEVEL_GM) &&
-		((llong)g_Serv.StatGet(SERV_STAT_CLIENTS) > g_Cfg.m_iClientsMax) )
+		(static_cast<llong>(g_Serv.StatGet(SERV_STAT_CLIENTS)) > g_Cfg.m_iClientsMax) )
 	{
 		// Give them a polite goodbye.
 		g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached.\n", GetSocketID(), pAccount->GetName());

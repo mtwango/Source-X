@@ -50,7 +50,7 @@ void CCryptoKeysHolder::LoadKeyTable(CScript& s)
                 .m_client = val.value(),
                 .m_key_1 = s.GetArgDWVal(),
                 .m_key_2 = s.GetArgDWVal(),
-                .m_EncType = (ENCRYPTION_TYPE)s.GetArgVal()
+                .m_EncType = static_cast<ENCRYPTION_TYPE>(s.GetArgVal())
             });
 	}
 }
@@ -163,7 +163,7 @@ bool CCrypto::SetClientVerFromKeyIndex(const uint uiVer, const bool fSetEncrypt 
 	ADDTOCALLSTACK("CCrypto::SetClientVerFromKeyIndex");
 	CCryptoKeysHolder* keys_holder = CCryptoKeysHolder::get();
 
-	if ( (size_t)uiVer >= keys_holder->client_keys.size() )
+	if ( static_cast<size_t>(uiVer) >= keys_holder->client_keys.size() )
 		return false;
 
 	auto &[m_client, m_key_1, m_key_2, m_EncType] = keys_holder->client_keys[uiVer];
@@ -366,7 +366,7 @@ bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, const ui
 	{
 		for (int i = ENC_NONE; i <= ENC_TFISH; ++i)
 		{
-			SetEncryptionType( (ENCRYPTION_TYPE)i );
+			SetEncryptionType( static_cast<ENCRYPTION_TYPE>(i) );
 
 			InitBlowFish();
 			InitTwoFish();
@@ -376,7 +376,7 @@ bool CCrypto::RelayGameCryptStart( byte * pOutput, const byte * pInput, const ui
                 return false;
             }
 
-			if ((pOutput[0] ^ (byte) m_CryptMaskLo) == 0x91)
+			if ((pOutput[0] ^ static_cast<byte>(m_CryptMaskLo)) == 0x91)
 			{
 				bFoundEncrypt = true;
 				break;
@@ -632,7 +632,7 @@ bool CCrypto::GameCryptStart(const dword dwIP, const byte * pEvent, const uint i
     // Auto-detect if the encryption is BFISH, BTFISH or TFISH
 	for ( uint i = ENC_NONE; i <= ENC_TFISH; ++i )
 	{
-		SetEncryptionType( (ENCRYPTION_TYPE)i );
+		SetEncryptionType( static_cast<ENCRYPTION_TYPE>(i) );
 		if ( GetEncryptionType() == ENC_TFISH || GetEncryptionType() == ENC_BTFISH )
 			InitTwoFish();
 		if ( GetEncryptionType() == ENC_BFISH || GetEncryptionType() == ENC_BTFISH )

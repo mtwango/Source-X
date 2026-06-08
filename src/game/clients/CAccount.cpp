@@ -340,7 +340,7 @@ bool CAccounts::Cmd_ListUnused(CTextConsole * pSrc, lpctstr pszDays, lpctstr psz
 		}
 
 		if ( (iDaysCur - iDaysAcc) < iDaysTest ) continue;
-		if ( dwMask && !pAccount->IsPriv((word)(dwMask)) ) continue;
+		if ( dwMask && !pAccount->IsPriv(static_cast<word>(dwMask)) ) continue;
 
 		iCount ++;
 		if ( pszVerb == nullptr || pszVerb[0] == '\0' )
@@ -430,7 +430,7 @@ bool CAccounts::Account_OnCmd( tchar * pszArgs, CTextConsole * pSrc )
 	}
 	else
 	{
-		index = (VACS_TYPE) FindTableSorted( ppCmd[0], sm_szVerbKeys, std::size(sm_szVerbKeys) - 1 );
+		index = static_cast<VACS_TYPE>(FindTableSorted(ppCmd[0], sm_szVerbKeys, std::size(sm_szVerbKeys) - 1));
 	}
 
 	static constexpr lpctstr sm_pszCmds[] =
@@ -557,7 +557,7 @@ PLEVEL_TYPE CAccount::GetPrivLevelText( lpctstr pszFlags ) // static
 	ADDTOCALLSTACK("CAccount::GetPrivLevelText");
 	int level = FindTable( pszFlags, sm_szPrivLevels, std::size(sm_szPrivLevels) - 1 );
 	if ( level >= 0 )
-		return (PLEVEL_TYPE)level;
+		return static_cast<PLEVEL_TYPE>(level);
 
 	level = Exp_GetVal( pszFlags );
 	if ( level < PLEVEL_Guest )
@@ -565,7 +565,7 @@ PLEVEL_TYPE CAccount::GetPrivLevelText( lpctstr pszFlags ) // static
 	if ( level > PLEVEL_Owner )
 		return PLEVEL_Owner;
 
-	return (PLEVEL_TYPE)level;
+	return static_cast<PLEVEL_TYPE>(level);
 }
 
 CAccount::CAccount(const lpctstr pszName, const bool fGuest )
@@ -582,7 +582,7 @@ CAccount::CAccount(const lpctstr pszName, const bool fGuest )
 	else
 		SetPrivLevel(PLEVEL_Player);
 
-	m_PrivFlags = (word)(g_Cfg.m_iAutoPrivFlags);
+	m_PrivFlags = static_cast<word>(g_Cfg.m_iAutoPrivFlags);
     SetResDisp(RDS_T2A);
 	m_MaxChars = 0;
     _iMaxHouses = g_Cfg._iMaxHousesAccount;
@@ -1046,7 +1046,7 @@ void CAccount::SetNewPassword(const lpctstr pszPassword )
 	if ( !pszPassword || !pszPassword[0] )		// no password given, auto-generate password
 	{
         static constexpr tchar passwdChars[] = "ABCDEFGHJKLMNPQRTUVWXYZ2346789";
-		int len = (int)strlen(passwdChars);
+        const int len = static_cast<int>(strlen(passwdChars));
 		int charsCnt = g_Rand.GetVal(4) + 6;	// 6 - 10 chars
 		if ( charsCnt > (MAX_ACCOUNT_PASSWORD_ENTER - 1) )
 			charsCnt = MAX_ACCOUNT_PASSWORD_ENTER - 1;
@@ -1380,12 +1380,12 @@ bool CAccount::r_LoadVal( CScript & s )
 				CChar * pChar = uid.CharFind();
 				if (pChar == nullptr)
 				{
-					DEBUG_ERR(( "Invalid CHARUID 0%x for account '%s'\n", (dword)(uid), GetName()));
+					DEBUG_ERR(( "Invalid CHARUID 0%x for account '%s'\n", static_cast<dword>(uid), GetName()));
 					return false;
 				}
 				if ( ! IsMyAccountChar( pChar ))
 				{
-					DEBUG_ERR(( "CHARUID 0%x (%s) not attached to account '%s'\n", (dword)(uid), pChar->GetName(), GetName()));
+					DEBUG_ERR(( "CHARUID 0%x (%s) not attached to account '%s'\n", static_cast<dword>(uid), pChar->GetName(), GetName()));
 					return false;
 				}
 				AttachChar(pChar);
@@ -1462,7 +1462,7 @@ bool CAccount::r_LoadVal( CScript & s )
 			m_PrivFlags = s.GetArgWVal();
 			if ( m_PrivFlags & PRIV_UNUSED )
 			{
-				g_Log.EventError("Fixing PRIV field (0%x) for account %s have not supported flags set (caught by mask 0%x).\n", m_PrivFlags, GetName(), (word)PRIV_UNUSED);
+				g_Log.EventError("Fixing PRIV field (0%x) for account %s have not supported flags set (caught by mask 0%x).\n", m_PrivFlags, GetName(), static_cast<word>(PRIV_UNUSED));
 				m_PrivFlags &= ~PRIV_UNUSED;
 			}
 			break;

@@ -177,7 +177,7 @@ bool CScriptTriggerArgs::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         if (*pszTemp && IsDigit(*pszTemp))
         {
             char *pEnd;
-            if (ushort number = (ushort)strtol(pszTemp, &pEnd, 10); number > 0) // Can only use 1 to 65535 as REFs
+            if (const ushort number = static_cast<ushort>(strtol(pszTemp, &pEnd, 10)); number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
                 // Make sure REFx or REFx.KEY is being used
@@ -254,7 +254,7 @@ bool CScriptTriggerArgs::r_Verb( CScript & s, CTextConsole * pSrc )
         if (*pszTemp && IsDigit(*pszTemp))
         {
             char *pEnd;
-            if (ushort number = (ushort)(strtol(pszTemp, &pEnd, 10)); number > 0) // Can only use 1 to 65535 as REFs
+            if (ushort number = static_cast<ushort>(strtol(pszTemp, &pEnd, 10)); number > 0) // Can only use 1 to 65535 as REFs
             {
                 pszTemp = pEnd;
                 if (!*pszTemp) // setting REFx to a new object
@@ -503,7 +503,7 @@ bool CScriptTriggerArgs::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsol
 
         if (*ptcKey == '\0')
         {
-            sVal.FormatUVal((uint)uiQty);
+            sVal.FormatUVal(static_cast<uint>(uiQty));
             return true;
         }
 

@@ -271,13 +271,13 @@ void ThreadHolder::remove(AbstractThread* pAbstractThread) CANTHROW
     {
         g_Log.Event(LOGM_DEBUG | LOGL_EVENT | LOGF_CONSOLE_ONLY,
             "THREADING: ThreadHolder removed %s with sys-id %" PRIu64 ".\n",
-            ptcName, (uint64_t)sysId);
+            ptcName, static_cast<uint64_t>(sysId));
     }
     else
     {
         // Logger may be shutting down; print directly to stdout to avoid loss.
         fprintf(stdout, "DEBUG: THREADING: ThreadHolder removed %s with sys-id %" PRIu64 ".\n",
-            ptcName, (uint64_t)sysId);
+            ptcName, static_cast<uint64_t>(sysId));
         fflush(stdout);
     }
 #endif
@@ -430,7 +430,7 @@ static void os_set_thread_name_portable(const char* name_trimmed) noexcept
         info.dwFlags    = 0;
 
         __try {
-            RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), (ULONG_PTR*)&info);
+            RaiseException(MS_VC_EXCEPTION, 0, sizeof(info) / sizeof(ULONG_PTR), reinterpret_cast<ULONG_PTR*>(&info));
         } __except(EXCEPTION_EXECUTE_HANDLER) {
         }
 #   else
@@ -499,7 +499,7 @@ AbstractThread::~AbstractThread()
 
     if (everBound)
         fprintf(stdout, "DEBUG: Destroying AbstractThread '%s' (ThreadHolder-ID %d) %s, sys-id %" PRIu64 ".\n",
-            name, m_threadHolderId, state, (uint64_t)m_threadSystemId);
+            name, m_threadHolderId, state, static_cast<uint64_t>(m_threadSystemId));
     else
         fprintf(stdout, "DEBUG: Destroying AbstractThread '%s' (ThreadHolder-ID %d) %s, sys-id n/a.\n",
             name, m_threadHolderId, state);
@@ -771,7 +771,7 @@ void AbstractThread::onStart()
 #ifdef _DEBUG
     g_Log.Event(LOGM_DEBUG | LOGL_EVENT | LOGF_CONSOLE_ONLY,
         "THREADING: Started thread loop for '%s' (ThreadHolder-ID %d), sys-id %" PRIu64 ".\n",
-        getName(), m_threadHolderId, (uint64)m_threadSystemId);
+        getName(), m_threadHolderId, static_cast<uint64>(m_threadSystemId));
 #endif
 
     // End of the small registration window.
@@ -947,12 +947,12 @@ void AbstractSphereThread::printStackTrace() noexcept
     g_Log.EventDebug("Printing STACK TRACE for debugging purposes (thread id %" PRIx64 ").\n", threadId);
     g_Log.EventDebug("_ thread name _ |   # | _____________ function _____________ |\n");
 
-    for (ssize_t i = 0; i < (ssize_t)std::size(m_stackInfoCopy); ++i)
+    for (ssize_t i = 0; i < static_cast<ssize_t>(std::size(m_stackInfoCopy)); ++i)
     {
         if (stackInfo[i].functionName == nullptr)
             break;
 
-        auto extra = "";
+        const auto *extra = "";
         if (i == m_iStackUnwindingStackPos)
             extra = "<-- last tracked function call (stack unwinding detected here)";
         else if (i == m_iCaughtExceptionStackPos)
@@ -962,7 +962,7 @@ void AbstractSphereThread::printStackTrace() noexcept
 
         g_Log.EventDebug("%15.15s | %3u | %36.36s | %s\n",
             /* limiting threadname to 15 characters because m_nameMaxLength is hardcoded to 16 */
-            threadName, (uint)i, stackInfo[i].functionName, extra);
+            threadName, static_cast<uint>(i), stackInfo[i].functionName, extra);
 
         if (i == m_iStackUnwindingStackPos)
             break;

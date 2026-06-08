@@ -147,7 +147,7 @@ CResourceID CResourceHolder::ResourceGetID_EatStr(const RES_TYPE restype, lpctst
         return CResourceID(restype, iEvalResIndex, wPage);
     }
     // CResourceID always needs to be a valid resource (there's an ASSERT in CResourceID copy constructor).
-    return CResourceID((RES_TYPE)iEvalResType, iEvalResIndex, wPage);
+    return CResourceID(static_cast<RES_TYPE>(iEvalResType), iEvalResIndex, wPage);
 }
 
 CResourceID CResourceHolder::ResourceGetID(const RES_TYPE restype, lpctstr ptcName, const word wPage, const bool fCanFail )

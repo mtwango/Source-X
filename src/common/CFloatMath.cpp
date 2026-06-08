@@ -505,7 +505,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 					else
 					{
 						cparg1 = ppCmd[2];
-						rResult = Str_IndexOf(ppCmd[0], ppCmd[1], (iCount == 3)? (int)(MakeFloatMath(cparg1)) : 0);
+						rResult = Str_IndexOf(ppCmd[0], ppCmd[1], (iCount == 3)? static_cast<int>(MakeFloatMath(cparg1)) : 0);
 					}
 				} break;
 
@@ -543,7 +543,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 					{
 						cparg1 = ppCmd[0];
 						cparg2 = ppCmd[1];
-						rResult = Calc_GetBellCurve((int)(MakeFloatMath(cparg1)), (int)(MakeFloatMath(cparg2)));
+						rResult = Calc_GetBellCurve(static_cast<int>(MakeFloatMath(cparg1)), static_cast<int>(MakeFloatMath(cparg2)));
 					}
 				} break;
 
@@ -602,7 +602,7 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
 				case INTRINSIC_STRLEN:
 				{
 					iCount = 1;
-                    rResult = (realtype)strlen(ptcRefArgs);
+                    rResult = static_cast<realtype>(strlen(ptcRefArgs));
 				} break;
 
 				case INTRINSIC_ISOBSCENE:

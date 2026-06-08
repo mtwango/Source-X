@@ -835,7 +835,7 @@ int StrncpyCharBytesWritten(const int iBytesToWrite, const size_t uiBufSize, con
         return 0;
     if (uiBufSize < 1)
         goto err;
-    if ((uint)iBytesToWrite >= uiBufSize - 1)
+    if (static_cast<uint>(iBytesToWrite) >= uiBufSize - 1)
         goto err;
     return iBytesToWrite;
 
@@ -1414,7 +1414,7 @@ tchar * Str_TrimWhitespace(tchar * pStr) noexcept
     if (!pStr) [[unlikely]]
         return nullptr;
     GETNONWHITESPACE(pStr);
-    Str_TrimEndWhitespace(pStr, (int)strlen(pStr));
+    Str_TrimEndWhitespace(pStr, static_cast<int>(strlen(pStr)));
     return pStr;
 }
 
@@ -1664,11 +1664,11 @@ int Str_IndexOf(const tchar * pStr1, const tchar * pStr2, const int offset) noex
     if (offset < 0)
         return -1;
 
-    int len = (int)strlen(pStr1);
+    const int len = static_cast<int>(strlen(pStr1));
     if (offset >= len)
         return -1;
 
-    int slen = (int)strlen(pStr2);
+    const int slen = static_cast<int>(strlen(pStr2));
     if (slen > len)
         return -1;
 
@@ -1933,7 +1933,7 @@ void CharToMultiByteNonNull(byte * Dest, const char * Src, const int MBytes) noe
     for (int idx = 0; idx != MBytes * 2; idx += 2) {
         if (Src[idx / 2] == '\0')
             break;
-        Dest[idx] = (byte)(Src[idx / 2]);
+        Dest[idx] = static_cast<byte>(Src[idx / 2]);
     }
 }
 
@@ -2061,7 +2061,7 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) n
 
     if (*buf == nullptr || *bufsiz == 0) {
         *bufsiz = BUFSIZ;
-        if ((*buf = (char*)malloc(*bufsiz)) == nullptr)
+        if ((*buf = static_cast<char*>(malloc(*bufsiz))) == nullptr)
             return -1;
     }
 
@@ -2076,7 +2076,7 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) n
             }
             return -1;
         }
-        *ptr++ = (char)c;
+        *ptr++ = static_cast<char>(c);
         if (c == delimiter) {
             *ptr = '\0';
             return ptr - *buf;
@@ -2085,7 +2085,7 @@ fReadUntilDelimiter(char **buf, size_t *bufsiz, const int delimiter, FILE *fp) n
             char *nbuf;
             size_t nbufsiz = *bufsiz * 2;
             ssize_t d = ptr - *buf;
-            if ((nbuf = (char*)realloc(*buf, nbufsiz)) == nullptr)
+            if ((nbuf = static_cast<char*>(realloc(*buf, nbufsiz))) == nullptr)
                 return -1;
             *buf = nbuf;
             *bufsiz = nbufsiz;

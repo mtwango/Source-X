@@ -22,8 +22,8 @@ size_t CResourceQty::WriteKey( tchar * pszArgs, const size_t uiBufSize, const bo
     size_t i = 0;
     if ( (GetResQty() || fQtyOnly) && !fKeyOnly )
     {
-        int ret = snprintf( pszArgs, uiBufSize, "%" PRId64 " ", GetResQty());
-        i = (size_t)StrncpyCharBytesWritten(ret, uiBufSize);
+        const int ret = snprintf( pszArgs, uiBufSize, "%" PRId64 " ", GetResQty());
+        i = static_cast<size_t>(StrncpyCharBytesWritten(ret, uiBufSize));
     }
     if ( !fQtyOnly )
     {
@@ -38,9 +38,9 @@ size_t CResourceQty::WriteNameSingle( tchar * pszArgs, const size_t uiBufLen, co
     if ( GetResType() == RES_ITEMDEF )
     {
         //DEBUG_ERR(("pItemBase 0x%x  m_rid 0%x  m_rid.GetResIndex() 0%x\n",pItemBase,m_rid,m_rid.GetResIndex()));
-        if ( const CItemBase *pItemBase = CItemBase::FindItemBase((ITEMID_TYPE)(m_rid.GetResIndex())) )
+        if ( const CItemBase *pItemBase = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(m_rid.GetResIndex())) )
         {
-            lpctstr ptcSrc = pItemBase->GetNamePluralize(pItemBase->GetTypeName(),(( iQty > 1 )));
+            const lpctstr ptcSrc = pItemBase->GetNamePluralize(pItemBase->GetTypeName(),(( iQty > 1 )));
             return Str_CopyLimitNull(pszArgs, ptcSrc, uiBufLen);
         }
     }
@@ -165,7 +165,7 @@ bool CResourceQtyArray::IsResourceMatchAll( const CChar * pChar ) const
     for ( size_t i = 0, iQty = size(); i < iQty; ++i )
     {
 
-        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); ! pChar->IsResourceMatch( ridtest, (uint)((*this)[i].GetResQty()) ))
+        if (const CResourceID &ridtest = (*this)[i].GetResourceID(); ! pChar->IsResourceMatch( ridtest, static_cast<uint>((*this)[i].GetResQty()) ))
             return false;
     }
 
@@ -275,7 +275,7 @@ void CResourceQtyArray::WriteNames( tchar * pszArgs, const size_t uiBufSize, con
             }
         }
 
-        pszArgs += resQty.WriteNameSingle( pszArgs, uiBufSize, (int)iQty );
+        pszArgs += resQty.WriteNameSingle( pszArgs, uiBufSize, static_cast<int>(iQty) );
     }
     *pszArgs = '\0';
 }

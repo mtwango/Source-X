@@ -360,7 +360,7 @@ CItem *CContainer::ContentFindRandom() const
 {
 	ADDTOCALLSTACK("CContainer::ContentFindRandom");
 	// returns Pointer of random item, nullptr if player carrying none
-	return static_cast<CItem *>(GetContentIndex(g_Rand.GetVal((int32)GetContentCount())));
+	return static_cast<CItem *>(GetContentIndex(g_Rand.GetVal(static_cast<int32>(GetContentCount()))));
 }
 
 int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, const dword dwArg ) const
@@ -381,7 +381,7 @@ int CContainer::ContentConsumeTest( const CResourceID& rid, int iAmount, const d
         if ( pItem->IsResourceMatch(rid, dwArg) )
         {
             const word wAmountMax = pItem->GetAmount();
-            const word wAmountToConsume = (word)minimum(iAmount,UINT16_MAX);
+            const word wAmountToConsume = static_cast<word>(minimum(iAmount, UINT16_MAX));
             iAmount -= (wAmountMax > wAmountToConsume ) ? wAmountToConsume : wAmountMax;
             if ( iAmount <= 0 )
                 break;
@@ -425,7 +425,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, const dword 
 		ASSERT(pItem);
 		if ( pItem->IsResourceMatch(rid, dwArg) )
 		{
-			amount -= pItem->ConsumeAmount( (word)minimum(amount,UINT16_MAX));
+			amount -= pItem->ConsumeAmount( static_cast<word>(minimum(amount, UINT16_MAX)));
 			if ( amount <= 0 )
 				break;
 		}
@@ -539,7 +539,7 @@ size_t CContainer::ResourceConsumePart( const CResourceQtyArray *pResources, con
 	size_t iQtyRes = pResources->size();
 	for ( size_t i = 0; i < iQtyRes; ++i )
 	{
-		int iResQty = (int)((*pResources)[i].GetResQty());
+        const int iResQty = static_cast<int>((*pResources)[i].GetResQty());
 		if ( iResQty <= 0 ) // not sure why this would be true
 			continue;
 
@@ -579,7 +579,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 	int iQtyMin = INT32_MAX;
 	for ( size_t i = 0; i < pResources->size(); ++i )
 	{
-		int iResQty = (int)((*pResources)[i].GetResQty());
+        const int iResQty = static_cast<int>((*pResources)[i].GetResQty());
 		if ( iResQty <= 0 ) // not sure why this would be true
 			continue;
 
@@ -589,7 +589,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 		{
 			if ( !pChar )
 				continue;
-			if ( pChar->Skill_GetBase((SKILL_TYPE)(rid.GetResIndex())) < iResQty )
+			if ( pChar->Skill_GetBase(static_cast<SKILL_TYPE>(rid.GetResIndex())) < iResQty )
 				return 0;
 			continue;
 		}

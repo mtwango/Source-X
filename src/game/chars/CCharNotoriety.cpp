@@ -119,10 +119,10 @@ NOTO_TYPE CChar::Noto_GetFlag(const CChar * pCharViewer, bool fAllowIncog, bool 
 
 	if (IsTrigUsed(TRIGGER_NOTOSEND))
 	{
-        CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+        const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pThis->OnTrigger(CTRIG_NotoSend, pScriptArgs, pTarget);
-        iNoto = (NOTO_TYPE)(pScriptArgs->m_iN1);
-        iColor = (NOTO_TYPE)(pScriptArgs->m_iN2);
+        iNoto = static_cast<NOTO_TYPE>(pScriptArgs->m_iN1);
+        iColor = static_cast<NOTO_TYPE>(pScriptArgs->m_iN2);
 	}
 
 	if (iNoto == NOTO_INVALID)
@@ -344,7 +344,7 @@ int CChar::Noto_GetLevel() const
     for (const ushort uiFame = GetFame(); j < g_Cfg.m_NotoFameLevels.size() && uiFame > g_Cfg.m_NotoFameLevels[j]; ++j )
 		;
 
-	return (int)( ( i * (g_Cfg.m_NotoFameLevels.size() + 1) ) + j );
+	return static_cast<int>((i * (g_Cfg.m_NotoFameLevels.size() + 1)) + j);
 }
 
 lpctstr CChar::Noto_GetTitle() const
@@ -375,7 +375,7 @@ void CChar::Noto_Murder()
 		SysMessageDefault(DEFMSG_MSG_MURDERER);
 
 	if ( m_pPlayer && m_pPlayer->m_wMurders )
-		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_Murders, g_Cfg.GetSpellEffect(SPELL_NONE, 0), (int)(g_Cfg.m_iMurderDecayTime/MSECS_PER_TENTH), nullptr);
+		Spell_Effect_Create(SPELL_NONE, LAYER_FLAG_Murders, g_Cfg.GetSpellEffect(SPELL_NONE, 0), static_cast<int>(g_Cfg.m_iMurderDecayTime / MSECS_PER_TENTH), nullptr);
 }
 
 bool CChar::Noto_Criminal( CChar * pCharViewer, const bool fFromSawCrime )
@@ -496,8 +496,8 @@ void CChar::Noto_Fame( int iFameChange, CChar* pNPC )
 	//if ( ! iFameChange )
 	//	return;
 
-	SetFame((ushort)(iFame + iFameChange), pNPC);
-    Noto_ChangeDeltaMsg( (int)GetFame() - iFame, g_Cfg.GetDefaultMsg( DEFMSG_NOTO_FAME ) );
+	SetFame(static_cast<ushort>(iFame + iFameChange), pNPC);
+    Noto_ChangeDeltaMsg( static_cast<int>(GetFame()) - iFame, g_Cfg.GetDefaultMsg( DEFMSG_NOTO_FAME ) );
 }
 
 void CChar::Noto_Karma( int iKarmaChange, int iBottom, const bool fMessage, CChar* pNPC )
@@ -534,8 +534,8 @@ void CChar::Noto_Karma( int iKarmaChange, int iBottom, const bool fMessage, CCha
 	//if ( ! iKarmaChange )
 	//	return;
 
-    SetKarma((short)(iKarma + iKarmaChange), pNPC);
-    Noto_ChangeDeltaMsg( (int)GetKarma() - iKarma, g_Cfg.GetDefaultMsg( DEFMSG_NOTO_KARMA ) );
+    SetKarma(static_cast<short>(iKarma + iKarmaChange), pNPC);
+    Noto_ChangeDeltaMsg( static_cast<int>(GetKarma()) - iKarma, g_Cfg.GetDefaultMsg( DEFMSG_NOTO_KARMA ) );
 	NotoSave_Update();
 	if ( fMessage == true )
 	{
@@ -589,7 +589,7 @@ void CChar::Noto_Kill(CChar * pKill, const int iTotalKillers)
 
             if (pScriptArgs->m_iN3 < 1)
             {
-                m_pPlayer->m_wMurders = (word)(pScriptArgs->m_iN1);
+                m_pPlayer->m_wMurders = static_cast<word>(pScriptArgs->m_iN1);
                 if (pScriptArgs->m_iN2)
                     Noto_Criminal();
 
@@ -677,7 +677,7 @@ NOTO_TYPE CChar::NotoSave_GetValue(const int id, const bool fGetColor )
 		return NOTO_INVALID;
 	if ( id < 0 )
 		return NOTO_INVALID;
-	if ( (int)(m_notoSaves.size()) <= id )
+	if ( static_cast<int>(m_notoSaves.size()) <= id )
 		return NOTO_INVALID;
 	NotoSaves & refNotoSave = m_notoSaves[id];
     if (fGetColor && refNotoSave.color != 0 )	// retrieving color if requested... only if a color is greater than 0 (to avoid possible crashes).
@@ -693,7 +693,7 @@ int64 CChar::NotoSave_GetTime(const int id )
 		return -1;
 	if ( id < 0 )
 		return NOTO_INVALID;
-	if ( (int)(m_notoSaves.size()) <= id )
+	if ( static_cast<int>(m_notoSaves.size()) <= id )
 		return -1;
 	NotoSaves & refNotoSave = m_notoSaves[id];
 	return refNotoSave.time;

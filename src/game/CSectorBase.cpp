@@ -108,11 +108,10 @@ void CItemsList::AddItemToSector( CItem * pItem )
         if (!pParent)
             throw CSError(LOGL_ERROR, 0, "No parent?");
 
-        const auto* pNewWorldObjCont = g_World.GetObjectsNew();
-        if (pParent == pNewWorldObjCont)
+        if (const auto *pNewWorldObjCont = g_World.GetObjectsNew(); pParent == pNewWorldObjCont)
         {
             // Just created, unplaced yet.
-            auto itNew = std::find(pNewWorldObjCont->cbegin(), pNewWorldObjCont->cend(), pItem);
+            auto itNew = std::ranges::find(*pNewWorldObjCont, pItem);
             DEBUG_ASSERT(itNew != pNewWorldObjCont->cend());
         }
         else if (dynamic_cast<const CSectorObjCont*>(pParent))
@@ -191,7 +190,7 @@ void CSectorBase::SetAdjacentSectors()
     };
 
     //int nAdj = 0;
-    for (int i = 0; i < (int)DIR_QTY; ++i)
+    for (int i = 0; i < static_cast<int>(DIR_QTY); ++i)
     {
         // out of bounds checks
         // These checks are needed or the negative iAdjX/iAdjY can lead to a wrong index if the sector is near the map borders.
@@ -210,7 +209,7 @@ void CSectorBase::SetAdjacentSectors()
             continue;
 
         //++ nAdj;
-        _ppAdjacentSectors[(DIR_TYPE)i] = pSectors.GetSectorByIndexUnchecked(m_BasePointSectUnits.m_map, iAdjIndex);
+        _ppAdjacentSectors[static_cast<DIR_TYPE>(i)] = pSectors.GetSectorByIndexUnchecked(m_BasePointSectUnits.m_map, iAdjIndex);
     }
     //if (nAdj < 8)
     //    g_Log.EventDebug("Map %d Sector %d with sect coords %d,%d has only %d adjacent sectors.\n",
@@ -278,10 +277,10 @@ void CSectorBase::Init(const int index, const uchar map, const short x, const sh
 CPointBase CSectorBase::GetBasePointMapUnits() const noexcept
 {
     return CPointBase {
-        (int16)m_MapRectWorldUnits.m_left,
-        (int16)m_MapRectWorldUnits.m_top,
+        static_cast<int16>(m_MapRectWorldUnits.m_left),
+        static_cast<int16>(m_MapRectWorldUnits.m_top),
         0,
-        (uint8)m_MapRectWorldUnits.m_map
+        static_cast<uint8>(m_MapRectWorldUnits.m_map)
     };
 }
 

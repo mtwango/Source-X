@@ -342,13 +342,13 @@ bailout1:
 	{
 		// Try to create the registry key containing the name of the EventMessageFile
 		//  Replace the name of the exe with the name of the dll in the szPath variable
-		if (RegSetValueEx(hKey, "EventMessageFile", 0, REG_EXPAND_SZ, (LPBYTE) szPath, (DWORD)strlen(szPath) + 1))
+		if (RegSetValueEx(hKey, "EventMessageFile", 0, REG_EXPAND_SZ, reinterpret_cast<LPBYTE>(szPath), static_cast<DWORD>(strlen(szPath)) + 1))
 			ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Install RegSetValueEx", GetLastErrorText(szErr, sizeof(szErr)));
 		else
 		{
 			// Try to create the registry key containing the types of errors this application will generate
 			dwData = EVENTLOG_ERROR_TYPE|EVENTLOG_INFORMATION_TYPE|EVENTLOG_WARNING_TYPE;
-			if ( RegSetValueEx(hKey, "TypesSupported", 0, REG_DWORD, (LPBYTE) &dwData, sizeof(DWORD)) )
+			if ( RegSetValueEx(hKey, "TypesSupported", 0, REG_DWORD, reinterpret_cast<LPBYTE>(&dwData), sizeof(DWORD)) )
 				ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Install RegSetValueEx", GetLastErrorText(szErr, sizeof(szErr)));
 		}
 		RegCloseKey(hKey);
@@ -365,7 +365,7 @@ bailout2:
 	}
 	ExtractPath(szPath);
 
-	if ( RegSetValueEx(hKey, "WorkingPath", 0, REG_SZ, (const unsigned char *) &szPath[0], (DWORD)strlen(szPath)) )
+	if ( RegSetValueEx(hKey, "WorkingPath", 0, REG_SZ, reinterpret_cast<const unsigned char *>(&szPath[0]), static_cast<DWORD>(strlen(szPath))) )
 		ReportEvent(EVENTLOG_ERROR_TYPE, 0, "Install RegSetValueEx", GetLastErrorText(szErr, sizeof(szErr)));
 
 	ReportEvent(EVENTLOG_INFORMATION_TYPE, 0, "Install OK", g_Serv.GetName());
@@ -437,7 +437,7 @@ void CNTService::CmdMainStart()
 	sprintf(szTmp, SPHERE_TITLE " - %s", g_Serv.GetName());
 	SERVICE_TABLE_ENTRY dispatchTable[] =
 	{
-		{ szTmp, (LPSERVICE_MAIN_FUNCTION)service_main },
+		{ szTmp, static_cast<LPSERVICE_MAIN_FUNCTIONA>(service_main) },
 		{ nullptr, nullptr },
 	};
 

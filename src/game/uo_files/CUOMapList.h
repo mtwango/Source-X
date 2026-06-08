@@ -37,8 +37,8 @@ protected:
             return {
                 .iNum = -1,
                 .iId = -1,
-                .uiSizeX = (uint16)-1,
-                .uiSizeY = (uint16)-1,
+                .uiSizeX = static_cast<uint16>(-1),
+                .uiSizeY = static_cast<uint16>(-1),
                 .iSectorSize = -1,
                 .fEnabled = true,
                 .fInitialized = false

@@ -109,7 +109,7 @@ bool CUOMapList::Load(const int map, char *args)
                     map, maxx, uiSizeX);
             }
             else
-                uiSizeX = (ushort)std::clamp(maxx, 0, (int)UINT16_MAX);
+                uiSizeX = static_cast<ushort>(std::clamp(maxx, 0, static_cast<int>(UINT16_MAX)));
         }
         if ( maxy )
         {
@@ -119,22 +119,22 @@ bool CUOMapList::Load(const int map, char *args)
                     map, maxy, uiSizeY);
             }
             else
-                uiSizeY = (ushort)std::clamp(maxy, 0, (int)UINT16_MAX);
+                uiSizeY = static_cast<ushort>(std::clamp(maxy, 0, static_cast<int>(UINT16_MAX)));
         }
         if ( sectorsize > 0 )
         {
-            if (!IsPowerOfTwo((ushort)sectorsize))
+            if (!IsPowerOfTwo(static_cast<ushort>(sectorsize)))
             {
                 g_Log.EventError("MAP%d: Invalid SectorSize (%d) is not a power of 2.\n",
                     map, sectorsize);
             }
             else
-                iSectorSize = (int16)sectorsize;
+                iSectorSize = static_cast<int16>(sectorsize);
         }
         if ( realmapnum >= 0 )
-            iNum = (int16)realmapnum;
+            iNum = static_cast<int16>(realmapnum);
         if ( mapid >= 0 )
-            iId = (int16)mapid;
+            iId = static_cast<int16>(mapid);
     }
 
     fInitialized = true;
@@ -285,14 +285,14 @@ int CUOMapList::CalcSectorRows(const int map) const
 int CUOMapList::GetMapCenterX(const int map) const
 {
     ASSERT(IsMapSupported(map));
-    ASSERT(m_mapGeoData.maps[map].uiSizeX != (ushort)-1);
+    ASSERT(m_mapGeoData.maps[map].uiSizeX != static_cast<ushort>(-1));
     return (m_mapGeoData.maps[map].uiSizeX / 2);
 }
 
 int CUOMapList::GetMapCenterY(const int map) const
 {
     ASSERT(IsMapSupported(map));
-    ASSERT(m_mapGeoData.maps[map].uiSizeY != (ushort)-1);
+    ASSERT(m_mapGeoData.maps[map].uiSizeY != static_cast<ushort>(-1));
     return (m_mapGeoData.maps[map].uiSizeY / 2);
 }
 

@@ -95,7 +95,7 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, co
 			//}
 			//myName = sTextUID;
 			if ( !*myName )
-				snprintf(myName, Str_TempLength(), "<%s [%x]>", pSrc->GetName(), (dword)pSrc->GetUID());
+				snprintf(myName, Str_TempLength(), "<%s [%x]>", pSrc->GetName(), static_cast<dword>(pSrc->GetUID()));
 		}
 
 		if (*myName)
@@ -207,7 +207,7 @@ void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwT
 			if ( wTextUID[0] == '\0' )
 			{
 				tchar * pszMsg = Str_GetTemp();
-				snprintf(pszMsg, Str_TempLength(), "<%s [%x]>", pSrc->GetName(), (dword)pSrc->GetUID());
+				snprintf(pszMsg, Str_TempLength(), "<%s [%x]>", pSrc->GetName(), static_cast<dword>(pSrc->GetUID()));
 				int iLen = CvtSystemToNETUTF16( wTextUID, std::size(wTextUID), pszMsg, -1 );
 				for ( int i = 0; pwText[i] && iLen < MAX_TALK_BUFFER - 1; i++, iLen++ )
 					wTextUID[iLen] = pwText[i];

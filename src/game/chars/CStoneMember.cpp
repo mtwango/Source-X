@@ -231,7 +231,7 @@ bool CStoneMember::r_LoadVal( CScript & s ) // Load an item Script
 			break;
 
 			case STMM_PRIV:
-				SetPriv( (STONEPRIV_TYPE)s.GetArgVal() );
+				SetPriv( static_cast<STONEPRIV_TYPE>(s.GetArgVal()) );
 				break;
 
 			case STMM_TITLE:
@@ -402,7 +402,7 @@ CStoneMember::CStoneMember( CItemStone * pStone, CUID uid, STONEPRIV_TYPE iType,
 	{
         if (CChar *pChar = uid.CharFind(); pChar != nullptr )
 		{
-			pChar->Memory_AddObjTypes(pStone, (word)(pStone->GetMemoryType()));
+			pChar->Memory_AddObjTypes(pStone, static_cast<word>(pStone->GetMemoryType()));
 			if ( pStone->IsTopLevel())
 			{
 				pChar->m_ptHome = pStone->GetTopPoint();	// Our new home.
@@ -436,7 +436,7 @@ CStoneMember::~CStoneMember()
 
         if ( CChar *pChar = GetLinkUID().CharFind() )
 		{
-			pChar->Memory_ClearTypes((word)(pStone->GetMemoryType())); 	// Make them forget they were ever in this guild
+			pChar->Memory_ClearTypes(static_cast<word>(pStone->GetMemoryType())); 	// Make them forget they were ever in this guild
 		}
 	}
 }
@@ -453,7 +453,7 @@ lpctstr CStoneMember::GetPrivName() const
 	STONEPRIV_TYPE iPriv = GetPriv();
 
 	TemporaryString tsDefname;
-	snprintf(tsDefname.buffer(), tsDefname.capacity(), "STONECONFIG_PRIVNAME_PRIVID-%d", (int)iPriv);
+	snprintf(tsDefname.buffer(), tsDefname.capacity(), "STONECONFIG_PRIVNAME_PRIVID-%d", static_cast<int>(iPriv));
 
     auto gReader = g_ExprGlobals.mtEngineLockedReader();
     CVarDefCont * pResult = gReader->m_VarDefs.GetKey(tsDefname);

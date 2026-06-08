@@ -67,13 +67,13 @@ bool CItemMemory::Guild_SetLoyalTo(const CUID &uid)
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_SetLoyalTo");
 	// Some other place checks to see if this is a valid member.
-	return (m_TagDefs.SetNum("LoyalTo", (dword)uid, false) != nullptr);
+	return (m_TagDefs.SetNum("LoyalTo", static_cast<dword>(uid), false) != nullptr);
 }
 
 CUID CItemMemory::Guild_GetLoyalTo() const
 {
 	ADDTOCALLSTACK("CItemMemory::Guild_GetLoyalTo");
-	CUID iUid((dword)(GetKeyNum("LoyalTo", true)));
+	CUID iUid(static_cast<dword>(GetKeyNum("LoyalTo", true)));
 	return iUid;
 }
 

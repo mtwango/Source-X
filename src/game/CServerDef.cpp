@@ -54,7 +54,7 @@ CServerDef::CServerDef( lpctstr pszName, CSocketAddressIP dwIP ) :
 	_iTimeCreate = CWorldGameTime::GetCurrentTime().GetTimeRaw();
 
 	// Set default time zone from UTC
-    m_TimeZone = (char)( TIMEZONE / (60 * 60) );	// Greenwich mean time.
+    m_TimeZone = static_cast<char>((TIMEZONE / (60 * 60)));	// Greenwich mean time.
 	m_eAccApp = ACCAPP_Unspecified;
 }
 
@@ -96,9 +96,9 @@ size_t CServerDef::StatGet(const SERV_STAT_TYPE i) const
 			if ( m_GetProcessMemoryInfo )
 			{
 				EXC_SET_BLOCK("open process");
-                if ( HANDLE hProcess = GetCurrentProcess() )
+                if (const HANDLE hProcess = GetCurrentProcess() )
 				{
-					ASSERT( hProcess == (HANDLE)-1 );
+					ASSERT( hProcess == reinterpret_cast<HANDLE>(-1));
 					EXC_SET_BLOCK("get memory info");
 					if ( m_GetProcessMemoryInfo(hProcess, &pcnt, sizeof(pcnt)) )
 					{
@@ -383,7 +383,7 @@ bool CServerDef::r_LoadVal( CScript & s )
 			SetStat( SERV_STAT_CHARS, s.GetArgDWVal() );
 			break;
 		case SC_TIMEZONE:
-			m_TimeZone = (char)s.GetArgVal();
+			m_TimeZone = static_cast<char>(s.GetArgVal());
 			break;
 		case SC_URL:
 		case SC_URLLINK:

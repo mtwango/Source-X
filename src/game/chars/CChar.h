@@ -1018,7 +1018,7 @@ private:
 	SPELL_TYPE Spell_GetMax(SKILL_TYPE skill = SKILL_NONE);	//gets first spell for the magic skill given.
 	bool Spell_Equip_OnTick( CItem * pItem );
 
-	void Spell_Field(const CPointMap &pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill, const CChar * pCharSrc = nullptr, ITEMID_TYPE idnewEW = (ITEMID_TYPE)0, ITEMID_TYPE idnewNS = (ITEMID_TYPE)0,
+	void Spell_Field(const CPointMap &pt, ITEMID_TYPE idEW, ITEMID_TYPE idNS, uint fieldWidth, uint fieldGauge, int iSkill, const CChar * pCharSrc = nullptr, ITEMID_TYPE idnewEW = static_cast<ITEMID_TYPE>(0), ITEMID_TYPE idnewNS = static_cast<ITEMID_TYPE>(0),
         int64 iDuration = 0, HUE_TYPE iColor = HUE_DEFAULT);
 	void Spell_Area(const CPointMap &pt, int iDist, int iSkill, int64 iDuration = 0);
 	bool Spell_TargCheck_Face();
@@ -1124,7 +1124,7 @@ public:
     #define ATTACKER_THREAT_TOLDBYMASTER 1000
 
 	int GetAttackersCount() {
-		return (int)m_lastAttackers.size();
+		return static_cast<int>(m_lastAttackers.size());
 	}
     bool	Attacker_Add(CChar * pChar, int iThreat = 0);
 	CChar * Attacker_GetLast() const;

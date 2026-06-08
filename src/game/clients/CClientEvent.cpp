@@ -148,7 +148,7 @@ void CClient::Event_Tips(word i) // Tip of the day window
 	if (i == 0)
 		i = 1;
 	CResourceLock s;
-	if ( g_Cfg.ResourceLock( s, CResourceID( RES_TIP, (int)i )) == false )
+	if ( g_Cfg.ResourceLock( s, CResourceID( RES_TIP, static_cast<int>(i) )) == false )
 	{
 		// requested tip was not found, default to tip 1 if possible
 		if ( i == 1 || ( g_Cfg.ResourceLock( s, CResourceID( RES_TIP, 1 )) == false ))
@@ -245,8 +245,8 @@ void CClient::Event_Item_Pickup(const CUID &uid, const word amount) // Client gr
         m_tNextPickup += MSECS_PER_TENTH;
     // +100 msec if amount should slow down the client
 
-	SOUND_TYPE iSnd = (SOUND_TYPE)(pItem->GetDefNum("PICKUPSOUND", true));
-	addSound(iSnd ? iSnd : (SOUND_TYPE)SOUND_USE_CLOTH);
+    const SOUND_TYPE iSnd = static_cast<SOUND_TYPE>(pItem->GetDefNum("PICKUPSOUND", true));
+	addSound(iSnd ? iSnd : static_cast<SOUND_TYPE>(SOUND_USE_CLOTH));
 
 	EXC_SET_BLOCK("TargMode");
 	SetTargMode(CLIMODE_DRAG);
@@ -1230,7 +1230,7 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, const uin
             }
         }
 
-		iCostTotal += ((int64)(items[i].m_vcAmount) * items[i].m_price);
+		iCostTotal += (static_cast<int64>(items[i].m_vcAmount) * items[i].m_price);
         if (iCostTotal > kuiMaxCost)
         {
             pVendor->Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_VENDOR_CANTFULFILL));
@@ -1260,9 +1260,9 @@ void CClient::Event_VendorBuy(CChar* pVendor, const VendorItem* items, const uin
         }
         else
         {
-            int iGold = m_pChar->GetPackSafe()->ContentConsumeTest(CResourceID(RES_TYPEDEF, IT_GOLD), (dword)iCostTotal);
+            int iGold = m_pChar->GetPackSafe()->ContentConsumeTest(CResourceID(RES_TYPEDEF, IT_GOLD), static_cast<dword>(iCostTotal));
             if (!g_Cfg.m_fPayFromPackOnly && iGold)
-                iGold = m_pChar->ContentConsumeTest(CResourceID(RES_TYPEDEF, IT_GOLD), (int)iCostTotal);
+                iGold = m_pChar->ContentConsumeTest(CResourceID(RES_TYPEDEF, IT_GOLD), static_cast<int>(iCostTotal));
 
             if (iGold)
             {
@@ -1404,9 +1404,9 @@ do_consume:
         }
         else
         {
-            if (int iGold = m_pChar->GetPackSafe()->ContentConsume(CResourceID(RES_TYPEDEF, IT_GOLD), (int)iCostTotal); !g_Cfg.m_fPayFromPackOnly && iGold)
+            if (const int iGold = m_pChar->GetPackSafe()->ContentConsume(CResourceID(RES_TYPEDEF, IT_GOLD), static_cast<int>(iCostTotal)); !g_Cfg.m_fPayFromPackOnly && iGold)
                 m_pChar->ContentConsume( CResourceID(RES_TYPEDEF,IT_GOLD), iGold);
-            pVendor->GetBank()->m_itEqBankBox.m_Check_Amount += (uint)iCostTotal;
+            pVendor->GetBank()->m_itEqBankBox.m_Check_Amount += static_cast<uint>(iCostTotal);
         }
     }
 
@@ -1516,7 +1516,7 @@ void CClient::Event_VendorSell(CChar* pVendor, const VendorItem* items, const ui
 		pBank->m_itEqBankBox.m_Check_Amount -= dwPrice;
 
 		// give them the appropriate amount of gold.
-		iGold += (int)(dwPrice);
+		iGold += static_cast<int>(dwPrice);
 
 		// Take the items from player.
 		// Put items in vendor inventory.
@@ -1814,7 +1814,7 @@ void CClient::Event_PromptResp_GMPage(const lpctstr pszReason)
 
 	const CPointMap& pt = m_pChar->GetTopPoint();
 	tchar * pszMsg = Str_GetTemp();
-	snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_GMPAGE_RECEIVED), m_pChar->GetName(), (dword)m_pChar->GetUID(), pt.WriteUsed(), pszReason);
+	snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_GMPAGE_RECEIVED), m_pChar->GetName(), static_cast<dword>(m_pChar->GetUID()), pt.WriteUsed(), pszReason);
 	g_Log.Event(LOGM_NOCONTEXT | LOGM_GM_PAGE, "%s\n", pszMsg);
 
 	CGMPage *pGMPage = nullptr;
@@ -1956,7 +1956,7 @@ void CClient::Event_Talk_Common(const lpctstr pszText)	// PC speech
 			// Named the char specifically?
 			//If i is 0 that means we have used a KEYWORD without a name or that we did not find any NPCs with that name.
 			i = pChar->NPC_OnHearName(pszText);
-			bNamed = (bool)i;
+			bNamed = static_cast<bool>(i);
 		}
 		if ( i > 0 )
 		{
@@ -2085,7 +2085,7 @@ void CClient::Event_Talk( lpctstr pszText, HUE_TYPE wHue, TALKMODE_TYPE mode, co
 
 		if ( g_Cfg.m_fSuppressCapitals )
 		{
-			int chars = (int)strlen(z);
+            const int chars = static_cast<int>(strlen(z));
 			int capitals = 0;
 			int i = 0;
 			for ( i = 0; i < chars; i++ )
@@ -2168,7 +2168,7 @@ void CClient::Event_TalkUNICODE(nachar* wszText, const int iTextLen, HUE_TYPE wH
 
 		if ( g_Cfg.m_fSuppressCapitals )
 		{
-			int chars = (int)strlen(szText);
+            const int chars = static_cast<int>(strlen(szText));
 			int capitals = 0;
 			int i = 0;
 			for ( i = 0; i < chars; i++ )
@@ -2454,7 +2454,7 @@ void CClient::Event_Target(const dword context, CUID uid, CPointMap pt, const by
 	if (m_pChar == nullptr)
 		return;
 
-	if (context != (dword)GetTargMode())
+	if (context != static_cast<dword>(GetTargMode()))
 	{
 		// unexpected context
 		if (context != 0 && (pt.m_x != -1 || uid.GetPrivateUID() != 0))
@@ -2627,16 +2627,16 @@ void CClient::Event_AOSPopupMenuRequest(const dword uid ) //construct packet aft
 						continue;
 					if (i == SKILL_SPELLWEAVING)
 						continue;
-					if (g_Cfg.IsSkillFlag((SKILL_TYPE)i, SKF_DISABLED))
+					if (g_Cfg.IsSkillFlag(static_cast<SKILL_TYPE>(i), SKF_DISABLED))
 						continue;
 
-					ushort wSkillNPC = pChar->Skill_GetBase( (SKILL_TYPE)i );
+                    const ushort wSkillNPC = pChar->Skill_GetBase( static_cast<SKILL_TYPE>(i) );
 					if (wSkillNPC < 300)
 						continue;
 
-					ushort wSkillPlayer = m_pChar->Skill_GetBase( (SKILL_TYPE)i );
-					word wFlag = ((wSkillPlayer >= g_Cfg.m_iTrainSkillMax) || (wSkillPlayer >= (wSkillNPC * g_Cfg.m_iTrainSkillPercent) / 100)) ? POPUPFLAG_LOCKED : POPUPFLAG_COLOR;
-					m_pPopupPacket->addOption( (word)(POPUP_TRAINSKILL + i), 6000 + i, wFlag, 0xFFFF);
+                    const ushort wSkillPlayer = m_pChar->Skill_GetBase( static_cast<SKILL_TYPE>(i) );
+                    const word wFlag = ((wSkillPlayer >= g_Cfg.m_iTrainSkillMax) || (wSkillPlayer >= (wSkillNPC * g_Cfg.m_iTrainSkillPercent) / 100)) ? POPUPFLAG_LOCKED : POPUPFLAG_COLOR;
+					m_pPopupPacket->addOption( static_cast<word>((POPUP_TRAINSKILL + i)), 6000 + i, wFlag, 0xFFFF);
 				}
 
 				if (pChar->m_pNPC->m_Brain == NPCBRAIN_STABLE)
@@ -2951,9 +2951,9 @@ void CClient::Event_UseToolbar(const byte bType, dword dwArg)
 	switch (bType)
 	{
 		case 0x01: // Spell call
-        if ( (SPELL_TYPE)dwArg <= SPELL_SPELLWEAVING_QTY )	// KR clients only have support up to spellweaving spells
+        if ( static_cast<SPELL_TYPE>(dwArg) <= SPELL_SPELLWEAVING_QTY )	// KR clients only have support up to spellweaving spells
         {
-			Cmd_Skill_Magery((SPELL_TYPE)dwArg, m_pChar);
+			Cmd_Skill_Magery(static_cast<SPELL_TYPE>(dwArg), m_pChar);
 		}
         break;
 
@@ -2961,7 +2961,7 @@ void CClient::Event_UseToolbar(const byte bType, dword dwArg)
         break;
 
 		case 0x03: // Skill
-			Event_Skill_Use((SKILL_TYPE)dwArg);
+			Event_Skill_Use(static_cast<SKILL_TYPE>(dwArg));
 		    break;
 
 		case 0x04: // Item
@@ -3002,7 +3002,7 @@ void CClient::Event_ExtCmd(const EXTCMD_TYPE type, tchar *pszName )
 
         if (type == EXTCMD_DOOR_AUTO)
         {
-            bDoorAutoDist = (byte)std::clamp(pScriptArgs->m_VarsLocal.GetKeyNum("DoorAutoDist"), (int64)0, (int64)UO_MAP_VIEW_SIGHT);
+            bDoorAutoDist = static_cast<byte>(std::clamp(pScriptArgs->m_VarsLocal.GetKeyNum("DoorAutoDist"), static_cast<int64>(0), static_cast<int64>(UO_MAP_VIEW_SIGHT)));
         }
 
         Str_CopyLimitNull(pszName, pScriptArgs->m_s1, MAX_TALK_BUFFER);
@@ -3053,7 +3053,7 @@ void CClient::Event_ExtCmd(const EXTCMD_TYPE type, tchar *pszName )
 
 		case EXTCMD_SKILL:
 		{
-			Event_Skill_Use((SKILL_TYPE)(atoi(ppArgs[0])));
+			Event_Skill_Use(static_cast<SKILL_TYPE>(atoi(ppArgs[0])));
 			return;
 		}
 
@@ -3085,7 +3085,7 @@ void CClient::Event_ExtCmd(const EXTCMD_TYPE type, tchar *pszName )
 				m_pChar->m_Act_p = m_pChar->GetTopPoint();
 				m_pChar->m_Act_UID = m_Targ_UID;
 				m_pChar->m_Act_Prv_UID = m_Targ_Prv_UID;
-				m_pChar->Skill_Start((SKILL_TYPE)skill);
+				m_pChar->Skill_Start(static_cast<SKILL_TYPE>(skill));
 			}
 			else
 				Cmd_Skill_Magery(spell, m_pChar);

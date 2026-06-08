@@ -55,7 +55,7 @@ void xRecordPacket(const CClient* client, const Packet * packet, const lpctstr h
 
 #ifdef _DEBUG
     // write to console
-    g_Log.EventDebug("%x:%s %s\n", client->GetSocketID(), heading, (lpctstr)tsDump);
+    g_Log.EventDebug("%x:%s %s\n", client->GetSocketID(), heading, static_cast<lpctstr>(tsDump));
 #endif
 
     // build file name
@@ -72,10 +72,9 @@ void xRecordPacket(const CClient* client, const Packet * packet, const lpctstr h
     CSString sFullFileName = CSFile::GetMergedFileName(g_Log.GetLogDir(), fname);
 
     // write to file
-    CSFileText out;
-    if (out.Open(sFullFileName, OF_READWRITE | OF_TEXT))
+    if (CSFileText out; out.Open(sFullFileName, OF_READWRITE | OF_TEXT))
     {
-        out.Printf("%s %s\n\n", heading, (lpctstr)tsDump);
+        out.Printf("%s %s\n\n", heading, static_cast<lpctstr>(tsDump));
         out.Close();
     }
 }
@@ -203,14 +202,14 @@ void Packet::seek(const uint pos)
 void Packet::skip(const int count)
 {
 	// ensure we can't go lower than 0
-    if (count < 0 && (uint)abs(count) > m_position)
+    if (count < 0 && static_cast<uint>(abs(count)) > m_position)
     {
 		m_position = 0;
         return;
     }
 
-    ASSERT((int64)m_position + count < UINT32_MAX);
-	m_position = (uint)((int64)m_position + count);
+    ASSERT(static_cast<int64>(m_position) + count < UINT32_MAX);
+	m_position = static_cast<uint>(static_cast<int64>(m_position) + count);
 }
 
 byte &Packet::operator[](const uint index)
@@ -230,8 +229,8 @@ void Packet::writeBool(const bool value)
 	if ((m_position + sizeof(byte)) > m_bufferSize)
 		expand(sizeof(byte));
 
-	ASSERT((m_position + sizeof(byte)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value ? 1 : 0);
+	ASSERT(m_position + sizeof(byte) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value ? 1 : 0);
 }
 
 void Packet::writeCharASCII(const char value)
@@ -239,8 +238,8 @@ void Packet::writeCharASCII(const char value)
 	if ((m_position + sizeof(char)) > m_bufferSize)
 		expand(sizeof(char));
 
-	ASSERT((m_position + sizeof(char)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value);
+	ASSERT(m_position + sizeof(char) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value);
 }
 
 void Packet::writeCharUTF16(const wchar value)
@@ -248,9 +247,9 @@ void Packet::writeCharUTF16(const wchar value)
 	if ((m_position + sizeof(wchar)) > m_bufferSize)
 		expand(sizeof(wchar));
 
-	ASSERT((m_position + sizeof(wchar)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value);
-	m_buffer[m_position++] = (byte)(value >> 8);
+	ASSERT(m_position + sizeof(wchar) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value);
+	m_buffer[m_position++] = static_cast<byte>(value >> 8);
 }
 
 void Packet::writeCharNETUTF16(const wchar value)
@@ -258,10 +257,10 @@ void Packet::writeCharNETUTF16(const wchar value)
 	if ((m_position + sizeof(wchar)) > m_bufferSize)
 		expand(sizeof(wchar));
 
-	ASSERT((m_position + sizeof(wchar)) <= m_bufferSize);
+	ASSERT(m_position + sizeof(wchar) <= m_bufferSize);
 	// Big endian
-	m_buffer[m_position++] = (byte)(value >> 8);
-	m_buffer[m_position++] = (byte)(value);
+	m_buffer[m_position++] = static_cast<byte>(value >> 8);
+	m_buffer[m_position++] = static_cast<byte>(value);
 }
 
 void Packet::writeByte(const byte value)
@@ -288,9 +287,9 @@ void Packet::writeInt16(const word value)
 	if ((m_position + sizeof(word)) > m_bufferSize)
 		expand(sizeof(word));
 
-	ASSERT((m_position + sizeof(word)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value >> 8);
-	m_buffer[m_position++] = (byte)(value);
+	ASSERT(m_position + sizeof(word) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value >> 8);
+	m_buffer[m_position++] = static_cast<byte>(value);
 }
 
 void Packet::writeInt32(const dword value)
@@ -298,11 +297,11 @@ void Packet::writeInt32(const dword value)
 	if ((m_position + sizeof(dword)) > m_bufferSize)
 		expand(sizeof(dword));
 
-	ASSERT((m_position + sizeof(dword)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value >> 24);
-	m_buffer[m_position++] = (byte)(value >> 16);
-	m_buffer[m_position++] = (byte)(value >> 8);
-	m_buffer[m_position++] = (byte)(value);
+	ASSERT(m_position + sizeof(dword) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value >> 24);
+	m_buffer[m_position++] = static_cast<byte>(value >> 16);
+	m_buffer[m_position++] = static_cast<byte>(value >> 8);
+	m_buffer[m_position++] = static_cast<byte>(value);
 }
 
 void Packet::writeInt64(const int64 value)
@@ -310,15 +309,15 @@ void Packet::writeInt64(const int64 value)
 	if ((m_position + sizeof(int64)) > m_bufferSize)
 		expand(sizeof(int64));
 
-	ASSERT((m_position + sizeof(int64)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(value >> 56);
-	m_buffer[m_position++] = (byte)(value >> 48);
-	m_buffer[m_position++] = (byte)(value >> 40);
-	m_buffer[m_position++] = (byte)(value >> 32);
-	m_buffer[m_position++] = (byte)(value >> 24);
-	m_buffer[m_position++] = (byte)(value >> 16);
-	m_buffer[m_position++] = (byte)(value >> 8);
-	m_buffer[m_position++] = (byte)(value);
+	ASSERT(m_position + sizeof(int64) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(value >> 56);
+	m_buffer[m_position++] = static_cast<byte>(value >> 48);
+	m_buffer[m_position++] = static_cast<byte>(value >> 40);
+	m_buffer[m_position++] = static_cast<byte>(value >> 32);
+	m_buffer[m_position++] = static_cast<byte>(value >> 24);
+	m_buffer[m_position++] = static_cast<byte>(value >> 16);
+	m_buffer[m_position++] = static_cast<byte>(value >> 8);
+	m_buffer[m_position++] = static_cast<byte>(value);
 }
 
 void Packet::writeInt64(const dword hi, const dword lo)
@@ -326,15 +325,15 @@ void Packet::writeInt64(const dword hi, const dword lo)
 	if ((m_position + sizeof(int64)) > m_bufferSize)
 		expand(sizeof(int64));
 
-	ASSERT((m_position + sizeof(int64)) <= m_bufferSize);
-	m_buffer[m_position++] = (byte)(hi);
-	m_buffer[m_position++] = (byte)(hi >> 8);
-	m_buffer[m_position++] = (byte)(hi >> 16);
-	m_buffer[m_position++] = (byte)(hi >> 24);
-	m_buffer[m_position++] = (byte)(lo);
-	m_buffer[m_position++] = (byte)(lo >> 8);
-	m_buffer[m_position++] = (byte)(lo >> 16);
-	m_buffer[m_position++] = (byte)(lo >> 24);
+	ASSERT(m_position + sizeof(int64) <= m_bufferSize);
+	m_buffer[m_position++] = static_cast<byte>(hi);
+	m_buffer[m_position++] = static_cast<byte>(hi >> 8);
+	m_buffer[m_position++] = static_cast<byte>(hi >> 16);
+	m_buffer[m_position++] = static_cast<byte>(hi >> 24);
+	m_buffer[m_position++] = static_cast<byte>(lo);
+	m_buffer[m_position++] = static_cast<byte>(lo >> 8);
+	m_buffer[m_position++] = static_cast<byte>(lo >> 16);
+	m_buffer[m_position++] = static_cast<byte>(lo >> 24);
 }
 
 void Packet::writeStringASCII(const char* value, const bool terminate)
@@ -354,7 +353,7 @@ void Packet::writeStringFixedASCII(const char* value, const uint size, const boo
 	if (size <= 0)
 		return;
 
-	uint valueLength = (value != nullptr) ? (uint)strlen(value) : 0;
+	uint valueLength = (value != nullptr) ? static_cast<uint>(strlen(value)) : 0;
 	if (terminate && valueLength >= size)
 		valueLength = size - 1;
 
@@ -465,7 +464,7 @@ void Packet::writeStringUTF16(const char* value, const bool terminate)
 	ASSERT(value != nullptr);
 
     const auto buffer = reinterpret_cast<wchar *>(Str_GetTemp());
-	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
+	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, static_cast<int>(strlen(value)));
 
 	writeStringNETUTF16(buffer, terminate);
 #endif
@@ -497,7 +496,7 @@ void Packet::writeStringFixedUTF16(const char* value, const uint size, const boo
 	ASSERT(value != nullptr);
 
     const auto buffer = reinterpret_cast<wchar *>(Str_GetTemp());
-	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, (int)(strlen(value)));
+	CvtSystemToNETUTF16(reinterpret_cast<nachar*>(buffer), THREAD_STRING_LENGTH / sizeof(wchar), value, static_cast<int>(strlen(value)));
 
 	writeStringFixedNETUTF16(buffer, size, terminate);
 #endif
@@ -747,8 +746,7 @@ word Packet::readInt16()
 	if ((m_position + sizeof(word)) > m_length)
 		return 0;
 
-	word w =(((word)m_buffer[m_position] <<  8u) |
-			 ((word)m_buffer[m_position + 1u]));
+    const word w = (static_cast<word>(m_buffer[m_position]) << 8u) | static_cast<word>(m_buffer[m_position + 1u]);
 
 	m_position += 2;
 	return w;
@@ -759,10 +757,8 @@ dword Packet::readInt32()
 	if ((m_position + sizeof(dword)) > m_length)
 		return 0;
 
-	dword dw = (((dword)m_buffer[m_position] << 24u) |
-			   ((dword)m_buffer[m_position + 1u] << 16u) |
-			   ((dword)m_buffer[m_position + 2u] << 8u) |
-			   ((dword)m_buffer[m_position + 3u]));
+    const dword dw = (static_cast<dword>(m_buffer[m_position]) << 24u) | (static_cast<dword>(m_buffer[m_position + 1u]) << 16u) |
+               (static_cast<dword>(m_buffer[m_position + 2u]) << 8u) | static_cast<dword>(m_buffer[m_position + 3u]);
 
 	m_position += 4;
 	return dw;
@@ -773,9 +769,9 @@ int64 Packet::readInt64()
 	if ((m_position + sizeof(int64)) > m_length)
 		return 0;
 
-	dword dwHigh = readInt32();
-	dword dwLow = readInt32();
-	int64 qw = ((int64)dwHigh << 32) + dwLow;
+    const dword dwHigh = readInt32();
+    const dword dwLow = readInt32();
+    const int64 qw = (static_cast<int64>(dwHigh) << 32) + dwLow;
 	return qw;
 }
 
@@ -1093,7 +1089,7 @@ void Packet::dump(AbstractString& output) const
 			byte c = m_buffer[idx++];
 			PROTECT_BYTE(c);
 
-			snprintf(ts.buffer(), ts.capacity(), "%02x", (int)c);
+			snprintf(ts.buffer(), ts.capacity(), "%02x", static_cast<int>(c));
 			Str_ConcatLimitNull(bytes, ts, sizeof(bytes));
 			Str_ConcatLimitNull(bytes, (j == 7) ? "  " : " ", sizeof(bytes));
 
@@ -1127,7 +1123,7 @@ void Packet::dump(AbstractString& output) const
 				byte c = m_buffer[idx++];
 				PROTECT_BYTE(c);
 
-				snprintf(ts.buffer(), ts.capacity(), "%02x", (int)c);
+				snprintf(ts.buffer(), ts.capacity(), "%02x", static_cast<int>(c));
 				Str_ConcatLimitNull(bytes, ts.buffer(), sizeof(bytes));
 				Str_ConcatLimitNull(bytes, (j == 7) ? "  " : " ", sizeof(bytes));
 
@@ -1228,7 +1224,7 @@ void PacketSend::initLength()
 //	DEBUGNETWORK(("Packet %x starts dynamic with pos %d.\n", m_buffer[0], m_position));
 
 	m_lengthPosition = m_position;
-	writeInt16((word)m_lengthPosition);
+	writeInt16(static_cast<word>(m_lengthPosition));
 }
 
 void PacketSend::fixLength()
@@ -1237,9 +1233,9 @@ void PacketSend::fixLength()
 	{
 //		DEBUGNETWORK(("Packet %x closes dynamic data writing %d as length to pos %d.\n", m_buffer[0], m_position, m_lengthPosition));
 
-		uint oldPosition = m_position;
+        const uint oldPosition = m_position;
 		m_position = m_lengthPosition;
-		writeInt16((word)oldPosition);
+		writeInt16(static_cast<word>(oldPosition));
 		m_position = oldPosition;
 		m_lengthPosition = 0;
 		m_length = m_position;

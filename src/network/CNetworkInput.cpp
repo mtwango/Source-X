@@ -124,7 +124,7 @@ void CNetworkInput::receiveData()
             auto packet = new Packet(buffer, length);
             state->m_incoming.rawPackets.push(packet);
             buffer += length;
-            received -= (int)(length);
+            received -= static_cast<int>(length);
         }
     }
 
@@ -362,14 +362,14 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
             //  allow skipping the packet which we do not wish to get
             if (client->xPacketFilter(packet->getRemainingData(), packetLength))
             {
-                packet->skip((int)(packetLength));
+                packet->skip(static_cast<int>(packetLength));
                 continue;
             }
 
             // copy data to handler
             handler->seek();
             handler->writeData(packet->getRemainingData(), packetLength);
-            packet->skip((int)packetLength);
+            packet->skip(static_cast<int>(packetLength));
 
             // move to position 1 (no need for id) and fire onReceive()
             handler->resize(packetLength);
@@ -385,7 +385,7 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
                 // todo: adjust packet filter to specify size!
                 // packet has been handled by filter but we don't know how big the packet
                 // actually is.. we can only assume the entire buffer is used.
-                packet->skip((int)(remainingLength));
+                packet->skip(static_cast<int>(remainingLength));
                 remainingLength = 0;
                 break;
             }
@@ -398,10 +398,10 @@ bool CNetworkInput::processGameClientData(CNetState* state, Packet* buffer)
 #ifdef _DEBUG
             TemporaryString tsDump;
             packet->dump(tsDump);
-            g_Log.EventDebug("%x:%s %s\n", client->GetSocketID(), "(unknown packet data) client -> server", (lpctstr)tsDump);
+            g_Log.EventDebug("%x:%s %s\n", client->GetSocketID(), "(unknown packet data) client -> server", static_cast<lpctstr>(tsDump));
 #endif
 
-            packet->skip((int)(remainingLength));
+            packet->skip(static_cast<int>(remainingLength));
             remainingLength = 0;
         }
     }
@@ -582,7 +582,7 @@ bool CNetworkInput::processUnknownClientData(CNetState* state, Packet* buffer)
         EXC_SET_BLOCK("game client seed");
         dword seed = 0;
 
-        DEBUGNETWORK(("%x:Client connected with a seed length of %u ([0]=0x%x)\n", state->id(), uiOrigRemainingLength, (uint)(pOrigRemainingData[0])));
+        DEBUGNETWORK(("%x:Client connected with a seed length of %u ([0]=0x%x)\n", state->id(), uiOrigRemainingLength, static_cast<uint>(pOrigRemainingData[0])));
         if (state->m_newseed || (pOrigRemainingData[0] == XCMD_NewSeed && uiOrigRemainingLength >= NETWORK_SEEDLEN_NEW))
         {
             DEBUGNETWORK(("%x:Receiving new client login handshake.\n", state->id()));

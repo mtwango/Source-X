@@ -131,7 +131,7 @@ bool CClient::addLoginErr(byte code)
 	if (code >= std::size(sm_Login_ErrMsg))
 		code = PacketLoginError::Other;
 
-	g_Log.EventWarn( "%x:Bad Login %d. %s.\n", GetSocketID(), code, sm_Login_ErrMsg[(size_t)code] );
+	g_Log.EventWarn( "%x:Bad Login %d. %s.\n", GetSocketID(), code, sm_Login_ErrMsg[static_cast<size_t>(code)] );
 
 	// translate the code into a code the client will understand
 	switch (code)
@@ -238,7 +238,7 @@ bool CClient::addRelay( const CServerDef * pServ )
 		sCustomerID.Add(GetAccount()->GetName());
 
 		dwCustomerId = zlib::crc32(0L, nullptr, 0);
-		dwCustomerId = zlib::crc32(dwCustomerId, reinterpret_cast<const zlib::Bytef *>(sCustomerID.GetBuffer()), (zlib::uInt)sCustomerID.GetLength());
+		dwCustomerId = zlib::crc32(dwCustomerId, reinterpret_cast<const zlib::Bytef *>(sCustomerID.GetBuffer()), static_cast<zlib::uInt>(sCustomerID.GetLength()));
 
 		GetAccount()->m_TagDefs.SetNum("customerid", dwCustomerId);
 	}
@@ -374,7 +374,7 @@ bool CClient::OnRxConsole( const byte * pData, uint iLen )
 			{
 				if ( !m_zLogin[0] )
 				{
-					if ( (uint)(m_Targ_Text.GetLength()) > (sizeof(m_zLogin) - 1) )
+					if ( static_cast<uint>(m_Targ_Text.GetLength()) > (sizeof(m_zLogin) - 1) )
 					{
 						SysMessage("Login:\n");
 					}
@@ -438,7 +438,7 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 			{
 				if ( !m_zLogin[0] )
 				{
-					if ((uint)(m_Targ_Text.GetLength()) <= (sizeof(m_zLogin) - 1))
+					if (static_cast<uint>(m_Targ_Text.GetLength()) <= (sizeof(m_zLogin) - 1))
 					{
 						Str_CopyLimitNull(m_zLogin, m_Targ_Text, sizeof(m_zLogin));
 					}
@@ -500,9 +500,9 @@ bool CClient::OnRxAxis( const byte * pData, uint iLen )
 								int iLength = FileRead.Read( szTmp, sizeof( szTmp ) );
 								if ( iLength <= 0 )
 									break;
-								packet.setData((byte*)szTmp, (uint)iLength);
+								packet.setData(reinterpret_cast<byte *>(szTmp), static_cast<uint>(iLength));
 								packet.send(this);
-								dwSize -= (dword)iLength;
+								dwSize -= static_cast<dword>(iLength);
 								if ( dwSize <= 0 )
 									break;
 							}
@@ -856,7 +856,7 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, const uint uiLen )
 
 	if ( !xCanEncLogin() )
 	{
-		addLoginErr((uchar)((m_Crypt.GetEncryptionType() == ENC_NONE? PacketLoginError::EncNoCrypt : PacketLoginError::EncCrypt) ));
+		addLoginErr(static_cast<uchar>((m_Crypt.GetEncryptionType() == ENC_NONE ? PacketLoginError::EncNoCrypt : PacketLoginError::EncCrypt)));
 		return false;
 	}
     if (m_Crypt.GetConnectType() == CONNECT_LOGIN && !xCanEncLogin(true))
@@ -920,14 +920,14 @@ bool CClient::xProcessClientSetup( CEvent * pEvent, const uint uiLen )
                 if (CAccount *pAcc = g_Accounts.Account_Find(szAccount))
 				{
 					dword tmSid = 0x7f000001;
-					dword tmVer = (dword)(pAcc->m_TagDefs.GetKeyNum("clientversion"));
-					dword tmVerReported = (dword)(pAcc->m_TagDefs.GetKeyNum("reportedcliver"));
+                    const dword tmVer = static_cast<dword>(pAcc->m_TagDefs.GetKeyNum("clientversion"));
+                    const dword tmVerReported = static_cast<dword>(pAcc->m_TagDefs.GetKeyNum("reportedcliver"));
 					pAcc->m_TagDefs.DeleteKey("clientversion");
 					pAcc->m_TagDefs.DeleteKey("reportedcliver");
 
 					if ( g_Cfg.m_fUseAuthID )
 					{
-						tmSid = (dword)(pAcc->m_TagDefs.GetKeyNum("customerid"));
+						tmSid = static_cast<dword>(pAcc->m_TagDefs.GetKeyNum("customerid"));
 						pAcc->m_TagDefs.DeleteKey("customerid");
 					}
 

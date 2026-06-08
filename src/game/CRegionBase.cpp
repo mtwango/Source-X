@@ -131,7 +131,7 @@ bool CRegionBase::IsOverlapped( const CRectMap & rect ) const noexcept
     if ( !m_rectUnion.IsOverlapped(rect) )
         return false;
 
-    const uint iQty = (uint)m_Rects.size();
+    const uint iQty = static_cast<uint>(m_Rects.size());
     if ( iQty <= 0 )    // TODOC: Usually happens for a multi-bound CRegion?
 		return true;
 

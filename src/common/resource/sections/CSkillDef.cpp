@@ -177,13 +177,13 @@ bool CSkillDef::r_LoadVal( CScript &s )
             m_AdvRate.Load( s.GetArgStr());
             break;
         case SKC_BONUS_DEX: // "BONUS_DEX"
-            m_StatBonus[STAT_DEX] = (uchar)(s.GetArgVal());
+            m_StatBonus[STAT_DEX] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_BONUS_INT: // "BONUS_INT"
-            m_StatBonus[STAT_INT] = (uchar)(s.GetArgVal());
+            m_StatBonus[STAT_INT] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_BONUS_STR: // "BONUS_STR"
-            m_StatBonus[STAT_STR] = (uchar)(s.GetArgVal());
+            m_StatBonus[STAT_STR] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_DEFNAME: // "DEFNAME"
             return SetResourceName( s.GetArgStr());
@@ -215,16 +215,16 @@ bool CSkillDef::r_LoadVal( CScript &s )
             m_Range = s.GetArgVal();
             break;
         case SKC_BONUS_STATS: // "BONUS_STATS"
-            m_StatPercent = (uchar)(s.GetArgVal());
+            m_StatPercent = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_STAT_DEX: // "STAT_DEX"
-            m_Stat[STAT_DEX] = (uchar)(s.GetArgVal());
+            m_Stat[STAT_DEX] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_STAT_INT: // "STAT_INT"
-            m_Stat[STAT_INT] = (uchar)(s.GetArgVal());
+            m_Stat[STAT_INT] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_STAT_STR: // "STAT_STR"
-            m_Stat[STAT_STR] = (uchar)(s.GetArgVal());
+            m_Stat[STAT_STR] = static_cast<uchar>(s.GetArgVal());
             break;
         case SKC_TITLE: // "TITLE"
             m_sTitle = s.GetArgStr();

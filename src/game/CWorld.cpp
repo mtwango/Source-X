@@ -202,16 +202,15 @@ static void ReportGarbageCollection(const CObjBase * pObj, const int iResultCode
 {
 	ASSERT(pObj != nullptr);
 
-	DEBUG_ERR(("GC: Deleted UID=0%" PRIx32 ", Defname='%s', Name='%s'. Invalid code=0x%x (%s).\n",
-		(dword)pObj->GetUID(), pObj->Base_GetDef()->GetResourceName(), pObj->GetName(), iResultCode, GetReasonForGarbageCode(iResultCode)));
+	DEBUG_ERR(("GC: Deleted UID=0%" PRIx32 ", Defname='%s', Name='%s'. Invalid code=0x%x (%s).\n", static_cast<dword>(pObj->GetUID()), pObj->Base_GetDef()->GetResourceName(), pObj->GetName(), iResultCode, GetReasonForGarbageCode(iResultCode)));
 
 	if ( (pObj->_iCreatedResScriptIdx != -1) && (pObj->_iCreatedResScriptLine != -1) )
 	{
 		// Object was created via NEWITEM or NEWNPC in scripts, tell me where
-		CResourceScript* pResFile = g_Cfg.GetResourceFile((size_t)(pObj->_iCreatedResScriptIdx));
+		CResourceScript* pResFile = g_Cfg.GetResourceFile(static_cast<size_t>(pObj->_iCreatedResScriptIdx));
 		if (pResFile == nullptr)
 			return;
-		DEBUG_ERR(("GC:\t Object was created in '%s', line %d.\n", (lpctstr)pResFile->GetFilePath(), pObj->_iCreatedResScriptLine));
+		DEBUG_ERR(("GC:\t Object was created in '%s', line %d.\n", static_cast<lpctstr>(pResFile->GetFilePath()), pObj->_iCreatedResScriptLine));
 	}
 }
 
@@ -239,11 +238,11 @@ CWorldThread::~CWorldThread()
 void CWorldThread::InitUIDs()
 {
 	_uiUIDObjArraySize = 8 * 1024;
-	_ppUIDObjArray = (CObjBase**)calloc(_uiUIDObjArraySize, sizeof(CObjBase*));
+	_ppUIDObjArray = static_cast<CObjBase **>(calloc(_uiUIDObjArraySize, sizeof(CObjBase *)));
 	_dwUIDIndexLast = 1;
 
 	_dwFreeUIDOffset = FREE_UIDS_SIZE;
-	_pdwFreeUIDs = (dword*)calloc(_dwFreeUIDOffset, sizeof(dword));
+	_pdwFreeUIDs = static_cast<dword *>(calloc(_dwFreeUIDOffset, sizeof(dword)));
 }
 
 void CWorldThread::CloseAllUIDs()
@@ -294,7 +293,7 @@ bool CWorldThread::IsSaving() const
 dword CWorldThread::GetUIDCount() const
 {
 	ASSERT(_uiUIDObjArraySize <= UINT32_MAX);
-	return (dword)_uiUIDObjArraySize;
+	return static_cast<dword>(_uiUIDObjArraySize);
 }
 
 CObjBase *CWorldThread::FindUID(const dword dwIndex) const noexcept
@@ -498,12 +497,12 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 
 	try
 	{
-		dwUID = (dword)pObj->GetUID();
+		dwUID = static_cast<dword>(pObj->GetUID());
 
 		// is it a real error ?
 		if ( pObj->IsItem())
 		{
-            if (const auto pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
+            if (auto *const pItem = dynamic_cast<CItem *>(pObj); pItem != nullptr && pItem->IsType(IT_EQ_MEMORY_OBJ) )
 			{
                 ReportGarbageCollection(pObj, iResultCode);
 				pObj->Delete();
@@ -569,7 +568,7 @@ void CWorldThread::GarbageCollection_NewObjs()
 	{
         if (std::unique_ptr<CGMPage> &pGMPage = *it; !pGMPage->m_uidChar.CharFind())
 		{
-			DEBUG_ERR(("GC: Deleted GM Page linked to invalid char (UID=0%x)\n", (dword)(pGMPage->m_uidChar)));
+			DEBUG_ERR(("GC: Deleted GM Page linked to invalid char (UID=0%x)\n", static_cast<dword>(pGMPage->m_uidChar)));
 			it = g_World.m_GMPages.erase(it);
 		}
 		else if (!g_Accounts.Account_Find(pGMPage->m_sAccount))
@@ -967,7 +966,7 @@ bool CWorld::SaveForce() // Save world state
             fSave = SaveStage();
 			if ( !(_iSaveStage & 0x7F) )
 			{
-				g_Serv.PrintPercent( _iSaveStage, (ssize_t)iSectorsQty + 3 );
+				g_Serv.PrintPercent( _iSaveStage, static_cast<ssize_t>(iSectorsQty) + 3 );
 			}
 			if ( !fSave && (pCurBlock != save_msgs[5]) )
 				goto failedstage;
@@ -1098,7 +1097,7 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
         struct stat st;
         if (CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
 		{
-            if (const ullong uiCurSavefileSize = (ullong)st.st_size; uiCurSavefileSize == 0)
+            if (const ullong uiCurSavefileSize = static_cast<ullong>(st.st_size); uiCurSavefileSize == 0)
 				fSizeErr = true;
 			else
 				uiPreviousSaveSize += uiCurSavefileSize;

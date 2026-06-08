@@ -48,7 +48,7 @@ CBaseBaseDef::CBaseBaseDef( CResourceID const& id ) :
 void CBaseBaseDef::DelInstance()
 {
 #ifdef _DEBUG
-	ASSERT(_dwInstances != (dword)-1);    // catching underflows
+	ASSERT(_dwInstances != static_cast<dword>(-1));    // catching underflows
 #endif
 	--_dwInstances;
 }
@@ -339,10 +339,10 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_ARMOR:
 			{
 				int64 piVal[2];
-                int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
-				m_defenseBase = (word)(piVal[0]);
+                const int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
+				m_defenseBase = static_cast<word>(piVal[0]);
 				if ( iQty > 1 )
-					m_defenseRange = (word)(piVal[1]) - m_defenseBase;
+					m_defenseRange = static_cast<word>(piVal[1]) - m_defenseBase;
 				else
 					m_defenseRange = 0;
 			}
@@ -351,10 +351,10 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_DAM:
 			{
 				int64 piVal[2];
-				int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
-				m_attackBase = (word)(piVal[0]);
+                const int iQty = Str_ParseCmds( s.GetArgStr(), piVal, std::size(piVal));
+				m_attackBase = static_cast<word>(piVal[0]);
 				if ( iQty > 1 )
-					m_attackRange = (word)(piVal[1]) - m_attackBase;
+					m_attackRange = static_cast<word>(piVal[1]) - m_attackBase;
 				else
 					m_attackRange = 0;
 			}
@@ -370,7 +370,7 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_DEFNAME2:
 			return SetResourceName(s.GetArgStr());
 		case OBC_HEIGHT:
-			m_Height = (height_t)s.GetArgVal();
+			m_Height = static_cast<height_t>(s.GetArgVal());
 			return true;
 		case OBC_INSTANCES:
 			return false;
@@ -383,7 +383,7 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 		case OBC_RESLEVEL:
             return( SetResLevel(enum_alias_cast<RESDISPLAY_VERSION>(s.GetArgCVal())) );
 		case OBC_RESDISPDNHUE:
-			SetResDispDnHue((HUE_TYPE)(s.GetArgVal()));
+			SetResDispDnHue(static_cast<HUE_TYPE>(s.GetArgVal()));
 			return true;
 		case OBC_TEVENTS:
 			return( m_TEvents.r_LoadVal( s, RES_EVENTS ));
@@ -494,8 +494,8 @@ ushort CBaseBaseDef::ConvertRangeStr(const lpctstr ptcRange) // static
 	ushort iHi = 0, iLo = 0;
 	if (iQty > 1)	// args: "min, max"
 	{
-		iHi = (ushort)piVal[1];
-		iLo = (ushort)piVal[0];
+		iHi = static_cast<ushort>(piVal[1]);
+		iLo = static_cast<ushort>(piVal[0]);
 		if (iLo > iHi)
 		{
 			std::swap(iHi, iLo);
@@ -503,7 +503,7 @@ ushort CBaseBaseDef::ConvertRangeStr(const lpctstr ptcRange) // static
 	}
 	else			// arg: "max"
 	{
-		iHi = (ushort)piVal[0];
+		iHi = static_cast<ushort>(piVal[0]);
 	}
 	return RANGE_MAKE(iHi, iLo);
 }

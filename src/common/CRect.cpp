@@ -227,10 +227,10 @@ lpctstr CRect::Write() const
 CPointBase CRect::GetCenter() const noexcept
 {
     return CPointBase(
-        (short)((m_left + m_right) / 2),
-        (short)((m_top + m_bottom) / 2),
+        static_cast<short>((m_left + m_right) / 2),
+        static_cast<short>((m_top + m_bottom) / 2),
         0,
-        (uchar)(m_map)
+        static_cast<uchar>(m_map)
         );
 }
 
@@ -242,40 +242,40 @@ CPointBase CRect::GetRectCorner(const DIR_TYPE dir ) const
 
 	CPointBase pt;
 	pt.m_z = 0;	// NOTE: remember this is a nonsense value.
-	pt.m_map = (uchar)m_map;
+	pt.m_map = static_cast<uchar>(m_map);
 	switch ( dir )
 	{
 		case DIR_N:
-			pt.m_x = (short)((m_left + m_right) / 2);
-			pt.m_y = (short)m_top;
+			pt.m_x = static_cast<short>((m_left + m_right) / 2);
+			pt.m_y = static_cast<short>(m_top);
 			break;
 		case DIR_NE:
-			pt.m_x = (short)m_right;
-			pt.m_y = (short)m_top;
+			pt.m_x = static_cast<short>(m_right);
+			pt.m_y = static_cast<short>(m_top);
 			break;
 		case DIR_E:
-			pt.m_x = (short)m_right;
-			pt.m_y = (short)((m_top + m_bottom) / 2);
+			pt.m_x = static_cast<short>(m_right);
+			pt.m_y = static_cast<short>((m_top + m_bottom) / 2);
 			break;
 		case DIR_SE:
-			pt.m_x = (short)m_right;
-			pt.m_y = (short)m_bottom;
+			pt.m_x = static_cast<short>(m_right);
+			pt.m_y = static_cast<short>(m_bottom);
 			break;
 		case DIR_S:
-			pt.m_x = (short)((m_left + m_right) / 2);
-			pt.m_y = (short)m_bottom;
+			pt.m_x = static_cast<short>((m_left + m_right) / 2);
+			pt.m_y = static_cast<short>(m_bottom);
 			break;
 		case DIR_SW:
-			pt.m_x = (short)m_left;
-			pt.m_y = (short)m_bottom;
+			pt.m_x = static_cast<short>(m_left);
+			pt.m_y = static_cast<short>(m_bottom);
 			break;
 		case DIR_W:
-			pt.m_x = (short)m_left;
-			pt.m_y = (short)((m_top + m_bottom) / 2);
+			pt.m_x = static_cast<short>(m_left);
+			pt.m_y = static_cast<short>((m_top + m_bottom) / 2);
 			break;
 		case DIR_NW:
-			pt.m_x = (short)m_left;
-			pt.m_y = (short)m_top;
+			pt.m_x = static_cast<short>(m_left);
+			pt.m_y = static_cast<short>(m_top);
 			break;
 		case DIR_QTY:
 			pt = GetCenter();

@@ -177,7 +177,7 @@ int CPointBase::GetDistBase( const CPointBase & pt ) const noexcept // Distance 
             const double dist = sqrt(static_cast<double>((dx * dx) + (dy * dy)));
             //const double dist = hypot(dx, dy);  // To test if faster
 
-            return (int)round(dist);
+            return static_cast<int>(round(dist));
 
             //const double flr = floor(dist);
             //return (int)(((dist - flr) > 0.5) ? ceil(dist) : flr);
@@ -261,7 +261,7 @@ int CPointBase::GetDist3D( const CPointBase & pt ) const noexcept // Distance be
             //dz /= (PLAYER_HEIGHT / 2);
 
             const double dist = sqrt(static_cast<double>((dx * dx) + (dy * dy) + (dz * dz)));
-            return (int)round(dist);
+            return static_cast<int>(round(dist));
         }
     }
 }
@@ -311,13 +311,13 @@ bool CPointBase::IsValidXY() const noexcept
 
 void CPointBase::ValidatePoint() noexcept
 {
-    const short iMaxX = (short)g_MapList.GetMapSizeX(m_map);
-    const short iMaxY = (short)g_MapList.GetMapSizeY(m_map);
+    const short iMaxX = static_cast<short>(g_MapList.GetMapSizeX(m_map));
+    const short iMaxY = static_cast<short>(g_MapList.GetMapSizeY(m_map));
 
-    m_x = sl::fmath::sMax(m_x,  (short)0);
+    m_x = sl::fmath::sMax(m_x,  static_cast<short>(0));
     m_x = (m_x < iMaxX) ? m_x : (iMaxX - 1);
 
-    m_y = sl::fmath::sMax(m_y,  (short)0);
+    m_y = sl::fmath::sMax(m_y,  static_cast<short>(0));
     m_y = (m_y < iMaxY) ? m_y : (iMaxY - 1);
 
     /*
@@ -359,16 +359,16 @@ void CPointBase::Move(const DIR_TYPE dir )
 {
 	// Move a point in a direction.
 	ASSERT( (dir > DIR_INVALID) && (dir <= DIR_QTY) );
-	m_x += (short)(sm_Moves[dir][0]);
-	m_y += (short)(sm_Moves[dir][1]);
+	m_x += (sm_Moves[dir][0]);
+	m_y += (sm_Moves[dir][1]);
 }
 
 void CPointBase::MoveN(const DIR_TYPE dir, const int amount )
 {
 	// Move a point in a direction.
 	ASSERT( dir <= DIR_QTY );
-	m_x += (short)(sm_Moves[dir][0] * amount);
-	m_y += (short)(sm_Moves[dir][1] * amount);
+	m_x += static_cast<short>(sm_Moves[dir][0] * amount);
+	m_y += static_cast<short>(sm_Moves[dir][1] * amount);
 }
 
 bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
@@ -420,7 +420,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 
 		if ( type == RES_ITEMDEF )
 		{
-			const CItemBase * pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(iStatic)));
+			const CItemBase * pItemDef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(ResGetIndex(iStatic)));
 			if ( !pItemDef )
 			{
 				sVal.FormatVal( 0 );
@@ -527,7 +527,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
                         continue;
 
                     const CPointMap ptTest(
-                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
+                        static_cast<word>(ptMulti.m_x + pMultiItem->m_dx), static_cast<word>(ptMulti.m_y + pMultiItem->m_dy), static_cast<char>(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
 
                     if (GetDist(ptTest) > 0)
                         continue;
@@ -563,7 +563,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
 
         if (type == RES_ITEMDEF)
         {
-            const CItemBase *pItemDef = CItemBase::FindItemBase((ITEMID_TYPE)(ResGetIndex(iComponent)));
+            const CItemBase *pItemDef = CItemBase::FindItemBase(static_cast<ITEMID_TYPE>(ResGetIndex(iComponent)));
             if (pItemDef == nullptr)
             {
                 sVal.FormatVal(0);
@@ -594,7 +594,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
                     if (pMultiItem->m_visible == 0)
                         continue;
                     CPointMap ptTest(
-                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
+                        static_cast<word>(ptMulti.m_x + pMultiItem->m_dx), static_cast<word>(ptMulti.m_y + pMultiItem->m_dy), static_cast<char>(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
                     if (GetDist(ptTest) > 0)
                         continue;
 
@@ -634,7 +634,7 @@ bool CPointBase::r_WriteVal( lpctstr ptcKey, CSString & sVal ) const
                         continue;
 
                     const CPointMap ptTest(
-                        (word)(ptMulti.m_x + pMultiItem->m_dx), (word)(ptMulti.m_y + pMultiItem->m_dy), (char)(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
+                        static_cast<word>(ptMulti.m_x + pMultiItem->m_dx), static_cast<word>(ptMulti.m_y + pMultiItem->m_dy), static_cast<char>(ptMulti.m_z + pMultiItem->m_dz), this->m_map);
                     if (GetDist(ptTest) > 0)
                         continue;
 
@@ -834,10 +834,10 @@ bool CPointBase::r_LoadVal(const lpctstr ptcKey, lpctstr pszArgs )
 	int iVal = Exp_GetVal(pszArgs);
 	switch (index)
 	{
-		case 0: m_map = (uchar)iVal; break;
-		case 1: m_x = (short)iVal; break;
-		case 2: m_y = (short)iVal; break;
-		case 3: m_z = (char)iVal; break;
+		case 0: m_map = static_cast<uchar>(iVal); break;
+		case 1: m_x = static_cast<short>(iVal); break;
+		case 2: m_y = static_cast<short>(iVal); break;
+		case 3: m_z = static_cast<char>(iVal); break;
 	}
 	return true;
 }
@@ -935,8 +935,8 @@ int CPointBase::StepLinePath( const CPointBase & ptSrc, const int iSteps )
 	if ( ! iDist2D )
 		return 0;
 
-	m_x = (short)(ptSrc.m_x + IMulDivLL( iSteps, dx, iDist2D ));
-	m_y = (short)(ptSrc.m_y + IMulDivLL( iSteps, dy, iDist2D ));
+	m_x = static_cast<short>(ptSrc.m_x + IMulDivLL(iSteps, dx, iDist2D));
+	m_y = static_cast<short>(ptSrc.m_y + IMulDivLL(iSteps, dy, iDist2D));
 	return iDist2D;
 }
 
@@ -1087,7 +1087,7 @@ size_t CPointBase::GetRegions(const dword dwType, CRegionLinks *pRLinks ) const
 
 int CPointBase::GetPointSortIndex() const noexcept
 {
-	return (int)make_dword( m_x, m_y );
+	return static_cast<int>(make_dword(m_x, m_y));
 }
 
 

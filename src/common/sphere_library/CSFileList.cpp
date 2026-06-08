@@ -131,6 +131,6 @@ int CSFileList::ReadDir(const lpctstr pszFilePath, const bool bShowError )
 
 	closedir(dirp);
 #endif
-	return (int)(GetContentCount());
+	return static_cast<int>(GetContentCount());
 }
 

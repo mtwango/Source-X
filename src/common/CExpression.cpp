@@ -47,48 +47,48 @@ void CExprGlobals::UpdateDefMsgDependentData()
     m_SkillTitles_Ninjitsu = std::array<CValStr, m_kiSkillTitlesQty>
         {{
             { "", INT32_MIN },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            (int)(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              (int)(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          (int)(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          (int)(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              (int)(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               (int)(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              (int)(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         (int)(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER_NINJITSU],      (int)(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY_NINJITSU],  (int)(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER_NINJITSU],      static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY_NINJITSU],  static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
             { nullptr, INT32_MAX }
         }};
 
     m_SkillTitles_Bushido = std::array<CValStr, m_kiSkillTitlesQty>
         {{
             { "", INT32_MIN },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            (int)(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              (int)(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          (int)(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          (int)(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              (int)(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               (int)(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              (int)(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         (int)(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER_BUSHIDO],       (int)(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY_BUSHIDO],   (int)(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER_BUSHIDO],       static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY_BUSHIDO],   static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
             { nullptr, INT32_MAX }
         }};
 
     m_SkillTitles_Generic = std::array<CValStr, m_kiSkillTitlesQty>
         {{
             { "", INT32_MIN },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            (int)(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              (int)(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          (int)(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          (int)(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              (int)(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               (int)(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              (int)(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         (int)(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER],               (int)(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
-            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY],           (int)(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NEOPHYTE],            static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NEOPHYTE"))     },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_NOVICE],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_NOVICE"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_APPRENTICE],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_APPRENTICE"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_JOURNEYMAN],          static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_JOURNEYMAN"))   },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_EXPERT],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_EXPERT"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ADEPT],               static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ADEPT"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_MASTER],              static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_MASTER"))       },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_GRANDMASTER],         static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_GRANDMASTER"))  },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_ELDER],               static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_ELDER"))        },
+            { sm_szDefMessages[DEFMSG_SKILLTITLE_LEGENDARY],           static_cast<int>(vardefs.GetKeyNum("SKILLTITLE_LEGENDARY"))    },
             { nullptr, INT32_MAX }
         }};
 }
@@ -304,8 +304,8 @@ int Str_ParseCmds(tchar * pszCmdLine, tchar ** ppCmd, const int iMax, const tcha
 int Str_ParseCmds(tchar * pszCmdLine, int64 * piCmd, int iMax, const tchar * pszSep) noexcept
 {
     tchar * ppTmp[256];
-    if (iMax > (int)std::size(ppTmp))
-        iMax = (int)std::size(ppTmp);
+    if (iMax > static_cast<int>(std::size(ppTmp)))
+        iMax = static_cast<int>(std::size(ppTmp));
 
     int iQty = Str_ParseCmds(pszCmdLine, ppTmp, iMax, pszSep);
     int i;
@@ -543,8 +543,8 @@ bool IsValidGameObjDef( lpctstr ptcTest )
 
 static llong cexpression_power(const llong base, const llong level) noexcept
 {
-    const double rc = pow(static_cast<double>(base), (double)level);
-    return (llong)rc;
+    const double rc = pow(static_cast<double>(base), static_cast<double>(level));
+    return static_cast<llong>(rc);
 }
 
 int Calc_GetLog2( uint iVal )
@@ -673,9 +673,9 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
         {
             const tchar ch = *p;
             uint v;
-            if (ch >= '0' && ch <= '9')       v = (uint)(ch - '0');
-            else if (ch >= 'A' && ch <= 'F')  v = (uint)(ch - 'A' + 10);
-            else if (ch >= 'a' && ch <= 'f')  v = (uint)(ch - 'a' + 10);
+            if (ch >= '0' && ch <= '9')       v = static_cast<uint>(ch - '0');
+            else if (ch >= 'A' && ch <= 'F')  v = static_cast<uint>(ch - 'A' + 10);
+            else if (ch >= 'a' && ch <= 'f')  v = static_cast<uint>(ch - 'a' + 10);
             else                              break;        // stop on non-hex (including '.')
 
             if (!fSeenNonZero)
@@ -732,7 +732,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             const int64 neg  = -static_cast<int64>(mag); // well-defined negate in 64-bit domain
             return neg;
         }
-        return (int64)uiVal;
+        return static_cast<int64>(uiVal);
     }
     if ((refStrExpr[0] >= '0' && refStrExpr[0] <= '9') || (refStrExpr[0] == '.' && (refStrExpr[1] >= '0' && refStrExpr[1] <= '9')))
     {
@@ -836,7 +836,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = ResGetIndex((dword)GetVal(refStrExpr));
+                            iResult = ResGetIndex(static_cast<dword>(GetVal(refStrExpr)));
                         }
                         else
                         {
@@ -893,11 +893,11 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                                     SKIP_ARGSEP(refStrExpr);
                                     if (!strcmpi(refStrExpr, "e"))
                                     {
-                                        iResult = (llong)log((double)iArgument);
+                                        iResult = static_cast<llong>(log(static_cast<double>(iArgument)));
                                     }
                                     else if (!strcmpi(refStrExpr, "pi"))
                                     {
-                                        iResult = (llong)(log((double)iArgument) / log(M_PI));
+                                        iResult = static_cast<llong>(log(static_cast<double>(iArgument)) / log(M_PI));
                                     }
                                     else
                                     {
@@ -907,11 +907,11 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                                             iCount = 0;
                                         }
                                         else
-                                            iResult = (llong)(log((double)iArgument) / log((double)iBase));
+                                            iResult = static_cast<llong>(log(static_cast<double>(iArgument)) / log(static_cast<double>(iBase)));
                                     }
                                 }
                                 else
-                                    iResult = (llong)log10((double)iArgument);
+                                    iResult = static_cast<llong>(log10(static_cast<double>(iArgument)));
                             }
                         }
                     }
@@ -922,7 +922,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)exp((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(exp(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -943,14 +943,14 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                             if (llong iTosquare = GetVal(refStrExpr); iTosquare >= 0)
                             {
                                 ++iCount;
-                                iResult = (llong)sqrt((double)iTosquare);
+                                iResult = static_cast<llong>(sqrt(static_cast<double>(iTosquare)));
                             }
                             else
                             {
                                 ++iCount;
-                                std::complex<double> number((double)iTosquare, 0);
+                                std::complex<double> number(static_cast<double>(iTosquare), 0);
                                 std::complex<double> result = sqrt(number);
-                                iResult                     = (llong)result.real();
+                                iResult                     = static_cast<llong>(result.real());
                             }
                         }
                     }
@@ -961,7 +961,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)sin((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(sin(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -976,7 +976,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)asin((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(asin(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -991,7 +991,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)cos((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(cos(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -1006,7 +1006,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)acos((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(acos(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -1021,7 +1021,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)tan((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(tan(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -1036,7 +1036,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (*refStrExpr)
                         {
                             iCount  = 1;
-                            iResult = (llong)atan((double)GetVal(refStrExpr));
+                            iResult = static_cast<llong>(atan(static_cast<double>(GetVal(refStrExpr))));
                         }
                         else
                         {
@@ -1052,7 +1052,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (iCount < 2)
                             iResult = -1;
                         else
-                            iResult = Str_IndexOf(ppCmd[0], ppCmd[1], (iCount == 3) ? (int)GetVal(ppCmd[2]) : 0);
+                            iResult = Str_IndexOf(ppCmd[0], ppCmd[1], (iCount == 3) ? static_cast<int>(GetVal(ppCmd[2])) : 0);
                     }
                     break;
 
@@ -1089,7 +1089,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                         if (iCount < 2)
                             iResult = 0;
                         else
-                            iResult = Calc_GetBellCurve((int)GetVal(ppCmd[0]), (int)GetVal(ppCmd[1]));
+                            iResult = Calc_GetBellCurve(static_cast<int>(GetVal(ppCmd[0])), static_cast<int>(GetVal(ppCmd[1])));
                     }
                     break;
 
@@ -1779,7 +1779,7 @@ CExpression::GetConditionalSubexpressions(
                     }
                     else
                     {
-                        if (const ushort prevSubexprType = ((uiSubexprQty == 1) ? (ushort)SubexprType_t::None : parsingSubexprsStates[uiSubexprQty - 2].uiType);
+                        if (const ushort prevSubexprType = ((uiSubexprQty == 1) ? static_cast<ushort>(SubexprType_t::None) : parsingSubexprsStates[uiSubexprQty - 2].uiType);
                             (prevSubexprType & SubexprType_t::None))
                         {
                             // This subexpr is not preceded by a two-way operator, so probably i'm an operator: skip me.
@@ -1852,7 +1852,7 @@ CExpression::GetConditionalSubexpressions(
             // ptcStart might have changed, so update uiNonAssociativeOffset accordingly (given that it's relative to ptcStart).
             const int iDiff = static_cast<int>(ptcStart - sCurSubexpr.ptcStart);
             ASSERT(iDiff >= 0);
-            const uint uiNewOff = std::min((uint)USHRT_MAX, (uint)iDiff);
+            const uint uiNewOff = std::min(static_cast<uint>(USHRT_MAX), static_cast<uint>(iDiff));
             sCurSubexpr.uiNonAssociativeOffset += static_cast<uchar>(uiNewOff);
         }
         sCurSubexpr.ptcStart = ptcStart;
@@ -2482,7 +2482,7 @@ int CExpression::ParseScriptText(
 
                 // Set the statement start
                 ASSERT(i >= 0);
-                uiSubstitutionBegin = (size_t)i;
+                uiSubstitutionBegin = static_cast<size_t>(i);
                 pContext._fParseScriptText_Brackets = true;
 
                 // Set-up to process special statements: is it a QVAL?
@@ -2707,7 +2707,7 @@ int CExpression::ParseScriptText(
             memcpy(ptcDest, sVal.GetBuffer(), uiWriteValLen);
 
             // This can be negative.
-            i = (int)(uiSubstitutionBegin + uiWriteValLen) - 1;
+            i = static_cast<int>(uiSubstitutionBegin + uiWriteValLen) - 1;
 
             if (fNoRecurseBrackets) // just do this one then bail out.
             {

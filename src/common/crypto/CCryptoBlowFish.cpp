@@ -280,9 +280,9 @@ void CCrypto::InitTables() // static
 		//code[0] = (s_kKeyTable[i][0] << 24) + (s_kKeyTable[i][1] << 16) + (s_kKeyTable[i][2] << 8) + s_kKeyTable[i][3];
 		//code[1] = (s_kKeyTable[i][4] << 24) + (s_kKeyTable[i][5] << 16) + (s_kKeyTable[i][0] << 8) + s_kKeyTable[i][1];
 		//code[2] = (s_kKeyTable[i][2] << 24) + (s_kKeyTable[i][3] << 16) + (s_kKeyTable[i][4] << 8) + s_kKeyTable[i][5];
-        code[0] = ((dword)s_kKeyTable[i][0] << 24) + ((dword)s_kKeyTable[i][1] << 16) + ((dword)s_kKeyTable[i][2] << 8) + (dword)s_kKeyTable[i][3];
-		code[1] = ((dword)s_kKeyTable[i][4] << 24) + ((dword)s_kKeyTable[i][5] << 16) + ((dword)s_kKeyTable[i][0] << 8) + (dword)s_kKeyTable[i][1];
-		code[2] = ((dword)s_kKeyTable[i][2] << 24) + ((dword)s_kKeyTable[i][3] << 16) + ((dword)s_kKeyTable[i][4] << 8) + (dword)s_kKeyTable[i][5];
+        code[0] = (static_cast<dword>(s_kKeyTable[i][0]) << 24) + (static_cast<dword>(s_kKeyTable[i][1]) << 16) + (static_cast<dword>(s_kKeyTable[i][2]) << 8) + static_cast<dword>(s_kKeyTable[i][3]);
+		code[1] = (static_cast<dword>(s_kKeyTable[i][4]) << 24) + (static_cast<dword>(s_kKeyTable[i][5]) << 16) + (static_cast<dword>(s_kKeyTable[i][0]) << 8) + static_cast<dword>(s_kKeyTable[i][1]);
+		code[2] = (static_cast<dword>(s_kKeyTable[i][2]) << 24) + (static_cast<dword>(s_kKeyTable[i][3]) << 16) + (static_cast<dword>(s_kKeyTable[i][4]) << 8) + static_cast<dword>(s_kKeyTable[i][5]);
 
 		int j;
 		for(j=0; j<18; ++j)

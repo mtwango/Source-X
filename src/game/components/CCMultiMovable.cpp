@@ -307,7 +307,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
         pt += ptDelta;
         if (!pt.IsValidPoint())  // boat goes out of bounds !
         {
-            DEBUG_ERR(("Ship uid=0%x out of bounds\n", (dword)pItemThis->GetUID()));
+            DEBUG_ERR(("Ship uid=0%x out of bounds\n", static_cast<dword>(pItemThis->GetUID())));
             continue;
         }
         pObj->MoveTo(pt);
@@ -386,7 +386,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
                         //    pClient->addObjectRemove(pItemThis);
 
                         // Move the ship and its contents. This packet works if the objects were already added to the screen.
-                        new PacketMoveShip(pClient, pItemThis, ppObjs, iCount, pItemThis->m_itShip.m_DirMove, pItemThis->m_itShip.m_DirFace, (byte)pMultiThis->_eSpeedMode);
+                        new PacketMoveShip(pClient, pItemThis, ppObjs, iCount, pItemThis->m_itShip.m_DirMove, pItemThis->m_itShip.m_DirFace, static_cast<byte>(pMultiThis->_eSpeedMode));
                     }
 
                     // If client is on Ship
@@ -531,10 +531,10 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
     // Check that we can fit into this space.
     CPointMap ptTmp;
     ptTmp.m_z = ptThis.m_z;
-    ptTmp.m_map = (uchar)(rect.m_map);
-    for (ptTmp.m_x = (short)(rect.m_left); ptTmp.m_x < (short)(rect.m_right); ++ptTmp.m_x)
+    ptTmp.m_map = static_cast<uchar>(rect.m_map);
+    for (ptTmp.m_x = static_cast<short>(rect.m_left); ptTmp.m_x < static_cast<short>(rect.m_right); ++ptTmp.m_x)
     {
-        for (ptTmp.m_y = (short)(rect.m_top); ptTmp.m_y < (short)(rect.m_bottom); ++ptTmp.m_y)
+        for (ptTmp.m_y = static_cast<short>(rect.m_top); ptTmp.m_y < static_cast<short>(rect.m_bottom); ++ptTmp.m_y)
         {
             if (pMultiThis->GetRegion()->IsInside2d(ptTmp))
                 continue;
@@ -583,8 +583,8 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
                 yd = -ydiff;
                 break;
         }
-        pt.m_x = (short)(ptThis.m_x + xd);
-        pt.m_y = (short)(ptThis.m_y + yd);
+        pt.m_x = static_cast<short>(ptThis.m_x + xd);
+        pt.m_y = static_cast<short>(ptThis.m_y + yd);
         if (pObj->IsItem())
         {
             const auto pItem = dynamic_cast<CItem*>(pObj);
@@ -607,7 +607,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
                         pItem->SetType(oldType);
                         if ( oldType == IT_SHIP_PLANK && pItem->m_itShipPlank.m_wSideType == IT_SHIP_SIDE_LOCKED)
                         {
-                            pItem->SetID((ITEMID_TYPE)pItem->Item_GetDef()->m_ttShipPlank.m_ridState.GetResIndex());
+                            pItem->SetID(static_cast<ITEMID_TYPE>(pItem->Item_GetDef()->m_ttShipPlank.m_ridState.GetResIndex()));
                             pItem->SetType(IT_SHIP_PLANK);
 
                         }
@@ -641,7 +641,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
         pObj->Update();
     }
 
-    pMultiThis->m_itShip.m_DirFace = (uchar)(dir);
+    pMultiThis->m_itShip.m_DirFace = static_cast<uchar>(dir);
     return true;
 }
 
@@ -672,8 +672,8 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
     CPointMap ptRight(pMultiRegion->GetRegionCorner(GetDirTurn(dir, 1 + (dir % 2))));
     CPointMap ptTest(ptLeft.m_x, ptLeft.m_y, pItemThis->GetTopZ(), pItemThis->GetTopMap());
 
-	short iMapBoundX = (short)(g_MapList.GetMapSizeX(ptBack.m_map));
-	short iMapBoundY = (short)(g_MapList.GetMapSizeY(ptBack.m_map));
+    const short iMapBoundX = static_cast<short>(g_MapList.GetMapSizeX(ptBack.m_map));
+    const short iMapBoundY = static_cast<short>(g_MapList.GetMapSizeY(ptBack.m_map));
 	bool fStopped = false, fTurbulent = false, fMapBoundary = false;
 
     for (int i = 0; i < distance; ++i)
@@ -1025,9 +1025,9 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
             // Does NOT protect against exploits !
             if (!s.HasArgs())
                 return false;
-            pItemThis->m_itShip.m_DirMove = (byte)(GetDirStr(s.GetArgStr()));
+            pItemThis->m_itShip.m_DirMove = static_cast<byte>(GetDirStr(s.GetArgStr()));
             SetCaptain(pSrc);
-            Move((DIR_TYPE)(pItemThis->m_itShip.m_DirMove), _shipSpeed.tiles); //No need to return false, we just can't move the ship. The command is valid and by returning false we will get a console warning.
+            Move(static_cast<DIR_TYPE>(pItemThis->m_itShip.m_DirMove), _shipSpeed.tiles); //No need to return false, we just can't move the ship. The command is valid and by returning false we will get a console warning.
             return true;
         }
 
@@ -1060,7 +1060,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
             pItemThis->m_itShip.m_DirMove = static_cast<uchar>(GetDirTurn(DirFace, DirMoveChange));
             if (!Face(static_cast<DIR_TYPE>(pItemThis->m_itShip.m_DirMove)))
             {
-                pItemThis->m_itShip.m_DirMove = (uchar)(DirMove);
+                pItemThis->m_itShip.m_DirMove = static_cast<uchar>(DirMove);
                 return true; //No need to return false, we just can't turn the ship. The command is valid and by returning false we will get a console warning.
             }
             break;
@@ -1384,7 +1384,7 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
     auto index = static_cast<CML_TYPE>(FindTableSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
     // CItem *pItemThis = dynamic_cast<CItem*>(this);
     // ASSERT(pItemThis);
-    if (index == (CML_TYPE)-1)
+    if (index == static_cast<CML_TYPE>(-1))
     {
         if (!strnicmp(ptcKey, "SHIPSPEED.", 10))
             index = CML_SHIPSPEED;
@@ -1420,10 +1420,10 @@ bool CCMultiMovable::r_LoadVal(CScript & s)
                     return true;
                 }
                 int64 piVal[2];
-                if (size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
+                if (const size_t iQty = Str_ParseCmds(s.GetArgStr(), piVal, std::size(piVal)); iQty == 2)
                 {
-                    _shipSpeed.period = (ushort)(piVal[0] * (IsSetOF(OF_NoSmoothSailing) ? MSECS_PER_TENTH : 1));
-                    _shipSpeed.tiles = (uchar)(piVal[1]);
+                    _shipSpeed.period = static_cast<ushort>(piVal[0] * (IsSetOF(OF_NoSmoothSailing) ? MSECS_PER_TENTH : 1));
+                    _shipSpeed.tiles = static_cast<uchar>(piVal[1]);
                     return true;
                 }
 

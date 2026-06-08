@@ -2,5 +2,5 @@
 
 ITEMID_TYPE CUOStaticItemRec::GetDispID() const
 {
-    return (ITEMID_TYPE)(m_wTileID);
+    return static_cast<ITEMID_TYPE>(m_wTileID);
 }

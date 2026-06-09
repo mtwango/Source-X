@@ -1371,12 +1371,12 @@ bool CChar::ReadScriptReduced(CResourceLock &s, const bool fVendor)
 
                     if (pItem->IsAttr(ATTR_NEWBIE))
                     {
-                        if (g_Rand.GetVal(s.GetArgVal()) == 0)
+                        if (CSRand::GetVal(s.GetArgVal()) == 0)
                             pItem->ClrAttr(ATTR_NEWBIE);
                     }
                     else
                     {
-                        if (g_Rand.GetVal(s.GetArgVal()) == 0)
+                        if (CSRand::GetVal(s.GetArgVal()) == 0)
                             pItem->SetAttr(ATTR_NEWBIE);
                     }
                     continue;
@@ -1745,7 +1745,7 @@ void CChar::InitPlayer( CClient *pClient, const char *pszCharname, bool fFemale,
 	for ( uint i = 0; i < g_Cfg.m_iMaxSkill; ++i )
 	{
 		if ( g_Cfg.m_SkillIndexDefs.valid_index(i) )
-			Skill_SetBase(static_cast<SKILL_TYPE>(i), static_cast<ushort>(g_Rand.GetVal(g_Cfg.m_iMaxBaseSkill)));
+			Skill_SetBase(static_cast<SKILL_TYPE>(i), static_cast<ushort>(CSRand::GetVal(g_Cfg.m_iMaxBaseSkill)));
 	}
 
 	if ( wStr > 60 )		wStr = 60;

@@ -734,7 +734,7 @@ bool CChar::Stat_Decrease(const STAT_TYPE stat, const SKILL_TYPE skill)
 
 	// We are at a point where our skills can degrade a bit.
     const uint uiStatSumMax = uiStatSumLimit + uiStatSumLimit / 4;
-    if (const int iChanceForLoss = Calc_GetSCurve(uiStatSumMax - uiStatSumLimit, (uiStatSumMax - uiStatSumLimit) / 4); iChanceForLoss > g_Rand.GetVal(1000) )
+    if (const int iChanceForLoss = Calc_GetSCurve(uiStatSumMax - uiStatSumLimit, (uiStatSumMax - uiStatSumLimit) / 4); iChanceForLoss > CSRand::GetVal(1000) )
 	{
 		// Find the stat that was used least recently and degrade it.
 		int iMin = -1;

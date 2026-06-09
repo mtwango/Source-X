@@ -1194,9 +1194,9 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 				if ( g_Cfg.m_iFeatureSE & FEATURE_SE_UPDATE )
 					chance = 50 * (tracking * 2 + detectHidden) / divisor;
 				else
-					chance = 50 * (tracking + detectHidden + 10 * g_Rand.GetVal(20)) / divisor;
+					chance = 50 * (tracking + detectHidden + 10 * CSRand::GetVal(20)) / divisor;
 
-				if ( g_Rand.GetVal(100) > chance )
+				if (CSRand::GetVal(100) > chance )
 					continue;
 			}
 
@@ -1213,13 +1213,13 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 		// Some credit for trying.
 		if ( count > 0 )
 		{
-			m_pChar->Skill_UseQuick(SKILL_TRACKING, 20 + g_Rand.GetLLVal(30));
+			m_pChar->Skill_UseQuick(SKILL_TRACKING, 20 + CSRand::GetLLVal(30));
 			ASSERT(count < ARRAY_COUNT(item));
 			addItemMenu(CLIMODE_MENU_SKILL_TRACK, item, count);
 			return true;
 		}
 
-	    m_pChar->Skill_UseQuick(SKILL_TRACKING, 10 + g_Rand.GetLLVal(30));
+	    m_pChar->Skill_UseQuick(SKILL_TRACKING, 10 + CSRand::GetLLVal(30));
     }
 
 	// Tracking failed or was cancelled.

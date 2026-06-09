@@ -88,8 +88,8 @@ bool CCMultiMovable::SetMoveDir(const DIR_TYPE dir, ShipMovementType eMovementTy
 
     if (!pItemThis->IsAttr(ATTR_MAGIC))	// make sound.
     {
-        if (!g_Rand.GetVal(10))
-            pItemThis->Sound(g_Rand.GetVal(2) ? 0x12 : 0x13);
+        if (CSRand::GetVal(10))
+            pItemThis->Sound(CSRand::GetVal(2) ? 0x12 : 0x13);
     }
 
     pItemThis->m_itShip._eMovementType = (eMovementType >= SMT_NORMAL) ? SMT_NORMAL : eMovementType;	//checking here that packet is legit from client and not modified by 3rd party tools to send speed > 2.
@@ -1244,7 +1244,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
     {
         if (pszSpeak == nullptr)
         {
-            switch (g_Rand.GetVal(3))
+            switch (CSRand::GetVal(3))
             {
                 case 1:
                     pszSpeak = g_Cfg.GetDefaultMsg(DEFMSG_TILLER_REPLY_1);

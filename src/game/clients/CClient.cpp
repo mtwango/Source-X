@@ -1418,7 +1418,7 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 				int64 piMidi[64];
                 if (int64 iQty = Str_ParseCmds(s.GetArgStr(), piMidi, std::size(piMidi)); iQty > 0 )
 				{
-					addMusic( static_cast<MIDI_TYPE>(piMidi[ g_Rand.GetLLVal( iQty ) ]) );
+					addMusic( static_cast<MIDI_TYPE>(piMidi[ CSRand::GetLLVal( iQty ) ]) );
 				}
 			}
 			break;

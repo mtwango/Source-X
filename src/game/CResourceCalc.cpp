@@ -194,7 +194,7 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 		        iChance = 80;
 
 		    // Always need to have some chance (@todo Remove this horrendous random).
-			return g_Rand.GetVal(iChance);
+			return CSRand::GetVal(iChance);
 		}
 		// Pre-AOS formula.
 		case 1:
@@ -440,14 +440,14 @@ int CServerConfig::Calc_StealingItem(const CChar * pCharThief, const CItem * pIt
     const int iSkillMark = pCharMark->Skill_GetAdjusted( SKILL_STEALING );
     const int iWeightItem = pItem->GetWeight();
 
-	// int iDifficulty = iDexMark/2 + (iSkillMark/5) + g_Rand.GetVal(iDexMark/2) + IMulDivLL( iWeightItem, 4, WEIGHT_UNITS );
+	// int iDifficulty = iDexMark/2 + (iSkillMark/5) + CSRand::GetVal(iDexMark/2) + IMulDivLL( iWeightItem, 4, WEIGHT_UNITS );
 	// Melt mod:
-    int iDifficulty = (iSkillMark/5) + g_Rand.GetVal(iDexMark/2) + IMulDiv( iWeightItem, 4, WEIGHT_UNITS );
+    int iDifficulty = (iSkillMark/5) + CSRand::GetVal(iDexMark/2) + IMulDiv( iWeightItem, 4, WEIGHT_UNITS );
 
 	if ( pItem->IsItemEquipped())
 		iDifficulty += iDexMark/2 + pCharMark->Stat_GetAdjusted(STAT_INT);		// This is REALLY HARD to do.
 	if ( pCharThief->IsStatFlag( STATF_WAR )) // all keyed up.
-		iDifficulty += g_Rand.GetVal( iDexMark/2 );
+		iDifficulty += CSRand::GetVal( iDexMark/2 );
 
 	// return( iDifficulty );
 	// Melt mod:
@@ -498,7 +498,7 @@ bool CServerConfig::Calc_CrimeSeen( const CChar * pCharThief, const CChar * pCha
 			iChanceToSee=10;
 	}
 
-	if ( g_Rand.GetVal(1000) > iChanceToSee )
+	if ( CSRand::GetVal(1000) > iChanceToSee )
 		return false;
 
 	return true;
@@ -573,7 +573,7 @@ size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpell
 		const CResourceQtyArray* pReagents = &(pSpell->m_Reags);
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); g_Rand.GetVal(100) >= iLowerReagentCost)
+        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); CSRand::GetVal(100) >= iLowerReagentCost)
 		{
 			CContainer* pCont = pCharCaster;
             if (const size_t iMissing = pCont->ResourceConsumePart(pReagents, 1, 100, fTest); iMissing != sl::scont_bad_index())
@@ -596,7 +596,7 @@ ushort CServerConfig::Calc_SpellTithingCost(CChar* pCharCaster, const CSpellDef*
 
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
-        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); g_Rand.GetVal(100) >= iLowerReagentCost)
+        if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); CSRand::GetVal(100) >= iLowerReagentCost)
 			return pSpell->m_wTithingUse; //Default amount of Tithing points consumed.
 	}
 	return 0; //No tithing points consumed.
@@ -619,13 +619,13 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, const int iCureL
     if (const CVarDefCont *pTagStorage = pPoison->GetKey("OVERRIDE.CUREPOISONCHANCE", true))
 	{
 		iCureChance = static_cast<int>(pTagStorage->GetValNum());
-		return (g_Rand.GetVal(100) <= iCureChance);
+		return (CSRand::GetVal(100) <= iCureChance);
 	}
 
 	if (!IsSetMagicFlags(MAGICF_OSIFORMULAS))
 	{
 		iCureChance = Calc_GetSCurve(iCureLevel - iPoisonLevel, 100);
-		return (g_Rand.GetVal(1000) <= iCureChance);
+		return (CSRand::GetVal(1000) <= iCureChance);
 	}
 	//If we use MAGICF_OSIFORMULAS, the poison level is in the 0-4+ range.
 	if (!iPoisonLevel) //Lesser Poison (iPoisonLevel 0) is always cured no matter the potion or spell/skill level value
@@ -687,5 +687,5 @@ bool CServerConfig::Calc_CurePoisonChance(const CItem* pPoison, const int iCureL
 		}
 	}
 
-	return (g_Rand.GetVal(100) <= iCureChance);
+	return (CSRand::GetVal(100) <= iCureChance);
 }

@@ -328,7 +328,7 @@ void CCSpawn::GenerateItem()
         ASSERT(pItemDef);
         if (pItemDef->IsStackableType())
         {
-            SetAmount(static_cast<uint16>(g_Rand.GetVal(iAmountPile)));
+            SetAmount(static_cast<uint16>(CSRand::GetVal(iAmountPile)));
         }
     }
 
@@ -353,7 +353,7 @@ void CCSpawn::GenerateItem()
             if (!pItem->MoveTo(ptSpawn))
                 goto move_failed;
         }
-        else if (!pItem->MoveNear(ptSpawn, static_cast<word>(g_Rand.GetVal(_iMaxDist) + 1)))
+        else if (!pItem->MoveNear(ptSpawn, static_cast<word>(CSRand::GetVal(_iMaxDist) + 1)))
         {
         move_failed:
             // If this fails, try placing the char ON the spawn
@@ -425,7 +425,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
     if (pChar->GetTopPoint().IsValidPoint() == false)// Try to place it only if the @Spawn trigger didn't set it a valid P.
     {
         ushort iPlacingTries = 0;
-        while (!pChar->MoveNear(pt, _iMaxDist ? static_cast<word>(g_Rand.GetVal(_iMaxDist) + 1) : 1) || pChar->IsStuck(false) || !pChar->CanSeeLOS(pt)) //Character shouldn't spawn where can't see it's spawn point.
+        while (!pChar->MoveNear(pt, _iMaxDist ? static_cast<word>(CSRand::GetVal(_iMaxDist) + 1) : 1) || pChar->IsStuck(false) || !pChar->CanSeeLOS(pt)) //Character shouldn't spawn where can't see it's spawn point.
         {
             ++iPlacingTries;
             if (iPlacingTries <= 3)
@@ -543,11 +543,11 @@ void CCSpawn::DelObj(const CUID& uid)
         int64 iMinutes;
 		if (_iTimeHi <= 0)
 		{
-			iMinutes = g_Rand.GetLLVal(30) + 1;
+			iMinutes = CSRand::GetLLVal(30) + 1;
 		}
 		else
 		{
-			iMinutes = g_Rand.GetVal2(_iTimeLo, _iTimeHi);
+			iMinutes = CSRand::GetVal2(_iTimeLo, _iTimeHi);
 		}
 
 		if (iMinutes <= 0)
@@ -664,11 +664,11 @@ CCRET_TYPE CCSpawn::OnTickComponent()
     CItem *pSpawnItem = GetLink();
     if (_iTimeHi <= 0)
     {
-        iMinutes = g_Rand.GetLLVal(30) + 1;
+        iMinutes = CSRand::GetLLVal(30) + 1;
     }
     else
     {
-        iMinutes = g_Rand.GetVal2(_iTimeLo, _iTimeHi);
+        iMinutes = CSRand::GetVal2(_iTimeLo, _iTimeHi);
     }
 
     if (iMinutes <= 0)

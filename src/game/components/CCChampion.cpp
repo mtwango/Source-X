@@ -294,7 +294,7 @@ void CCChampion::SpawnNPC()
 
         if (uiSize > 0 && uiSize <= UCHAR_MAX)
         {
-            const uchar ucRand = static_cast<uchar>(g_Rand.GetVal(static_cast<int>(uiSize)));
+            const uchar ucRand = static_cast<uchar>(CSRand::GetVal(static_cast<int>(uiSize)));
             pNpc = idGroup[_iLevel][ucRand]; // Get the npc randomly from the list.
         }
         else

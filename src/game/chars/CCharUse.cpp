@@ -289,7 +289,7 @@ bool CChar::Use_Kindling( CItem * pKindling )
 		return false;
 	}
 
-	if ( !Skill_UseQuick(SKILL_CAMPING, g_Rand.GetLLVal(30)) )
+	if ( !Skill_UseQuick(SKILL_CAMPING, CSRand::GetLLVal(30)) )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_KINDLING_FAIL);
 		return false;
@@ -398,8 +398,8 @@ bool CChar::Use_Train_Dummy( CItem * pItem, const bool fSetup )
 
 	pItem->SetAnim(static_cast<ITEMID_TYPE>(pItem->GetDispID() + 1), 3 * 1000);
 	static const SOUND_TYPE sm_TrainingDummySounds[] = { 0x3A4, 0x3A6, 0x3A9, 0x3AE, 0x3B4, 0x3B6 };
-	pItem->Sound(sm_TrainingDummySounds[g_Rand.GetVal(std::size(sm_TrainingDummySounds))]);
-	Skill_Experience(skill, g_Rand.GetVal(40));
+	pItem->Sound(sm_TrainingDummySounds[CSRand::GetVal(std::size(sm_TrainingDummySounds))]);
+	Skill_Experience(skill, CSRand::GetVal(40));
 	return true;
 }
 
@@ -444,7 +444,7 @@ bool CChar::Use_Train_PickPocketDip( CItem * pItem, const bool fSetup )
 		return false;
 
 	pItem->Sound(SOUND_RUSTLE);
-	if ( Skill_UseQuick(SKILL_STEALING, g_Rand.GetVal(40)) )
+	if ( Skill_UseQuick(SKILL_STEALING, CSRand::GetVal(40)) )
 	{
 		SysMessageDefault(DEFMSG_ITEMUSE_PICKPOCKET_SUCCESS);
 		pItem->SetAnim(pItem->GetDispID(), 3 * 1000);
@@ -455,7 +455,7 @@ bool CChar::Use_Train_PickPocketDip( CItem * pItem, const bool fSetup )
 		pItem->Sound(SOUND_GLASS_BREAK4);
 		pItem->SetAnim(static_cast<ITEMID_TYPE>(pItem->GetDispID() + 1), 3 * 1000);
 	}
-	Skill_Experience(SKILL_STEALING, g_Rand.GetVal(40));
+	Skill_Experience(SKILL_STEALING, CSRand::GetVal(40));
 	return true;
 }
 
@@ -597,7 +597,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 		m_pClient->m_SkillThrowingAnimRender = AnimRender;
 	}
 
-	if ( Skill_UseQuick(skill, g_Rand.GetVal(40)) )
+	if ( Skill_UseQuick(skill, CSRand::GetVal(40)) )
 	{
 		static lpctstr const sm_Txt_ArcheryButte_Success[] =
 		{
@@ -606,7 +606,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 			g_Cfg.GetDefaultMsg(DEFMSG_ITEMUSE_ARCHBUTTE_HIT3),
 			g_Cfg.GetDefaultMsg(DEFMSG_ITEMUSE_ARCHBUTTE_HIT4)
 		};
-		Emote(sm_Txt_ArcheryButte_Success[g_Rand.GetVal(std::size(sm_Txt_ArcheryButte_Success))]);
+		Emote(sm_Txt_ArcheryButte_Success[CSRand::GetVal(std::size(sm_Txt_ArcheryButte_Success))]);
 		Sound(pWeapon->Weapon_GetSoundHit());
 
 		if ( WeaponAmmoID )
@@ -621,7 +621,7 @@ bool CChar::Use_Train_ArcheryButte( CItem * pButte, const bool fSetup )
 		Sound(pWeapon->Weapon_GetSoundMiss());
 	}
 
-	Skill_Experience(skill, g_Rand.GetVal(40));
+	Skill_Experience(skill, CSRand::GetVal(40));
 	return true;
 }
 
@@ -642,7 +642,7 @@ bool CChar::Use_Item_Web( CItem * pItemWeb )
 	// Try to break it.
 
     if (pItemWeb->m_itWeb.m_wHitsCur == 0)
-        pItemWeb->m_itWeb.m_wHitsCur = 60 + g_Rand.GetVal(250);
+        pItemWeb->m_itWeb.m_wHitsCur = 60 + CSRand::GetVal(250);
     else if (pItemWeb->m_itWeb.m_wHitsCur > INT32_MAX)
         pItemWeb->m_itWeb.m_wHitsCur = INT32_MAX;
 
@@ -770,7 +770,7 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 	}
 
 	// Quickly use arms lore skill, but don't gain any skill until later on
-    const int iArmsLoreDiff = g_Rand.GetVal(30);
+    const int iArmsLoreDiff = CSRand::GetVal(30);
 	if ( !Skill_UseQuick(SKILL_ARMSLORE, iArmsLoreDiff, false) )
 	{
 		// apply arms lore skillgain for failure
@@ -840,13 +840,13 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 		// not sure if this is working!
 		******************************/
 		// Failure
-		if ( !g_Rand.GetVal(6) )
+		if ( !CSRand::GetVal(6) )
 		{
 			pszText = g_Cfg.GetDefaultMsg(DEFMSG_REPAIR_2);
 			-- pItemArmor->m_itArmor.m_wHitsMax;
 			-- pItemArmor->m_itArmor.m_wHitsCur;
 		}
-		else if ( !g_Rand.GetVal(3) )
+		else if ( !CSRand::GetVal(3) )
 		{
 			pszText = g_Cfg.GetDefaultMsg(DEFMSG_REPAIR_3);
 			-- pItemArmor->m_itArmor.m_wHitsCur;
@@ -854,7 +854,7 @@ bool CChar::Use_Repair( CItem * pItemArmor )
 		else
 			pszText = g_Cfg.GetDefaultMsg( DEFMSG_REPAIR_4 );
 
-		iDamagePercent = g_Rand.GetVal(iDamagePercent);	// some random amount
+		iDamagePercent = CSRand::GetVal(iDamagePercent);	// some random amount
 	}
 
 	ResourceConsumePart(&(pItemDef->m_BaseResources), 1, iDamagePercent / 2, false);
@@ -1036,7 +1036,7 @@ void CChar::Use_Drink( CItem * pItem )
 	if ( pItem->IsType(IT_BOOZE) )
 	{
 		// Beer wine and liquor. vary strength of effect. m_itBooze.m_EffectStr
-        const int iStrength = g_Rand.GetVal(300) + 10;
+        const int iStrength = CSRand::GetVal(300) + 10;
 
 		// Create ITEMID_PITCHER if drink a pitcher.
 		// GLASS or MUG or Bottle ?
@@ -1099,7 +1099,7 @@ void CChar::Use_Drink( CItem * pItem )
 			SetPoison(pItem->m_itFood.m_poison_skill * 10, 1 + (pItem->m_itFood.m_poison_skill / 50), this);
 	}
 
-	//Sound(sm_DrinkSounds[g_Rand.GetVal(ARRAY_COUNT(sm_DrinkSounds))]);
+	//Sound(sm_DrinkSounds[CSRand::GetVal(ARRAY_COUNT(sm_DrinkSounds))]);
 	UpdateAnimate(ANIM_EAT);
     if (wConsume > 0) //if ARGN2 > 0, consume.
         ConsumeFromPack(pItem, wConsume);
@@ -1347,7 +1347,7 @@ bool CChar::Use_Key( CItem * pKey, CItem * pItemTarg )
 		}
 
 		// Need tinkering tools ???
-		if ( !Skill_UseQuick(SKILL_TINKERING, 30 + g_Rand.GetLLVal(40)) )
+		if ( !Skill_UseQuick(SKILL_TINKERING, 30 + CSRand::GetLLVal(40)) )
 		{
 			SysMessageDefault(DEFMSG_MSG_KEY_FAILC);
 			return false;
@@ -1545,7 +1545,7 @@ bool CChar::Use_BedRoll( CItem * pItem )
 				SysMessageDefault(DEFMSG_ITEMUSE_BEDROLL);
 				return true;
 			}
-			pItem->SetID(g_Rand.GetVal(2) ? ITEMID_BEDROLL_O_EW : ITEMID_BEDROLL_O_NS);
+			pItem->SetID(CSRand::GetVal(2) ? ITEMID_BEDROLL_O_EW : ITEMID_BEDROLL_O_NS);
 			pItem->Update();
 			return true;
 		case ITEMID_BEDROLL_C_NS:
@@ -1698,7 +1698,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 				SysMessageDefault(DEFMSG_ITEMUSE_BEEHIVE);
 			else
 			{
-				switch(g_Rand.GetVal(3))
+				switch(CSRand::GetVal(3))
 				{
 					case 1:
 						id = ITEMID_JAR_HONEY;
@@ -1716,7 +1716,7 @@ int CChar::Do_Use_Item(CItem *pItem, const bool fLink)
 			else
             {
 				SysMessageDefault(DEFMSG_ITEMUSE_BEEHIVE_STING);
-				OnTakeDamage(g_Rand.GetVal(5), this, DAMAGE_POISON | DAMAGE_GENERAL);
+				OnTakeDamage(CSRand::GetVal(5), this, DAMAGE_POISON | DAMAGE_GENERAL);
 			}
 			pItem->SetTimeoutS(15 * 60);
 			return true;

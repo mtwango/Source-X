@@ -73,7 +73,7 @@ SKILL_TYPE CChar::Skill_GetMagicRandom(ushort uiVal)
 		skills[static_cast<SKILL_TYPE>(count)] = skill;
 	}
 	if ( count )
-		return skills[static_cast<SKILL_TYPE>(g_Rand.GetVal2(0, count))];
+		return skills[static_cast<SKILL_TYPE>(CSRand::GetVal2(0, count))];
 
 	return SKILL_NONE;
 }
@@ -422,7 +422,7 @@ void CChar::Skill_Experience(const SKILL_TYPE skill, int iDifficulty )
 	if ( iChance <= 0 )
 		return;
 
-	const int iRoll = g_Rand.GetVal(1000);
+	const int iRoll = CSRand::GetVal(1000);
 	if ( uiSkillLevelFixed < static_cast<ushort>(iSkillMax) )	// are we in position to gain skill ?
 	{
 		// slightly more chance of decay than gain
@@ -493,7 +493,7 @@ void CChar::Skill_Experience(const SKILL_TYPE skill, int iDifficulty )
 		if (fDecrease)
 			uiStatSum = Stat_GetSum();
 
-		if ( (iChance > g_Rand.GetVal(1000)) && fDecrease)
+		if ( (iChance > CSRand::GetVal(1000)) && fDecrease)
 		{
 			Stat_SetBase(static_cast<STAT_TYPE>(i), (uiStatVal + 1));
 			break;
@@ -526,7 +526,7 @@ bool CChar::Skill_CheckSuccess(const SKILL_TYPE skill, int iDifficulty, const bo
     if ( fUseBellCurve )
         iSuccessChance = Calc_GetSCurve( Skill_GetAdjusted(skill) - iDifficulty, SKILL_VARIANCE );
 
-	return ( iSuccessChance >= g_Rand.GetVal(1000) );
+	return ( iSuccessChance >= CSRand::GetVal(1000) );
 }
 
 bool CChar::Skill_UseQuick(const SKILL_TYPE skill, int64 iDifficulty, const bool fAllowGain, const bool fUseBellCurve, const bool fForceCheck )
@@ -710,10 +710,10 @@ bool CChar::Skill_MakeItem_Success()
 		// minimum quality is 1, maximum quality is 200.  100 is average.
 
 		// How much variance? This is the difference in quality levels from what I can normally make.
-		int variance = 2 - static_cast<int>(log10(1.0 + static_cast<double>(g_Rand.GetVal(250))));	// this should result in a value between 0 and 2
+		int variance = 2 - static_cast<int>(log10(1.0 + static_cast<double>(CSRand::GetVal(250))));	// this should result in a value between 0 and 2
 
 		// Determine if lower or higher quality
-		if ( !g_Rand.GetVal(2) )
+		if ( !CSRand::GetVal(2) )
 			variance = -variance;		// worse than I can normally make
 
 		// Determine which range I'm in
@@ -745,36 +745,36 @@ bool CChar::Skill_MakeItem_Success()
 			case 0:
 				// Shoddy quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_1), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 1;
+				quality = CSRand::GetVal(25) + 1;
 				break;
 			case 1:
 				// Poor quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_2), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 26;
+				quality = CSRand::GetVal(25) + 26;
 				break;
 			case 2:
 				// Below average quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_3), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 51;
+				quality = CSRand::GetVal(25) + 51;
 				break;
 			case 3:
 				// Average quality
-				quality = g_Rand.GetVal(50) + 76;
+				quality = CSRand::GetVal(50) + 76;
 				break;
 			case 4:
 				// Above average quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_4), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 126;
+				quality = CSRand::GetVal(25) + 126;
 				break;
 			case 5:
 				// Excellent quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_5), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 151;
+				quality = CSRand::GetVal(25) + 151;
 				break;
 			case 6:
 				// Superior quality
 				Str_CopyLimitNull(pszMsg, g_Cfg.GetDefaultMsg(DEFMSG_MAKESUCCESS_6), Str_TempLength());
-				quality = g_Rand.GetVal(25) + 176;
+				quality = CSRand::GetVal(25) + 176;
 				break;
 			default:
 				// How'd we get here?
@@ -926,7 +926,7 @@ bool CChar::Skill_MakeItem(const ITEMID_TYPE id, const CUID &uidTarg, const SKTR
 		}
 
 		if ( iConsumePercent < 0 )
-			iConsumePercent = g_Rand.GetVal(50);
+			iConsumePercent = CSRand::GetVal(50);
 
 		ResourceConsumePart(&(pItemDef->m_BaseResources), iReplicationQty, iConsumePercent, false, pItemDef->GetResourceID().GetResIndex());
 		return false;
@@ -1226,13 +1226,13 @@ bool CChar::Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg )
 		}
 
 		const int iSkillRange = pBaseDef->m_ttIngot.m_iSkillMax - pBaseDef->m_ttIngot.m_iSkillMin;
-		int iSmeltingDifficulty = g_Rand.GetVal(iSkillRange);
+		int iSmeltingDifficulty = CSRand::GetVal(iSkillRange);
 
 		iSmeltingDifficulty = (pBaseDef->m_ttIngot.m_iSkillMin + iSmeltingDifficulty) / 10;
 		if ( !iResourceQty || !Skill_UseQuick( SKILL_MINING, iSmeltingDifficulty))
 		{
 			SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_MINING_NOTHING ), pItemOre->GetName());
-            const word iAmountLost = static_cast<word>(g_Rand.GetVal(pItemOre->GetAmount() / 2) + 1);
+            const word iAmountLost = static_cast<word>(CSRand::GetVal(pItemOre->GetAmount() / 2) + 1);
 			pItemOre->ConsumeAmount(iAmountLost);	// lose up to half the resources.
 			iOreQty -= iAmountLost;
 			if ( iResourceTotalQty > 1 ) // This is a niche scenario where an item can provide more than one type ingots, so we continue to loop for because we can successfully get the other type of lingots.
@@ -1443,7 +1443,7 @@ int CChar::Skill_Mining(const SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
-		m_atResource.m_dwStrokeCount = static_cast<word>(g_Rand.GetVal(5) + 2);
+		m_atResource.m_dwStrokeCount = static_cast<word>(CSRand::GetVal(5) + 2);
 		m_Act_UID = pResBit->GetUID();
 		return Skill_NaturalResource_Setup(pResBit);	// How difficult? 1-1000
 	}
@@ -1546,7 +1546,7 @@ int CChar::Skill_Fishing(const SKTRIG_TYPE stage )
             pSplash->SetType(IT_WATER_WASH);
             pSplash->MoveToDecay(m_Act_p, 1 * MSECS_PER_SEC);
         }
-        m_atResource.m_dwStrokeCount = g_Rand.GetVal(2) + 1;
+        m_atResource.m_dwStrokeCount = CSRand::GetVal(2) + 1;
 		m_Act_UID = pResBit->GetUID();
 		return Skill_NaturalResource_Setup(pResBit);	// How difficult? 1-1000
 	}
@@ -1645,7 +1645,7 @@ int CChar::Skill_Lumberjack(const SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
-		m_atResource.m_dwStrokeCount = static_cast<word>(g_Rand.GetVal(5) + 2);
+		m_atResource.m_dwStrokeCount = static_cast<word>(CSRand::GetVal(5) + 2);
 		return Skill_NaturalResource_Setup(pResBit);	// How difficult? 1-1000
 	}
 
@@ -1718,8 +1718,8 @@ int CChar::Skill_DetectHidden(const SKTRIG_TYPE stage )
 			continue;
 
 		// Check chance to reveal the target
-        const int iSkillSrc = iSkill + g_Rand.GetVal(210) - 100;
-        if (const int iSkillTarg = pChar->Skill_GetAdjusted(SKILL_HIDING) + g_Rand.GetVal(210) - 100; iSkillSrc < iSkillTarg )
+        const int iSkillSrc = iSkill + CSRand::GetVal(210) - 100;
+        if (const int iSkillTarg = pChar->Skill_GetAdjusted(SKILL_HIDING) + CSRand::GetVal(210) - 100; iSkillSrc < iSkillTarg )
 			continue;
 
 		pChar->Reveal();
@@ -1764,7 +1764,7 @@ int CChar::Skill_Musicianship(const SKTRIG_TYPE stage )
     // Slayer instruments will increase your success chance by 20% when used on the creatures it is meant for;
     // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 	if ( stage == SKTRIG_START )
-		return Use_PlayMusic( m_Act_UID.ItemFind(), g_Rand.GetVal(90));	// How difficult? 1-1000. If no instrument, it immediately fails
+		return Use_PlayMusic( m_Act_UID.ItemFind(), CSRand::GetVal(90));	// How difficult? 1-1000. If no instrument, it immediately fails
 
 	return 0;
 }
@@ -1806,12 +1806,12 @@ int CChar::Skill_Peacemaking(const SKTRIG_TYPE stage )
             // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 
 			// Basic skill check.
-			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(40));
+			int iDifficulty = Use_PlayMusic(pInstrument, CSRand::GetVal(40));
 			if (iDifficulty < -1)	// no instrument: immediate fail
 				return -SKTRIG_ABORT;
 
 			if ( !iDifficulty )
-				iDifficulty = g_Rand.GetVal(40);	// Depend on evil of the creatures here.
+				iDifficulty = CSRand::GetVal(40);	// Depend on evil of the creatures here.
 
 			return iDifficulty;		// How difficult? 1-1000
 		}
@@ -1930,12 +1930,12 @@ int CChar::Skill_Enticement(const SKTRIG_TYPE stage )
             // Slayer instruments will increase your success chance by 20% when used on the creatures it is meant for;
             // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 
-			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
+			int iDifficulty = Use_PlayMusic(pInstrument, CSRand::GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
 			if (iDifficulty < -1)	// no instrument: immediate fail
 				return -SKTRIG_ABORT;
 
 			if ( !iDifficulty )
-				iDifficulty = g_Rand.GetVal(40);	// Depend on evil of the creatures here.
+				iDifficulty = CSRand::GetVal(40);	// Depend on evil of the creatures here.
 
 			return iDifficulty;
 		}
@@ -2044,7 +2044,7 @@ int CChar::Skill_Provocation(const SKTRIG_TYPE stage)
             // Slayer instruments will increase your success chance by 20% when used on the creatures it is meant for;
             // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 
-			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
+			int iDifficulty = Use_PlayMusic(pInstrument, CSRand::GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
 			if (iDifficulty < -1)	// no instrument: immediate fail
 				return -SKTRIG_ABORT;
 
@@ -2068,7 +2068,7 @@ int CChar::Skill_Provocation(const SKTRIG_TYPE stage)
 
 		case SKTRIG_SUCCESS:
 			// They are just too good for this.
-			if ( pCharProv->GetKarma() >= g_Rand.GetVal2(1000, 10000) )
+			if ( pCharProv->GetKarma() >= CSRand::GetVal2(1000, 10000) )
 			{
 				pCharProv->Emote(g_Cfg.GetDefaultMsg(DEFMSG_PROVOCATION_EMOTE_1));
 				return -SKTRIG_ABORT;
@@ -2149,7 +2149,7 @@ int CChar::Skill_Poisoning(const SKTRIG_TYPE stage )
 		return -SKTRIG_ABORT;
 
 	if ( stage == SKTRIG_START )
-		return g_Rand.GetVal( 60 );	// How difficult? 1-1000
+		return CSRand::GetVal( 60 );	// How difficult? 1-1000
 
 	if ( stage == SKTRIG_FAIL )
 		return 0;	// lose the poison sometimes ?
@@ -2322,7 +2322,7 @@ int CChar::Skill_Taming(const SKTRIG_TYPE stage )
 		if ( pChar->Memory_FindObjTypes( this, MEMORY_FIGHT|MEMORY_HARMEDBY|MEMORY_IRRITATEDBY|MEMORY_AGGREIVED ))	// I've attacked it before ?
 			iDifficulty += 50;	// is it too much?
 
-        m_atTaming.m_dwStrokeCount = static_cast<dword>(g_Rand.GetVal(4) + 2);
+        m_atTaming.m_dwStrokeCount = static_cast<dword>(CSRand::GetVal(4) + 2);
 		return iDifficulty;		// How difficult? 1-1000
 	}
 
@@ -2343,7 +2343,7 @@ int CChar::Skill_Taming(const SKTRIG_TYPE stage )
 			return 0;
 
 		tchar * pszMsg = Str_GetTemp();
-		snprintf(pszMsg, Str_TempLength(), sm_szTameSpeak[ g_Rand.GetVal( std::size(sm_szTameSpeak)) ], pChar->GetName());
+		snprintf(pszMsg, Str_TempLength(), sm_szTameSpeak[ CSRand::GetVal( std::size(sm_szTameSpeak)) ], pChar->GetName());
 		Speak(pszMsg);
 
 		// Keep trying and updating the animation
@@ -2488,7 +2488,7 @@ int CChar::Skill_Hiding(const SKTRIG_TYPE stage )
 			}
 		}
 
-		return g_Rand.GetVal(70);	// How difficult? 1-1000
+		return CSRand::GetVal(70);	// How difficult? 1-1000
 	}
 	ASSERT(0);
 	return -SKTRIG_QTY;
@@ -2549,7 +2549,7 @@ int CChar::Skill_Herding(const SKTRIG_TYPE stage )
 				UpdateAnimate(ANIM_ATTACK_WEAPON);
 
             const int iIntVal = pChar->Stat_GetAdjusted(STAT_INT) / 2;
-			return iIntVal + g_Rand.GetVal(iIntVal);	// How difficult? 1-1000
+			return iIntVal + CSRand::GetVal(iIntVal);	// How difficult? 1-1000
 		}
 
 		case SKTRIG_FAIL:
@@ -2606,7 +2606,7 @@ int CChar::Skill_SpiritSpeak(const SKTRIG_TYPE stage )
 		return 0;
 
 	if ( stage == SKTRIG_START )
-		return( g_Rand.GetVal( 90 ));		// How difficult? 1-1000. difficulty based on spirits near ?
+		return( CSRand::GetVal( 90 ));		// How difficult? 1-1000. difficulty based on spirits near ?
 
 	if ( stage == SKTRIG_SUCCESS )
 	{
@@ -2655,7 +2655,7 @@ int CChar::Skill_Meditation(const SKTRIG_TYPE stage )
 
 		m_atTaming.m_dwStrokeCount = 0;
 		SysMessageDefault( DEFMSG_MEDITATION_TRY );
-		return g_Rand.GetVal(100);	// How difficult? 1-1000. how hard to get started ?
+		return CSRand::GetVal(100);	// How difficult? 1-1000. how hard to get started ?
 	}
 	if ( stage == SKTRIG_STROKE )
 		return 0;
@@ -2690,7 +2690,7 @@ int CChar::Skill_Meditation(const SKTRIG_TYPE stage )
 		Skill_SetTimeout();		// next update (depends on skill)
 
 		// Set a new possibility for failure ?
-		// iDifficulty = g_Rand.GetVal(100);
+		// iDifficulty = CSRand::GetVal(100);
 		return -SKTRIG_STROKE;
 	}
 	return -SKTRIG_QTY;
@@ -2808,17 +2808,17 @@ int CChar::Skill_Healing(const SKTRIG_TYPE stage )
 			Emote( g_Cfg.GetDefaultMsg( DEFMSG_HEALING_SELF ) );
 		}
 		if ( pCorpse || pChar->IsStatFlag(STATF_DEAD))	// resurrect
-			return( 85 + g_Rand.GetVal(25));
+			return( 85 + CSRand::GetVal(25));
 		if ( pChar->IsStatFlag( STATF_POISONED ))	// poison level
-			return( 50 + g_Rand.GetVal(50));
+			return( 50 + CSRand::GetVal(50));
 
-		return g_Rand.GetVal(80);	// Normal healing, How difficult? 1-1000
+		return CSRand::GetVal(80);	// Normal healing, How difficult? 1-1000
 	}
 
 	ASSERT( stage == SKTRIG_SUCCESS );
 	pBandage->ConsumeAmount();
 
-	CItem * pBloodyBandage = CItem::CreateScript(g_Rand.GetVal(2) ? ITEMID_BANDAGES_BLOODY1 : ITEMID_BANDAGES_BLOODY2, this );
+	CItem * pBloodyBandage = CItem::CreateScript(CSRand::GetVal(2) ? ITEMID_BANDAGES_BLOODY1 : ITEMID_BANDAGES_BLOODY2, this );
 	ItemBounce(pBloodyBandage);
 
     if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(Skill_GetActive()); pSkillDef == nullptr)
@@ -2884,7 +2884,7 @@ int CChar::Skill_RemoveTrap(const SKTRIG_TYPE stage )
 	}
 	if ( stage == SKTRIG_START )
 	{
-		return g_Rand.GetVal(95);		// How difficult? 1-1000
+		return CSRand::GetVal(95);		// How difficult? 1-1000
 	}
 	if ( stage == SKTRIG_FAIL )
 	{
@@ -3124,7 +3124,7 @@ int CChar::Skill_Blacksmith(const SKTRIG_TYPE stage )
 			return -SKTRIG_QTY;
 		}
 		UpdateDir( m_Act_p );			// toward the forge
-		m_atCreate.m_dwStrokeCount = 2;	// + g_Rand.GetVal( 4 )
+		m_atCreate.m_dwStrokeCount = 2;	// + CSRand::GetVal( 4 )
 	}
 
 	if ( stage == SKTRIG_SUCCESS )
@@ -3147,7 +3147,7 @@ int CChar::Skill_Carpentry(const SKTRIG_TYPE stage )
 		Sound( 0x23d );
 
 	if ( stage == SKTRIG_START )
-		m_atCreate.m_dwStrokeCount = 2;	// + g_Rand.GetVal( 3 )
+		m_atCreate.m_dwStrokeCount = 2;	// + CSRand::GetVal( 3 )
 
 	return( Skill_MakeItem( stage ));	// How difficult? 1-1000
 }
@@ -3340,7 +3340,7 @@ int CChar::Skill_Act_Throwing(const SKTRIG_TYPE stage )
 
 	if ( stage == SKTRIG_START )
 	{
-		UpdateStatVal( STAT_DEX, -static_cast<ushort>(4 + g_Rand.GetVal(6)) );
+		UpdateStatVal( STAT_DEX, -static_cast<ushort>(4 + CSRand::GetVal(6)) );
 		if ( !g_Cfg.IsSkillFlag( Skill_GetActive(), SKF_NOANIM ) )
 			UpdateAnimate( ANIM_THROW );
 
@@ -3383,7 +3383,7 @@ int CChar::Skill_Act_Throwing(const SKTRIG_TYPE stage )
 				iDamage = static_cast<int>(DVal[0]);
 				break;
 			case 2:
-				iDamage = static_cast<int>(DVal[0] + g_Rand.GetLLVal(DVal[1] - DVal[0]));
+				iDamage = static_cast<int>(DVal[0] + CSRand::GetLLVal(DVal[1] - DVal[0]));
 				break;
 		}
 	}
@@ -3410,21 +3410,21 @@ int CChar::Skill_Act_Throwing(const SKTRIG_TYPE stage )
         const CResourceID rid = g_Cfg.ResourceGetID(RES_ITEMDEF, t_Str);
 		id = static_cast<ITEMID_TYPE>(rid.GetResIndex());
 		if (!iDamage)
-			iDamage = Stat_GetVal(STAT_DEX)/4 + g_Rand.GetVal( Stat_GetVal(STAT_DEX)/4 );
+			iDamage = Stat_GetVal(STAT_DEX)/4 + CSRand::GetVal( Stat_GetVal(STAT_DEX)/4 );
 	}
 	else
 	{
-		if ( g_Rand.GetVal( 3 ) )
+		if ( CSRand::GetVal( 3 ) )
 		{
-			id = static_cast<ITEMID_TYPE>(ITEMID_ROCK_B_LO + g_Rand.GetVal(ITEMID_ROCK_B_HI - ITEMID_ROCK_B_LO));
+			id = static_cast<ITEMID_TYPE>(ITEMID_ROCK_B_LO + CSRand::GetVal(ITEMID_ROCK_B_HI - ITEMID_ROCK_B_LO));
 			if (!iDamage)
-				iDamage = Stat_GetVal(STAT_DEX)/4 + g_Rand.GetVal( Stat_GetVal(STAT_DEX)/4 );
+				iDamage = Stat_GetVal(STAT_DEX)/4 + CSRand::GetVal( Stat_GetVal(STAT_DEX)/4 );
 		}
 		else
 		{
-			id = static_cast<ITEMID_TYPE>(ITEMID_ROCK_2_LO + g_Rand.GetVal(ITEMID_ROCK_2_HI - ITEMID_ROCK_2_LO));
+			id = static_cast<ITEMID_TYPE>(ITEMID_ROCK_2_LO + CSRand::GetVal(ITEMID_ROCK_2_HI - ITEMID_ROCK_2_LO));
 			if (!iDamage)
-				iDamage = 2 + g_Rand.GetVal( Stat_GetVal(STAT_DEX)/4 );
+				iDamage = 2 + CSRand::GetVal( Stat_GetVal(STAT_DEX)/4 );
 		}
 	}
 
@@ -3436,7 +3436,7 @@ int CChar::Skill_Act_Throwing(const SKTRIG_TYPE stage )
 			pItemRock->MoveToCheck(m_Act_p, this);
 			pItemRock->Effect(EFFECT_BOLT, id, this);
 		}
-		if ( ! g_Rand.GetVal( pChar->GetTopPoint().GetDist( m_Act_p )))	// did it hit?
+		if ( ! CSRand::GetVal( pChar->GetTopPoint().GetDist( m_Act_p )))	// did it hit?
 			pChar->OnTakeDamage( iDamage, this, iDmgType,iDmgPhysical,iDmgFire,iDmgCold,iDmgPoison,iDmgEnergy);
 	}
 
@@ -3524,7 +3524,7 @@ SOUND_TYPE CChar::Skill_GetSound(const SKILL_TYPE skill )
 		case SKILL_CARPENTRY:
 			return 0x23d;
 		case SKILL_MINING:
-			return g_Rand.GetVal(2) ? 0x125 : 0x126;
+			return CSRand::GetVal(2) ? 0x125 : 0x126;
 		case SKILL_LUMBERJACKING:
 			return 0x13e;
 		default:
@@ -3913,7 +3913,7 @@ int CChar::Skill_Done()
 
         if (pTool && pTool->IsTypeWeapon())
         {
-            if (g_Rand.GetVal(100) < iChance)
+            if (CSRand::GetVal(100) < iChance)
             {
                 const int iAmount = std::max(std::min(static_cast<int>(pScriptArgs->m_VarsLocal.GetKeyNum("ITEMDAMAGEAMOUNT")), static_cast<int>(pTool->m_itWeapon.m_wHitsCur)), 0);
                 pTool->OnTakeDamage(iAmount, nullptr, DAMAGE_GOD);
@@ -4112,7 +4112,7 @@ int CChar::Skill_Snooping(const SKTRIG_TYPE stage)
 		}
 
 		// return the difficulty.
-		return ((Skill_GetAdjusted(SKILL_SNOOPING) < g_Rand.GetVal(1000)) ? 100 : 0);
+		return ((Skill_GetAdjusted(SKILL_SNOOPING) < CSRand::GetVal(1000)) ? 100 : 0);
 	}
 
 	// did anyone see this ?
@@ -4122,7 +4122,7 @@ int CChar::Skill_Snooping(const SKTRIG_TYPE stage)
 	if (stage == SKTRIG_FAIL)
 	{
 		SysMessageDefault(DEFMSG_SNOOPING_FAILED);
-		if ((Skill_GetAdjusted(SKILL_HIDING) / 2) < g_Rand.GetVal(1000))
+		if ((Skill_GetAdjusted(SKILL_HIDING) / 2) < CSRand::GetVal(1000))
 			Reveal();
 	}
 

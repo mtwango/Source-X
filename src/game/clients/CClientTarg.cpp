@@ -783,8 +783,8 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 		}
 
 		if ( pChar->IsPlayableCharacter())
-            return g_Rand.GetVal(10);
-		return g_Rand.GetVal(60);
+            return CSRand::GetVal(10);
+		return CSRand::GetVal(60);
 	}
 
     const lpctstr pszHe = pChar->GetPronoun();
@@ -865,9 +865,9 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 		if ( pItem->IsAttr( ATTR_IDENTIFIED ))
 		{
 			// already identified so easier.
-			return g_Rand.GetVal(20);
+			return CSRand::GetVal(20);
 		}
-		return g_Rand.GetVal(60);
+		return CSRand::GetVal(60);
 	}
 
 	pItem->SetAttr(ATTR_IDENTIFIED);
@@ -920,7 +920,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 	{
 		if ( pChar == m_pChar )
 			return( 2 );
-		return g_Rand.GetVal(60);
+		return CSRand::GetVal(60);
 	}
 
 	static lpctstr const sm_szIntDesc[] =
@@ -1007,7 +1007,7 @@ int CClient::OnSkill_ArmsLore(const CUID &uid, int iSkillLevel, const bool fTest
 
 	if ( fTest )
 	{
-		return g_Rand.GetVal(60);
+		return CSRand::GetVal(60);
 	}
 
 	tchar *pszTemp = Str_GetTemp();
@@ -1118,7 +1118,7 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 		// based on rareity ?
 		if ( pChar == m_pChar )
 			return( 2 );
-		return g_Rand.GetVal(60);
+		return CSRand::GetVal(60);
 	}
 
 	// Add in error cased on your skill level.
@@ -1194,9 +1194,9 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 	}
 
 	if (fTest)
-		return (pCorpse->m_uidLink == m_pChar->GetUID()) ? 2 : g_Rand.GetVal(60);
+		return (pCorpse->m_uidLink == m_pChar->GetUID()) ? 2 : CSRand::GetVal(60);
 
-    const CChar * pCharKiller = pCorpse->m_itCorpse.m_uidKiller.CharFind();
+    CChar const * pCharKiller = pCorpse->m_itCorpse.m_uidKiller.CharFind();
     const lpctstr pName = pCharKiller ? pCharKiller->GetName() : nullptr;
 
 	if ( pCorpse->IsCorpseSleeping() )
@@ -1289,7 +1289,7 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 	}
 
 	if ( fTest )
-		return g_Rand.GetVal(60);
+		return CSRand::GetVal(60);
 
 
 	static const lpctstr sm_szPoisonMessages[] =
@@ -1802,7 +1802,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			if ( pChar )
 				pChar->OnTakeDamage( 80 + CSRand::GetVal(150), m_pChar, DAMAGE_HIT_BLUNT|DAMAGE_FIRE );
 			else if ( pItem )
-				pItem->OnTakeDamage( 80 + g_Rand.GetVal(150), m_pChar, DAMAGE_HIT_BLUNT|DAMAGE_FIRE );
+				pItem->OnTakeDamage( 80 + CSRand::GetVal(150), m_pChar, DAMAGE_HIT_BLUNT|DAMAGE_FIRE );
 		}
 		return true;
 
@@ -2481,7 +2481,7 @@ bool CClient::OnTarg_Party_Add( CChar * pChar )
 	pChar->SysMessage( sTemp );
 
 	m_pChar->SetKeyNum("PARTY_LASTINVITE", static_cast<dword>(pChar->GetUID()));
-	m_pChar->SetKeyNum("PARTY_LASTINVITETIME", CWorldGameTime::GetCurrentTime().GetTimeRaw() + (g_Rand.GetVal2(2,5) * MSECS_PER_SEC));
+	m_pChar->SetKeyNum("PARTY_LASTINVITETIME", CWorldGameTime::GetCurrentTime().GetTimeRaw() + (CSRand::GetVal2(2,5) * MSECS_PER_SEC));
 
 	new PacketPartyInvite(pChar->GetClientActive(), m_pChar);
 

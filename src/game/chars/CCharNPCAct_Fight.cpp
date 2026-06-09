@@ -45,7 +45,7 @@ bool CChar::NPC_FightArchery(const CChar * pChar)
     if (iDist > iMinDist)
         return true;		// always use archery if distant enough
 
-    if (!g_Rand.GetVal(2))	// move away
+    if (!CSRand::GetVal(2))	// move away
     {
         // Move away
         NPC_Act_Follow(false, iMaxDist, true);
@@ -180,7 +180,7 @@ void CChar::NPC_Act_Fight()
     if (!IsStatFlag(STATF_PET) || (m_pNPC->m_Brain == NPCBRAIN_BERSERK))
     {
         int iObservant = (130 - Stat_GetAdjusted(STAT_INT)) / 20;
-        if (!g_Rand.GetVal(2 + maximum(0, iObservant)))
+        if (!CSRand::GetVal(2 + maximum(0, iObservant)))
         {
             if (NPC_LookAround())
             {
@@ -208,7 +208,7 @@ void CChar::NPC_Act_Fight()
 
     if ((m_pNPC->m_Brain == NPCBRAIN_GUARD) &&
         (m_atFight.m_iWarSwingState == WAR_SWING_READY) &&
-        !g_Rand.Get16ValFast(3))
+        !CSRand::Get16ValFast(3))
     {
         // If a guard is ever too far away (missed a chance to swing)
         // Teleport me closer.

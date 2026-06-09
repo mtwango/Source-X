@@ -224,7 +224,7 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger 
     size_t i;
     if ( pCharSrc == nullptr )
     {
-        iWeight	= g_Rand.GetVal( m_iTotalWeight ) + 1;
+        iWeight	= CSRand::GetVal( m_iTotalWeight ) + 1;
 
         for ( i = 0; iWeight > 0 && i < iCount; ++i )
         {
@@ -261,7 +261,7 @@ size_t CRandGroupDef::GetRandMemberIndex( CChar * pCharSrc, const bool fTrigger 
         members.emplace_back(i);
         iTotalWeight += static_cast<int>(m_Members[i].GetResQty());
     }
-    iWeight = g_Rand.GetVal( iTotalWeight ) + 1;
+    iWeight = CSRand::GetVal( iTotalWeight ) + 1;
     iCount = members.size();
 
     for ( i = 0; iWeight > 0 && i < iCount; ++i )

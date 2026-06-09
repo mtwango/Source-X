@@ -68,11 +68,11 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, co
 					for ( int i = 0; i < sTextGhost.GetLength(); ++i )
 					{
 						if ( sTextGhost[i] != ' ' &&  sTextGhost[i] != '\t' )
-							sTextGhost[i] = g_Rand.GetVal(2) ? 'O' : 'o';
+							sTextGhost[i] = CSRand::GetVal(2) ? 'O' : 'o';
 					}
 				}
 				pszSpeak = sTextGhost;
-				pClient->addSound( sm_Sounds_Ghost[ g_Rand.GetVal( std::size(sm_Sounds_Ghost)) ], pSrc );
+				pClient->addSound( sm_Sounds_Ghost[ CSRand::GetVal( std::size(sm_Sounds_Ghost)) ], pSrc );
 			}
 
 			if ( !fCanSee && pSrc )
@@ -168,14 +168,14 @@ void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwT
 					for ( i = 0; i < MAX_TALK_BUFFER - 1 && pwText[i]; ++i )
 					{
 						if ( pwText[i] != ' ' && pwText[i] != '\t' )
-							wTextGhost[i] = g_Rand.GetVal(2) ? 'O' : 'o';
+							wTextGhost[i] = CSRand::GetVal(2) ? 'O' : 'o';
 						else
 							wTextGhost[i] = pwText[i];
 					}
 					wTextGhost[i] = '\0';
 				}
 				pwSpeak = wTextGhost;
-				pClient->addSound( sm_Sounds_Ghost[ g_Rand.GetVal( std::size(sm_Sounds_Ghost)) ], pSrc );
+				pClient->addSound( sm_Sounds_Ghost[ CSRand::GetVal( std::size(sm_Sounds_Ghost)) ], pSrc );
 			}
 
 			// Must label the text.

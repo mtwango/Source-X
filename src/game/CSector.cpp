@@ -709,9 +709,9 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 	{
 		// Clouds of some sort...
 		if (fNight)
-			uiTargLight += static_cast<byte>(g_Rand.Get16ValFast(2) + 1);	// 1-2 light levels darker if cloudy at night
+			uiTargLight += static_cast<byte>(CSRand::Get16ValFast(2) + 1);	// 1-2 light levels darker if cloudy at night
 		else
-			uiTargLight += static_cast<byte>(g_Rand.Get16ValFast(4) + 1);	// 1-4 light levels darker if cloudy during the day.
+			uiTargLight += static_cast<byte>(CSRand::Get16ValFast(4) + 1);	// 1-4 light levels darker if cloudy during the day.
 	}
 
 	if ( fNight )
@@ -853,11 +853,11 @@ WEATHER_TYPE CSector::GetWeatherCalc() const
 		return( WEATHER_DRY );
 
 	// Rain chance also controls the chance of snow. If it isn't possible to rain then it cannot snow either
-    const int iPercentRoll = g_Rand.GetValFast( 100 );
+    const int iPercentRoll = CSRand::GetValFast( 100 );
 	if ( iPercentRoll < GetRainChance() )
 	{
 		// It is precipitating... but is it rain or snow?
-		if ( GetColdChance() && g_Rand.GetValFast(100) <= GetColdChance()) // Should it actually snow here?
+		if ( GetColdChance() && CSRand::GetValFast(100) <= GetColdChance()) // Should it actually snow here?
 			return WEATHER_SNOW;
 		return WEATHER_RAIN;
 	}
@@ -1248,7 +1248,7 @@ bool CSector::_OnTick()
 	int iRegionPeriodic = 0;
 
     const WEATHER_TYPE weatherprv = m_Env.m_Weather;
-	if ( ! g_Rand.GetValFast( 30 ))	// change less often
+	if ( ! CSRand::GetValFast( 30 ))	// change less often
 	{
 		m_Env.m_Weather = GetWeatherCalc();
 		if ( weatherprv != m_Env.m_Weather )
@@ -1274,22 +1274,22 @@ bool CSector::_OnTick()
 				break;
 
 			case WEATHER_SNOW:
-				if ( ! g_Rand.GetValFast(5) )
-					sound = sm_SfxWind[ g_Rand.GetValFast( std::size(sm_SfxWind)) ];
+				if ( ! CSRand::GetValFast(5) )
+					sound = sm_SfxWind[ CSRand::GetValFast( std::size(sm_SfxWind)) ];
 				break;
 
 			case WEATHER_RAIN:
 				{
-                if (const int iVal = g_Rand.GetValFast(30); iVal < 5 )
+                if (const int iVal = CSRand::GetValFast(30); iVal < 5 )
 					{
 						// Mess up the light levels for a sec..
 						LightFlash();
-						sound = sm_SfxThunder[ g_Rand.GetValFast( std::size(sm_SfxThunder)) ];
+						sound = sm_SfxThunder[ CSRand::GetValFast( std::size(sm_SfxThunder)) ];
 					}
 					else if ( iVal < 10 )
-						sound = sm_SfxRain[ g_Rand.GetValFast( std::size(sm_SfxRain)) ];
+						sound = sm_SfxRain[ CSRand::GetValFast( std::size(sm_SfxRain)) ];
 					else if ( iVal < 15 )
-						sound = sm_SfxWind[ g_Rand.GetValFast( std::size(sm_SfxWind)) ];
+						sound = sm_SfxWind[ CSRand::GetValFast( std::size(sm_SfxWind)) ];
 				}
 				break;
 

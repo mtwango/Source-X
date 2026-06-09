@@ -1047,13 +1047,13 @@ void CAccount::SetNewPassword(const lpctstr pszPassword )
 	{
         static constexpr tchar passwdChars[] = "ABCDEFGHJKLMNPQRTUVWXYZ2346789";
         const int len = static_cast<int>(strlen(passwdChars));
-		int charsCnt = g_Rand.GetVal(4) + 6;	// 6 - 10 chars
+		int charsCnt =CSRand::GetVal(4) + 6;	// 6 - 10 chars
 		if ( charsCnt > (MAX_ACCOUNT_PASSWORD_ENTER - 1) )
 			charsCnt = MAX_ACCOUNT_PASSWORD_ENTER - 1;
 
 		tchar szTmp[MAX_ACCOUNT_PASSWORD_ENTER + 1];
 		for ( int i = 0; i < charsCnt; ++i )
-			szTmp[i] = passwdChars[g_Rand.GetVal(len)];
+			szTmp[i] = passwdChars[CSRand::GetVal(len)];
 
 		szTmp[charsCnt] = '\0';
 		m_sNewPassword = szTmp;

@@ -83,11 +83,11 @@ void CChar::Action_StartSpecial(const CREID_TYPE id )
 		case CREID_FIRE_ELEM:
 		{
 			// Leave a fire path
-            pItem = CItem::CreateScript( g_Rand.Get16ValFast(2) ? ITEMID_FX_FIRE_F_EW : ITEMID_FX_FIRE_F_NS, this );
+            pItem = CItem::CreateScript( CSRand::Get16ValFast(2) ? ITEMID_FX_FIRE_F_EW : ITEMID_FX_FIRE_F_NS, this );
 			ASSERT(pItem);
 			pItem->SetType(IT_FIRE);
 			pItem->m_itSpell.m_spell = static_cast<word>(SPELL_Fire_Field);
-			pItem->m_itSpell.m_spelllevel = static_cast<word>(100 + g_Rand.Get16ValFast(500));
+			pItem->m_itSpell.m_spelllevel = static_cast<word>(100 + CSRand::Get16ValFast(500));
 			pItem->m_itSpell.m_spellcharges = 1;
 			pItem->m_uidLink = GetUID();
             iMaxTimeoutS = 50;
@@ -97,7 +97,7 @@ void CChar::Action_StartSpecial(const CREID_TYPE id )
 		case CREID_GIANT_SPIDER:
 		{
 			// Leave a web path
-            pItem = CItem::CreateScript( static_cast<ITEMID_TYPE>(g_Rand.GetVal2Fast(ITEMID_WEB1_1, ITEMID_WEB1_4)), this );
+            pItem = CItem::CreateScript( static_cast<ITEMID_TYPE>(CSRand::GetVal2Fast(ITEMID_WEB1_1, ITEMID_WEB1_4)), this );
 			ASSERT(pItem);
 			pItem->SetType(IT_WEB);
             iMaxTimeoutS = 170;
@@ -127,10 +127,10 @@ void CChar::Action_StartSpecial(const CREID_TYPE id )
                 pItem->m_CanMask |= CAN_O_NOSLEEP;
             }
         }
-        pItem->MoveToDecay( GetTopPoint(), 10 + g_Rand.Get16ValFast(iMaxTimeoutS)*MSECS_PER_SEC);
+        pItem->MoveToDecay( GetTopPoint(), 10 + CSRand::Get16ValFast(iMaxTimeoutS)*MSECS_PER_SEC);
     }
 
-    UpdateStatVal( STAT_DEX, -(5 + g_Rand.Get16ValFast(5)) );	// the stamina cost
+    UpdateStatVal( STAT_DEX, -(5 + CSRand::Get16ValFast(5)) );	// the stamina cost
 }
 
 bool CChar::NPC_OnVerb( CScript &s, CTextConsole * pSrc ) // Execute command from script
@@ -402,9 +402,9 @@ void CChar::NPC_OnNoticeSnoop( const CChar * pCharThief, const CChar * pCharMark
 
 	if ( NPC_CanSpeak())
 	{
-		Speak( g_Cfg.GetDefaultMsg(sm_szTextSnoop[ g_Rand.GetValFast( std::size(sm_szTextSnoop)) ]));
+		Speak( g_Cfg.GetDefaultMsg(sm_szTextSnoop[ CSRand::GetValFast( std::size(sm_szTextSnoop)) ]));
 	}
-	if ( ! g_Rand.Get16ValFast(4))
+	if ( ! CSRand::Get16ValFast(4))
 	{
 		m_Act_UID = pCharThief->GetUID();
 		m_atFlee.m_iStepsMax = 20;	// how long should it take to get there.
@@ -494,7 +494,7 @@ int CChar::NPC_WalkToPoint( bool fRun )
 
 		// try to step around it ?
 		int iDiff = 0;
-		int iRand = g_Rand.Get16ValFast( 100 );
+		int iRand = CSRand::Get16ValFast( 100 );
 		if ( iRand < 30 )	// do nothing.
 		{
 			// whilst pathfinding we should keep trying to find new ways to our destination
@@ -621,10 +621,10 @@ int CChar::NPC_WalkToPoint( bool fRun )
                 if (iDex < 75)
                     iDex = 75;
             }
-            iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast((100 - iDex) / 5) * MSECS_PER_SEC / 10;
+            iTickNext = MSECS_PER_SEC / 4 + CSRand::GetValFast((100 - iDex) / 5) * MSECS_PER_SEC / 10;
         }
         else
-            iTickNext = MSECS_PER_SEC + g_Rand.GetValFast((100 - iDex) / 3) * MSECS_PER_SEC / 10;
+            iTickNext = MSECS_PER_SEC + CSRand::GetValFast((100 - iDex) / 3) * MSECS_PER_SEC / 10;
 
         if (CVarDefCont *pValue = GetKey("OVERRIDE.MOVERATE", true))
         {
@@ -675,10 +675,10 @@ int CChar::NPC_WalkToPoint( bool fRun )
                     if (iDex < 75)
                         iDex = 75;
                 }
-                iTickNext = MSECS_PER_SEC / 4 + g_Rand.GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 5) * MSECS_PER_SEC / 10;   // TODO MSEC to TICK? custom timers for npc's movement?
+                iTickNext = MSECS_PER_SEC / 4 + CSRand::GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 5) * MSECS_PER_SEC / 10;   // TODO MSEC to TICK? custom timers for npc's movement?
             }
             else
-                iTickNext = MSECS_PER_SEC + g_Rand.GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 3) * MSECS_PER_SEC / 10;
+                iTickNext = MSECS_PER_SEC + CSRand::GetValFast(static_cast<int32>(100 - (iDex * tTick) / 100) / 3) * MSECS_PER_SEC / 10;
         }
 
         if (iTickNext < MSECS_PER_TENTH) // Do not allow less than a tenth of second. This may be decreased in the future to allow more precise timers, at the cost of cpu.
@@ -714,11 +714,11 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, const bool bFromTrigger )
 		};
 
 		// At least jeer at the criminal.
-		if ( g_Rand.Get16ValFast(10))
+		if ( CSRand::Get16ValFast(10))
 			return false;
 
 		tchar *pszMsg = Str_GetTemp();
-		snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(sm_szSpeakGuardJeer[ g_Rand.GetValFast( std::size(sm_szSpeakGuardJeer)) ]), pChar->GetName());
+		snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(sm_szSpeakGuardJeer[ CSRand::GetValFast( std::size(sm_szSpeakGuardJeer)) ]), pChar->GetName());
 		Speak(pszMsg);
 		UpdateDir(pChar);
 		return false;
@@ -747,7 +747,7 @@ bool CChar::NPC_LookAtCharGuard( CChar * pChar, const bool bFromTrigger )
 	}
 	if ( !IsStatFlag(STATF_WAR) || m_Act_UID != pChar->GetUID() )
 	{
-		Speak(g_Cfg.GetDefaultMsg(sm_szSpeakGuardStrike[g_Rand.GetValFast(std::size(sm_szSpeakGuardStrike))]));
+		Speak(g_Cfg.GetDefaultMsg(sm_szSpeakGuardStrike[CSRand::GetValFast(std::size(sm_szSpeakGuardStrike))]));
 		Fight_Attack(pChar, true);
 	}
 	return true;
@@ -810,7 +810,7 @@ bool CChar::NPC_LookAtCharHuman( CChar * pChar )
         {
 			return NPC_LookAtCharGuard(pChar);
         }
-        if (NPC_CanSpeak() && !g_Rand.Get16ValFast(3))
+        if (NPC_CanSpeak() && !CSRand::Get16ValFast(3))
         {
             // Find a guard.
             if (CallGuards(pChar))
@@ -846,7 +846,7 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
     // Character is too far.
     if (GetDist(pChar) > 3)
     {
-        if (g_Rand.Get16ValFast(5))
+        if (CSRand::Get16ValFast(5))
             return false;
         Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_HEALER_RANGE));
         return true;
@@ -886,8 +886,8 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if ( !IsStatFlag( STATF_CRIMINAL ) && NotoThem == NOTO_CRIMINAL )
 	{
-		pszRefuseMsg = sm_szHealerRefuseCriminals[ g_Rand.GetValFast( std::size(sm_szHealerRefuseCriminals)) ];
-		if (g_Rand.Get16ValFast(5))
+		pszRefuseMsg = sm_szHealerRefuseCriminals[ CSRand::GetValFast( std::size(sm_szHealerRefuseCriminals)) ];
+		if (CSRand::Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
@@ -899,8 +899,8 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if (!fImNeutral && !fImEvil && NotoThem >= NOTO_NEUTRAL)
 	{
-		pszRefuseMsg = sm_szHealerRefuseEvils[ g_Rand.GetValFast( std::size(sm_szHealerRefuseEvils)) ];
-		if (g_Rand.Get16ValFast(5))
+		pszRefuseMsg = sm_szHealerRefuseEvils[ CSRand::GetValFast( std::size(sm_szHealerRefuseEvils)) ];
+		if (CSRand::Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
@@ -908,19 +908,19 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 
 	if ((fImNeutral || fImEvil ) && NotoThem == NOTO_GOOD)
 	{
-		pszRefuseMsg = sm_szHealerRefuseGoods[ g_Rand.GetValFast( std::size(sm_szHealerRefuseGoods)) ];
-		if (g_Rand.Get16ValFast(5))
+		pszRefuseMsg = sm_szHealerRefuseGoods[ CSRand::GetValFast( std::size(sm_szHealerRefuseGoods)) ];
+		if (CSRand::Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
 	}
 
 	// Attempt to res.
-	Speak( sm_szHealer[ g_Rand.GetValFast( std::size(sm_szHealer)) ] );
+	Speak( sm_szHealer[ CSRand::GetValFast( std::size(sm_szHealer)) ] );
 	UpdateAnimate( ANIM_CAST_AREA );
 	if ( ! pChar->OnSpellEffect( SPELL_Resurrection, this, 1000, nullptr ))
 	{
-		if ( g_Rand.Get16ValFast(2))
+		if ( CSRand::Get16ValFast(2))
 			Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_FAIL_1 ) );
 		else
 			Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_FAIL_2 ) );
@@ -956,7 +956,7 @@ bool CChar::NPC_LookAtItem( CItem * pItem, const int iDist )
 	}
 
 	// Loot nearby items on ground
-	if ( iWantThisItem > g_Rand.Get16ValFast(100) )
+	if ( iWantThisItem > CSRand::Get16ValFast(100) )
 	{
 		m_Act_UID = pItem->GetUID();
 		NPC_Act_Looting();
@@ -972,7 +972,7 @@ bool CChar::NPC_LookAtItem( CItem * pItem, const int iDist )
 	}
 
 	// Check for doors we can open
-	if ( pItem->IsType(IT_DOOR) && GetDist(pItem) <= 1 && CanTouch(pItem) && !g_Rand.Get16ValFast(2) )
+	if ( pItem->IsType(IT_DOOR) && GetDist(pItem) <= 1 && CanTouch(pItem) && !CSRand::Get16ValFast(2) )
 	{
 		if ( pItem->IsDoorOpen() )	// door is already open
 			return false;
@@ -1114,7 +1114,7 @@ bool CChar::NPC_LookAround( bool fForceCheckItems )
 		return false;
 
     // Call the rand function once, since repeated calls can be expensive (and this function is called a LOT of times, if there are lots of active NPCs)
-    const int iRand = g_Rand.Get16ValFast(g_Cfg.m_iMapViewRadar);
+    const int iRand = CSRand::Get16ValFast(g_Cfg.m_iMapViewRadar);
     const CPointMap& ptTop(GetTopPoint());
 
     int iRange = std::min(GetVisualRange(), static_cast<int>(g_Cfg.m_iMapViewRadar));
@@ -1220,7 +1220,7 @@ void CChar::NPC_Act_Wander()
 		return;
 
     // Call the rand function once, since repeated calls can be expensive (and this function is called a LOT of times, if there are lots of active NPCs).
-    const uint uiRand = static_cast<uint32_t>(g_Rand.Get16ValFast(100));
+    const uint uiRand = static_cast<uint32_t>(CSRand::Get16ValFast(100));
 	int iStopWandering = 0;
 
     if ( !(uiRand % (7u + (Stat_GetVal(STAT_DEX) / 30u))) )
@@ -1375,7 +1375,7 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 	{
 		// Monster may get confused because he can't see you.
 		// There is a chance they could forget about you if hidden for a while.
-        if (fFlee || !g_Rand.GetValFast(1 + ((100 - Stat_GetAdjusted(STAT_INT)) / 20)))
+        if (fFlee || !CSRand::GetValFast(1 + ((100 - Stat_GetAdjusted(STAT_INT)) / 20)))
         {
             return false;
         }
@@ -1416,7 +1416,7 @@ bool CChar::NPC_Act_Follow(bool fFlee, int maxDistance, bool fMoveAway)
 	{
         const CPointMap ptOld = m_Act_p;
 		m_Act_p = ptMe;
-		m_Act_p.Move(GetDirTurn(m_Act_p.GetDir(ptOld), 4 + 1 - g_Rand.GetValFast(3)));
+		m_Act_p.Move(GetDirTurn(m_Act_p.GetDir(ptOld), 4 + 1 - CSRand::GetValFast(3)));
         const int iRet = NPC_WalkToPoint(dist > 3);
 		m_Act_p = ptOld;	// last known point of the enemy.
 		return (iRet < 2);  // 2 = fail
@@ -1469,7 +1469,7 @@ bool CChar::NPC_Act_Talk()
 				g_Cfg.GetDefaultMsg( DEFMSG_NPC_GENERIC_GONE_2 )
 			};
 			tchar *pszMsg = Str_GetTemp();
-			snprintf(pszMsg, Str_TempLength(), sm_szText[ g_Rand.GetValFast(std::size(sm_szText)) ], pChar->GetName() );
+			snprintf(pszMsg, Str_TempLength(), sm_szText[ CSRand::GetValFast(std::size(sm_szText)) ], pChar->GetName() );
 			Speak(pszMsg);
 		}
 		return false;
@@ -1486,7 +1486,7 @@ void CChar::NPC_Act_GoHome()
 	// NPCACT_GO_HOME
 	// If our home is not valid then
 
-	if ( !g_Rand.GetValFast(3) && NPC_LookAround())
+	if ( !CSRand::GetValFast(3) && NPC_LookAround())
 		return;
 
 	if ( m_pNPC->m_Brain == NPCBRAIN_GUARD )
@@ -1604,7 +1604,7 @@ void CChar::NPC_Act_Looting()
 
     const auto pCorpse = dynamic_cast<CItemCorpse *>(pItem);
 	if ( pCorpse && !pCorpse->IsContainerEmpty() )
-		pItem = static_cast<CItem*>( pCorpse->GetContentIndex(g_Rand.GetValFast( static_cast<int>(pCorpse->GetContentCount()) )) );
+		pItem = static_cast<CItem*>( pCorpse->GetContentIndex(CSRand::GetValFast( static_cast<int>(pCorpse->GetContentCount()) )) );
 
 	if ( !CanTouch(pItem) || !CanMoveItem(pItem) || !CanCarry(pItem) )
 	{
@@ -1959,7 +1959,7 @@ void CChar::NPC_Act_Idle()
 	}
 
 	// Specific creature random actions.
-	if ( Stat_GetVal(STAT_DEX) >= Stat_GetAdjusted(STAT_DEX) && !g_Rand.Get16ValFast(3) )
+	if ( Stat_GetVal(STAT_DEX) >= Stat_GetAdjusted(STAT_DEX) && !CSRand::Get16ValFast(3) )
 	{
 		if ( IsTrigUsed(TRIGGER_NPCSPECIALACTION) )
 		{
@@ -2000,7 +2000,7 @@ void CChar::NPC_Act_Idle()
 	}
 
 	// Periodically head home.
-	if ( m_ptHome.IsValidPoint() && ! g_Rand.Get16ValFast( 15 ))
+	if ( m_ptHome.IsValidPoint() && ! CSRand::Get16ValFast( 15 ))
 	{
 		Skill_Start(NPCACT_GO_HOME);
 		return;
@@ -2008,7 +2008,7 @@ void CChar::NPC_Act_Idle()
 
 	//	periodically use hiding skill
 	if ( Skill_GetBase(SKILL_HIDING) > 30 &&
-		! g_Rand.GetValFast( 15 - Skill_GetBase(SKILL_HIDING)/100) &&
+		! CSRand::GetValFast( 15 - Skill_GetBase(SKILL_HIDING)/100) &&
 		!m_pArea->IsGuarded())
 	{
 		// Just hide here.
@@ -2019,7 +2019,7 @@ void CChar::NPC_Act_Idle()
 		}
 	}
 
-	if ( g_Rand.GetValFast( 100 - Stat_GetAdjusted(STAT_DEX)) < 25 )
+	if ( CSRand::GetValFast( 100 - Stat_GetAdjusted(STAT_DEX)) < 25 )
 	{
 		// dex determines how jumpy they are.
 		// Decide to wander about ?
@@ -2029,7 +2029,7 @@ void CChar::NPC_Act_Idle()
 
 	// just stand here for a bit.
 	Skill_Start(SKILL_NONE);
-	_SetTimeoutS(1 + g_Rand.GetValFast(2));
+	_SetTimeoutS(1 + CSRand::GetValFast(2));
 }
 
 bool CChar::NPC_OnItemGive( CChar *pCharSrc, CItem *pItem )
@@ -2260,7 +2260,7 @@ void CChar::NPC_OnTickAction()
 				if ( NPC_LookAround())
 					break;
 				// just remain hidden unless we find something new to do.
-				if ( g_Rand.GetVal( Skill_GetBase(SKILL_HIDING)))
+				if ( CSRand::GetVal( Skill_GetBase(SKILL_HIDING)))
 					break;
 				EXC_SET_BLOCK("idle: Hiding");
 				NPC_Act_Idle();
@@ -2362,7 +2362,7 @@ void CChar::NPC_OnTickAction()
 		int32 timeout = (150-Stat_GetAdjusted(STAT_DEX))/2;
 		timeout = maximum(timeout, 0);
         if (timeout > 1)
-		    timeout = g_Rand.GetVal2Fast(timeout/2, timeout);
+		    timeout = CSRand::GetVal2Fast(timeout/2, timeout);
 		// default next brain/move tick
 		_SetTimeoutD(1 + timeout);   // In Tenths of Second.
 	}
@@ -2419,7 +2419,7 @@ void CChar::NPC_Pathfinding()
 
 	// need 300 int at least to pathfind each step, but always
 	// search if this is a first step
-	if (( g_Rand.GetValFast(300) > iInt ) && ( m_pNPC->m_nextX[0] ))
+	if (( CSRand::GetValFast(300) > iInt ) && ( m_pNPC->m_nextX[0] ))
         return;
 
 	//	clear saved steps list

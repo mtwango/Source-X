@@ -4523,7 +4523,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 	if ( iHashRange )
 	{
 		// find a new FREE entry starting here
-        int iRandIndex = iIndex + g_Rand.GetVal(iHashRange);
+        int iRandIndex = iIndex + CSRand::GetVal(iHashRange);
         rid = CResourceID(restype, iRandIndex, wPage);
 
         const bool fCheckPage = (pszName && (g_ExprGlobals.mtEngineLockedReader()->m_VarResDefs.GetKeyNum(pszName) != 0));

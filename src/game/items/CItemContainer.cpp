@@ -851,7 +851,7 @@ void CItemContainer::MakeKey()
 	ADDTOCALLSTACK("CItemContainer::MakeKey");
 	SetType(IT_CONTAINER);
 	m_itContainer.m_UIDLock = GetUID();
-	m_itContainer.m_dwLockComplexity = 500 + g_Rand.GetVal(600);
+	m_itContainer.m_dwLockComplexity = 500 + CSRand::GetVal(600);
 
 	CItem *pKey = CreateScript(ITEMID_KEY_COPPER);
 	ASSERT(pKey);

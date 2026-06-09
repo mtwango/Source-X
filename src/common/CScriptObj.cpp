@@ -582,7 +582,7 @@ bool CScriptObj::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc
 			if ( min >= max )
 				sVal.FormatLLVal(min);
 			else
-				sVal.FormatLLVal(g_Rand.GetLLVal2(min, max));
+				sVal.FormatLLVal(CSRand::GetLLVal2(min, max));
 
 			return true;
 		}
@@ -2516,7 +2516,7 @@ jump_in:
 					EXC_SET_BLOCK("dorand/doswitch");
 					int64 iVal = s.GetArgLLVal();
 					if ( iCmd == SK_DORAND )
-						iVal = g_Rand.GetLLVal(iVal);
+						iVal = CSRand::GetLLVal(iVal);
 					for ( ; ; --iVal )
 					{
                         iRet = OnTriggerRun( s, (iVal == 0) ? TRIGRUN_SINGLE_TRUE : TRIGRUN_SINGLE_FALSE, pScriptArgs, pSrc, pResult );

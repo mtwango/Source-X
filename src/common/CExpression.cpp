@@ -336,11 +336,15 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
     // variables used to track opened/closed quotes and brackets
     bool fQuotes = false;
     int iQuotes = 0;
-    int iSquare, iRound, iAngle;
+    int iSquare;
+    int iRound;
+    int iAngle;
     int iCurly = iSquare = iRound = iAngle = 0;
 
     // ignore opened/closed brackets if that type of bracket is also a separator
-    bool fSepHasSquare, fSepHasRound, fSepHasAngle;
+    bool fSepHasSquare;
+    bool fSepHasRound;
+    bool fSepHasAngle;
     bool fSepHasCurly = fSepHasSquare = fSepHasRound = fSepHasAngle = false;
     for (uint j = 0; pszSep[j] != '\0'; ++j)		// loop through each separator
     {
@@ -362,11 +366,13 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
         tchar chNext = *pLineNext;
         if ((ch == '"') || (ch == '\''))
         {
-            if (!fQuotes) //Has first quote?
+            // Has first quote?
+            if (!fQuotes)
             {
                 fQuotes = true;
             }
-            else if (fQuotes) //We already has quote? Check for inner quotes...
+            // We already has quote? Check for inner quotes...
+            else
             {
                 while ((chNext == '"') || (chNext == '\''))
                 {
@@ -374,7 +380,7 @@ bool Str_ParseAdv(tchar * pLine, tchar ** ppArg, const tchar * pszSep) noexcept
                     chNext = *pLineNext;
                 }
 
-                if ((chNext == '\0') || (chNext == ',') || (chNext == ' ') || (chNext == '\''))
+                if ((chNext == '\0') || (chNext == ',') || (chNext == ' '))
                     --iQuotes;
                 else
                     ++iQuotes;
@@ -759,7 +765,7 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
             }
             else if (!overflow)
             {
-                val = val * 10 + d; // safe: guarded to avoid signed overflow
+                val = (val * 10) + d; // safe: guarded to avoid signed overflow
             }
         }
 
@@ -850,10 +856,13 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                     {
                         iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
                         if (iCount < 2)
+                        {
                             iResult = 0;
+                        }
                         else
                         {
-                            const int64 iVal1 = GetVal(ppCmd[0]), iVal2 = GetVal(ppCmd[1]);
+                            const int64 iVal1 = GetVal(ppCmd[0]);
+                            const int64 iVal2 = GetVal(ppCmd[1]);
                             iResult = maximum(iVal1, iVal2);
                         }
                     }
@@ -863,10 +872,13 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                     {
                         iCount = Str_ParseCmds(const_cast<tchar *>(refStrExpr), ppCmd, 2, ",");
                         if (iCount < 2)
+                        {
                             iResult = 0;
+                        }
                         else
                         {
-                            const int64 iVal1 = GetVal(ppCmd[0]), iVal2 = GetVal(ppCmd[1]);
+                            const int64 iVal1 = GetVal(ppCmd[0]);
+                            const int64 iVal2 = GetVal(ppCmd[1]);
                             iResult = minimum(iVal1, iVal2);
                         }
                     }
@@ -907,11 +919,15 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                                             iCount = 0;
                                         }
                                         else
+                                        {
                                             iResult = static_cast<llong>(log(static_cast<double>(iArgument)) / log(static_cast<double>(iBase)));
+                                        }
                                     }
                                 }
                                 else
+                                {
                                     iResult = static_cast<llong>(log10(static_cast<double>(iArgument)));
+                                }
                             }
                         }
                     }
@@ -1119,10 +1135,12 @@ int64 CExpression::GetSingle(lpctstr & refStrExpr)
                             if (iCount == 2)
                             {
                                 int64 val2 = GetVal(ppCmd[1]);
-                                iResult    = g_Rand.GetLLVal2(val1, val2);
+                                iResult    = CSRand::GetLLVal2(val1, val2);
                             }
                             else
-                                iResult = g_Rand.GetLLVal(val1);
+                            {
+                                iResult = CSRand::GetLLVal(val1);
+                            }
                         }
                     }
                     break;
@@ -2015,13 +2033,13 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
         pToParseCasted = static_cast<lptstr>(ptcToParse);
         int64 iValSecond = GetSingle(pToParseCasted);
 
-        if (iValSecond < iValFirst)	// the first value has to be < than the second before passing it to g_Rand.GetLLVal2
+        if (iValSecond < iValFirst)	// the first value has to be < than the second before passing it to CSRand::GetLLVal2
 		{
             const int64 iValTemp = iValFirst;
             iValFirst = iValSecond;
             iValSecond = iValTemp;
 		}
-        return g_Rand.GetLLVal2(iValFirst, iValSecond);
+        return CSRand::GetLLVal2(iValFirst, iValSecond);
 	}
 
 	// First get the total of the weights
@@ -2048,7 +2066,7 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 	}
 
 	// Now roll the dice to see what value to pick
-    llTotalWeight = g_Rand.GetLLVal(llTotalWeight) + 1;
+    llTotalWeight = CSRand::GetLLVal(llTotalWeight) + 1;
 
 	// Now loop to that value
 	int i = 1;
@@ -2129,7 +2147,7 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
     }
 
     // Now roll the dice to see what value to pick
-    llTotalWeight = g_Rand.GetLLVal(llTotalWeight) + 1;
+    llTotalWeight = CSRand::GetLLVal(llTotalWeight) + 1;
 
     // Now loop to that value
     int i = 1;
@@ -2669,7 +2687,7 @@ int CExpression::ParseScriptText(
                 EXC_SET_BLOCK("writeval generic");
                 ASSERT(pContext._pScriptObjI);
                 fRes = pContext._pScriptObjI->r_WriteVal(ptcKey, sVal, pSrc);
-                if (fRes == false)
+                if (!fRes)
                 {
                     EXC_SET_BLOCK("writeval args");
                     // write the value of functions or triggers variables/objects like ARGO, ARGN1/2/3, LOCALs...
@@ -2679,7 +2697,7 @@ int CExpression::ParseScriptText(
             }
 
 
-            if ( fRes == false )
+            if (!fRes)
             {
                 DEBUG_ERR(( "Can't resolve <%s>.\n", ptcKey ));
                 // Just in case this really is a <= operator ?

@@ -153,7 +153,7 @@ bool CChar::Spell_Teleport( CPointMap ptNew, const bool fTakePets, const bool fC
                     g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_1),
                     g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_2)
                 };
-                SysMessage(sm_szPunishMsg[g_Rand.GetVal(std::size(sm_szPunishMsg))]);
+                SysMessage(sm_szPunishMsg[CSRand::GetVal(std::size(sm_szPunishMsg))]);
 
                 int iCell = 0;
                 if ( m_pPlayer && m_pPlayer->GetAccount() )
@@ -271,7 +271,7 @@ bool CChar::Spell_CreateGate(CPointMap ptDest, const bool fCheckAntiMagic)
                 g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_1),
                 g_Cfg.GetDefaultMsg(DEFMSG_SPELL_TELE_JAILED_2)
             };
-            SysMessage(sm_szPunishMsg[g_Rand.GetVal(std::size(sm_szPunishMsg))]);
+            SysMessage(sm_szPunishMsg[CSRand::GetVal(std::size(sm_szPunishMsg))]);
             return false;
         }
 
@@ -1172,9 +1172,9 @@ void CChar::Spell_Effect_Add( CItem * pSpell )
 					SetName(pCharDef->IsFemale() ? "#NAMES_GARGOYLE_FEMALE" : "#NAMES_GARGOYLE_MALE");
 
 				if (IsPlayableCharacter())
-					SetHue(static_cast<HUE_TYPE>(g_Rand.GetVal2(HUE_SKIN_LOW, HUE_SKIN_HIGH)) | HUE_UNDERWEAR);
+					SetHue(static_cast<HUE_TYPE>(CSRand::GetVal2(HUE_SKIN_LOW, HUE_SKIN_HIGH)) | HUE_UNDERWEAR);
 
-				HUE_TYPE RandomHairHue = static_cast<HUE_TYPE>(g_Rand.GetVal2(HUE_HAIR_LOW, HUE_HAIR_HIGH));
+				HUE_TYPE RandomHairHue = static_cast<HUE_TYPE>(CSRand::GetVal2(HUE_HAIR_LOW, HUE_HAIR_HIGH));
                 if (CItem *pHair = LayerFind(LAYER_HAIR))
 				{
 					pSpell->m_TagDefs.SetNum("COLOR.HAIR", pHair->GetHue());
@@ -1791,18 +1791,18 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 		case SPELL_Liquor:	// 92 = extreme drunkeness ?
 		{
 			// Chance to get sober quickly
-			if (10 > g_Rand.GetVal(100))
+			if (10 > CSRand::GetVal(100))
 				--iCharges;
 
 			Stat_AddVal(STAT_INT, -1);
 			Stat_AddVal(STAT_DEX, -1);
 
-			if ( !g_Rand.GetVal(3) )
+			if ( !CSRand::GetVal(3) )
 			{
 				Speak(g_Cfg.GetDefaultMsg(DEFMSG_SPELL_ALCOHOL_HIC));
 				if ( !IsStatFlag(STATF_ONHORSE) )
 				{
-					UpdateDir( static_cast<DIR_TYPE>(g_Rand.GetVal(8)) );
+					UpdateDir( static_cast<DIR_TYPE>(CSRand::GetVal(8)) );
 					UpdateAnimate(ANIM_BOW);
 				}
 			}
@@ -1821,12 +1821,12 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 		{
 			if (iCharges <=0 || iLevel <= 0)
 				return false;
-			iSecondsDelay = g_Rand.GetLLVal2(15, 30);
+			iSecondsDelay = CSRand::GetLLVal2(15, 30);
 
 			if (IsClientActive())
 			{
 				static constexpr SOUND_TYPE sm_sounds[] = { 0x243, 0x244 };
-				m_pClient->addSound(sm_sounds[g_Rand.GetVal(std::size(sm_sounds))]);
+				m_pClient->addSound(sm_sounds[CSRand::GetVal(std::size(sm_sounds))]);
 				m_pClient->addChar(this);
 				m_pClient->addPlayerSee(CPointMap());
 			}
@@ -1845,24 +1845,24 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 				switch (iLevel)
 				{
 					case 4:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(16, 33), 100);
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), CSRand::GetVal2(16, 33), 100);
                         iSecondsDelay = 5;
 						break;
 					case 3:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(15, 30), 100);
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), CSRand::GetVal2(15, 30), 100);
                         iSecondsDelay = 5;
 						break;
 					case 2:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(7, 15), 100);
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), CSRand::GetVal2(7, 15), 100);
                         iSecondsDelay = 4;
 						break;
 					case 1:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(5, 10), 100);
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), CSRand::GetVal2(5, 10), 100);
                         iSecondsDelay = 3;
 						break;
 					default:
 					case 0:
-						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), g_Rand.GetVal2(4, 7), 100);
+						iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), CSRand::GetVal2(4, 7), 100);
                         iSecondsDelay = 2;
 						break;
 				}
@@ -1906,7 +1906,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 
 				pItem->m_itSpell.m_spelllevel -= 50;	// gets weaker too.	Only on old formulas
 				iEffect = IMulDiv(Stat_GetMaxAdjusted(STAT_STR), iLevel * 2, 100);
-				iSecondsDelay = (5 + g_Rand.GetLLVal(4));
+				iSecondsDelay = (5 + CSRand::GetLLVal(4));
 
 				static lpctstr const sm_Poison_Message[] =
 				{
@@ -1977,7 +1977,7 @@ bool CChar::Spell_Equip_OnTick( CItem * pItem )
 					break;
 			}
 
-            const int iSpellPower = static_cast<int>(g_Rand.GetLLVal2(static_cast<int64>(iLevel) - 2, static_cast<int64>(iLevel) + 1));
+            const int iSpellPower = static_cast<int>(CSRand::GetLLVal2(static_cast<int64>(iLevel) - 2, static_cast<int64>(iLevel) + 1));
 			iEffect = iSpellPower * ( 3 - ( (Stat_GetBase(STAT_DEX) / Stat_GetAdjusted(STAT_DEX) ) * 2));
 			iDmgType = DAMAGE_MAGIC | DAMAGE_POISON | DAMAGE_NOREVEAL;
 		}
@@ -2347,7 +2347,7 @@ void CChar::Spell_Field(const CPointMap &pntTarg, const ITEMID_TYPE idEW, const 
 		    // If the spell has ASYNC flag, the timers should be randomized.
             if (pSpellDef->IsSpellType(SPELLFLAG_FIELD_RANDOMDECAY))
             {
-                iObjectDuration += g_Rand.GetLLVal(iDuration / 2);
+                iObjectDuration += CSRand::GetLLVal(iDuration / 2);
             }
 
 			pSpell->MoveToDecay( ptg, iObjectDuration * MSECS_PER_TENTH, true);
@@ -2619,7 +2619,7 @@ CChar * CChar::Spell_Summon_Try(const SPELL_TYPE spell, const CPointMap &ptTarg,
 			m_atMagery.m_uiSummonID = CREID_RISING_COLOSSUS;
 			break;
 		case SPELL_Summon_Undead: //Sphere custom spell.
-			switch (g_Rand.GetVal(15))
+			switch (CSRand::GetVal(15))
 			{
 			case 1:
 				m_atMagery.m_uiSummonID = CREID_LICH;
@@ -2926,7 +2926,7 @@ bool CChar::Spell_CastDone()
 		if (pItem == nullptr)
 			return false;
 		if (!pItem->m_itWeapon.m_spelllevel)
-			iSkillLevel = g_Rand.GetVal(500);
+			iSkillLevel = CSRand::GetVal(500);
 		else
 			iSkillLevel = pItem->m_itWeapon.m_spelllevel;
 	}
@@ -3302,7 +3302,7 @@ bool CChar::Spell_CastDone()
 				int iGet = 0;
 				for (size_t i = 0; i < std::size(sm_Item_Bone); ++i)
 				{
-					if (!g_Rand.GetVal(2 + iGet))
+					if (!CSRand::GetVal(2 + iGet))
 						break;
 					CItem *pItem = CItem::CreateScript(sm_Item_Bone[i], this);
 				    if (pItem == nullptr)
@@ -3672,7 +3672,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
     if (IsStatFlag(STATF_RIDDEN) && (pSpellDef->IsSpellType(SPELLFLAG_FIELD) || pSpellDef->IsSpellType(SPELLFLAG_AREA)))
         return false;
 
-	iSkillLevel = (iSkillLevel / 2) + g_Rand.GetVal(iSkillLevel / 2);	// randomize the potency
+	iSkillLevel = (iSkillLevel / 2) + CSRand::GetVal(iSkillLevel / 2);	// randomize the potency
 	int iEffect = g_Cfg.GetSpellEffect(spell, iSkillLevel);
 
 	if (pSpellDef->m_idLayer && !iDuration) //By using SPELLEFFECT command (and the spell has a layer where to store properties)  we need to calculate the duration.
@@ -3684,7 +3684,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 	if ( fPotion )
 	{
 		static constexpr SOUND_TYPE sm_DrinkSounds[] = { 0x030, 0x031 };
-		iSound = sm_DrinkSounds[g_Rand.GetVal(std::size(sm_DrinkSounds))];
+		iSound = sm_DrinkSounds[CSRand::GetVal(std::size(sm_DrinkSounds))];
 	}
 
     //If true allows the spell to bypass the magic reflection checks.
@@ -4072,7 +4072,7 @@ bool CChar::OnSpellEffect( SPELL_TYPE spell, CChar * pCharSrc, int iSkillLevel, 
 		{
 			CItem * pItem = Spell_Effect_Create( spell, LAYER_FLAG_Hallucination, iEffect, iDuration, pCharSrc );
             ASSERT(pItem);
-			pItem->m_itSpell.m_spellcharges = g_Rand.GetVal(30);
+			pItem->m_itSpell.m_spellcharges = CSRand::GetVal(30);
 		}
 		break;
 

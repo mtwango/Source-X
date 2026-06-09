@@ -1967,7 +1967,7 @@ int64 CExpression::GetRangeNumber(lpctstr & refStrExpr)
 		return 0;
 
 	// I guess it's weighted values
-	if ((iQty > 2) && ((iQty % 2) == 1))
+	if (iQty > 2 && iQty % 2 != 0)
 	{
 		g_Log.EventError("Even number of elements in the random range: invalid. Forgot to write an element?\n");
 		return 0;
@@ -2095,8 +2095,8 @@ CSString CExpression::GetRangeString(lpctstr & refStrExpr)
         return CSString(pElementsStart[0][0], iToParseLen - 1);
     }
 
-    // I guess weighted values
-    if ( (iQty % 2) == 1 )
+    // I guess weighted values.
+    if (iQty % 2 != 0)
     {
         g_Log.EventError("Even number of elements in the random string range: invalid. Forgot to write an element?\n");
         return {};

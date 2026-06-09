@@ -113,7 +113,8 @@ realtype CFloatMath::GetValMath(realtype dVal, lpctstr & ptcRefExpr )
             if ( ptcRefExpr[0] == '|' )	// boolean ?
 			{
                 ++ptcRefExpr;
-                dVal = ( MakeFloatMath( ptcRefExpr ) || dVal );
+                //dVal = ( MakeFloatMath( ptcRefExpr ) || dVal );
+                dVal = MakeFloatMath(ptcRefExpr) != 0.0 || dVal != 0.0;
 			}
 			else	// bitwise
 				DEBUG_ERR(("Operator '%s' is not allowed with floats.\n","|"));
@@ -123,7 +124,8 @@ realtype CFloatMath::GetValMath(realtype dVal, lpctstr & ptcRefExpr )
             if ( ptcRefExpr[0] == '&' )	// boolean ?
 			{
                 ++ptcRefExpr;
-                dVal = ( MakeFloatMath( ptcRefExpr ) && dVal );	// tricky stuff here. logical ops must come first or possibly not get processed.
+                // Tricky stuff here. logical ops must come first or possibly not get processed.
+                dVal = MakeFloatMath(ptcRefExpr) != 0.0 && dVal != 0.0 ? 1.0 : 0.0;
 			}
 			else	// bitwise
 				DEBUG_ERR(("Operator '%s' is not allowed with floats.\n","&"));
@@ -243,9 +245,9 @@ realtype CFloatMath::GetSingle( lpctstr & ptcRefArgs )
             if ( ptcRefArgs[0] == '=' )  // odd condition such as (!=x) which is always true of course.
 			{
                 ++ptcRefArgs;		// so just skip it. and compare it to 0
-                return( GetSingle( ptcRefArgs ));
+                return GetSingle(ptcRefArgs);
 			}
-            return( !GetSingle( ptcRefArgs ));
+            return static_cast<realtype>(!static_cast<bool>(GetSingle(ptcRefArgs)));
 		case ';':	// seperate field.
 		case ',':	// seperate field.
 		case '\0':

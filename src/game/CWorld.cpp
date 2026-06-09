@@ -24,7 +24,13 @@
 #endif
 #include <sys/stat.h>
 
-
+/**
+ * Returns an error message based on the given code.
+ *
+ * @param iCode The error code to get the message for.
+ *
+ * @return The error message.
+ */
 static lpctstr GetReasonForGarbageCode(const int iCode = -1) noexcept
 {
 	lpctstr pStr;

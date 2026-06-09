@@ -1454,14 +1454,10 @@ PacketQueryClient::PacketQueryClient(CClient* target, const byte bCmd) : PacketS
 		case 0x01:
 		{
 			// Update Map Definitions Command
-            const int length = 2 * 9; //map count * 9
+            constexpr int length = 2 * 9; //map count * 9
             int count = length / 7;
-            int padding = 0;
-            if (length - (count * 7) > 0)
-            {
-                ++count;
-                padding = (count * 7) - length;
-            }
+		    ++count;
+            const int padding = (count * 7) - length;
 
 			writeInt32(0);
 			writeInt32(4);

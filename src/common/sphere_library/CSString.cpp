@@ -363,7 +363,7 @@ void CSString::Format(lpctstr pStr, ...)
 	va_end(vargs);
 }
 
-void CSString::FormatV(const lpctstr pszFormat, const va_list args)
+void CSString::FormatV(const lpctstr pszFormat, va_list args)
 {
 	TemporaryString tsTemp;
 	vsnprintf(tsTemp.buffer(), tsTemp.capacity(), pszFormat, args);

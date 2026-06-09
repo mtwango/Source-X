@@ -122,7 +122,7 @@ if(NOT MSVC)
 
     set(custom_compile_options_release
         ${local_compile_options_nondebug}
-        -flto=full
+        -flto
         -ffunction-sections
         -fdata-sections
         #-fno-unique-section-names
@@ -139,7 +139,7 @@ if(NOT MSVC)
 
     set(custom_link_options_release
         ${local_link_options_nondebug}
-        -flto=full
+        -flto
         CACHE INTERNAL STRING
     )
     set(custom_link_options_nightly

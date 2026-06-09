@@ -185,9 +185,9 @@ PacketObjectStatus::PacketObjectStatus(const CClient* target, CObjBase* object) 
 		}
 		else
 		{
-            if (const CItem *objectItem = object->IsItem() ? dynamic_cast<const CItem *>(object) : nullptr)
+            if (object->IsItem() ? dynamic_cast<const CItem *>(object) : nullptr)
             {
-                if (const auto pItem = dynamic_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
+                if (const auto *const pItem = dynamic_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
                 {
                     const ushort tmpMaxHits = pItem->GetMaxHits();
                     iHitsCurrent = static_cast<word>((pItem->GetCurHits() * 100) / maximum(tmpMaxHits, 1));

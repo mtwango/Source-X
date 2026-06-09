@@ -772,7 +772,7 @@ bool CWorldTicker::AddObjStatusUpdate(CObjBase* pObj, const bool fNeedsLock) // 
         const auto itEntryInAddList = std::ranges::find(std::as_const(_vObjStatusUpdatesAddRequests),
             pObj);
         ASSERT(_vObjStatusUpdatesAddRequests.cend() != itEntryInAddList);
-
+        UnreferencedParameter(itEntryInAddList);
         // I am requesting to add an element, but this was already done in this tick (there's already a request in the buffer).
         // We don't want duplicates.
 

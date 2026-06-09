@@ -225,7 +225,7 @@ tchar * CSFileText::ReadString( tchar * pBuffer, const int sizemax )
     MT_UNIQUE_LOCK_RETURN(this, CSFileText::_ReadString(pBuffer, sizemax));
 }
 
-int CSFileText::_VPrintf(const lpctstr pFormat, const va_list args )
+int CSFileText::_VPrintf(const lpctstr pFormat, va_list args )
 {
     ADDTOCALLSTACK("CSFileText::_VPrintf");
     ASSERT(pFormat);
@@ -236,7 +236,7 @@ int CSFileText::_VPrintf(const lpctstr pFormat, const va_list args )
     return vfprintf( _pStream, pFormat, args );
 }
 
-int CSFileText::VPrintf(const lpctstr pFormat, const va_list args)
+int CSFileText::VPrintf(const lpctstr pFormat, va_list args)
 {
     ADDTOCALLSTACK("CSFileText::VPrintf");
     ASSERT(pFormat);

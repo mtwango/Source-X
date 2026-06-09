@@ -12,7 +12,7 @@ CEventLog::CEventLog() = default;
 CEventLog::~CEventLog() = default;
 
 
-int CEventLog::VEvent(const dword dwMask, const lpctstr pszFormat, const ConsoleTextColor iColor, const va_list args) noexcept
+int CEventLog::VEvent(dword dwMask, lpctstr pszFormat, ConsoleTextColor iColor, va_list args) noexcept
 {
     if (pszFormat == nullptr || pszFormat[0] == '\0')
         return 0;
@@ -29,7 +29,7 @@ int CEventLog::VEvent(const dword dwMask, const lpctstr pszFormat, const Console
     return EventStr(dwMask, pszTemp, iColor);
 }
 
-int CEventLog::Event(const dword dwMask, lpctstr pszFormat, ...) noexcept
+int CEventLog::Event(const dword dwMask, const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -38,7 +38,7 @@ int CEventLog::Event(const dword dwMask, lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
-int CEventLog::EventDebug(lpctstr pszFormat, ...) noexcept
+int CEventLog::EventDebug(const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -47,7 +47,7 @@ int CEventLog::EventDebug(lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
-int CEventLog::EventError(lpctstr pszFormat, ...) noexcept
+int CEventLog::EventError(const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -56,7 +56,7 @@ int CEventLog::EventError(lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
-int CEventLog::EventWarn(lpctstr pszFormat, ...) noexcept
+int CEventLog::EventWarn(const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -65,7 +65,7 @@ int CEventLog::EventWarn(lpctstr pszFormat, ...) noexcept
     return iret;
 }
 
-int CEventLog::EventCustom(const ConsoleTextColor iColor, const dword dwMask, lpctstr pszFormat, ...) noexcept
+int CEventLog::EventCustom(const ConsoleTextColor iColor, const dword dwMask, const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);
@@ -74,7 +74,7 @@ int CEventLog::EventCustom(const ConsoleTextColor iColor, const dword dwMask, lp
     return iret;
 }
 
-int CEventLog::EventEvent(lpctstr pszFormat, ...) noexcept
+int CEventLog::EventEvent(const lpctstr pszFormat, ...) noexcept
 {
     va_list vargs;
     va_start(vargs, pszFormat);

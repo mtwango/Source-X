@@ -10,6 +10,13 @@
 #include "../game/CServerConfig.h"
 #include "StartupMonitorThread.h"
 
+#ifndef _DEBUG
+// NOTE: We do not hold a pointer to g_Main here to avoid coupling;
+// the original code called g_Main.checkStuck(). Keep that in the caller
+// if needed (or expose a function to do it).
+extern bool Sphere_CheckMainStuckAndRestart(); // declare a tiny wrapper in spheresvr.cpp
+#endif
+
 StartupMonitorThread::StartupMonitorThread()
 : AbstractSphereThread("T_SphereStartup", ThreadPriority::Highest)
 {
@@ -72,10 +79,7 @@ void StartupMonitorThread::runMonitorLoop()
 
         #ifndef _DEBUG
         EXC_SET_BLOCK("Check Stuck");
-        // NOTE: We do not hold a pointer to g_Main here to avoid coupling;
-        // the original code called g_Main.checkStuck(). Keep that in the caller
-        // if needed (or expose a function to do it).
-        extern bool Sphere_CheckMainStuckAndRestart(); // declare a tiny wrapper in spheresvr.cpp
+
         if (Sphere_CheckMainStuckAndRestart())
         {
             g_Log.Event(LOGL_CRIT, "'T_Main' thread hang, restarting...\n");

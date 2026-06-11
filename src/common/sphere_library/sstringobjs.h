@@ -53,7 +53,7 @@ public:
     }
 
     bool empty() const noexcept {
-        return m_length != 0;
+        return m_length == 0;
     }
 
     char *buffer() noexcept {

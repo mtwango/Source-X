@@ -1247,7 +1247,7 @@ bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)
 void CCSpawn::Copy(const CComponent * target)
 {
     ADDTOCALLSTACK("CCSpawn::Copy");
-    const auto *const pTarget = dynamic_cast<const CCSpawn*>(target);
+    const auto *const pTarget = static_cast<const CCSpawn*>(target);
     if (!pTarget)
     {
         return;

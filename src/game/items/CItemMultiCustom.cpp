@@ -1356,7 +1356,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
     const int8 iBaseZ = GetTopPoint().m_z + (iFloor * 20) + 6;
     const int16 iMaxZ = iBaseZ + 19;
     const int16 iMinZ = iBaseZ;
-    const auto pCrate = dynamic_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
+    const auto pCrate = static_cast<CItemContainer*>(GetMovingCrate(true).ItemFind());
     if (pCrate == nullptr)
     {
         return;
@@ -1369,7 +1369,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid(_lSecureContainers[i]);
-            const auto pCont = dynamic_cast<CItemContainer*>(uid.ItemFind());
+            const auto pCont = static_cast<CItemContainer*>(uid.ItemFind());
             if (pCont == nullptr)
             {
                 break;
@@ -1409,7 +1409,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
         for (i = 0; i < max; ++i)
         {
             CUID uid = _lLockDowns[i];
-            const auto pAddon = dynamic_cast<CItemMulti*>(uid.ItemFind());
+            const auto pAddon = static_cast<CItemMulti*>(uid.ItemFind());
             if (pAddon == nullptr)
             {
                 break;
@@ -1448,7 +1448,7 @@ void CItemMultiCustom::ClearFloor(const int8 iFloor)
         }
         if (pItem->IsType(IT_MULTI_ADDON) || pItem->IsType(IT_MULTI))  // If the item is a house Addon, redeed it.
         {
-            dynamic_cast<CItemMulti*>(pItem)->Redeed(false, false);
+            static_cast<CItemMulti*>(pItem)->Redeed(false, false);
             Area->RestartSearch();	// we removed an item and this will mess the search loop, so restart to fix it.
             continue;
         }

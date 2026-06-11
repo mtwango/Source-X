@@ -1992,7 +1992,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		{
 			if (pItemTarg->GetType() == IT_CORPSE)
 			{
-                const auto pCorpse = dynamic_cast<CItemCorpse*>(pItemTarg);
+                const auto pCorpse = static_cast<CItemCorpse*>(pItemTarg);
 				pCharTarg = pCorpse->m_uidLink.CharFind();
 				if (pCharTarg == nullptr || pCharTarg->IsNPC())
 					return false;

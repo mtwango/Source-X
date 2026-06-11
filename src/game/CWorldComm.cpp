@@ -27,7 +27,7 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, co
 	{
 		if ( pSrc->IsChar() )
 		{
-            const auto pSrcChar = dynamic_cast<const CChar *>(pSrc);
+            const auto pSrcChar = static_cast<const CChar *>(pSrc);
 			ASSERT(pSrcChar);
 
 			// Are they dead? Garble the text. unless we have SpiritSpeak
@@ -115,7 +115,7 @@ void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwT
 	{
 		if ( pSrc->IsChar() )
 		{
-			pSrcChar = dynamic_cast<const CChar *>(pSrc);
+			pSrcChar = static_cast<const CChar *>(pSrc);
 			ASSERT(pSrcChar);
 
 			// Are they dead? Garble the text. unless we have SpiritSpeak

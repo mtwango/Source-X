@@ -1022,7 +1022,7 @@ bool CChar::CanSeeInContainer( const CItemContainer *pContItem ) const
 	// Not normally searchable.
 	// Make some special cases for searchable.
 
-    const auto pChar = dynamic_cast<const CChar*>(pContItem->GetTopLevelObj());
+    const auto pChar = static_cast<const CChar*>(pContItem->GetTopLevelObj());
 	if ( !pChar )
 		return false;
 
@@ -1033,7 +1033,7 @@ bool CChar::CanSeeInContainer( const CItemContainer *pContItem ) const
 
         if ( const CItem *pItemTrade = pContItem->m_uidLink.ItemFind() )
 		{
-            if (const auto pCharTrade = dynamic_cast<const CChar *>(pItemTrade->GetTopLevelObj()); pCharTrade == this )
+            if (const auto pCharTrade = static_cast<const CChar *>(pItemTrade->GetTopLevelObj()); pCharTrade == this )
 				return true;
 		}
 		return false;
@@ -1084,14 +1084,14 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 
 	if ( pObj->IsItem() )
 	{
-        const auto *const pItem = dynamic_cast<const CItem*>(pObj);
+        const auto *const pItem = static_cast<const CItem*>(pObj);
 		if ( !pItem || !CanSeeItem(pItem) )
 			return false;
 
         if (pItem->IsTypeMulti())
         {
             const DIR_TYPE dirFace = GetDir(pObj);
-            const auto *const pMulti = dynamic_cast<const CItemMulti*>(pItem);
+            const auto *const pMulti = static_cast<const CItemMulti*>(pItem);
             iDistSight += pMulti->GetSideDistanceFromCenter(dirFace);
         }
 		if ( ptTop.GetDistSight(ptObjTop) > iDistSight )
@@ -1150,7 +1150,7 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 	}
 	else
 	{
-        const auto pChar = dynamic_cast<const CChar*>(pObj);
+        const auto pChar = static_cast<const CChar*>(pObj);
 		if ( pChar == this )
 			return true;
 		if ( ptTop.GetDistSight(pChar->GetTopPoint()) > iDistSight )

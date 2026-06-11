@@ -201,7 +201,7 @@ void CCPropsItemChar::r_Write(CScript & s)
 void CCPropsItemChar::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemChar::Copy");
-    const auto pTarget = dynamic_cast<const CCPropsItemChar*>(target);
+    const auto pTarget = static_cast<const CCPropsItemChar*>(target);
     if (!pTarget)
         return;
 

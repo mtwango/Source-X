@@ -123,7 +123,7 @@ CCRET_TYPE CCChampion::OnTickComponent()
 
 CCSpawn* CCChampion::GetSpawnItem()
 {
-    return dynamic_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+    return static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
 }
 
 void CCChampion::Init()
@@ -279,7 +279,7 @@ void CCChampion::SpawnNPC()
         else
         {
             CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-            if (const auto pChampDef = dynamic_cast<CCChampionDef *>(pRes))
+            if (const auto pChampDef = static_cast<CCChampionDef *>(pRes))
             {
                 uiSize = pChampDef->_idSpawn[_iLevel].size();
                 if (uiSize > 0)
@@ -727,7 +727,7 @@ void CCChampion::DelObj(const CUID& uid)
     {
         return;
     }
-    const auto pSpawn = dynamic_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+    const auto pSpawn = static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
     ASSERT(pSpawn);
     pSpawn->DelObj(uid);
 
@@ -764,7 +764,7 @@ void CCChampion::r_Write(CScript& s)
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
 
-    if (const CCChampionDef *pChampDef = dynamic_cast<CCChampionDef *>(pRes); !pChampDef)
+    if (const CCChampionDef *pChampDef = static_cast<CCChampionDef *>(pRes); !pChampDef)
     {
         g_Log.EventDebug("Trying to save a champion spawn 0%" PRIx32 " with bad id 0%" PRIx32 ".\n", static_cast<dword>(GetLink()->GetUID()), _idSpawn.GetPrivateUID());
         return;
@@ -883,7 +883,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
             else // If it doesnt have, then try to retrieve the group from [CHAMPION ]
             {
                 CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-                if (const auto pChampDef = dynamic_cast<CCChampionDef *>(pRes); pChampDef != nullptr)
+                if (const auto pChampDef = static_cast<CCChampionDef *>(pRes); pChampDef != nullptr)
                 {
                     iSize = static_cast<int>(pChampDef->_idSpawn[uiGroup].size());
                     if (iSize > 0)
@@ -1096,7 +1096,7 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
         ptcKey += 5;
         lpctstr i = ptcKey;
         SKIP_SEPARATORS(ptcKey);
-        if (const auto pSpawn = dynamic_cast<CCSpawn *>(GetLink()->GetComponent(COMP_SPAWN)))
+        if (const auto pSpawn = static_cast<CCSpawn *>(GetLink()->GetComponent(COMP_SPAWN)))
         {
             return pSpawn->r_GetRef(i, pRef);
         }
@@ -1162,7 +1162,7 @@ TRIGRET_TYPE CCChampion::OnTrigger(const ITRIG_TYPE trig, CScriptTriggerArgsPtr 
     const lpctstr pszTrigName = CItem::sm_szTrigName[trig];
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-    const auto pChampDef = dynamic_cast<CCChampionDef*>(pRes);
+    const auto pChampDef = static_cast<CCChampionDef*>(pRes);
     CResourceLink* pResourceLink = pChampDef;
     ASSERT(pResourceLink);
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;

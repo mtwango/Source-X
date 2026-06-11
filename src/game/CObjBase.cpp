@@ -146,7 +146,7 @@ CObjBase::~CObjBase()
     if (CCSpawn *pSpawn = GetSpawn())    // If I was created from a Spawn
     {
         const CItem * pSpawnLink = pSpawn->GetLink();
-        if (auto *const pChampion = dynamic_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
+        if (auto *const pChampion = static_cast<CCChampion*>(pSpawnLink->GetComponent(COMP_CHAMPION)))
         {
             pChampion->DelObj(GetUID());
         }

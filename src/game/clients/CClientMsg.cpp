@@ -62,7 +62,7 @@ void CClient::resendBuffs() const
 
 	for (const CSObjContRec* pObjRec : *pChar)
 	{
-        const auto pItem = dynamic_cast<const CItem*>(pObjRec);
+        const auto pItem = static_cast<const CItem*>(pObjRec);
 		if (pItem == nullptr || !pItem->IsType(IT_SPELL))
 			continue;
 
@@ -1530,7 +1530,7 @@ bool CClient::addBookOpen( CItem * pBook ) const
 	{
 		// User written book.
 
-        if (const auto pMsgItem = dynamic_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
+        if (const auto pMsgItem = static_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
             wPagesNow = pMsgItem->GetPageCount(); // for some reason we must send them now
 	}
 
@@ -1961,7 +1961,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
         if ( pItem->IsTypeMulti() )		// incoming multi on radar view
 		{
             const DIR_TYPE dirFace = pItem->GetDir(pCharThis);
-            const auto pMulti = dynamic_cast<const CItemMulti*>(pItem);
+            const auto pMulti = static_cast<const CItemMulti*>(pItem);
 
             // This looks like the only way to make this thing work. Even if i send the worldobj packet with the commented code, the client
             //  will ignore it (and SpyUO 2 doesn't show that packet ?! it only shows packets that actually result in the generation of a world item, how weird)
@@ -2329,7 +2329,7 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	int count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-        if (const auto pItem = dynamic_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
+        if (const auto pItem = static_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
 			continue;
 		++ count;
 	}
@@ -2551,7 +2551,7 @@ bool CClient::addBBoardMessage( const CItemContainer * pBoard, const BBOARDF_TYP
 	ADDTOCALLSTACK("CClient::addBBoardMessage");
 	ASSERT(pBoard);
 
-    const auto pMsgItem = dynamic_cast<CItemMessage *>(uidMsg.ItemFind());
+    const auto pMsgItem = static_cast<CItemMessage *>(uidMsg.ItemFind());
 	if (pMsgItem == nullptr || !pBoard->IsItemInside( pMsgItem ))
 		return false;
 

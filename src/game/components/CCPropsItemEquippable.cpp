@@ -236,7 +236,7 @@ void CCPropsItemEquippable::r_Write(CScript & s)
 void CCPropsItemEquippable::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::Copy");
-    const auto pTarget = dynamic_cast<const CCPropsItemEquippable*>(target);
+    const auto pTarget = static_cast<const CCPropsItemEquippable*>(target);
     if (!pTarget)
     {
         return;

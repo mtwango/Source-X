@@ -19,7 +19,7 @@ int64 CTimedFunctionHandler::IsTimer(const CUID& uid, const lpctstr ptcCommand) 
 	ADDTOCALLSTACK("CTimedFunctionHandler::IsTimer");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-        if (const auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (const auto *const tfObj = static_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			return tfObj->GetTimerAdjusted();
 		}
@@ -32,7 +32,7 @@ void CTimedFunctionHandler::ClearUID( const CUID& uid ) const
 	ADDTOCALLSTACK("CTimedFunctionHandler::Erase");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())	// the end iterator changes at each stl container erase call
 	{
-        if (auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid)
+        if (auto *const tfObj = static_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid)
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
@@ -44,7 +44,7 @@ void CTimedFunctionHandler::Stop(const CUID& uid, const lpctstr ptcCommand) cons
 	ADDTOCALLSTACK("CTimedFunctionHandler::Stop");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
 	{
-        if (auto *tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
+        if (auto *tfObj = static_cast<CTimedFunction *>(obj); tfObj && tfObj->GetUID() == uid && (Str_Match(ptcCommand, tfObj->GetCommand()) == MATCH_VALID))
 		{
 			g_World.ScheduleObjDeletion(tfObj);
 		}
@@ -71,7 +71,7 @@ TRIGRET_TYPE CTimedFunctionHandler::Loop(const lpctstr ptcCommand, int iLoopsMad
 			return TRIGRET_ENDIF;
 		}
 
-        if (const auto *const tfObj = dynamic_cast<CTimedFunction *>(obj); tfObj && !strcmpi(tfObj->GetCommand(), ptcCommand))
+        if (const auto *const tfObj = static_cast<CTimedFunction *>(obj); tfObj && !strcmpi(tfObj->GetCommand(), ptcCommand))
 		{
 			CObjBase* pObj = tfObj->GetUID().ObjFind();
 			if (!pObj)
@@ -194,7 +194,7 @@ void CTimedFunctionHandler::r_Write( CScript & s ) const
 	ADDTOCALLSTACK("CTimedFunctionHandler::r_Write");
 	for (CSObjContRec* obj : _timedFunctions.GetIterationSafeCont())
 	{
-        const auto *const tfObj = dynamic_cast<CTimedFunction*>(obj);
+        const auto *const tfObj = static_cast<CTimedFunction*>(obj);
         ASSERT(tfObj);
         if (const CUID &uid = tfObj->GetUID(); uid.IsValidUID())
 		{

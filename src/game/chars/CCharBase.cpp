@@ -506,7 +506,7 @@ CCharBase * CCharBase::FindCharBase( CREID_TYPE baseID ) // static
 	if ( index == sl::scont_bad_index() )
 		return nullptr;
 
-    const auto pBaseLink = dynamic_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
+    const auto pBaseLink = static_cast <CResourceLink *> (g_Cfg.m_ResHash.GetBarePtrAt(rid,index));
 	ASSERT(pBaseLink);
     auto pBase = dynamic_cast <CCharBase *> (pBaseLink);
 	if ( pBase )

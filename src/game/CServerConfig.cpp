@@ -4709,7 +4709,7 @@ void CServerConfig::_OnTick(const bool fNow )
 			EXC_TRY("WebTick");
 			if ( !m_WebPages[i] )
 				continue;
-            if (const auto pWeb = dynamic_cast<CWebPageDef *>(m_WebPages[i].get()) )
+            if (const auto pWeb = static_cast<CWebPageDef *>(m_WebPages[i].get()) )
 			{
 				pWeb->WebPageUpdate(fNow, nullptr, &g_Serv);
 				pWeb->WebPageLog();

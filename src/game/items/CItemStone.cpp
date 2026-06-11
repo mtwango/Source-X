@@ -141,7 +141,7 @@ void CItemStone::r_Write( CScript & s )
 
 	// s.WriteKeyVal( "//", "uid,title,priv,loyaluid,abbr&theydecl,wedecl");
 
-    for (const auto *pMember = dynamic_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
+    for (const auto *pMember = static_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
 	{
 		if (pMember->GetLinkUID().IsValidUID()) // To protect against characters that were deleted!
 		{
@@ -219,7 +219,7 @@ bool CItemStone::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         const int nNumber = Exp_GetVal(ptcKey);
 		SKIP_SEPARATORS(ptcKey);
 
-        auto *pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+        auto *pMember = static_cast <CStoneMember *>(GetContainerHead());
 		for ( int i = 0; pMember != nullptr; pMember = pMember->GetNext() )
         {
             if ( !pMember->GetLinkUID().IsChar() )
@@ -261,7 +261,7 @@ bool CItemStone::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
         const int nNumber = Exp_GetVal(ptcKey);
 		SKIP_SEPARATORS(ptcKey);
 
-        auto *pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+        auto *pMember = static_cast <CStoneMember *>(GetContainerHead());
 
 		for ( int i = 0; pMember != nullptr; pMember = pMember->GetNext() )
 		{
@@ -306,7 +306,7 @@ bool CItemStone::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 
         if (nNumber < GetMultiStorage()->GetHouseCountReal())
         {
-            pRef = dynamic_cast<CItemMulti*>(GetMultiStorage()->GetHouseAt(nNumber).ItemFind());
+            pRef = static_cast<CItemMulti*>(GetMultiStorage()->GetHouseAt(nNumber).ItemFind());
             return true;
         }
     }
@@ -321,7 +321,7 @@ bool CItemStone::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 
         if (nNumber < GetMultiStorage()->GetShipCountReal())
         {
-            pRef = dynamic_cast<CItemShip*>(GetMultiStorage()->GetShipAt(nNumber).ItemFind());
+            pRef = static_cast<CItemShip*>(GetMultiStorage()->GetShipAt(nNumber).ItemFind());
             return true;
         }
     }
@@ -456,7 +456,7 @@ bool CItemStone::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole 
 			pszCmd = pszCmd + 5;
 
 			int i = 0;
-            auto const * pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+            auto const * pMember = static_cast <CStoneMember *>(GetContainerHead());
 
 			if ( *pszCmd )
 			{
@@ -491,7 +491,7 @@ bool CItemStone::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole 
 		int const nNumber = Exp_GetVal(pszCmd);
 		SKIP_SEPARATORS(pszCmd);
 
-        auto *pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+        auto *pMember = static_cast <CStoneMember *>(GetContainerHead());
 		sVal.SetValFalse();
 
 		for ( int i = 0 ; pMember != nullptr; pMember = pMember->GetNext() )
@@ -540,7 +540,7 @@ bool CItemStone::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole 
             pszCmd = pszCmd + 5;
 
             int i = 0;
-            auto const * pMember = dynamic_cast<CStoneMember *>(GetContainerHead());
+            auto const * pMember = static_cast<CStoneMember *>(GetContainerHead());
 
             if (*pszCmd)
             {
@@ -577,7 +577,7 @@ bool CItemStone::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole 
         const int nNumber = Exp_GetVal(pszCmd);
         SKIP_SEPARATORS(pszCmd);
 
-        auto *pMember = dynamic_cast<CStoneMember *>(GetContainerHead());
+        auto *pMember = static_cast<CStoneMember *>(GetContainerHead());
         sVal.SetValFalse();
 
         for (int i = 0; pMember != nullptr; pMember = pMember->GetNext())
@@ -785,7 +785,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				    if (pszArgs[0] != '\0')
                     {
-                        pMember = dynamic_cast<CStoneMember *>(GetContainerHead());
+                        pMember = static_cast<CStoneMember *>(GetContainerHead());
                         SKIP_ARGSEP(pszArgs);
                         CScript script(pszArgs);
                         script.CopyParseState(s);
@@ -828,7 +828,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 
 				    if (pszArgs[0] != '\0')
                     {
-                        pMember = dynamic_cast<CStoneMember *>(GetContainerHead());
+                        pMember = static_cast<CStoneMember *>(GetContainerHead());
                         SKIP_ARGSEP(pszArgs);
                         CScript script(pszArgs);
                         script.CopyParseState(s);
@@ -881,7 +881,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 				CUID const pMemberUid(s.GetArgDWVal());
                 if ( CItem *pEnemyItem = pMemberUid.ItemFind() )
 				{
-                    if (auto *pNewEnemy = dynamic_cast<CItemStone *>(pEnemyItem) )
+                    if (auto *pNewEnemy = static_cast<CItemStone *>(pEnemyItem) )
 						WeDeclareWar(pNewEnemy);
 				}
 			}
@@ -971,7 +971,7 @@ bool CItemStone::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command f
 CStoneMember * CItemStone::GetMasterMember() const
 {
 	ADDTOCALLSTACK("CItemStone::GetMasterMember");
-    for (auto *pMember = dynamic_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
+    for (auto *pMember = static_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
 	{
 		if ( pMember->GetPriv() == STONEPRIV_MASTER )
 			return pMember;
@@ -1004,7 +1004,7 @@ CStoneMember * CItemStone::GetMember( const CObjBase * pObj ) const
 	if (!pObj)
 		return nullptr;
     const CUID& otherUID = pObj->GetUID();
-    for (auto *pMember = dynamic_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
+    for (auto *pMember = static_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
 	{
 		if ( pMember->GetLinkUID() == otherUID )
 			return pMember;
@@ -1015,7 +1015,7 @@ CStoneMember * CItemStone::GetMember( const CObjBase * pObj ) const
 bool CItemStone::NoMembers() const
 {
 	ADDTOCALLSTACK("CItemStone::NoMembers");
-    for (CStoneMember const *pMember = dynamic_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
+    for (CStoneMember const *pMember = static_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
 	{
 		if ( pMember->IsPrivMember())
 			return false;
@@ -1106,7 +1106,7 @@ void CItemStone::ElectMaster()
 	CStoneMember * pMaster = nullptr;
 
 	// Validate the items and Clear the votes field
-    auto *pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+    auto *pMember = static_cast <CStoneMember *>(GetContainerHead());
     CStoneMember * pMemberNext = nullptr;
 	for ( ; pMember != nullptr; pMember = pMemberNext)
 	{
@@ -1124,7 +1124,7 @@ void CItemStone::ElectMaster()
 	}
 
 	// Now tally the votes.
-	pMemberNext = nullptr, pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+	pMemberNext = nullptr, pMember = static_cast <CStoneMember *>(GetContainerHead());
 	for ( ; pMember != nullptr; pMember = pMemberNext)
 	{
         pMemberNext = pMember->GetNext();
@@ -1149,7 +1149,7 @@ void CItemStone::ElectMaster()
 	// Find who won.
 	bool fTie = false;
 	CStoneMember * pMemberHighest = nullptr;
-    pMemberNext = nullptr, pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+    pMemberNext = nullptr, pMember = static_cast <CStoneMember *>(GetContainerHead());
 	for ( ; pMember != nullptr; pMember = pMemberNext)
 	{
         pMemberNext = pMember->GetNext();
@@ -1182,7 +1182,7 @@ void CItemStone::ElectMaster()
 	if ( ! iCountMembers )
 	{
 		// No more members, declare peace (by force)
-        pMemberNext = nullptr, pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+        pMemberNext = nullptr, pMember = static_cast <CStoneMember *>(GetContainerHead());
 		for (; pMember != nullptr; pMember = pMemberNext)
 		{
             pMemberNext = pMember->GetNext();
@@ -1262,7 +1262,7 @@ int CItemStone::FixWeirdness()
 	}
 
 	bool fChanges = false;
-    const auto *pMember = dynamic_cast <CStoneMember *>(GetContainerHead());
+    const auto *pMember = static_cast <CStoneMember *>(GetContainerHead());
 	while ( pMember != nullptr )
 	{
         const CStoneMember * pMemberNext = pMember->GetNext();
@@ -1380,7 +1380,7 @@ void CItemStone::AnnounceWar( const CItemStone * pEnemyStone, const bool fWeDecl
 	else
 		snprintf( pszTemp+len, Str_TempLength() - len, " War is OFF." );
 
-    for (const auto * pMember = dynamic_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
+    for (const auto * pMember = static_cast<CStoneMember *>(GetContainerHead()); pMember != nullptr; pMember = pMember->GetNext())
 	{
         const CChar * pChar = pMember->GetLinkUID().CharFind();
 		if ( pChar == nullptr )

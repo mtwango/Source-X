@@ -251,7 +251,7 @@ void CCPropsItemWeapon::r_Write(CScript & s)
 void CCPropsItemWeapon::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::Copy");
-    const auto pTarget = dynamic_cast<const CCPropsItemWeapon*>(target);
+    const auto pTarget = static_cast<const CCPropsItemWeapon*>(target);
     if (!pTarget)
     {
         return;

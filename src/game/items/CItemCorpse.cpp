@@ -243,7 +243,7 @@ bool CChar::RaiseCorpse( CItemCorpse * pCorpse )
         //Looping 2x to equip items first then send rest to pack
 		for ( CSObjContRec *pObjRec : pCorpse->GetIterationSafeContReverse() )
 		{
-            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
+            auto *const pItem = static_cast<CItem*>(pObjRec);
 			if ( pItem->IsType(IT_HAIR) || pItem->IsType(IT_BEARD) )	// hair on corpse was copied!
 				continue;
 
@@ -252,7 +252,7 @@ bool CChar::RaiseCorpse( CItemCorpse * pCorpse )
 		}
         for (CSObjContRec* pObjRec : pCorpse->GetIterationSafeContReverse())
         {
-            auto *const pItem = dynamic_cast<CItem*>(pObjRec);
+            auto *const pItem = static_cast<CItem*>(pObjRec);
             if (pItem->IsType(IT_HAIR) || pItem->IsType(IT_BEARD))	// hair on corpse was copied!
                 continue;
 

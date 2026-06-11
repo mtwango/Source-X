@@ -1199,7 +1199,7 @@ bool CChar::DupeFrom(const CChar * pChar, const bool fNewbieItems )
 			pItem->SetAttr(ATTR_NEWBIE);
 			if (pItem->IsType(IT_CONTAINER) )
 			{
-                for (const auto pContainer = dynamic_cast<CItemContainer *>(pItem); CSObjContRec * pObjRec : *pContainer)
+                for (const auto pContainer = static_cast<CItemContainer *>(pItem); CSObjContRec * pObjRec : *pContainer)
 				{
                     const auto pItemCont = static_cast<CItem*>(pObjRec);
 					pItemCont->SetAttr(ATTR_NEWBIE);

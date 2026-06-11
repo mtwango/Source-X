@@ -409,7 +409,7 @@ bool CClient::CanSee( const CObjBaseTemplate * pObj ) const
 
 	if ( pObj->IsChar() )
 	{
-        if (const auto pChar = dynamic_cast<const CChar *>(pObj); pChar->IsDisconnected() )
+        if (const auto pChar = static_cast<const CChar *>(pObj); pChar->IsDisconnected() )
         {
             if( !IsPriv(PRIV_ALLSHOW) )
                 return false;

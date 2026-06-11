@@ -290,7 +290,7 @@ void ThreadHolder::markThreadsClosing() CANTHROW
 
     for (auto& thread_data : m_threads)
     {
-        auto *const sphere_thread = dynamic_cast<AbstractSphereThread*>(thread_data.m_ptr);
+        auto *const sphere_thread = static_cast<AbstractSphereThread*>(thread_data.m_ptr);
         if (!sphere_thread)
             continue;
 

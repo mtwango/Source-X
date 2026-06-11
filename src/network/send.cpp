@@ -185,10 +185,10 @@ PacketObjectStatus::PacketObjectStatus(const CClient* target, CObjBase* object) 
 		}
 		else
 		{
-		    const CItem *objectItem = object->IsItem() ? dynamic_cast<const CItem *>(object) : nullptr;
+		    const CItem *objectItem = object->IsItem() ? static_cast<const CItem *>(object) : nullptr;
             if (objectItem)
             {
-                if (const auto *const pItem = dynamic_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
+                if (const auto *const pItem = static_cast<CCItemDamageable *>(object->GetComponent(COMP_ITEMDAMAGEABLE)))
                 {
                     const ushort tmpMaxHits = pItem->GetMaxHits();
                     iHitsCurrent = static_cast<word>((pItem->GetCurHits() * 100) / maximum(tmpMaxHits, 1));
@@ -1245,13 +1245,13 @@ PacketItemContents::PacketItemContents(CClient* target, const CItemContainer* co
 		{
 			if (itRev == itRevEnd)
 				break;
-			item = dynamic_cast<CItem *>(*itRev);
+			item = static_cast<CItem *>(*itRev);
 		}
 		else
 		{
 			if (it == itEnd)
 				break;
-			item = dynamic_cast<CItem*>(*it);
+			item = static_cast<CItem*>(*it);
 		}
 		ASSERT (item != nullptr);
 
@@ -2726,7 +2726,7 @@ PacketCorpseEquipment::PacketCorpseEquipment(CClient* target, const CItemContain
 
 	for (CSObjContRec* pObjRec : *corpse)
 	{
-        const auto item = dynamic_cast<CItem*>(pObjRec);
+        const auto item = static_cast<CItem*>(pObjRec);
 		if (item == nullptr || (item->IsAttr(ATTR_INVIS) && !viewer->CanSee(item)))
 			continue;
 
@@ -5492,7 +5492,7 @@ PacketContainer::PacketContainer(const CClient* target, CObjBase** objects, cons
 		}
 		else
 		{
-            const CChar * mobile = dynamic_cast<CChar*>(object);
+            const CChar * mobile = static_cast<CChar*>(object);
             constexpr ds source = ds::Character;
             const dword uid = mobile->GetUID();
             const CREID_TYPE id = mobile->GetDispID();

@@ -2495,7 +2495,7 @@ bool CItem::LoadSetContainer(const CUID& uidCont, LAYER_TYPE layer )
 
 	if ( IsTypeSpellbook() && pObjCont->GetTopLevelObj()->IsChar())	// Intercepting the spell's addition here for NPCs, they store the spells on vector <Spells>m_spells for better access from their AI.
 	{
-        if (const auto pChar = dynamic_cast<CChar *>(pObjCont->GetTopLevelObj()); pChar != nullptr && pChar->m_pNPC)
+        if (const auto pChar = static_cast<CChar *>(pObjCont->GetTopLevelObj()); pChar != nullptr && pChar->m_pNPC)
 			pChar->NPC_AddSpellsFromBook(this);
 	}
 	if ( pObjCont->IsItem() )
@@ -4096,7 +4096,7 @@ const CItem* CItem::GetTopContainer() const
 		if (pCont->IsChar())
 			break;
 		ASSERT(pCont->IsItem());
-		pItem = dynamic_cast<const CItem *>(pCont);
+		pItem = static_cast<const CItem *>(pCont);
 	}
 	return (pItem == this) ? nullptr : pItem;
 }
@@ -4110,7 +4110,7 @@ CItem* CItem::GetTopContainer()
 		if (pCont->IsChar())
 			break;
 		ASSERT(pCont->IsItem());
-		pItem = dynamic_cast<CItem *>(pCont);
+		pItem = static_cast<CItem *>(pCont);
 	}
 	return (pItem == this) ? nullptr : pItem;
 }

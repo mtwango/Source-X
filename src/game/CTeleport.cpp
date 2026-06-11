@@ -22,7 +22,7 @@ CTeleport::CTeleport(tchar* pszArgs)
 	Read(ppCmds[0]);
 	_ptDst.Read(ppCmds[1]);
 	if (ppCmds[3])
-		_fNpc = (Str_ToI(ppCmds[3]) != 0);
+		_fNpc = Str_ToI(ppCmds[3]) != 0;
 	else
 		_fNpc = false;
 }

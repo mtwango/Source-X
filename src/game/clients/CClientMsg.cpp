@@ -1,11 +1,7 @@
-
 // Game server messages. (No login stuff)
 
 #include "../../common/resource/CResourceLock.h"
 #include "../../common/sphere_library/CSRand.h"
-//#include "../../common/CException.h" // included in the precompiled header
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../network/send.h"
 #include "../chars/CChar.h"
 #include "../chars/CCharNPC.h"
@@ -24,7 +20,6 @@
 #include "../spheresvr.h"
 #include "../triggers.h"
 #include "CClient.h"
-
 
 /////////////////////////////////////////////////////////////////
 // -CClient stuff.
@@ -62,7 +57,7 @@ void CClient::resendBuffs() const
 
 	for (const CSObjContRec* pObjRec : *pChar)
 	{
-        const auto pItem = static_cast<const CItem*>(pObjRec);
+        const auto *const pItem = static_cast<const CItem*>(pObjRec);
 		if (pItem == nullptr || !pItem->IsType(IT_SPELL))
 			continue;
 
@@ -228,7 +223,7 @@ void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dwo
 	ADDTOCALLSTACK("CClient::addBuff");
 	if ( !IsSetOF(OF_Buffs) )
 		return;
-	if ( PacketBuff::CanSendTo(GetNetState()) == false )
+	if ( !PacketBuff::CanSendTo(GetNetState()) )
 		return;
 
     new PacketBuff(this, IconId, ClilocOne, ClilocTwo, durationSeconds, pptcArgs, uiArgCount);
@@ -239,7 +234,7 @@ void CClient::removeBuff(const BUFF_ICONS IconId) const
 	ADDTOCALLSTACK("CClient::removeBuff");
 	if ( !IsSetOF(OF_Buffs) )
 		return;
-	if ( PacketBuff::CanSendTo(GetNetState()) == false )
+	if ( !PacketBuff::CanSendTo(GetNetState()) )
 		return;
 
 	new PacketBuff(this, IconId);
@@ -370,7 +365,7 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 	// send corpse clothing
 	if ( !IsPriv(PRIV_DEBUG) && (fCorpse && CCharBase::IsPlayableID(pItem->GetCorpseType())) )	// cloths on corpse
 	{
-        if (const auto pCorpse = static_cast<const CItemCorpse *>(pItem) )
+        if (const auto *const pCorpse = static_cast<const CItemCorpse *>(pItem) )
 		{
 			addContainerContents( pCorpse, false, true );	// send all corpse items
 			addContainerContents( pCorpse, true, true );	// equip proper items on corpse
@@ -380,10 +375,10 @@ void CClient::addItem_OnGround( CItem * pItem ) // Send items (on ground)
 	// send item tooltip
 	addAOSTooltip(pItem);
 
-	if ( (pItem->IsType(IT_MULTI_CUSTOM)) && m_pChar->CanSee(pItem) )
+	if ( pItem->IsType(IT_MULTI_CUSTOM) && m_pChar->CanSee(pItem) )
 	{
 		// send house design version
-        const auto pItemMulti = dynamic_cast<const CItemMultiCustom *>(pItem);
+        const auto *const pItemMulti = dynamic_cast<const CItemMultiCustom *>(pItem);
         ASSERT(pItemMulti);
         pItemMulti->SendVersionTo(this);
 	}
@@ -394,7 +389,7 @@ void CClient::addItem_Equipped( const CItem * pItem )
 	ADDTOCALLSTACK("CClient::addItem_Equipped");
 	ASSERT(pItem);
 	// Equip a single item on a CChar.
-    const auto pChar = dynamic_cast <CChar*> (pItem->GetParent());
+    auto *const pChar = dynamic_cast <CChar*> (pItem->GetParent());
 	ASSERT( pChar != nullptr );
 
 	if ( ! m_pChar->CanSeeItem( pItem ) && m_pChar != pChar )
@@ -409,7 +404,7 @@ void CClient::addItem_InContainer( const CItem * pItem )
 {
 	ADDTOCALLSTACK("CClient::addItem_InContainer");
 	ASSERT(pItem);
-    if (const auto pCont = dynamic_cast<CItemContainer *>(pItem->GetParent()); pCont == nullptr )
+    if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem->GetParent()); pCont == nullptr )
 		return;
 
 	new PacketItemContainer(this, pItem);
@@ -440,7 +435,7 @@ void CClient::addContainerContents( const CItemContainer * pContainer, const boo
 	// 1 = equip a corpse
 	// 0 = contents.
 
-	if (fCorpseEquip == true)
+	if (fCorpseEquip)
 		new PacketCorpseEquipment(this, pContainer);
 	else
 		new PacketItemContents(this, pContainer, fShop, fCorpseFilter);
@@ -469,7 +464,7 @@ bool CClient::addContainerSetup( const CItemContainer * pContainer ) // Send Bac
 	if ( gump <= GUMP_RESERVED )
 		return false;
 
-	OpenPacketTransaction transaction(this, PacketSend::PRI_NORMAL);
+	OpenPacketTransaction const transaction(this, PacketSend::PRI_NORMAL);
 
 	addOpenGump(pContainer, gump);
 	addContainerContents(pContainer);
@@ -487,7 +482,7 @@ void CClient::LogOpenedContainer(const CItemContainer* pContainer) // record a c
 	const CObjBaseTemplate * pTopMostContainer = pContainer->GetTopLevelObj();
 	const CObjBase * pTopContainer = pContainer->GetContainer();
 
-	dword dwTopMostContainerUID = pTopMostContainer->GetUID().GetPrivateUID();
+	dword const dwTopMostContainerUID = pTopMostContainer->GetUID().GetPrivateUID();
 	dword dwTopContainerUID = 0;
 
 	if ( pTopContainer != nullptr )
@@ -598,7 +593,7 @@ void CClient::addArrowQuest(const int x, const int y, const int id ) const
 void CClient::addMusic(const MIDI_TYPE id ) const
 {
 	ADDTOCALLSTACK("CClient::addMusic");
-	// Music is ussually appropriate for the region.
+	// Music is usually appropriate for the region.
 	new PacketPlayMusic(this, id);
 }
 
@@ -645,7 +640,9 @@ void CClient::addSound(const SOUND_TYPE id, const CObjBaseTemplate * pBase, int 
 		pt = pBase->GetTopPoint();
 	}
 	else
+	{
 		pt = m_pChar->GetTopPoint();
+    }
 
 	if (( id > 0 ) && !iOnce && !pBase )
 		return;
@@ -754,7 +751,8 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
             "IMSG_DEF_UNICODE",
         };
 
-    ushort iTalkmodeFont, iTalkmodeUnicode;
+    ushort iTalkmodeFont;
+    ushort iTalkmodeUnicode;
     ushort iTalkmodeHue = iTalkmodeFont = iTalkmodeUnicode = UINT16_MAX;
     switch ( mode )
 	{
@@ -873,7 +871,7 @@ void CClient::addBarkParse( lpctstr pszText, const CObjBaseTemplate * pSrc, cons
             tchar * ppArgs[256];
             const int iQty = Str_ParseCmds(ptcBarkBuffer, ppArgs, std::size(ppArgs), "," );
             const int iClilocId = Exp_GetVal( pszText ); //pszText holds the cliloc number, we can't use ppArgs[0] because if the string name exists it will contain the speaker name along with the cliloc number.
-			int iAffixType = Exp_GetVal( ppArgs[1] );
+			int const iAffixType = Exp_GetVal( ppArgs[1] );
 			CSString CArgs;
 
 			for (int i = 3; i < iQty; ++i )
@@ -1047,21 +1045,29 @@ void CClient::GetAdjustedItemID( const CChar * pChar, const CItem * pItem, ITEMI
 	}
 
 	if ( m_pChar->IsStatFlag( STATF_HALLUCINATING ))
+	{
 		wHue = static_cast<HUE_TYPE>(CSRand::GetVal(HUE_DYE_HIGH));
-
-	else if ( pChar->IsStatFlag(STATF_STONE)) //Client do not have stone state. So we must send the hue we want. (Affect the paperdoll hue as well)
+	}
+    else if ( pChar->IsStatFlag(STATF_STONE))
+	{ //Client do not have stone state. So we must send the hue we want. (Affect the paperdoll hue as well)
 		wHue = HUE_STONE;
 
-	// Normaly, client automaticly change the anim color in grey when someone is insubtantial, hidden or invisible. Paperdoll are never affected by this.
+	// Normally, client automatically change the anim color in grey when someone is insubstantial, hidden or invisible. Paperdoll are never affected by this.
 	// The next 3 state overwrite the client process and force ITEM color to have a specific color. It cause that Paperdoll AND anim get the color.
-	else if ( pChar->IsStatFlag(STATF_INSUBSTANTIAL) && g_Cfg.m_iColorInvis)
+	}
+    else if ( pChar->IsStatFlag(STATF_INSUBSTANTIAL) && g_Cfg.m_iColorInvis)
+    {
 		wHue = g_Cfg.m_iColorInvis;
-	else if (pChar->IsStatFlag(STATF_HIDDEN) && g_Cfg.m_iColorHidden)
+	}
+    else if (pChar->IsStatFlag(STATF_HIDDEN) && g_Cfg.m_iColorHidden)
+    {
 		wHue = g_Cfg.m_iColorHidden;
-	else if (pChar->IsStatFlag(STATF_INVISIBLE) && g_Cfg.m_iColorInvisSpell)
+	}
+    else if (pChar->IsStatFlag(STATF_INVISIBLE) && g_Cfg.m_iColorInvisSpell)
+    {
 		wHue = g_Cfg.m_iColorInvisSpell;
-
-	else
+	}
+    else
 	{
 		if ( pItemDef && (uiResDisp < pItemDef->GetResLevel() ) )
 			if ( pItemDef->GetResDispDnHue() != HUE_DEFAULT )
@@ -1115,18 +1121,26 @@ void CClient::GetAdjustedCharID( const CChar * pChar, CREID_TYPE &id, HUE_TYPE &
 	}
 	else
 	{
-		if ( pChar->IsStatFlag(STATF_STONE) )	//Client do not have stone state. So we must send the hue we want. (Affect the paperdoll hue as well)
+		if ( pChar->IsStatFlag(STATF_STONE) )
+		{	//Client do not have stone state. So we must send the hue we want. (Affect the paperdoll hue as well)
 			wHue = HUE_STONE;
 
-		// Normaly, client automaticly change the anim color in grey when someone is insubtantial, hidden or invisible. Paperdoll are never affected by this.
+		// Normally, client automatically change the anim color in grey when someone is insubstantial, hidden or invisible. Paperdoll are never affected by this.
 		// The next 3 state overwrite the client process and force SKIN color to have a specific color. It cause that Paperdoll AND anim get the color.
+		}
 		else if ( pChar->IsStatFlag(STATF_INSUBSTANTIAL) && g_Cfg.m_iColorInvis)
+		{
 			wHue = g_Cfg.m_iColorInvis;
-		else if ( pChar->IsStatFlag(STATF_HIDDEN) && g_Cfg.m_iColorHidden)
+		}
+	    else if ( pChar->IsStatFlag(STATF_HIDDEN) && g_Cfg.m_iColorHidden)
+		{
 			wHue = g_Cfg.m_iColorHidden;
-		else if ( pChar->IsStatFlag(STATF_INVISIBLE) && g_Cfg.m_iColorInvisSpell)
+		}
+	    else if ( pChar->IsStatFlag(STATF_INVISIBLE) && g_Cfg.m_iColorInvisSpell)
+		{
 			wHue = g_Cfg.m_iColorInvisSpell;
-		else
+		}
+	    else
 		{
 			wHue = pChar->GetHue();
 			// Allow transparency and underwear colors
@@ -1222,7 +1236,7 @@ void CClient::addItemName( CItem * pItem )
 	tchar szName[ MAX_ITEM_NAME_SIZE * 2 ];
 	size_t len = Str_CopyLimitNull( szName, pszNameFull, std::size(szName));
 
-    if (const auto pCont = dynamic_cast<const CContainer *>(pItem); pCont != nullptr )
+    if (const auto *const pCont = dynamic_cast<const CContainer *>(pItem); pCont != nullptr )
 	{
 		// ??? Corpses show hair as an item !!
 		len += snprintf( szName+len, sizeof(szName) - len,
@@ -1240,10 +1254,10 @@ void CClient::addItemName( CItem * pItem )
 	}
 
 	// Show the priced value
-    const auto pMyCont = dynamic_cast <CItemContainer *>( pItem->GetParent());
+    auto *const pMyCont = dynamic_cast <CItemContainer *>( pItem->GetParent());
 	if ( pMyCont != nullptr && pMyCont->IsType(IT_EQ_VENDOR_BOX))
 	{
-        if (const auto pVendItem = dynamic_cast<const CItemVendable *>(pItem) )
+        if (const auto *const pVendItem = dynamic_cast<const CItemVendable *>(pItem) )
 		{
 			len += snprintf( szName+len, sizeof(szName) - len, " (%u gp)", pVendItem->GetBasePrice());
 		}
@@ -1253,7 +1267,7 @@ void CClient::addItemName( CItem * pItem )
     if (const CVarDefCont *sVal = pItem->GetKey("NAME.HUE", true))
 		wHue = static_cast<HUE_TYPE>(sVal->GetValNum());
 
-    if (const auto pCorpseItem = dynamic_cast<const CItemCorpse *>(pItem) )
+    if (const auto *const pCorpseItem = dynamic_cast<const CItemCorpse *>(pItem) )
 	{
         if (const CChar *pCharCorpse = pCorpseItem->m_uidLink.CharFind() )
 		{
@@ -1302,7 +1316,7 @@ void CClient::addItemName( CItem * pItem )
 	if ( IsPriv(PRIV_DEBUG) )
 		len += snprintf(szName+len, sizeof(szName) - len, " [0%x]", static_cast<dword>(pItem->GetUID()));
 
-	if (( IsTrigUsed(TRIGGER_AFTERCLICK) ) || ( IsTrigUsed(TRIGGER_ITEMAFTERCLICK) ))
+	if (IsTrigUsed(TRIGGER_AFTERCLICK) || IsTrigUsed(TRIGGER_ITEMAFTERCLICK))
 	{
         const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(0, 0, 0, this);
@@ -1321,7 +1335,7 @@ void CClient::addItemName( CItem * pItem )
 	addObjMessage( szName, pItem, wHue, TALKMODE_ITEM );
 }
 
-void CClient::addCharName( const CChar * pChar ) // Singleclick text for a character
+void CClient::addCharName( const CChar * pChar ) // Single click text for a character
 {
 	ADDTOCALLSTACK("CClient::addCharName");
 	// Karma wHue codes ?
@@ -1353,7 +1367,9 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 		}
 	}
 	else
+	{
         Str_CopyLimitNull( pszTemp, pChar->GetName(), Str_TempLength() );
+    }
 
 	if ( pChar->m_pNPC && g_Cfg.m_fVendorTradeTitle )
 	{
@@ -1378,7 +1394,7 @@ void CClient::addCharName( const CChar * pChar ) // Singleclick text for a chara
 			if ( pChar->IsStatFlag( STATF_CONJURED ))
                 Str_ConcatLimitNull( pszTemp, g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_SUMMONED), Str_TempLength() );
 			else if ( pChar->IsStatFlag( STATF_PET ))
-                Str_ConcatLimitNull( pszTemp, (pChar->m_pNPC->m_bonded) ? g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_BONDED) : g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_TAME), Str_TempLength() );
+                Str_ConcatLimitNull( pszTemp, pChar->m_pNPC->m_bonded ? g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_BONDED) : g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_TAME), Str_TempLength() );
 		}
 		if ( pChar->IsStatFlag( STATF_INVUL ) && ! pChar->IsStatFlag( STATF_INCOGNITO ) && ! pChar->IsPriv( PRIV_PRIV_NOSHOW ))
             Str_ConcatLimitNull( pszTemp, g_Cfg.GetDefaultMsg(DEFMSG_CHARINFO_INVUL), Str_TempLength() );
@@ -1526,11 +1542,11 @@ bool CClient::addBookOpen( CItem * pBook ) const
 	word wPagesNow = 0;
     const bool bNewPacket = PacketDisplayBookNew::CanSendTo(GetNetState());
 
-	if (pBook->IsBookSystem() == false)
+	if (!pBook->IsBookSystem())
 	{
 		// User written book.
 
-        if (const auto pMsgItem = static_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
+        if (auto *const pMsgItem = static_cast<CItemMessage *>(pBook); pMsgItem->IsBookWritable())
             wPagesNow = pMsgItem->GetPageCount(); // for some reason we must send them now
 	}
 
@@ -1553,8 +1569,7 @@ void CClient::addBookPage( const CItem * pBook, const word wPage, word wCount ) 
 	//  wPage = 1 based page.
 	if ( wPage <= 0 )
 		return;
-	if ( wCount < 1 )
-		wCount = 1;
+	wCount = std::max<word>(wCount, 1);
 
 	new PacketBookPageContent(this, pBook, wPage, wCount );
 }
@@ -1579,12 +1594,12 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 		++count;
 	}
 
-	const size_t iAcctCharCount = pAccount->m_Chars.GetCharCount(), iAcctMaxChars = pAccount->GetMaxChars();
+	const size_t iAcctCharCount = pAccount->m_Chars.GetCharCount();
+	const size_t iAcctMaxChars = pAccount->GetMaxChars();
 	const uint iMax = static_cast<uint>(minimum(maximum(iAcctCharCount, iAcctMaxChars), MAX_CHARS_PER_ACCT));
 
 	uint iQty = static_cast<uint>(iAcctCharCount);
-	if (iQty > iMax)
-		iQty = iMax;
+	iQty = std::min(iQty, iMax);
 
 	for (uint i = 0; i < iQty; ++i)
 	{
@@ -1740,13 +1755,13 @@ void CClient::SetTargMode(const CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iT
 			pItem->RemoveFromView();		//Removing from view to avoid seeing it in the cursor
 			pCharThis->ItemBounce(pItem);
 			// Just clear the old target mode
-			if (fSuppressCancelMessage == false)
+			if (!fSuppressCancelMessage)
 				addSysMessage(g_Cfg.GetDefaultMsg(DEFMSG_TARGET_CANCEL_2));
 		}
 	}
 
 	m_Targ_Mode = targmode;
-	if (targmode == CLIMODE_NORMAL && fSuppressCancelMessage == false)
+	if (targmode == CLIMODE_NORMAL && !fSuppressCancelMessage)
 		addSysMessage(g_Cfg.GetDefaultMsg(DEFMSG_TARGET_CANCEL_1));
 	else if (iCliloc > 0)
 		addBarkLocalized(iCliloc, nullptr, HUE_GRAY_LIGHT, TALKMODE_SAY, FONT_BOLD, ""); //For some reason it crash if i omit the last parameter
@@ -1778,7 +1793,7 @@ void CClient::addPromptConsole(const CLIMODE_TYPE mode, lpctstr pPrompt, const C
 void CClient::addTarget(const CLIMODE_TYPE targmode, lpctstr pPrompt, const bool fAllowGround, const bool fCheckCrime, int64 iTimeout, const int iCliloc) // Send targetting cursor to client
 {
 	ADDTOCALLSTACK("CClient::addTarget");
-	// Send targetting cursor to client.
+	// Send targeting cursor to client.
     // Expect XCMD_Target back.
 	// ??? will this be selective for us ? objects only or chars only ? not on the ground (statics) ?
 
@@ -1898,13 +1913,13 @@ void CClient::addDyeOption( const CObjBase * pObj )
 void CClient::addSkillWindow(const SKILL_TYPE skill, const bool fFromInfo) const // Opens the skills list
 {
 	ADDTOCALLSTACK("CClient::addSkillWindow");
-	// Whos skills do we want to look at ?
+	// Who's skills do we want to look at ?
 	CChar* pChar = m_Prop_UID.CharFind();
 	if (pChar == nullptr)
 		pChar = m_pChar;
 
     const bool fAllSkills = (skill >= static_cast<SKILL_TYPE>(g_Cfg.m_iMaxSkill));
-	if (fAllSkills == false && g_Cfg.m_SkillIndexDefs.valid_index(skill) == false)
+	if (!fAllSkills && !g_Cfg.m_SkillIndexDefs.valid_index(skill))
 		return;
 
 	if ( IsTrigUsed(TRIGGER_USERSKILLS) )
@@ -1915,7 +1930,7 @@ void CClient::addSkillWindow(const SKILL_TYPE skill, const bool fFromInfo) const
 			return;
 	}
 
-	if (fAllSkills == false && skill >= SKILL_QTY)
+	if (!fAllSkills && skill >= SKILL_QTY)
 		return;
 
 	new PacketSkills(this, pChar, skill);
@@ -1961,7 +1976,7 @@ void CClient::addPlayerSee( const CPointMap & ptOld )
         if ( pItem->IsTypeMulti() )		// incoming multi on radar view
 		{
             const DIR_TYPE dirFace = pItem->GetDir(pCharThis);
-            const auto pMulti = static_cast<const CItemMulti*>(pItem);
+            const auto *const pMulti = static_cast<const CItemMulti*>(pItem);
 
             // This looks like the only way to make this thing work. Even if i send the worldobj packet with the commented code, the client
             //  will ignore it (and SpyUO 2 doesn't show that packet ?! it only shows packets that actually result in the generation of a world item, how weird)
@@ -2300,7 +2315,7 @@ void CClient::addSpellbookOpen( CItem * pBook )
 	if ( count == -1 )
 		return;
 	addItem(pBook); 	// NOTE: if the spellbook item is not present on the client it will crash.
-	OpenPacketTransaction transaction(this, PacketSend::PRI_NORMAL);
+	OpenPacketTransaction const transaction(this, PacketSend::PRI_NORMAL);
 	addOpenGump( pBook, GUMP_OPEN_SPELLBOOK );
 
 	// New AOS spellbook packet required by client 4.0.0 and above.
@@ -2329,12 +2344,12 @@ void CClient::addCustomSpellbookOpen( CItem * pBook, dword gumpID )
 	int count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-        if (const auto pItem = static_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
+        if (const auto *const pItem = static_cast<const CItem *>(pObjRec); !pItem->IsType( IT_SCROLL ) )
 			continue;
 		++ count;
 	}
 
-	OpenPacketTransaction transaction(this, PacketSend::PRI_NORMAL);
+	OpenPacketTransaction const transaction(this, PacketSend::PRI_NORMAL);
 	addOpenGump( pBook, static_cast<GUMP_TYPE>(gumpID));
 	if (count <= 0)
 		return;
@@ -2377,7 +2392,7 @@ bool CClient::addShopMenuBuy( CChar * pVendor )
 	if ( !pVendor || !pVendor->NPC_IsVendor() )
 		return false;
 
-	OpenPacketTransaction transaction(this, PacketSend::PRI_HIGH);
+	OpenPacketTransaction const transaction(this, PacketSend::PRI_HIGH);
 
 	// Non-player vendors could be restocked on-the-fly
 	if ( !pVendor->IsStatFlag(STATF_PET) )
@@ -2397,12 +2412,12 @@ bool CClient::addShopMenuBuy( CChar * pVendor )
 
 	// Send item list and then price list first for layer 26, then for 27.
 	new PacketItemContents(this, pContainer, true, false);
-    const auto buyList = new PacketVendorBuyList();
+    auto *const buyList = new PacketVendorBuyList();
     const size_t buyListCount = buyList->fillBuyData(pContainer, pVendor->NPC_GetVendorMarkup());
 	buyList->push(this);
 
 	new PacketItemContents(this, pContainerExtra, true, false);
-    const auto buyListExtra = new PacketVendorBuyList();
+    auto *const buyListExtra = new PacketVendorBuyList();
     const size_t buyListExtraCount = buyListExtra->fillBuyData(pContainerExtra, pVendor->NPC_GetVendorMarkup());
 	buyListExtra->push(this);
 
@@ -2428,7 +2443,7 @@ bool CClient::addShopMenuSell( CChar * pVendor )
 	if ( !pVendor || !pVendor->NPC_IsVendor() )
 		return false;
 
-	OpenPacketTransaction transaction( this, PacketSend::PRI_LOW );
+	OpenPacketTransaction const transaction( this, PacketSend::PRI_LOW );
 
 	//	non-player vendors could be restocked on-the-fly
 	if ( !pVendor->IsStatFlag( STATF_PET ) )
@@ -2439,7 +2454,7 @@ bool CClient::addShopMenuSell( CChar * pVendor )
 	addItem( pContainer1 );
 	addItem( pContainer2 );
 
-	// Classic clients will crash without extra packets, let's provide some empty packets specialy for them
+	// Classic clients will crash without extra packets, let's provide some empty packets specially for them
 	CItemContainer *pContainer3 = pVendor->GetBank( LAYER_VENDOR_EXTRA );
 	addItem( pContainer3 );
 
@@ -2551,7 +2566,7 @@ bool CClient::addBBoardMessage( const CItemContainer * pBoard, const BBOARDF_TYP
 	ADDTOCALLSTACK("CClient::addBBoardMessage");
 	ASSERT(pBoard);
 
-    const auto pMsgItem = static_cast<CItemMessage *>(uidMsg.ItemFind());
+    auto *const pMsgItem = static_cast<CItemMessage *>(uidMsg.ItemFind());
 	if (pMsgItem == nullptr || !pBoard->IsItemInside( pMsgItem ))
 		return false;
 
@@ -2594,7 +2609,7 @@ void CClient::addGlobalChatConnect()
 
 	// Send xml to client
 	tchar* pszXML = Str_GetTemp();
-	sprintf(pszXML, "<iq to=\"%s\" id=\"iq_%.10u\" type=\"6\" version=\"1\" jid=\"%s\" />",
+	sprintf(pszXML, R"(<iq to="%s" id="iq_%.10u" type="6" version="1" jid="%s" />)",
 			GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), GetJID());
 
 	SetVisible(false);
@@ -2623,7 +2638,7 @@ void CClient::addGlobalChatStatusToggle()
 	}
 
 	tchar* pszXML = Str_GetTemp();
-	sprintf(pszXML, "<presence from=\"%s\" id=\"pres_%.10u\" name=\"%.6s\" show=\"%d\" version=\"1\" />",
+	sprintf(pszXML, R"(<presence from="%s" id="pres_%.10u" name="%.6s" show="%d" version="1" />)",
 			GetJID(), static_cast<dword>(CSTime::GetCurrentTime().GetTime()), m_pChar->GetName(), iShow);
 
 	SetVisible(static_cast<bool>(iShow));
@@ -2677,8 +2692,7 @@ void CClient::addCharPaperdoll( CChar * pChar )
 void CClient::addShowDamage( int damage, const dword uid_damage )
 {
 	ADDTOCALLSTACK("CClient::addShowDamage");
-	if ( damage < 0 )
-		damage = 0;
+	damage = std::max(damage, 0);
 
 	if ( PacketCombatDamage::CanSendTo(GetNetState()) )
 		new PacketCombatDamage(this, static_cast<word>(damage), static_cast<CUID>(uid_damage));
@@ -2712,7 +2726,7 @@ void CClient::addIdleWarning( byte message )
 void CClient::addKRToolbar(const bool bEnable )
 {
 	ADDTOCALLSTACK("CClient::addKRToolbar");
-	if ( PacketToggleHotbar::CanSendTo(GetNetState()) == false || !IsResClient(RDS_KR) || ( GetConnectType() != CONNECT_GAME ))
+	if ( !PacketToggleHotbar::CanSendTo(GetNetState()) || !IsResClient(RDS_KR) || ( GetConnectType() != CONNECT_GAME ))
 		return;
 
 	new PacketToggleHotbar(this, bEnable);
@@ -2723,7 +2737,7 @@ void CClient::addKRToolbar(const bool bEnable )
 void CClient::SendPacket( tchar * ptcKey )
 {
 	ADDTOCALLSTACK("CClient::SendPacket");
-    const auto packet = new PacketSend(0, 0, PacketSend::PRI_NORMAL);
+    auto *const packet = new PacketSend(0, 0, PacketSend::PRI_NORMAL);
 	packet->seek();
 
 	while ( *ptcKey )
@@ -2893,19 +2907,19 @@ byte CClient::Setup_Play(const uint iSlot ) // After hitting "Play Character" bu
 
 	CAccount* pAccount = GetAccount();
 	if ( !pAccount )
-		return( PacketLoginError::Invalid );
+		return PacketLoginError::Invalid;
 	if ( iSlot >= std::size(m_tmSetupCharList))
-		return( PacketLoginError::BadCharacter );
+		return PacketLoginError::BadCharacter;
 
 	CChar * pChar = m_tmSetupCharList[ iSlot ].CharFind();
 	if (pChar == nullptr || !pAccount->IsMyAccountChar(pChar))
-		return( PacketLoginError::BadCharacter );
+		return PacketLoginError::BadCharacter;
 
     if (const CChar *pCharLast = pAccount->m_uidLastChar.CharFind(); pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
-		! pCharLast->IsDisconnected() && (pChar->GetUID() != pCharLast->GetUID()))
+		! pCharLast->IsDisconnected() && pChar->GetUID() != pCharLast->GetUID())
 	{
 		addIdleWarning(PacketWarningMessage::CharacterInWorld);
-		return(PacketLoginError::CharIdle);
+		return PacketLoginError::CharIdle;
 	}
 
 	// LastLogged update
@@ -3026,13 +3040,13 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 {
 	ADDTOCALLSTACK("CClient::LogIn");
 	if ( pAccount == nullptr )
-		return( PacketLoginError::Invalid );
+		return PacketLoginError::Invalid;
 
 	if ( pAccount->IsPriv( PRIV_BLOCKED ))
 	{
 		g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s' is blocked.\n", GetSocketID(), pAccount->GetName());
 		sMsg.Format( g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_BLOCKED ), static_cast<lpctstr>(g_Serv.m_sEMail));
-		return( PacketLoginError::Blocked );
+		return PacketLoginError::Blocked;
 	}
 
 	// Look for this account already in use.
@@ -3045,8 +3059,10 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 
 		//	different ip - no reconnect
 		if ( ! GetPeer().IsSameIP( pClientPrev->GetPeer() ))
+		{
 			fInUse = true;
-		else
+		}
+        else
 		{
 			//	from same ip - allow reconnect if the old char is lingering out
             if (const CChar *pCharOld = pClientPrev->GetChar() )
@@ -3063,7 +3079,9 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 					pClientPrev->GetNetState()->markReadClosed();
 				}
 				else if ( GetConnectType() == pClientPrev->GetConnectType() )
+				{
 					fInUse = true;
+                }
 			}
 		}
 
@@ -3082,7 +3100,7 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 		{
 			g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached (only local connections allowed).\n", GetSocketID(), pAccount->GetName());
 			sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_SERV_LD );
-			return( PacketLoginError::MaxClients );
+			return PacketLoginError::MaxClients;
 		}
 	}
 	if ( g_Cfg.m_iClientsMax <= 1 )
@@ -3092,16 +3110,16 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 		{
 			g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached (only administrators allowed).\n", GetSocketID(), pAccount->GetName());
 			sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_SERV_AO );
-			return( PacketLoginError::MaxClients );
+			return PacketLoginError::MaxClients;
 		}
 	}
 	if ( (pAccount->GetPrivLevel() < PLEVEL_GM) &&
-		(static_cast<llong>(g_Serv.StatGet(SERV_STAT_CLIENTS)) > g_Cfg.m_iClientsMax) )
+		std::cmp_greater(g_Serv.StatGet(SERV_STAT_CLIENTS), g_Cfg.m_iClientsMax) )
 	{
 		// Give them a polite goodbye.
 		g_Log.Event(LOGM_CLIENTS_LOG, "%x: Account '%s', maximum clients reached.\n", GetSocketID(), pAccount->GetName());
 		sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_SERV_FULL );
-		return( PacketLoginError::MaxClients );
+		return PacketLoginError::MaxClients;
 	}
 
 	//	Do the scripts allow to login this account?
@@ -3117,13 +3135,13 @@ byte CClient::LogIn( CAccount * pAccount, CSString & sMsg )
 	if ( tr == TRIGRET_RET_TRUE )
 	{
 		sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_DENIED );
-		return (PacketLoginError::Blocked);
+		return PacketLoginError::Blocked;
 	}
 
 	m_pAccount = pAccount;
 	pAccount->OnLogin( this );
 
-	return( PacketLoginError::Success );
+	return PacketLoginError::Success;
 }
 
 byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
@@ -3134,7 +3152,7 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 	// NOTE: addLoginErr() will get called after this.
 
 	if ( GetAccount()) // already logged in.
-		return( PacketLoginError::Success );
+		return PacketLoginError::Success;
 
 	char szTmp[ MAX_NAME_SIZE ];
     const size_t iLen1 = strlen( ptcAccName );
@@ -3143,22 +3161,22 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 	if ( (iLen1 == 0) || (iLen1 != iLen3) || (iLen1 > MAX_NAME_SIZE) )	// a corrupt message.
 	{
 		sMsg.Format( g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_WCLI ), m_Crypt.GetClientVer().c_str());
-		return( PacketLoginError::BadAccount );
+		return PacketLoginError::BadAccount;
 	}
 
 	iLen3 = Str_GetBare( szTmp, ptcPassword, MAX_NAME_SIZE );
 	if ( iLen2 != iLen3 )	// a corrupt message.
 	{
 		sMsg.Format( g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_WCLI ), m_Crypt.GetClientVer().c_str());
-		return( PacketLoginError::BadPassword );
+		return PacketLoginError::BadPassword;
 	}
 
 
 	tchar ptcName[ MAX_ACCOUNT_NAME_SIZE ];
     if ( !CAccount::NameStrip(ptcName, ptcAccName) || Str_Untrusted_InvalidTermination(ptcAccName) )
-		return( PacketLoginError::BadAccount );
+		return PacketLoginError::BadAccount;
     if (Str_Untrusted_InvalidTermination(ptcPassword))
-        return (PacketLoginError::BadPassword);
+        return PacketLoginError::BadPassword;
 
     const bool fGuestAccount = ! strnicmp( ptcAccName, "GUEST", 5 );
 	if ( fGuestAccount )
@@ -3171,7 +3189,7 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 			if ( i>=g_Cfg.m_iGuestsMax )
 			{
 				sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_GUSED );
-				return( PacketLoginError::MaxGuests );
+				return PacketLoginError::MaxGuests;
 			}
 
 			sprintf(ptcTemp, "GUEST%d", i);
@@ -3190,7 +3208,7 @@ byte CClient::LogIn( lpctstr ptcAccName, lpctstr ptcPassword, CSString & sMsg )
 		if ( ptcPassword[0] == '\0' )
 		{
 			sMsg = g_Cfg.GetDefaultMsg( DEFMSG_MSG_ACC_NEEDPASS );
-			return( PacketLoginError::BadPassword );
+			return PacketLoginError::BadPassword;
 		}
 	}
 

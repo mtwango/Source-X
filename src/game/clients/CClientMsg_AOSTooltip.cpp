@@ -1,5 +1,6 @@
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
+
+#include <utility>
+
 #include "../../network/send.h"
 #include "../chars/CChar.h"
 #include "../chars/CCharNPC.h"
@@ -7,12 +8,10 @@
 #include "../items/CItem.h"
 #include "../items/CItemStone.h"
 #include "../components/CCSpawn.h"
-//#include "../components/CCPropsItemChar.h"
 #include "../components/CCPropsItemEquippable.h"
 #include "../components/CCPropsItemWeapon.h"
 #include "../triggers.h"
 #include "CClient.h"
-
 
 // Simple string hashing algorithm function by D. J. Bernstein
 // Original code found at: http://www.cse.yorku.ca/~oz/hash.html
@@ -35,7 +34,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 	if (!pObj)
 		return false;
 
-	if (PacketPropertyList::CanSendTo(GetNetState()) == false)
+	if (!PacketPropertyList::CanSendTo(GetNetState()))
 		return false;
 
 	// Enhanced and KR clients always need the tooltips (but they can't be enabled without FEATURE_AOS_UPDATE_B, since this has to be sent to the client via the packet 0xB9).
@@ -53,14 +52,14 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 	// we do not need to send tooltips for items not in LOS (multis/ships)
 	//DEBUG_MSG(("(( m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()) (%x) > UO_MAP_VIEW_SIZE_DEFAULT (%x) ) && ( !bShop ) (%x) )", m_pChar->GetTopPoint().GetDistSight(pObj->GetTopPoint()), UO_MAP_VIEW_SIZE_DEFAULT, ( !bShop )));
     if (const int iDist = GetChar()->GetTopPoint().GetDistSight(pObj->GetTopPoint());
-        (iDist > GetChar()->GetVisualRange()) && (iDist <= g_Cfg.m_iMapViewRadar) && !fShop ) //(iDist <= UO_MAP_VIEW_RADAR) fShop is needed because items equipped or in a container have invalid GetTopPoint (and a very high iDist)
+        (iDist > GetChar()->GetVisualRange()) && (std::cmp_less_equal(iDist , g_Cfg.m_iMapViewRadar)) && !fShop ) //(iDist <= UO_MAP_VIEW_RADAR) fShop is needed because items equipped or in a container have invalid GetTopPoint (and a very high iDist)
 		return false;
 
 	// We check here if we are sending a tooltip for a static/non-movable items
 	// (client doesn't expect us to) but only in the world
 	if (pObj->IsItem())
 	{
-        if (const auto pItem = static_cast<const CItem *>(pObj); !pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
+        if (const auto *const pItem = static_cast<const CItem *>(pObj); !pItem->GetContainer() && pItem->IsAttr(/*ATTR_MOVE_NEVER|*/ATTR_STATIC))
 		{
 			if ((!GetChar()->IsPriv(PRIV_GM)) && (!GetChar()->IsPriv(PRIV_ALLMOVE)))
 				return false;
@@ -81,8 +80,10 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 		if (fNameOnly) // if we only want to display the name
 		{
             if (const dword ClilocName = static_cast<dword>(pObj->GetDefNum("NAMELOC", false)))
+            {
                 PUSH_FRONT_TOOLTIP(pObj, new CClientTooltip(ClilocName));
-			else
+			}
+		    else
 			{
                 CClientTooltip *t = nullptr;
                 PUSH_FRONT_TOOLTIP(pObj, t = new CClientTooltip(1042971)); // ~1_NOTHING~
@@ -164,13 +165,13 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 
 		// cache the property list for next time, unless property list is
 		// incomplete (name only) or caching is disabled
-		if ((fNameOnly == false) && (g_Cfg.m_iTooltipCache > 0))
+		if ((!fNameOnly) && (g_Cfg.m_iTooltipCache > 0))
 		{
 			pObj->SetPropertyList(propertyList);
 		}
 	}
 
-	if (propertyList->isEmpty() == false)
+	if (!propertyList->isEmpty())
 	{
 		switch (g_Cfg.m_iTooltipMode)
 		{
@@ -183,7 +184,7 @@ bool CClient::addAOSTooltip(CObjBase * pObj, bool fRequested, const bool fShop)
 			if (!fRequested && !fNameOnly)
 			{
 				// send property list version (client will send a request for the full tooltip if needed)
-				if (PacketPropertyListVersion::CanSendTo(GetNetState()) == false)
+				if (!PacketPropertyListVersion::CanSendTo(GetNetState()))
 					new PacketPropertyListVersionOld(this, pObj, propertyList->getVersion());
 				else
 					new PacketPropertyListVersion(this, pObj, propertyList->getVersion());
@@ -352,9 +353,9 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 {
 	// TODO: add check to ATTR_IDENTIFIED, then add tooltips: stolen, BonusSkill1/2/3/4/5, minlevel/maxlevel, shurikencount
 
-    //const CCPropsItemChar *pCCPItemChar = pItem->GetCCPropsItemChar(), *pBaseCCPItemChar = pItem->Base_GetDef()->GetCCPropsItemChar
-	const auto pCCPItemEquip = pItem->GetComponentProps<CCPropsItemEquippable>();
-	const auto pBaseCCPItemEquip = pItem->Base_GetDef()->GetComponentProps<CCPropsItemEquippable>();
+    // const CCPropsItemChar *pCCPItemChar = pItem->GetCCPropsItemChar(), *pBaseCCPItemChar = pItem->Base_GetDef()->GetCCPropsItemChar
+    const auto *const pCCPItemEquip = pItem->GetComponentProps<CCPropsItemEquippable>();
+    const auto *const pBaseCCPItemEquip = pItem->Base_GetDef()->GetComponentProps<CCPropsItemEquippable>();
 	CClientTooltip* t = nullptr;
 
 	if (pItem->IsAttr(ATTR_LOCKEDDOWN))
@@ -441,7 +442,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_TRASH_CAN:
 		if (pItem->IsContainer())
 		{
-            const auto pContainer = dynamic_cast <const CContainer *> (pItem);
+            const auto *const pContainer = dynamic_cast <const CContainer *> (pItem);
 			ASSERT(pContainer);
 			if ( g_Cfg.m_iFeatureML & FEATURE_ML_UPDATE )
 			{
@@ -630,14 +631,14 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	case IT_SPAWN_CHAR:
 	{
 
-        const auto pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
+        auto *const pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
 		if (!pSpawn)
             break;
         CResourceDef * pSpawnCharDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
 		lpctstr pszName = nullptr;
 		if (pSpawnCharDef)
 		{
-            if (const auto pCharBase = dynamic_cast<CCharBase *>(pSpawnCharDef))
+            if (auto *const pCharBase = dynamic_cast<CCharBase *>(pSpawnCharDef))
 				pszName = pCharBase->GetTradeName();
 			else
 				pszName = pSpawnCharDef->GetName();
@@ -661,7 +662,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 
 	case IT_SPAWN_ITEM:
 	{
-        const auto pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
+        auto *const pSpawn = static_cast<CCSpawn*>(pItem->GetComponent(COMP_SPAWN));
         if (!pSpawn)
             break;
         const CResourceDef * pSpawnItemDef = g_Cfg.RegisteredResourceGetDef(pSpawn->GetSpawnID());
@@ -689,7 +690,7 @@ void CClient::AOSTooltip_addDefaultItemData(CItem * pItem)
 	{
 		pItem->m_TooltipData.clear();
 		PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1041429)); // a guildstone
-        if (const auto thisStone = static_cast<const CItemStone *>(pItem))
+        if (const auto *const thisStone = static_cast<const CItemStone *>(pItem))
 		{
 			PUSH_BACK_TOOLTIP(pItem, t = new CClientTooltip(1060802)); // Guild name: ~1_val~
 			if (thisStone->GetAbbrev()[0])

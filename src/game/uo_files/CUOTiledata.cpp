@@ -4,7 +4,6 @@
 */
 
 #include "../../sphere/threads.h"
-//#include "../../common/CException.h" // included in the precompiled header
 #include "../../common/CLog.h"
 #include "../../common/CUOInstall.h"
 #include "CUOTerrainTypeRec.h"
@@ -56,7 +55,7 @@ void CUOTiledata::Load()
 
     VERFILE_TYPE filedata;
     dword offset;
-    CUOIndexRec Index;
+    CUOIndexRec Index{};
     VERFILE_FORMAT format;
 
     // Cache the Tiledata Terrain entries
@@ -91,7 +90,7 @@ void CUOTiledata::Load()
             }
         }
 
-        if ( static_cast<uint>(g_Install.m_File[filedata].Seek(offset, SEEK_SET)) != offset )
+        if ( std::cmp_not_equal(g_Install.m_File[filedata].Seek(offset, SEEK_SET), offset) )
         {
             throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.ReadInfo: TileData Seek");
         }
@@ -106,7 +105,7 @@ void CUOTiledata::Load()
             case VERFORMAT_ORIGINAL: // old format (CUOTerrainTypeRec)
             default:
             {
-                CUOTerrainTypeRec record;
+                CUOTerrainTypeRec record{};
                 if ( g_Install.m_File[filedata].Read(&record, sizeof(CUOTerrainTypeRec)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.ReadInfo: TileData Read");
 
@@ -152,7 +151,7 @@ void CUOTiledata::Load()
             }
         }
 
-        if ( static_cast<uint>(g_Install.m_File[filedata].Seek(offset, SEEK_SET)) != offset )
+        if ( std::cmp_not_equal(g_Install.m_File[filedata].Seek(offset, SEEK_SET), offset) )
         {
             throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.Load: TileData Seek");
         }
@@ -167,7 +166,7 @@ void CUOTiledata::Load()
             case VERFORMAT_ORIGINAL: // old format (CUOItemTypeRec)
             default:
             {
-                CUOItemTypeRec record;
+                CUOItemTypeRec record{};
                 if ( g_Install.m_File[filedata].Read( &record, sizeof(CUOItemTypeRec)) <= 0 )
                     throw CSError(LOGL_CRIT, CSFile::GetLastError(), "CUOTiledata.Item.Load: TileData Read");
 

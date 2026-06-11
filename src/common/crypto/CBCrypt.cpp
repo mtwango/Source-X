@@ -132,10 +132,10 @@ CSString CBCrypt::HashBCrypt(const char* password, const int iPrefixCode, const 
     }
 
     if (bcrypt_gensalt(pcPrefix, iCost, salt) != 0)
-        return CSString();
+        return {};
     if (bcrypt_hashpw(password, salt, hash) != 0)
-        return CSString();
-    return CSString(hash);
+        return {};
+    return {hash};
 }
 
 bool CBCrypt::ValidateBCrypt(const char* password, const char* hash) // static

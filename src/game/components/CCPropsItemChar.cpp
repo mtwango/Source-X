@@ -4,13 +4,12 @@
 #include "../clients/CClientTooltip.h"
 #include "../items/CItem.h"
 
-
 lpctstr const CCPropsItemChar::_ptcPropertyKeys[PROPITCH_QTY + 1] =
 {
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsItemChar_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsItemChar::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<int>(std::size(_ptcPropertyKeys)) };
@@ -21,13 +20,12 @@ RESDISPLAY_VERSION CCPropsItemChar::_iPropertyExpansion[PROPITCH_QTY + 1] =
     #define ADDPROP(a,b,c) c,
     #include "../../tables/CCPropsItemChar_props.tbl"
     #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsItemChar::CCPropsItemChar() : CComponentProps(COMP_PROPS_ITEMCHAR)
 {
 }
-
 
 // If a CItem: subscribed in CItemBase::SetType and CItem::SetType
 // If a CChar: subscribed in CCharBase::CCharBase and CChar::CChar
@@ -90,7 +88,9 @@ bool CCPropsItemChar::SetPropertyNum(const PropertyIndex_t iPropIndex, const Pro
             iOldVal = pLinkedObj->GetWeight();
     }
     else if (fOldValExistant)
+    {
         iOldVal = itOldVal->second;
+    }
 
     if ((fDeleteZero && (iVal == 0)) || (_iPropertyExpansion[iPropIndex] > iLimitToExpansion))
     {
@@ -113,8 +113,8 @@ bool CCPropsItemChar::SetPropertyNum(const PropertyIndex_t iPropIndex, const Pro
         {
             if (iVal != iOldVal)
             {
-                const auto pItemLink = static_cast<const CItem*>(pLinkedObj);
-                if (const auto pCont = dynamic_cast<CContainer *>(pItemLink->GetParent()))
+                const auto *const pItemLink = static_cast<const CItem*>(pLinkedObj);
+                if (auto *const pCont = dynamic_cast<CContainer *>(pItemLink->GetParent()))
                 {
                     ASSERT(pItemLink->IsItemEquipped() || pItemLink->IsItemInContainer());
                     pCont->OnWeightChange(pItemLink->GetWeight() - iOldVal);
@@ -201,7 +201,7 @@ void CCPropsItemChar::r_Write(CScript & s)
 void CCPropsItemChar::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemChar::Copy");
-    const auto pTarget = static_cast<const CCPropsItemChar*>(target);
+    const auto *const pTarget = static_cast<const CCPropsItemChar*>(target);
     if (!pTarget)
         return;
 

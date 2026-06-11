@@ -1,9 +1,6 @@
 #include "../../common/resource/sections/CRandGroupDef.h"
 #include "../../common/sphere_library/CSRand.h"
 #include "../../common/CLog.h"
-//#include "../../common/CException.h" // included in the precompiled header
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../chars/CChar.h"
 #include "../chars/CCharNPC.h"
 #include "../CObjBase.h"
@@ -22,7 +19,7 @@ std::vector<CCSpawn*> CCSpawn::_vBadSpawns; // static
 void CCSpawn::AddBadSpawn()
 {
     ADDTOCALLSTACK("CCSpawn::AddBadSpawn");
-    if (_fIsBadSpawn == true)
+    if (_fIsBadSpawn)
     {
         return;
     }
@@ -51,7 +48,7 @@ CCSpawn *CCSpawn::GetBadSpawn(int index)
     CCSpawn* ret = nullptr;
     if (!_vBadSpawns.empty())
     {
-        if ((index < 0) || (index >= static_cast<int>(_vBadSpawns.size())))
+        if (index < 0 || std::cmp_greater_equal(index ,_vBadSpawns.size()))
         {
             index = 0;
         }
@@ -256,7 +253,7 @@ const CResourceDef* CCSpawn::_FixDef()
 const CResourceDef *CCSpawn::FixDef()
 {
     const CResourceDef* pRef = _FixDef();
-    if (pRef == nullptr && _fIsChampion == false)
+    if (pRef == nullptr && !_fIsChampion)
     {
         AddBadSpawn();
     }
@@ -281,7 +278,7 @@ void CCSpawn::Delete(const bool fForce)
     ADDTOCALLSTACK("CCSpawn::Delete");
     UnreferencedParameter(fForce);
     KillChildren();
-    if (_fIsBadSpawn == true)
+    if (_fIsBadSpawn)
     {
         DelBadSpawn();
     }
@@ -422,7 +419,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
     }
 
     // Try placing this char near the spawn
-    if (pChar->GetTopPoint().IsValidPoint() == false)// Try to place it only if the @Spawn trigger didn't set it a valid P.
+    if (!pChar->GetTopPoint().IsValidPoint())// Try to place it only if the @Spawn trigger didn't set it a valid P.
     {
         ushort iPlacingTries = 0;
         while (!pChar->MoveNear(pt, _iMaxDist ? static_cast<word>(CSRand::GetVal(_iMaxDist) + 1) : 1) || pChar->IsStuck(false) || !pChar->CanSeeLOS(pt)) //Character shouldn't spawn where can't see it's spawn point.
@@ -469,7 +466,7 @@ CChar* CCSpawn::GenerateChar(CResourceIDBase rid)
 CResourceIDBase CCSpawn::GetCharRid()
 {
     ADDTOCALLSTACK("CCSpawn::GetCharRid");
-    const auto pSpawnItem = static_cast<const CItem*>(GetLink());
+    const auto *const pSpawnItem = static_cast<const CItem*>(GetLink());
 
     CResourceIDBase rid;
     const CResourceDef* pDef = FixDef();
@@ -483,7 +480,7 @@ CResourceIDBase CCSpawn::GetCharRid()
     rid = pDef->GetResourceID();
     if (const RES_TYPE iRidType = rid.GetResType(); iRidType == RES_SPAWN)
     {
-        const auto pSpawnGroup = dynamic_cast<const CRandGroupDef*>(pDef);
+        const auto *const pSpawnGroup = dynamic_cast<const CRandGroupDef*>(pDef);
         ASSERT(pSpawnGroup);
         if (const size_t i = pSpawnGroup->GetRandMemberIndex(); i != sl::scont_bad_index())
         {
@@ -533,7 +530,7 @@ void CCSpawn::DelObj(const CUID& uid)
 		pSpawnedObj->SetSpawn(nullptr);
         if (const IT_TYPE iSpawnType = pSpawnItem->GetType(); (iSpawnType == IT_SPAWN_CHAR) || (iSpawnType == IT_SPAWN_CHAMPION))
 		{
-            if (const auto pSpawnedChar = dynamic_cast<CChar *>(pSpawnedObj))
+            if (auto *const pSpawnedChar = dynamic_cast<CChar *>(pSpawnedObj))
 				pSpawnedChar->StatFlag_Clear(STATF_SPAWNED);
 		}
 	}
@@ -579,7 +576,7 @@ void CCSpawn::AddObj(const CUID& uid)
 
     const uint16 uiAmount = GetAmount();
     const uint16 uiMax = maximum(uiAmount, 1);
-    const auto pSpawnItem = GetLink();
+    auto *const pSpawnItem = GetLink();
     if ((_uidList.size() >= uiMax) && !pSpawnItem->IsType(IT_SPAWN_CHAMPION))  // char/item spawns have a limit, champions may spawn a lot of npcs
     {
         return;
@@ -722,8 +719,8 @@ void CCSpawn::KillChildren()
         if (auto *const pChar = dynamic_cast<CChar *>(pObj))
         {
 #ifdef _DEBUG
-            const auto parent = pChar->GetParent();
-            const auto sector = pChar->GetTopSector();
+            const auto *const parent = pChar->GetParent();
+            const auto *const sector = pChar->GetTopSector();
             DEBUG_ASSERT(parent == &sector->m_Chars_Active || parent == &sector->m_Chars_Disconnect);
 #endif
             pChar->SetSpawn(nullptr);   // Just to prevent CObjBase to call DelObj.
@@ -735,8 +732,8 @@ void CCSpawn::KillChildren()
         if (auto *const pItem = dynamic_cast<CItem *>(pObj))
         {
 #ifdef _DEBUG
-            const auto parent = pItem->GetParent();
-            const auto sector = pItem->GetTopSector();
+            const auto *const parent = pItem->GetParent();
+            const auto *const sector = pItem->GetTopSector();
             DEBUG_ASSERT(parent == &sector->m_Items);
 #endif
             pItem->SetSpawn(nullptr);   // Just to prevent CObjBase to call DelObj.
@@ -796,7 +793,7 @@ enum ISPW_TYPE
     ISPW_SPAWNID,
     ISPW_TIMEHI,
     ISPW_TIMELO,
-    ISPW_QTY
+    ISPW_QTY,
 };
 
 lpctstr const CCSpawn::sm_szLoadKeys[ISPW_QTY + 1] =
@@ -816,7 +813,7 @@ lpctstr const CCSpawn::sm_szLoadKeys[ISPW_QTY + 1] =
     "SPAWNID",
     "TIMEHI",
     "TIMELO",
-    nullptr
+    nullptr,
 };
 
 bool CCSpawn::r_WriteVal(const lpctstr ptcKey, CSString & sVal, CTextConsole *pSrc)
@@ -1078,7 +1075,7 @@ void CCSpawn::r_Write(CScript & s)
     EXC_TRY("Write");
 
     const CItem *pItem = GetLink();
-    if (_fIsChampion == false)
+    if (!_fIsChampion)
     {
         if (!FixDef())
         {
@@ -1123,13 +1120,13 @@ void CCSpawn::r_Write(CScript & s)
 enum SPAWN_REF
 {
     ISPR_AT,
-    ISPR_QTY
+    ISPR_QTY,
 };
 
 lpctstr const CCSpawn::sm_szRefKeys[ISPR_QTY + 1]
 {
     "AT",
-    nullptr
+    nullptr,
 };
 
 bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
@@ -1146,9 +1143,6 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
         return false;
     }
 
-
-    CItem const * pItem = GetLink();
-
     ptcKey += strlen(sm_szRefKeys[iCmd]);
     SKIP_SEPARATORS(ptcKey);
 
@@ -1160,11 +1154,11 @@ bool CCSpawn::r_GetRef(lpctstr & ptcKey, CScriptObj *& pRef)
             if (objIndex < 0)
                 return false;
             SKIP_SEPARATORS(ptcKey);
-            if (objIndex >= GetCurrentSpawned())
+            if (std::cmp_greater_equal(objIndex , GetCurrentSpawned()))
             {
                 return false;
             }
-            if (pItem->IsType(IT_SPAWN_ITEM))
+            if (CItem const *pItem = GetLink(); pItem->IsType(IT_SPAWN_ITEM))
             {
                 if (CItem *pSpawnedItem = _uidList[objIndex].ItemFind())
                 {
@@ -1193,7 +1187,7 @@ enum SPAWN_VERB
     ISPV_RESET,
     ISPV_START,
     ISPV_STOP,
-    ISPV_QTY
+    ISPV_QTY,
 };
 
 lpctstr const CCSpawn::sm_szVerbKeys[ISPV_QTY + 1]
@@ -1202,7 +1196,7 @@ lpctstr const CCSpawn::sm_szVerbKeys[ISPV_QTY + 1]
     "RESET",
     "START",
     "STOP",
-    nullptr
+    nullptr,
 };
 
 bool CCSpawn::r_Verb(CScript & s, CTextConsole * pSrc)

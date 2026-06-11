@@ -1,9 +1,6 @@
 
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "../common/common.h"
 #include "CServerConfig.h"
-//#include "CServer.h"
 #include "CBase.h"
 #include <algorithm>
 
@@ -12,7 +9,7 @@ enum OBC_TYPE
 	#define ADD(a,b) OBC_##a,
 	#include "../tables/CBaseBaseDef_props.tbl"
 	#undef ADD
-	OBC_QTY
+	OBC_QTY,
 };
 
 lpctstr const CBaseBaseDef::sm_szLoadKeys[OBC_QTY+1] =
@@ -20,7 +17,7 @@ lpctstr const CBaseBaseDef::sm_szLoadKeys[OBC_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../tables/CBaseBaseDef_props.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 
@@ -48,7 +45,7 @@ CBaseBaseDef::CBaseBaseDef( CResourceID const& id ) :
 void CBaseBaseDef::DelInstance()
 {
 #ifdef _DEBUG
-	ASSERT(_dwInstances != static_cast<dword>(-1));    // catching underflows
+	ASSERT(std::cmp_not_equal(_dwInstances ,-1));    // catching underflows
 #endif
 	--_dwInstances;
 }
@@ -381,14 +378,14 @@ bool CBaseBaseDef::r_LoadVal( CScript & s )
 			m_BaseResources.Load(s.GetArgStr());
 			return true;
 		case OBC_RESLEVEL:
-            return( SetResLevel(enum_alias_cast<RESDISPLAY_VERSION>(s.GetArgCVal())) );
+            return SetResLevel(enum_alias_cast<RESDISPLAY_VERSION>(s.GetArgCVal())) ;
 		case OBC_RESDISPDNHUE:
 			SetResDispDnHue(static_cast<HUE_TYPE>(s.GetArgVal()));
 			return true;
 		case OBC_TEVENTS:
-			return( m_TEvents.r_LoadVal( s, RES_EVENTS ));
+			return m_TEvents.r_LoadVal( s, RES_EVENTS );
 	}
-	return( CScriptObj::r_LoadVal(s));
+	return CScriptObj::r_LoadVal(s);
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
@@ -437,12 +434,12 @@ void CBaseBaseDef::CopyTransfer( CBaseBaseDef * pBase )
 
 bool CBaseBaseDef::IsValid() const
 {
-	return( m_sName.IsValid());
+	return m_sName.IsValid();
 }
 
 height_t CBaseBaseDef::GetHeight() const
 {
-	return( m_Height );
+	return m_Height;
 }
 
 void CBaseBaseDef::SetHeight(const height_t Height )
@@ -452,7 +449,7 @@ void CBaseBaseDef::SetHeight(const height_t Height )
 
 byte CBaseBaseDef::GetResLevel() const
 {
-	return( m_ResLevel );
+	return m_ResLevel;
 }
 
 bool CBaseBaseDef::SetResLevel(const RESDISPLAY_VERSION ResLevel )
@@ -467,7 +464,7 @@ bool CBaseBaseDef::SetResLevel(const RESDISPLAY_VERSION ResLevel )
 
 HUE_TYPE CBaseBaseDef::GetResDispDnHue() const
 {
-	return( m_ResDispDnHue );
+	return m_ResDispDnHue;
 }
 
 void CBaseBaseDef::SetResDispDnHue(const HUE_TYPE ResDispDnHue )
@@ -477,7 +474,7 @@ void CBaseBaseDef::SetResDispDnHue(const HUE_TYPE ResDispDnHue )
 
 word CBaseBaseDef::GetResDispDnId() const
 {
-	return( m_ResDispDnId );
+	return m_ResDispDnId;
 }
 
 void CBaseBaseDef::SetResDispDnId(const word ResDispDnId )
@@ -491,7 +488,8 @@ ushort CBaseBaseDef::ConvertRangeStr(const lpctstr ptcRange) // static
 	tchar* ptcTmp = Str_GetTemp();
 	Str_CopyLimitNull(ptcTmp, ptcRange, Str_TempLength());
 	const int iQty = Str_ParseCmds(ptcTmp, piVal, std::size(piVal));
-	ushort iHi = 0, iLo = 0;
+	ushort iHi = 0;
+	ushort iLo = 0;
 	if (iQty > 1)	// args: "min, max"
 	{
 		iHi = static_cast<ushort>(piVal[1]);

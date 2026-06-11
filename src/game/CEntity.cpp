@@ -1,10 +1,8 @@
 #include "../sphere/threads.h"
-//#include "../common/CException.h" // included in the precompiled header
 #include "../common/CLog.h"
 #include "../common/CScript.h"
 #include "CEntity.h"
 #include "CComponent.h"
-
 
 CEntity::CEntity()
 {
@@ -48,7 +46,7 @@ void CEntity::SubscribeComponent(CComponent * pComponent)
 {
     ADDTOCALLSTACK_DEBUG("CEntity::SubscribeComponent");
     const COMP_TYPE compType = pComponent->GetType();
-    if (const auto [fst, snd] = _lComponents.try_emplace(compType, pComponent); snd == false)
+    if (const auto [fst, snd] = _lComponents.try_emplace(compType, pComponent); !snd)
     {
         delete pComponent;
         ASSERT(false);  // This should never happen
@@ -80,7 +78,7 @@ void CEntity::UnsubscribeComponent(const CComponent *pComponent)
 bool CEntity::IsComponentSubscribed(const CComponent *pComponent) const
 {
     ADDTOCALLSTACK_DEBUG("CEntity::IsComponentSubscribed");
-    return ( !_lComponents.empty() && (_lComponents.end() != _lComponents.find(pComponent->GetType())) );
+    return ( !_lComponents.empty() && _lComponents.end() != _lComponents.find(pComponent->GetType()) );
 }
 
 CComponent * CEntity::GetComponent(const COMP_TYPE type) const
@@ -92,7 +90,7 @@ CComponent * CEntity::GetComponent(const COMP_TYPE type) const
         return nullptr;
     }
     const auto it = _lComponents.find(type);
-    return (it != _lComponents.end()) ? it->second : nullptr;
+    return it != _lComponents.end() ? it->second : nullptr;
 }
 
 bool CEntity::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)

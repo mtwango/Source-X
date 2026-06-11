@@ -64,15 +64,25 @@ void CUOMobTypes::Load()
                 const uint uiAnimIndex = *iconv;
 
                 if (const std::string_view sType(pptcSplitArray[1]); sType == "MONSTER")
+                {
                     mobTypesRow.m_uiType = MOBTE_MONSTER;
+                }
                 else if (sType == "SEA_MONSTER")
+                {
                     mobTypesRow.m_uiType = MOBTE_SEA_MONSTER;
+                }
                 else if (sType == "ANIMAL")
+                {
                     mobTypesRow.m_uiType = MOBTE_ANIMAL;
+                }
                 else if (sType == "HUMAN")
+                {
                     mobTypesRow.m_uiType = MOBTE_HUMAN;
+                }
                 else if (sType == "EQUIPMENT")
+                {
                     mobTypesRow.m_uiType = MOBTE_EQUIPMENT;
+                }
                 else
                 {
                     mobTypesRow.m_uiType = MOBTE_QTY;
@@ -110,6 +120,6 @@ void CUOMobTypes::Load()
 const CUOMobTypesEntry* CUOMobTypes::GetEntry(const uint id) const
 {
     ASSERT(id < _vMobTypesEntries.size());
-    return &(_vMobTypesEntries[id]);
+    return &_vMobTypesEntries[id];
 }
 

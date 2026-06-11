@@ -3,13 +3,12 @@
 #include "../clients/CClientTooltip.h"
 #include "../CObjBase.h"
 
-
 lpctstr const CCPropsItem::_ptcPropertyKeys[PROPIT_QTY + 1] =
 {
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsItem_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsItem::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
@@ -20,7 +19,7 @@ RESDISPLAY_VERSION CCPropsItem::_iPropertyExpansion[PROPIT_QTY + 1] =
     #define ADDPROP(a,b,c) c,
     #include "../../tables/CCPropsItem_props.tbl"
     #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsItem::CCPropsItem() : CComponentProps(COMP_PROPS_ITEM)
@@ -166,7 +165,7 @@ void CCPropsItem::r_Write(CScript & s)
 void CCPropsItem::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItem::Copy");
-    const auto pTarget = static_cast<const CCPropsItem*>(target);
+    const auto *const pTarget = static_cast<const CCPropsItem*>(target);
     if (!pTarget)
         return;
 

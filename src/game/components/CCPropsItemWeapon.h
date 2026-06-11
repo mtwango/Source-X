@@ -18,7 +18,7 @@ enum PROPIWEAP_TYPE : CComponentProps::PropertyIndex_t
     #define ADDPROP(a,b,c) PROPIWEAP_##a,
     #include "../../tables/CCPropsItemWeapon_props.tbl"
     #undef ADDPROP
-    PROPIWEAP_QTY
+    PROPIWEAP_QTY,
 };
 
 class CCPropsItemWeapon : public CComponentProps

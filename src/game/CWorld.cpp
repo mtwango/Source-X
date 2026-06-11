@@ -1,6 +1,3 @@
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
-//#include "../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../common/CLog.h"
 #include "../common/sphereversion.h"
 #include "../network/CClientIterator.h"
@@ -367,7 +364,7 @@ setcount:
 		const size_t uiOldArraySize = _uiUIDObjArraySize;
 		_uiUIDObjArraySize = static_cast<size_t>((dwIndex + 0x1000u) & ~0xFFFu);
 
-        const auto pNewBlock = static_cast<CObjBase **>(realloc(_ppUIDObjArray, _uiUIDObjArraySize * sizeof(CObjBase *)));
+        auto *const pNewBlock = static_cast<CObjBase **>(realloc(_ppUIDObjArray, _uiUIDObjArraySize * sizeof(CObjBase *)));
 		if (pNewBlock == nullptr)
 		{
 			throw CSError(LOGL_FATAL, 0, "Not enough memory to store new UIDs!.\n");
@@ -520,11 +517,13 @@ int CWorldThread::FixObj( CObjBase * pObj, dword dwUID )
 
 		if ( iResultCode == 0x1203 || iResultCode == 0x1103 )
 		{
-            if (const auto pChar = dynamic_cast<CChar *>(pObj) )
+            if (auto *const pChar = dynamic_cast<CChar *>(pObj) )
 				pChar->Skill_Start( NPCACT_RIDDEN );
 		}
 		else
+		{
 			pObj->Delete();
+        }
 	}
 	catch ( const CSError& e )	// catch all
 	{
@@ -556,7 +555,7 @@ void CWorldThread::GarbageCollection_NewObjs()
                 m_ObjDelete.erase(itObjDel);
             }
 
-            const auto pObj = dynamic_cast<CObjBase*>(m_ObjNew.GetContentIndex(i));
+            auto *const pObj = dynamic_cast<CObjBase*>(m_ObjNew.GetContentIndex(i));
 			if (pObj == nullptr)
 				continue;
 
@@ -783,7 +782,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 	}
 	else if ( _iSaveStage < iSectorsQty)
 	{
-		// NPC Chars in the world secors and the stuff they are carrying.
+		// NPC Chars in the world sectors and the stuff they are carrying.
 		// Sector lighting info.
 		if(IsSetEF(EF_Dynamic_Backsave))
 		{
@@ -793,7 +792,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 			if (s)
 			{
 				s->r_Write();
-				szComplexity += ( s->GetCharComplexity() + s->GetInactiveChars())*100 + s->GetItemComplexity();
+				szComplexity += ((s->GetCharComplexity() + s->GetInactiveChars()) * 100) + s->GetItemComplexity();
 			}
 
 			int dynStage = _iSaveStage + 1;
@@ -805,7 +804,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 					s = _Sectors.GetSectorAbsolute(dynStage);
 					if ( s )
 					{
-						szComplexity += ( s->GetCharComplexity() + s->GetInactiveChars())*100 + s->GetItemComplexity();
+						szComplexity += ((s->GetCharComplexity() + s->GetInactiveChars()) * 100) + s->GetItemComplexity();
 
 						if(szComplexity <= g_Cfg.m_iSaveStepMaxComplexity)
 						{
@@ -876,7 +875,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 		m_FilePlayers.WriteSection("EOF");
 		m_FileMultis.WriteSection("EOF");
 
-		++m_iSaveCountID;	// Save only counts if we get to the end winout trapping.
+		++m_iSaveCountID;	// Save only counts if we get to the end without trapping.
 		_iTimeLastWorldSave = _GameClock.GetCurrentTime().GetTimeRaw() + g_Cfg.m_iSavePeriod;	// next save time.
 
 		g_Log.Event(LOGM_SAVE, "World data saved   (%s).\n", m_FileWorld.GetFilePath());
@@ -912,8 +911,7 @@ bool CWorld::SaveStage() // Save world state in stages.
 	{
 		ASSERT(iSectorsQty > 0);
 		int64 iNextTime = g_Cfg.m_iSaveBackgroundTime / iSectorsQty;
-		if ( iNextTime > MSECS_PER_SEC * 30 * 60 )
-			iNextTime = MSECS_PER_SEC  * 30 * 60;	// max out at 30 minutes or so.
+		iNextTime = std::min(iNextTime, MSECS_PER_SEC * 30 * 60);	// max out at 30 minutes or so.
 		_iTimeLastWorldSave = _GameClock.GetCurrentTime().GetTimeRaw() + iNextTime;
 	}
 	++_iSaveStage;
@@ -935,7 +933,7 @@ bool CWorld::SaveForce() // Save world state
 {
 	ADDTOCALLSTACK("CWorld::SaveForce");
 	CWorldComm::Broadcast( g_Cfg.GetDefaultMsg( DEFMSG_SERVER_WORLDSAVE ) );
-	if (g_NetworkManager.isOutputThreaded() == false)
+	if (!g_NetworkManager.isOutputThreaded())
 		g_NetworkManager.flushAllClients();
 
     g_Serv.SetServerMode(ServMode::Saving);	// Forced save freezes the system.
@@ -949,7 +947,7 @@ bool CWorld::SaveForce() // Save world state
 		"global variables, regions, gmpages",
 		"servers",
 		"accounts",
-		""
+		"",
 	};
 	const char *pCurBlock = save_msgs[0];
 
@@ -1083,7 +1081,9 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
     }
     uiFreeSpace = stvfs.f_bsize * stvfs.f_bavail;
 #else
-    ULARGE_INTEGER liFreeBytesAvailable, liTotalNumberOfBytes, liTotalNumberOfFreeBytes;
+    ULARGE_INTEGER liFreeBytesAvailable;
+    ULARGE_INTEGER liTotalNumberOfBytes;
+    ULARGE_INTEGER liTotalNumberOfFreeBytes;
     if (! ::GetDiskFreeSpaceEx(ptcSaveDir,  // directory name
         &liFreeBytesAvailable,              // bytes available to caller
         &liTotalNumberOfBytes,              // bytes on disk
@@ -1100,7 +1100,7 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
     ullong uiPreviousSaveSize = 0;
     auto CalcPrevSavesSize = [=, &fSizeErr, &uiPreviousSaveSize](const lpctstr ptcSaveName) -> void
     {
-        struct stat st;
+        struct stat st{};
         if (const CSString strSaveFile = g_Cfg.m_sWorldBaseDir + SPHERE_FILE + ptcSaveName + SPHERE_SCRIPT_EXT; !stat(strSaveFile.GetBuffer(), &st))
 		{
             if (const ullong uiCurSavefileSize = static_cast<ullong>(st.st_size); uiCurSavefileSize == 0)
@@ -1109,7 +1109,9 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
 				uiPreviousSaveSize += uiCurSavefileSize;
 		}
 		else
+		{
 			fSizeErr = true;
+        }
     };
 
     if (fStatics)
@@ -1135,7 +1137,7 @@ bool CWorld::CheckAvailableSpaceForSave(const bool fStatics)
     ullong mem_adjust_save_size;
     if (fSizeErr)
     {
-        // In case we have corrupted or unexistant previous save files, check for this arbitrary amount of free space.
+        // In case we have corrupted or non-existing previous save files, check for this arbitrary amount of free space.
         mem_adjust_save_size = 8;
     }
     else
@@ -1182,7 +1184,7 @@ bool CWorld::Save( bool fForceImmediate ) // Save world state
 		//Should we flush only non threaded output or force it
 		//to flush on any conditions?
 
-		if (g_NetworkManager.isOutputThreaded() == false)
+		if (!g_NetworkManager.isOutputThreaded())
         {
 #ifdef _DEBUG
 			g_Log.EventDebug("Flushing %" PRIuSIZE_T " client(s) output data...\n", g_Serv.StatGet(SERV_STAT_CLIENTS));
@@ -1241,7 +1243,7 @@ void CWorld::SaveStatics()
 
 		CWorldComm::Broadcast( g_Cfg.GetDefaultMsg(DEFMSG_SERVER_WORLDSTATICSAVE) );
 
-		if (g_NetworkManager.isOutputThreaded() == false)
+		if (!g_NetworkManager.isOutputThreaded())
 			g_NetworkManager.flushAllClients();
 
 		//	loop through all sectors and save static items
@@ -1252,13 +1254,13 @@ void CWorld::SaveStatics()
 
             for (int s = 0, qty = _Sectors.GetMapSectorDataUnchecked(m).iSectorQty; s < qty; ++s)
 			{
-                CSector* pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
+                CSector const* pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
 				if ( !pSector )
                     continue;
 
 				for (CSObjContRec* pObjRec : pSector->m_Items)
 				{
-                    const auto pItem = static_cast<CItem*>(pObjRec);
+                    auto *const pItem = static_cast<CItem*>(pObjRec);
                     if (pItem->IsTypeMulti())
 						continue;
 					if ( !pItem->IsAttr(ATTR_STATIC) )
@@ -1310,7 +1312,7 @@ bool CWorld::LoadFile(const lpctstr pszLoadName, const bool fError ) // Load wor
 	const int iLoadSize = s.GetLength();
     int iLoadStage = 0;
 
-	CScriptFileContext ScriptContext( &s );
+	CScriptFileContext const ScriptContext( &s );
 
 	// Read the header stuff first.
 	CScriptObj::r_Load( s );
@@ -1540,7 +1542,7 @@ enum WC_TYPE
     WC_TIMEHIRES,
 	WC_TITLE,
 	WC_VERSION,
-	WC_QTY
+	WC_QTY,
 };
 
 lpctstr const CWorld::sm_szLoadKeys[WC_QTY+1] =	// static
@@ -1552,7 +1554,7 @@ lpctstr const CWorld::sm_szLoadKeys[WC_QTY+1] =	// static
     "TIMEHIRES",
 	"TITLE",
 	"VERSION",
-	nullptr
+	nullptr,
 };
 
 bool CWorld::r_WriteVal(const lpctstr ptcKey, CSString &sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
@@ -1680,7 +1682,7 @@ void CWorld::Restock()
 			if ( pResDef == nullptr || ( pResDef->GetResType() != RES_ITEMDEF ))
 				continue;
 
-            if (const auto pBase = dynamic_cast<CItemBase *>(pResDef); pBase != nullptr )
+            if (auto *const pBase = dynamic_cast<CItemBase *>(pResDef); pBase != nullptr )
 				pBase->Restock();
 		}
 	}
@@ -1782,7 +1784,7 @@ void CWorld::_OnTick()
 	EXC_SET_BLOCK("Worldsave checks");
 	// Save state checks
 	// Notifications
-	if ((_fSaveNotificationSent == false) && ((_iTimeLastWorldSave - (10 * MSECS_PER_SEC)) <= iCurTime))
+	if ((!_fSaveNotificationSent) && ((_iTimeLastWorldSave - (10 * MSECS_PER_SEC)) <= iCurTime))
 	{
 		CWorldComm::Broadcast(g_Cfg.GetDefaultMsg(DEFMSG_SERVER_WORLDSAVE_NOTIFY));
 		_fSaveNotificationSent = true;

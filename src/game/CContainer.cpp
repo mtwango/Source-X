@@ -1,7 +1,5 @@
 
 #include "../common/sphere_library/CSRand.h"
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "../common/CUID.h"
 #include "../network/send.h"
 #include "chars/CChar.h"
@@ -15,14 +13,13 @@ CContainer::CContainer() noexcept :
 {
 }
 
-
 void CContainer::_GoAwake()
 {
 	ADDTOCALLSTACK("CContainer::_GoAwake");
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
         //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-		if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
+		if (auto *const pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
 			pItem->GoAwake();
 	}
 }
@@ -33,13 +30,12 @@ void CContainer::_GoSleep()
 	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
 	{
         //std::unique_lock<std::shared_mutex> lock(pItem->MT_CMUTEX);
-        if (const auto pItem = static_cast<CItem *>(pObjRec); !pItem->_CanTick(true))
+        if (auto *const pItem = static_cast<CItem *>(pObjRec); !pItem->_CanTick(true))
 		{
             pItem->GoSleep();
 		}
 	}
 }
-
 
 void CContainer::ContentDelete(const bool fForce)
 {
@@ -60,7 +56,7 @@ void CContainer::ContentDelete(const bool fForce)
 		EXC_TRY("Scheduling objects for deletion");
 
         ASSERT(pRec->GetParent() == this);
-        const auto pItem = static_cast<CItem*>(pRec);
+        auto *const pItem = static_cast<CItem*>(pRec);
         pItem->Delete(fForce);
 
 		EXC_CATCH;
@@ -76,7 +72,7 @@ void CContainer::ContentNotifyDelete()
 	// trigger @Destroy on contained items
 	for (size_t i = 0; i < GetContentCount(); )
 	{
-        const auto pItem = static_cast<CItem*>(GetContentIndex(i));
+        auto *const pItem = static_cast<CItem*>(GetContentIndex(i));
 		bool fIncreaseIndex = true;
 		if (!pItem->NotifyDelete())
 		{
@@ -115,7 +111,7 @@ int CContainer::FixWeight()
 
 	for ( CSObjContRec *pObjRec : *this )
 	{
-        const auto pCont = dynamic_cast<CItemContainer *>(pObjRec);
+        auto *const pCont = dynamic_cast<CItemContainer *>(pObjRec);
 		if (!pCont)
 		{
 			//For every non-container item inside this container add its weight to it.
@@ -147,7 +143,7 @@ void CContainer::ContentAddPrivate( CItem *pItem )
 	if ( !pItem->IsType(IT_EQ_TRADE_WINDOW) )  //Don't apply trade window layer item weight on character weight.
 		OnWeightChange(pItem->GetWeight());
 
-	if (const auto pThisObj = dynamic_cast<const CObjBase*>(this))
+	if (const auto *const pThisObj = dynamic_cast<const CObjBase*>(this))
 	{
 		if (pThisObj->IsItem())
 		{
@@ -186,7 +182,7 @@ void CContainer::OnRemoveObj(CSObjContRec *pObjRec )	// Override this = called w
 	// remove this object from the container list.
 	// Overload the RemoveAt for general lists to come here.
     DEBUG_ASSERT(dynamic_cast<const CItem *>(pObjRec));
-    const auto pItem = static_cast<CItem *>(pObjRec);
+    auto *const pItem = static_cast<CItem *>(pObjRec);
 	ASSERT(pItem);
 
 	CSObjCont::OnRemoveObj(pItem);
@@ -206,7 +202,7 @@ void CContainer::r_WriteContent( CScript &s ) const
 	{
 		ASSERT(pObjRec->GetParent() == this);
 
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
 		pItem->r_WriteSafe(s);
 	}
 }
@@ -221,7 +217,7 @@ CItem *CContainer::ContentFind(CResourceID const& rid, const dword dwArg, const 
 
 	for (CSObjContRec* pObjRec : *this)
 	{
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
 		if ( pItem->IsResourceMatch(rid, dwArg) )
 			return pItem;
 
@@ -323,7 +319,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 		if ( iDecendLevels <= 0 )
 			continue;
 
-        if (const auto pCont = dynamic_cast<CItemContainer *>(pItem); pCont && pCont->IsSearchable() )
+        if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem); pCont && pCont->IsSearchable() )
 		{
 			CContainer *pContBase = pCont;
             iRet = pContBase->OnGenericContTriggerForLoop(s, pScriptArgs, pSrc, pResult, StartContext, EndContext, iDecendLevels - 1);
@@ -351,7 +347,7 @@ TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop(
 bool CContainer::ContentFindKeyFor(const CItem *pLocked ) const
 {
 	ADDTOCALLSTACK("CContainer::ContentFindKeyFor");
-	// Look for the key that fits this in my possesion.
+	// Look for the key that fits this in my possession.
 	const CUID& uidLock(pLocked->m_itContainer.m_UIDLock);
 	return (uidLock.IsValidUID() && (nullptr != ContentFind(CResourceID(RES_TYPEDEF, IT_KEY), uidLock)));
 }
@@ -430,7 +426,7 @@ int CContainer::ContentConsume( const CResourceID& rid, int amount, const dword 
 				break;
 		}
 
-        if (const auto pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
+        if (auto *const pCont = dynamic_cast<CItemContainer *>(pItem) )	// this is a sub-container.
 		{
 			if ( rid == CResourceID(RES_TYPEDEF, IT_GOLD) )
 			{
@@ -589,7 +585,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 		{
 			if ( !pChar )
 				continue;
-			if ( pChar->Skill_GetBase(static_cast<SKILL_TYPE>(rid.GetResIndex())) < iResQty )
+			if ( std::cmp_less(pChar->Skill_GetBase(static_cast<SKILL_TYPE>(rid.GetResIndex())) , iResQty) )
 				return 0;
 			continue;
 		}
@@ -606,8 +602,7 @@ int CContainer::ResourceConsume( const CResourceQtyArray *pResources, int iRepli
 
         int iQtyCur = iQtyTotal - (fTest ? ContentConsumeTest(rid, iQtyTotal) : ContentConsume(rid, iQtyTotal));
 		iQtyCur /= iResQty;
-		if ( iQtyCur < iQtyMin )
-			iQtyMin = iQtyCur;
+		iQtyMin = std::min(iQtyCur, iQtyMin);
 	}
 
 	if ( iQtyMin == INT32_MAX )	// it has no resources ? So i guess we can make it from nothing ?
@@ -620,7 +615,7 @@ size_t CContainer::ContentCountAll() const
 {
 	ADDTOCALLSTACK("CContainer::ContentCountAll");
 	// RETURN:
-	//  A count of all the items in this container and sub contianers.
+	//  A count of all the items in this container and sub containers.
 	size_t iTotal = 0;
 	for (const CSObjContRec* pObjRec : *this)
 	{
@@ -684,7 +679,7 @@ bool CContainer::r_WriteValContainer(const lpctstr ptcKey, CSString &sVal, CText
 		"COUNT",
 		"FCOUNT",
 		"RESCOUNT",
-		"RESTEST"
+		"RESTEST",
 	};
 
     const int i = FindTableHeadSorted(ptcKey, sm_szParams, std::size(sm_szParams));

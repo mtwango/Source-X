@@ -61,7 +61,8 @@ void CSectorList::Init()
         sd.uiSectorSizeDivShift = static_cast<uint16>(sector_shift);
 
 
-		short iSectorX = 0, iSectorY = 0;
+		short iSectorX = 0;
+		short iSectorY = 0;
         for (int iSectorIndex = 0; iSectorIndex < iSectorQty; ++iSectorIndex)
 		{
             // Map sectors are ordered in row-major order:
@@ -72,7 +73,7 @@ void CSectorList::Init()
                 ++iSectorY;
             }
 
-			CSector* pSector = &(sd._pSectors[iSectorIndex]);
+			CSector* pSector = &sd._pSectors[iSectorIndex];
 			pSector->Init(iSectorIndex, static_cast<uchar>(iMap), iSectorX, iSectorY);
 
             ++iSectorX;
@@ -80,7 +81,7 @@ void CSectorList::Init()
 
 	}
 
-	for (MapSectorsData& sd : _SectorData)
+	for (MapSectorsData const& sd : _SectorData)
 	{
 		if (!sd._pSectors)
 			continue;
@@ -99,7 +100,7 @@ void CSectorList::Close(const bool fClosingWorld)
 {
 	ADDTOCALLSTACK("CSectorList::Close");
 
-	for (MapSectorsData& sd : _SectorData)
+	for (MapSectorsData const& sd : _SectorData)
 	{
 		if (!sd._pSectors)
 			continue;
@@ -161,7 +162,8 @@ CSector* CSectorList::GetSectorByCoordsUnchecked(const int map, const short x, c
 
     // We know that sector sizes MUST be multiple of 2, so just use bit shifts.
     //const int xSectTest = (x / sd.iSectorSize), ySectTest = (y / sd.iSectorSize);
-    const int xSect = (x >> sd.uiSectorSizeDivShift), ySect = (y >> sd.uiSectorSizeDivShift);
+    const int xSect = (x >> sd.uiSectorSizeDivShift);
+    const int ySect = (y >> sd.uiSectorSizeDivShift);
     //ASSERT(xSectTest == xSect);
     //ASSERT(ySectTest == ySect);
 
@@ -177,7 +179,7 @@ CSector* CSectorList::GetSectorByCoordsUnchecked(const int map, const short x, c
 */
     const int index = ((ySect * sd.iSectorColumns) + xSect);
     DEBUG_ASSERT(index < sd.iSectorQty);
-    return &(sd._pSectors[index]);
+    return &sd._pSectors[index];
 //#endif
 
 }
@@ -206,7 +208,7 @@ CSector* CSectorList::GetSectorAbsolute(const int index) noexcept
 		if ((base + sd.iSectorQty) > index)
 		{
 			const int iSummation = (index - base);
-			return &(sd._pSectors[iSummation]);
+			return &sd._pSectors[iSummation];
 		}
 
 		base += sd.iSectorQty;

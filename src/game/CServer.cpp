@@ -14,9 +14,6 @@
 #include "../common/sphere_library/sstring.h"
 #include "../common/sphere_library/snetwork.h"
 #include "../common/crypto/CCryptoKeyCalc.h"
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
-//#include "../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../common/CLog.h"
 #include "../common/CUOClientVersion.h"
 #include "../common/sphereversion.h"
@@ -83,8 +80,10 @@ static void defragSphere(const char *path)
     CSFileText inf;
     CSFile ouf;
     char file_buf[1024];
-    char path_buf[SPHERE_MAX_PATH], path_buf_2[SPHERE_MAX_PATH];
-    char *str_ptr = nullptr, *str_ptr_2 = nullptr;
+    char path_buf[SPHERE_MAX_PATH];
+    char path_buf_2[SPHERE_MAX_PATH];
+    char *str_ptr = nullptr;
+    char *str_ptr_2 = nullptr;
 
     g_Log.Event(LOGM_INIT,	"Defragmentation (UID alteration) of " SPHERE_TITLE " saves.\n"
                            "Use it on your risk and if you know what you are doing since it can possibly harm your server.\n"
@@ -95,7 +94,7 @@ static void defragSphere(const char *path)
     constexpr dword MAX_UID = 40'000'000U; // limit to 40mln of objects, takes 40mln*4bytes ~= 160mb
 
     dword dwIdxUID = 0;
-    const auto puids = static_cast<dword*>(calloc(MAX_UID, sizeof(dword)));
+    auto *const puids = static_cast<dword*>(calloc(MAX_UID, sizeof(dword)));
     for ( uint i = 0; i < 3; ++i )
     {
         Str_CopyLimitNull(path_buf, path, sizeof(path_buf));
@@ -109,7 +108,8 @@ static void defragSphere(const char *path)
             g_Log.Event(LOGM_INIT, "Cannot open file for reading. Skipped!\n");
             continue;
         }
-        size_t uiBytesRead = 0, uiTotalMb = 0;
+        size_t uiBytesRead = 0;
+        size_t uiTotalMb = 0;
         while ((dwIdxUID < MAX_UID) && !feof(inf._pStream))
         {
             fgets(file_buf, sizeof(file_buf), inf._pStream);
@@ -171,7 +171,8 @@ static void defragSphere(const char *path)
             continue;
         }
 
-        size_t uiBytesRead = 0, uiTotalMb = 0;
+        size_t uiBytesRead = 0;
+        size_t uiTotalMb = 0;
         while ( inf.ReadString(file_buf, sizeof(file_buf)) )
         {
             dwIdxUID = static_cast<dword>(strlen(file_buf));
@@ -194,27 +195,43 @@ static void defragSphere(const char *path)
             //	mounts seems having ACTARG1 > 0x30000000. The actual UID is ACTARG1-0x30000000. The
             //	new also should be new+0x30000000. need investigation if this can help making mounts
             //	not to disappear after the defrag
-            if (( file_buf[0] == 'A' ) && ( strstr(file_buf, "ACTARG1=0") == file_buf ))		// ACTARG1=
+            if (( file_buf[0] == 'A' ) && ( strstr(file_buf, "ACTARG1=0") == file_buf ))
+            {		// ACTARG1=
                 str_ptr += 8;
-            else if (( file_buf[0] == 'C' ) && ( strstr(file_buf, "CONT=0") == file_buf ))			// CONT=
+            }
+            else if (( file_buf[0] == 'C' ) && ( strstr(file_buf, "CONT=0") == file_buf ))
+            {			// CONT=
                 str_ptr += 5;
-            else if (( file_buf[0] == 'C' ) && ( strstr(file_buf, "CHARUID=0") == file_buf ))		// CHARUID=
+            }
+            else if (( file_buf[0] == 'C' ) && ( strstr(file_buf, "CHARUID=0") == file_buf ))
+            {		// CHARUID=
                 str_ptr += 8;
-            else if (( file_buf[0] == 'L' ) && ( strstr(file_buf, "LASTCHARUID=0") == file_buf ))	// LASTCHARUID=
+            }
+            else if (( file_buf[0] == 'L' ) && ( strstr(file_buf, "LASTCHARUID=0") == file_buf ))
+            {	// LASTCHARUID=
                 str_ptr += 12;
-            else if (( file_buf[0] == 'L' ) && ( strstr(file_buf, "LINK=0") == file_buf ))			// LINK=
+            }
+            else if (( file_buf[0] == 'L' ) && ( strstr(file_buf, "LINK=0") == file_buf ))
+            {			// LINK=
                 str_ptr += 5;
+            }
             else if (( file_buf[0] == 'M' ) && ( strstr(file_buf, "MEMBER=0") == file_buf ))		// MEMBER=
             {
                 str_ptr += 7;
                 fSpecial = true;
             }
-            else if (( file_buf[0] == 'M' ) && ( strstr(file_buf, "MORE1=0") == file_buf ))		// MORE1=
+            else if (( file_buf[0] == 'M' ) && ( strstr(file_buf, "MORE1=0") == file_buf ))
+            {		// MORE1=
                 str_ptr += 6;
-            else if (( file_buf[0] == 'M' ) && ( strstr(file_buf, "MORE2=0") == file_buf ))		// MORE2=
+            }
+            else if (( file_buf[0] == 'M' ) && ( strstr(file_buf, "MORE2=0") == file_buf ))
+            {		// MORE2=
                 str_ptr += 6;
-            else if (( file_buf[0] == 'S' ) && ( strstr(file_buf, "SERIAL=0") == file_buf ))		// SERIAL=
+            }
+            else if (( file_buf[0] == 'S' ) && ( strstr(file_buf, "SERIAL=0") == file_buf ))
+            {		// SERIAL=
                 str_ptr += 7;
+            }
             else if ((( file_buf[0] == 'T' ) && ( strstr(file_buf, "TAG.") == file_buf )) ||		// TAG.=
                      (( file_buf[0] == 'R' ) && ( strstr(file_buf, "REGION.TAG") == file_buf )))
             {
@@ -229,13 +246,15 @@ static void defragSphere(const char *path)
                 ++str_ptr;
             }
             else
+            {
                 str_ptr = nullptr;
+            }
 
             //	UIDs are always hex, so prefixed by 0
             if ( str_ptr && ( *str_ptr != '0' ))
                 str_ptr = nullptr;
 
-            //	here we got potentialy UID-contained variable
+            //	here we got potentially UID-contained variable
             //	check if it really is only UID-like var containing
             if ( str_ptr )
             {
@@ -271,8 +290,8 @@ static void defragSphere(const char *path)
                 *(str_ptr-1) = c1;
                 *str_ptr = c2;
                 //	Note 28-Jun-2004
-                //	The search algourytm is very simple and fast. But maybe integrate some other, at least /2 algorythm
-                //	since has amount/2 tryes at worst chance to get the item and never scans the whole array
+                //	The search algorithm is very simple and fast. But maybe integrate some other, at least /2 algorythm
+                //	since has amount/2 tries at worst chance to get the item and never scans the whole array
                 //	It should improve speed since defragmenting 150Mb saves takes ~2:30 on 2.0Mhz CPU
                 {
                     dword dStep = dwTotalUIDs /2;
@@ -364,9 +383,7 @@ CServer::CServer() : CServerDef( SPHERE_TITLE, CSocketAddressIP( SOCKET_LOCAL_AD
 	memset(m_OutPacketFilter, 0, sizeof(m_OutPacketFilter));
 }
 
-CServer::~CServer()
-{
-}
+CServer::~CServer() = default;
 
 void CServer::SetSignals(const bool fMsg )
 {
@@ -758,14 +775,14 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
 {
 	ADDTOCALLSTACK("CServer::OnConsoleCmd");
 	// RETURN: false = unsuccessful command.
-	size_t len = sText.GetLength();
+	size_t const len = sText.GetLength();
 
 	// We can't have a command with no length
 	if ( len <= 0 )
 		return true;
 
 	// Convert first character to lowercase
-	tchar low = static_cast<tchar>(tolower(sText[0]));
+	tchar const low = static_cast<tchar>(tolower(sText[0]));
 	bool fRet = true;
 
 	if ((( len > 2 ) || (( len == 2 ) && ( sText[1] != '#' ))) && ( sText[0] != 'd' ))
@@ -804,7 +821,7 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
 				);
 			break;
 		case '#':	//	# - save world, ## - save both world and statics
-			{		// Start a syncronous save or finish a background save synchronously
+			{		// Start a synchronous save or finish a background save synchronously
 				if ( g_Serv.m_fResyncPause )
 					goto do_resync;
 
@@ -1006,10 +1023,10 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
                 {
                     g_Log.Event(LOGL_EVENT, "Current active threads: %" PRIuSIZE_T ".\n", ThreadHolder::get().getActiveThreads());
                 }
-				size_t iThreadCount = ThreadHolder::get().getActiveThreads();
+				size_t const iThreadCount = ThreadHolder::get().getActiveThreads();
 				for ( size_t iThreads = 0; iThreads < iThreadCount; ++iThreads )
 				{
-                    if (AbstractThread *thrCurrent = ThreadHolder::get().getThreadAt(iThreads); thrCurrent != nullptr)
+                    if (AbstractThread const * thrCurrent = ThreadHolder::get().getThreadAt(iThreads); thrCurrent != nullptr)
 					{
                         pSrc->SysMessagef(
                             "%" PRIuSIZE_T " - Id: %" PRIu64 ", Priority: %d, Name: %s.\n",
@@ -1069,7 +1086,7 @@ bool CServer::OnConsoleCmd( CSString & sText, CTextConsole * pSrc )
                 catch (const CSError& e)
                 {
                     // the following call will destroy the stack trace on linux due to
-                    // a call to CSFile::Close fromn CLog::EventStr.
+                    // a call to CSFile::Close from CLog::EventStr.
                     g_Log.Event( LOGM_DEBUG, "Caught exception\n" );
                     _EXC_CATCH_EXCEPTION_GENERIC(&e, "CSError");
                 }
@@ -1127,7 +1144,8 @@ longcommand:
 		{
 			size_t			i = 0;
 			CResourceScript	*script;
-			FILE			*f, *f1;
+			FILE			 *f;
+			FILE			 *f1;
 			char			*z = Str_GetTemp();
 			char			*y = Str_GetTemp();
 			char			*x;
@@ -1406,7 +1424,7 @@ void CServer::ProfileDump(const CTextConsole * pSrc, const bool bDump )
 			continue;
 
 		const ProfileData& profile = static_cast<AbstractSphereThread*>(thrCurrent)->m_profile;
-		if (profile.IsEnabled() == false)
+		if (!profile.IsEnabled())
 			continue;
 
         if (pSrc != this)
@@ -1723,7 +1741,7 @@ enum SV_TYPE
 	SV_TIME, // read only
 	SV_UNBLOCKIP,
 	SV_VARLIST,
-	SV_QTY
+	SV_QTY,
 };
 
 lpctstr const CServer::sm_szVerbKeys[SV_QTY+1] =
@@ -1763,7 +1781,7 @@ lpctstr const CServer::sm_szVerbKeys[SV_QTY+1] =
 	"TIME", // read only
 	"UNBLOCKIP",
 	"VARLIST",
-	nullptr
+	nullptr,
 };
 
 bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
@@ -1784,7 +1802,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
         {
             // RES_FUNCTION call
             CSString sVal;
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            CScriptTriggerArgsPtr const pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->Init(s.GetArgRaw());
             if ( r_Call( uiFunctionIndex, pScriptArgs, pSrc, &sVal ) )
                 return true;
@@ -1819,7 +1837,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
         if (!strnicmp(ptcKey, "GMPAGE.", 7))
         {
             ptcKey += 7;
-            size_t iNum = Exp_GetVal(ptcKey);
+            size_t const iNum = Exp_GetVal(ptcKey);
             if (iNum >= g_World.m_GMPages.size())
                 return false;
 
@@ -1878,7 +1896,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 				int iTimeDecay(-1);
 
 				tchar* ppArgs[2];
-				if (Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ", ") == false)
+				if (!static_cast<bool>(Str_ParseCmds(s.GetArgRaw(), ppArgs, std::size(ppArgs), ", ")))
 					return false;
 
 				if (ppArgs[1])
@@ -1968,7 +1986,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			if ( s.HasArgs())
 			{
 				tchar * Arg_ppCmd[5];
-				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
+				int const Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( Arg_Qty <= 0 )
 					break;
 				// IMPFLAGS_ITEMS
@@ -2045,7 +2063,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			if (s.HasArgs())
 			{
 				tchar * Arg_ppCmd[5];
-				int Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
+				int const Arg_Qty = Str_ParseCmds( s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd));
 				if ( Arg_Qty <= 0 )
 				{
 					break;
@@ -2079,9 +2097,7 @@ bool CServer::r_Verb( CScript &s, CTextConsole * pSrc )
 			break;
 		case SV_LOAD:
 			// Load a resource file.
-			if ( g_Cfg.LoadResourcesAdd( s.GetArgStr()) == nullptr )
-				return false;
-			return true;
+			return g_Cfg.LoadResourcesAdd( s.GetArgStr()) != nullptr;
 
 		case SV_LOG:
 			{
@@ -2146,7 +2162,7 @@ log_cont:
 			if (s.HasArgs())
 			{
 				tchar * Arg_ppCmd[4];
-                if (size_t Arg_Qty = Str_ParseCmds(s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd)); Arg_Qty <= 0 )
+                if (size_t const Arg_Qty = Str_ParseCmds(s.GetArgRaw(), Arg_ppCmd, std::size(Arg_ppCmd)); Arg_Qty <= 0 )
 				{
 					break;
 				}
@@ -2215,14 +2231,14 @@ log_cont:
 
                 if (pSrc != this)
                 {
-                    pSrc->SysMessage("Memory shrinked succesfully.\n");
+                    pSrc->SysMessage("Memory shrunk successfully.\n");
                 }
                 else
                 {
-                    g_Log.Event(LOGL_EVENT, "Memory shrinked succesfully.\n");
+                    g_Log.Event(LOGL_EVENT, "Memory shrunk successfully.\n");
                 }
 #else
-				g_Log.EventError( "Command not avaible on *NIX os.\n" );
+				g_Log.EventError( "Command not available on *NIX os.\n" );
 				return false;
 #endif
 			} break;
@@ -2289,9 +2305,6 @@ log_cont:
 }
 
 //*********************************************************
-
-extern void defragSphere(const char *);
-
 
 bool CServer::CommandLinePreLoad(const int argc, tchar * argv[] )
 {
@@ -2519,7 +2532,7 @@ bool CServer::SocketsInit( CSocket & socket )
 		return false;
 	}
 
-	linger lval;
+	linger lval{};
 	lval.l_onoff = 0;
 	lval.l_linger = 10;
 	if ((0 != socket.SetSockOpt(SO_LINGER, &lval, sizeof(lval))) ||
@@ -2674,7 +2687,9 @@ void CServer::_OnTick()
 			SetResyncPause(false, m_fResyncRequested);
 		}
 		else
+		{
             SetResyncPause(false, m_fResyncRequested, true);
+        }
 		m_fResyncRequested = nullptr;
 	}
 
@@ -2767,8 +2782,10 @@ nowinsock:		g_Log.Event(LOGL_FATAL|LOGM_INIT, "Winsock 1.1 not found!\n");
 	{
 		EXC_SET_BLOCK( "Connecting to MySQL server" );
 		if (_hDb.Connect())
+		{
 			g_Log.Event( LOGM_NOCONTEXT, "MySQL connected to server: '%s'.\n", g_Cfg.m_sMySqlHost.GetBuffer() );
-		else
+		}
+	    else
 		{
 			g_Log.EventError( "Can't connect to MySQL DataBase. Check your ini settings or if the server is working.\n" );
 			return false;

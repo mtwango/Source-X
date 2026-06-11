@@ -28,7 +28,7 @@ void CUOIndexRec::SetupIndex(const dword dwOffset, const dword dwLength )
 
 dword CUOIndexRec::GetFileOffset() const
 {
-    return ( m_dwOffset );
+    return m_dwOffset ;
 }
 
 dword CUOIndexRec::GetBlockLength() const

@@ -4,13 +4,12 @@
 #include "../chars/CChar.h"
 #include "../items/CItem.h"
 
-
 lpctstr const CCPropsItemEquippable::_ptcPropertyKeys[PROPIEQUIP_QTY + 1] =
 {
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsItemEquippable_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsItemEquippable::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
@@ -21,7 +20,7 @@ RESDISPLAY_VERSION CCPropsItemEquippable::_iPropertyExpansion[PROPIEQUIP_QTY + 1
 #define ADDPROP(a,b,c) c,
 #include "../../tables/CCPropsItemEquippable_props.tbl"
 #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsItemEquippable::CCPropsItemEquippable() : CComponentProps(COMP_PROPS_ITEMEQUIPPABLE)
@@ -236,7 +235,7 @@ void CCPropsItemEquippable::r_Write(CScript & s)
 void CCPropsItemEquippable::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemEquippable::Copy");
-    const auto pTarget = static_cast<const CCPropsItemEquippable*>(target);
+    const auto *const pTarget = static_cast<const CCPropsItemEquippable*>(target);
     if (!pTarget)
     {
         return;

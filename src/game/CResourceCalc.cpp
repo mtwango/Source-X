@@ -1,9 +1,10 @@
 // The physics calculations of the world.
 
+#include <algorithm>
+
 #include "../common/sphere_library/CSRand.h"
 #include "chars/CChar.h"
 #include "chars/CCharNPC.h"
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "components/CCPropsChar.h"
 #include "items/CItem.h"
 #include "CServerConfig.h"
@@ -22,8 +23,7 @@ int CServerConfig::Calc_MaxCarryWeight( const CChar * pChar ) const
 
 	ASSERT(pChar);
 	int iQty = 40 + ( pChar->Stat_GetAdjusted(STAT_STR) * 35 / 10 ) + pChar->m_ModMaxWeight;
-	if ( iQty < 0 )
-		iQty = 0;
+	iQty = std::max(iQty, 0);
 	if ( (m_iRacialFlags & RACIALF_HUMAN_STRONGBACK) && pChar->IsHuman())
 		iQty += 60;		//Humans can always carry +60 stones (Strong Back racial trait)
 	return (iQty * WEIGHT_UNITS);
@@ -61,8 +61,7 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 				iSwingSpeed = (pChar->Stat_GetAdjusted(STAT_DEX) + 100) * iBaseSpeed;
 				iSwingSpeed = maximum(1, iSwingSpeed);
 				iSwingSpeed = (iSpeedScaleFactor * 10) / iSwingSpeed;
-				if ( iSwingSpeed < 5 )
-					iSwingSpeed = 5;
+				iSwingSpeed = std::max(iSwingSpeed, 5);
 				break;
 			}
 
@@ -80,7 +79,9 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 				iSwingSpeed += iWeightMod;
 			}
 			else
+			{
 				iSwingSpeed += 2;
+            }
 			break;
 		}
 
@@ -90,8 +91,7 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 			iSwingSpeed = (pChar->Stat_GetVal(STAT_DEX) + 100) * iBaseSpeed;
 			iSwingSpeed = maximum(1, iSwingSpeed);
 			iSwingSpeed = (iSpeedScaleFactor * 10) / iSwingSpeed;
-			if ( iSwingSpeed < 1 )
-				iSwingSpeed = 1;
+			iSwingSpeed = std::max(iSwingSpeed, 1);
 			break;
 		}
 
@@ -102,8 +102,8 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 			iSwingSpeed = iSwingSpeed * (100 + iSwingSpeedIncrease) / 100;
 			iSwingSpeed = maximum(1, iSwingSpeed);
 			iSwingSpeed = ((iSpeedScaleFactor * 10) / iSwingSpeed) / 2;
-			if ( iSwingSpeed < 12 )		//1.25
-				iSwingSpeed = 12;
+			iSwingSpeed = std::max(iSwingSpeed, 12); //1.25
+
 			break;
 		}
 
@@ -114,8 +114,7 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 			iSwingSpeed = iBaseSpeed * (100 + iSwingSpeedIncrease) / 100;
 			iSwingSpeed = maximum(1, iSwingSpeed);
 			iSwingSpeed = (iSpeedScaleFactor / ((pChar->Stat_GetVal(STAT_DEX) + 100) * iSwingSpeed)) - 2;	// get speed in ticks of 0.25s each
-			if ( iSwingSpeed < 5 )
-				iSwingSpeed = 5;
+			iSwingSpeed = std::max(iSwingSpeed, 5);
 			iSwingSpeed = (iSwingSpeed * 10) / 4;		// convert tenths of second in 0.25s ticks (OSI ticking period)
 			break;
 		}
@@ -124,8 +123,7 @@ int CServerConfig::Calc_CombatAttackSpeed( const CChar * pChar, const CItem * pW
 		{
 			// ML formula		(doesn't use m_iSpeedScaleFactor and it's only compatible with ML speed format eg. 0.25 ~ 5.00 instead 0 ~ 50)
 			iSwingSpeed = ((iBaseSpeed * 4) - (pChar->Stat_GetVal(STAT_DEX) / 30)) * (100 / (100 + iSwingSpeedIncrease));	// get speed in ticks of 0.25s each
-			if ( iSwingSpeed < 5 )
-				iSwingSpeed = 5;
+			iSwingSpeed = std::max(iSwingSpeed, 5);
 			iSwingSpeed = (iSwingSpeed * 10) / 4;		// convert tenths of second in 0.25s ticks (OSI ticking period)
 			break;
 		}
@@ -168,10 +166,10 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 
 		    // Make it easier to hit target having a ranged weapon.
 			if (g_Cfg.IsSkillFlag(skillTarget, SKF_RANGED) && !g_Cfg.IsSkillFlag(skillAttacker, SKF_RANGED))
-				iSkillDefend = (iSkillDefend + iStam * 9) / 2;
+				iSkillDefend = (iSkillDefend + (iStam * 9)) / 2;
 			// The defender doesn't have a ranged weapon or both do.
 			else
-				iSkillDefend = (iSkillDefend + iStam * 10) / 2;
+				iSkillDefend = (iSkillDefend + (iStam * 10)) / 2;
 
 			int iChance = (iSkillAttack - iSkillDefend) / 5;
 			iChance = (iSkillVal - iChance) / 10;
@@ -265,8 +263,7 @@ int CServerConfig::Calc_CombatChanceToParry(const CChar * pChar, CItem*& pItemPa
 			iParryChance = (iParrying - iBushido) / 40;
 			if ((iParrying >= 1000) || (iBushido >= 1000))
 				iParryChance += 5;
-			if (iParryChance < 0)
-				iParryChance = 0;
+			iParryChance = std::max(iParryChance, 0);
 		}
 		else if (pChar->m_uidWeapon.IsItem())		// parry using weapon
 		{
@@ -363,12 +360,11 @@ int CServerConfig::Calc_KarmaKill(const CChar * pKill, const NOTO_TYPE NotoThem 
 	ADDTOCALLSTACK("CServerConfig::Calc_KarmaKill");
 	// Karma change on kill ?
 
-	int iKarmaChange = -(pKill->GetKarma());
+	int iKarmaChange = -pKill->GetKarma();
 	if ( NotoThem >= NOTO_CRIMINAL )
 	{
 		// No bad karma for killing a criminal or my aggressor.
-		if ( iKarmaChange < 0 )
-			iKarmaChange = 0;
+		iKarmaChange = std::max(iKarmaChange, 0);
 	}
 
 	// Check if the victim is a PC, then higher gain/loss.
@@ -442,10 +438,10 @@ int CServerConfig::Calc_StealingItem(const CChar * pCharThief, const CItem * pIt
 
 	// int iDifficulty = iDexMark/2 + (iSkillMark/5) + CSRand::GetVal(iDexMark/2) + IMulDivLL( iWeightItem, 4, WEIGHT_UNITS );
 	// Melt mod:
-    int iDifficulty = (iSkillMark/5) + CSRand::GetVal(iDexMark/2) + IMulDiv( iWeightItem, 4, WEIGHT_UNITS );
+    int iDifficulty = (iSkillMark / 5) + CSRand::GetVal(iDexMark / 2) + IMulDiv( iWeightItem, 4, WEIGHT_UNITS );
 
 	if ( pItem->IsItemEquipped())
-		iDifficulty += iDexMark/2 + pCharMark->Stat_GetAdjusted(STAT_INT);		// This is REALLY HARD to do.
+		iDifficulty += (iDexMark / 2) + pCharMark->Stat_GetAdjusted(STAT_INT);		// This is REALLY HARD to do.
 	if ( pCharThief->IsStatFlag( STATF_WAR )) // all keyed up.
 		iDifficulty += CSRand::GetVal( iDexMark/2 );
 
@@ -481,21 +477,19 @@ bool CServerConfig::Calc_CrimeSeen( const CChar * pCharThief, const CChar * pCha
 	if ( (SkillToSee == SKILL_SNOOPING) || (SkillToSee == SKILL_STEALING) )
 		iChanceToSee = 1000 + (pCharViewer->Skill_GetBase(SkillToSee) - pCharThief->Skill_GetBase(SkillToSee));
 	else
-		iChanceToSee = 400 + ( pCharViewer->Stat_GetAdjusted(STAT_DEX) + pCharViewer->Stat_GetAdjusted(STAT_INT)) * 50;
+		iChanceToSee = 400 + (( pCharViewer->Stat_GetAdjusted(STAT_DEX) + pCharViewer->Stat_GetAdjusted(STAT_INT)) * 50);
 
 	// the targets chance of seeing.
 	if ( fBonus )
 	{
 		// Up by 30 % if it's me.
 		iChanceToSee += iChanceToSee/3;
-		if ( iChanceToSee < 50 ) // always atleast 5% chance.
-			iChanceToSee=50;
+		iChanceToSee = std::max(iChanceToSee, 50); // always atleast 5% chance.
 	}
 	else
 	{
 		// the bystanders chance of seeing.
-		if ( iChanceToSee < 10 ) // always atleast 1% chance.
-			iChanceToSee=10;
+		iChanceToSee = std::max(iChanceToSee, 10); // always atleast 1% chance.
 	}
 
 	if ( CSRand::GetVal(1000) > iChanceToSee )
@@ -537,7 +531,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	bool fScroll = false;
 	if (pObj != pCharCaster)
 	{
-        if (const auto pItem = dynamic_cast<const CItem *>(pObj))
+        if (const auto *const pItem = dynamic_cast<const CItem *>(pObj))
 		{
 			const IT_TYPE iType = pItem->GetType();
 			if (iType == IT_WAND)
@@ -552,7 +546,7 @@ ushort CServerConfig::Calc_SpellManaCost(CChar* pCharCaster, const CSpellDef* pS
 	const int iLowerManaCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERMANACOST, pBaseCCPChar);
 	ushort iCost = pSpell->m_wManaUse;
 	if (iLowerManaCost != 0) //LowerManaCost can be negative, and thus increasing the mana cost!
-		iCost = static_cast<ushort>(iCost - (iCost * iLowerManaCost) / 100);
+		iCost = static_cast<ushort>(iCost - ((iCost * iLowerManaCost) / 100));
 
 	if ( fScroll )
 		return iCost / 2; //spells cast from scrolls consume half of the mana.
@@ -570,7 +564,7 @@ size_t CServerConfig::Calc_SpellReagentsConsume(CChar* pCharCaster, const CSpell
 	//Check for reagents
 	if (g_Cfg.m_fReagentsRequired && !pCharCaster->m_pNPC && (pObj == pCharCaster))
 	{
-		const CResourceQtyArray* pReagents = &(pSpell->m_Reags);
+		const CResourceQtyArray* pReagents = &pSpell->m_Reags;
 		const CCPropsChar* pCCPChar = pCharCaster->GetComponentProps<CCPropsChar>();
 		const CCPropsChar* pBaseCCPChar = pCharCaster->Base_GetDef()->GetComponentProps<CCPropsChar>();
         if (const int iLowerReagentCost = pCharCaster->GetPropNum(pCCPChar, PROPCH_LOWERREAGENTCOST, pBaseCCPChar); CSRand::GetVal(100) >= iLowerReagentCost)

@@ -1,11 +1,9 @@
 #include "../common/sphere_library/CSRand.h"
-//#include "../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../network/CClientIterator.h"
 #include "chars/CChar.h"
 #include "clients/CClient.h"
 #include "CWorldComm.h"
 #include "CServer.h"
-
 
 static constexpr SOUND_TYPE sm_Sounds_Ghost[] =
 {
@@ -13,7 +11,7 @@ static constexpr SOUND_TYPE sm_Sounds_Ghost[] =
 	SOUND_GHOST_2,
 	SOUND_GHOST_3,
 	SOUND_GHOST_4,
-	SOUND_GHOST_5
+	SOUND_GHOST_5,
 };
 
 void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, const HUE_TYPE wHue, TALKMODE_TYPE mode, const FONT_TYPE font ) // static
@@ -27,7 +25,7 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, co
 	{
 		if ( pSrc->IsChar() )
 		{
-            const auto pSrcChar = static_cast<const CChar *>(pSrc);
+            const auto *const pSrcChar = static_cast<const CChar *>(pSrc);
 			ASSERT(pSrcChar);
 
 			// Are they dead? Garble the text. unless we have SpiritSpeak
@@ -35,7 +33,9 @@ void CWorldComm::Speak( const CObjBaseTemplate * pSrc, const lpctstr pszText, co
 		}
 	}
 	else
+	{
 		mode = TALKMODE_BROADCAST;
+    }
 
 	//CSString sTextUID;
 	//CSString sTextName;	// name labelled text.
@@ -123,7 +123,9 @@ void CWorldComm::SpeakUNICODE( const CObjBaseTemplate * pSrc, const nachar * pwT
 		}
 	}
 	else
+	{
 		mode = TALKMODE_BROADCAST;
+    }
 
 	if (mode != TALKMODE_SPELL)
 	{

@@ -1,5 +1,4 @@
 
-//#include "../../common/CException.h" // included in the precompiled header
 #include "../chars/CChar.h"
 #include "../CWorld.h"
 #include "../CWorldGameTime.h"
@@ -64,7 +63,7 @@ enum GC_TYPE
 	GC_P,
 	GC_REASON,
 	GC_TIME,
-	GC_QTY
+	GC_QTY,
 };
 
 lpctstr const CGMPage::sm_szLoadKeys[GC_QTY + 1] =
@@ -76,9 +75,8 @@ lpctstr const CGMPage::sm_szLoadKeys[GC_QTY + 1] =
 	"P",
 	"REASON",
 	"TIME",
-	nullptr
+	nullptr,
 };
-
 
 bool CGMPage::r_WriteVal(const lpctstr pszKey, CSString &sVal, CTextConsole *pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {

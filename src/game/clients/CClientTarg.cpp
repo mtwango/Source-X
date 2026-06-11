@@ -1,10 +1,8 @@
-// An item is targetted.
+// An item is targeted.
 
 #include "../../network/send.h"
 #include "../../common/resource/sections/CItemTypeDef.h"
 #include "../../common/sphere_library/CSRand.h"
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../common/CLog.h"
 #include "../chars/CChar.h"
 #include "../items/CItemCorpse.h"
@@ -19,9 +17,8 @@
 #include "../triggers.h"
 #include "CClient.h"
 
-
 ////////////////////////////////////////////////////////
-// Targetted GM functions.
+// Targeted GM functions.
 
 bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 {
@@ -50,8 +47,10 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
                      static_cast<dword>(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
 	}
 	else
+	{
 		snprintf(pszLogMsg, Str_TempLength(), "'%s' commands uid=0%x (%s) to '%s'", GetName(),
                  static_cast<dword>(pObj->GetUID()), pObj->GetName(), static_cast<lpctstr>(m_Targ_Text));
+    }
 
 	// Check priv level for the new verb.
 	if ( ! g_Cfg.CanUsePrivVerb( pObj, m_Targ_Text, this ))
@@ -81,7 +80,7 @@ bool CClient::OnTarg_Obj_Set( CObjBase * pObj )
 
 	if ( GetPrivLevel() >= g_Cfg.m_iCommandLog )
 		g_Log.Event( LOGM_GM_CMDS, "%s=%d\n", pszLogMsg, fRet);
-	return( fRet );
+	return fRet;
 }
 
 
@@ -189,7 +188,7 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 	// Put my newbie equipped items on it.
 	for (CSObjContRec* pObjRec : pChar1->GetIterationSafeContReverse())
 	{
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
 		if ( !pItem->IsAttr(ATTR_MOVE_NEVER) )
 			continue; // keep GM stuff.
 		if ( !CItemBase::IsVisibleLayer(pItem->GetEquipLayer()) )
@@ -213,7 +212,7 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 	{
 		for (CSObjContRec* pObjRec : pPack1->GetIterationSafeContReverse())
 		{
-            const auto pItem = static_cast<CItem*>(pObjRec);
+            auto *const pItem = static_cast<CItem*>(pObjRec);
 			if ( !pItem->IsAttr(ATTR_MOVE_NEVER) )	// keep newbie stuff.
 				continue;
 			pPack2->ContentAdd(pItem);	// add content
@@ -223,7 +222,7 @@ bool CClient::Cmd_Control( CChar * pChar2 )
 	pChar1->ClientDetach();
 	m_pChar = nullptr;
 	CClient * pClient2 = pChar2->GetClientActive();
-	if ( pClient2 )	// controled char is a player/client.
+	if ( pClient2 )	// controlled char is a player/client.
 	{
 		pChar2->ClientDetach();
 		pClient2->m_pChar = nullptr;
@@ -378,7 +377,7 @@ bool CClient::OnTarg_Item_Add(const CObjBase * pObj, CPointMap & pt )
 	{
         const CItem *pMulti = OnTarg_Use_Multi(pItem->Item_GetDef(), pt, pItem);
 		pItem->Delete();
-		return pMulti ? true : false;
+		return pMulti != nullptr;
 	}
 
     pItem->SetAmount(m_tmAdd.m_vcAmount);
@@ -398,7 +397,7 @@ bool CClient::OnTarg_Item_Link( CObjBase * pObj2 )
 		return false;
 	}
 
-    auto pItem2 = dynamic_cast <CItem*>(pObj2);
+    auto *pItem2 = dynamic_cast <CItem*>(pObj2);
 	CItem * pItem1 = m_Targ_UID.ItemFind();
 	if ( pItem1 == nullptr )
 	{
@@ -470,7 +469,7 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 	{
 		for ( int my = rect.m_top; my <= rect.m_bottom; my++)
 		{
-			CPointMap ptCur(static_cast<word>(mx), static_cast<word>(my), 0, static_cast<uchar>(rect.m_map));
+			CPointMap const ptCur(static_cast<word>(mx), static_cast<word>(my), 0, static_cast<uchar>(rect.m_map));
 			const CServerMapBlock * pBlock = CWorldMap::GetMapBlock( ptCur );
 			if ( pBlock == nullptr )
 				continue;
@@ -495,10 +494,7 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 				}
 				else
 				{
-					if ( pStatic->m_z < zlowest)
-					{
-						zlowest = pStatic->m_z;
-					}
+					zlowest = std::min<int>(pStatic->m_z, zlowest);
 				}
 			}
 		}
@@ -509,8 +505,8 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 
 	// Extract dynamics as well.
 
-    const int rx = 1 + abs( rect.m_right - rect.m_left ) / 2;
-    const int ry = 1 + abs( rect.m_bottom - rect.m_top ) / 2;
+    const int rx = 1 + (abs( rect.m_right - rect.m_left ) / 2);
+    const int ry = 1 + (abs( rect.m_bottom - rect.m_top ) / 2);
 
 	auto AreaItem = CWorldSearchHolder::GetInstance( ptCtr, maximum( rx, ry ));
 	AreaItem->SetSearchSquare( true );
@@ -532,10 +528,7 @@ int CClient::Cmd_Extract( CScript * pScript, const CRectMap &rect, int & zlowest
 		}
 		else
 		{
-			if ( pt.m_z < zlowest)
-			{
-				zlowest = pt.m_z;
-			}
+			zlowest = std::min<int>(pt.m_z, zlowest);
 		}
 	}
 
@@ -576,9 +569,9 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 	CPointMap ptCtr(rect.GetCenter());
 	ptCtr.m_map = pt.m_map;
 
-	int rx = 1 + abs( rect.m_right - rect.m_left ) / 2;
-	int ry = 1 + abs( rect.m_bottom - rect.m_top ) / 2;
-	int iRadius = maximum( rx, ry );
+	int const rx = 1 + (abs( rect.m_right - rect.m_left ) / 2);
+	int const ry = 1 + (abs( rect.m_bottom - rect.m_top ) / 2);
+	int const iRadius = maximum( rx, ry );
 
 	int iCount = 0;
 
@@ -619,7 +612,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 			int64 piArgs[3];		// Maximum parameters in one line
 			Str_ParseCmds( szTmp, piArgs, std::size(piArgs));
 
-			CPointMap ptNudge(static_cast<word>(piArgs[0]), static_cast<word>(piArgs[1]), static_cast<char>(piArgs[2]) );
+			CPointMap const ptNudge(static_cast<word>(piArgs[0]), static_cast<word>(piArgs[1]), static_cast<char>(piArgs[2]) );
 
 			auto Area = CWorldSearchHolder::GetInstance( ptCtr, iRadius );
 			Area->SetAllShow( IsPriv( PRIV_ALLSHOW ));
@@ -718,9 +711,9 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 			Str_CopyLimitNull( szTmp, m_Targ_Text, std::size(szTmp));
 
 			int64 piArgs[16];		// Maximum parameters in one line
-			int iArgQty = Str_ParseCmds( szTmp, piArgs, std::size(piArgs));
+			int const iArgQty = Str_ParseCmds( szTmp, piArgs, std::size(piArgs));
 
-			char z = static_cast<char>(piArgs[0]);	// z height is the first arg.
+			char const z = static_cast<char>(piArgs[0]);	// z height is the first arg.
 			int iArg = 0;
 			for ( int mx = rect.m_left; mx <= rect.m_right; mx++)
 			{
@@ -732,7 +725,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
                     if (!pItem)
                         continue;
 					pItem->SetAttr( ATTR_MOVE_NEVER );
-					CPointMap ptCur(static_cast<word>(mx), static_cast<word>(my), z, pt.m_map);
+					CPointMap const ptCur(static_cast<word>(mx), static_cast<word>(my), z, pt.m_map);
 					pItem->MoveToUpdate( ptCur );
 					++iCount;
 				}
@@ -747,7 +740,7 @@ bool CClient::OnTarg_Tile( CObjBase * pObj, const CPointMap & pt )
 }
 
 //-----------------------------------------------------------------------
-// Targetted Informational skills
+// Targeted Informational skills
 
 int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTest )
 {
@@ -825,7 +818,7 @@ int CClient::OnSkill_AnimalLore(const CUID &uid, int iSkillLevel, const bool fTe
 	// Food count = 30 minute intervals.
     const lpctstr pszText = pChar->IsStatFlag(STATF_CONJURED) ?
 						g_Cfg.GetDefaultMsg(DEFMSG_ANIMALLORE_CONJURED) :
-						pChar->Food_GetLevelMessage(pCharOwner ? true : false, true);
+						pChar->Food_GetLevelMessage(pCharOwner != nullptr, true);
 
 	snprintf(pszTemp, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_ANIMALLORE_FOOD), pszHe, pszText);
 	addObjMessage(pszTemp, pChar);
@@ -846,7 +839,7 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 
 	if ( pObj->IsChar())
 	{
-        const auto pChar = static_cast <CChar*>(pObj);
+        auto *const pChar = static_cast <CChar*>(pObj);
 		ASSERT(pChar);
 		if ( fTest )
 		{
@@ -857,7 +850,7 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 		return 1;
 	}
 
-    const auto pItem = static_cast <CItem*>(pObj);
+    auto *const pItem = static_cast <CItem*>(pObj);
 	ASSERT( pItem );
 
 	if ( fTest )
@@ -874,7 +867,7 @@ int CClient::OnSkill_ItemID(const CUID &uid, int iSkillLevel, const bool fTest )
 
 	// ??? Estimate it's worth ?
 
-    if (const auto pItemVend = dynamic_cast<CItemVendable *>(pItem); pItemVend == nullptr )
+    if (auto *const pItemVend = dynamic_cast<CItemVendable *>(pItem); pItemVend == nullptr )
 	{
 		SysMessage( g_Cfg.GetDefaultMsg( DEFMSG_ITEMID_NOVAL ));
 	}
@@ -919,7 +912,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 	if ( fTest )
 	{
 		if ( pChar == m_pChar )
-			return( 2 );
+			return 2;
 		return CSRand::GetVal(60);
 	}
 
@@ -934,13 +927,12 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_7 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_8 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_9 ),
-		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_10 )
+		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_INT_10 ),
 	};
 
     const int iIntVal = pChar->Stat_GetAdjusted(STAT_INT);
 	int iIntEntry = (iIntVal-1) / 10;
-	if ( iIntEntry < 0 )
-		iIntEntry = 0;
+	iIntEntry = std::max(iIntEntry, 0);
 	if ( static_cast<uint>(iIntEntry) >= std::size(sm_szIntDesc))
 		iIntEntry = std::size(sm_szIntDesc) - 1;
 
@@ -953,7 +945,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAG_3 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAG_4 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAG_5 ),
-		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAG_6 )
+		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAG_6 ),
 	};
 
 	static lpctstr const sm_szManaDesc[] =
@@ -963,7 +955,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAN_3 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAN_4 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAN_5 ),	// 100 %
-		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAN_6 )
+		g_Cfg.GetDefaultMsg( DEFMSG_EVALINT_MAN_6 ),
 	};
 
 	if ( iSkillLevel > 400 )	// magery skill and mana level ?
@@ -973,8 +965,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
         const int iMagicSkill = maximum(iMagerySkill,iNecroSkill);
 
 		int iMagicEntry = iMagicSkill / 200;
-		if ( iMagicEntry < 0 )
-			iMagicEntry = 0;
+		iMagicEntry = std::max(iMagicEntry, 0);
 		if ( static_cast<uint>(iMagicEntry) >= std::size(sm_szMagicDesc))
 			iMagicEntry = std::size(sm_szMagicDesc) - 1;
 
@@ -982,8 +973,7 @@ int CClient::OnSkill_EvalInt(const CUID &uid, int iSkillLevel, const bool fTest 
 		if ( iIntVal )
 			iManaEntry = IMulDiv( pChar->Stat_GetVal(STAT_INT), std::size(sm_szManaDesc) - 1, iIntVal );
 
-		if ( iManaEntry < 0 )
-			iManaEntry = 0;
+		iManaEntry = std::max(iManaEntry, 0);
 		if ( static_cast<uint>(iManaEntry) >= std::size(sm_szManaDesc))
 			iManaEntry = std::size(sm_szManaDesc) - 1;
 
@@ -1086,7 +1076,7 @@ int CClient::OnSkill_ArmsLore(const CUID &uid, int iSkillLevel, const bool fTest
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_7),
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_8),
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_9),
-			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_10)
+			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_10),
 	};
 
 	// Poisoned ?
@@ -1115,9 +1105,9 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 
 	if ( fTest )
 	{
-		// based on rareity ?
+		// based on rarity ?
 		if ( pChar == m_pChar )
-			return( 2 );
+			return 2;
 		return CSRand::GetVal(60);
 	}
 
@@ -1134,7 +1124,7 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_STR_7 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_STR_8 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_STR_9 ),
-		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_STR_10 )
+		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_STR_10 ),
 	};
 	static lpctstr const sm_szDexEval[] =
 	{
@@ -1147,20 +1137,18 @@ int CClient::OnSkill_Anatomy(const CUID &uid, int iSkillLevel, const bool fTest 
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_7 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_8 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_9 ),
-		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_10 )
+		g_Cfg.GetDefaultMsg( DEFMSG_ANATOMY_DEX_10 ),
 	};
 
     const int iStrVal = pChar->Stat_GetAdjusted(STAT_STR);
 	int iStrEntry = (iStrVal-1)/10;
-	if ( iStrEntry < 0 )
-		iStrEntry = 0;
+	iStrEntry = std::max(iStrEntry, 0);
 	if ( static_cast<uint>(iStrEntry) >= std::size(sm_szStrEval))
 		iStrEntry = std::size(sm_szStrEval) - 1;
 
     const int iDexVal = pChar->Stat_GetAdjusted(STAT_DEX);
 	int iDexEntry = (iDexVal-1)/10;
-	if ( iDexEntry < 0 )
-		iDexEntry = 0;
+	iDexEntry = std::max(iDexEntry, 0);
 	if ( static_cast<uint>(iDexEntry) >= std::size(sm_szDexEval))
 		iDexEntry = std::size(sm_szDexEval) - 1;
 
@@ -1179,9 +1167,9 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 {
 	ADDTOCALLSTACK("CClient::OnSkill_Forensics");
 	// SKILL_FORENSICS
-	// ! weird client issue targetting corpses !
+	// ! weird client issue targeting corpses !
 
-    const auto pCorpse = dynamic_cast<CItemCorpse *>(uid.ItemFind());
+    auto *const pCorpse = dynamic_cast<CItemCorpse *>(uid.ItemFind());
 	if ( !pCorpse )
 	{
 		SysMessageDefault( DEFMSG_FORENSICS_CORPSE );
@@ -1194,7 +1182,7 @@ int CClient::OnSkill_Forensics(const CUID &uid, int iSkillLevel, const bool fTes
 	}
 
 	if (fTest)
-		return (pCorpse->m_uidLink == m_pChar->GetUID()) ? 2 : CSRand::GetVal(60);
+		return pCorpse->m_uidLink == m_pChar->GetUID() ? 2 : CSRand::GetVal(60);
 
     CChar const * pCharKiller = pCorpse->m_itCorpse.m_uidKiller.CharFind();
     const lpctstr pName = pCharKiller ? pCharKiller->GetName() : nullptr;
@@ -1236,7 +1224,7 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 	// SKILL_TASTEID
 	// Try to taste for poisons I assume.
 	// Maybe taste what it is made of for ingredients ?
-	// Differntiate potion types ?
+	// Differentiate potion types ?
 
     const CItem * pItem = uid.ItemFind();
 	if ( pItem == nullptr )
@@ -1303,7 +1291,7 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_7),
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_8),
 			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_9),
-			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_10)
+			g_Cfg.GetDefaultMsg(DEFMSG_ARMSLORE_PSN_10),
 	};
 
 	if ( iPoisonLevel )
@@ -1314,7 +1302,9 @@ int CClient::OnSkill_TasteID(const CUID &uid, int iSkillLevel, const bool fTest 
 		SysMessage(sm_szPoisonMessages[iLevel] );
 	}
 	else
+	{
 		SysMessagef( g_Cfg.GetDefaultMsg( DEFMSG_TASTEID_RESULT ), pItem->GetNameFull(false));
+    }
 
 	return iSkillLevel;
 }
@@ -1344,7 +1334,7 @@ int CClient::OnSkill_Info(const SKILL_TYPE skill, const CUID &uid, int iSkillLev
 bool CClient::OnTarg_Skill(const CObjBase * pObj )
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Skill");
-	// targetted skill now has it's target.
+	// targeted skill now has it's target.
 	// response to CLIMODE_TARG_SKILL
 	// from Event_Skill_Use() select button from skill window
 
@@ -1358,7 +1348,7 @@ bool CClient::OnTarg_Skill(const CObjBase * pObj )
 	if ( g_Cfg.IsSkillFlag( m_tmSkillTarg.m_iSkill, SKF_SCRIPTED ) )
 	{
 		// is this scripted skill a targeted skill ?
-        if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(m_tmSkillTarg.m_iSkill); pSkillDef && pSkillDef->m_sTargetPrompt.IsEmpty() == false)
+        if (const CSkillDef *pSkillDef = g_Cfg.GetSkillDef(m_tmSkillTarg.m_iSkill); pSkillDef && !pSkillDef->m_sTargetPrompt.IsEmpty())
 		{
 			m_pChar->m_Act_UID = m_Targ_UID;
 			return m_pChar->Skill_Start( m_tmSkillTarg.m_iSkill );
@@ -1367,7 +1357,7 @@ bool CClient::OnTarg_Skill(const CObjBase * pObj )
 	    return true;
     }
 
-	// targetting what skill ?
+	// targeting what skill ?
 	switch ( m_tmSkillTarg.m_iSkill )
 	{
 		// Delayed response type skills.
@@ -1387,7 +1377,7 @@ bool CClient::OnTarg_Skill(const CObjBase * pObj )
 	case SKILL_FORENSICS:
 	case SKILL_TASTEID:
 		m_pChar->m_Act_UID = m_Targ_UID;
-		return( m_pChar->Skill_Start( m_tmSkillTarg.m_iSkill ));
+		return m_pChar->Skill_Start( m_tmSkillTarg.m_iSkill );
 
 	case SKILL_PROVOCATION:
 		if ( !pObj->IsChar() )
@@ -1404,7 +1394,7 @@ bool CClient::OnTarg_Skill(const CObjBase * pObj )
 		break;
 
 	default:
-		// This is not a targetted skill !
+		// This is not a targeted skill !
 		break;
 	}
 
@@ -1483,7 +1473,7 @@ bool CClient::OnTarg_Skill_Magery( CObjBase * pObj, const CPointMap & pt )
 				SysMessageDefault( DEFMSG_MAGERY_2 );
 				return true;
 			}
-            const auto pChar = static_cast<CChar*>(pObj);
+            auto *const pChar = static_cast<CChar*>(pObj);
 			if ( pSpell->IsSpellType( SPELLFLAG_TARG_NO_PLAYER ) && pChar->m_pPlayer )
 			{
 				SysMessageDefault( DEFMSG_MAGERY_7 );
@@ -1632,7 +1622,7 @@ bool CClient::OnTarg_Pet_Stable( CChar * pCharPet )
 }
 
 //-----------------------------------------------------------------------
-// Targetted items with special props.
+// Targeted items with special props.
 
 bool CClient::OnTarg_Use_Deed( CItem * pDeed, CPointMap & pt )
 {
@@ -1671,7 +1661,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Use_Item");
 	// CLIMODE_TARG_USE_ITEM started from Event_DoubleClick()
-	// Targetted an item to be used on some other object (char or item).
+	// Targeted an item to be used on some other object (char or item).
 	// Solve for the intersection of the items.
 	// ARGS:
 	//  id = static item id
@@ -1717,7 +1707,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
             m_pChar->UpdateDir(pt);
     }
 
-	if (( IsTrigUsed(CItem::sm_szTrigName[trigtype]) ) || ( IsTrigUsed(CChar::sm_szTrigName[(CTRIG_itemAfterClick - 1) + trigtype]) )) //ITRIG_TARGON_GROUND, ITRIG_TARGON_CHAR, ITRIG_TARGON_ITEM
+	if (IsTrigUsed(CItem::sm_szTrigName[trigtype]) || IsTrigUsed(CChar::sm_szTrigName[CTRIG_itemAfterClick - 1 + trigtype])) //ITRIG_TARGON_GROUND, ITRIG_TARGON_CHAR, ITRIG_TARGON_ITEM
 	{
         const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->Init(id, 0, 0, pObjTarg);
@@ -1729,8 +1719,8 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 	// Call CanUse( pItemTarg )
 
 	// What did i target it on ? this could be null if ground is the target.
-    auto pCharTarg = dynamic_cast <CChar*>(pObjTarg);
-    const auto pItemTarg = dynamic_cast <CItem*>(pObjTarg);
+    auto *pCharTarg = dynamic_cast <CChar*>(pObjTarg);
+    auto *const pItemTarg = dynamic_cast <CItem*>(pObjTarg);
 
 	switch ( pItemUse->GetType() )
 	{
@@ -1761,11 +1751,11 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		return true;
 
 	case IT_KEY:
-		return( m_pChar->Use_Key( pItemUse, pItemTarg ));
+		return m_pChar->Use_Key( pItemUse, pItemTarg );
 
 	case IT_FORGE:
 		// target the ore.
-		return( m_pChar->Skill_Mining_Smelt( pItemTarg, pItemUse ));
+		return m_pChar->Skill_Mining_Smelt( pItemTarg, pItemUse );
 
 	case IT_CANNON_MUZZLE:
 		// We have targetted the cannon to something.
@@ -1797,8 +1787,8 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			pObjTarg->Sound( 0x207 );
 			pObjTarg->Effect( EFFECT_BOLT, ITEMID_Cannon_Ball, pItemUse, 8, 0, true );
 
-            const auto pChar = dynamic_cast<CChar *>(this);
-            const auto pItem = dynamic_cast<CItem *>(this);
+            auto *const pChar = dynamic_cast<CChar *>(this);
+            auto *const pItem = dynamic_cast<CItem *>(this);
 			if ( pChar )
 				pChar->OnTakeDamage( 80 + CSRand::GetVal(150), m_pChar, DAMAGE_HIT_BLUNT|DAMAGE_FIRE );
 			else if ( pItem )
@@ -1811,7 +1801,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		m_pChar->m_Act_p = pt;
 		m_pChar->m_Act_Prv_UID = m_Targ_Prv_UID;
 		m_pChar->m_atResource.m_ridType = CResourceIDBase(RES_TYPEDEF, IT_ROCK);
-		return( m_pChar->Skill_Start( SKILL_MINING ));
+		return m_pChar->Skill_Start( SKILL_MINING );
 
 	case IT_WEAPON_MACE_CROOK:
 		// SKILL_HERDING
@@ -1894,7 +1884,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			m_pChar->m_Act_UID = m_Targ_UID;
 			m_pChar->m_Act_p = pt;
 			m_pChar->m_atResource.m_ridType = CResourceIDBase(RES_TYPEDEF, IT_TREE);
-			return( m_pChar->Skill_Start( SKILL_LUMBERJACKING ));
+			return m_pChar->Skill_Start( SKILL_LUMBERJACKING );
 
 		case IT_LOG:
 			if ( ! m_pChar->CanUse( pItemTarg, true ))
@@ -1992,7 +1982,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		{
 			if (pItemTarg->GetType() == IT_CORPSE)
 			{
-                const auto pCorpse = static_cast<CItemCorpse*>(pItemTarg);
+                const auto *const pCorpse = static_cast<CItemCorpse*>(pItemTarg);
 				pCharTarg = pCorpse->m_uidLink.CharFind();
 				if (pCharTarg == nullptr || pCharTarg->IsNPC())
 					return false;
@@ -2069,7 +2059,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 		{
 		if ( pItemTarg == nullptr )
 			return false;
-        const auto pKeyRing = dynamic_cast <CItemContainer*>(pItemUse);
+        auto *const pKeyRing = dynamic_cast <CItemContainer*>(pItemUse);
 		if ( pKeyRing == nullptr )
 			return false;
 
@@ -2108,7 +2098,7 @@ bool CClient::OnTarg_Use_Item( CObjBase * pObjTarg, CPointMap & pt, const ITEMID
 			return false;
 		}
 
-		return( m_pChar->Use_Key( pKey, pItemTarg ));
+		return m_pChar->Use_Key( pKey, pItemTarg );
 		}
 
 	case IT_SCISSORS:
@@ -2180,7 +2170,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 	g_Cfg.GetDefaultMsg( DEFMSG_ITEMUSE_BOLT_2 ),
 	g_Cfg.GetDefaultMsg( DEFMSG_ITEMUSE_BOLT_3 ),
 	g_Cfg.GetDefaultMsg( DEFMSG_ITEMUSE_BOLT_4 ),
-	g_Cfg.GetDefaultMsg( DEFMSG_ITEMUSE_BOLT_5 )
+	g_Cfg.GetDefaultMsg( DEFMSG_ITEMUSE_BOLT_5 ),
 };
 
 		// pItemTarg->SetAnim((ITEMID_TYPE)(pItemTarg->GetID() + 1), 2 * MSECS_PER_SEC );
@@ -2265,7 +2255,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 	case IT_FISH_POLE:
 		m_pChar->m_Act_p = pt;
 		m_pChar->m_atResource.m_ridType = CResourceIDBase(RES_TYPEDEF, IT_WATER);
-		return( m_pChar->Skill_Start( SKILL_FISHING ));
+		return m_pChar->Skill_Start( SKILL_FISHING );
 
 	case IT_LOCKPICK:
 		// Using a lock pick on something.
@@ -2275,7 +2265,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 		m_pChar->m_Act_Prv_UID = m_Targ_Prv_UID;	// the pick
 		if ( ! m_pChar->CanUse( pItemTarg, false ))
 			return false;
-		return( m_pChar->Skill_Start( SKILL_LOCKPICKING ));
+		return m_pChar->Skill_Start( SKILL_LOCKPICKING );
 
 	case IT_CANNON_BALL:
 		if ( m_pChar->Use_Cannon_Feed( pItemTarg, pItemUse ))
@@ -2377,7 +2367,7 @@ static lpctstr const sm_Txt_LoomUse[] =
 		}
 
 		SysMessageDefault( DEFMSG_ITEMUSE_SKIT_UNABLE );
-		return (false);
+		return false;
 
 	default:
 		break;
@@ -2391,7 +2381,7 @@ bool CClient::OnTarg_Stone_Recruit(const CChar * pChar, const bool bFull)
 {
 	ADDTOCALLSTACK("CClient::OnTarg_Stone_Recruit");
 	// CLIMODE_TARG_STONE_RECRUIT / CLIMODE_TARG_STONE_RECRUITFULL
-    const auto pStone = dynamic_cast <CItemStone*> (m_Targ_UID.ItemFind());
+    auto *const pStone = dynamic_cast <CItemStone*> (m_Targ_UID.ItemFind());
 	if ( !pStone )
 		return false;
 	return ( pStone->AddRecruit(pChar, STONEPRIV_CANDIDATE, bFull) != nullptr );
@@ -2423,7 +2413,7 @@ bool CClient::OnTarg_Party_Add( CChar * pChar )
 
 	if ( m_pChar->m_pParty )
 	{
-		if ( !(m_pChar->m_pParty->IsPartyMaster(m_pChar)) )
+		if ( !m_pChar->m_pParty->IsPartyMaster(m_pChar) )
 		{
 			SysMessageDefault( DEFMSG_PARTY_NOTLEADER );
 			return false;

@@ -1,4 +1,3 @@
-//#include "../common/CException.h" // included in the precompiled header
 #include "../common/CLog.h"
 #include "../common/CRect.h"
 #include "../game/CWorld.h"
@@ -8,7 +7,6 @@
 #include "CWorldGameTime.h"
 #include "CSectorBase.h"
 #include <algorithm>
-
 
 ////////////////////////////////////////////////////////////////////////
 // -CCharsDisconnectList
@@ -43,7 +41,7 @@ void CCharsActiveList::OnRemoveObj(CSObjContRec* pObjRec )
 	// Override this = called when removed from group.
 	CSObjCont::OnRemoveObj(pObjRec);
 
-    const auto pChar = static_cast<CChar*>(pObjRec);
+    auto *const pChar = static_cast<CChar*>(pObjRec);
 	if (pChar->IsClientType())
 	{
 		--m_iClients;
@@ -81,7 +79,7 @@ void CItemsList::OnRemoveObj(CSObjContRec* pObjRec)
     DEBUG_ASSERT(nullptr != dynamic_cast<const CItem*>(pObjRec));
 
 	// Item is picked up off the ground. (may be put right back down though)
-    const auto pItem = static_cast<CItem*>(pObjRec);
+    auto *const pItem = static_cast<CItem*>(pObjRec);
 
     // IT_MULTI, IT_SHIP and IT_COMM_CRYSTAL
     pItem->OnMoveFrom();
@@ -186,7 +184,7 @@ void CSectorBase::SetAdjacentSectors()
         {0, +1},    // S
         {-1, +1},   // SW
         {-1, 0},    // W
-        {-1, -1}    // NW
+        {-1, -1},    // NW
     };
 
     //int nAdj = 0;
@@ -235,7 +233,7 @@ void CSectorBase::Init(const int index, const uchar map, const short x, const sh
 	ADDTOCALLSTACK("CSectorBase::Init");
 	if (!g_MapList.IsMapSupported(map) || !g_MapList.IsInitialized(map))
 	{
-		g_Log.EventError("Trying to initalize a sector %d in unsupported map #%d. Defaulting to 0,0.\n", index, map);
+		g_Log.EventError("Trying to initialize a sector %d in unsupported map #%d. Defaulting to 0,0.\n", index, map);
         return;
 	}
 
@@ -244,7 +242,7 @@ void CSectorBase::Init(const int index, const uchar map, const short x, const sh
     if (( index < 0 ) || ( index >= CSectorList::Get().GetMapSectorDataUnchecked(map).iSectorQty ))
 	{
         m_BasePointSectUnits.m_map = map;
-		g_Log.EventError("Trying to initalize a sector by sector number %d out-of-range for map #%d. Defaulting to 0,%d.\n", index, map, map);
+		g_Log.EventError("Trying to initialize a sector by sector number %d out-of-range for map #%d. Defaulting to 0,%d.\n", index, map, map);
         return;
 	}
 
@@ -268,8 +266,8 @@ void CSectorBase::Init(const int index, const uchar map, const short x, const sh
         {
             m_BasePointSectUnits.m_x * sd.iSectorSize,			        // left
             m_BasePointSectUnits.m_y * sd.iSectorSize,			        // top
-            m_BasePointSectUnits.m_x * sd.iSectorSize + sd.iSectorSize,	// right: East
-            m_BasePointSectUnits.m_y * sd.iSectorSize + sd.iSectorSize, // bottom: South
+            (m_BasePointSectUnits.m_x * sd.iSectorSize) + sd.iSectorSize,	// right: East
+            (m_BasePointSectUnits.m_y * sd.iSectorSize) + sd.iSectorSize, // bottom: South
             m_BasePointSectUnits.m_map                                  // map
         };
 }
@@ -310,7 +308,9 @@ CRegion * CSectorBase::GetRegion( const CPointBase & pt, const dword dwType ) co
 					continue;
 			}
 			else if (!(dwType & REGION_TYPE_HOUSE))
+			{
 				continue;
+            }
 		}
 		else if ( ridRegion.GetResType() == RES_AREA )
 		{
@@ -352,7 +352,9 @@ size_t CSectorBase::GetRegions( const CPointBase & pt, const dword dwType, CRegi
 					continue;
 			}
 			else if (!(dwType & REGION_TYPE_HOUSE))
+			{
 				continue;
+            }
 		}
 		else if (ridRegion.GetResType() == RES_AREA )
 		{

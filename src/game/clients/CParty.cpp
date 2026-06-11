@@ -1,7 +1,4 @@
 
-//#include "../../common/CException.h" // included in the precompiled header
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../common/CLog.h"
 #include "../../common/CScriptObj.h"
 #include "../../network/send.h"
@@ -11,7 +8,6 @@
 #include "../triggers.h"
 #include "CClient.h"
 #include "CParty.h"
-
 
 //*****************************************************************
 // -CPartyDef
@@ -245,7 +241,7 @@ bool CPartyDef::MessageEvent(const CUID &uidDst, const CUID &uidSrc, const nacha
 
     const CChar *pFrom = uidSrc.CharFind();
     ASSERT(pFrom);
-    CChar *pTo = (uidDst == static_cast<dword>(0)) ? nullptr : uidDst.CharFind();
+    CChar *pTo = uidDst == static_cast<dword>(0) ? nullptr : uidDst.CharFind();
 
 	tchar *szText = Str_GetTemp();
 	CvtNETUTF16ToSystem(szText, MAX_TALK_BUFFER, pText, MAX_TALK_BUFFER);
@@ -400,7 +396,7 @@ bool CPartyDef::Disband(const CUID &uidMaster)
 
 		if ( IsTrigUsed(TRIGGER_PARTYREMOVE) )
 		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            CScriptTriggerArgsPtr const pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
             pScriptArgs->m_iN1 = 1;
             pChar->OnTrigger(CTRIG_PartyRemove, pScriptArgs, pSrc);
 		}
@@ -473,7 +469,9 @@ bool CPartyDef::AcceptEvent(CChar *pCharAccept, const CUID &uidInviter, const bo
 			pCharAccept->m_pParty = nullptr;
 		}
 		else
+		{
 			return false;
+        }
 	}
 
 	if (IsTrigUsed(TRIGGER_PARTYADD))
@@ -531,7 +529,7 @@ enum PDC_TYPE
 	#define ADD(a,b) PDC_##a,
 	#include "../../tables/CParty_props.tbl"
 	#undef ADD
-	PDC_QTY
+	PDC_QTY,
 };
 
 lpctstr const CPartyDef::sm_szLoadKeys[PDC_QTY+1] =
@@ -539,7 +537,7 @@ lpctstr const CPartyDef::sm_szLoadKeys[PDC_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../../tables/CParty_props.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 bool CPartyDef::r_GetRef( lpctstr &ptcKey, CScriptObj *&pRef )
@@ -581,13 +579,14 @@ bool CPartyDef::r_LoadVal( CScript &s )
 	{
 		case PDC_SPEECHFILTER:
 		{
-			if ( !s.HasArgs() )
+			if ( !s.HasArgs() ) {
 				this->m_pSpeechFunction.Clear();
-			else
+			}
+		    else
 			{
                 const lpctstr ptcArg = s.GetArgStr();
 
-                if (const auto m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg)); !m_pTestEvent )
+                if (auto *const m_pTestEvent = dynamic_cast<CResourceLink *>(g_Cfg.RegisteredResourceGetDefByName(RES_FUNCTION, ptcArg)); !m_pTestEvent )
 					return false;
 
 				this->m_pSpeechFunction.Format("%s", ptcArg);
@@ -633,7 +632,7 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 		}
 		if ( ptcKey[0] == '\0' )	// we where just testing the ref.
 		{
-            if (const auto pObj = dynamic_cast<CObjBase *>(pRef) )
+            if (auto *const pObj = dynamic_cast<CObjBase *>(pRef) )
 				sVal.FormatHex(pObj->GetUID());
 			else
                 sVal.SetValTrue();
@@ -655,7 +654,9 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 				sVal.FormatVal(pCharToCheck && (pCharToCheck->m_pParty == this));
 			}
 			else
+			{
 				return false;
+            }
 		} break;
 
 		case PDC_MEMBERS:
@@ -689,11 +690,11 @@ bool CPartyDef::r_WriteVal( lpctstr ptcKey, CSString &sVal, CTextConsole *pSrc, 
 				SKIP_SEPARATORS(ptcKey);
                 const size_t iQty = Exp_GetSTVal(ptcKey);
 				if ( iQty >= m_TagDefs.GetCount() )
-					return false;	// trying to get non-existant tag
+					return false;	// trying to get non-existent tag
 
 				const CVarDefCont *pTagAt = m_TagDefs.GetAt(iQty);
 				if ( !pTagAt )
-					return false;	// trying to get non-existant tag
+					return false;	// trying to get non-existent tag
 
 				SKIP_SEPARATORS(ptcKey);
 				if ( !*ptcKey )
@@ -798,7 +799,9 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 				toRemove = m_Chars.GetChar(nMember);
 			}
 			else
+			{
 				toRemove.SetObjUID(s.GetArgDWVal());
+            }
 
 			if ( toRemove.IsValidUID() )
 				return RemoveMember(toRemove, GetMaster());
@@ -819,7 +822,9 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 				newMaster = m_Chars.GetChar(nMember);
 			}
 			else
+			{
 				newMaster.SetObjUID(s.GetArgDWVal());
+            }
 
 			if ( newMaster.IsValidUID() )
 				return SetMaster(newMaster.CharFind());
@@ -877,7 +882,9 @@ bool CPartyDef::r_Verb( CScript &s, CTextConsole *pSrc )
 			    }
 			}
 			else
+			{
 				SysMessageAll(ptcArg);
+            }
 		} break;
 
 		case PDV_TAGLIST:

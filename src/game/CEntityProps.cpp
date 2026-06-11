@@ -41,7 +41,7 @@ void CEntityProps::UnsubscribeComponentProps(const CComponentProps *pComponent)
     const auto it = _lComponentProps.find(compType);
     if (it == _lComponentProps.end())
     {
-        g_Log.EventError("Trying to unsuscribe not suscribed prop component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
+        g_Log.EventError("Trying to unsubscribe not subscribed prop component (%d)\n", static_cast<int>(pComponent->GetType()));    // Should never happen?
         return;
     }
     _lComponentProps.erase(it);  // iterator invalidation!
@@ -55,7 +55,7 @@ CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE type)
         return nullptr;
     }
     const auto it = _lComponentProps.find(type);
-    return (it == _lComponentProps.end()) ? nullptr : it->second.get();
+    return it == _lComponentProps.end() ? nullptr : it->second.get();
 }
 
 const CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE type) const
@@ -63,12 +63,12 @@ const CComponentProps * CEntityProps::GetComponentProps(const COMPPROPS_TYPE typ
     if (!_lComponentProps.empty())
     {
         const auto it = _lComponentProps.find(type);
-        return (it == _lComponentProps.end()) ? nullptr : it->second.get();
+        return it == _lComponentProps.end() ? nullptr : it->second.get();
     }
     return nullptr;
 }
 
-void CEntityProps::r_Write(CScript & s) // Storing data in the worldsave.
+void CEntityProps::r_Write(CScript & s) // Storing data in the world save.
 {
     ADDTOCALLSTACK("CEntityProps::r_Write");
     if (_lComponentProps.empty() && !s.IsWriteMode())
@@ -149,7 +149,7 @@ bool CEntityProps::r_LoadPropVal(CScript & s, CObjBase* pObjEntityProps, CBaseBa
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
-    return ((pBaseEntityProps->_lComponentProps.empty() == false) && pBaseEntityProps->CEPLoopLoad(&loopRet, s, nullptr, iLimitToExpansion));
+    return !pBaseEntityProps->_lComponentProps.empty() && pBaseEntityProps->CEPLoopLoad(&loopRet, s, nullptr, iLimitToExpansion);
 }
 
 
@@ -217,7 +217,7 @@ bool CEntityProps::r_WritePropVal(const lpctstr ptcKey, CSString & sVal, const C
         return true; // return true regardlessly of the value being set or not (it's still a valid property)
     }
 
-    return (pBaseEntityProps && (pBaseEntityProps->_lComponentProps.empty() == false) && pBaseEntityProps->CEPLoopWrite(&loopRet, ptcKey, sVal));
+    return (pBaseEntityProps && (!pBaseEntityProps->_lComponentProps.empty()) && pBaseEntityProps->CEPLoopWrite(&loopRet, ptcKey, sVal));
 }
 
 void CEntityProps::AddPropsTooltipData(CObjBase* pObj)

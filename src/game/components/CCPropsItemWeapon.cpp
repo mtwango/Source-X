@@ -3,13 +3,12 @@
 #include "../items/CItem.h"
 #include "CCPropsItemWeapon.h"
 
-
 lpctstr const CCPropsItemWeapon::_ptcPropertyKeys[PROPIWEAP_QTY + 1] =
 {
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsItemWeapon_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsItemWeapon::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
@@ -20,7 +19,7 @@ RESDISPLAY_VERSION CCPropsItemWeapon::_iPropertyExpansion[PROPIWEAP_QTY + 1] =
 #define ADDPROP(a,b,c) c,
 #include "../../tables/CCPropsItemWeapon_props.tbl"
 #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsItemWeapon::CCPropsItemWeapon() : CComponentProps(COMP_PROPS_ITEMWEAPON)
@@ -251,7 +250,7 @@ void CCPropsItemWeapon::r_Write(CScript & s)
 void CCPropsItemWeapon::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemWeapon::Copy");
-    const auto pTarget = static_cast<const CCPropsItemWeapon*>(target);
+    const auto *const pTarget = static_cast<const CCPropsItemWeapon*>(target);
     if (!pTarget)
     {
         return;

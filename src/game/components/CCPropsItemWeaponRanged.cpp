@@ -1,15 +1,13 @@
 #include "../../common/sphere_library/CSString.h"
-//#include "../clients/CClientTooltip.h"
 #include "../items/CItem.h"
 #include "CCPropsItemWeaponRanged.h"
-
 
 lpctstr const CCPropsItemWeaponRanged::_ptcPropertyKeys[PROPIWEAPRNG_QTY + 1] =
 {
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsItemWeaponRanged_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsItemWeaponRanged::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
@@ -20,7 +18,7 @@ RESDISPLAY_VERSION CCPropsItemWeaponRanged::_iPropertyExpansion[PROPIWEAPRNG_QTY
 #define ADDPROP(a,b,c) c,
 #include "../../tables/CCPropsItemWeaponRanged_props.tbl"
 #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsItemWeaponRanged::CCPropsItemWeaponRanged() : CComponentProps(COMP_PROPS_ITEMWEAPONRANGED)
@@ -172,7 +170,7 @@ void CCPropsItemWeaponRanged::r_Write(CScript & s)
 void CCPropsItemWeaponRanged::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsItemWeaponRanged::Copy");
-    const auto pTarget = static_cast<const CCPropsItemWeaponRanged*>(target);
+    const auto *const pTarget = static_cast<const CCPropsItemWeaponRanged*>(target);
     if (!pTarget)
     {
         return;

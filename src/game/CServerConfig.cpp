@@ -6,8 +6,6 @@
 #include "../common/resource/sections/CResourceNamedDef.h"
 #include "../common/sphere_library/CSFileList.h"
 #include "../common/sphere_library/CSRand.h"
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "../common/CUOInstall.h"
 #include "../common/sphereversion.h"
 #include "../network/CClientIterator.h"
@@ -43,7 +41,6 @@
 //#   define OFFSETOF(TYPE, ELEMENT) (offsetof(TYPE, ELEMENT))
 # define OFFSETOF(TYPE, ELEMENT) ((size_t)&(((TYPE *)0)->ELEMENT))
 #endif
-
 
 // .ini settings.
 CServerConfig::CServerConfig()
@@ -370,7 +367,7 @@ CServerConfig::~CServerConfig()
 bool CServerConfig::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CServerConfig::r_GetRef");
-    auto pszSep = const_cast<tchar*>(strchr( ptcKey, '(' ));
+    auto *pszSep = const_cast<tchar*>(strchr( ptcKey, '(' ));
 	if ( pszSep == nullptr )
 	{
 		pszSep = const_cast<tchar*>(strchr( ptcKey, '.' ));
@@ -741,7 +738,7 @@ enum RC_TYPE
 	RC_WOPTALKMODE,
 	RC_WORLDSAVE,
 	RC_ZEROPOINT,				// m_sZeroPoint
-	RC_QTY
+	RC_QTY,
 };
 
 // NOTE: Need to be alphabetized order
@@ -879,15 +876,15 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY + 1]
     { "HITPOINTPERCENTONREZ",	{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iHitpointPercentOnRez) }},
     { "HITSHUNGERLOSS",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iHitsHungerLoss)		}},
     { "HITSUPDATERATE",			{ ELEM_VOID,	0												}},
-    { "ITEMHITPOINTSUPDATE",    { ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,_iItemHitpointsUpdate),  }},
-    { "ITEMSMAXAMOUNT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iItemsMaxAmount),		}},
-    { "ITEMTIMERS",             { ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,m_uiItemTimers),  } },
-    { "LEVELMODE",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLevelMode),			}},
-    { "LEVELNEXTAT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLevelNextAt),			}},
-    { "LEVELSYSTEM",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fLevelSystem),			}},
-    { "LIGHTDAY",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightDay),			}},
-    { "LIGHTNIGHT",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightNight),			}},
-    { "LOCALIPADMIN",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fLocalIPAdmin),		}}, // The local ip is assumed to be the admin.
+    { "ITEMHITPOINTSUPDATE",    { ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,_iItemHitpointsUpdate)  }},
+    { "ITEMSMAXAMOUNT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iItemsMaxAmount)		}},
+    { "ITEMTIMERS",             { ELEM_MASK_INT,static_cast<uint>OFFSETOF(CServerConfig,m_uiItemTimers)  }},
+    { "LEVELMODE",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLevelMode)			}},
+    { "LEVELNEXTAT",			{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLevelNextAt)			}},
+    { "LEVELSYSTEM",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fLevelSystem)			}},
+    { "LIGHTDAY",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightDay)			}},
+    { "LIGHTNIGHT",				{ ELEM_INT,		static_cast<uint>OFFSETOF(CServerConfig,m_iLightNight)			}},
+    { "LOCALIPADMIN",			{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fLocalIPAdmin)		}}, // The local ip is assumed to be the admin.
     { "LOG",					{ ELEM_VOID,	0												}},
     { "LOGMASK",				{ ELEM_VOID,	0												}}, // GetLogMask
     { "LOOTINGISACRIME",		{ ELEM_BOOL,	static_cast<uint>OFFSETOF(CServerConfig,m_fLootingIsACrime)		}},
@@ -1036,7 +1033,7 @@ const CAssocReg CServerConfig::sm_szLoadKeys[RC_QTY + 1]
     { "WOPTALKMODE",            { ELEM_INT,     static_cast<uint>OFFSETOF(CServerConfig,m_iWordsOfPowerTalkMode) }},
 	{ "WORLDSAVE",				{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sWorldBaseDir)			}},
 	{ "ZEROPOINT",				{ ELEM_CSTRING,	static_cast<uint>OFFSETOF(CServerConfig,m_sZeroPoint)			}},
-	{ nullptr,					{ ELEM_VOID,	0,												}}
+	{ nullptr,					{ ELEM_VOID,	0,												}},
 };
 
 #if defined(__GNUC__) || defined(__clang__)
@@ -1061,12 +1058,12 @@ bool CServerConfig::r_LoadVal( CScript &s )
 #define LOG_WARN_NOINIT(x)  if (g_Serv.GetServerMode() != ServMode::StartupPreLoadingIni) g_Log.EventWarn(x)
 #define LOG_ERR_NOINIT(x)   if (g_Serv.GetServerMode() != ServMode::StartupPreLoadingIni) g_Log.EventError(x)
 
-	int i = FindCAssocRegTableHeadSorted( s.GetKey(), reinterpret_cast<lpctstr const *>(sm_szLoadKeys), std::size(sm_szLoadKeys) - 1, sizeof(sm_szLoadKeys[0]));
+	int const i = FindCAssocRegTableHeadSorted( s.GetKey(), reinterpret_cast<lpctstr const *>(sm_szLoadKeys), std::size(sm_szLoadKeys) - 1, sizeof(sm_szLoadKeys[0]));
 	if ( i < 0 )
 	{
 		if ( s.IsKeyHead( "REGEN", 5 ))			//	REGENx=<stat regeneration rate>
 		{
-			int index = atoi(s.GetKey()+5);
+			int const index = atoi(s.GetKey()+5);
 			if (index < 0 || index > STAT_FOOD)
 				return false;
 			m_iRegenRate[index] = (s.GetArgLLVal() * MSECS_PER_SEC);
@@ -1086,14 +1083,14 @@ bool CServerConfig::r_LoadVal( CScript &s )
                 ok = false;
                 break;
             }
-            if (ok && ts.size() > 0)
+            if (ok && !ts.empty())
                 return g_MapList.Load(atoi(ptcStr), s.GetArgRaw());
 
-            if (size_t length = ts.size(); length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]))
+            if (size_t const length = ts.size(); length >= 2 /*at least .X*/ && ptcStr[0] == '.' && isdigit(ptcStr[1]))
             {
                 lpctstr pszStr = &(ptcStr[1]);
 
-                if (int nMapNumber = Exp_GetVal(pszStr); g_MapList.IsMapSupported(nMapNumber))
+                if (int const nMapNumber = Exp_GetVal(pszStr); g_MapList.IsMapSupported(nMapNumber))
                 {
                     if (!strnicmp(pszStr, "ALLSECTORS", 10))
                     {
@@ -1139,10 +1136,12 @@ bool CServerConfig::r_LoadVal( CScript &s )
         }
         if (s.IsKeyHead("PACKET", 6)) //	PACKETx=<function name to execute upon packet>
         {
-            if (int index = atoi(s.GetKey() + 6); (index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
+            if (int const index = atoi(s.GetKey() + 6); (index >= 0) && (index < 255)) // why XCMD_QTY? let them hook every possible custom packet
             {
-                if (char *args = s.GetArgRaw(); !args || (strlen(args) >= 31))
+                if (char const * args = s.GetArgRaw(); !args || (strlen(args) >= 31))
+                {
                     g_Log.EventError("Invalid function name for packet filtering (limit is 30 chars).\n");
+                }
                 else
                 {
                     Str_CopyLimitNull(g_Serv.m_PacketFilter[index], args, sizeof(g_Serv.m_PacketFilter[0]));
@@ -1151,14 +1150,18 @@ bool CServerConfig::r_LoadVal( CScript &s )
                 }
             }
             else
+            {
                 g_Log.EventError("Packet filtering index %d out of range [0..254]\n", index);
+            }
         }
         else if (s.IsKeyHead("OUTPACKET", 9)) //	OUTPACKETx=<function name to execute upon packet>
         {
-            if (int index = atoi(s.GetKey() + 9); (index >= 0) && (index < 255))
+            if (int const index = atoi(s.GetKey() + 9); (index >= 0) && (index < 255))
             {
-                if (char *args = s.GetArgRaw(); !args || (strlen(args) >= 31))
+                if (char const * args = s.GetArgRaw(); !args || (strlen(args) >= 31))
+                {
                     g_Log.EventError("Invalid function name for outgoing packet filtering (limit is 30 chars).\n");
+                }
                 else
                 {
                     Str_CopyLimitNull(g_Serv.m_OutPacketFilter[index], args, sizeof(g_Serv.m_OutPacketFilter[0]));
@@ -1167,7 +1170,9 @@ bool CServerConfig::r_LoadVal( CScript &s )
                 }
             }
             else
+            {
                 g_Log.EventError("Outgoing packet filtering index %d out of range [0..254]\n", index);
+            }
         }
 
         return false;
@@ -1202,8 +1207,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 		case RC_CLIENTLOGINMAXTRIES:
 			{
 				m_iClientLoginMaxTries = s.GetArgVal();
-				if ( m_iClientLoginMaxTries < 0 )
-					m_iClientLoginMaxTries = 0;
+				m_iClientLoginMaxTries = std::max(m_iClientLoginMaxTries, 0);
 			} break;
 		case RC_CLIENTLOGINTEMPBAN:
 			m_iClientLoginTempBan = s.GetArgLLVal() * 60 * MSECS_PER_SEC;
@@ -1286,7 +1290,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			break;
 		case RC_ITEMSMAXAMOUNT:
 		{
-			int iVal = s.GetArgVal();
+			int const iVal = s.GetArgVal();
 			m_iItemsMaxAmount = minimum(iVal, UINT16_MAX);
 		}
 		break;
@@ -1324,17 +1328,15 @@ bool CServerConfig::r_LoadVal( CScript &s )
             break;
 		case RC_MAXFAME:
 			m_iMaxFame = s.GetArgVal();
-			if (m_iMaxFame < 0)
-				m_iMaxFame = 0;
+			m_iMaxFame = std::max(m_iMaxFame, 0);
 			break;
 		case RC_MAXKARMA:
 			m_iMaxKarma = s.GetArgVal();
-			if (m_iMaxKarma < m_iMinKarma)
-				m_iMaxKarma = m_iMinKarma;
+			m_iMaxKarma = std::max(m_iMaxKarma, m_iMinKarma);
 			break;
         case RC_MAXPOLYSTATS:
         {
-            int iMax = s.GetArgVal();
+            int const iMax = s.GetArgVal();
             m_iMaxPolyStats = static_cast<ushort>(minimum(iMax, UINT16_MAX));
             break;
         }
@@ -1343,8 +1345,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 			break;
 		case RC_MINKARMA:
 			m_iMinKarma = s.GetArgVal();
-			if (m_iMinKarma > m_iMaxKarma)
-				m_iMinKarma = m_iMaxKarma;
+			m_iMinKarma = std::min(m_iMinKarma, m_iMaxKarma);
 			break;
 		case RC_MURDERDECAYTIME:
 			m_iMurderDecayTime = s.GetArgLLVal() * MSECS_PER_SEC;
@@ -1363,11 +1364,11 @@ bool CServerConfig::r_LoadVal( CScript &s )
             break;
 		case RC_PROFILE:
 			{
-				int seconds = std::max(0, s.GetArgVal());   // 0 does not enable it
-				size_t threadCount = ThreadHolder::get().getActiveThreads();
+				int const seconds = std::max(0, s.GetArgVal());   // 0 does not enable it
+				size_t const threadCount = ThreadHolder::get().getActiveThreads();
 				for (size_t j = 0; j < threadCount; ++j)
 				{
-                    if (auto thread = static_cast<AbstractSphereThread *>(ThreadHolder::get().getThreadAt(j)); thread != nullptr)
+                    if (auto *thread = static_cast<AbstractSphereThread *>(ThreadHolder::get().getThreadAt(j)); thread != nullptr)
 						thread->m_profile.SetActive(seconds);
 				}
 			}
@@ -1375,22 +1376,20 @@ bool CServerConfig::r_LoadVal( CScript &s )
 
 		case RC_PLAYEREVIL:	// How much bad karma makes a player evil?
 			m_iPlayerKarmaEvil = s.GetArgVal();
-			if ( m_iPlayerKarmaNeutral < m_iPlayerKarmaEvil )
-				m_iPlayerKarmaNeutral = m_iPlayerKarmaEvil;
+			m_iPlayerKarmaNeutral = std::max(m_iPlayerKarmaNeutral, m_iPlayerKarmaEvil);
 			break;
 
 		case RC_PLAYERNEUTRAL:	// How much bad karma makes a player neutral?
 			m_iPlayerKarmaNeutral = s.GetArgVal();
-			if ( m_iPlayerKarmaEvil > m_iPlayerKarmaNeutral )
-				m_iPlayerKarmaEvil = m_iPlayerKarmaNeutral;
+			m_iPlayerKarmaEvil = std::min(m_iPlayerKarmaEvil, m_iPlayerKarmaNeutral);
 			break;
 
 		case RC_GUARDSINSTANTKILL:
-			m_fGuardsInstantKill = s.GetArgVal() ? true : false;
+			m_fGuardsInstantKill = s.GetArgVal() != 0;
 			break;
 
 		case RC_GUARDSONMURDERERS:
-			m_fGuardsOnMurderers = s.GetArgVal() ? true : false;
+			m_fGuardsOnMurderers = s.GetArgVal() != 0;
 			break;
 
 		case RC_CONTEXTMENULIMIT:
@@ -1477,7 +1476,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
 		case RC_NETWORKTHREADS:
 			if (g_Serv.IsLoadingGeneric())
 			{
-				int iNetThreads = s.GetArgVal();
+				int const iNetThreads = s.GetArgVal();
 				//if (iNetThreads < 0)
 				//	iNetThreads = 0;
 				//else if (iNetThreads > 10)
@@ -1485,7 +1484,9 @@ bool CServerConfig::r_LoadVal( CScript &s )
 				_uiNetworkThreads = static_cast<uint>(iNetThreads);
 			}
 			else
+			{
 				g_Log.EventError("The value of NetworkThreads cannot be modified after the server has started\n");
+            }
 			break;
 
 		case RC_NETWORKTHREADPRIORITY:
@@ -1508,7 +1509,7 @@ bool CServerConfig::r_LoadVal( CScript &s )
             _fMeditationMovementAbort = s.GetArgVal() > 0;
             break;
 		default:
-			return( sm_szLoadKeys[i].m_elem.SetValStr( this, s.GetArgRaw()));
+			return sm_szLoadKeys[i].m_elem.SetValStr( this, s.GetArgRaw());
 	}
 	return true;
 	EXC_CATCH;
@@ -1653,7 +1654,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				// Parse the arguments inside the round brackets
 				tchar * ppVal[4];
 
-                switch ( int iArgs = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppVal, std::size(ppVal), ",") )
+                switch ( int const iArgs = Str_ParseCmds(const_cast<tchar *>(ptcKey), ppVal, std::size(ppVal), ",") )
 				{
 					default:
 					case 4:
@@ -1693,7 +1694,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		if ( !strnicmp( ptcKey, "MAPLIST.", 8) )
 		{
 			lpctstr pszCmd = ptcKey + 8;
-			int iNumber = Exp_GetVal(pszCmd);
+			int const iNumber = Exp_GetVal(pszCmd);
 			SKIP_SEPARATORS(pszCmd);
 			sVal.SetValFalse();
 
@@ -1706,14 +1707,22 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				if (g_MapList.IsMapSupported(iNumber))
 				{
 					if (!strnicmp(pszCmd, "BOUND.X", 7))
+					{
 						sVal.FormatVal(g_MapList.GetMapSizeX(iNumber));
-					else if (!strnicmp(pszCmd, "BOUND.Y", 7))
+					}
+				    else if (!strnicmp(pszCmd, "BOUND.Y", 7))
+					{
 						sVal.FormatVal(g_MapList.GetMapSizeY(iNumber));
-					else if (!strnicmp(pszCmd, "CENTER.X", 8))
+					}
+				    else if (!strnicmp(pszCmd, "CENTER.X", 8))
+					{
 						sVal.FormatVal(g_MapList.GetMapCenterX(iNumber));
-					else if (!strnicmp(pszCmd, "CENTER.Y", 8))
+					}
+				    else if (!strnicmp(pszCmd, "CENTER.Y", 8))
+					{
 						sVal.FormatVal(g_MapList.GetMapCenterY(iNumber));
-					else if (!strnicmp(pszCmd, "SECTOR.", 7))
+					}
+				    else if (!strnicmp(pszCmd, "SECTOR.", 7))
 					{
 						pszCmd += 7;
                         const CSectorList& pSectors = CSectorList::Get();
@@ -1732,7 +1741,9 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 					}
 				}
 				else
+				{
 					return false;
+                }
 			}
 
 			return true;
@@ -1741,7 +1752,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		if ( !strnicmp( ptcKey, "MAP", 3 ))
 		{
 			ptcKey = ptcKey + 3;
-			int iMapNumber = Exp_GetVal(ptcKey);
+			int const iMapNumber = Exp_GetVal(ptcKey);
 			SKIP_SEPARATORS(ptcKey);
 			sVal.SetValFalse();
 
@@ -1750,7 +1761,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				if ( !strnicmp( ptcKey, "SECTOR", 6 ))
 				{
 					ptcKey = ptcKey + 6;
-					int iSecNumber = Exp_GetVal(ptcKey);
+					int const iSecNumber = Exp_GetVal(ptcKey);
 					SKIP_SEPARATORS(ptcKey);
                     CSector* pSector = CWorldMap::GetSectorByIndex(iMapNumber, iSecNumber);
                     if (!pSector)
@@ -1766,7 +1777,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 		if (!strnicmp(ptcKey, "MULTIS.", 7))
 		{
-			bool bMulti = !strnicmp(ptcKey, "MULTIS.", 7);
+			bool const bMulti = !strnicmp(ptcKey, "MULTIS.", 7);
 			lpctstr pszCmd = ptcKey + 7;
 			CItemMulti* pMulti = nullptr;
 			size_t x = 0;
@@ -1839,11 +1850,11 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
                 return true;
             }
 
-            int iNumber = Exp_GetVal(pszCmd);
+            int const iNumber = Exp_GetVal(pszCmd);
 			SKIP_SEPARATORS(pszCmd);
 			sVal.SetValFalse();
 
-			if (iNumber < 0 || iNumber >= static_cast<int>(m_Functions.size())) //invalid index can potentially crash the server, this check is strongly needed
+			if (iNumber < 0 || std::cmp_greater_equal(iNumber ,m_Functions.size())) //invalid index can potentially crash the server, this check is strongly needed
 			{
 				g_Log.EventError("Invalid command index %d\n",iNumber);
 				return false;
@@ -1863,8 +1874,8 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 
 		if ( ( !strnicmp( ptcKey, "GUILDSTONES.", 12) ) || ( !strnicmp( ptcKey, "TOWNSTONES.", 11) ) )
 		{
-			bool bGuild = !strnicmp( ptcKey, "GUILDSTONES.",12);
-			lpctstr pszCmd = ptcKey + 11 + ( (bGuild) ? 1 : 0 );
+			bool const bGuild = !strnicmp( ptcKey, "GUILDSTONES.",12);
+			lpctstr pszCmd = ptcKey + 11 + ( bGuild ? 1 : 0 );
 			CItemStone * pStone = nullptr;
 			size_t x = 0;
 
@@ -1886,7 +1897,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 				return true;
 			}
 
-			size_t iNumber = Exp_GetVal(pszCmd);
+			size_t const iNumber = Exp_GetVal(pszCmd);
 			SKIP_SEPARATORS(pszCmd);
 			sVal.SetValFalse();
 
@@ -1916,7 +1927,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		if ( !strnicmp( ptcKey, "CLIENT.",7))
 		{
 			ptcKey += 7;
-			uint cli_num = (Exp_GetUVal(ptcKey));
+			uint const cli_num = (Exp_GetUVal(ptcKey));
 			uint i = 0;
 			SKIP_SEPARATORS(ptcKey);
 
@@ -1967,7 +1978,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			if (! Str_Parse(const_cast<tchar*>(ptcKey), &pszArgsNext, ")") )
 				return false;
 
-			uint id = Exp_GetUVal(ptcKey);
+			uint const id = Exp_GetUVal(ptcKey);
 			if ( fTerrain && (id >= TERRAIN_QTY) )
 			{
 				// Invalid id
@@ -1980,13 +1991,31 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			SKIP_SEPARATORS(ptcKey);
 			if (fTerrain)
 			{
-				enum {ITATTR_FLAGS, ITATTR_UNK, ITATTR_IDX, ITATTR_NAME};
+				enum
+				{
+				    ITATTR_FLAGS,
+				    ITATTR_UNK,
+				    ITATTR_IDX,
+				    ITATTR_NAME,
+				};
 				int iAttr = 0;
-				if (!strnicmp(ptcKey, "FLAGS", 5))			iAttr = ITATTR_FLAGS;
-				else if (!strnicmp(ptcKey, "UNK", 7))		iAttr = ITATTR_UNK;
-				else if (!strnicmp(ptcKey, "INDEX", 5))		iAttr = ITATTR_IDX;
-				else if (!strnicmp(ptcKey, "NAME", 4))		iAttr = ITATTR_NAME;
-				else
+				if (!strnicmp(ptcKey, "FLAGS", 5))
+				{
+				    iAttr = ITATTR_FLAGS;
+				}
+			    else if (!strnicmp(ptcKey, "UNK", 7))
+			    {
+			        iAttr = ITATTR_UNK;
+				}
+			    else if (!strnicmp(ptcKey, "INDEX", 5))
+			    {
+			        iAttr = ITATTR_IDX;
+				}
+			    else if (!strnicmp(ptcKey, "NAME", 4))
+			    {
+			        iAttr = ITATTR_NAME;
+				}
+			    else
 				{
 					// Invalid attr
 					return false;
@@ -2003,18 +2032,55 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			}
 			else
 			{
-				enum {TTATTR_FLAGS, TTATTR_WEIGHT, TTATTR_LAYER, TTATTR_UNK11, TTATTR_ANIM, TTATTR_HUE, TTATTR_LIGHT, TTATTR_HEIGHT, TTATTR_NAME};
+				enum
+				{
+				    TTATTR_FLAGS,
+				    TTATTR_WEIGHT,
+				    TTATTR_LAYER,
+				    TTATTR_UNK11,
+				    TTATTR_ANIM,
+				    TTATTR_HUE,
+				    TTATTR_LIGHT,
+				    TTATTR_HEIGHT,
+				    TTATTR_NAME,
+				};
 				int iAttr = 0;
-				if (!strnicmp(ptcKey, "FLAGS", 5))			iAttr = TTATTR_FLAGS;
-				else if (!strnicmp(ptcKey, "WEIGHT", 6))	iAttr = TTATTR_WEIGHT;
-				else if (!strnicmp(ptcKey, "LAYER", 5))		iAttr = TTATTR_LAYER;
-				else if (!strnicmp(ptcKey, "UNK11", 5))		iAttr = TTATTR_UNK11;
-				else if (!strnicmp(ptcKey, "ANIM", 4))		iAttr = TTATTR_ANIM;
-				else if (!strnicmp(ptcKey, "HUE", 5))		iAttr = TTATTR_HUE;
-                else if (!strnicmp(ptcKey, "LIGHT", 5))		iAttr = TTATTR_LIGHT;
-				else if (!strnicmp(ptcKey, "HEIGHT", 6))	iAttr = TTATTR_HEIGHT;
-				else if (!strnicmp(ptcKey, "NAME", 4))		iAttr = TTATTR_NAME;
-				else
+				if (!strnicmp(ptcKey, "FLAGS", 5))
+				{			iAttr = TTATTR_FLAGS;
+				}
+			    else if (!strnicmp(ptcKey, "WEIGHT", 6))
+			    {
+			        iAttr = TTATTR_WEIGHT;
+				}
+			    else if (!strnicmp(ptcKey, "LAYER", 5))
+			    {
+			        iAttr = TTATTR_LAYER;
+				}
+			    else if (!strnicmp(ptcKey, "UNK11", 5))
+			    {
+			        iAttr = TTATTR_UNK11;
+				}
+			    else if (!strnicmp(ptcKey, "ANIM", 4))
+			    {
+			        iAttr = TTATTR_ANIM;
+				}
+			    else if (!strnicmp(ptcKey, "HUE", 5))
+			    {
+			        iAttr = TTATTR_HUE;
+                }
+			    else if (!strnicmp(ptcKey, "LIGHT", 5))
+			    {
+			        iAttr = TTATTR_LIGHT;
+				}
+			    else if (!strnicmp(ptcKey, "HEIGHT", 6))
+			    {
+			        iAttr = TTATTR_HEIGHT;
+				}
+			    else if (!strnicmp(ptcKey, "NAME", 4))
+			    {
+			        iAttr = TTATTR_NAME;
+				}
+			    else
 				{
 					// Invalid attr
 					return false;
@@ -2180,8 +2246,10 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		case RC_RTICKS:
 			{
 				if ( ptcKey[6] != '.' )
+				{
 					sVal.FormatLLVal(CSTime::GetCurrentTime().GetTime());
-				else
+				}
+		        else
 				{
 					ptcKey += 6;
 					SKIP_SEPARATORS(ptcKey);
@@ -2192,10 +2260,10 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						int64 piVal[6];
 
 						// year, month, day, hour, minute, second
-                        if (size_t iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), piVal, std::size(piVal)); iQty != 6 )
+                        if (size_t const iQty = Str_ParseCmds(const_cast<tchar *>(ptcKey), piVal, std::size(piVal)); iQty != 6 )
 							return false;
 
-                        if (CSTime datetime(static_cast<int>(piVal[0]), static_cast<int>(piVal[1]), static_cast<int>(piVal[2]), static_cast<int>(piVal[3]), static_cast<int>(piVal[4]), static_cast<int>(piVal[5]));
+                        if (CSTime const datetime(static_cast<int>(piVal[0]), static_cast<int>(piVal[1]), static_cast<int>(piVal[2]), static_cast<int>(piVal[3]), static_cast<int>(piVal[4]), static_cast<int>(piVal[5]));
                             datetime.GetTime() == -1 )
 							sVal.FormatVal(-1);
 						else
@@ -2208,13 +2276,13 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 						tchar *ppVal[2];
 
 						// timestamp, formatstr
-						size_t iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppVal, std::size(ppVal));
+						size_t const iQty = Str_ParseCmds(const_cast<tchar*>(ptcKey), ppVal, std::size(ppVal));
 						if ( iQty < 1 )
 							return false;
 
-						time_t lTime = Exp_GetVal(ppVal[0]);
+						time_t const lTime = Exp_GetVal(ppVal[0]);
 
-						CSTime datetime(lTime);
+						CSTime const datetime(lTime);
 						sVal = datetime.Format(iQty > 1? ppVal[1]: nullptr);
 					}
 				}
@@ -2223,8 +2291,10 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 		case RC_RTIME:
 			{
 				if ( ptcKey[5] != '.' )
+				{
 					sVal = CSTime::GetCurrentTime().Format(nullptr);
-				else
+				}
+		        else
 				{
 					ptcKey += 5;
 					SKIP_SEPARATORS(ptcKey);
@@ -2310,7 +2380,7 @@ bool CServerConfig::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * 
 			sVal.FormatLLVal(m_iWalkBuffer);
 			break;
 		default:
-			return( sm_szLoadKeys[index].m_elem.GetValStr( this, sVal ));
+			return sm_szLoadKeys[index].m_elem.GetValStr( this, sVal );
 	}
 	return true;
 	EXC_CATCH;
@@ -2356,7 +2426,7 @@ static constexpr lpctstr _ptcStatName[STAT_QTY] = // not alphabetically sorted o
     "STR",
     "INT",
     "DEX",
-    "FOOD"
+    "FOOD",
 };
 
 STAT_TYPE CServerConfig::GetStatKey(const lpctstr ptcKey ) // static
@@ -2468,7 +2538,7 @@ CWebPageDef * CServerConfig::FindWebPage(const lpctstr pszPath ) const
 	if ( pszTitle == nullptr || pszTitle[0] == '\0' )
 	{
 		// This is just the root index.
-		if (m_WebPages.size() <= 0 )
+		if (m_WebPages.empty())
 			return nullptr;
 		// Take this as the default page.
 		return static_cast <CWebPageDef*>( m_WebPages[0].get() );
@@ -2479,7 +2549,7 @@ CWebPageDef * CServerConfig::FindWebPage(const lpctstr pszPath ) const
 		if ( m_WebPages[i] == nullptr )	// not sure why this would happen
 			continue;
 
-        const auto pWeb = static_cast <CWebPageDef*>(m_WebPages[i].get() );
+        auto *const pWeb = static_cast <CWebPageDef*>(m_WebPages[i].get() );
 		ASSERT(pWeb);
 		if ( pWeb->IsMatch(pszTitle))
 			return pWeb;
@@ -2498,7 +2568,7 @@ bool CServerConfig::IsObscene(const lpctstr pszText ) const
 	for ( size_t i = 0; i < m_Obscene.size(); ++i )
 	{
 		match.Resize(static_cast<int>(2 * strlen(m_Obscene[i])));
-        const auto ptcMatch = const_cast<lptstr>(match.GetBuffer()); // Do that just because we know that the buffer has the right size and we won't write past the buffer's end.
+        auto *const ptcMatch = const_cast<lptstr>(match.GetBuffer()); // Do that just because we know that the buffer has the right size and we won't write past the buffer's end.
 		snprintf(ptcMatch, match.GetCapacity(), "%s%s%s", "*", m_Obscene[i], "*");
 
         if (const MATCH_TYPE ematch = Str_Match(ptcMatch, pszText); ematch == MATCH_VALID )
@@ -2571,7 +2641,7 @@ const CUOMulti * CServerConfig::GetMultiItemDefs( CItem * pItem )
 	if ( !pItem )
 		return nullptr;
 
-    if (const auto pItemMultiCustom = dynamic_cast<CItemMultiCustom *>(pItem) )
+    if (auto *const pItemMultiCustom = dynamic_cast<CItemMultiCustom *>(pItem) )
 		return pItemMultiCustom->GetMultiItemDefs();	// customized multi
 
 	return GetMultiItemDefs(pItem->GetDispID());		// multi.mul multi
@@ -2611,7 +2681,7 @@ PLEVEL_TYPE CServerConfig::GetPrivCommandLevel(const lpctstr pszCmd ) const
 	}
 
 	// A GM will default to use all commands.
-	// xcept those that are specifically named that i can't use.
+	// Except those that are specifically named that i can't use.
 	return static_cast<PLEVEL_TYPE>(m_iDefaultCommandLevel); // default level.
 }
 
@@ -2619,7 +2689,7 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr p
 {
 	ADDTOCALLSTACK("CServerConfig::CanUsePrivVerb");
 	// can i use this verb on this object ?
-	// Check just at entry points where commands are entered or targetted.
+	// Check just at entry points where commands are entered or targeted.
 	// NOTE:
 	//  Call this each time we change pObjTarg such as r_GetRef()
 	// RETURN:
@@ -2628,9 +2698,9 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr p
 	if ( !pSrc || !pObjTarg )
 		return false;
 
-	// Are they more privleged than me ?
+	// Are they more privileged than me ?
 
-    if (const auto pChar = dynamic_cast<const CChar *>(pObjTarg) )
+    if (const auto *const pChar = dynamic_cast<const CChar *>(pObjTarg) )
 	{
 		if ( pSrc->GetChar() == pChar )
 			return true;
@@ -2646,16 +2716,14 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr p
 	if ( pSrc->GetChar() == nullptr )
 	{
 		// I'm not a cchar. what am i ?
-        if (const auto pClient = dynamic_cast<CClient *>(pSrc) )
+        if (const auto *const pClient = dynamic_cast<CClient *>(pSrc) )
 		{
 			// We are not logged in as a player char ? so we cannot do much !
 			if ( pClient->GetAccount() == nullptr )
 			{
 				// must be a console or web page ?
 				// I guess we can just login !
-				if ( ! strnicmp( pszCmd, "LOGIN", 5 ))
-					return true;
-				return false;
+				return strnicmp( pszCmd, "LOGIN", 5 ) == 0;
 			}
 		}
 		else
@@ -2683,10 +2751,7 @@ bool CServerConfig::CanUsePrivVerb( const CScriptObj * pObjTarg, const lpctstr p
 
 
 	ilevel = GetPrivCommandLevel( myCmd );
-	if ( ilevel > pSrc->GetPrivLevel())
-		return false;
-
-	return true;
+	return ilevel <= pSrc->GetPrivLevel();
 }
 
 
@@ -3127,7 +3192,7 @@ void CServerConfig::AddResourceDir(const lpctstr pszDirName )
     if ( iRet <= 0 )	// no files here.
         return;
 
-    // Load the files, but preordering them by file name.
+    // Load the files, but reorder them by file name.
     // TODO (low priority): just rework CSStringList to CSStringCont/Vec and add a method to sort it
     std::vector<lpctstr> vecFileNames;
 
@@ -3209,7 +3274,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	// Index or read any resource sections we know how to handle.
 
 	ASSERT(pScript);
-	CScriptFileContext FileContext( pScript );	// set this as the context.
+	CScriptFileContext const FileContext( pScript );	// set this as the context.
     const CSString sSection(pScript->GetSection());
     lpctstr pszSection = sSection.GetBuffer();
 
@@ -3271,7 +3336,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
         //restype = rid.GetResType();
 
 		CResourceDef *	pRes = nullptr;
-        if (size_t index = m_ResHash.FindKey(rid); index != sl::scont_bad_index() )
+        if (size_t const index = m_ResHash.FindKey(rid); index != sl::scont_bad_index() )
 			pRes = m_ResHash.GetBarePtrAt(rid, index);
 
 		if ( pRes == nullptr )
@@ -3345,7 +3410,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		while ( pScript->ReadKeyParse())
 		{
 			lpctstr ptcKey = pScript->GetKey();
-			STAT_TYPE i = GetStatKey(ptcKey);
+			STAT_TYPE const i = GetStatKey(ptcKey);
 			if ((i <= STAT_NONE) || (i >= STAT_BASE_QTY))
 			{
 				g_Log.EventError("Invalid keyword '%s'.\n", ptcKey);
@@ -3448,14 +3513,15 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		return true;
 	case RES_NOTOTITLES:
 		{
-			if (pScript->ReadKey() == false)
+			if (!pScript->ReadKey())
 			{
 				g_Log.Event(LOGM_INIT|LOGL_ERROR, "NOTOTITLES section is missing the list of karma levels.\n");
 				return true;
 			}
 
 			int64 piNotoLevels[64];
-			size_t i = 0, iQty = 0;
+			size_t i = 0;
+			size_t iQty = 0;
 
 			// read karma levels
 			iQty = Str_ParseCmds(pScript->GetKeyBuffer(), piNotoLevels, std::size(piNotoLevels));
@@ -3464,7 +3530,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 
 			m_NotoKarmaLevels.resize(i);
 
-			if (pScript->ReadKey() == false)
+			if (!pScript->ReadKey())
 			{
 				g_Log.Event(LOGM_INIT|LOGL_ERROR, "NOTOTITLES section is missing the list of fame levels.\n");
 				return true;
@@ -3505,13 +3571,13 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		return true;
 	case RES_PLEVEL:
 		{
-			int index = rid.GetResIndex();
+			int const index = rid.GetResIndex();
 			if ( index < 0 || static_cast<uint>(index) >= std::size(m_PrivCommands))
 				return false;
 			while ( pScript->ReadKey() )
 			{
                 // It's mandatory to convert to UPPERCASE the function name, because we perform a case-sensitive search
-                auto key = const_cast<tchar*>(pScript->GetKey());
+                auto *key = const_cast<tchar*>(pScript->GetKey());
                 _strupr(key);
 				m_PrivCommands[index].AddSortString(key);
 			}
@@ -3552,7 +3618,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			ASSERT(pSpell);
 			pNewLink = pSpell;
 
-			CScriptLineContext LineContext = pScript->GetContext();
+			CScriptLineContext const LineContext = pScript->GetContext();
 			pNewLink->r_Load(*pScript);
 			pScript->SeekContext( LineContext );
 
@@ -3582,7 +3648,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			ASSERT(pSkill);
 			pNewLink = pSkill;
 
-			CScriptLineContext LineContext = pScript->GetContext();
+			CScriptLineContext const LineContext = pScript->GetContext();
 			pNewLink->r_Load(*pScript);
 			pScript->SeekContext( LineContext );
 
@@ -3593,7 +3659,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 				const size_t emplaced_idx = array_pos_iter - m_SkillNameDefs.begin();
 
 				// Hard coded value for skill index.
-				uint idx = rid.GetResIndex();
+				uint const idx = rid.GetResIndex();
 
 				m_SkillIndexDefs.emplace_index_grow(idx, m_SkillNameDefs[emplaced_idx]);
 			}
@@ -3606,7 +3672,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		pPrvDef = ResourceGetDef( rid );
 		if ( pPrvDef )
 		{
-            auto pTypeDef = dynamic_cast <CItemTypeDef*>(pPrvDef);
+            auto *pTypeDef = dynamic_cast <CItemTypeDef*>(pPrvDef);
 			ASSERT( pTypeDef );
 			pNewLink = pTypeDef;
 			ASSERT(pNewLink);
@@ -3615,7 +3681,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			const size_t iQty = g_World.m_TileTypes.size();
 			for ( size_t i = 0; i < iQty; ++i )
 			{
-                if (auto pCurTypeDef = static_cast<CItemTypeDef *>(g_World.m_TileTypes[i].get()); pCurTypeDef == pTypeDef)
+                if (auto *pCurTypeDef = static_cast<CItemTypeDef *>(g_World.m_TileTypes[i].get()); pCurTypeDef == pTypeDef)
 					g_World.m_TileTypes.emplace_index_grow(i, nullptr);
 			}
 
@@ -3624,13 +3690,13 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CItemTypeDef( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
 
 		ASSERT(pScript);
-		CScriptLineContext LineContext = pScript->GetContext();
+		CScriptLineContext const LineContext = pScript->GetContext();
 		pNewLink->r_Load(*pScript);
 		pScript->SeekContext( LineContext );
 		break;
@@ -3659,7 +3725,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CResourceLink( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3676,7 +3742,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CDialogDef( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3694,12 +3760,12 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CRegionResourceDef( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
 		{
-			CScriptLineContext LineContext = pScript->GetContext();
+			CScriptLineContext const LineContext = pScript->GetContext();
 			pNewLink->r_Load(*pScript);
 			pScript->SeekContext( LineContext ); // set the pos back so ScanSection will work.
 		}
@@ -3742,7 +3808,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		pPrvDef = RegisteredResourceGetDef(rid);
 		if ( pPrvDef && fNewStyleDef )
 		{
-            auto pRegion = dynamic_cast <CRegion*>( pPrvDef );
+            auto *pRegion = dynamic_cast <CRegion*>( pPrvDef );
 			pNewDef	= pRegion;
 			ASSERT(pNewDef);
 			pRegion->UnRealizeRegion();
@@ -3752,7 +3818,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		else
 		{
             ptcScriptArg = pScript->GetArgStr();
-            auto pRegion = new CRegion( rid, ptcScriptArg );
+            auto *pRegion = new CRegion( rid, ptcScriptArg );
 			pNewDef = pRegion;
 			ASSERT(pNewDef);
 			pRegion->r_Load(*pScript);
@@ -3784,12 +3850,12 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CRandGroupDef( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
 		{
-			CScriptLineContext LineContext = pScript->GetContext();
+			CScriptLineContext const LineContext = pScript->GetContext();
 			pNewLink->r_Load( *pScript );
 			pScript->SeekContext( LineContext );
 		}
@@ -3808,13 +3874,13 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
             pNewLink = new CCChampionDef(rid);
             if (pNewLink)
             {
-                if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+                if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
                     pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
                 RESHASH_ADD(rid, pNewLink);
             }
         }
         {
-            CScriptLineContext LineContext = pScript->GetContext();
+            CScriptLineContext const LineContext = pScript->GetContext();
             pNewLink->r_Load(*pScript);
             pScript->SeekContext(LineContext);
         }
@@ -3831,7 +3897,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CSkillClassDef( rid );
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3853,7 +3919,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			if ( !pNewLink )
 				return true;
 
-            if (auto pBaseDef = dynamic_cast<CBaseBaseDef *>(pNewLink) )
+            if (auto *pBaseDef = dynamic_cast<CBaseBaseDef *>(pNewLink) )
 			{
 				pBaseDef->UnLink();
 				CScriptLineContext LineContext = pScript->GetContext();
@@ -3865,7 +3931,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		{
 			pNewLink = new CResourceLink(rid);
 			ASSERT(pNewLink);
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
 				pNewLink->SetLink(pLinkResScript);	// So later i can retrieve m_iResourceFileIndex and m_iLineNum from the CResourceScript
             RESHASH_ADD( rid, pNewLink );
 		}
@@ -3890,7 +3956,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			m_WebPages.emplace(pNewLink);
 		}
 		{
-			CScriptLineContext LineContext = pScript->GetContext();
+			CScriptLineContext const LineContext = pScript->GetContext();
 			pNewLink->r_Load(*pScript);
 			pScript->SeekContext( LineContext ); // set the pos back so ScanSection will work.
 		}
@@ -3906,7 +3972,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 
             // Link the CResourceLink to the CResourceScript it was read and created,
             //	so later we can retrieve the file and the line for debugging purposes.
-            if (auto pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
+            if (auto *pLinkResScript = dynamic_cast<CResourceScript *>(pScript); pLinkResScript != nullptr)
                 pNewLink->SetLink(pLinkResScript);
 
             m_Functions.emplace(static_cast<CResourceNamedDef*>(pNewLink));
@@ -3933,7 +3999,9 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 					fAddNew = true;
 				}
 				else
+				{
 					pServ = Server_GetDef(i);
+                }
 				ASSERT(pServ != nullptr);
 
 				if ( pScript->ReadKey())
@@ -3972,7 +4040,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
             {
                 const lpctstr ptcName = pScript->GetKey();
                 const int iIndex = pScript->GetArgVal();
-                CResourceID ridnew( RES_TYPEDEF, iIndex );
+                CResourceID const ridnew( RES_TYPEDEF, iIndex );
 
                 // Do we already have a TYPEDEF with the same index?
                 if (CResourceDef *pResDef = RegisteredResourceGetDef(ridnew))
@@ -4002,7 +4070,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 			m_StartDefs.ClearFree();
 			while ( pScript->ReadKey())
 			{
-                auto pStart = new CStartLoc( pScript->GetKey());
+                auto *pStart = new CStartLoc( pScript->GetKey());
 				if ( pScript->ReadKey())
 				{
 					pStart->m_sName = pScript->GetKey();
@@ -4030,7 +4098,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		m_MoonGates.clear();
 		while ( pScript->ReadKey())
 		{
-			CPointMap pt = GetRegionPoint( pScript->GetKey());
+			CPointMap const pt = GetRegionPoint( pScript->GetKey());
 			m_MoonGates.push_back(pt);
 		}
 		return true;
@@ -4078,7 +4146,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		while ( pScript->ReadKey())
 		{
 			// Add the teleporter to the CSector.
-            auto pTeleport = new CTeleport( pScript->GetKeyBuffer());
+            auto *pTeleport = new CTeleport( pScript->GetKeyBuffer());
 			ASSERT(pTeleport);
 			// make sure this is not a dupe.
 			if (!pTeleport->RealizeTeleport()) {
@@ -4089,7 +4157,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 	case RES_KRDIALOGLIST:
 		while ( pScript->ReadKeyParse() )
 		{
-            if (auto pDef = dynamic_cast<CDialogDef *>(ResourceGetDefByName(RES_DIALOG, pScript->GetKey())); pDef != nullptr )
+            if (auto *pDef = dynamic_cast<CDialogDef *>(ResourceGetDefByName(RES_DIALOG, pScript->GetKey())); pDef != nullptr )
 				SetKRDialogMap( pDef->GetResourceID().GetPrivateUID(), pScript->GetArgVal());
 			else
 				DEBUG_ERR(("Dialog '%s' not found...\n", pScript->GetKey()));
@@ -4129,7 +4197,7 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		pNewLink->SetResourceVar( pVarNum );
 
 		// NOTE: we should not be linking to stuff in the *WORLD.SCP file.
-        auto pResScript = dynamic_cast <CResourceScript*>(pScript);
+        auto *pResScript = dynamic_cast <CResourceScript*>(pScript);
 		if ( pResScript == nullptr )	// can only link to it if it's a CResourceScript !
 		{
 			DEBUG_ERR(( "Can't link resources in the world save file\n" ));
@@ -4227,15 +4295,20 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			// For dialog resources, we use the page bits to mark if it's the TEXT or BUTTON block
             // TODO: shouldn't we offload this to a static method of CDialogDef? Too much centralization here...
 			if ( !strnicmp( pArg2, "TEXT", 4 ) )
+			{
 				wPage = RES_DIALOG_TEXT;
-			else if ( !strnicmp( pArg2, "BUTTON", 6 ) )
+			}
+	        else if ( !strnicmp( pArg2, "BUTTON", 6 ) )
+			{
 				wPage = RES_DIALOG_BUTTON;
-			else if ( !strnicmp( pArg2, "PREBUTTON", 9) )
+			}
+	        else if ( !strnicmp( pArg2, "PREBUTTON", 9) )
+			{
 				wPage = RES_DIALOG_PREBUTTON;
-			else
+			} else
 			{
 				// For a book the page is... the page number
-				// For a REGIONTYPE block, the page (pArg2) is the landtile type associated with the REGIONTYPE
+				// For a REGIONTYPE block, the page (pArg2) is the land tile type associated with the REGIONTYPE
                 if (const int iArgPage = ResGetIndex(Exp_GetDWVal(pArg2)); iArgPage < RES_PAGE_MAX )
                     wPage = static_cast<word>(iArgPage);
                 else
@@ -4253,16 +4326,22 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			tchar * pArg2;
 			Str_Parse( pArg1, &pArg2 );
 			if ( ! strcmpi( pArg2, "ELF" ))
+			{
 				wPage = static_cast<word>(RACETYPE_ELF);
-			else if ( ! strcmpi( pArg2, "GARG" ))
+			}
+	        else if ( ! strcmpi( pArg2, "GARG" ))
+			{
                 wPage = static_cast<word>(RACETYPE_GARGOYLE);
-			else if (*pArg2)
+			}
+	        else if (*pArg2)
 			{
 				g_Log.EventWarn("Unrecognized race for a NEWBIE section. Defaulting to human.\n");
                 wPage = static_cast<word>(RACETYPE_HUMAN);
 			}
 			else
+			{
                 wPage = static_cast<word>(RACETYPE_HUMAN);
+            }
 
 			if ( ! strcmpi( pszName, "MALE_DEFAULT" ))
 				return CResourceID( RES_NEWBIE, RES_NEWBIE_MALE_DEFAULT, wPage );
@@ -4324,7 +4403,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			{
 			case RES_BOOK:			// A book or a page from a book.
 			case RES_DIALOG:		// A scriptable gump dialog: text or handler block.
-			case RES_REGIONTYPE:	// Triggers etc. that can be assinged to a RES_AREA
+			case RES_REGIONTYPE:	// Triggers etc. that can be assigned to a RES_AREA
 				rid = CResourceID( restype, iIndex, wPage );
 				break;
 			case RES_SKILLMENU:
@@ -4364,7 +4443,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			// We are creating a new Block but using an old name ? weird.
 			// just check to see if this is a strange type conflict ?
 
-            const auto pVarNum = dynamic_cast <CVarDefContNum*>( pVarBase );
+            auto *const pVarNum = dynamic_cast <CVarDefContNum*>( pVarBase );
 			if ( pVarNum == nullptr )
 			{
 				switch (restype)
@@ -4479,7 +4558,7 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
 			return ridInvalid;
 		FALLTHROUGH;
 
-	case RES_REGIONTYPE:	// Triggers etc. that can be assinged to a RES_AREA
+	case RES_REGIONTYPE:	// Triggers etc. that can be assigned to a RES_AREA
 		iHashRange = 100;
 		iIndex = 1000;
 		break;
@@ -4536,7 +4615,9 @@ CResourceID CServerConfig::ResourceGetNewID(const RES_TYPE restype, lpctstr pszN
                     break;
             }
             else if (m_ResHash.FindKey(CResourceID(restype, iRandIndex, RES_PAGE_ANY)) == sl::scont_bad_index())
+            {
                 break;
+            }
 
             ++iRandIndex;
             rid = CResourceID(restype, iRandIndex, wPage);
@@ -4709,7 +4790,7 @@ void CServerConfig::_OnTick(const bool fNow )
 			EXC_TRY("WebTick");
 			if ( !m_WebPages[i] )
 				continue;
-            if (const auto pWeb = static_cast<CWebPageDef *>(m_WebPages[i].get()) )
+            if (auto *const pWeb = static_cast<CWebPageDef *>(m_WebPages[i].get()) )
 			{
 				pWeb->WebPageUpdate(fNow, nullptr, &g_Serv);
 				pWeb->WebPageLog();
@@ -4717,7 +4798,7 @@ void CServerConfig::_OnTick(const bool fNow )
 			EXC_CATCH;
 
 			EXC_DEBUG_START;
-            const auto pWeb = static_cast <CWebPageDef *>(m_WebPages[i].get());
+            auto *const pWeb = static_cast <CWebPageDef *>(m_WebPages[i].get());
 			g_Log.EventDebug("web '%s' dest '%s' now '%d' index '%" PRIuSIZE_T "'/'%" PRIuSIZE_T "'\n",
 				pWeb ? pWeb->GetName() : "", pWeb ? pWeb->GetDstName() : "",
 				fNow? 1 : 0, i, m_WebPages.size());
@@ -4947,7 +5028,7 @@ bool CServerConfig::Load( bool fResync )
 
         // Open the MUL files I need.
         g_Log.Event(LOGM_INIT, "\nIndexing the client files...\n");
-        VERFILE_TYPE i = g_Install.OpenFiles(
+        VERFILE_TYPE const i = g_Install.OpenFiles(
             (1ull<<VERFILE_MAP)|
             (1<<VERFILE_STAIDX)|
             (1<<VERFILE_STATICS)|
@@ -4958,7 +5039,7 @@ bool CServerConfig::Load( bool fResync )
         );
         if ( i != VERFILE_QTY )
         {
-            g_Log.Event( LOGL_FATAL|LOGM_INIT, "File '%s' not found...\n", g_Install.GetBaseFileName(i));
+            g_Log.Event( LOGL_FATAL|LOGM_INIT, "File '%s' not found...\n", CUOInstall::GetBaseFileName(i));
             return false;
         }
 
@@ -5020,7 +5101,7 @@ bool CServerConfig::Load( bool fResync )
 	// open and index all my script files i'm going to use.
 	AddResourceDir( m_sSCPBaseDir );		// if we want to get *.SCP files from elsewhere.
 
-	size_t count = m_ResourceFiles.size();
+	size_t const count = m_ResourceFiles.size();
 	g_Log.Printf("\n");
 	g_Log.Event(LOGM_INIT, "Indexing %" PRIuSIZE_T " script files...\n", count);
 
@@ -5044,7 +5125,9 @@ bool CServerConfig::Load( bool fResync )
             LoadResources( pResFile, true /*false*/ );
         }
         else
+        {
 			pResFile->ReSync();
+        }
 
 		g_Serv.PrintPercent( j + 1, count);
 	}
@@ -5069,7 +5152,7 @@ bool CServerConfig::Load( bool fResync )
 			continue;
 
 		CSString sEventsList;
-		for (CRegion* pTopRegion : vTopRegions)
+		for (CRegion const* pTopRegion : vTopRegions)
 		{
 			const auto curRegionFlags = pCurRegion->GetRegionFlags();
 			if ((g_Cfg._uiAreaFlags & AREAF_RoomInheritsEvents) || (curRegionFlags & REGION_FLAG_INHERIT_PARENT_EVENTS))
@@ -5097,25 +5180,28 @@ bool CServerConfig::Load( bool fResync )
 	if ( g_Serv.GetName()[0] == '\0' )	// make sure we have a set name
 	{
 		tchar szName[ MAX_SERVER_NAME_SIZE ];
-		int iRet = gethostname( szName, sizeof( szName ));
+		int const iRet = gethostname( szName, sizeof( szName ));
 		g_Serv.SetName(( ! iRet && szName[0] ) ? szName : SPHERE_TITLE );
 	}
 
 	if ( !RegisteredResourceGetDefRef( CResourceID( RES_SKILLCLASS, 0 )) )
 	{
 		// must have at least 1 skill class.
-        auto pSkillClass = new CSkillClassDef( CResourceID( RES_SKILLCLASS ));
+        auto *pSkillClass = new CSkillClassDef( CResourceID( RES_SKILLCLASS ));
         m_ResHash.AddSortKey( CResourceID( RES_SKILLCLASS, 0 ), pSkillClass );
 	}
 
 	if ( !fResync )
 	{
-		int total, used;
+		int total;
+		int used;
 		Triglist(total, used);
         g_Log.Event(LOGL_EVENT, "Done loading scripts (%d of %d triggers used).\n", used, total);
 	}
 	else
+	{
 		g_Log.Event(LOGM_INIT, "Done loading scripts.\n");
+	}
 
 	if (m_StartDefs.empty() )
 	{
@@ -5124,7 +5210,7 @@ bool CServerConfig::Load( bool fResync )
 	}
 
 	// Make region DEFNAMEs
-    size_t iRegionMax = m_RegionDefs.size();
+    size_t const iRegionMax = m_RegionDefs.size();
     for (size_t k = 0; k < iRegionMax; ++k)
     {
         CRegion * pRegion = m_RegionDefs[k];
@@ -5168,7 +5254,7 @@ bool CServerConfig::Load( bool fResync )
 	if (!m_sChatStaticChannels.IsEmpty())
 	{
 		tchar* ppArgs[32];
-		size_t iChannels = Str_ParseCmds(const_cast<tchar *>(g_Cfg.m_sChatStaticChannels.GetBuffer()), ppArgs, std::size(ppArgs), ",");
+		size_t const iChannels = Str_ParseCmds(const_cast<tchar *>(g_Cfg.m_sChatStaticChannels.GetBuffer()), ppArgs, std::size(ppArgs), ",");
 		for (size_t i = 0; i < iChannels; i++)
 			g_Serv.m_Chats.CreateChannel(ppArgs[i]);
 	}
@@ -5287,7 +5373,7 @@ bool CServerConfig::GenerateDefname(const tchar *pObjectName, const size_t iInpu
 	if (iOut == 0)
 		return false;
 
-	if (bCheckConflict == true)
+	if (bCheckConflict)
 	{
 		// check for conflicts
         const size_t iEnd = iOut;
@@ -5307,7 +5393,7 @@ bool CServerConfig::GenerateDefname(const tchar *pObjectName, const size_t iInpu
 				isValid = false;
 			}
 
-			if (isValid == true)
+			if (isValid)
 				break;
 
 			// attach suffix
@@ -5347,8 +5433,7 @@ bool CServerConfig::DumpUnscriptedItems(const CTextConsole * pSrc, lpctstr pszFi
 	s.Printf("// Unscripted items, generated by " SPHERE_TITLE " at %s\n", CSTime::GetCurrentTime().Format(nullptr));
 
     auto idMaxItem = static_cast<ITEMID_TYPE>(g_Install.m_tiledata.GetItemMaxIndex());
-	if (idMaxItem > ITEMID_MULTI)
-		idMaxItem = ITEMID_MULTI;
+	idMaxItem = std::min(idMaxItem, ITEMID_MULTI);
 
 	for (uint i = 0; i < idMaxItem; ++i)
 	{
@@ -5360,7 +5445,7 @@ bool CServerConfig::DumpUnscriptedItems(const CTextConsole * pSrc, lpctstr pszFi
 
 		// check item in tiledata
 		CUOItemTypeRec_HS tiledata;
-		if (CItemBase::GetItemData(static_cast<ITEMID_TYPE>(i), &tiledata) == false)
+		if (!CItemBase::GetItemData(static_cast<ITEMID_TYPE>(i), &tiledata))
 			continue;
 
 		// ensure there is actually some data here, treat "MissingName" as blank since some tiledata.muls

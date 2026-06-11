@@ -106,14 +106,14 @@ enum CIDMGL_TYPE
 {
     CIDMGL_HITS,
     CIDMGL_MAXHITS,
-    CIDMGL_QTY
+    CIDMGL_QTY,
 };
 
 lpctstr const CCItemDamageable::sm_szLoadKeys[CIDMGL_QTY + 1] =
 {
     "HITS",
     "MAXHITS",
-    nullptr
+    nullptr,
 };
 
 bool CCItemDamageable::r_LoadVal(CScript & s)

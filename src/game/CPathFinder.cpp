@@ -1,10 +1,8 @@
 
-//#include "../common/CException.h" // included in the precompiled header
 #include "../sphere/threads.h"
 #include "chars/CChar.h"
 #include "CPathFinder.h"
 #include <algorithm>
-
 
 int CPathFinder::Heuristic(const CPathFinderPoint* Pt1, const CPathFinderPoint* Pt2) noexcept // static
 {
@@ -27,11 +25,11 @@ void CPathFinder::GetAdjacentCells(const CPathFinderPoint* Point, std::deque<CPa
             const short RealY = y + Point->m_y;
 			if ( RealX < 0 || RealY < 0 || RealX >= (MAX_NPC_PATH_STORAGE_SIZE - 1) || (RealY >= MAX_NPC_PATH_STORAGE_SIZE - 1))
 				continue;
-			if ( m_Points[RealX][RealY]._Walkable == false )
+			if ( !m_Points[RealX][RealY]._Walkable )
 				continue;
 			if ( x != 0 && y != 0 ) // Diagonal
 			{
-				if ( m_Points[RealX - x][RealY]._Walkable == false || m_Points[RealX][RealY - y]._Walkable == false )
+				if ( !m_Points[RealX - x][RealY]._Walkable || !m_Points[RealX][RealY - y]._Walkable )
 					continue;
 			}
 
@@ -234,7 +232,7 @@ void CPathFinder::FillMap()
 				pt.m_y = (y + m_RealY);
 				const CRegion *pArea = m_pChar->CanMoveWalkTo(pt, true, true, DIR_QTY, true);
 
-				m_Points[x][y]._Walkable = pArea ? true : false;
+				m_Points[x][y]._Walkable = pArea != nullptr;
 			}
 
 			m_Points[x][y].Set(x, y, pt.m_z, pt.m_map);

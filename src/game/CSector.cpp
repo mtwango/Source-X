@@ -1,6 +1,4 @@
 #include "../common/sphere_library/CSRand.h"
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "../common/CLog.h"
 #include "../sphere/ProfileTask.h"
 #include "../sphere/ProfileData.h"
@@ -15,6 +13,7 @@
 #include "CServer.h"
 #include "triggers.h"
 #include "CSector.h"
+
 
 
 #define SECTOR_TICKING_PERIOD	30 * 1000	// Every 30 seconds.
@@ -64,7 +63,7 @@ enum SC_TYPE
 	SC_RAINCHANCE,
 	SC_SEASON,
 	SC_WEATHER,
-	SC_QTY
+	SC_QTY,
 };
 
 lpctstr const CSector::sm_szLoadKeys[SC_QTY+1] =
@@ -85,7 +84,7 @@ lpctstr const CSector::sm_szLoadKeys[SC_QTY+1] =
 	"RAINCHANCE",
 	"SEASON",
 	"WEATHER",
-	nullptr
+	nullptr,
 };
 
 bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
@@ -100,7 +99,7 @@ bool CSector::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 		{ "HIGH", INT32_MIN },	// speech can be very complex if low char count
 		{ "MEDIUM", 5 },
 		{ "LOW", 10 },
-		{ nullptr, INT32_MAX }
+		{ nullptr, INT32_MAX },
 	};
 
     switch (static_cast<SC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1)))
@@ -188,7 +187,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Active Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(true);
 		ASSERT(!pChar->IsDisconnected());
         if (!fCanTick)
@@ -198,7 +197,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Disconnected Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(true);
 		ASSERT(pChar->IsDisconnected());
 		if (!fCanTick)
@@ -208,7 +207,7 @@ void CSector::_GoSleep()
     EXC_SET_BLOCK("Items");
 	for (CSObjContRec* pObjRec : m_Items)
 	{
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
         if (const bool fCanTick = pItem->_CanTick(true); !fCanTick)
             pItem->GoSleep();
     }
@@ -233,7 +232,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Active Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		const bool fSleeping = pChar->IsSleeping();
 		ASSERT(!pChar->IsDisconnected());
 		if (fSleeping)
@@ -243,7 +242,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Disconnected Chars");
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
         const bool fCanTick = pChar->_CanTick(false);
 		ASSERT(pChar->IsDisconnected());
         // If disconnected, they will only "partly" go awake: they will only have char periodic ticks.
@@ -254,7 +253,7 @@ void CSector::_GoAwake()
     EXC_SET_BLOCK("Items");
 	for (CSObjContRec* pObjRec : m_Items)
 	{
-        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
+        if (auto *const pItem = static_cast<CItem *>(pObjRec); pItem->IsSleeping())
         	pItem->GoAwake();
     }
 
@@ -265,7 +264,7 @@ void CSector::_GoAwake()
     * generating NPCs at once.
     */
     // Using the 'static' keyword isn't thread safe. We assume that we are managing sectors only on a single thread...
-    static CSector *pCentral = nullptr;   // do this only for the awaken sector
+    static CSector const * pCentral = nullptr;   // do this only for the awaken sector
     if (!pCentral)
     {
         pCentral = this;
@@ -315,7 +314,7 @@ bool CSector::r_LoadVal( CScript &s )
 			return true;
 		case SC_SEASON:
 			SetSeason(s.HasArgs() ? static_cast<SEASON_TYPE>(s.GetArgVal()) : SEASON_Summer);
-			return (true);
+			return true;
 		case SC_WEATHER:
 			SetWeather(s.HasArgs() ? static_cast<WEATHER_TYPE>(s.GetArgVal()) : WEATHER_DRY);
 			return true;
@@ -333,7 +332,7 @@ enum SEV_TYPE
 	#define ADD(a,b) SEV_##a,
 	#include "../tables/CSector_functions.tbl"
 	#undef ADD
-	SEV_QTY
+	SEV_QTY,
 };
 
 lpctstr const CSector::sm_szVerbKeys[SEV_QTY+1] =
@@ -341,7 +340,7 @@ lpctstr const CSector::sm_szVerbKeys[SEV_QTY+1] =
 	#define ADD(a,b) b,
 	#include "../tables/CSector_functions.tbl"
 	#undef ADD
-	nullptr
+	nullptr,
 };
 
 bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
@@ -375,7 +374,7 @@ bool CSector::r_Verb( CScript & s, CTextConsole * pSrc )
 			break;
 		case SEV_LIGHT:
 			if ( g_Cfg.m_fAllowLightOverride )
-				SetLight( (s.HasArgs()) ? s.GetArgVal() : -1 );
+				SetLight( s.HasArgs() ? s.GetArgVal() : -1 );
 			else
 				g_Log.EventWarn("AllowLightOverride flag is disabled in sphere.ini, so sector's LIGHT property wasn't set\n");
 			break;
@@ -443,7 +442,7 @@ void CSector::r_Write()
 
 	if (g_Cfg.m_fAllowLightOverride && IsLightOverriden())
 	{
-		if (fHeaderCreated == false )
+		if (!fHeaderCreated )
 		{
 			g_World.m_FileWorld.WriteSection("SECTOR %d,%d,0,%d", pt.m_x, pt.m_y, pt.m_map);
 			fHeaderCreated = true;
@@ -454,7 +453,7 @@ void CSector::r_Write()
 
 	if (!g_Cfg.m_fNoWeather && (IsRainOverriden() || IsColdOverriden()))
 	{
-		if (fHeaderCreated == false )
+		if (!fHeaderCreated )
 		{
 			g_World.m_FileWorld.WriteSection("SECTOR %d,%d,0,%d", pt.m_x, pt.m_y, pt.m_map);
 			fHeaderCreated = true;
@@ -469,7 +468,7 @@ void CSector::r_Write()
 
 	if (GetSeason() != SEASON_Summer)
 	{
-		if (fHeaderCreated == false )
+		if (!fHeaderCreated )
 			g_World.m_FileWorld.WriteSection("SECTOR %d,%d,0,%d", pt.m_x, pt.m_y, pt.m_map);
 
 		g_World.m_FileWorld.WriteKeyVal("SEASON", GetSeason());
@@ -478,21 +477,21 @@ void CSector::r_Write()
 	// Chars in the sector.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeCont())
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		pChar->r_WriteParity(pChar->m_pPlayer ? g_World.m_FilePlayers : g_World.m_FileWorld);
 	}
 
 	// Inactive Client Chars, ridden horses and dead NPCs (NOTE: Push inactive player chars out to the account files here?)
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect.GetIterationSafeCont())
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		pChar->r_WriteParity(pChar->m_pPlayer ? g_World.m_FilePlayers : g_World.m_FileWorld);
 	}
 
 	// Items on the ground.
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeCont())
 	{
-        if (const auto pItem = static_cast<CItem *>(pObjRec); pItem->IsTypeMulti())
+        if (auto *const pItem = static_cast<CItem *>(pObjRec); pItem->IsTypeMulti())
         {
             pItem->r_WriteSafe(g_World.m_FileMultis);
         }
@@ -516,7 +515,7 @@ bool CSector::v_AllChars( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeContReverse())
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -540,7 +539,7 @@ bool CSector::v_AllCharsIdle( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Disconnect.GetIterationSafeContReverse())
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -563,7 +562,7 @@ bool CSector::v_AllItems( CScript & s, CTextConsole * pSrc )
 	// Loop through all the items in the sector.
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeContReverse())
 	{
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
 
 		// Check that an item was returned and keep looking if not.
 		if (pItem == nullptr)
@@ -589,7 +588,7 @@ bool CSector::v_AllClients( CScript & s, CTextConsole * pSrc )
 	// We should start at the end incase some are removed during the loop.
 	for (CSObjContRec* pObjRec : m_Chars_Active.GetIterationSafeContReverse())
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 
 		// Check that a character was returned and keep looking if not.
 		if (pChar == nullptr)
@@ -689,20 +688,20 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 		//	convert	0=midnight	.. (23*60)+59=midnight
 		//	to		0=day		.. 12*60=night
 		if ( localtime < 12*60 )
-			localtime = 12*60 - localtime;
+			localtime = (12 * 60) - localtime;
 		else
-			localtime -= 12*60;
+			localtime -= 12 * 60;
 
 		//	0...	y	...lightnight
 		//	0...	x	...12*60
-        const int iTargLight = ((localtime * ( g_Cfg.m_iLightNight - g_Cfg.m_iLightDay ))/(12*60) + g_Cfg.m_iLightDay);
+        const int iTargLight = (((localtime * ( g_Cfg.m_iLightNight - g_Cfg.m_iLightDay )) / (12 * 60)) + g_Cfg.m_iLightDay);
 
 		return static_cast<uchar>(std::clamp(iTargLight, LIGHT_BRIGHT, LIGHT_DARK));
 	}
 
-	const int hour = ( localtime / ( 60)) % 24;
+	const int hour = ( localtime / 60) % 24;
 	const bool fNight = ( hour < 6 || hour > 12+8 );	// Is it night or day ?
-	byte uiTargLight = static_cast<byte>(std::min(static_cast<int>(UINT8_MAX), (fNight) ? g_Cfg.m_iLightNight : g_Cfg.m_iLightDay));	// Target light level.
+	byte uiTargLight = static_cast<byte>(std::min(static_cast<int>(UINT8_MAX), fNight ? g_Cfg.m_iLightNight : g_Cfg.m_iLightDay));	// Target light level.
 
 	// Check for clouds...if it is cloudy, then we don't even need to check for the effects of the moons...
 	if ( GetWeather())
@@ -731,7 +730,7 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 				TRAMMEL_FULL_BRIGHTNESS,		// Full Moon
 				( TRAMMEL_FULL_BRIGHTNESS * 3) / 4, // Gibbous Moon
 				TRAMMEL_FULL_BRIGHTNESS / 2, 	// Quarter Moon
-				TRAMMEL_FULL_BRIGHTNESS / 4		// Crescent Moon
+				TRAMMEL_FULL_BRIGHTNESS / 4,		// Crescent Moon
 			};
 
 			ASSERT( iTrammelPhase < ARRAY_COUNT(sm_TrammelPhaseBrightness));
@@ -750,7 +749,7 @@ byte CSector::GetLightCalc(const bool fQuickSet ) const
 				FELUCCA_FULL_BRIGHTNESS,		// Full Moon
 				( FELUCCA_FULL_BRIGHTNESS * 3) / 4, // Gibbous Moon
 				FELUCCA_FULL_BRIGHTNESS / 2, 	// Quarter Moon
-				FELUCCA_FULL_BRIGHTNESS / 4		// Crescent Moon
+				FELUCCA_FULL_BRIGHTNESS / 4,		// Crescent Moon
 			};
 
 			ASSERT( iFeluccaPhase < ARRAY_COUNT(sm_FeluccaPhaseBrightness));
@@ -780,7 +779,7 @@ void CSector::SetLightNow(const bool fFlash )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsStatFlag( STATF_DEAD | STATF_NIGHTSIGHT ))
 			continue;
 
@@ -800,7 +799,7 @@ void CSector::SetLightNow(const bool fFlash )
 		}
 
 		// don't fire trigger when server is loading or light is flashing
-		if (( ! g_Serv.IsLoadingGeneric() && fFlash == false ) && ( IsTrigUsed(TRIGGER_ENVIRONCHANGE) ))
+		if (!g_Serv.IsLoadingGeneric() && !fFlash && IsTrigUsed(TRIGGER_ENVIRONCHANGE))
 		{
             pChar->OnTrigger( CTRIG_EnvironChange, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar );
 		}
@@ -819,7 +818,9 @@ void CSector::SetLight(const int light )
 		m_Env.m_Light = GetLightCalc(true);
 	}
 	else
+	{
 		m_Env.m_Light = static_cast<byte>(light | LIGHT_OVERRIDE);
+    }
 
 	SetLightNow(false);
 }
@@ -832,7 +833,7 @@ void CSector::SetDefaultWeatherChance()
     if (const byte iPercent = static_cast<byte>(IMulDiv(m_BasePointSectUnits.m_y, 100, sd.iSectorRows)); iPercent < 50 )
 	{
 		// Anywhere north of the Britain Moongate is a good candidate for snow
-		m_ColdChance = 1 + ( 49 - iPercent ) * 2;
+		m_ColdChance = 1 + ((49 - iPercent) * 2);
 		m_RainChance = 15;
 	}
 	else
@@ -840,7 +841,7 @@ void CSector::SetDefaultWeatherChance()
 		// warmer down south
 		m_ColdChance = 1;
 		// rain more likely down south.
-		m_RainChance = 15 + ( iPercent - 50 ) / 10;
+		m_RainChance = 15 + ((iPercent - 50) / 10);
 	}
 }
 
@@ -850,11 +851,11 @@ WEATHER_TYPE CSector::GetWeatherCalc() const
 
 	// There is no weather in dungeons (or when the Sphere.ini setting prevents weather)
 	if ( IsInDungeon() || g_Cfg.m_fNoWeather )
-		return( WEATHER_DRY );
+		return WEATHER_DRY ;
 
 	// Rain chance also controls the chance of snow. If it isn't possible to rain then it cannot snow either
     const int iPercentRoll = CSRand::GetValFast( 100 );
-	if ( iPercentRoll < GetRainChance() )
+	if ( std::cmp_less(iPercentRoll , GetRainChance()) )
 	{
 		// It is precipitating... but is it rain or snow?
 		if ( GetColdChance() && CSRand::GetValFast(100) <= GetColdChance()) // Should it actually snow here?
@@ -864,7 +865,7 @@ WEATHER_TYPE CSector::GetWeatherCalc() const
 	// It is not precipitating, but is it cloudy or dry?
 	if ( ( iPercentRoll / 2) < GetRainChance() )
 		return WEATHER_CLOUDY;
-	return( WEATHER_DRY );
+	return WEATHER_DRY ;
 }
 
 void CSector::SetWeather(const WEATHER_TYPE w )
@@ -880,7 +881,7 @@ void CSector::SetWeather(const WEATHER_TYPE w )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsClientActive())
 			pChar->GetClientActive()->addWeather( w );
 
@@ -901,7 +902,7 @@ void CSector::SetSeason(const SEASON_TYPE season )
 
 	for (CSObjContRec* pObjRec : m_Chars_Active)
 	{
-        const auto pChar = static_cast<CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		if ( pChar->IsClientActive() )
 			pChar->GetClientActive()->addSeason(season);
 
@@ -916,8 +917,7 @@ void CSector::SetWeatherChance(const bool fRain, int iChance )
 	// Set via the client.
 	// Transfer from snow to rain does not work ! must be DRY first.
 
-	if ( iChance > 100 )
-		iChance = 100;
+	iChance = std::min(iChance, 100);
 	if ( iChance < 0 )
 	{
 		// just set back to defaults.
@@ -932,7 +932,7 @@ void CSector::SetWeatherChance(const bool fRain, int iChance )
 		m_ColdChance = static_cast<uchar>(iChance | LIGHT_OVERRIDE);
 	}
 
-	// Recalc the weather immediatly.
+	// Recalc the weather immediately.
 	SetWeather( GetWeatherCalc());
 }
 
@@ -956,7 +956,7 @@ void CSector::OnHearItem( CChar * pChar, const lpctstr pszText )
 
 	for (CSObjContRec* pObjRec : m_Items.GetIterationSafeContReverse())
 	{
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
         if (!pItem->CanHear())
             continue;
 
@@ -983,7 +983,9 @@ void CSector::MoveItemToSector( CItem * pItem )
         if (_CanSleep(true))
         {
             if (!pItem->_CanTick(true))
+            {
                 pItem->GoSleep();
+            }
             else
             {
                 // The item should tick even if the sector shouldn't (_CanTick true parameter).
@@ -1144,7 +1146,7 @@ void CSector::RespawnDeadNPCs()
 	// Respawn dead NPCs
     for (const auto charsActive = m_Chars_Active.GetIterationSafeCont(); CSObjContRec *pObjRec : charsActive)
 	{
-        const auto pChar = static_cast <CChar*>(pObjRec);
+        auto *const pChar = static_cast<CChar*>(pObjRec);
 		if (!pChar->m_pNPC || !pChar->m_ptHome.IsValidPoint() || !pChar->IsStatFlag(STATF_DEAD))
 			continue;
 
@@ -1169,7 +1171,7 @@ void CSector::Restock()
     for (const auto charsActive = m_Chars_Active.GetIterationSafeCont();
         CSObjContRec *pObjRec : charsActive)
     {
-        if (const auto pChar = static_cast<CChar *>(pObjRec); pChar->m_pNPC)
+        if (auto *const pChar = static_cast<CChar *>(pObjRec); pChar->m_pNPC)
         {
             pChar->NPC_Vendor_Restock(true);
         }
@@ -1178,7 +1180,7 @@ void CSector::Restock()
     for (const auto items = m_Items.GetIterationSafeCont();
         CSObjContRec *pObjRec : items)
     {
-        const auto pItem = static_cast<CItem*>(pObjRec);
+        auto *const pItem = static_cast<CItem*>(pObjRec);
         if (CCSpawn *pSpawn = pItem->GetSpawn())
         {
             pSpawn->OnTickComponent();
@@ -1287,9 +1289,13 @@ bool CSector::_OnTick()
 						sound = sm_SfxThunder[ CSRand::GetValFast( std::size(sm_SfxThunder)) ];
 					}
 					else if ( iVal < 10 )
+					{
 						sound = sm_SfxRain[ CSRand::GetValFast( std::size(sm_SfxRain)) ];
-					else if ( iVal < 15 )
+					}
+			        else if ( iVal < 15 )
+			        {
 						sound = sm_SfxWind[ CSRand::GetValFast( std::size(sm_SfxWind)) ];
+                    }
 				}
 				break;
 
@@ -1305,12 +1311,12 @@ bool CSector::_OnTick()
 	while (i > 0)
 	{
 		ASSERT(i <= m_Chars_Active.GetContentCount());
-        const auto pChar = static_cast<CChar*>(m_Chars_Active.GetContentIndex(--i));
+        auto *const pChar = static_cast<CChar*>(m_Chars_Active.GetContentIndex(--i));
 		EXC_TRYSUB("TickChar");
 
         ASSERT(pChar);
 
-		if (fEnvironChange && ( IsTrigUsed(TRIGGER_ENVIRONCHANGE) ))
+		if (fEnvironChange && IsTrigUsed(TRIGGER_ENVIRONCHANGE))
             pChar->OnTrigger(CTRIG_EnvironChange, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar);
 
 		if ( pChar->IsClientActive())
@@ -1328,7 +1334,7 @@ bool CSector::_OnTick()
 
 			if ( iRegionPeriodic && pChar->m_pArea )
 			{
-				if ( ( iRegionPeriodic == 2 ) && IsTrigUsed(TRIGGER_REGPERIODIC))
+				if ( iRegionPeriodic == 2 && IsTrigUsed(TRIGGER_REGPERIODIC))
 				{
 					pChar->m_pArea->OnRegionTrigger( pChar, RTRIG_REGPERIODIC );
 					--iRegionPeriodic;
@@ -1373,7 +1379,7 @@ WEATHER_TYPE CSector::GetWeather() const	// current weather.
 
 bool CSector::IsRainOverriden() const
 {
-	return (( m_RainChance & LIGHT_OVERRIDE ) ? true : false );
+	return (( m_RainChance & LIGHT_OVERRIDE ) != 0 );
 }
 
 byte CSector::GetRainChance() const
@@ -1383,7 +1389,7 @@ byte CSector::GetRainChance() const
 
 bool CSector::IsColdOverriden() const
 {
-	return (( m_ColdChance & LIGHT_OVERRIDE ) ? true : false );
+	return (( m_ColdChance & LIGHT_OVERRIDE ) != 0 );
 }
 
 byte CSector::GetColdChance() const
@@ -1394,7 +1400,7 @@ byte CSector::GetColdChance() const
 // Light
 bool CSector::IsLightOverriden() const
 {
-	return (( m_Env.m_Light & LIGHT_OVERRIDE ) ? true : false );
+	return (m_Env.m_Light & LIGHT_OVERRIDE) != 0;
 }
 
 byte CSector::GetLight() const
@@ -1404,13 +1410,13 @@ byte CSector::GetLight() const
 
 bool CSector::IsDark() const
 {
-	return ( GetLight() > 6 );
+	return GetLight() > 6;
 }
 
 bool CSector::IsNight() const
 {
     const int iMinutes = GetLocalTime();
-	return ((iMinutes < 7*60) || (iMinutes > (9+12)*60) );
+	return iMinutes < 7 * 60 || iMinutes > (9 + 12) * 60;
 }
 
 void CSector::LightFlash()
@@ -1450,7 +1456,7 @@ void CSector::RemoveListenItem()
 
 bool CSector::HasListenItems() const
 {
-	return (m_ListenItems ? true : false);
+	return m_ListenItems != 0;
 }
 
 bool CSector::IsCharActiveIn( const CChar * pChar ) //const
@@ -1494,4 +1500,3 @@ int64 CSector::GetLastClientTime() const
 {
 	return m_Chars_Active.GetTimeLastClient() ;
 }
-

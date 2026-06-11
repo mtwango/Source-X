@@ -16,12 +16,12 @@ void CUOVersionBlock::SetFile(const VERFILE_TYPE dwFile)
 
 dword CUOVersionBlock::GetIndex() const
 {
-    return( VERDATA_MAKE_INDEX( m_file, m_block ));
+    return VERDATA_MAKE_INDEX(m_file, m_block);
 }
 
 dword CUOVersionBlock::GetBlockIndex() const
 {
-    return( m_block );
+    return m_block;
 }
 
 void CUOVersionBlock::SetBlock(const dword dwBlock)

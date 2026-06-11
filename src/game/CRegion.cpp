@@ -1,8 +1,6 @@
 // Common for client and server.
 #include "../common/resource/sections/CRandGroupDef.h"
 #include "../common/resource/CResourceLock.h"
-//#include "../common/CExpression.h" // included in the precompiled header
-//#include "../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../network/CClientIterator.h"
 #include "chars/CChar.h"
 #include "clients/CClient.h"
@@ -10,7 +8,6 @@
 #include "CSector.h"
 #include "CSectorList.h"
 #include "CServer.h"
-
 
 //*************************************************************************
 // -CRegion
@@ -208,7 +205,9 @@ bool CRegion::MakeRegionDefname()
             }
         }
         else
+        {
             ++iVar;
+        }
     }
 
     // Only one, no need for the extra "_"
@@ -253,7 +252,7 @@ enum RC_TYPE : int // Even if it would implicitly be set to int, specify it to s
 	RC_TYPEREGION,
 	RC_UID,
 	RC_UNDERGROUND,
-	RC_QTY
+	RC_QTY,
 };
 
 lpctstr const CRegion::sm_szLoadKeys[RC_QTY+1] =	// static (Sorted)
@@ -291,7 +290,7 @@ lpctstr const CRegion::sm_szLoadKeys[RC_QTY+1] =	// static (Sorted)
 	"TYPE",
 	"UID",
 	"UNDERGROUND",
-	nullptr
+	nullptr,
 };
 
 bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
@@ -303,7 +302,7 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
     const auto index = static_cast<RC_TYPE>(FindTableHeadSorted(ptcKey, sm_szLoadKeys, std::size(sm_szLoadKeys) - 1));
 	if ( index < 0 )
 	{
-		return (fNoCallParent ? false : CScriptObj::r_WriteVal( ptcKey, sVal, pSrc ));
+		return fNoCallParent ? false : CScriptObj::r_WriteVal(ptcKey, sVal, pSrc);
 	}
 
 	switch ( index )
@@ -424,11 +423,11 @@ bool CRegion::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, 
 					SKIP_SEPARATORS( ptcKey );
                     const size_t uiQty = Exp_GetSTVal( ptcKey );
 					if ( uiQty >= m_TagDefs.GetCount() )
-						return false; // trying to get non-existant tag
+						return false; // trying to get non-existent tag
 
 					const CVarDefCont * pTagAt = m_TagDefs.GetAt(uiQty);
 					if ( !pTagAt )
-						return false; // trying to get non-existant tag
+						return false; // trying to get non-existent tag
 
 					SKIP_SEPARATORS( ptcKey );
 					if ( ! *ptcKey )
@@ -761,23 +760,23 @@ enum RV_TYPE
 {
 	RV_ALLCLIENTS,
 	RV_TAGLIST,
-	RV_QTY
+	RV_QTY,
 };
 
 lpctstr const CRegion::sm_szVerbKeys[RV_QTY+1] =
 {
 	"ALLCLIENTS",
 	"TAGLIST",
-	nullptr
+	nullptr,
 };
 
-//	actualy part of CSector, here we need SEV_QTY to know that the command is part of the sector
+//	actually part of CSector, here we need SEV_QTY to know that the command is part of the sector
 enum SEV_TYPE
 {
 	#define ADD(a,b) SEV_##a,
 	#include "../tables/CSector_functions.tbl"
 	#undef ADD
-	SEV_QTY
+	SEV_QTY,
 };
 
 bool CRegion::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from script
@@ -870,7 +869,7 @@ lpctstr const CRegion::sm_szTrigName[RTRIG_QTY+1] =	// static
 	"@EXIT",
 	"@REGPERIODIC",
 	"@STEP",
-	nullptr
+	nullptr,
 };
 
 TRIGRET_TYPE CRegion::OnRegionTrigger( CTextConsole * pSrc, RTRIG_TYPE iAction )
@@ -921,28 +920,26 @@ CRegionWorld::CRegionWorld(const CResourceID &rid, const lpctstr pszName) :
 {
 }
 
-CRegionWorld::~CRegionWorld()
-{
-}
+CRegionWorld::~CRegionWorld() = default;
 
 enum RWC_TYPE
 {
 	RWC_REGION,
 	RWC_RESOURCES,
-	RWC_QTY
+	RWC_QTY,
 };
 
 lpctstr const CRegionWorld::sm_szLoadKeys[RWC_QTY+1] =	// static
 {
 	"REGION",
 	"RESOURCES",
-	nullptr
+	nullptr,
 };
 
 bool CRegionWorld::r_GetRef( lpctstr & ptcKey, CScriptObj * & pRef )
 {
 	ADDTOCALLSTACK("CRegionWorld::r_GetRef");
-	return( CRegion::r_GetRef( ptcKey, pRef ));
+	return CRegion::r_GetRef( ptcKey, pRef );
 }
 
 bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren )
@@ -962,7 +959,7 @@ bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 				if ( ptcKey[6] && ptcKey[6] != '.' )
 					return false;
 
-                const auto pRegionTemp = dynamic_cast <CRegionWorld*>(m_pt.GetRegion( REGION_TYPE_AREA ));
+                auto *const pRegionTemp = dynamic_cast <CRegionWorld*>(m_pt.GetRegion( REGION_TYPE_AREA ));
 
 				if ( !ptcKey[6] )
 				{
@@ -976,7 +973,7 @@ bool CRegionWorld::r_WriteVal( lpctstr ptcKey, CSString & sVal, CTextConsole * p
 				if ( pRegionTemp && m_pt.GetRegion( REGION_TYPE_MULTI ) )
 					return pRegionTemp->r_WriteVal( ptcKey, sVal, pSrc );
 
-				return( this->r_WriteVal( ptcKey, sVal, pSrc ));
+				return this->r_WriteVal( ptcKey, sVal, pSrc );
 			}
 		default:
 			return (fNoCallParent ? false : CRegion::r_WriteVal( ptcKey, sVal, pSrc ));
@@ -1000,11 +997,11 @@ bool CRegionWorld::r_LoadVal( CScript &s )
 	{
 		case RWC_RESOURCES:
 			SetModified( REGMOD_EVENTS );
-			return( m_Events.r_LoadVal( s, RES_REGIONTYPE ));
+			return m_Events.r_LoadVal( s, RES_REGIONTYPE );
 		default:
 			break;
 	}
-	return(CRegion::r_LoadVal(s));
+	return CRegion::r_LoadVal(s);
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
@@ -1071,7 +1068,7 @@ bool CRegionWorld::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command
 const CRandGroupDef * CRegionWorld::FindNaturalResource(const int type) const
 {
 	ADDTOCALLSTACK("CRegionWorld::FindNaturalResource");
-	// Find the natural resources assinged to this region.
+	// Find the natural resources assigned to this region.
 	// ARGS: type = IT_TYPE
 
 	for ( size_t i = 0; i < m_Events.size(); ++i )

@@ -1,7 +1,3 @@
-
-//#include "../common/CException.h" // included in the precompiled header
-//#include "../common/CExpression.h" // included in the precompiled header
-//#include "../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../common/sphereproto.h"
 #include "../common/sphereversion.h"
 #include "../common/CLog.h"
@@ -78,7 +74,7 @@ size_t CServerDef::StatGet(const SERV_STAT_TYPE i) const
 				if (m_hmPsapiDll == nullptr)
 				{
                     sm_fHasMemoryInfo = false;
-					g_Log.EventError(("Unable to load process information PSAPI.DLL library. Memory information will be not available.\n"));
+					g_Log.EventError("Unable to load process information PSAPI.DLL library. Memory information will be not available.\n");
 				}
 				else
                 {
@@ -256,7 +252,7 @@ enum SC_TYPE
 	SC_URL,			// m_sURL
 	SC_URLLINK,
 	SC_VERSION,
-	SC_QTY
+	SC_QTY,
 };
 
 lpctstr const CServerDef::sm_szLoadKeys[SC_QTY+1] =	// static
@@ -284,7 +280,7 @@ lpctstr const CServerDef::sm_szLoadKeys[SC_QTY+1] =	// static
 	"URL",			// m_sURL
 	"URLLINK",
 	"VERSION",
-	nullptr
+	nullptr,
 };
 
 static lpctstr constexpr sm_AccAppTable[ ACCAPP_QTY ] =
@@ -297,7 +293,7 @@ static lpctstr constexpr sm_AccAppTable[ ACCAPP_QTY ] =
 	"UNUSED",
 	"UNSPECIFIED",	// Not specified.
 	"UNUSED",
-	"UNUSED"
+	"UNUSED",
 };
 
 bool CServerDef::r_LoadVal( CScript & s )
@@ -334,7 +330,7 @@ bool CServerDef::r_LoadVal( CScript & s )
             const lpctstr ptcArg = s.GetArgStr();
 			if ( this != &g_Serv && !g_Serv.m_sEMail.IsEmpty() && strstr(ptcArg, g_Serv.m_sEMail) )
 				return false;
-			if ( !g_Cfg.IsValidEmailAddressFormat(ptcArg) )
+			if ( !CServerConfig::IsValidEmailAddressFormat(ptcArg) )
 				return false;
 			if ( g_Cfg.IsObscene(ptcArg) )
 				return false;

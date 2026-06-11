@@ -58,7 +58,7 @@ public:
         UNDEAD     = 0x10,
         ARACHNID   = 0x20,
         REPTILIAN  = 0x40,
-        QTY
+        QTY,
         // MAX = 0x800000
     };
     // Lowest two bytes are used to store the species as a plain number.
@@ -134,7 +134,7 @@ public:
         BOVINE_SSLAYER       = _kuiSuperSlayerSpeciesIndex,
         FLAME = 2,
         ICE = 3,
-        WOLF = 4
+        WOLF = 4,
         //STANDALONE_QTY
     };
     // The upper 6 bytes are used to store the family/group as a bitmask.
@@ -151,45 +151,43 @@ public:
     Species GetSpecies() const noexcept;
     bool SetSpecies(Species species) noexcept;
 
-        /*
-        Checks my group and the target's one and return true if we are enemies.
-    */
+    /**
+     * Checks my group and the target's one and return true if we are enemies.
+     */
     bool IsOppositeGroup(const CFactionDef *target) const noexcept;
 
-    /*
-    Returns true if I'm a Super Slayer and the target has also the same type
-    */
+    /**
+     * Returns true if I'm a Super Slayer and the target has also the same type
+     */
     bool IsSuperSlayerVersus(const CFactionDef *target) const noexcept;
 
-    /*
-    Returns true if I'm a Lesser Slayer and the target has also the same type
-    */
+    /**
+     * Returns true if I'm a Lesser Slayer and the target has also the same type
+     */
     bool IsLesserSlayerVersus(const CFactionDef *target) const noexcept;
 
-    /*
-        Returns true if I have a Super Slayer property
-    */
+    /**
+     * Returns true if I have a Super Slayer property
+     */
     bool HasSuperSlayer() const noexcept;
 
-    /*
-        Returns true if I have a Lesser Slayer property
-    */
-
+    /**
+     * Returns true if I have a Lesser Slayer property
+     */
     bool HasLesserSlayer() const noexcept;
-    /*
-        Returns the Slayers's damage bonus (if any).
-        NOTE: We can't direct check for target's Super Slayer or Lesser Slayer and compare
-        with ours because we may both have more than one Group (even if we shouldn't,
-        Sphere's 'versatility' forces us to do so).
-    */
+
+    /**
+     * Returns the Slayers's damage bonus (if any).
+     *
+     * NOTE: We can't direct check for target's Super Slayer or Lesser Slayer and compare with ours because we may both have more than one Group (even if we
+     * shouldn't, Sphere's 'versatility' forces us to do so).
+     */
     int GetSlayerDamageBonusPercent(const CFactionDef *target) const noexcept;
 
-    /*
-        Wielding a slayer type against its opposite will cause the attacker to take more damage
-        returns the penalty damage.
-    */
+    /**
+     * Wielding a slayer type against its opposite will cause the attacker to take more damage returns the penalty damage.
+     */
     int GetSlayerDamagePenaltyPercent(const CFactionDef *target) const noexcept;
 };
-
 
 #endif // _INC_CFACTIONDEF_H

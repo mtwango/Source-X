@@ -1,7 +1,5 @@
-//#include "../common/CExpression.h" // included in the precompiled header
 #include "CServerConfig.h"
 #include "CServerTime.h"
-
 
 CServerTime CServerTime::operator+(const int64 llTimeDiff ) const noexcept
 {
@@ -12,7 +10,6 @@ CServerTime CServerTime::operator-(const int64 llTimeDiff ) const noexcept
 {
     return CServerTime(m_llPrivateTime - llTimeDiff);
 }
-
 
 lpctstr CServerTime::GetTimeMinDesc(const int iMinutes) // static
 {

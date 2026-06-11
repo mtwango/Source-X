@@ -1,7 +1,6 @@
 #include "uo_files/uofiles_macros.h"
 #include "CSectorEnviron.h"
 
-
 CSectorEnviron::CSectorEnviron() noexcept
 {
     m_Light = LIGHT_BRIGHT;	// set based on time later.

@@ -3,7 +3,6 @@
 #include "uo_files/CUOMapList.h"
 #include "CWorldCache.h"
 
-
 CWorldCache::CWorldCache()
 {
 	_iTimeLastMapBlockCacheCheck = 0;
@@ -16,7 +15,7 @@ static int _GetMapBlocksCount(const int iMap) noexcept
 {
 	const int iXBlocks = g_MapList.GetMapSizeX(iMap) / UO_BLOCK_SIZE;
 	const int iYBlocks = g_MapList.GetMapSizeY(iMap) / UO_BLOCK_SIZE;
-	return (iXBlocks * iYBlocks);
+	return iXBlocks * iYBlocks;
 }
 
 void CWorldCache::Init()
@@ -40,7 +39,7 @@ void CWorldCache::CheckMapBlockCache(const int64 iCurTime, const int64 iCacheTim
 	const ProfileTask overheadTask(PROFILE_MAP);
 	for (int i = 0; i < MAP_SUPPORTED_QTY; ++i)
 	{
-		MapBlockCache& cache = _mapBlocks[i];
+		MapBlockCache const& cache = _mapBlocks[i];
 		if (!cache)
 			continue;
 

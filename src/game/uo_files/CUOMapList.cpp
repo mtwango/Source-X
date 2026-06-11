@@ -82,7 +82,7 @@ bool CUOMapList::Load(const int map, char *args)
     }
 
     auto &[iNum, iId, uiSizeX, uiSizeY, iSectorSize, fEnabled, fInitialized] = m_mapGeoData.maps[map];
-    if ( false == fInitialized )	// disable double intialization
+    if ( !fInitialized )	// disable double intialization
     {
         tchar * ppCmd[5];	// maxx,maxy,sectorsize,mapnum[like 0 for map0/statics0/staidx0],mapid
 
@@ -93,7 +93,11 @@ bool CUOMapList::Load(const int map, char *args)
             return true;
         }
 
-        int maxx = 0, maxy = 0, sectorsize = 0, realmapnum = 0, mapid = -1;
+        int maxx = 0;
+        int maxy = 0;
+        int sectorsize = 0;
+        int realmapnum = 0;
+        int mapid = -1;
         if ( ppCmd[0] ) maxx        = atoi(ppCmd[0]);
         if ( ppCmd[1] ) maxy        = atoi(ppCmd[1]);
         if ( ppCmd[2] ) sectorsize  = atoi(ppCmd[2]);
@@ -109,7 +113,9 @@ bool CUOMapList::Load(const int map, char *args)
                     map, maxx, uiSizeX);
             }
             else
+            {
                 uiSizeX = static_cast<ushort>(std::clamp(maxx, 0, static_cast<int>(UINT16_MAX)));
+            }
         }
         if ( maxy )
         {
@@ -119,7 +125,9 @@ bool CUOMapList::Load(const int map, char *args)
                     map, maxy, uiSizeY);
             }
             else
+            {
                 uiSizeY = static_cast<ushort>(std::clamp(maxy, 0, static_cast<int>(UINT16_MAX)));
+            }
         }
         if ( sectorsize > 0 )
         {
@@ -129,7 +137,9 @@ bool CUOMapList::Load(const int map, char *args)
                     map, sectorsize);
             }
             else
+            {
                 iSectorSize = static_cast<int16>(sectorsize);
+            }
         }
         if ( realmapnum >= 0 )
             iNum = static_cast<int16>(realmapnum);
@@ -146,14 +156,14 @@ bool CUOMapList::Load(const int map, char *args)
 
 bool CUOMapList::DetectMapSize(const int map) // it sets also the default sector size, if not specified in the ini (<= 0)
 {
-    if (m_mapGeoData.maps[map].fInitialized == false )
+    if (!m_mapGeoData.maps[map].fInitialized )
         return false;
 
     const int index = m_mapGeoData.maps[map].iNum;
     if ( index < 0 )
         return false;
 
-    if (g_Install.m_Maps[index].IsFileOpen() == false)
+    if (!g_Install.m_Maps[index].IsFileOpen())
         return false;
 
     //

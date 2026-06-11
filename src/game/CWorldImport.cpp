@@ -1,4 +1,5 @@
-//#include "../common/CExpression.h" // included in the precompiled header
+#include <utility>
+
 #include "../common/CLog.h"
 #include "chars/CChar.h"
 #include "items/CItem.h"
@@ -7,10 +8,9 @@
 #include "CWorld.h"
 #include "CWorldSearch.h"
 
-
 struct CImportSer : CSObjListRec
 {
-	// Temporary holding structure for new objects being impoted.
+	// Temporary holding structure for new objects being imported.
 
 	// Translate the import UID's into my UID's
 	const dword m_dwSer;		// My Imported serial number
@@ -53,9 +53,9 @@ struct CImportFile
 	tchar * m_pszArg1;	// account
 	tchar * m_pszArg2;	// name
 
-	CImportFile(const word wModeFlags, const CPointMap &ptCenter, const int iDist ) :
+	CImportFile(const word wModeFlags, CPointMap ptCenter, const int iDist ) :
 		m_wModeFlags(wModeFlags),
-		m_ptCenter(ptCenter),
+		m_ptCenter(std::move(ptCenter)),
 		m_iDist(iDist)
 	{
 		m_pCurSer = nullptr;
@@ -111,7 +111,7 @@ void CImportFile::CheckLast()
 void CImportFile::ImportFix()
 {
 	ADDTOCALLSTACK("CImportFile::ImportFix");
-	// adjust all the containered items and eliminate duplicates.
+	// adjust all the contained items and eliminate duplicates.
 
 	CheckLast();
 
@@ -135,7 +135,7 @@ void CImportFile::ImportFix()
 		{
 			if ( m_pCurSer->m_pObj->IsItem())
 			{
-                const auto pItemCheck = dynamic_cast <CItem*>( m_pCurSer->m_pObj );
+                auto *const pItemCheck = dynamic_cast <CItem*>( m_pCurSer->m_pObj );
 				ASSERT(pItemCheck);
 				pItemCheck->SetAttr(ATTR_MOVE_NEVER);
 
@@ -201,7 +201,7 @@ void CImportFile::ImportFix()
 		}
 
 		// Is it a dupe in the container or equipped ?
-        const auto pObjContBase = dynamic_cast<CContainer*>(pObjCont);
+        auto *const pObjContBase = dynamic_cast<CContainer*>(pObjCont);
 		ASSERT(pObjCont);
 		for (CSObjContRec* pObjRec : *pObjContBase)
 		{
@@ -345,7 +345,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
             continue;
 
         // Parse the line.
-        auto pKey = const_cast<tchar*>(strchr(s.GetKey(), ' '));
+        auto *pKey = const_cast<tchar*>(strchr(s.GetKey(), ' '));
 		lpctstr pArg = nullptr;
 
 		if (pKey != nullptr)
@@ -364,7 +364,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
 			if ( m_pCurSer != nullptr )
 				return false;
 
-			dword dwSerial = atoi( pArg );
+			dword const dwSerial = atoi( pArg );
 			if ( dwSerial == UID_UNUSED )
 			{
 				DEBUG_ERR(( "Import:Bad serial number\n" ));
@@ -744,7 +744,7 @@ bool CImportFile::ImportWSC( CScript & s, word wModeFlags, short dx, short dy )
                 if (!iconv.has_value())
                     return false;
 
-                if (pChar->IsSkillBase(skill) && g_Cfg.m_SkillIndexDefs.valid_index(skill))
+                if (CChar::IsSkillBase(skill) && g_Cfg.m_SkillIndexDefs.valid_index(skill))
                     pChar->Skill_SetBase(skill, *iconv);
 
                 continue;

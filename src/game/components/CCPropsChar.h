@@ -14,7 +14,7 @@ enum PROPCH_TYPE : CComponentProps::PropertyIndex_t
     #define ADDPROP(a,b,c) PROPCH_##a,
     #include "../../tables/CCPropsChar_props.tbl"
     #undef ADDPROP
-    PROPCH_QTY
+    PROPCH_QTY,
 };
 
 class CCPropsChar : public CComponentProps

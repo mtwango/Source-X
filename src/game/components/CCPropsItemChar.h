@@ -13,7 +13,7 @@ enum PROPITCH_TYPE : CComponentProps::PropertyIndex_t
     #define ADDPROP(a,b,c) PROPITCH_##a,
     #include "../../tables/CCPropsItemChar_props.tbl"
     #undef ADDPROP
-    PROPITCH_QTY
+    PROPITCH_QTY,
 };
 
 class CCPropsItemChar : public CComponentProps

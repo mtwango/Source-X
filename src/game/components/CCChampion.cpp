@@ -1,5 +1,5 @@
-/*
-* @file Champion.cpp
+/**
+* @file CCChampion.cpp
 *
 * @brief This file contains CCChampion and CCChampionDef classes declarations
 *
@@ -13,8 +13,6 @@
 
 #include "../../common/resource/CResourceLock.h"
 #include "../../common/sphere_library/CSRand.h"
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../common/CLog.h"
 #include "../../common/CScript.h"
 #include "../chars/CChar.h"
@@ -50,7 +48,7 @@ lpctstr const CCChampion::sm_szLoadKeys[ICHMPL_QTY + 1] =
     "SPAWNSCUR",
     "SPAWNSMAX",
     "WHITECANDLES",
-    nullptr
+    nullptr,
 };
 
 lpctstr const CCChampion::sm_szVerbKeys[ICHMPV_QTY + 1] =
@@ -64,7 +62,7 @@ lpctstr const CCChampion::sm_szVerbKeys[ICHMPV_QTY + 1] =
     "MULTICREATE",
     "START",
     "STOP",
-    nullptr
+    nullptr,
 };
 
 CCChampion::CCChampion(CItem* pLink) : CComponent(COMP_CHAMPION)
@@ -275,15 +273,19 @@ void CCChampion::SpawnNPC()
         size_t uiSize = _spawnGroupsId[_iLevel].size();
         idSpawn idGroup;
         if (uiSize > 0)
+        {
             idGroup = _spawnGroupsId;
+        }
         else
         {
             CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-            if (const auto pChampDef = static_cast<CCChampionDef *>(pRes))
+            if (auto *const pChampDef = static_cast<CCChampionDef *>(pRes))
             {
                 uiSize = pChampDef->_idSpawn[_iLevel].size();
                 if (uiSize > 0)
+                {
                     idGroup = pChampDef->_idSpawn;
+                }
                 else
                 {
                     g_Log.EventError("CCChampion:: Trying to create NPCs from undefined NPCGROUP[%d]\n", _iLevel);
@@ -356,54 +358,52 @@ void CCChampion::AddWhiteCandle(const CUID& uid)
         return;
     }
 
+    pCandle = CItem::CreateBase(ITEMID_SKULL_CANDLE);
     if (!pCandle)
     {
-        pCandle = pLink->CreateBase(ITEMID_SKULL_CANDLE);
-        if (!pCandle)
-        {
-            // If cannot create candle, force boss to spawn to be able to finish.
-            SetLevel(_iLevelMax);
-            return;
-        }
-        CPointMap pt = pLink->GetTopPoint();
-        switch (_pWhiteCandles.size())
-        {
-            case 0:
-                pt.MoveN(DIR_SW, 1);
-                break;
-            case 1:
-                pt.MoveN(DIR_SE, 1);
-                break;
-            case 2:
-                pt.MoveN(DIR_NW, 1);
-                break;
-            case 3:
-                pt.MoveN(DIR_NE, 1);
-                break;
-            default:
-                break;
-        }
+        // If cannot create candle, force boss to spawn to be able to finish.
+        SetLevel(_iLevelMax);
+        return;
+    }
+    CPointMap pt = pLink->GetTopPoint();
+    switch (_pWhiteCandles.size())
+    {
+        case 0:
+            pt.MoveN(DIR_SW, 1);
+            break;
+        case 1:
+            pt.MoveN(DIR_SE, 1);
+            break;
+        case 2:
+            pt.MoveN(DIR_NW, 1);
+            break;
+        case 3:
+            pt.MoveN(DIR_NE, 1);
+            break;
+        default:
+            break;
+    }
 
-        pCandle->SetTopPoint(pt);
-        if (!g_Serv.IsLoadingGeneric())
+    pCandle->SetTopPoint(pt);
+    if (!g_Serv.IsLoadingGeneric())
+    {
+        if (IsTrigUsed(TRIGGER_ADDWHITECANDLE))
         {
-            if (IsTrigUsed(TRIGGER_ADDWHITECANDLE))
+            const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+            pScriptArgs->m_pO1 = pCandle;
+            if (OnTrigger(ITRIG_ADDWHITECANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
             {
-                const CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-                pScriptArgs->m_pO1 = pCandle;
-                if (OnTrigger(ITRIG_ADDWHITECANDLE, pScriptArgs, &g_Serv) == TRIGRET_RET_TRUE)
-                {
-                    pCandle->Delete();
-                    return;
-                }
+                pCandle->Delete();
+                return;
             }
         }
-        pCandle->SetAttr(ATTR_MOVE_NEVER);
-        pCandle->MoveTo(pt);
-        pCandle->SetTopZ(pCandle->GetTopZ() + 4);
-        pCandle->Update();
-        pCandle->GenerateScript(nullptr);
     }
+    pCandle->SetAttr(ATTR_MOVE_NEVER);
+    pCandle->MoveTo(pt);
+    pCandle->SetTopZ(pCandle->GetTopZ() + 4);
+    pCandle->Update();
+    pCandle->GenerateScript(nullptr);
+
 
     _pWhiteCandles.emplace_back(pCandle->GetUID());
     pCandle->m_uidLink = pLink->GetUID();
@@ -435,7 +435,7 @@ void CCChampion::AddRedCandle(const CUID& uid)
 
     if (!pCandle)
     {
-        pCandle = pLink->CreateBase(ITEMID_SKULL_CANDLE);
+        pCandle = CItem::CreateBase(ITEMID_SKULL_CANDLE);
         if (!pCandle)
         {
             // If cannot create candle, force boss to spawn to be able to finish.
@@ -538,8 +538,7 @@ void CCChampion::SetLevel(const byte iLevel)
         return;
 
     _iLevel = iLevel;
-    if (_iLevel < 1)
-        _iLevel = 1;
+    _iLevel = std::max<uchar>(_iLevel, 1);
 
     const ushort iLevelMonsters = GetMonstersCount();
     _iCandlesNextLevel += GetCandlesCount();
@@ -585,7 +584,7 @@ void CCChampion::InitializeLists()
     uchar uiCandleTotal = 0;
     for (uchar i = (_iLevelMax - 2); i > 0; --i)
     {
-        uchar uiMonster = (uiPerc / i) + (_iLevelMax - (i + 1));
+        uchar const uiMonster = (uiPerc / i) + (_iLevelMax - (i + 1));
         _MonstersList.insert(_MonstersList.begin(), uiMonster); // Push the value from beginning.
         uiMonsterTotal += uiMonster;
     }
@@ -593,7 +592,7 @@ void CCChampion::InitializeLists()
 
     for (uchar i = (_iLevelMax - 1); i > 1; --i)
     {
-        uchar uiCandle = ((16 - uiCandleTotal) / i);
+        uchar const uiCandle = ((16 - uiCandleTotal) / i);
         _CandleList.insert(_CandleList.begin(), uiCandle);
         uiCandleTotal += uiCandle;
     }
@@ -606,8 +605,7 @@ uchar CCChampion::GetCandlesCount()
     if (_iLevel == UCHAR_MAX)
         return 16;
 
-    if (_iLevel < 1) // Should never happen but put here to make sure avoid invalid index.
-        _iLevel = 1;
+    _iLevel = std::max<uchar>(_iLevel, 1); // Should never happen but put here to make sure avoid invalid index.
 
     if (_CandleList.empty())
         InitializeLists();
@@ -624,8 +622,7 @@ uchar CCChampion::GetCandlesCount()
 ushort CCChampion::GetMonstersCount()
 {
     ADDTOCALLSTACK("CCChampion::GetMonstersCount");
-    if (_iLevel < 1) // Should never happen but put here to make sure avoid invalid index.
-        _iLevel = 1;
+    _iLevel = std::max<uchar>(_iLevel, 1); // Should never happen but put here to make sure avoid invalid index.
 
     if (_MonstersList.empty())
         InitializeLists();
@@ -727,7 +724,7 @@ void CCChampion::DelObj(const CUID& uid)
     {
         return;
     }
-    const auto pSpawn = static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
+    auto *const pSpawn = static_cast<CCSpawn*>(GetLink()->GetComponent(COMP_SPAWN));
     ASSERT(pSpawn);
     pSpawn->DelObj(uid);
 
@@ -806,7 +803,7 @@ void CCChampion::r_Write(CScript& s)
         {
             std::stringstream groupStream;
             auto const& vec = snd;
-            if (vec.empty() == true)
+            if (vec.empty())
             {
                 continue;
             }
@@ -883,7 +880,7 @@ bool CCChampion::r_WriteVal(lpctstr ptcKey, CSString& sVal, CTextConsole* pSrc)
             else // If it doesnt have, then try to retrieve the group from [CHAMPION ]
             {
                 CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-                if (const auto pChampDef = static_cast<CCChampionDef *>(pRes); pChampDef != nullptr)
+                if (auto *const pChampDef = static_cast<CCChampionDef *>(pRes); pChampDef != nullptr)
                 {
                     iSize = static_cast<int>(pChampDef->_idSpawn[uiGroup].size());
                     if (iSize > 0)
@@ -965,7 +962,7 @@ bool CCChampion::r_LoadVal(CScript& s)
     {
     case ICHMPL_ACTIVE:
         {
-            if (g_Serv.IsLoadingGeneric() == true)    //Only when the server is loading.
+            if (g_Serv.IsLoadingGeneric())    //Only when the server is loading.
             {
                 _fActive = static_cast<bool>(s.GetArgBVal());
             }
@@ -1096,7 +1093,7 @@ bool CCChampion::r_GetRef(lpctstr & ptcKey, CScriptObj * & pRef)
         ptcKey += 5;
         lpctstr i = ptcKey;
         SKIP_SEPARATORS(ptcKey);
-        if (const auto pSpawn = static_cast<CCSpawn *>(GetLink()->GetComponent(COMP_SPAWN)))
+        if (auto *const pSpawn = static_cast<CCSpawn *>(GetLink()->GetComponent(COMP_SPAWN)))
         {
             return pSpawn->r_GetRef(i, pRef);
         }
@@ -1162,7 +1159,7 @@ TRIGRET_TYPE CCChampion::OnTrigger(const ITRIG_TYPE trig, CScriptTriggerArgsPtr 
     const lpctstr pszTrigName = CItem::sm_szTrigName[trig];
 
     CResourceDef* pRes = g_Cfg.RegisteredResourceGetDef(_idSpawn);
-    const auto pChampDef = static_cast<CCChampionDef*>(pRes);
+    auto *const pChampDef = static_cast<CCChampionDef*>(pRes);
     CResourceLink* pResourceLink = pChampDef;
     ASSERT(pResourceLink);
     TRIGRET_TYPE iRet = TRIGRET_RET_DEFAULT;
@@ -1188,9 +1185,8 @@ lpctstr const CCChampionDef::sm_szLoadKeys[CHAMPIONDEF_QTY + 1] =
     "NAME",
     "NPCGROUP",
     "SPAWNSMAX",
-    nullptr
+    nullptr,
 };
-
 
 CCChampionDef::CCChampionDef(const CResourceID &rid) : CResourceLink(rid)
 {
@@ -1200,9 +1196,7 @@ CCChampionDef::CCChampionDef(const CResourceID &rid) : CResourceLink(rid)
     _idChampion = CREID_INVALID;
 }
 
-CCChampionDef::~CCChampionDef()
-{
-}
+CCChampionDef::~CCChampionDef() = default;
 
 bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * pSrc, const bool fNoCallParent, const bool fNoCallChildren)
 {
@@ -1252,7 +1246,7 @@ bool CCChampionDef::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * p
                 sVal.FormatVal(-1);
                 return true;
             }
-            if ( uiNPC < npcCount )
+            if ( std::cmp_less(uiNPC , npcCount) )
             {
                 if (const auto npc = _idSpawn[uiGroup].at(uiNPC); npc != CREID_INVALID)
                 {

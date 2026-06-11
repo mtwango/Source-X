@@ -1,10 +1,8 @@
-//#include "../common/CException.h" // included in the precompiled header
 #include "../sphere/ProfileTask.h"
 #include "../sphere/threads.h"
 #include "CWorldGameTime.h"
 #include "CWorldTickingList.h"
 #include "CTimedObject.h"
-
 
 CTimedObject::CTimedObject(const PROFILE_TYPE profile) noexcept :
     _iTimeout(0), _profileType(profile), _fIsSleeping(true),
@@ -24,7 +22,6 @@ CTimedObject::~CTimedObject()
 
     EXC_CATCH;
 }
-
 
 void CTimedObject::_GoAwake()
 {
@@ -48,7 +45,7 @@ void CTimedObject::_SetTimeout(const int64 iDelayInMsecs)
     ADDTOCALLSTACK_DEBUG("CTimedObject::_SetTimeout");
     // Assume we have the mutex already locked here
 
-    const ProfileTask timersTask(PROFILE_TIMERS); // profile the settimeout proccess.
+    const ProfileTask timersTask(PROFILE_TIMERS); // profile the set timeout process.
     if (_IsDeleted()) //prevent deleted objects from setting new timers to avoid nullptr calls
     {
         //CWorldTickingList::DelObjSingle(this); // This should already by done upon object deletion.

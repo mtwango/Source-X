@@ -1,8 +1,6 @@
 
 #include "../../common/resource/CResourceLock.h"
 #include "../../common/sphere_library/CSRand.h"
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../common/CLog.h"
 #include "../../network/send.h"
 #include "../chars/CChar.h"
@@ -33,10 +31,10 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 	{
 		if ( !fScript )
 		{
-            if (const auto pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent()) )
+            if (auto *const pContainer = dynamic_cast<CItemContainer *>(pItem->GetParent()) )
 			{
 				// protect from ,snoop - disallow picking from not opened containers
-                const auto pTopContainer = dynamic_cast<CItemContainer*>(pItem->GetTopContainer());
+                auto *const pTopContainer = dynamic_cast<CItemContainer*>(pItem->GetTopContainer());
 				bool isInOpenedContainer = false;
 				if ( pContainer->IsType(IT_EQ_TRADE_WINDOW) )
 				{
@@ -51,9 +49,9 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 				{
                     if (const auto itContainerFound = m_openedContainers.find(pContainer->GetUID().GetPrivateUID()); itContainerFound != m_openedContainers.cend() )
 					{
-                        const dword dwTopContainerUID = ((itContainerFound->second).first).first;
-                        const dword dwTopMostContainerUID = ((itContainerFound->second).first).second;
-                        const CPointMap ptOpenedContainerPosition = (itContainerFound->second).second;
+                        const dword dwTopContainerUID = itContainerFound->second.first.first;
+                        const dword dwTopMostContainerUID = itContainerFound->second.first.second;
+                        const CPointMap ptOpenedContainerPosition = itContainerFound->second.second;
 
 						dword dwTopContainerUID_ToCheck = 0;
 						if ( pContainer->GetContainer() )
@@ -70,7 +68,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 							}
 							else
 							{
-                                if (const auto pItemTop = static_cast<const CItem *>(pObjTop);
+                                if (const auto *const pItemTop = static_cast<const CItem *>(pObjTop);
                                     pItemTop && (pItemTop->IsType(IT_SHIP_HOLD) || pItemTop->IsType(IT_SHIP_HOLD_LOCK)) && (pItemTop->GetTopPoint().GetRegion(REGION_TYPE_MULTI) == m_pChar->GetTopPoint().GetRegion(REGION_TYPE_MULTI)) )
 									isInOpenedContainer = true;
 								else if ( ptOpenedContainerPosition.GetDist(pObjTop->GetTopPoint()) <= 3 )
@@ -92,7 +90,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 		if ( !m_pChar->CanUse(pItem, false) )
 		{
 			if ( !m_pChar->CanTouch(pItem) )
-				SysMessage((m_pChar->IsStatFlag(STATF_DEAD)) ? g_Cfg.GetDefaultMsg(DEFMSG_REACH_GHOST) : g_Cfg.GetDefaultMsg(DEFMSG_REACH_FAIL));
+				SysMessage(m_pChar->IsStatFlag(STATF_DEAD) ? g_Cfg.GetDefaultMsg(DEFMSG_REACH_GHOST) : g_Cfg.GetDefaultMsg(DEFMSG_REACH_FAIL));
 			else
 				SysMessageDefault(DEFMSG_REACH_UNABLE);
 
@@ -209,7 +207,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 		case IT_CONTAINER:
 		case IT_TRASH_CAN:
 		{
-            const auto pPack = static_cast<CItemContainer *>(pItem);
+            auto *const pPack = static_cast<CItemContainer *>(pItem);
 
 			if ( !m_pChar->Skill_Snoop_Check(pPack) )
 			{
@@ -219,7 +217,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 
             if (pItem->GetType() == IT_CORPSE)
             {
-                if (const auto pCorpseItem = static_cast<CItemCorpse *>(pPack); m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
+                if (auto *const pCorpseItem = static_cast<CItemCorpse *>(pPack); m_pChar->CheckCorpseCrime(pCorpseItem, true, true) )
                     SysMessageDefault(DEFMSG_LOOT_CRIMINAL_ACT);
             }
 
@@ -233,7 +231,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 				SysMessageDefault(DEFMSG_ITEMUSE_GAMEBOARD_FAIL);
 				return false;
 			}
-            const auto pBoard = static_cast<CItemContainer *>(pItem);
+            auto *const pBoard = static_cast<CItemContainer *>(pItem);
 			ASSERT(pBoard);
 			pBoard->Game_Create();
 			addContainerSetup(pBoard);
@@ -331,7 +329,7 @@ bool CClient::Cmd_Use_Item( CItem *pItem, bool fTestTouch, const bool fScript )
 		{
 			if (m_net->isClientVersionNumber(MINCLIVER_HS))
 			{
-                if (const auto pShip = dynamic_cast<CItemShip *>(pItem->m_uidLink.ItemFind()))
+                if (auto *const pShip = dynamic_cast<CItemShip *>(pItem->m_uidLink.ItemFind()))
 				{
 					if (m_pChar->ContentFindKeyFor(pItem) || pShip->GetOwner() == m_pChar->GetUID())
 						pShip->SetPilot(m_pChar);
@@ -578,7 +576,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, const int iSelect )
 	if ( !pObj )
 		return;
 
-    const auto pContainer = dynamic_cast<CContainer *>(pObj);
+    auto *const pContainer = dynamic_cast<CContainer *>(pObj);
 	if ( !pContainer )
 	{
 		addGumpDialogProps(pObj->GetUID());
@@ -607,7 +605,7 @@ void CClient::Cmd_EditItem( CObjBase *pObj, const int iSelect )
 	uint count = 0;
 	for (const CSObjContRec* pObjRec : *pContainer)
 	{
-        const auto pItem = static_cast<const CItem*>(pObjRec);
+        const auto *const pItem = static_cast<const CItem*>(pObjRec);
 		++count;
 		m_tmMenu.m_Item[count] = pItem->GetUID();
 		item[count].m_sText = pItem->GetName();
@@ -668,8 +666,8 @@ bool CClient::Skill_Menu(const SKILL_TYPE skill, lpctstr skillmenu, const ITEMID
 bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Skill_Menu");
-	// Build the skill menu for the curent active skill.
-	// Only list the things we have skill and ingrediants to make.
+	// Build the skill menu for the current active skill.
+	// Only list the things we have skill and ingredients to make.
 	//
 	// ARGS:
 	//	m_Targ_UID = the object used to get us here.
@@ -700,7 +698,7 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
     const int iShowCount = Cmd_Skill_Menu_Build(rid, iSelect, item, MAX_MENU_ITEMS, &fShowMenu, &fLimitReached);
 
 	if ( iSelect < -1 )		// just a test
-		return iShowCount ? true : false;
+		return iShowCount != 0;
 
 	if ( iSelect > 0 )		// seems our resources disappeared.
 	{
@@ -742,8 +740,8 @@ bool CClient::Cmd_Skill_Menu( const CResourceID& rid, const int iSelect )
 int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CMenuItem * item, const int iMaxSize, bool *fShowMenu, bool *fLimitReached )
 {
 	ADDTOCALLSTACK("CClient::Cmd_Skill_Menu_Build");
-	// Build the skill menu for the curent active skill.
-	// Only list the things we have skill and ingrediants to make.
+	// Build the skill menu for the current active skill.
+	// Only list the things we have skill and ingredients to make.
 	//
 	// ARGS:
 	//	m_Targ_UID = the object used to get us here.
@@ -883,7 +881,7 @@ int CClient::Cmd_Skill_Menu_Build( const CResourceID& rid, const int iSelect, CM
 		{
             CScriptExprContext scpContext{._pScriptObjI = m_pChar};
             CExpression::GetExprParser().ParseScriptText(s.GetArgRaw(), scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
-            if (CResourceQtyArray skills(s.GetArgStr()); !skills.IsResourceMatchAll(m_pChar) )
+            if (CResourceQtyArray const skills(s.GetArgStr()); !skills.IsResourceMatchAll(m_pChar) )
 			{
                 fSkipNeedCleanup = true;
 			}
@@ -985,7 +983,9 @@ bool CClient::Cmd_Skill_Magery( SPELL_TYPE iSpell, CObjBase *pSrc )
 			iSpell = m_tmSkillMagery.m_iSpell;
 	}
 	else
+	{
 		pSpellDef = g_Cfg.GetSpellDef(iSpell);
+    }
 
 	if ( !pSpellDef )
 		return false;
@@ -1126,7 +1126,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 			NPCBRAIN_ANIMAL,
 			NPCBRAIN_MONSTER,
 			NPCBRAIN_HUMAN,
-			NPCBRAIN_NONE	// players
+			NPCBRAIN_NONE,	// players
 		};
 
 		if ( track_sel >= std::size(sm_Track_Brain))
@@ -1146,13 +1146,15 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 		*/
 
 		if (m_pChar->m_Act_Effect >= 0)
+		{
 			m_pChar->m_atTracking.m_dwDistMax = static_cast<dword>(m_pChar->m_Act_Effect);
-		else //This is default Sphere maximum tracking distance.
+		}
+	    else //This is default Sphere maximum tracking distance.
 		{
 			int iSkillLevel = m_pChar->Skill_GetAdjusted(SKILL_TRACKING);
 			if ((g_Cfg.m_iRacialFlags & RACIALF_HUMAN_JACKOFTRADES) && m_pChar->IsHuman())
 				iSkillLevel = maximum(iSkillLevel, 200);			// humans always have a 20.0 minimum skill (racial traits)
-			m_pChar->m_atTracking.m_dwDistMax = static_cast<dword>(iSkillLevel / 10 + 10);
+			m_pChar->m_atTracking.m_dwDistMax = static_cast<dword>((iSkillLevel / 10) + 10);
 		}
 		auto AreaChars = CWorldSearchHolder::GetInstance(m_pChar->GetTopPoint(), m_pChar->m_atTracking.m_dwDistMax);
 		for (;;)
@@ -1192,9 +1194,9 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, const bool fExec )
 
 				int chance;
 				if ( g_Cfg.m_iFeatureSE & FEATURE_SE_UPDATE )
-					chance = 50 * (tracking * 2 + detectHidden) / divisor;
+					chance = 50 * ((tracking * 2) + detectHidden) / divisor;
 				else
-					chance = 50 * (tracking + detectHidden + 10 * CSRand::GetVal(20)) / divisor;
+					chance = 50 * (tracking + detectHidden + (10 * CSRand::GetVal(20))) / divisor;
 
 				if (CSRand::GetVal(100) > chance )
 					continue;
@@ -1327,7 +1329,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	// Check if the trade window is already open
 	for (CSObjContRec* pObjRec : m_pChar->GetIterationSafeContReverse())
 	{
-        const auto pItemCont = static_cast<CItem*>(pObjRec);
+        auto *const pItemCont = static_cast<CItem*>(pObjRec);
 		if ( !pItemCont->IsType(IT_EQ_TRADE_WINDOW) )
 			continue;
 
@@ -1335,7 +1337,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		if ( !pItemPartner )
 			continue;
 
-        if (const auto pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent()); pCharPartner != pChar )
+        if (const auto *const pCharPartner = dynamic_cast<CChar *>(pItemPartner->GetParent()); pCharPartner != pChar )
 			continue;
 
 		if ( pItem )
@@ -1347,7 +1349,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
                 if ( pItem->OnTrigger(ITRIG_DROPON_TRADE, pScriptArgs1, this) == TRIGRET_RET_TRUE )
 					return false;
 			}
-            if (const auto pCont = dynamic_cast<CItemContainer *>(pItemCont) )
+            if (auto *const pCont = dynamic_cast<CItemContainer *>(pItemCont) )
 				pCont->ContentAdd(pItem);
 		}
 		return true;
@@ -1375,7 +1377,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 	if ( !pItem1 )
 		return false;
 
-    const auto pCont1 = dynamic_cast<CItemContainer *>(pItem1);
+    auto *const pCont1 = dynamic_cast<CItemContainer *>(pItem1);
 	if ( !pCont1 )
 	{
 		DEBUG_ERR(("Item 0%x must be a container type to enable player trading.\n", ITEMID_Bulletin1));
@@ -1383,7 +1385,7 @@ bool CClient::Cmd_SecureTrade( CChar *pChar, CItem *pItem )
 		return false;
 	}
 
-    const auto pCont2 = static_cast<CItemContainer *>(CItem::CreateBase(ITEMID_Bulletin1));
+    auto *const pCont2 = static_cast<CItemContainer *>(CItem::CreateBase(ITEMID_Bulletin1));
 	ASSERT(pCont2);
 
 	pCont1->SetName("Trade Window");

@@ -6,7 +6,6 @@
 #include "CTimedFunctionHandler.h"
 #include "CTimedFunction.h"
 
-
 CTimedFunction::CTimedFunction(const CUID& uidAttached, const char* pcCommand) :
 	CTimedObject(PROFILE_TIMEDFUNCTIONS),
 	_uidAttached(uidAttached)

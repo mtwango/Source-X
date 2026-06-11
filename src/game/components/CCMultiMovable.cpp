@@ -1,6 +1,4 @@
 #include "../../common/sphere_library/CSRand.h"
-//#include "../../common/CExpression.h" // included in the precompiled header
-//#include "../../common/CScriptParserBufs.h" // included in the precompiled header via CExpression.h
 #include "../../network/CClientIterator.h"
 #include "../../network/send.h"
 #include "../clients/CClient.h"
@@ -14,21 +12,19 @@
 #include "../triggers.h"
 #include "CCMultiMovable.h"
 
-
 static constexpr DIR_TYPE sm_FaceDir[] =
 {
     DIR_N,
     DIR_E,
     DIR_S,
-    DIR_W
+    DIR_W,
 };
 
 enum ShipDelay
 {
     ShipDelay_Normal = 500,
-    ShipDelay_Fast = 250
+    ShipDelay_Fast = 250,
 };
-
 
 CCMultiMovable::CCMultiMovable(const bool fCanTurn) :
     _shipSpeed{}
@@ -52,7 +48,7 @@ CTextConsole * CCMultiMovable::GetCaptain()
 
 int CCMultiMovable::GetFaceOffset() const
 {
-    const auto pItemThis = dynamic_cast<const CItem*>(this);
+    const auto *const pItemThis = dynamic_cast<const CItem*>(this);
     ASSERT(pItemThis);
     return (pItemThis->GetID() & 3);
 }
@@ -66,7 +62,7 @@ bool CCMultiMovable::SetMoveDir(const DIR_TYPE dir, ShipMovementType eMovementTy
     //  otherwise for each click with mouse it will do 1 move.
 
     // We set new direction regardless of click limitations, so click in another direction means changing dir but makes not more moves until ship's timer moves it.
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
     pItemThis->m_itShip.m_DirMove = static_cast<byte>(dir);
     if (eMovementType == SMT_STOP)
@@ -106,7 +102,7 @@ bool CCMultiMovable::SetMoveDir(const DIR_TYPE dir, ShipMovementType eMovementTy
 
 void CCMultiMovable::SetNextMove()
 {
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
     if (pItemThis->m_itShip._eMovementType == SMT_STOP)
     {
@@ -132,7 +128,7 @@ uint CCMultiMovable::ListObjs(CObjBase ** ppObjList)
     // List all the objects in the structure.
     // Move the ship and everything on the deck
     // If too much stuff. then some will fall overboard. hehe.
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
     const CItemMulti *pMulti = static_cast<CItemMulti*>(pItemThis);
     if (!pItemThis->IsTopLevel())
@@ -212,7 +208,7 @@ void CCMultiMovable::SetPilot(CChar *pChar)
 	ADDTOCALLSTACK("CCMultiMovable::SetPilot");
 	// Enable boat mouse movement on HS clients >= 7.0.9.0
 
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
 	ASSERT(pItemThis);
 
 	Stop();
@@ -272,15 +268,15 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
     ADDTOCALLSTACK("CCMultiMovable::MoveDelta");
     // Move the ship one space in some direction.
 
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
-    const auto pMultiThis = static_cast<CItemMulti*>(pItemThis);
+    const auto *const pMultiThis = static_cast<CItemMulti*>(pItemThis);
     ASSERT(pMultiThis->GetRegion()->m_iLinkedSectors);
 
     const int zNew = pItemThis->GetTopZ() + ptDelta.m_z;
-    if ( (ptDelta.m_z > 0) && (zNew >= (UO_SIZE_Z - PLAYER_HEIGHT) - 1) )
+    if ( ptDelta.m_z > 0 && zNew >= (UO_SIZE_Z - PLAYER_HEIGHT) - 1 )
         return false;
-    if ( (ptDelta.m_z < 0) && (zNew <= (UO_SIZE_MIN_Z + 3)) )
+    if ( ptDelta.m_z < 0 && zNew <= (UO_SIZE_MIN_Z + 3) )
         return false;
 
     const CPointMap& ptMultiOld = pItemThis->GetTopPoint();
@@ -338,7 +334,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
             ptOld -= ptDelta;
 
             //Remove objects that just moved out of sight
-            if ((ptMe.GetDistSight(pt) >= iViewDist) && (ptMe.GetDistSight(ptOld) < iViewDist))
+            if (ptMe.GetDistSight(pt) >= iViewDist && ptMe.GetDistSight(ptOld) < iViewDist)
             {
                 pClient->addObjectRemove(pObj);
                 continue; //no need to keep going. skip!
@@ -349,8 +345,7 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
                 // Check if me or other clients can see a object they couldn't see before
                 if (pObj->IsItem())
                 {
-                    if ((ptMe.GetDistSight(pt) < iViewDist)
-                        && ( (ptMe.GetDistSight(ptOld) >= iViewDist) || !(pNetState->isClientVersionNumber(MINCLIVER_HS) || pNetState->isClientEnhanced()) || IsSetOF(OF_NoSmoothSailing) ))
+                    if (ptMe.GetDistSight(pt) < iViewDist && ( ptMe.GetDistSight(ptOld) >= iViewDist || !(pNetState->isClientVersionNumber(MINCLIVER_HS) || pNetState->isClientEnhanced()) || IsSetOF(OF_NoSmoothSailing) ))
                     {
                         auto *const pItem = static_cast<CItem *>(pObj);
                         pClient->addItem(pItem);
@@ -363,11 +358,12 @@ bool CCMultiMovable::MoveDelta(const CPointMap& ptDelta, const bool fUpdateViewF
                         if (!fClientUsesSmoothSailing)
                             pClient->addPlayerUpdate();     // update my (client) position
                     }
-                    else if ((ptMe.GetDistSight(pt) <= iViewDist)
-                        && ((ptMe.GetDistSight(ptOld) > iViewDist) || !(pNetState->isClientVersionNumber(MINCLIVER_HS) || pNetState->isClientEnhanced()) || IsSetOF(OF_NoSmoothSailing)))
+                    else if (ptMe.GetDistSight(pt) <= iViewDist && (ptMe.GetDistSight(ptOld) > iViewDist || !(pNetState->isClientVersionNumber(MINCLIVER_HS) || pNetState->isClientEnhanced()) || IsSetOF(OF_NoSmoothSailing)))
                     {
-                        if ((pt.GetDist(ptOld) > 1) && (pNetState->isClientLessVersionNumber(MINCLIVER_HS)) && (pt.GetDistSight(ptOld) < iViewDist))
+                        if ((pt.GetDist(ptOld) > 1) && pNetState->isClientLessVersionNumber(MINCLIVER_HS) && (pt.GetDistSight(ptOld) < iViewDist))
+                        {
                             pClient->addCharMove(pChar);
+                        }
                         else
                         {
                             pClient->addObjectRemove(pChar);
@@ -483,10 +479,7 @@ bool CCMultiMovable::CanMoveTo(const CPointMap & pt) const
 
     uint64 uiBlockFlags = CAN_I_WATER;
     CWorldMap::GetHeightPoint2(pt, uiBlockFlags, true);
-    if (uiBlockFlags & CAN_I_WATER)
-        return true;
-
-    return false;
+    return (uiBlockFlags & CAN_I_WATER) != 0;
 }
 
 bool CCMultiMovable::Face(const DIR_TYPE dir)
@@ -512,7 +505,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
 
     const int iFaceOffset = GetFaceOffset();
     const auto idnew = static_cast<ITEMID_TYPE>(pMultiThis->GetID() - iFaceOffset + iDirection);
-    const CItemBaseMulti * pMultiNew = pMultiThis->Multi_GetDefByID(idnew);
+    const CItemBaseMulti * pMultiNew = CItemMulti::Multi_GetDefByID(idnew);
     if (pMultiNew == nullptr)
     {
         return false;
@@ -550,7 +543,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
         }
     }
 
-    const CItemBaseMulti * pMultiOld = pMultiThis->Multi_GetDefByID(pMultiThis->GetID());
+    const CItemBaseMulti * pMultiOld = CItemMulti::Multi_GetDefByID(pMultiThis->GetID());
     // why not const CItemBaseMulti * pMultiOld = pMultiThis->Multi_GetDef(); ?
 
     // Reorient everything on the deck
@@ -587,7 +580,7 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
         pt.m_y = static_cast<short>(ptThis.m_y + yd);
         if (pObj->IsItem())
         {
-            const auto pItem = static_cast<CItem*>(pObj);
+            auto *const pItem = static_cast<CItem*>(pObj);
             if (pItem == pMultiThis)
             {
                 pMultiThis->GetRegion()->UnRealizeRegion();
@@ -621,14 +614,14 @@ bool CCMultiMovable::Face(const DIR_TYPE dir)
 
             if (IsTrigUsed(TRIGGER_SHIP_TURN))
             {
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                CScriptTriggerArgsPtr const pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
                 pScriptArgs->Init(dir, sm_FaceDir[iFaceOffset], 0, nullptr);
                 pItem->OnTrigger(ITRIG_Ship_Turn, pScriptArgs, &g_Serv);
             }
         }
         else if (pObj->IsChar())
         {
-            const auto pChar = static_cast<CChar*>(pObj);
+            auto *const pChar = static_cast<CChar*>(pObj);
             pChar->m_dirFace = GetDirTurn(pChar->m_dirFace, iTurn);
             pChar->RemoveFromView();
         }
@@ -651,7 +644,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
     if ((dir >= DIR_QTY) || (dir <= DIR_INVALID))
         return false;
 
-    const auto pMulti = static_cast<CItemMulti*>(this);
+    auto *const pMulti = static_cast<CItemMulti*>(this);
     const CRegion* pMultiRegion = pMulti->GetRegion();
     if (pMultiRegion == nullptr)
     {
@@ -659,7 +652,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
         return false;
     }
 
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
 
     CPointMap ptDelta;
@@ -674,7 +667,9 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 
     const short iMapBoundX = static_cast<short>(g_MapList.GetMapSizeX(ptBack.m_map));
     const short iMapBoundY = static_cast<short>(g_MapList.GetMapSizeY(ptBack.m_map));
-	bool fStopped = false, fTurbulent = false, fMapBoundary = false;
+	bool fStopped = false;
+	bool fTurbulent = false;
+	bool fMapBoundary = false;
 
     for (int i = 0; i < distance; ++i)
     {
@@ -758,7 +753,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
                 {
                     ptTest.m_x = x;
                     SPAWNSHIPTRACK(ptTest, 0x40);
-                    if (CanMoveTo(ptTest) == false)
+                    if (!CanMoveTo(ptTest))
                     {
                         fStopped = true;
                         break;
@@ -774,7 +769,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
                 {
                     ptTest.m_x = x;
                     SPAWNSHIPTRACK(ptTest, 0x40);
-                    if (CanMoveTo(ptTest) == false)
+                    if (!CanMoveTo(ptTest))
                     {
                         fStopped = true;
                         break;
@@ -797,7 +792,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
                 {
                     ptTest.m_y = y;
                     SPAWNSHIPTRACK(ptTest, 0xe0);
-                    if (CanMoveTo(ptTest) == false)
+                    if (!CanMoveTo(ptTest))
                     {
                         fStopped = true;
                         break;
@@ -813,7 +808,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
                 {
                     ptTest.m_y = y;
                     SPAWNSHIPTRACK(ptTest, 0xe0);
-                    if (CanMoveTo(ptTest) == false)
+                    if (!CanMoveTo(ptTest))
                     {
                         fStopped = true;
                         break;
@@ -828,7 +823,7 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
 #undef SHIPSPAWNTRACK // macro no longer needed
 
         // If the ship has been flagged as stopped, then abort movement here
-        if (fStopped == true)
+        if (fStopped)
             break;
 
         // Move delta one space
@@ -843,11 +838,11 @@ bool CCMultiMovable::Move(const DIR_TYPE dir, const int distance)
         pItemThis->GetTopSector()->SetSectorWakeStatus();	// may get here b4 my client does.
     }
 
-    if (fStopped == true)
+    if (fStopped)
     {
         CItem * pTiller = pMulti->Multi_GetSign();
         ASSERT(pTiller);
-        if (fTurbulent == true)
+        if (fTurbulent)
             pTiller->Speak(g_Cfg.GetDefaultMsg(DEFMSG_TILLER_TURB_WATER), HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL);
         else
             pTiller->Speak(g_Cfg.GetDefaultMsg(DEFMSG_TILLER_STOPPED), HUE_TEXT_DEF, TALKMODE_SAY, FONT_NORMAL);
@@ -902,7 +897,7 @@ void CCMultiMovable::Stop()
     ADDTOCALLSTACK("CCMultiMovable::Stop");
     // Make sure we have stopped.
 
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
     pItemThis->m_itShip._eMovementType = SMT_STOP;
 
@@ -938,7 +933,7 @@ enum
     CMV_SHIPTURNLEFT,
     CMV_SHIPTURNRIGHT,
     CMV_SHIPUP,
-    CMV_QTY
+    CMV_QTY,
 };
 
 lpctstr const CCMultiMovable::sm_szVerbKeys[CMV_QTY + 1] =
@@ -963,7 +958,7 @@ lpctstr const CCMultiMovable::sm_szVerbKeys[CMV_QTY + 1] =
     "SHIPTURNLEFT",
     "SHIPTURNRIGHT",
     "SHIPUP",		// up one space.
-    nullptr
+    nullptr,
 };
 
 bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command from script
@@ -981,7 +976,7 @@ bool CCMultiMovable::r_Verb(CScript & s, CTextConsole * pSrc) // Execute command
 
     auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
-    const auto pMultiThis = static_cast<CItemMulti*>(pItemThis);
+    auto *const pMultiThis = static_cast<CItemMulti*>(pItemThis);
     if (!pSrc || !pItemThis->IsTopLevel())
         return false;
 
@@ -1277,7 +1272,7 @@ enum CML_TYPE : int
     CML_PILOT,
     CML_SHIPSPEED,
     CML_SPEEDMODE,
-    CML_QTY
+    CML_QTY,
 };
 
 lpctstr const CCMultiMovable::sm_szLoadKeys[CML_QTY + 1] =
@@ -1288,7 +1283,7 @@ lpctstr const CCMultiMovable::sm_szLoadKeys[CML_QTY + 1] =
     "PILOT",
     "SHIPSPEED",
     "SPEEDMODE",
-    nullptr
+    nullptr,
 };
 
 
@@ -1302,7 +1297,7 @@ bool CCMultiMovable::r_WriteVal(lpctstr ptcKey, CSString & sVal, CTextConsole * 
         if (!strnicmp(ptcKey, "SHIPSPEED.", 10))
             index = CML_SHIPSPEED;
     }
-    const auto pItemThis = dynamic_cast<CItem*>(this);
+    const auto *const pItemThis = dynamic_cast<CItem*>(this);
     ASSERT(pItemThis);
     switch (index)
     {

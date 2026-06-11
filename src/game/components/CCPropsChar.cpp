@@ -9,7 +9,7 @@ lpctstr const CCPropsChar::_ptcPropertyKeys[PROPCH_QTY + 1] =
     #define ADDPROP(a,b,c) b,
     #include "../../tables/CCPropsChar_props.tbl"
     #undef ADDPROP
-    nullptr
+    nullptr,
 };
 KeyTableDesc_s CCPropsChar::GetPropertyKeysData() const {
     return {_ptcPropertyKeys, static_cast<PropertyIndex_t>(std::size(_ptcPropertyKeys)) };
@@ -20,7 +20,7 @@ RESDISPLAY_VERSION CCPropsChar::_iPropertyExpansion[PROPCH_QTY + 1] =
     #define ADDPROP(a,b,c) c,
     #include "../../tables/CCPropsChar_props.tbl"
     #undef ADDPROP
-    RDS_QTY
+    RDS_QTY,
 };
 
 CCPropsChar::CCPropsChar() : CComponentProps(COMP_PROPS_CHAR)
@@ -153,7 +153,7 @@ bool CCPropsChar::SetPropertyNum(const PropertyIndex_t iPropIndex, const Propert
     {
         case PROPCH_NIGHTSIGHT:
         {
-            const auto pChar = static_cast <CChar*>(pLinkedObj);
+            auto *const pChar = static_cast <CChar*>(pLinkedObj);
             pChar->StatFlag_Mod( STATF_NIGHTSIGHT, (iVal > 0));
             if ( pChar->IsClientActive() )
                 pChar->GetClientActive()->addLight();
@@ -293,7 +293,7 @@ void CCPropsChar::r_Write(CScript & s)
 void CCPropsChar::Copy(const CComponentProps * target)
 {
     ADDTOCALLSTACK("CCPropsChar::Copy");
-    const auto pTarget = static_cast<const CCPropsChar*>(target);
+    const auto *const pTarget = static_cast<const CCPropsChar*>(target);
     if (!pTarget)
         return;
 

@@ -1551,11 +1551,10 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			if ( !pSpellDef )
 				return false;
 
-			m_pChar->m_Act_UID = m_pChar->GetUID();
-			m_pChar->m_Act_Prv_UID = m_pChar->GetUID();
-
 			if ( pSpellDef->IsSpellType(SPELLFLAG_TARG_OBJ|SPELLFLAG_TARG_XYZ) )
 			{
+				// Keep the character action context untouched until the summon target is selected.
+				// It may still belong to another spell currently waiting for its cast delay.
 				m_tmSkillMagery.m_iSpell = SPELL_Summon;
 				m_tmSkillMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 
@@ -1572,6 +1571,8 @@ bool CClient::r_Verb( CScript & s, CTextConsole * pSrc ) // Execute command from
 			}
 			else
 			{
+				m_pChar->m_Act_UID = m_pChar->GetUID();
+				m_pChar->m_Act_Prv_UID = m_pChar->GetUID();
 				m_pChar->m_atMagery.m_iSpell = SPELL_Summon;
 				m_pChar->m_atMagery.m_uiSummonID = (CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, s.GetArgStr()));
 

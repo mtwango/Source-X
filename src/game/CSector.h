@@ -40,6 +40,7 @@ private:
 	bool IsMoonVisible( uint iPhase, int iLocalTime ) const;
 	void SetDefaultWeatherChance();
     bool IsInDungeon() const;
+    void CheckCharSaveParity(CChar* pChar);
 
 public:
 	CSector();
@@ -103,6 +104,7 @@ public:		virtual bool IsDeleted() const override;
 	size_t GetClientsNumber() const;
 	int64 GetLastClientTime() const;
 	bool MoveCharToSector(CChar* pChar);
+	bool MoveDisconnectedCharToSector(CChar* pChar);
 
 	bool _CanSleep(bool fCheckAdjacents) const;
 	void SetSectorWakeStatus();	// Ships may enter a sector before it's riders !

@@ -4131,3 +4131,7 @@ When setting a property like MORE to the a spell or skill defname, trying to rea
 
 02-04-2026, Mulambo
 - Fixed: Timer on field spells with `SPELLFLAG_FIELD_RANDOMDECAY` was incrementally increasing for each field item created.
+
+11-08-2026
+- Fixed: World saves and garbage collection could fire region/location triggers on mounted or shrunken NPCs, killing pets or leaving mounts at stale positions.
+- Fixed: The hidden NPC representation of an equipped mount now follows its rider without entering the normal gameplay movement pipeline.

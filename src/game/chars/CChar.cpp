@@ -959,18 +959,17 @@ int CChar::FixWeirdness()
 				return iResultCode;
 			}
 
-			const CItem * pFigurine = Horse_GetValidMountItem();
-			if ( pFigurine == nullptr )
+			if (!_SyncRiddenPositionFromAnchor(true))
 			{
+				CItem* pLinkedItem = m_atRidden.m_uidFigurine.ItemFind();
+				const CObjBaseTemplate* pAnchor = pLinkedItem ? pLinkedItem->GetTopLevelObj() : nullptr;
+				g_Log.EventError("Ridden NPC (UID=0%x, id=0%x '%s') could not be synchronized without triggers. P=%s, ACTARG1=0%x, itemtype=%d, anchor=0%x, flags=0%" PRIx64 ", action=%d, disconnected=%d, servermode=%d.\n",
+					(dword)GetUID(), GetIDCommon(), GetName(), GetTopPoint().WriteUsed(),
+					(dword)m_atRidden.m_uidFigurine, pLinkedItem ? (int)pLinkedItem->GetType() : -1,
+					pAnchor ? (dword)pAnchor->GetUID() : 0, _uiStatFlag, (int)Skill_GetActive(),
+					(int)IsDisconnected(), (int)g_Serv.GetServerMode());
 				iResultCode = 0x1204;
 				return iResultCode;
-			}
-
-			const CPointMap& pt = pFigurine->GetTopLevelObj()->GetTopPoint();
-			if ( pt != GetTopPoint())
-			{
-				MoveToChar( pt, true, true );
-				SetDisconnected();
 			}
 		}
 	}
@@ -4143,7 +4142,10 @@ void CChar::r_Write( CScript & s )
 	if ( m_pNPC )
 		m_pNPC->r_WriteChar(this, s);
 
-	const CPointMap& pt = GetTopPoint();
+	CPointMap pt(GetTopPoint());
+	CPointMap ptAnchor;
+	if (IsStatFlag(STATF_RIDDEN) && _GetRiddenAnchorPoint(ptAnchor))
+		pt = ptAnchor;
 	if (pt.IsValidPoint())
 		s.WriteKeyStr("P", pt.WriteUsed());
 

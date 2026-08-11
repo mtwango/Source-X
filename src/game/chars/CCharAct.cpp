@@ -3715,6 +3715,84 @@ CItem* CChar::Horse_ValidateMountItem(CItem *pMountItem) const
 
 }
 
+bool CChar::_GetRiddenAnchorPoint(CPointMap& ptAnchor) const
+{
+	ADDTOCALLSTACK("CChar::_GetRiddenAnchorPoint");
+
+	if (!IsStatFlag(STATF_RIDDEN) || !IsDisconnected() || (Skill_GetActive() != NPCACT_RIDDEN))
+		return false;
+
+	CItem* pMountItem = Horse_GetMountItem();
+	if (!pMountItem)
+		return false;
+
+	const CObjBaseTemplate* pAnchor = pMountItem->GetTopLevelObj();
+	if (!pAnchor)
+		return false;
+
+	ptAnchor = pAnchor->GetTopPoint();
+	return ptAnchor.IsValidPoint();
+}
+
+bool CChar::_RelocateDisconnectedNoTriggers(const CPointMap& pt)
+{
+	ADDTOCALLSTACK("CChar::_RelocateDisconnectedNoTriggers");
+
+	if (!IsDisconnected() || !pt.IsValidPoint())
+		return false;
+
+	CSector* pNewSector = pt.GetSector();
+	if (!pNewSector)
+		return false;
+
+	// Internal bookkeeping only: disconnected chars must not enter the normal
+	// movement pipeline or fire region, room, environment or location triggers.
+	SetUnkPoint(pt);
+	if (!pNewSector->IsCharDisconnectedIn(this))
+		pNewSector->MoveDisconnectedCharToSector(this);
+
+	ASSERT(IsDisconnected());
+	ASSERT(pNewSector->IsCharDisconnectedIn(this));
+	ASSERT(GetTopPoint() == pt);
+	return IsDisconnected() && pNewSector->IsCharDisconnectedIn(this) && (GetTopPoint() == pt);
+}
+
+bool CChar::_SyncRiddenPositionFromAnchor(bool fAttemptRepair)
+{
+	ADDTOCALLSTACK("CChar::_SyncRiddenPositionFromAnchor");
+
+	if (!IsStatFlag(STATF_RIDDEN) || !IsDisconnected() || (Skill_GetActive() != NPCACT_RIDDEN))
+		return false;
+
+	CItem* pMountItem = fAttemptRepair ? Horse_GetValidMountItem() : Horse_GetMountItem();
+	if (!pMountItem)
+		return false;
+
+	const CObjBaseTemplate* pAnchor = pMountItem->GetTopLevelObj();
+	if (!pAnchor)
+		return false;
+
+	return _RelocateDisconnectedNoTriggers(pAnchor->GetTopPoint());
+}
+
+void CChar::_SyncEquippedMountPosition()
+{
+	ADDTOCALLSTACK("CChar::_SyncEquippedMountPosition");
+
+	if (!IsStatFlag(STATF_ONHORSE))
+		return;
+
+	CItem* pMountItem = LayerFind(LAYER_HORSE);
+	if (!pMountItem || !pMountItem->IsType(IT_EQ_HORSE))
+		return;
+
+	CChar* pMount = pMountItem->m_itFigurine.m_UID.CharFind();
+	if (!pMount || (pMount->Horse_ValidateMountItem(pMountItem) != pMountItem))
+		return;
+
+	pMount->_RelocateDisconnectedNoTriggers(GetTopPoint());
+}
+
 // I am a horse.
 // Get my mount object. (attached to my rider)
 CItem* CChar::Horse_GetMountItem() const
@@ -4021,6 +4099,7 @@ bool CChar::Horse_Mount(CChar *pHorse)
 
     pHorse->StatFlag_Set(STATF_RIDDEN);
 	pHorse->Skill_Start(NPCACT_RIDDEN);
+	_SyncEquippedMountPosition();
 	return true;
 }
 
@@ -4058,6 +4137,7 @@ bool CChar::Horse_UnMount()
 	}
 	else
 	{
+		_SyncEquippedMountPosition();
 		Use_Figurine(pMountItem, false);
 		pMountItem->Delete();
 		/*
@@ -5334,6 +5414,7 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 		SetDisconnected(pSector);
         SetTopPoint(pt); // This will clear the disconnected UID flag and the set the character position in the world.
 		SetDisconnected(); //Before entering here the player is not considered disconnected anymore, so we need to disconnect it again.
+		_SyncEquippedMountPosition();
 		return true;
 	}
 
@@ -5374,8 +5455,10 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
     if (fCheckLocationEffects && (CheckLocationEffects(fStanding) == TRIGRET_RET_FALSE) && ptOld.IsValidPoint())
     {
         SetTopPoint(ptOld);
+		_SyncEquippedMountPosition();
         return false;
     }
+	_SyncEquippedMountPosition();
 	return true;
 }
 
@@ -5392,6 +5475,7 @@ void CChar::SetTopZ( char z )
 	CObjBaseTemplate::SetTopZ( z );
 	m_fClimbUpdated = false; // update climb height
 	FixClimbHeight();	// can throw an exception
+	_SyncEquippedMountPosition();
 }
 
 // Move from here to a valid spot.

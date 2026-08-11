@@ -1015,6 +1015,26 @@ void CSector::MoveItemToSector( CItem * pItem )
     }
 }
 
+void CSector::CheckCharSaveParity(CChar* pChar)
+{
+    ADDTOCALLSTACK("CSector::CheckCharSaveParity");
+    ASSERT(pChar);
+
+    if ((pChar->IsStatFlag(STATF_SAVEPARITY) == m_fSaveParity) || !g_World.IsSaving())
+        return;
+
+    if (m_fSaveParity == g_World.m_fSaveParity)
+    {
+        // The destination sector has already been saved. Save the char before moving it there.
+        pChar->r_WriteParity(pChar->m_pPlayer ? g_World.m_FilePlayers : g_World.m_FileWorld);
+    }
+    else
+    {
+        // The destination sector has not been saved yet. Save it before adding the char.
+        r_Write();
+    }
+}
+
 bool CSector::MoveCharToSector( CChar * pChar )
 {
 	ADDTOCALLSTACK("CSector::MoveCharToSector");
@@ -1025,26 +1045,7 @@ bool CSector::MoveCharToSector( CChar * pChar )
 	if (IsCharActiveIn(pChar))
 		return false;
 
-	// Check my save parity vs. this sector's
-	if ( pChar->IsStatFlag( STATF_SAVEPARITY ) != m_fSaveParity )
-	{
-		if ( g_World.IsSaving())
-		{
-			if ( m_fSaveParity == g_World.m_fSaveParity )
-			{
-				// Save out the CChar now. the sector has already been saved.
-				if ( pChar->m_pPlayer )
-					pChar->r_WriteParity(g_World.m_FilePlayers);
-				else
-					pChar->r_WriteParity(g_World.m_FileWorld);
-			}
-			else
-			{
-				// We need to write out this CSector now. (before adding client)
-				r_Write();
-			}
-		}
-	}
+	CheckCharSaveParity(pChar);
 
 	// Remove from previous spot.
 	m_Chars_Active.AddCharActive(pChar);
@@ -1081,6 +1082,22 @@ bool CSector::MoveCharToSector( CChar * pChar )
         }
     }
 
+	return true;
+}
+
+bool CSector::MoveDisconnectedCharToSector(CChar* pChar)
+{
+	ADDTOCALLSTACK("CSector::MoveDisconnectedCharToSector");
+	ASSERT(pChar);
+	ASSERT(pChar->IsDisconnected());
+
+	if (IsCharDisconnectedIn(pChar))
+		return false;
+
+	m_Chars_Disconnect.AddCharDisconnected(pChar);
+	ASSERT(IsCharDisconnectedIn(pChar));
+	ASSERT(pChar->IsDisconnected());
+	CheckCharSaveParity(pChar);
 	return true;
 }
 
@@ -1511,4 +1528,3 @@ int64 CSector::GetLastClientTime() const
 {
 	return m_Chars_Active.GetTimeLastClient() ;
 }
-

@@ -1180,6 +1180,10 @@ public:
 private:
     [[nodiscard]]
     CItem* Horse_ValidateMountItem(CItem *pMountItem) const;
+	bool _GetRiddenAnchorPoint(CPointMap& ptAnchor) const;
+	bool _RelocateDisconnectedNoTriggers(const CPointMap& pt);
+	bool _SyncRiddenPositionFromAnchor(bool fAttemptRepair);
+	void _SyncEquippedMountPosition();
 
     CItem* Horse_GetMountItem() const;
     CChar* Horse_GetMountChar() const;

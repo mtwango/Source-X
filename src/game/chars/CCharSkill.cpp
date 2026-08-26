@@ -1312,7 +1312,7 @@ bool CChar::Skill_Tracking( CUID uidTarg, DIR_TYPE & dirPrv, int iDistMax )
 	{
 		// Prevent tracking of hidden staff
 		const CChar * pChar = dynamic_cast<const CChar *>(pObjTop);
-		if ( pChar && pChar->IsStatFlag(STATF_INSUBSTANTIAL) && pChar->GetPrivLevel() > GetPrivLevel() )
+		if ( pChar && pChar->GetPrivLevel() > GetPrivLevel() )
 			return false;
 	}
 

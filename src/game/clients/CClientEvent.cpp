@@ -3226,6 +3226,10 @@ void CClient::Event_ExtCmd( EXTCMD_TYPE type, tchar *pszName )
                         if (abs(iCharZ - itemPt.m_z) >= 20)
                             break;
 
+                        // Timer on doors means they are opened.
+                        if (pItem->IsTimerSet())
+                            break;
+
                         // Calculate distance of the doors and where are we facing relatively to them.
                         const int distanceX = itemPt.m_x - m_pChar->GetTopPoint().m_x;
                         const int distanceY = itemPt.m_y - m_pChar->GetTopPoint().m_y;

@@ -13,6 +13,7 @@
 #include "../CTimedObject.h"
 #include "../game_macros.h"
 #include "CCharBase.h"
+#include "CCharDeathState.h"
 #include "CCharPlayer.h"
 
 
@@ -152,6 +153,7 @@ public:
 	height_t m_zClimbHeight;	// The height at the end of the climbable.
 
 	// Saved stuff.
+	CCharDeathTransaction m_deathTransaction;
 	byte m_iVisualRange;		// Visual Range
     height_t m_height;			// Height set in-game or under some trigger (height=) - for both items and chars
     HUE_TYPE _wBloodHue;		// Replicating CharDef's BloodColor on the char, or overriding it.
@@ -1221,12 +1223,15 @@ public:
     {
         Success,
         SuccessAndDelete,
+        InProgress,
         AlreadyDead,
         Aborted,
         AbortedNoLog
     };
 
     DeathRequestResult Death();
+    DeathRequestResult ContinueDeath();
+    bool HasActiveDeathTransaction() const noexcept { return m_deathTransaction.IsActive(); }
 
 	/**
 	* @Brief I'm calling guards (Player speech)

@@ -470,6 +470,7 @@ bool CChar::Spell_Resurrection(CItemCorpse * pCorpse, CChar * pCharSrc, bool fNo
 
 	SetID(_iPrev_id);
 	SetHue(_wPrev_Hue);
+	m_deathTransaction.Reset();
 	StatFlag_Clear(STATF_DEAD|STATF_INSUBSTANTIAL);
     Stat_SetVal(STAT_STR, maximum(uiHits, 1));
 

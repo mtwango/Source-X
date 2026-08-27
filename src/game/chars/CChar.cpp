@@ -3462,26 +3462,45 @@ bool CChar::r_LoadVal( CScript & s )
 
 		return CObjBase::r_LoadVal( s );
 	}
-	switch (iKeyNum)
-	{
-		//Status Update Variables
+    switch (iKeyNum)
+    {
+        case CHC_DEATHTXN:
+        {
+            int64 values[8] {};
+            if (Str_ParseCmds(s.GetArgStr(), values, ARRAY_COUNT(values)) != ARRAY_COUNT(values))
+                return false;
+            if (values[0] != CCharDeathTransaction::kSaveVersion || values[1] <= (int64)CCharDeathPhase::None ||
+                values[1] > (int64)CCharDeathPhase::EmergencyFinalization)
+                return false;
+            m_deathTransaction.phase               = (CCharDeathPhase)values[1];
+            m_deathTransaction.transactionId       = (uint32)values[2];
+            m_deathTransaction.killerUid           = (uint32)values[3];
+            m_deathTransaction.corpseUid           = (uint32)values[4];
+            m_deathTransaction.dispatchedCallbacks = (uint32)values[5];
+            m_deathTransaction.retryCount          = (uint16)values[6];
+            m_deathTransaction.frontFall           = (values[7] & 1) != 0;
+            m_deathTransaction.legacyRecovery      = (values[7] & 2) != 0;
+            m_deathTransaction.nextRetryTime       = 0;
+            break;
+        }
+        //Status Update Variables
         case CHC_REGENHITS:
-            Stats_SetRegenRate(STAT_STR, s.GetArg64Val()* MSECS_PER_SEC);
+            Stats_SetRegenRate(STAT_STR, s.GetArg64Val() * MSECS_PER_SEC);
             break;
         case CHC_REGENHITSD:
-            Stats_SetRegenRate(STAT_STR, s.GetArg64Val()* MSECS_PER_TENTH);
+            Stats_SetRegenRate(STAT_STR, s.GetArg64Val() * MSECS_PER_TENTH);
             break;
         case CHC_REGENSTAM:
-            Stats_SetRegenRate(STAT_DEX, s.GetArg64Val()* MSECS_PER_SEC);
+            Stats_SetRegenRate(STAT_DEX, s.GetArg64Val() * MSECS_PER_SEC);
             break;
         case CHC_REGENSTAMD:
-            Stats_SetRegenRate(STAT_DEX, s.GetArg64Val()* MSECS_PER_TENTH);
+            Stats_SetRegenRate(STAT_DEX, s.GetArg64Val() * MSECS_PER_TENTH);
             break;
         case CHC_REGENMANA:
-            Stats_SetRegenRate(STAT_INT, s.GetArg64Val()* MSECS_PER_SEC);
+            Stats_SetRegenRate(STAT_INT, s.GetArg64Val() * MSECS_PER_SEC);
             break;
         case CHC_REGENMANAD:
-            Stats_SetRegenRate(STAT_INT, s.GetArg64Val()* MSECS_PER_TENTH);
+            Stats_SetRegenRate(STAT_INT, s.GetArg64Val() * MSECS_PER_TENTH);
             break;
         case CHC_REGENFOOD:
             Stats_SetRegenRate(STAT_FOOD, s.GetArg64Val()* MSECS_PER_SEC);
@@ -4096,44 +4115,52 @@ bool CChar::r_LoadVal( CScript & s )
 			break;
 		default:
 			return false;
-	}
-	return true;
+    }
+    return true;
 	EXC_CATCH;
 
 	EXC_DEBUG_START;
 	EXC_ADD_SCRIPT;
-	EXC_DEBUG_END;
-	return false;
+    EXC_DEBUG_END;
+    return false;
 }
 
-void CChar::r_Write( CScript & s )
+void CChar::r_Write(CScript &s)
 {
-	ADDTOCALLSTACK("CChar::r_Write");
-	EXC_TRY("r_Write");
+    ADDTOCALLSTACK("CChar::r_Write");
+    EXC_TRY("r_Write");
 
-	s.WriteSection("WORLDCHAR %s", GetResourceName());
-	s.WriteKeyVal("CREATE", CWorldGameTime::GetCurrentTime().GetTimeDiff(_iTimeCreate) / MSECS_PER_TENTH );
+    s.WriteSection("WORLDCHAR %s", GetResourceName());
+    s.WriteKeyVal("CREATE", CWorldGameTime::GetCurrentTime().GetTimeDiff(_iTimeCreate) / MSECS_PER_TENTH);
 
     // Do not save TAG.LastHit (used by PreHit combat flag). It's based on the server uptime, so if this tag isn't zeroed,
     //  after the server restart the char may not be able to attack until the server reaches the serv.time when the previous TAG.LastHit was set.
-	int64 iValLastHit = 0;
-	CVarDefContNum* pVarLastHit = m_TagDefs.GetKeyDefNum("LastHit");
-	if (pVarLastHit)
-	{
-		iValLastHit = pVarLastHit->GetValNum();
-		pVarLastHit->SetValNum(0);
-	}
+    int64 iValLastHit           = 0;
+    CVarDefContNum *pVarLastHit = m_TagDefs.GetKeyDefNum("LastHit");
+    if (pVarLastHit)
+    {
+        iValLastHit = pVarLastHit->GetValNum();
+        pVarLastHit->SetValNum(0);
+    }
 
-	CObjBase::r_Write(s);
+    CObjBase::r_Write(s);
+    if (m_deathTransaction.IsActive())
+    {
+        const uint flags = (m_deathTransaction.frontFall ? 1u : 0u) | (m_deathTransaction.legacyRecovery ? 2u : 0u);
+        s.WriteKeyFormat("DEATHTXN", "%u,%u,%" PRIu32 ",0%" PRIx32 ",0%" PRIx32 ",0%" PRIx32 ",%u,%u", CCharDeathTransaction::kSaveVersion,
+            (uint)m_deathTransaction.phase, m_deathTransaction.transactionId, m_deathTransaction.killerUid, m_deathTransaction.corpseUid,
+            m_deathTransaction.dispatchedCallbacks, m_deathTransaction.retryCount, flags);
+    }
 
-    for (uint i = 0; auto const& fdata : m_followers) {
+    for (uint i = 0; auto const &fdata : m_followers)
+    {
         char *pcTag = Str_GetTemp();
         snprintf(pcTag, Str_TempLength(), "FOLLOWER.%u", i);
         s.WriteKeyFormat(pcTag, "0%" PRIx32 ",%d", fdata.uid.GetObjUID(), fdata.followerslots);
-        ++ i;
+        ++i;
     }
 
-	if (iValLastHit != 0)
+    if (iValLastHit != 0)
 	{
 		pVarLastHit->SetValNum(iValLastHit);
 	}
@@ -5358,4 +5385,3 @@ uint CChar::GetSkillTotal(int what, bool how)
 
 	return uiTotal;
 }
-

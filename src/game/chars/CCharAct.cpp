@@ -4328,222 +4328,356 @@ void CChar::SleepStart( bool fFrontFall )
 // Removing myself from view, generating Death packets.
 CChar::DeathRequestResult CChar::Death()
 {
-	ADDTOCALLSTACK("CChar::Death");
+    ADDTOCALLSTACK("CChar::Death");
+    EXC_TRY("Death transaction");
 
-    if ( IsStatFlag(STATF_DEAD) )
-        return DeathRequestResult::AlreadyDead;
+    CCharDeathTransaction &tx = m_deathTransaction;
+    if (tx.executing)
+        return DeathRequestResult::InProgress;
+    CCharDeathExecutionGuard executionGuard(tx);
+    if (tx.phase == CCharDeathPhase::Completed)
+        return (m_pNPC && !m_pNPC->m_bonded) ? DeathRequestResult::SuccessAndDelete : DeathRequestResult::AlreadyDead;
 
-    if ( IsStatFlag(STATF_INVUL) )
-        return DeathRequestResult::AbortedNoLog;
-
-	if ( IsTrigUsed(TRIGGER_DEATH) )
-	{
-        if ( OnTrigger(CTRIG_Death, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this) == TRIGRET_RET_TRUE )
-            return DeathRequestResult::Aborted;
-	}
-	//Dismount now. Later is may be too late and cause problems
-	if ( m_pNPC )
-	{
-		if (Skill_GetActive() == NPCACT_RIDDEN)
-		{
-			CChar* pCRider = Horse_GetMountChar();
-			if (pCRider)
-				pCRider->Horse_UnMount();
-		}
-	}
-	// Look through memories of who I was fighting (make sure they knew they where fighting me)
-	for (CSObjContRec* pObjRec : GetIterationSafeContReverse())
-	{
-		CItem* pItem = static_cast<CItem*>(pObjRec);
-		if ( pItem->IsType(IT_EQ_TRADE_WINDOW) )
-		{
-			CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
-			if ( pCont )
-			{
-				pCont->Trade_Delete();
-				continue;
-			}
-		}
-
-		// Remove every memory, with some exceptions
-		if ( pItem->IsType(IT_EQ_MEMORY_OBJ) )
-			Memory_ClearTypes( static_cast<CItemMemory *>(pItem), (MEMORY_FIGHT | MEMORY_HARMEDBY) );
-	}
-
-	// Give credit for the kill to my attacker(s)
-	int iKillers = 0;
-	CChar * pKiller = nullptr;
-	tchar * pszKillStr = Str_GetTemp();
-	int iKillStrLen = snprintf( pszKillStr, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_KILLED_BY), (m_pPlayer)? 'P':'N', GetNameWithoutIncognito() );
-	for ( size_t count = 0; count < m_lastAttackers.size(); ++count )
-	{
-		pKiller = CUID::CharFindFromUID(m_lastAttackers[count].charUID);
-		if ( pKiller && (m_lastAttackers[count].amountDone > 0) )
-		{
-			if ( IsTrigUsed(TRIGGER_KILL) )
-			{
-                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-                pScriptArgs->Init(GetAttackersCount(), 0, 0, this);
-                if ( pKiller->OnTrigger(CTRIG_Kill, pScriptArgs, pKiller) == TRIGRET_RET_TRUE )
-					continue;
-			}
-
-			pKiller->Noto_Kill( this, GetAttackersCount() );
-
-			iKillStrLen += snprintf(
-				pszKillStr + iKillStrLen, Str_TempLength() - iKillStrLen,
-				"%s%c'%s'.",
-                iKillers ? ", " : "",
-                (pKiller->m_pPlayer) ? 'P':'N', pKiller->GetNameWithoutIncognito() );
-
-			++iKillers;
-		}
-	}
-
-	// Record the kill event for posterity
-	if ( !iKillers )
-        /*iKillStrLen +=*/ snprintf( pszKillStr + iKillStrLen, Str_TempLength() - iKillStrLen, "accident." );
-	if ( m_pPlayer )
-		g_Log.Event( LOGL_EVENT|LOGM_KILLS, "%s\n", pszKillStr );
-	if ( m_pParty )
-		m_pParty->SysMessageAll( pszKillStr );
-
-	Reveal();
-	SoundChar(CRESND_DIE);
-	StatFlag_Set(STATF_DEAD);
-	StatFlag_Clear(STATF_STONE|STATF_FREEZE|STATF_HIDDEN|STATF_SLEEPING|STATF_HOVERING);
-	SetPoisonCure(true);
-	Skill_Cleanup();
-	Spell_Dispel(100);		// get rid of all spell effects (moved here to prevent double @Destroy trigger)
-
-	if ( m_pPlayer )		// if I'm NPC then my mount goes with me
-		Horse_UnMount();
-
-    if ( IsTrigUsed(TRIGGER_CREATELOOT) )
+    if (CCharShouldStartLegacyDeathRecovery(IsStatFlag(STATF_DEAD), m_pNPC != nullptr, m_pNPC && m_pNPC->m_bonded, tx.IsActive()))
     {
-        //OnTrigger(CTRIG_CreateLoot, this);
-        ReadScriptReducedTrig(Char_GetDef(), CTRIG_CreateLoot, false);
+        tx.phase               = CCharDeathPhase::DeadCommitted;
+        tx.transactionId       = GetUID().GetObjUID();
+        tx.legacyRecovery      = true;
+        tx.dispatchedCallbacks = UINT32_MAX;
+        g_Log.EventWarn("DeathTxn legacy-recovery uid=0%" PRIx32 ".\n", GetUID().GetObjUID());
+    }
+    else if (IsStatFlag(STATF_DEAD) && !tx.IsActive())
+    {
+        return DeathRequestResult::AlreadyDead;
     }
 
-	// Create the corpse item
-    bool fFrontFall = g_Rand.GetValFast(2);
-	CItemCorpse * pCorpse = MakeCorpse(fFrontFall);
-	if ( pCorpse )
-	{
-		if ( IsTrigUsed(TRIGGER_DEATHCORPSE) )
-		{
-            CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-            pScriptArgs->Init(pCorpse);
-            OnTrigger(CTRIG_DeathCorpse, pScriptArgs, this);
-		}
-	}
+    if (!tx.IsActive())
+    {
+        if (IsStatFlag(STATF_INVUL))
+            return DeathRequestResult::AbortedNoLog;
+        tx.phase         = CCharDeathPhase::Accepted;
+        tx.transactionId = GetUID().GetObjUID() ^ (uint32)CWorldGameTime::GetCurrentTime().GetTimeRaw();
+        tx.frontFall     = g_Rand.GetValFast(2);
+        g_Log.EventDebug("DeathTxn start uid=0%" PRIx32 " tx=%" PRIu32 " hits=%u flags=0%" PRIx64 ".\n", GetUID().GetObjUID(), tx.transactionId,
+            Stat_GetVal(STAT_STR), _uiStatFlag);
+    }
+    if (tx.phase == CCharDeathPhase::Accepted && tx.DispatchOnce(CCharDeathCallback::Death) && IsTrigUsed(TRIGGER_DEATH))
+    {
+        if (OnTrigger(CTRIG_Death, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this) == TRIGRET_RET_TRUE)
+        {
+            tx.Reset();
+            return DeathRequestResult::Aborted;
+        }
+    }
+
+    if (tx.nextRetryTime > CWorldGameTime::GetCurrentTime().GetTimeRaw())
+        return DeathRequestResult::InProgress;
+    if (tx.phase == CCharDeathPhase::EmergencyFinalization)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        NPC_PetClearOwners();
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase = CCharDeathPhase::Completed;
+        return DeathRequestResult::SuccessAndDelete;
+    }
+
+    if (tx.phase == CCharDeathPhase::Accepted)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        //Dismount now. Later is may be too late and cause problems
+        if (m_pNPC)
+        {
+            if (Skill_GetActive() == NPCACT_RIDDEN)
+            {
+                CChar *pCRider = Horse_GetMountChar();
+                if (pCRider)
+                    pCRider->Horse_UnMount();
+            }
+        }
+        // Look through memories of who I was fighting (make sure they knew they where fighting me)
+        for (CSObjContRec *pObjRec : GetIterationSafeContReverse())
+        {
+            CItem *pItem = static_cast<CItem *>(pObjRec);
+            if (pItem->IsType(IT_EQ_TRADE_WINDOW))
+            {
+                CItemContainer *pCont = dynamic_cast<CItemContainer *>(pItem);
+                if (pCont)
+                {
+                    pCont->Trade_Delete();
+                    continue;
+                }
+            }
+
+            // Remove every memory, with some exceptions
+            if (pItem->IsType(IT_EQ_MEMORY_OBJ))
+                Memory_ClearTypes(static_cast<CItemMemory *>(pItem), (MEMORY_FIGHT | MEMORY_HARMEDBY));
+        }
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase      = CCharDeathPhase::InteractionsDetached;
+        tx.retryCount = 0;
+    }
+
+    // Give credit for the kill to my attacker(s)
+    CChar *pKiller = CUID::CharFindFromUID(tx.killerUid);
+    if (tx.phase == CCharDeathPhase::InteractionsDetached)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        tx.phase      = CCharDeathPhase::AttributionDispatched;
+        tx.retryCount = 0;
+        tx.dispatchedCallbacks |= CCharDeathCallback::Attribution;
+        int iKillers      = 0;
+        tchar *pszKillStr = Str_GetTemp();
+        int iKillStrLen = snprintf(pszKillStr, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_KILLED_BY), (m_pPlayer) ? 'P' : 'N', GetNameWithoutIncognito());
+        for (size_t count = 0; count < m_lastAttackers.size(); ++count)
+        {
+            pKiller = CUID::CharFindFromUID(m_lastAttackers[count].charUID);
+            if (pKiller && (m_lastAttackers[count].amountDone > 0))
+            {
+                tx.killerUid = pKiller->GetUID().GetObjUID();
+                if (IsTrigUsed(TRIGGER_KILL))
+                {
+                    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                    pScriptArgs->Init(GetAttackersCount(), 0, 0, this);
+                    if (pKiller->OnTrigger(CTRIG_Kill, pScriptArgs, pKiller) == TRIGRET_RET_TRUE)
+                        continue;
+                }
+
+                pKiller->Noto_Kill(this, GetAttackersCount());
+
+                iKillStrLen += snprintf(pszKillStr + iKillStrLen, Str_TempLength() - iKillStrLen, "%s%c'%s'.", iKillers ? ", " : "",
+                    (pKiller->m_pPlayer) ? 'P' : 'N', pKiller->GetNameWithoutIncognito());
+
+                ++iKillers;
+            }
+        }
+
+        // Record the kill event for posterity
+        if (!iKillers)
+            /*iKillStrLen +=*/snprintf(pszKillStr + iKillStrLen, Str_TempLength() - iKillStrLen, "accident.");
+        if (m_pPlayer)
+            g_Log.Event(LOGL_EVENT | LOGM_KILLS, "%s\n", pszKillStr);
+        if (m_pParty)
+            m_pParty->SysMessageAll(pszKillStr);
+        CCharDeathFaultInjector::Check(CCharDeathPhase::InteractionsDetached, CCharDeathFaultBoundary::AfterSideEffect);
+    }
+
+    if (tx.phase == CCharDeathPhase::AttributionDispatched)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        Reveal();
+        SoundChar(CRESND_DIE);
+        StatFlag_Set(STATF_DEAD);
+        StatFlag_Clear(STATF_STONE | STATF_FREEZE | STATF_HIDDEN | STATF_SLEEPING | STATF_HOVERING);
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase      = CCharDeathPhase::DeadCommitted;
+        tx.retryCount = 0;
+    }
+
+    if (tx.phase == CCharDeathPhase::DeadCommitted)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        SetPoisonCure(true);
+        Skill_Cleanup();
+        Spell_Dispel(100); // get rid of all spell effects (moved here to prevent double @Destroy trigger)
+
+        if (m_pPlayer)     // if I'm NPC then my mount goes with me
+            Horse_UnMount();
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase      = CCharDeathPhase::CoreEffectsCleaned;
+        tx.retryCount = 0;
+    }
+
+    if (tx.phase == CCharDeathPhase::CoreEffectsCleaned)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        tx.phase      = CCharDeathPhase::LootDispatched;
+        tx.retryCount = 0;
+        tx.dispatchedCallbacks |= CCharDeathCallback::CreateLoot;
+        if (!tx.legacyRecovery && IsTrigUsed(TRIGGER_CREATELOOT))
+            ReadScriptReducedTrig(Char_GetDef(), CTRIG_CreateLoot, false);
+        CCharDeathFaultInjector::Check(CCharDeathPhase::CoreEffectsCleaned, CCharDeathFaultBoundary::AfterSideEffect);
+    }
+
+    // Create the corpse item
+    CItemCorpse *pCorpse = dynamic_cast<CItemCorpse *>(CUID(tx.corpseUid).ItemFind());
+    if (tx.phase == CCharDeathPhase::LootDispatched)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        if (!pCorpse && (tx.retryCount > 0 || tx.legacyRecovery))
+            pCorpse = FindMyCorpse();
+        if (!pCorpse)
+            pCorpse = MakeCorpse(tx.frontFall);
+        if (pCorpse)
+            tx.corpseUid = pCorpse->GetUID().GetObjUID();
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase      = CCharDeathPhase::CorpseEnsured;
+        tx.retryCount = 0;
+    }
+    if (tx.phase == CCharDeathPhase::CorpseEnsured)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        tx.phase      = CCharDeathPhase::CorpseTriggerDispatched;
+        tx.retryCount = 0;
+        tx.dispatchedCallbacks |= CCharDeathCallback::DeathCorpse;
+        if (pCorpse)
+        {
+            if (!tx.legacyRecovery && IsTrigUsed(TRIGGER_DEATHCORPSE))
+            {
+                CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                pScriptArgs->Init(pCorpse);
+                OnTrigger(CTRIG_DeathCorpse, pScriptArgs, this);
+            }
+        }
+        CCharDeathFaultInjector::Check(CCharDeathPhase::CorpseEnsured, CCharDeathFaultBoundary::AfterSideEffect);
+    }
     /*
     else
     {
         // TODO: add a error msg?
     }
     */
-	m_lastAttackers.clear();	// clear list of attackers
+    if (tx.phase == CCharDeathPhase::CorpseTriggerDispatched)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        tx.phase      = CCharDeathPhase::WorldNotified;
+        tx.retryCount = 0;
+        tx.dispatchedCallbacks |= CCharDeathCallback::WorldNotify;
+        m_lastAttackers.clear(); // clear list of attackers
 
-	// Play death animation (fall on ground)
-	UpdateCanSee(new PacketDeath(this, pCorpse, fFrontFall), m_pClient);
+        // Play death animation (fall on ground)
+        if (!tx.legacyRecovery)
+            UpdateCanSee(new PacketDeath(this, pCorpse, tx.frontFall), m_pClient);
+        CCharDeathFaultInjector::Check(CCharDeathPhase::CorpseTriggerDispatched, CCharDeathFaultBoundary::AfterSideEffect);
+    }
 
-	if ( m_pNPC )
-	{
-		if ( m_pNPC->m_bonded )
-		{
-			m_CanMask |= CAN_C_GHOST;
-            UpdateMode(true, nullptr);
-            return DeathRequestResult::Success;
-		}
-
-		if ( pCorpse )
-			pCorpse->m_uidLink.InitUID();
-
-		NPC_PetClearOwners();
-        return DeathRequestResult::SuccessAndDelete;	// delete the NPC
-	}
-
-	if ( m_pPlayer )
-	{
-        llong iDelta = m_exp / 10;
-		ChangeExperience(- maximum(1, iDelta), pKiller);
-		if ( !(m_TagDefs.GetKeyNum("DEATHFLAGS") & DEATH_NOFAMECHANGE) )
-			Noto_Fame( -GetFame()/10 );
-
-		lpctstr pszGhostName = nullptr;
-		const CCharBase *pCharDefPrev = CCharBase::FindCharBase( _iPrev_id );
-        const bool fFemale = pCharDefPrev && pCharDefPrev->IsFemale();
-		switch ( _iPrev_id )
-		{
-			case CREID_GARGMAN:
-			case CREID_GARGWOMAN:
-				pszGhostName = ( fFemale ? "c_garg_ghost_woman" : "c_garg_ghost_man" );
-				break;
-			case CREID_ELFMAN:
-			case CREID_ELFWOMAN:
-				pszGhostName = ( fFemale ? "c_elf_ghost_woman" : "c_elf_ghost_man" );
-				break;
-			default:
-				pszGhostName = ( fFemale ? "c_ghost_woman" : "c_ghost_man" );
-				break;
-		}
-		ASSERT(pszGhostName != nullptr);
-
-		if ( !IsStatFlag(STATF_WAR) )
-			StatFlag_Set(STATF_INSUBSTANTIAL);	// manifest war mode for ghosts
-
-		++m_pPlayer->m_wDeaths;
-
-		SetHue( HUE_DEFAULT );	// get all pale
-		SetID( (CREID_TYPE)(g_Cfg.ResourceGetIndexType( RES_CHARDEF, pszGhostName )) );
-		LayerAdd( CItem::CreateScript( ITEMID_DEATHSHROUD, this ) );
-
-        CClient * pClient = GetClientActive();
-		if ( pClient )
-		{
-            if (g_Cfg.m_iPacketDeathAnimation)
+    if (tx.phase == CCharDeathPhase::WorldNotified)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        if (m_pNPC)
+        {
+            if (m_pNPC->m_bonded)
             {
-                // OSI uses PacketDeathMenu to update client screen on death.
-                // If the user disable this packet, it must be updated using addPlayerUpdate()
-
-                // Display death animation to client ("You are dead")
-                new PacketDeathMenu(pClient, PacketDeathMenu::Dead);
+                m_CanMask |= CAN_C_GHOST;
+                UpdateMode(true, nullptr);
             }
             else
             {
-                pClient->addPlayerUpdate();
+                if (pCorpse)
+                    pCorpse->m_uidLink.InitUID();
+                NPC_PetClearOwners();
             }
+        }
+
+        if (m_pPlayer)
+        {
+            if (tx.DispatchOnce(CCharDeathCallback::Penalties))
+            {
+                const llong iDelta = m_exp / 10;
+                ChangeExperience(-maximum(1, iDelta), pKiller);
+                if (!(m_TagDefs.GetKeyNum("DEATHFLAGS") & DEATH_NOFAMECHANGE))
+                    Noto_Fame(-GetFame() / 10);
+                ++m_pPlayer->m_wDeaths;
+            }
+
+            lpctstr pszGhostName          = nullptr;
+            const CCharBase *pCharDefPrev = CCharBase::FindCharBase(_iPrev_id);
+            const bool fFemale            = pCharDefPrev && pCharDefPrev->IsFemale();
+            switch (_iPrev_id)
+            {
+                case CREID_GARGMAN:
+                case CREID_GARGWOMAN:
+                    pszGhostName = (fFemale ? "c_garg_ghost_woman" : "c_garg_ghost_man");
+                    break;
+                case CREID_ELFMAN:
+                case CREID_ELFWOMAN:
+                    pszGhostName = (fFemale ? "c_elf_ghost_woman" : "c_elf_ghost_man");
+                    break;
+                default:
+                    pszGhostName = (fFemale ? "c_ghost_woman" : "c_ghost_man");
+                    break;
+            }
+            ASSERT(pszGhostName != nullptr);
+
+            if (!IsStatFlag(STATF_WAR))
+                StatFlag_Set(STATF_INSUBSTANTIAL); // manifest war mode for ghosts
+
+            SetHue(HUE_DEFAULT);                   // get all pale
+            SetID((CREID_TYPE)(g_Cfg.ResourceGetIndexType(RES_CHARDEF, pszGhostName)));
+            if (!ContentFind(CResourceID(RES_ITEMDEF, ITEMID_DEATHSHROUD)))
+                LayerAdd(CItem::CreateScript(ITEMID_DEATHSHROUD, this));
+        }
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::AfterSideEffect);
+        tx.phase      = CCharDeathPhase::EntityFinalized;
+        tx.retryCount = 0;
+    }
+
+    if (tx.phase == CCharDeathPhase::EntityFinalized)
+    {
+        CCharDeathFaultInjector::Check(tx.phase, CCharDeathFaultBoundary::BeforePhase);
+        tx.phase         = CCharDeathPhase::Completed;
+        CClient *pClient = GetClientActive();
+        if (m_pPlayer && pClient && !tx.legacyRecovery)
+        {
+            if (g_Cfg.m_iPacketDeathAnimation)
+                new PacketDeathMenu(pClient, PacketDeathMenu::Dead);
+            else
+                pClient->addPlayerUpdate();
             pClient->addPlayerWarMode();
             pClient->addSeason(SEASON_Desolate);
-            pClient->addMapWaypoint(pCorpse, MAPWAYPOINT_Corpse);		// add corpse map waypoint on enhanced clients
-            pClient->addTargetCancel();	// cancel target if player death
-
-            CItem *pPack = LayerFind(LAYER_PACK);
-            if ( pPack )
+            pClient->addMapWaypoint(pCorpse, MAPWAYPOINT_Corpse);
+            pClient->addTargetCancel();
+            if (CItem *pPack = LayerFind(LAYER_PACK))
             {
                 pPack->RemoveFromView();
                 pPack->Update();
             }
-
-		    // Remove the characters which I can't see as dead from the screen
             if (g_Cfg.m_fDeadCannotSeeLiving)
             {
-                auto AreaChars = CWorldSearchHolder::GetInstance(GetTopPoint(), g_Cfg.m_iMapViewSizeMax);
-                AreaChars->SetSearchSquare(true);
-                for (;;)
+                auto areaChars = CWorldSearchHolder::GetInstance(GetTopPoint(), g_Cfg.m_iMapViewSizeMax);
+                areaChars->SetSearchSquare(true);
+                for (CChar *pChar = areaChars->GetChar(); pChar; pChar = areaChars->GetChar())
                 {
-                    CChar *pChar = AreaChars->GetChar();
-                    if (!pChar)
-                        break;
                     if (!CanSeeAsDead(pChar))
                         pClient->addObjectRemove(pChar);
                 }
             }
+        }
+        CCharDeathFaultInjector::Check(CCharDeathPhase::EntityFinalized, CCharDeathFaultBoundary::AfterSideEffect);
+        g_Log.EventDebug("DeathTxn complete uid=0%" PRIx32 " tx=%" PRIu32 ".\n", GetUID().GetObjUID(), tx.transactionId);
+    }
+    return (m_pNPC && !m_pNPC->m_bonded) ? DeathRequestResult::SuccessAndDelete : DeathRequestResult::Success;
 
-		}
-	}
-    return DeathRequestResult::Success;
+    EXC_CATCH;
+    const CCharDeathPhase failedPhase       = m_deathTransaction.phase;
+    const bool fEmergency                   = m_deathTransaction.RegisterFailure(m_pNPC && !m_pNPC->m_bonded);
+    static constexpr int64 sm_iRetryDelay[] = { MSECS_PER_TENTH, 5 * MSECS_PER_TENTH, MSECS_PER_SEC, 5 * MSECS_PER_SEC, 30 * MSECS_PER_SEC };
+    const size_t iDelay                     = minimum((size_t)(m_deathTransaction.retryCount - 1), ARRAY_COUNT(sm_iRetryDelay) - 1);
+    m_deathTransaction.nextRetryTime        = CWorldGameTime::GetCurrentTime().GetTimeRaw() + sm_iRetryDelay[iDelay];
+    _iTimeNextRegen                         = m_deathTransaction.nextRetryTime;
+    if (m_deathTransaction.retryCount == 1 || m_deathTransaction.retryCount == 2 || m_deathTransaction.retryCount == 4 || m_deathTransaction.retryCount == 8)
+    {
+        const CPointMap pt = GetTopPoint();
+        g_Log.EventError("DeathTxn phase-failed uid=0%" PRIx32 " tx=%" PRIu32 " phase=%s attempt=%u hits=%u flags=0%" PRIx64
+                         " p=%s sleeping=%d sectorSleeping=%d corpse=0%" PRIx32 ".\n",
+            GetUID().GetObjUID(), m_deathTransaction.transactionId, CCharDeathPhaseName(failedPhase), m_deathTransaction.retryCount, Stat_GetVal(STAT_STR),
+            _uiStatFlag, pt.WriteUsed(), _IsSleeping(), GetTopSector()->IsSleeping(), m_deathTransaction.corpseUid);
+    }
+    if (fEmergency)
+    {
+        g_Log.EventError("DeathTxn emergency-finalization uid=0%" PRIx32 " tx=%" PRIu32 " phase=%s.\n", GetUID().GetObjUID(), m_deathTransaction.transactionId,
+            CCharDeathPhaseName(failedPhase));
+    }
+    else if ((!m_pNPC || m_pNPC->m_bonded) && m_deathTransaction.retryCount > 8 && ((m_deathTransaction.retryCount - 8) % 20 == 0))
+    {
+        g_Log.EventError("DeathTxn persistent-failure uid=0%" PRIx32 " tx=%" PRIu32 " phase=%s attempt=%u; player/bonded entity retained.\n",
+            GetUID().GetObjUID(), m_deathTransaction.transactionId, CCharDeathPhaseName(failedPhase), m_deathTransaction.retryCount);
+    }
+    return DeathRequestResult::InProgress;
+}
+
+CChar::DeathRequestResult CChar::ContinueDeath()
+{
+    return Death();
 }
 
 // Check if we are held in place.
@@ -5919,15 +6053,21 @@ bool CChar::_CanTick(bool fParentGoingToSleep) const
     //ADDTOCALLSTACK_DEBUG("CChar::_CanTick");
     EXC_TRY("Able to tick?");
 
+    // An accepted death transaction is a lifecycle invariant, not ambient AI.
+    // It must continue even when the sector is going to sleep.
+    if (HasActiveDeathTransaction() ||
+        CCharShouldStartLegacyDeathRecovery(IsStatFlag(STATF_DEAD), m_pNPC != nullptr, m_pNPC && m_pNPC->m_bonded, HasActiveDeathTransaction()))
+        return true;
+
     if (IsDisconnected())
-	{
+    {
         if (!IsTickableEvenIfDisconnected())
             return false;
-	}
+    }
 
     return CObjBase::_CanTick(fParentGoingToSleep);
 
-	EXC_CATCH;
+    EXC_CATCH;
 
 	return false;
 }
@@ -6099,10 +6239,12 @@ bool CChar::OnTickPeriodic()
     *   it should also be called before stat regen, since death happen in the last tick and regen belongs to the new tick
     *   and it makes no sense to regen some hits after death.
     */
-    if (!IsStatFlag(STATF_DEAD) && (Stat_GetVal(STAT_STR) <= 0))
+    const bool fLegacyDeathRecovery =
+        CCharShouldStartLegacyDeathRecovery(IsStatFlag(STATF_DEAD), m_pNPC != nullptr, m_pNPC && m_pNPC->m_bonded, HasActiveDeathTransaction());
+    if (HasActiveDeathTransaction() || fLegacyDeathRecovery || (!IsStatFlag(STATF_DEAD) && (Stat_GetVal(STAT_STR) <= 0)))
     {
         EXC_SET_BLOCK("death?");
-        const DeathRequestResult deathRes = Death();
+        const DeathRequestResult deathRes = HasActiveDeathTransaction() ? ContinueDeath() : Death();
         if ((deathRes != DeathRequestResult::Aborted) && (deathRes != DeathRequestResult::AbortedNoLog))
         {
             if (deathRes == DeathRequestResult::AlreadyDead)
@@ -6113,12 +6255,12 @@ bool CChar::OnTickPeriodic()
         }
         else
         {
-//#ifdef _DEBUG
+            //#ifdef _DEBUG
             if (deathRes != DeathRequestResult::AbortedNoLog)
             {
                 g_Log.EventEvent("Aborted char '%s' (0x%" PRIx32 " ) death.\n", GetName(), GetUID().GetObjUID());
             }
-//#endif
+            //#endif
             ; // Then, fall through.
         }
     }

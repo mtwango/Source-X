@@ -1276,8 +1276,19 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 				}
 			    if ( !iStatBonusPercent )
 			        iStatBonusPercent = 10;
-			    iDmgBonus += CSRand::GetValFast(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
-				break;
+
+			    // We should stay with 0 bonus on min and 100% bonus on max when not randomizing dmg, to get the whole range.
+			    if (fNoRandom) {
+			        iDmgMax += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+			    }
+			    // Otherwise get random bonus.
+			    else {
+			        iDmgBonus += CSRand::GetValFast(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
+			        iDmgMin += iDmgBonus;
+			        iDmgMax += iDmgBonus;
+			    }
+
+			    break;
 			}
 
 			case 1:
@@ -1300,7 +1311,9 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 					iStatBonus = STAT_STR;
 				if ( !iStatBonusPercent )
 					iStatBonusPercent = 20;
-				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+			    iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+			    iDmgMin += iDmgBonus;
+			    iDmgMax += iDmgBonus;
 				break;
 			}
 
@@ -1329,13 +1342,12 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 				if (Stat_GetAdjusted(iStatBonus) >= 100)
 					iDmgBonus += 5;
 
-				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+			    iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+			    iDmgMin += iDmgBonus;
+			    iDmgMax += iDmgBonus;
 				break;
 			}
 		}
-
-	    iDmgMin += iDmgBonus;
-	    iDmgMax += iDmgBonus;
 	}
 
     if ( fNoRandom )

@@ -407,7 +407,7 @@ void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gri
 		if ( pContItem != nullptr )
 		{
 		    // If player is trying to put container inside its child, it will crash sphere due to circular weight calculation.
-            auto *const pItemIsContainer = dynamic_cast<CItemContainer *>(pItem);
+		    auto *const pItemIsContainer = dynamic_cast<CItemContainer *>(pItem);
 		    if (pItemIsContainer && pItemIsContainer->IsItemInside(pContItem))
 		    {
 		        Event_Item_Drop_Fail(pItem);
@@ -417,7 +417,7 @@ void CClient::Event_Item_Drop( CUID uidItem, CPointMap pt, CUID uidOn, uchar gri
                     pItem->GetName(), static_cast<dword>(pItem->GetUID()),
                     pContItem->GetName(), static_cast<dword>(pContItem->GetUID())
                 );
-		        // Disconnect character, since this is usually a script that will be called indefinitely, and it cannot be done manually.
+		        // Disconnect character. This behavior cannot be done manually and script might be called indefinitely.
 		        CharDisconnect();
 		        GetNetState()->markReadClosed();
 		        return;

@@ -1150,10 +1150,10 @@ void CClient::Event_Attack( CUID uid )
         fFail = !m_pChar->Fight_Attack(pChar);
 
     // Rotate player.
-    if (!fFail && m_pChar->CanSeeLOS(pChar))
-		m_pChar->UpdateDir(pChar);
+    if (!fFail && m_pChar->CanSeeLOS(pChar) && !IsSetOF(OF_NoDClickTurn))
+        m_pChar->UpdateDir(pChar);
 
-	new PacketAttack(this, (fFail ? CUID() : pChar->GetUID()));
+    new PacketAttack(this, (fFail ? CUID() : pChar->GetUID()));
 }
 
 // Client/Player buying items from the Vendor

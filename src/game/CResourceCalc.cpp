@@ -207,7 +207,6 @@ int CServerConfig::Calc_CombatChanceToHit(const CChar * pChar, const CChar * pCh
 		    if (pCharTarg->IsStatFlag(STATF_SLEEPING | STATF_FREEZE) && iChance < 80)
 		        iChance = 80;
 
-		    // Always need to have some chance (@todo Remove this horrendous random).
 			return iChance;
 		}
 		// Pre-AOS formula.

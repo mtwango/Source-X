@@ -2259,19 +2259,19 @@ void CChar::NPC_OnTickAction()
 	{
 		// SCRIPTED SKILL OnTickAction
 	}
-	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_FIGHT))
+	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_FIGHT) && (!IsStatFlag(STATF_FREEZE) || IsSetCombatFlags(COMBAT_PARALYZE_CANSWING)))
 	{
 		EXC_SET_BLOCK("fighting");
         fSkillFight = true;
 		NPC_Act_Fight();
 	}
-	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_MAGIC))
+	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_MAGIC) && (!IsStatFlag(STATF_FREEZE) || IsSetMagicFlags(MAGICF_CASTPARALYZED)))
 	{
 		EXC_SET_BLOCK("fighting-magic");
 	    fSkillFight = true;
 		NPC_Act_Fight();
 	}
-	else
+	else if (!IsStatFlag(STATF_FREEZE))
 	{
 		switch ( iSkillActive )
 		{

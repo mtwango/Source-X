@@ -803,6 +803,12 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 		if ( pItemVend )
 			pItemVend->SetPlayerVendorPrice(0);
 	}
+
+    // @todo Temporary debug check.
+    if (pObjRec->GetParent() != this) {
+        g_Log.EventDebug("Debug: removing %s (0%x) from invalid container %s (0%x).\n", pItem->GetName(), (dword) pItem->GetUID(), GetName(), (dword) GetUID());
+    }
+
 	CContainer::OnRemoveObj(pObjRec);
     UpdatePropertyFlag();
 

@@ -410,6 +410,11 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
             pItem->OnTrigger( ITRIG_UNEQUIP, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this );
 	}
 
+    // @todo Temporary debug check.
+    if (pObRec->GetParent() != this) {
+        g_Log.EventDebug("Debug: removing %s (0%x) from invalid character %s (0%x).\n", pItem->GetName(), (dword) pItem->GetUID(), GetName(), (dword) GetUID());
+    }
+
 	CContainer::OnRemoveObj( pObRec );
 
 	// remove equipped items effects

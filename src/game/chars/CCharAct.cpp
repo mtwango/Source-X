@@ -410,9 +410,12 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
             pItem->OnTrigger( ITRIG_UNEQUIP, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this );
 	}
 
-    // @todo Temporary debug check.
+    // @todo This item is getting removed multiple times, which shouldn't happen.
     if (pObRec->GetParent() != this) {
-        g_Log.EventDebug("Debug: removing %s (0%x) from invalid character %s (0%x).\n", pItem->GetName(), (dword) pItem->GetUID(), GetName(), (dword) GetUID());
+#ifdef _DEBUG
+        g_Log.EventDebug("Invalid parent %s (0%x) for item %s (0%x).\n", GetName(), (dword) GetUID(), pItem->GetName(), (dword) pItem->GetUID());
+#endif
+        return;
     }
 
 	CContainer::OnRemoveObj( pObRec );

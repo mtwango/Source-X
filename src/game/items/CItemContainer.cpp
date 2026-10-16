@@ -804,9 +804,12 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 			pItemVend->SetPlayerVendorPrice(0);
 	}
 
-    // @todo Temporary debug check.
+    // @todo This item is getting removed multiple times, which shouldn't happen.
     if (pObjRec->GetParent() != this) {
-        g_Log.EventDebug("Debug: removing %s (0%x) from invalid container %s (0%x).\n", pItem->GetName(), (dword) pItem->GetUID(), GetName(), (dword) GetUID());
+#ifdef _DEBUG
+        g_Log.EventDebug("Invalid parent %s (0%x) for item %s (0%x).\n", GetName(), (dword) GetUID(), pItem->GetName(), (dword) pItem->GetUID());
+#endif
+        return;
     }
 
 	CContainer::OnRemoveObj(pObjRec);

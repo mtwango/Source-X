@@ -4944,8 +4944,10 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
         else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_FIGHT) && g_Cfg.IsSkillFlag(iSkillActive, SKF_RANGED) && !IsSetCombatFlags(COMBAT_ARCHERYCANMOVE) && !IsStatFlag(STATF_ARCHERCANMOVE))
         {
             // Keep timer active holding the swing action until the char stops moving
-            m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
-            _SetTimeoutD(1);
+            if (m_atFight.m_iWarSwingState != WAR_SWING_SWINGING) {
+                m_atFight.m_iWarSwingState = WAR_SWING_EQUIPPING;
+                _SetTimeoutD(1);
+            }
         }
 
         if (_uiRecursingStep >= _kuiRecursingStepLimit)

@@ -1892,8 +1892,8 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 		{
 			// Only start the swing this much tenths of second after the char stopped moving.
 			//  (Values changed between expansions. SE:0,25s / AOS:0,5s / pre-AOS:1,0s)
-			if ( m_pClient && ( (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pClient->m_timeLastEventWalk) / MSECS_PER_TENTH) < g_Cfg.m_iCombatArcheryMovementDelay) )
-				return WAR_SWING_EQUIPPING;
+			if ( m_pClient && ( (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pClient->m_timeLastEventWalk) / MSECS_PER_TENTH) < g_Cfg.m_iCombatArcheryMovementDelay) && m_atFight.m_iWarSwingState != WAR_SWING_SWINGING)
+			    return WAR_SWING_EQUIPPING;
 		}
 
         if ( pWeapon )

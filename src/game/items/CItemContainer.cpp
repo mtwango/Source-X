@@ -804,10 +804,14 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 			pItemVend->SetPlayerVendorPrice(0);
 	}
 
+    bool sameOwner = true;
+    if (pObjRec->GetParent() != this)
+        sameOwner = false;
+
 	CContainer::OnRemoveObj(pObjRec);
 
     // @todo This item is getting removed multiple times, which shouldn't happen.
-    if (pObjRec->GetParent() != this) {
+    if (sameOwner == false) {
 #ifdef _DEBUG
         g_Log.EventDebug("Invalid parent %s (0%x) for item %s (0%x).\n", GetName(), (dword) GetUID(), pItem->GetName(), (dword) pItem->GetUID());
 #endif

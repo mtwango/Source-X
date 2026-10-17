@@ -410,6 +410,8 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
             pItem->OnTrigger( ITRIG_UNEQUIP, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this );
 	}
 
+	CContainer::OnRemoveObj( pObRec );
+
     // @todo This item is getting removed multiple times, which shouldn't happen.
     if (pObRec->GetParent() != this) {
 #ifdef _DEBUG
@@ -417,8 +419,6 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 #endif
         return;
     }
-
-	CContainer::OnRemoveObj( pObRec );
 
 	// remove equipped items effects
 	switch ( layer )

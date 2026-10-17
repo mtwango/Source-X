@@ -804,6 +804,8 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 			pItemVend->SetPlayerVendorPrice(0);
 	}
 
+	CContainer::OnRemoveObj(pObjRec);
+
     // @todo This item is getting removed multiple times, which shouldn't happen.
     if (pObjRec->GetParent() != this) {
 #ifdef _DEBUG
@@ -812,7 +814,6 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
         return;
     }
 
-	CContainer::OnRemoveObj(pObjRec);
     UpdatePropertyFlag();
 
 	if ( IsType(IT_KEYRING) )	// key ring.

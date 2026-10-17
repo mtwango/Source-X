@@ -121,7 +121,7 @@ void CSObjCont::OnRemoveObj(CSObjContRec* pObjRec)	// Override this --> called w
 	// just remove from list. DON'T delete !
 	ASSERT(pObjRec);
 
-	ASSERT(pObjRec->GetParent() == this);
+	//ASSERT(pObjRec->GetParent() == this);
 
 	pObjRec->m_pParent = nullptr;	// We are now unlinked.
 

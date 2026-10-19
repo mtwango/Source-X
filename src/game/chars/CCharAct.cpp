@@ -410,6 +410,13 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
             pItem->OnTrigger( ITRIG_UNEQUIP, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this );
 	}
 
+    // If script trigger execution already removed or relocated the item,
+    // prevent duplicate unlinking, assertion failures, and duplicate stat deductions.
+    if (pObRec->GetParent() != this)
+    {
+        return;
+    }
+
 	CContainer::OnRemoveObj( pObRec );
 
 	// remove equipped items effects
@@ -441,6 +448,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 		case LAYER_HELM:		// 6
 		case LAYER_GLOVES:	// 7
 		case LAYER_COLLAR:	// 10 = gorget or necklace.
+		case LAYER_HALF_APRON:
 		case LAYER_CHEST:	// 13 = armor chest
 		case LAYER_TUNIC:	// 17 = jester suit
 		case LAYER_ARMS:		// 19 = armor

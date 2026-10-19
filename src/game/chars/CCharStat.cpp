@@ -58,7 +58,13 @@ void CChar::Stat_SetMod( STAT_TYPE i, int iVal )
 	if ( i == STAT_STR && iVal < iStatVal )
 	{
 		// ModSTR is being decreased, so check if the char still have enough STR to use current equipped items
-		Stat_StrCheckEquip();
+	    static bool fInEquipCheck = false;
+	    if (!fInEquipCheck)
+	    {
+	        fInEquipCheck = true;
+	        Stat_StrCheckEquip();
+	        fInEquipCheck = false;
+	    }
 	}
 
     if (!IsSetOF(OF_StatAllowValOverMax))
@@ -798,6 +804,10 @@ void CChar::Stat_StrCheckEquip()
 	for (CSObjContRec* pObjRec : GetIterationSafeCont())
 	{
 		CItem* pItem = static_cast<CItem*>(pObjRec);
+	    if (!pItem || !CItemBase::IsVisibleLayer(pItem->GetEquipLayer())) {
+	        continue;
+	    }
+
 		if (!CanEquipStr(pItem))
 		{
 			SysMessagef("%s %s.", g_Cfg.GetDefaultMsg(DEFMSG_EQUIP_NOT_STRONG_ENOUGH), pItem->GetName());

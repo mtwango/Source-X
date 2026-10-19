@@ -103,15 +103,15 @@ void CSObjCont::InsertContentHead(CSObjContRec* pNewRec)
 
 void CSObjCont::InsertContentTail(CSObjContRec* pNewRec)
 {
-#ifdef _DEBUG
-	const_iterator itEnd = cend();
-	const_iterator itObjRec = std::find(cbegin(), itEnd, pNewRec);
-	ASSERT(itObjRec == itEnd);
-	// Avoid duplicates, thus delete-ing objects multiple times
-#endif
-
     pNewRec->RemoveSelf();
     pNewRec->m_pParent = this;
+
+    const_iterator itEnd = cend();
+    const_iterator itObjRec = std::find(cbegin(), itEnd, pNewRec);
+    if (itObjRec != itEnd)
+    {
+        return;
+    }
 
     _Contents.emplace_back(pNewRec);
 }
@@ -121,7 +121,7 @@ void CSObjCont::OnRemoveObj(CSObjContRec* pObjRec)	// Override this --> called w
 	// just remove from list. DON'T delete !
 	ASSERT(pObjRec);
 
-	//ASSERT(pObjRec->GetParent() == this);
+	ASSERT(pObjRec->GetParent() == this);
 
 	pObjRec->m_pParent = nullptr;	// We are now unlinked.
 

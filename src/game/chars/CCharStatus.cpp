@@ -157,7 +157,7 @@ CItemContainer *CChar::GetBank( LAYER_TYPE layer )
 	if ( pBankBox )
 		return pBankBox;
 
-	if ( !g_Serv.IsLoading() )
+	if ( !g_Serv.IsLoadingGeneric() )
 	{
 		if ( pItemTest )
 		{
@@ -209,7 +209,7 @@ CItem *CChar::LayerFind( LAYER_TYPE layer ) const
 	return nullptr;
 }
 
-TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr pScriptArgs, CTextConsole *pSrc, CSString *pResult, LAYER_TYPE layer )
+TRIGRET_TYPE CChar::OnCharTrigForLayerLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole *pSrc, CSString *pResult, LAYER_TYPE layer )
 {
 	ADDTOCALLSTACK("CChar::OnCharTrigForLayerLoop");
 	const CScriptLineContext StartContext = s.GetContext();
@@ -680,7 +680,7 @@ byte CChar::GetModeFlag( const CClient *pViewer ) const
 
 	if ( IsStatFlag(STATF_INVUL) )
 		mode |= CHARMODE_YELLOW;
-	if ( GetPrivLevel() > PLEVEL_Player )
+	if (GetPrivLevel() > PLEVEL_Player || IsSetEF(EF_WalkBypassMonsters))
 		mode |= CHARMODE_IGNOREMOBS;
 	if ( IsStatFlag(STATF_WAR) )
 		mode |= CHARMODE_WAR;
@@ -920,6 +920,9 @@ CChar * CChar::GetOwner() const
 
 bool CChar::CanDress(const CChar* pChar) const
 {
+    // Self dressing always allowed
+    if (pChar == this)
+        return true;
     if (IsPriv(PRIV_GM) && (GetPrivLevel() > pChar->GetPrivLevel() || GetPrivLevel() == PLEVEL_Owner))
         return true;
     else if (g_Cfg.m_fCanUndressPets && pChar->IsOwnedBy(this))
@@ -1006,10 +1009,13 @@ bool CChar::CanSeeAsDead( const CChar *pChar) const
 	{
 		if ( pChar->m_pPlayer )
 		{
-            if (IsNPC() && NPC_PetGetOwner() != pChar) //NPCs should see their owners even if iDeadCannotSee equals to 2.
-            {
-                if (iDeadCannotSee == 2)
-                    return false;
+		    // Dead NPCs should always see their owners (is there such thing as dead NPC?).
+            if (IsNPC() && NPC_PetGetOwner() == pChar) {
+                return true;
+            }
+
+		    if (iDeadCannotSee == 2) {
+		        return false;
             }
 		}
 		else
@@ -1191,12 +1197,12 @@ bool CChar::CanSee( const CObjBaseTemplate *pObj ) const
 			{
 				if ( IsTrigUsed( TRIGGER_SEEHIDDEN ) )
 				{
-                    CScriptTriggerArgsPtr pArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
-                    pArgs->m_iN1 = (plevelMe <= plevelChar);
+                    CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+                    pScriptArgs->m_iN1 = (plevelMe <= plevelChar);
 					CChar *pChar2 = const_cast< CChar* >( pChar );
 					CChar *this2 = const_cast< CChar* >( this );
-                    this2->OnTrigger( CTRIG_SeeHidden, pArgs, pChar2 );
-                    return ( pArgs->m_iN1 != 1 );
+                    this2->OnTrigger( CTRIG_SeeHidden, pScriptArgs, pChar2 );
+                    return ( pScriptArgs->m_iN1 != 1 );
 				}
 			}
 			//Here we analyse how GM can see other player/GM when they are hide.
@@ -1822,7 +1828,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
         const short iHeightDiff = (blockingState->m_Top.m_z - blockingState->m_Bottom.m_z);
         const height_t uiHeightReq = fTopLandTile ? (uiMyHeight / 2) : uiMyHeight;
 
-        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK))
+        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
         {
             g_Log.EventWarn("block.m_Top.m_z (%hhd) - block.m_Bottom.m_z (%hhd) < m_zClimbHeight (%hhu) + (block.m_Top.m_dwTile (0x%" PRIx32 ") > TERRAIN_QTY ? iHeightMount : iHeightMount/2 )(%hhu).\n",
                 blockingState->m_Top.m_z, blockingState->m_Bottom.m_z, m_zClimbHeight, blockingState->m_Top.m_dwTile, (height_t)(m_zClimbHeight + uiHeightReq));
@@ -1849,7 +1855,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
     if ((uiMyMovementFlags != UINT64_MAX) && (uiMapPointMovementFlags != 0x0))
     {
         // It IS in my way and HAS a flag set, check further
-        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK))
+        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
             g_Log.EventWarn("BOTTOMitemID (0%" PRIx32 ") TOPitemID (0%" PRIx32 ").\n", (blockingState->m_Bottom.m_dwTile - TERRAIN_QTY), (blockingState->m_Top.m_dwTile - TERRAIN_QTY));
 
         if (uiMapPointMovementFlags & CAN_I_WATER)
@@ -1898,7 +1904,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
             }
         }
 
-        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK))
+        if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
             g_Log.EventWarn("block.m_Lowest.m_z %hhd, block.m_Bottom.m_z %hhd, block.m_Top.m_z %hhd.\n", blockingState->m_Lowest.m_z, blockingState->m_Bottom.m_z, blockingState->m_Top.m_z);
 
         if (blockingState->m_Bottom.m_z >= UO_SIZE_Z)
@@ -1949,7 +1955,7 @@ bool CChar::CanStandAt(CPointMap *ptDest, const CRegion* pArea, uint64 uiMyMovem
         }
     }
 
-    if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK))
+    if (!fPathfinding && (g_Cfg.m_iDebugFlags & DEBUGF_WALK) && IsPlayer())
         g_Log.EventWarn("GetHeightMount() %hhu, block.m_Top.m_z %hhd, ptDest.m_z %hhd.\n", uiMyHeight, blockingState->m_Top.m_z, ptDest->m_z);
 
     if (IsStatFlag(STATF_ONHORSE) && (uiMyHeight + ptDest->m_z >= blockingState->m_Top.m_z) && g_Cfg.m_iMountHeight && !IsPriv(PRIV_GM) && !IsPriv(PRIV_ALLMOVE))
@@ -2017,7 +2023,7 @@ CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, DIR_TYP
     CRegion *pArea = ptDest.GetRegion(REGION_TYPE_MULTI|REGION_TYPE_AREA|REGION_TYPE_ROOM);
 	if ( !pArea )
 	{
-		//if (g_Cfg.m_iDebugFlags & DEBUGF_WALK)
+		//if (g_Cfg.m_iDebugFlags & DEBUGF_WALK && IsPlayer())
 		g_Log.EventWarn("WalkCheck: failed to get the destination region at P=%d,%d,%d,%d (UID: 0%x, name: %s).\n",
             ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map, (dword)GetUID(), GetName());
 		return nullptr;
@@ -2028,15 +2034,15 @@ CRegion *CChar::CheckValidMove( CPointMap &ptDest, uint64 *uiBlockFlags, DIR_TYP
 	const uint64 uiCanFlags = GetCanFlags();
 	const uint64 uiMovementCan = GetCanMoveFlags(uiCanFlags);  // actions i can perform to step on a tile (some tiles require a specific ability, like to swim for the water)
 
-	if (g_Cfg.m_iDebugFlags & DEBUGF_WALK)
-		g_Log.EventWarn("GetCanMoveFlags() (0x%" PRIx64 ").\n", uiMovementCan);
+	if (g_Cfg.m_iDebugFlags & DEBUGF_WALK && IsPlayer())
+		g_Log.EventWarn("GetCanMoveFlags() (flags: 0x%" PRIx64 ", uid: 0%x, name: %s, location: %d,%d,%d,%d).\n",
+		    uiMovementCan, static_cast<dword>(GetUID()), GetName(), ptDest.m_x, ptDest.m_y, ptDest.m_z, ptDest.m_map);
 	if (!(uiMovementCan & CAN_C_MOVEMENTCAPABLEMASK))
 		return nullptr;	// cannot move at all, so WTF?
 
-
     const height_t uiHeight = IsSetEF(EF_WalkCheckHeightMounted) ? GetHeightMount() : GetHeight();
     CServerMapBlockingState blockingState(uiMovementCan, ptDest.m_z, ptDest.m_z + m_zClimbHeight + uiHeight, ptDest.m_z + m_zClimbHeight + 3, uiHeight);
-    if (g_Cfg.m_iDebugFlags & DEBUGF_WALK)
+    if (g_Cfg.m_iDebugFlags & DEBUGF_WALK && IsPlayer())
     {
         g_Log.EventWarn("\t\tCServerMapBlockState block( 0%" PRIx64 ", %d, %d, %d ); ptDest.m_z(%d) m_zClimbHeight(%d).\n",
             uiMovementCan, ptDest.m_z, ptDest.m_z + m_zClimbHeight + uiHeight, ptDest.m_z + m_zClimbHeight + 2, ptDest.m_z, m_zClimbHeight);

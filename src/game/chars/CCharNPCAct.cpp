@@ -304,7 +304,7 @@ void CChar::NPC_OnHear( lpctstr pszCmd, CChar * pSrc, bool fAllPets )
 		// This or CTRIG_SeeNewPlayer will be our first contact with people.
 		if ( IsTrigUsed(TRIGGER_NPCHEARGREETING) )
 		{
-            if ( OnTrigger( CTRIG_NPCHearGreeting, CScriptTriggerArgsPtr{}, pSrc ) == TRIGRET_RET_TRUE )
+            if ( OnTrigger( CTRIG_NPCHearGreeting, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc ) == TRIGRET_RET_TRUE )
 				return;
 		}
 
@@ -368,7 +368,7 @@ void CChar::NPC_OnHear( lpctstr pszCmd, CChar * pSrc, bool fAllPets )
 	// can't figure you out.
 	if ( IsTrigUsed(TRIGGER_NPCHEARUNKNOWN) )
 	{
-        if ( OnTrigger( CTRIG_NPCHearUnknown, CScriptTriggerArgsPtr{}, pSrc ) == TRIGRET_RET_TRUE )
+        if ( OnTrigger( CTRIG_NPCHearUnknown, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pSrc ) == TRIGRET_RET_TRUE )
 			return;
 	}
 
@@ -849,7 +849,18 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 	if ( !pChar->IsStatFlag(STATF_DEAD) || pChar->IsStatFlag(STATF_STONE) || pChar->Can(CAN_C_STATUE) || (pChar->m_pNPC && pChar->m_pNPC->m_bonded) )
 		return false;
 
-	static lpctstr const sm_szHealerRefuseEvils[] =
+    UpdateDir(pChar);
+
+    // Character is too far.
+    if (GetDist(pChar) > 3)
+    {
+        if (g_Rand.Get16ValFast(5))
+            return false;
+        Speak(g_Cfg.GetDefaultMsg(DEFMSG_NPC_HEALER_RANGE));
+        return true;
+    }
+
+    static lpctstr const sm_szHealerRefuseEvils[] =
 	{
 		g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_REF_EVIL_1 ),
 		g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_REF_EVIL_2 ),
@@ -876,47 +887,37 @@ bool CChar::NPC_LookAtCharHealer( CChar * pChar )
 		g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_RES_5 )
 	};
 
-	UpdateDir( pChar );
-
 	lpctstr pszRefuseMsg;
 
-	int iDist = GetDist( pChar );
-
-	if ( iDist > 3 )
-	{
-		if ( g_Rand.Get16ValFast(5))
-			return false;
-		Speak( g_Cfg.GetDefaultMsg( DEFMSG_NPC_HEALER_RANGE ) );
-		return true;
-	}
-
-	// What noto is this char to me ?
-	bool ImEvil = Noto_IsEvil();
-	bool ImNeutral = Noto_IsNeutral();
-	NOTO_TYPE NotoThem = pChar->Noto_GetFlag( this, true );
+	// What noto is this char to me?
+    const NOTO_TYPE NotoThem = pChar->Noto_GetFlag(this, true);
 
 	if ( !IsStatFlag( STATF_CRIMINAL ) && NotoThem == NOTO_CRIMINAL )
 	{
 		pszRefuseMsg = sm_szHealerRefuseCriminals[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseCriminals )) ];
-		if ( g_Rand.Get16ValFast(5) || iDist > 3 )
+		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
 	}
 
-	if (( !ImNeutral && !ImEvil) && NotoThem >= NOTO_NEUTRAL )
+    // My karma status.
+    const bool fImEvil = Noto_IsEvil();
+    const bool fImNeutral = Noto_IsNeutral();
+
+	if (!fImNeutral && !fImEvil && NotoThem >= NOTO_NEUTRAL)
 	{
 		pszRefuseMsg = sm_szHealerRefuseEvils[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseEvils )) ];
-		if ( g_Rand.Get16ValFast(5) || iDist > 3 )
+		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
 	}
 
-	if (( ImNeutral || ImEvil ) && NotoThem == NOTO_GOOD )
+	if ((fImNeutral || fImEvil ) && NotoThem == NOTO_GOOD)
 	{
 		pszRefuseMsg = sm_szHealerRefuseGoods[ g_Rand.GetValFast( ARRAY_COUNT( sm_szHealerRefuseGoods )) ];
-		if ( g_Rand.Get16ValFast(5) || iDist > 3 )
+		if (g_Rand.Get16ValFast(5))
 			return false;
 		Speak( pszRefuseMsg );
 		return true;
@@ -1018,7 +1019,7 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
 
 	if ( IsTrigUsed(TRIGGER_NPCLOOKATCHAR) )
 	{
-        switch ( OnTrigger(CTRIG_NPCLookAtChar, CScriptTriggerArgsPtr{}, pChar) )
+        switch ( OnTrigger(CTRIG_NPCLookAtChar, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar) )
 		{
 			case  TRIGRET_RET_TRUE:		return true;
 			case  TRIGRET_RET_FALSE:	return false;
@@ -1046,7 +1047,7 @@ bool CChar::NPC_LookAtChar( CChar * pChar, int iDist )
 			{
 				if ( IsTrigUsed(TRIGGER_NPCSEENEWPLAYER) )
 				{
-                    if ( OnTrigger( CTRIG_NPCSeeNewPlayer, CScriptTriggerArgsPtr{}, pChar ) != TRIGRET_RET_TRUE )
+                    if ( OnTrigger( CTRIG_NPCSeeNewPlayer, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pChar ) != TRIGRET_RET_TRUE )
 					{
 						// record that we attempted to speak to them.
 						CItemMemory * pMemory = Memory_AddObjTypes( pChar, MEMORY_SPEAK );
@@ -1988,7 +1989,7 @@ void CChar::NPC_Act_Idle()
 	{
 		if ( IsTrigUsed(TRIGGER_NPCSPECIALACTION) )
 		{
-            if ( OnTrigger( CTRIG_NPCSpecialAction, CScriptTriggerArgsPtr{}, this ) == TRIGRET_RET_TRUE )
+            if ( OnTrigger( CTRIG_NPCSpecialAction, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this ) == TRIGRET_RET_TRUE )
 				return;
 		}
 
@@ -2258,18 +2259,18 @@ void CChar::NPC_OnTickAction()
 	{
 		// SCRIPTED SKILL OnTickAction
 	}
-	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_FIGHT))
+	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_FIGHT) && (!IsStatFlag(STATF_FREEZE) || IsSetCombatFlags(COMBAT_PARALYZE_CANSWING)))
 	{
 		EXC_SET_BLOCK("fighting");
         fSkillFight = true;
 		NPC_Act_Fight();
 	}
-	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_MAGIC))
+	else if (g_Cfg.IsSkillFlag(iSkillActive, SKF_MAGIC) && (!IsStatFlag(STATF_FREEZE) || IsSetMagicFlags(MAGICF_CASTPARALYZED)))
 	{
 		EXC_SET_BLOCK("fighting-magic");
 		NPC_Act_Fight();
 	}
-	else
+	else if (!IsStatFlag(STATF_FREEZE))
 	{
 		switch ( iSkillActive )
 		{
@@ -2681,7 +2682,7 @@ void CChar::NPC_ExtraAI()
 	EXC_SET_BLOCK("init");
 	if ( IsTrigUsed(TRIGGER_NPCACTION) )
 	{
-        if ( OnTrigger( CTRIG_NPCAction, CScriptTriggerArgsPtr{}, this ) == TRIGRET_RET_TRUE )
+        if ( OnTrigger( CTRIG_NPCAction, CScriptParserBufs::GetCScriptTriggerArgsPtr(), this ) == TRIGRET_RET_TRUE )
 			return;
 	}
 

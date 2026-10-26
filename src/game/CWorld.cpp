@@ -413,10 +413,10 @@ void CWorldThread::ScheduleObjDeletion(CSObjContRec* obj)
 {
     // If the world is being destroyed, do not schedule the object for deletion but delete it right away.
     const auto servMode = g_Serv.GetServerMode();
-    // I can't destroy it while SERVMODE_Loading, because the script parser can't know (without creating a global state holder, TODO) that this
+    // I can't destroy it while ServMode::LoadingScripts/Saves, because the script parser can't know (without creating a global state holder, TODO) that this
     //  object was deleted/destroyed. The object pointer will become invalid, and if something uses it, even for calling a method, Sphere will crash.
-    //const bool fDestroy = (servMode == SERVMODE_Exiting || servMode == SERVMODE_Loading);
-    const bool fDestroy = (servMode == SERVMODE_Exiting);
+    //const bool fDestroy = g_Serv.IsDestroyingWorld();
+    const bool fDestroy = (servMode == ServMode::Exiting);
 
     if (fDestroy)
     {
@@ -615,20 +615,18 @@ void CWorldThread::GarbageCollection_UIDs()
 			int iResultCode = FixObj(pObj, i);
 			if ( iResultCode )
 			{
-				// FixObj directly calls Delete method
-				//if (pObj->_IsBeingDeleted() || pObj->IsDeleted())
-				//{
+                if (pObj->_IsBeingDeleted() || pObj->IsDeleted())
+                {
 					// Do an immediate delete here instead of Delete()
 					delete pObj;
 					FreeUID(i);	// Get rid of junk uid if all fails..
-				//}
-				/*
-				else
+                }
+                else
 				{
+                    // FixObj doesn't always delete the item on failure/result code != 0.
 					pObj->Delete();
 				}
-				*/
-				continue;
+                continue;
 			}
 
 			if ((iCount & 0x1FF ) == 0)
@@ -947,7 +945,7 @@ bool CWorld::SaveForce() // Save world state
 	if (g_NetworkManager.isOutputThreaded() == false)
 		g_NetworkManager.flushAllClients();
 
-	g_Serv.SetServerMode(SERVMODE_Saving);	// Forced save freezes the system.
+    g_Serv.SetServerMode(ServMode::Saving);	// Forced save freezes the system.
 	bool fSave = true;
 	bool fSuccess = true;
 
@@ -1003,7 +1001,7 @@ failedstage:
 		fSuccess = false;
 	}
 
-	g_Serv.SetServerMode(SERVMODE_Run);			// Game is up and running
+    g_Serv.SetServerMode(ServMode::Run);			// Game is up and running
 	return fSuccess;
 }
 
@@ -1260,9 +1258,9 @@ void CWorld::SaveStatics()
 			if ( !g_MapList.IsMapSupported(m) )
                 continue;
 
-            for (int s = 0, qty = _Sectors.GetMapSectorData(m).iSectorQty; s < qty; ++s)
+            for (int s = 0, qty = _Sectors.GetMapSectorDataUnchecked(m).iSectorQty; s < qty; ++s)
 			{
-                CSector* pSector = _Sectors.GetSectorByIndex(m, s);
+                CSector* pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
 				if ( !pSector )
                     continue;
 
@@ -1282,7 +1280,7 @@ void CWorld::SaveStatics()
 
 		m_FileStatics.WriteSection( "EOF" );
 		m_FileStatics.Close();
-		g_Log.Event(LOGM_SAVE, "Statics data saved (%s).\n", static_cast<lpctstr>(m_FileStatics.GetFilePath()));
+        g_Log.Event(LOGM_SAVE, "Statics data saved (%s).\n", m_FileStatics.GetFilePath());
 	}
 	catch (const CSError& e)
 	{
@@ -1387,8 +1385,10 @@ bool CWorld::LoadWorld() // Load world from script
 	int iPrevSaveCount = m_iSaveCountID;
 	for (;;)
 	{
+        g_Log.Event(LOGM_INIT, "\n");
 		InitUIDs();
 
+        /* TODO: why aren't we checking also for successful loading of spheredata and spherestatics? */
 		LoadFile(sDataName, false);
 		LoadFile(sStaticsName, false);
 		if ( LoadFile(sWorldName, false) && LoadFile(sCharsName, false) && LoadFile(sMultisName, false))
@@ -1436,9 +1436,9 @@ bool CWorld::LoadWorld() // Load world from script
 		sDataName = sArchive;
 	}
 
-	g_Log.Event(LOGL_WARN | LOGM_INIT, "No previous backup available ?\n");
+    g_Log.Event(LOGL_WARN | LOGM_INIT, "No previous backup available?\n");
     if ( !Save(true) )
-        g_Log.Event(LOGL_FATAL | LOGM_INIT, "No save found unable to create new one.\n");
+        g_Log.Event(LOGL_FATAL | LOGM_INIT, "No save found and unable to create new one.\n");
     else
         return true;
     EXC_CATCH;
@@ -1448,14 +1448,14 @@ bool CWorld::LoadWorld() // Load world from script
 
 bool CWorld::LoadAll() // Load world from script
 {
-	// start count. (will grow as needed)
+    // start count (will grow as needed).
 	_GameClock.Init();		// will be loaded from the world file.
 
 	// Load all the accounts.
 	if ( !g_Accounts.Account_LoadAll(false) )
 		return false;
 
-	// Try to load the world and chars files .
+    // Try to load the world and chars files.
 	if ( !LoadWorld() )
 		return false;
 
@@ -1470,11 +1470,11 @@ bool CWorld::LoadAll() // Load world from script
 		if (!g_MapList.IsMapSupported(m))
 			continue;
 
-        for (int s = 0, qty = _Sectors.GetMapSectorData(m).iSectorQty; s < qty; ++s)
+        for (int s = 0, qty = _Sectors.GetMapSectorDataUnchecked(m).iSectorQty; s < qty; ++s)
 		{
 			EXC_TRYSUB("Load");
 
-            CSector* pSector = _Sectors.GetSectorByIndex(m, s);
+            CSector* pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
 			ASSERT(pSector);
 
             if (!pSector->IsLightOverriden())
@@ -1491,6 +1491,8 @@ bool CWorld::LoadAll() // Load world from script
 	EXC_TRYSUB("Load");
 	GarbageCollection();
 	EXC_CATCHSUB("Garbage collect");
+
+    g_Log.Event(LOGM_INIT, "\n");
 
 	// Set the current version now.
 	r_SetVal("VERSION", SPHERE_VER_ID_STR);	// Set m_iLoadVersion
@@ -1618,7 +1620,7 @@ bool CWorld::r_LoadVal( CScript &s )
 			m_iSaveCountID = s.GetArgVal();
 			break;
 		case WC_TIME:	// "TIME"
-            if (!g_Serv.IsLoading())
+            if (!g_Serv.IsLoadingGeneric())
             {
                 g_Log.EventError("Can't set TIME while server is running.\n");
                 return false;
@@ -1626,7 +1628,7 @@ bool CWorld::r_LoadVal( CScript &s )
 			_GameClock.InitTime( s.GetArgLLVal() * MSECS_PER_SEC);
 			break;
         case WC_TIMEHIRES:	// "TIMEHIRES"
-            if (!g_Serv.IsLoading())
+            if (!g_Serv.IsLoadingGeneric())
             {
                 g_Log.EventError("Can't set TIMEHIRES while server is running.\n");
                 return false;
@@ -1652,24 +1654,24 @@ void CWorld::RespawnDeadNPCs()
 {
 	ADDTOCALLSTACK("CWorld::RespawnDeadNPCs");
 	// Respawn dead story NPC's
-	g_Serv.SetServerMode(SERVMODE_RestockAll);
+    g_Serv.SetServerMode(ServMode::RestockAll);
 	for ( int m = 0; m < MAP_SUPPORTED_QTY; ++m )
 	{
 		if ( !g_MapList.IsMapSupported(m) )
             continue;
 
-        for (int s = 0, qty = _Sectors.GetMapSectorData(m).iSectorQty; s < qty; ++s)
+        for (int s = 0, qty = _Sectors.GetMapSectorDataUnchecked(m).iSectorQty; s < qty; ++s)
 		{
 			EXC_TRY("OnSector");
 
-            CSector* pSector = _Sectors.GetSectorByIndex(m, s);
+            CSector* pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
 			ASSERT(pSector);
 			pSector->RespawnDeadNPCs();
 
 			EXC_CATCH;
 		}
 	}
-	g_Serv.SetServerMode(SERVMODE_Run);
+    g_Serv.SetServerMode(ServMode::Run);
 }
 
 void CWorld::Restock()
@@ -1677,7 +1679,7 @@ void CWorld::Restock()
 	ADDTOCALLSTACK("CWorld::Restock");
 	// Recalc all the base items as well.
 	g_Log.Event(LOGL_EVENT, "World Restock: started.\n");
-	g_Serv.SetServerMode(SERVMODE_RestockAll);
+    g_Serv.SetServerMode(ServMode::RestockAll);
 
 	for ( size_t i = 0; i < ARRAY_COUNT(g_Cfg.m_ResHash.m_Array); ++i )
 	{
@@ -1698,11 +1700,11 @@ void CWorld::Restock()
 		if ( !g_MapList.IsMapSupported(m) )
 			continue;
 
-        for ( int s = 0, qty = _Sectors.GetMapSectorData(m).iSectorQty; s < qty; ++s )
+        for ( int s = 0, qty = _Sectors.GetMapSectorDataUnchecked(m).iSectorQty; s < qty; ++s )
 		{
 			EXC_TRY("OnSector");
 
-            CSector	*pSector = _Sectors.GetSectorByIndex(m, s);
+            CSector	*pSector = _Sectors.GetSectorByIndexUnchecked(m, s);
 			ASSERT(pSector);
 			pSector->Restock();
 
@@ -1710,7 +1712,7 @@ void CWorld::Restock()
 		}
 	}
 
-	g_Serv.SetServerMode(SERVMODE_Run);
+    g_Serv.SetServerMode(ServMode::Run);
 	g_Log.Event(LOGL_EVENT, "World Restock: done.\n");
 }
 
@@ -1760,10 +1762,10 @@ void CWorld::GarbageCollection()
 {
 	ADDTOCALLSTACK("CWorld::GarbageCollection");
 	g_Log.Flush();
-	g_Serv.SetServerMode(SERVMODE_GarbageCollection);
+    g_Serv.SetServerMode(ServMode::GarbageCollection);
 	g_Log.Event(LOGL_EVENT|LOGM_NOCONTEXT, "Garbage Collection: started.\n");
 	GarbageCollection_UIDs();
-	g_Serv.SetServerMode(SERVMODE_Run);
+    g_Serv.SetServerMode(ServMode::Run);
 	g_Log.Flush();
 }
 
@@ -1773,7 +1775,7 @@ void CWorld::_OnTick()
 	// 256 real secs = 1 server hour. 19 light levels. check every 10 minutes or so.
 
 	// Do not tick while loading (startup, resync, exiting...) or when double ticking in the same msec?.
-	if (g_Serv.IsLoading() || !_GameClock.Advance())
+    if (g_Serv.IsLoadingGeneric() || !_GameClock.Advance())
 		return;
 
 	EXC_TRY("CWorld Tick");

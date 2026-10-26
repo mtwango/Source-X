@@ -34,6 +34,8 @@ enum GUMPCTL_TYPE // controls we can put in a gump.
 
     GUMPCTL_ITEMPROPERTY,   // 1 = uid of the item in question.
 
+	GUMPCTL_MAPAREA,      // NEW: x,y,w,h,mapIndex,areaX,areaY,areaEndX,areaEndY
+
     // Not really controls but more attributes.
     GUMPCTL_NOCLOSE, // 0 = The gump cannot be closed by right clicking.
     GUMPCTL_NODISPOSE, // 0 = The gump cannot be closed by gump-closing macro.
@@ -83,6 +85,8 @@ lpctstr const CDialogDef::sm_szLoadKeys[GUMPCTL_QTY+1] =
 
     "ITEMPROPERTY",
 
+    "MAPAREA",
+
     "NOCLOSE",
     "NODISPOSE",
     "NOMOVE",
@@ -126,6 +130,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
     const int index = FindTableSorted( ptcKey, sm_szLoadKeys, ARRAY_COUNT(sm_szLoadKeys)-1 );
     if ( index < 0 )
     {
+        // TODO: This function check is already done in CObjBase::r_Verb... remove this?
         const size_t uiFunctionIndex = r_GetFunctionIndex(ptcKey);
         if (r_CanCall(uiFunctionIndex))
         {
@@ -142,6 +147,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
         return m_pObj->r_Verb(s, pSrc);
     }
 
+    auto &gExprParser = CExpression::GetExprParser();
     lptstr ptcArgs = s.GetArgStr();
     //g_Log.EventDebug("Dialog index %d, KEY %s ARG %s.\n", index, ptcKey, ptcArgs);
 
@@ -151,25 +157,33 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
         GETNONWHITESPACE(ptcArgs_);
     };
 
-    const auto _CalcRelative = [](lptstr& ptcArgs_, int &iCoordBase_) -> int
+    const auto _CalcRelative = [&gExprParser](lptstr& ptcArgs_, int &iCoordBase_) -> int
     {
         int c;
-            if ( *ptcArgs_ == '-' && IsSpace(ptcArgs_[1]))
+        if ( *ptcArgs_ == '-' && IsSpace(ptcArgs_[1]))
             c = iCoordBase_, ++ptcArgs_;
         else if ( *ptcArgs_ == '+' )
-            c = iCoordBase_ + Exp_GetSingle( ++ptcArgs_ );
+            c = iCoordBase_ + n64_narrow_n32_checked(gExprParser.GetSingle(++ptcArgs_ ));
         else if ( *ptcArgs_ == '-' )
-            c = iCoordBase_ - Exp_GetSingle( ++ptcArgs_ );
+            c = iCoordBase_ - n64_narrow_n32_checked(gExprParser.GetSingle(++ptcArgs_ ));
         else if ( *ptcArgs_ == '*' )
-            iCoordBase_ = c = iCoordBase_ + Exp_GetSingle( ++ptcArgs_ );
+            iCoordBase_ = c = iCoordBase_ + n64_narrow_n32_checked(gExprParser.GetSingle( ++ptcArgs_ ));
         else
-            c = Exp_GetSingle( ptcArgs_ );
+            c = n64_narrow_n32_checked(gExprParser.GetSingle( ptcArgs_ ));
         return c;
     };
 
-#   define GET_ABSOLUTE(c)          _SkipAll(ptcArgs);   int c = Exp_GetSingle(ptcArgs);
-#   define GET_EVAL(c)              _SkipAll(ptcArgs);   int c = Exp_GetVal(ptcArgs);
-#   define GET_RELATIVE(c, base)    _SkipAll(ptcArgs);   int c = _CalcRelative(ptcArgs, base);
+#   define GET_RELATIVE(c, base)    \
+        _SkipAll(ptcArgs);          \
+        const int c = _CalcRelative(ptcArgs, base);
+
+#   define GET_ABSOLUTE(c)          \
+        _SkipAll(ptcArgs);          \
+        const int c = n64_narrow_n32_checked(gExprParser.GetSingle(ptcArgs), false);
+
+#   define GET_EVAL(c)              \
+        _SkipAll(ptcArgs);          \
+        const int c = n64_narrow_n32_checked(gExprParser.GetVal(ptcArgs), false);
 
     switch( index )
     {
@@ -180,7 +194,7 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
                 return true;
 
             int	iNewPage;
-            if ( m_wPage == 0 || page > m_wPage || page == 0 )
+            if ( m_wPage == 0 || page > m_wPage )
                 iNewPage	= page;
             else if ( page == m_wPage  )
                 iNewPage	= 1;
@@ -431,18 +445,34 @@ bool CDialogDef::r_Verb( CScript & s, CTextConsole * pSrc )	// some command on t
             if ( *ptcArgs == '-' && (IsSpace( ptcArgs[1] ) || !ptcArgs[1]) )
                 ++ptcArgs;
             else if ( *ptcArgs == '*' )
-                m_iOriginX += Exp_GetSingle( ++ptcArgs );
+                m_iOriginX += n64_narrow_n32_checked(gExprParser.GetSingle( ++ptcArgs ), false);
             else
-            	m_iOriginX	= Exp_GetSingle( ptcArgs );
+                m_iOriginX	= n64_narrow_n32_checked(gExprParser.GetSingle( ptcArgs ), false);
 
             _SkipAll( ptcArgs );
             if ( *ptcArgs == '-' && (IsSpace( ptcArgs[1] ) || !ptcArgs[1]) )
                 ++ptcArgs;
             else if ( *ptcArgs == '*' )
-                m_iOriginY += Exp_GetSingle( ++ptcArgs );
+                m_iOriginY += n64_narrow_n32_checked(gExprParser.GetSingle( ++ptcArgs ), false);
             else
-                m_iOriginY  = Exp_GetSingle( ptcArgs );
+                m_iOriginY  = n64_narrow_n32_checked(gExprParser.GetSingle( ptcArgs ), false);
 
+            return true;
+        }
+
+        case GUMPCTL_MAPAREA:
+        {
+            GET_RELATIVE(x, m_iOriginX);
+            GET_RELATIVE(y, m_iOriginY);
+            GET_ABSOLUTE(width);
+            GET_ABSOLUTE(height);
+            GET_ABSOLUTE(mapIndex);
+            GET_ABSOLUTE(areaX);
+            GET_ABSOLUTE(areaY);
+            GET_ABSOLUTE(areaEndX);
+            GET_ABSOLUTE(areaEndY);
+
+            m_sControls.emplace_back(false).Format("maparea %d %d %d %d %d %d %d %d %d", x, y, width, height, mapIndex, areaX, areaY, areaEndX, areaEndY);
             return true;
         }
 
@@ -568,7 +598,7 @@ bool CDialogDef::GumpSetup( int iPage, CClient * pClient, CObjBase * pObjSrc, lp
         while ( s.ReadKey())
         {
             CScriptExprContext scpContext{._pScriptObjI = m_pObj};
-            expr_parser.ParseScriptText( s.GetKeyBuffer(), scpContext, CScriptTriggerArgsPtr{}, pClient->GetChar() );
+            expr_parser.ParseScriptText( s.GetKeyBuffer(), scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pClient->GetChar() );
             m_sText.emplace_back(false) = s.GetKey();
         }
     }
@@ -587,7 +617,7 @@ bool CDialogDef::GumpSetup( int iPage, CClient * pClient, CObjBase * pObjSrc, lp
     int64 iSizes[2];
     tchar * pszBuf = s.GetKeyBuffer();
     CScriptExprContext scpContext{._pScriptObjI = m_pObj};
-    expr_parser.ParseScriptText( pszBuf, scpContext, CScriptTriggerArgsPtr{}, pClient->GetChar() );
+    expr_parser.ParseScriptText( pszBuf, scpContext, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pClient->GetChar() );
 
     Str_ParseCmds( pszBuf, iSizes, ARRAY_COUNT(iSizes) );
     m_x	= (int)(iSizes[0]);

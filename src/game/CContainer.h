@@ -136,7 +136,16 @@ public:
     CItem * ContentFind( CResourceID const& rid, dword dwArg = 0, int iDescendLevels = 255 ) const;
 
     /**
-     * @fn  TRIGRET_TYPE CContainer::OnContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgs * pArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, RESOURCE_ID_BASE rid, dword dwArg = 0, int iDescendLevels = 255 );
+     * @brief   Finds the first item having the given EVENTS (on the item) or TEVENTS (on its itemdef).
+     * @param   rid             The rid of the EVENTS section.
+     * @param   fBaseEvents     true = search in the TEVENTS of the itemdef, false = in the EVENTS of the item.
+     * @param   iDescendLevels  How many levels of sub containers to search.
+     * @return  null if it fails, else a pointer to a CItem.
+     */
+    CItem * ContentFindEvent( CResourceID const& rid, bool fBaseEvents, int iDescendLevels = 255 ) const;
+
+    /**
+     * @fn  TRIGRET_TYPE CContainer::OnContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgsPtr const& pScriptArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, RESOURCE_ID_BASE rid, dword dwArg = 0, int iDescendLevels = 255 );
      * @brief   Executes the container trigger for loop action.
      * @param [in,out]  s               The CScript to process.
      * @param [in,out]  pSrc            If non-null, source for the.
@@ -150,10 +159,10 @@ public:
      *
      * @return  A TRIGRET_TYPE.
      */
-    TRIGRET_TYPE OnContTriggerForLoop(CScript &s, CScriptTriggerArgsPtr pArgs, CTextConsole * pSrc, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, CResourceID const& rid, dword dwArg = 0, int iDescendLevels = 255 );
+    TRIGRET_TYPE OnContTriggerForLoop(CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, CResourceID const& rid, dword dwArg = 0, int iDescendLevels = 255 );
 
     /**
-     * @fn  TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgs * pArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, int iDecendLevels = 255 );
+     * @fn  TRIGRET_TYPE CContainer::OnGenericContTriggerForLoop( CScript &s, CTextConsole * pSrc, CScriptTriggerArgsPtr const& pScriptArgs, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, int iDecendLevels = 255 );
      * @brief   Executes the generic container trigger for loop action.
      * @param [in,out]  s               The CScript to process.
      * @param [in,out]  pSrc            If non-null, source for the.
@@ -165,7 +174,7 @@ public:
      *
      * @return  A TRIGRET_TYPE.
      */
-    TRIGRET_TYPE OnGenericContTriggerForLoop(CScript &s, CScriptTriggerArgsPtr pArgs, CTextConsole * pSrc, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, int iDecendLevels = 255 );
+    TRIGRET_TYPE OnGenericContTriggerForLoop(CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, CScriptLineContext & StartContext, CScriptLineContext & EndContext, int iDecendLevels = 255 );
 
     /**
      * @fn  int CContainer::ContentCount( RESOURCE_ID_BASE rid, dword dwArg = 0 );

@@ -320,6 +320,10 @@ void CChar::Skill_Decay()
 	ADDTOCALLSTACK("CChar::Skill_Decay");
 	// Decay the character's skill levels.
 
+	// Can be turned off with SkillDecay=0 in sphere.ini
+	if (!g_Cfg.m_fSkillDecay)
+		return;
+
 	SKILL_TYPE skillDeduct = SKILL_NONE;
 	ushort uiSkillLevel = 0;
 
@@ -1828,7 +1832,7 @@ int CChar::Skill_Peacemaking( SKTRIG_TYPE stage )
 
 			// Basic skill check.
 			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(40));
-			if (iDifficulty < -1)	// no instrument: immediate fail
+			if (iDifficulty < 0)	// no instrument or played badly: immediate fail
 				return -SKTRIG_ABORT;
 
 			if ( !iDifficulty )
@@ -1954,7 +1958,7 @@ int CChar::Skill_Enticement( SKTRIG_TYPE stage )
             // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 
 			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
-			if (iDifficulty < -1)	// no instrument: immediate fail
+			if (iDifficulty < 0)	// no instrument or played badly: immediate fail
 				return -SKTRIG_ABORT;
 
 			if ( !iDifficulty )
@@ -2069,7 +2073,7 @@ int CChar::Skill_Provocation(SKTRIG_TYPE stage)
             // Slayer instruments will decrease your success chance by 20% when used on the creatures from its opposing group
 
 			int iDifficulty = Use_PlayMusic(pInstrument, g_Rand.GetVal(iBaseDiff));	// How difficult? 1-100 (use RandBell). If no instrument, it immediately fails
-			if (iDifficulty < -1)	// no instrument: immediate fail
+			if (iDifficulty < 0)	// no instrument or played badly: immediate fail
 				return -SKTRIG_ABORT;
 
 			if ( !iDifficulty )
@@ -3309,8 +3313,8 @@ int CChar::Skill_Act_Breath( SKTRIG_TYPE stage )
 		iDamage = (Stat_GetVal(STAT_STR) * 5) / 100;
 		if ( iDamage < 1 )
 			iDamage = 1;
-		else if ( iDamage > 200 )
-			iDamage = 200;
+		else if ( iDamage > UINT16_MAX )
+			iDamage = UINT16_MAX;
 	}
 
 	HUE_TYPE hue = (HUE_TYPE)(GetDefNum("BREATH.HUE", true));
@@ -3808,12 +3812,12 @@ void CChar::Skill_Fail( bool fCancel )
     {
 		if ( IsTrigUsed(TRIGGER_SKILLFAIL) )
 		{
-            if ( Skill_OnCharTrigger(skill, CTRIG_SkillFail, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnCharTrigger(skill, CTRIG_SkillFail, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 				fCancel = true;
 		}
 		if ( IsTrigUsed(TRIGGER_FAIL) && !fCancel )
 		{
-            if ( Skill_OnTrigger(skill, SKTRIG_FAIL, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnTrigger(skill, SKTRIG_FAIL, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 				fCancel = true;
 		}
 	}
@@ -3821,7 +3825,7 @@ void CChar::Skill_Fail( bool fCancel )
 	{
 		if ( IsTrigUsed(TRIGGER_SKILLABORT) )
 		{
-            if ( Skill_OnCharTrigger(skill, CTRIG_SkillAbort, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnCharTrigger(skill, CTRIG_SkillAbort, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 			{
 				Skill_Cleanup();
 				return;
@@ -3829,7 +3833,7 @@ void CChar::Skill_Fail( bool fCancel )
 		}
 		if ( IsTrigUsed(TRIGGER_ABORT) )
 		{
-            if ( Skill_OnTrigger(skill, SKTRIG_ABORT, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnTrigger(skill, SKTRIG_ABORT, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 			{
 				Skill_Cleanup();
 				return;
@@ -3848,14 +3852,13 @@ void CChar::Skill_Fail( bool fCancel )
 }
 
 
-TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScriptTriggerArgsPtr pScriptArgs )
+TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs )
 {
 	ADDTOCALLSTACK("CChar::Skill_OnTrigger");
 	if ( !IsSkillBase(skill) )
 		return TRIGRET_RET_DEFAULT;
 
-    if (!pScriptArgs)
-        pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    ASSERT(pScriptArgs);
 
 	if ( !(stage == SKTRIG_SELECT || stage == SKTRIG_GAIN || stage == SKTRIG_USEQUICK || stage == SKTRIG_WAIT || stage == SKTRIG_TARGETCANCEL) )
 		m_Act_SkillCurrent = skill;
@@ -3878,14 +3881,13 @@ TRIGRET_TYPE CChar::Skill_OnTrigger( SKILL_TYPE skill, SKTRIG_TYPE stage, CScrip
 	return iRet;
 }
 
-TRIGRET_TYPE CChar::Skill_OnCharTrigger(SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr pScriptArgs )
+TRIGRET_TYPE CChar::Skill_OnCharTrigger(SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs )
 {
 	ADDTOCALLSTACK("CChar::Skill_OnCharTrigger");
 	if ( !IsSkillBase(skill) )
 		return TRIGRET_RET_DEFAULT;
 
-    if (!pScriptArgs)
-        pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
+    ASSERT(pScriptArgs);
 
 	if ( !(ctrig == CTRIG_SkillSelect || ctrig == CTRIG_SkillGain || ctrig == CTRIG_SkillUseQuick || ctrig == CTRIG_SkillWait || ctrig == CTRIG_SkillTargetCancel) )
 		m_Act_SkillCurrent = skill;
@@ -4028,6 +4030,14 @@ bool CChar::Skill_Wait( SKILL_TYPE skilltry )
 			return false;
 		else
 			Reveal();
+		return false;
+	}
+
+	// Tracking stays active for as long as the target is in range: without this, after choosing who to track no other
+	//  skill (Tracking itself included) could be used until the target was lost.
+	if ( skill == SKILL_TRACKING )
+	{
+		Skill_Fail(true);
 		return false;
 	}
 
@@ -4392,7 +4402,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
 	// RETURN:
 	//  false = failed outright with no wait. "You have no chance of taming this"
 
-	if ( g_Serv.IsLoading() )
+	if ( g_Serv.IsLoadingGeneric() )
 	{
 		if ( skill != SKILL_NONE && !IsSkillBase(skill) && !IsSkillNPC(skill) )
 		{
@@ -4405,6 +4415,16 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
 
 	if ( !Skill_CanUse(skill) )
 		return false;
+
+	// A ridden mount (or a shrunken pet) is kept "alive" only by its action: NPCACT_RIDDEN, with ACTARG1 holding the UID of the
+	//  mount item. Both are shared with any other action, so starting or stopping an action here (ACTION=-1 or HEAR from scripts,
+	//  a pet command, a fight ending...) breaks the link with the rider: the garbage collection then finds an invalid mount.
+	//  The legit ways out of this state (dismount, unshrink) clear STATF_RIDDEN before changing the action.
+	if ( m_pNPC && (skill != NPCACT_RIDDEN) && IsStatFlag(STATF_RIDDEN) && (Skill_GetActive() == NPCACT_RIDDEN) )
+	{
+		g_Log.EventWarn("Blocked action change (to %d) on the ridden/shrunken NPC '%s' (UID=0%" PRIx32 ").\n", (int)skill, GetName(), GetUID().GetObjUID());
+		return false;
+	}
 
 	SKILL_TYPE skActive = Skill_GetActive();
 	if (skActive != SKILL_NONE )
@@ -4431,7 +4451,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
 		// 0-100 scale of Difficulty
 		if ( IsTrigUsed(TRIGGER_SKILLPRESTART) )
 		{
-            if ( Skill_OnCharTrigger(skill, CTRIG_SkillPreStart, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnCharTrigger(skill, CTRIG_SkillPreStart, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 			{
 				Skill_Cleanup();
 				return false;
@@ -4439,7 +4459,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
 		}
 		if ( IsTrigUsed(TRIGGER_PRESTART) )
 		{
-            if ( Skill_OnTrigger(skill, SKTRIG_PRESTART, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+            if ( Skill_OnTrigger(skill, SKTRIG_PRESTART, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 			{
 				Skill_Cleanup();
 				return false;
@@ -4476,6 +4496,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
         CScriptTriggerArgsPtr pScriptArgs = CScriptParserBufs::GetCScriptTriggerArgsPtr();
         pScriptArgs->m_iN1 = skill;
         pScriptArgs->m_iN2 = iWaitTime;
+        pScriptArgs->m_VarsLocal.SetNum("Effect", m_Act_Effect);
         pScriptArgs->m_VarsLocal.SetNumNew("Sound", sound);
         pScriptArgs->m_VarsLocal.SetNumNew("Anim", anim);
 		// Execute the @START trigger and pass various craft parameters there
@@ -4524,6 +4545,7 @@ bool CChar::Skill_Start( SKILL_TYPE skill, int iDifficultyIncrease )
             anim = (ANIM_TYPE)(pScriptArgs->m_VarsLocal.GetKeyNum("Anim"));
 		}
         iWaitTime = (int)pScriptArgs->m_iN2;
+	    m_Act_Effect = static_cast<int>(pScriptArgs->m_VarsLocal.GetKeyNum("Effect"));
 		if (IsSkillBase(skill) && iWaitTime > 0)
 			SetTimeoutD(iWaitTime);		// How long before complete skill.
 

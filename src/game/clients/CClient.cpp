@@ -92,9 +92,9 @@ CClient::~CClient() noexcept
 
 	// update ip history
 	HistoryIP& history = g_NetworkManager.getIPHistoryManager().getHistoryForIP(GetPeer());
-	if ( GetConnectType() != CONNECT_GAME )
+	if (IsPreGameTypePacket())
     {
-        EXC_TRYSUB("m_iPendingConnectionRequests")
+        EXC_TRYSUB("m_iPendingConnectionRequests");
 
         ASSERT(history.m_iPendingConnectionRequests > 0);
 		-- history.m_iPendingConnectionRequests;
@@ -139,7 +139,7 @@ CClient::~CClient() noexcept
 bool CClient::CanInstantLogOut() const
 {
 	ADDTOCALLSTACK("CClient::CanInstantLogOut");
-	if ( g_Serv.IsLoading())	// or exiting.
+	if ( g_Serv.IsLoadingGeneric())	// or exiting.
 		return true;
 	if ( ! g_Cfg.m_iClientLingerTime )
 		return true;

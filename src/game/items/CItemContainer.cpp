@@ -549,7 +549,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 	if ( pItem == this )
 		return;	// infinite loop.
 
-	if ( !g_Serv.IsLoading() )
+	if ( !g_Serv.IsLoadingGeneric() )
 	{
         switch (GetType())
         {
@@ -619,7 +619,7 @@ void CItemContainer::ContentAdd( CItem *pItem, CPointMap pt, bool bForceNoStack,
 	if (pt.m_x < 0 && pt.m_y < 0)
 	{
 		// Try to stack it.
-		if ( !g_Serv.IsLoading() && pItem->Item_GetDef()->IsStackableType() && !bForceNoStack )
+		if ( !g_Serv.IsLoadingGeneric() && pItem->Item_GetDef()->IsStackableType() && !bForceNoStack )
 		{
 			for (CSObjContRec* pObjRec : *this)
 			{
@@ -740,7 +740,7 @@ void CItemContainer::ContentAdd( CItem *pItem, bool bForceNoStack )
 		return;	// already here.
 
 	CPointMap pt;	// invalid point.
-	if ( g_Serv.IsLoading() )
+	if ( g_Serv.IsLoadingGeneric() )
 		pt = pItem->GetUnkPoint();
 
 	ContentAdd(pItem, pt, bForceNoStack);
@@ -906,8 +906,12 @@ bool CItemContainer::CanContainerHold( const CItem *pItem, const CChar *pCharMsg
 	int iMaxWeight = m_ModMaxWeight;
 	if ((GetContainedLayer() == LAYER_PACK) && !(g_Cfg.m_iBackpackOverload <= -1))
 	{
-		CChar* pCharContainerOwner = static_cast<CChar*>(GetContainer()); // Owner of the container
-		iMaxWeight += (g_Cfg.Calc_MaxCarryWeight(pCharContainerOwner) + g_Cfg.m_iBackpackOverload);
+	    // Allow more weight based on settings.
+        auto const *pCharContainerOwner = dynamic_cast<CChar*>(GetContainer());
+	    if (pCharContainerOwner)
+	    {
+		    iMaxWeight += (g_Cfg.Calc_MaxCarryWeight(pCharContainerOwner) + g_Cfg.m_iBackpackOverload);
+	    }
 	}
 	if (iMaxWeight > 0 && (GetTotalWeight() + pItem->GetWeight() > iMaxWeight))
 	{

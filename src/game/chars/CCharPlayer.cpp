@@ -374,7 +374,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 
 		case CPC_ADDHOUSE:
 		{
-			if (g_Serv.IsLoading()) //Prevent to load it from saves, it may cause a crash when accessing to a non-yet existant multi
+			if (g_Serv.IsLoadingGeneric()) //Prevent to load it from saves, it may cause a crash when accessing to a non-yet existant multi
 			{
 				break;
 			}
@@ -403,7 +403,7 @@ bool CCharPlayer::r_LoadVal( CChar * pChar, CScript &s )
 		}
 		case CPC_ADDSHIP:
 		{
-			if (g_Serv.IsLoading()) //Prevent to load it from saves, it may cause a crash when accessing to a non-yet existant multi
+			if (g_Serv.IsLoadingGeneric()) //Prevent to load it from saves, it may cause a crash when accessing to a non-yet existant multi
 			{
 				break;
 			}
@@ -703,7 +703,7 @@ bool CChar::Player_OnVerb( CScript &s, CTextConsole * pSrc )
 				if ( pAccount->SetPassword(s.GetArgStr()) )
 				{
 					SysMessage(g_Cfg.GetDefaultMsg(DEFMSG_MSG_ACC_ACCEPTPASS));
-					g_Log.Event(LOGM_ACCOUNTS|LOGL_EVENT, "Account '%s', password set to '%s'\n", pAccount->GetName(), s.GetArgStr());
+					g_Log.Event(LOGM_ACCOUNTS|LOGL_EVENT, "Account '%s', password set\n", pAccount->GetName());
 					return true;
 				}
 

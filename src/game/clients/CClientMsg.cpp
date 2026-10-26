@@ -219,7 +219,7 @@ void CClient::resendBuffs() const
 	}
 }
 
-void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dword ClilocTwo, const word durationSeconds, lpctstr* pArgs, uint uiArgCount) const
+void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dword ClilocTwo, const word durationSeconds, lpctstr* pptcArgs, uint uiArgCount) const
 {
 	ADDTOCALLSTACK("CClient::addBuff");
 	if ( !IsSetOF(OF_Buffs) )
@@ -227,7 +227,7 @@ void CClient::addBuff( const BUFF_ICONS IconId, const dword ClilocOne, const dwo
 	if ( PacketBuff::CanSendTo(GetNetState()) == false )
 		return;
 
-	new PacketBuff(this, IconId, ClilocOne, ClilocTwo, durationSeconds, pArgs, uiArgCount);
+    new PacketBuff(this, IconId, ClilocOne, ClilocTwo, durationSeconds, pptcArgs, uiArgCount);
 }
 
 void CClient::removeBuff(const BUFF_ICONS IconId) const
@@ -1594,7 +1594,7 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 	{
 		m_tmSetupCharList[0] = pCharFirst->GetUID();
 
-		pPacket->writeStringFixedASCII(pCharFirst->GetName(), MAX_NAME_SIZE);
+		pPacket->writeStringFixedASCII(pCharFirst->GetNameWithoutIncognito(), MAX_NAME_SIZE);
 		pPacket->writeStringFixedASCII("", MAX_NAME_SIZE);
 
 		++count;
@@ -1620,7 +1620,7 @@ uint CClient::Setup_FillCharList(Packet* pPacket, const CChar * pCharFirst)
 
 		m_tmSetupCharList[count] = uid;
 
-		pPacket->writeStringFixedASCII(pChar->GetName(), MAX_NAME_SIZE);
+		pPacket->writeStringFixedASCII(pChar->GetNameWithoutIncognito(), MAX_NAME_SIZE);
 		pPacket->writeStringFixedASCII("", MAX_NAME_SIZE);
 
 		++count;
@@ -1670,7 +1670,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 			CItem * pItemUse = m_Targ_UID.ItemFind();
 			if (pItemUse && (IsTrigUsed(TRIGGER_TARGON_CANCEL) || IsTrigUsed(TRIGGER_ITEMTARGON_CANCEL)))
 			{
-                if ( pItemUse->OnTrigger( ITRIG_TARGON_CANCEL, CScriptTriggerArgsPtr{}, pCharThis) == TRIGRET_RET_TRUE )
+                if ( pItemUse->OnTrigger( ITRIG_TARGON_CANCEL, CScriptParserBufs::GetCScriptTriggerArgsPtr(), pCharThis) == TRIGRET_RET_TRUE )
 					fSuppressCancelMessage = true;
 			}
 		} break;
@@ -1728,7 +1728,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 			{
 				if ( IsTrigUsed(TRIGGER_SKILLTARGETCANCEL) )
 				{
-                    if (pCharThis->Skill_OnCharTrigger(action, CTRIG_SkillTargetCancel, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+                    if (pCharThis->Skill_OnCharTrigger(action, CTRIG_SkillTargetCancel, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 					{
 						fSuppressCancelMessage = true;
 						break;
@@ -1736,7 +1736,7 @@ void CClient::SetTargMode( CLIMODE_TYPE targmode, lpctstr pPrompt, int64 iTimeou
 				}
 				if ( IsTrigUsed(TRIGGER_TARGETCANCEL) )
 				{
-                    if (pCharThis->Skill_OnTrigger(action, SKTRIG_TARGETCANCEL, CScriptTriggerArgsPtr{}) == TRIGRET_RET_TRUE )
+                    if (pCharThis->Skill_OnTrigger(action, SKTRIG_TARGETCANCEL, CScriptParserBufs::GetCScriptTriggerArgsPtr()) == TRIGRET_RET_TRUE )
 						fSuppressCancelMessage = true;
 				}
 			}
@@ -2690,7 +2690,7 @@ void CClient::addCharPaperdoll( CChar * pChar )
 
 	if (IsTrigUsed(TRIGGER_SENDPAPERDOLL))
 	{
-        pChar->OnTrigger(CTRIG_SendPaperdoll, CScriptTriggerArgsPtr{}, m_pChar);
+        pChar->OnTrigger(CTRIG_SendPaperdoll, CScriptParserBufs::GetCScriptTriggerArgsPtr(), m_pChar);
 	}
 
 	new PacketPaperdoll(this, pChar);
@@ -2929,8 +2929,9 @@ byte CClient::Setup_Play( uint iSlot ) // After hitting "Play Character" button
 	if ( pCharLast && pAccount->IsMyAccountChar( pCharLast ) && pAccount->GetPrivLevel() <= PLEVEL_GM &&
 		! pCharLast->IsDisconnected() && (pChar->GetUID() != pCharLast->GetUID()))
 	{
+	    // Login was successful, display warning only.
 		addIdleWarning(PacketWarningMessage::CharacterInWorld);
-		return(PacketLoginError::CharIdle);
+		return PacketLoginError::Success;
 	}
 
 	// LastLogged update

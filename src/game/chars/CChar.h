@@ -378,8 +378,10 @@ public:		void  StatFlag_Mod(uint64 uiStatFlag, bool fMod) noexcept;
 	bool IsPriv( word flag ) const;
 	virtual PLEVEL_TYPE GetPrivLevel() const override;
 
-	CCharBase * Char_GetDef() const;
-	CRegionWorld * GetRegion() const;
+    [[nodiscard]] RETURNS_NOTNULL
+        CCharBase * Char_GetDef() const;
+
+    CRegionWorld * GetRegion() const;
 	CRegion * GetRoom() const;
 
     [[nodiscard]]
@@ -591,8 +593,8 @@ public:
 	CItem * LayerFind( LAYER_TYPE layer ) const;
 	void LayerAdd( CItem * pItem, LAYER_TYPE layer = LAYER_QTY );
 
-    TRIGRET_TYPE OnCharTrigForLayerLoop(CScript &s, CScriptTriggerArgsPtr pScriptArgs, CTextConsole * pSrc, CSString * pResult, LAYER_TYPE layer );
-    TRIGRET_TYPE OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr pScriptArgs, CTextConsole * pSrc, CSString * pResult, word wMemType );
+    TRIGRET_TYPE OnCharTrigForLayerLoop(CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, LAYER_TYPE layer );
+    TRIGRET_TYPE OnCharTrigForMemTypeLoop( CScript &s, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, CSString * pResult, word wMemType );
 
 	virtual void OnWeightChange( int iChange ) override;
 	virtual int GetWeight(word amount = 0) const override;
@@ -620,8 +622,8 @@ public:
     */
     void SetTriggerActive(lpctstr trig = nullptr);
 
-    virtual TRIGRET_TYPE OnTrigger( lpctstr pTrigName, CScriptTriggerArgsPtr pArgs, CTextConsole * pSrc ) override;
-    TRIGRET_TYPE OnTrigger( CTRIG_TYPE trigger, CScriptTriggerArgsPtr pArgs, CTextConsole * pSrc);
+    virtual TRIGRET_TYPE OnTrigger( lpctstr pTrigName, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc ) override;
+    TRIGRET_TYPE OnTrigger( CTRIG_TYPE trigger, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc);
 
 public:
 	// Load/Save----------------------------------
@@ -696,16 +698,16 @@ public:
 	NOTO_TYPE Noto_GetFlag( const CChar * pChar, bool fIncog = true, bool fInvul = false, bool fGetColor = false ) const;
 
 	/**
-	* @brief Notoriety calculations
+	* Notoriety calculations. What is this char to the viewer? This allows the noto attack check in the client.
 	*
 	* TAG.OVERRIDE.NOTO will override everything and use the value in the tag for everyone, regardless of what I really are for them.
 	* If this char is a pet, check if notoriety must be inherited from its master or do regular checks for it.
-	* @param pChar is the CChar that needs to know what I am (good, evil, criminal, neutral...) to him.
-	* @param fIncog if set to true (usually because of Incognito spell), this character will be gray for the viewer (pChar).
-	* @param fInvul if set to true invulnerable characters will return NOTO_INVUL (yellow bar, etc).
+	* @param pCharViewer is the CChar that needs to know what I am (good, evil, criminal, neutral...) to him.
+	* @param fAllowIncog if set to true (usually because of Incognito spell), this character will be gray for the viewer (pChar).
+	* @param fAllowInvul if set to true invulnerable characters will return NOTO_INVUL (yellow bar, etc).
 	* @return NOTO_TYPE notoriety level.
 	*/
-	NOTO_TYPE Noto_CalcFlag( const CChar * pChar, bool fIncog = false, bool fInvul = false ) const;
+	NOTO_TYPE Noto_CalcFlag( const CChar * pCharViewer, bool fAllowIncog = false, bool fAllowInvul = false ) const;
 
 	/**
 	* @brief What color should the viewer see from me?
@@ -860,6 +862,25 @@ public:
 	*/
 	void NotoSave_CheckTimeout();
 
+    /**
+     * Helper for checking guild / town war status.
+     */
+    enum NOTO_WAR_STATUS: byte
+    {
+        NOTO_WAR_NONE = 0,
+        NOTO_WAR_ALLY,
+        NOTO_WAR_ENEMY,
+    };
+
+    /**
+     * Checks ally / war status between two guild / town stones.
+     *
+     * @param pMyStone My Guild/Town stone.
+     * @param pViewerStone The character's looking at me Guild/Town stone.
+     * @return War status (none, ally, enemy)
+     */
+    NOTO_WAR_STATUS Noto_GetWarStatus(const CItemStone* pMyStone, const CItemStone* pViewerStone) const;
+
 	/**
 	* @brief We are snooping or stealing, is taking this item a crime ?
 	*
@@ -868,7 +889,6 @@ public:
 	* @return false = no crime.
 	*/
 	bool IsTakeCrime( const CItem * pItem, CChar ** ppCharMark = nullptr ) const;
-
 
 	/**
 	* @brief We killed a character, starting exp calcs
@@ -931,8 +951,8 @@ public:
 	SOUND_TYPE Skill_GetSound( SKILL_TYPE skill);
 	int Skill_Stage( SKTRIG_TYPE stage );
 
-    TRIGRET_TYPE Skill_OnTrigger(SKILL_TYPE skill, SKTRIG_TYPE stage, CScriptTriggerArgsPtr pScriptArgs); //pScriptArgs.m_iN1 will be rewritten with skill
-    TRIGRET_TYPE Skill_OnCharTrigger( SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr pScriptArgs); //pArgs.m_iN1 will be rewritten with skill
+    TRIGRET_TYPE Skill_OnTrigger(SKILL_TYPE skill, SKTRIG_TYPE stage, CScriptTriggerArgsPtr const& pScriptArgs); //pScriptArgs.m_iN1 will be rewritten with skill
+    TRIGRET_TYPE Skill_OnCharTrigger( SKILL_TYPE skill, CTRIG_TYPE ctrig, CScriptTriggerArgsPtr const& pScriptArgs); //pArgs.m_iN1 will be rewritten with skill
 
 	bool Skill_Mining_Smelt( CItem * pItemOre, CItem * pItemTarg );
 	bool Skill_Tracking( CUID uidTarg, DIR_TYPE & dirPrv, int iDistMax = INT16_MAX );
@@ -1158,7 +1178,10 @@ public:
 	bool Horse_UnMount(); // Remove horse char and give player a horse item
 
 private:
-	CItem* Horse_GetMountItem() const;
+    [[nodiscard]]
+    CItem* Horse_ValidateMountItem(CItem *pMountItem) const;
+
+    CItem* Horse_GetMountItem() const;
     CChar* Horse_GetMountChar() const;
     CItem* Horse_GetValidMountItem();
     CChar* Horse_GetValidMountChar();
@@ -1168,7 +1191,7 @@ public:
 	bool IsOwnedBy( const CChar * pChar, bool fAllowGM = true ) const;
 	CChar * GetOwner() const;
 	CChar * Use_Figurine( CItem * pItem, bool fCheckFollowerSlots = true );
-	CItem * Make_Figurine( const CUID &uidOwner, ITEMID_TYPE id = ITEMID_NOTHING );
+    CItem * Make_Figurine( const CUID uidOwner, ITEMID_TYPE id = ITEMID_NOTHING );
 	CItem * NPC_Shrink();
     bool FollowersUpdate(CChar * pCharPet, short iPetFollowerSlots = 0, bool fCheckOnly = false );
     short GetFollowerSlots() const;
@@ -1380,13 +1403,14 @@ protected:
 
     bool IsPeriodicTickPending() const;
 
-    virtual bool _TickableState() const override final;
-
 protected:	virtual bool _OnTick() override final;  // _OnTick timeout for skills, AI, etc.
 //public:	virtual bool  _OnTick() override final;
 
 public:
-	bool OnTickEquip( CItem * pItem );
+    virtual bool _CanTick(bool fParentGoingToSleep) const override final;
+    bool IsTickableEvenIfDisconnected() const;
+
+    bool OnTickEquip( CItem * pItem );
 	void OnTickFood( ushort uiVal, int HitsHungerLoss );
 
 	virtual void OnTickStatusUpdate() override;

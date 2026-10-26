@@ -223,10 +223,10 @@ public:
 	static const char *m_sClassName;
 
 	// Evaluate using the stuff we know.
-    llong GetSingle(lpctstr & refStrExpr);
+    int64 GetSingle(lpctstr & refStrExpr);
 
-    llong GetValMath(llong llVal, lpctstr & refStrExpr);
-    llong GetVal(lpctstr & refStrExpr);
+    int64 GetValMath(int64 iVal, lpctstr & refStrExpr);
+    int64 GetVal(lpctstr & refStrExpr);
 
     int GetRangeVals(lpctstr& refStrExpr, int64* piVals, int iMaxQty, bool fNoWarn = false);
     int64 GetRangeNumber(lpctstr& refStrExpr);		// Evaluate a { } range
@@ -234,10 +234,10 @@ public:
 
 	// Strict G++ Prototyping produces an error when not casting char*& to const char*&
 	// So this is a rather lazy and const-UNsafe workaround
-    inline llong GetSingle(lptstr &refArgs) {
+    inline int64 GetSingle(lptstr &refArgs) {
         return GetSingle(const_cast<lpctstr &>(refArgs));
 	}
-    inline llong GetVal(lptstr& refArgs) {
+    inline int64 GetVal(lptstr& refArgs) {
         return GetVal(const_cast<lpctstr&>(refArgs));
 	}
     inline int GetRangeVals(lptstr &refStrExpr, int64 * piVals, int iMaxQty, bool fNoWarn = false) {
@@ -250,18 +250,18 @@ public:
     /*
     * @brief Do the first-level parsing of a script line and eventually replace requested values got by r_WriteVal.
     */
-    int ParseScriptText( tchar * pszResponse, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr pArgs, CTextConsole * pSrc, int iFlags = 0 );
+    int ParseScriptText( tchar * pszResponse, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole * pSrc, int iFlags = 0 );
 
     [[nodiscard]]
-    bool EvaluateConditionalWhole(lptstr ptcExpression, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr pArgs, CTextConsole* pSrc);
+    bool EvaluateConditionalWhole(lptstr ptcExpression, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
 
 private:
     // Arguments inside conditional statements: IF, ELIF, ELSEIF
     [[nodiscard]]
-    bool EvaluateConditionalSingle(CScriptSubExprState& refSubExprState, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr pArgs, CTextConsole* pSrc);
+    bool EvaluateConditionalSingle(CScriptSubExprState& refSubExprState, CScriptExprContext& refExprContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
 
     [[nodiscard]]
-    bool EvaluateConditionalQval(lpctstr ptcKey, CSString& refStrVal, CScriptExprContext& refContext, CScriptTriggerArgsPtr pArgs, CTextConsole* pSrc);
+    bool EvaluateConditionalQval(lpctstr ptcKey, CSString& refStrVal, CScriptExprContext& refContext, CScriptTriggerArgsPtr const& pScriptArgs, CTextConsole* pSrc);
 
     [[nodiscard]]
     PrvBuffersPool::CSubExprStatesArenaPool_t::UniquePtr_t

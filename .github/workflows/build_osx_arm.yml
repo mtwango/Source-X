@@ -20,7 +20,7 @@ on:
 
 jobs:
   macos-arm64:
-    runs-on: macos-14   # apple silicon
+    runs-on: macos-15   # apple silicon
     permissions:
       contents: read
       actions: read
@@ -32,9 +32,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
+    - name: Remove untrusted Homebrew tap (pre-installed on runner)
+      run: brew untap aws/tap || true
+
     - name: Install prerequisites
       run:  |
             sw_vers
@@ -65,8 +68,8 @@ jobs:
 
     # Upload artifact linked to the workflow run - only if the run is for a pull request, or for selected branches
     - name: Upload artifact
-      if: contains(fromJson('["master", "main", "dev"]'), github.ref_name) || ${{ github.event_name == 'pull_request' }}
-      uses: actions/upload-artifact@v4
+      if: contains(fromJson('["master", "main", "dev"]'), github.ref_name) || github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v7
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
@@ -79,19 +82,20 @@ jobs:
     needs: macos-arm64   # Upload artifact linked to GitHub RELEASE we are creating - only if the run is for a pull request, or for selected branches
     if: contains(fromJson('["master", "main"]'), github.ref_name)
     permissions:
-      contents: read
-      actions: write
+      contents: write
+      actions: read
 
     runs-on: ubuntu-latest
     steps:
       - name: Download builds
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: Build-osx-arm64
           merge-multiple: true
           run-id: ${{ github.run_id }}
+
       - name: Create release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -105,13 +109,13 @@ jobs:
     needs: macos-arm64
     if: contains(fromJson('["master", "main"]'), github.ref_name) && (github.repository == 'SphereServer/Source-X')
     permissions:
-      contents: read
-      actions: write
+      contents: write
+      actions: read
 
     runs-on: ubuntu-latest
     steps:
       - name: Download builds
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: Build-osx-arm64
           merge-multiple: true
@@ -119,3 +123,4 @@ jobs:
       - name: Push release
         run: |
           curl -sST "{SphereSvrX-osx-arm64-nightly.zip}" -u ${{secrets.UP_USER}}:${{secrets.UP_PASS}} ${{secrets.UP_WHERE}}
+          curl -sST "{SphereSvrX-osx-arm64-nightly.zip}" --ftp-pasv --ssl --ssl-reqd -u '${{secrets.FTP_USER}}:${{secrets.FTP_PASS}}' ${{secrets.FTP_LOC}}/release/prod/

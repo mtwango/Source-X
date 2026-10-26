@@ -209,7 +209,10 @@ void CChar::Stat_AddVal( STAT_TYPE i, int iVal )
 
     if ((i == STAT_STR) && (iVal <= 0))
     {   // Ensure this char will tick and die
-		CWorldTickingList::AddCharPeriodic(this, false);
+        if (!IsPeriodicTickPending())
+        {
+            CWorldTickingList::AddCharPeriodic(this, false);
+        }
     }
 }
 
@@ -343,7 +346,7 @@ void CChar::Stat_SetBase( STAT_TYPE i, ushort uiVal )
 	ASSERT(i >= 0 && i < STAT_QTY);
 
 	ushort uiStatVal = Stat_GetBase(i);
-	if (IsTrigUsed(TRIGGER_STATCHANGE) && !g_Serv.IsLoading() && !IsTriggerActive("CREATE"))
+	if (IsTrigUsed(TRIGGER_STATCHANGE) && !g_Serv.IsLoadingGeneric() && !IsTriggerActive("CREATE"))
 	{
 		// Only Str, Dex, Int, Food fire @StatChange here
 		if (i >= STAT_STR && i <= STAT_FOOD)
@@ -684,7 +687,7 @@ void CChar::SetKarma(short iNewKarma, CChar* pNPC)
 
     m_iKarma = (short)(maximum(g_Cfg.m_iMinKarma, minimum(g_Cfg.m_iMaxKarma, iNewKarma)));
 
-    if ( !g_Serv.IsLoading() )
+    if ( !g_Serv.IsLoadingGeneric() )
         NotoSave_Update();
 }
 

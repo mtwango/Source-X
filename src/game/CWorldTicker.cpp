@@ -32,7 +32,7 @@ static void UnsortedVecDifference(
     ASSERT(vecElemBuffer.empty());
 
     // Reserve space in vecElemBuffer to avoid reallocations
-    vecElemBuffer.reserve(vecMain.size() - vecToRemoveUnsorted.size());
+    vecElemBuffer.reserve(vecMain.size());
 
     /*
     // IMPLEMENTATION 1: linear, no bulk insertions
@@ -116,14 +116,10 @@ static void SortedVecRemoveAddQueued(
     ASSERT(!sl::SortedContainerHasDuplicates(vecToAdd));
 #endif
 
-    if (!vecToRemoveUnsorted.empty())
+    if (!vecToRemoveUnsorted.empty() && !vecMain.empty())
     {
-        if (vecMain.empty()) {
-            ASSERT(false);  // Shouldn't ever happen.
-        }
-
         vecElemBuffer.clear();
-        vecElemBuffer.reserve(vecMain.size() - vecToRemoveUnsorted.size());
+        vecElemBuffer.reserve(vecMain.size());
 
         // Unsorted custom algorithm.
         // We can't use a classical sorted algorithm because vecMain is sorted by pair.first (int64 timeout)
@@ -355,6 +351,7 @@ bool CWorldTicker::_EraseTimedObject(CTimedObject* pTimedObject)
     {
         // It isn't in the ticking list, or we already have received a remove request.
         ASSERT(false);  // Not legit.
+        return false;
     }
 
 #ifdef DEBUG_CTIMEDOBJ_TIMED_TICKING
@@ -414,6 +411,8 @@ bool CWorldTicker::AddTimedObject(const int64 iTimeout, CTimedObject* pTimedObje
     //if (iTimeout < CWorldGameTime::GetCurrentTime().GetTimeRaw())    // We do that to get them tick as sooner as possible; don't uncomment.
     //    return;
 
+    UnreferencedParameter(fForce);
+
     EXC_TRY("AddTimedObject");
     ASSERT(pTimedObject);
     const ProfileTask timersTask(PROFILE_TIMERS);
@@ -421,7 +420,7 @@ bool CWorldTicker::AddTimedObject(const int64 iTimeout, CTimedObject* pTimedObje
     EXC_SET_BLOCK("Already ticking?");
     if (pTimedObject->_fIsInWorldTickList)
     {
-        // Do not check with IsTimeoutTickingActive(), because if it's in the add list, i can just overwrite the entry timer,
+        // Do not check with _IsTimeoutTickingActive(), because if it's in the add list, i can just overwrite the entry timer,
         //  before actually adding it to the main ticking list. Remove the entry only if it's already in the main ticking list.
 
         // Adding an object that might already be in the list?
@@ -435,36 +434,10 @@ bool CWorldTicker::AddTimedObject(const int64 iTimeout, CTimedObject* pTimedObje
     }
 
     EXC_SET_BLOCK("Insert");
-    bool fCanTick;
-    if (fForce)
-    {
-        fCanTick = true;
-    }
-    else
-    {
-        fCanTick = pTimedObject->_TickableState();
-        /*
-        if (!fCanTick)
-        {
-            if (auto pObjBase = dynamic_cast<const CObjBase*>(pTimedObject))
-            {
-                // Not yet placed in the world? We could have set the TIMER before setting its P or CONT, we can't know at this point...
-                // In this case, add it to the list and check if it can tick in the tick loop. We have maybe useless object in the ticking list and this hampers
-                //  performance, but it would be a pain to fix every script by setting the TIMER only after the item is placed in the world...
-                fCanTick = !pObjBase->GetTopLevelObj()->GetTopPoint().IsValidPoint();
-            }
-        }
-        */
-    }
+    const bool fRet = _InsertTimedObject(iTimeout, pTimedObject);
+    ASSERT(fRet);
 
-    if (fCanTick)
-    {
-        const bool fRet = _InsertTimedObject(iTimeout, pTimedObject);
-        ASSERT(fRet);
-        fCanTick = fRet;
-    }
-
-    return fCanTick;
+    return fRet;
 
     EXC_CATCH;
     return false;
@@ -648,6 +621,12 @@ bool CWorldTicker::_EraseCharTicking(CChar* pChar)
         return false; // Not legit.
     }
 #endif
+
+    if (_vPeriodicCharsEraseRequests.cend() !=
+        std::find(_vPeriodicCharsEraseRequests.cbegin(), _vPeriodicCharsEraseRequests.cend(), pChar))
+    {
+        return true;
+    }
 
     _vPeriodicCharsEraseRequests.emplace_back(pChar);
 
@@ -1094,7 +1073,7 @@ void CWorldTicker::ProcessTimedObjects()
                 ++it, ++uiProgressive)
             {
                 CTimedObject* pTimedObj = it->second;
-                if (!pTimedObj->_IsTimerSet() || !pTimedObj->_TickableState())
+                if (!pTimedObj->_IsTimerSet() || pTimedObj->_IsSleeping())
                     continue;
 
                 //if (pTimedObj->_GetTimeoutRaw() > _iCurTickStartTime)
@@ -1337,8 +1316,10 @@ void CWorldTicker::ProcessCharPeriodicTicks()
             {
                 ASSERT(it->first != 0);
                 CChar* pChar = it->second;
-                if (!pChar->_TickableState() || pChar->_IsBeingDeleted())
+                if (pChar->_IsSleeping() || pChar->_IsBeingDeleted())
                     continue;
+
+                pChar->_iTimePeriodicTick = 0;
 
                 _vPeriodicCharsTicksBuffer.emplace_back(pChar);
                 _vIndexMiscBuffer.emplace_back(uiProgressive);
@@ -1374,7 +1355,11 @@ void CWorldTicker::ProcessCharPeriodicTicks()
         EXC_TRYSUB("Char Periodic Ticks Loop");
         for (CChar* pChar : _vPeriodicCharsTicksBuffer)    // Loop through all msecs stored, unless we passed the timestamp.
         {
-            pChar->_iTimePeriodicTick = 0;
+            if (pChar->_IsBeingDeleted() || pChar->_IsSleeping())
+            {
+                continue;
+            }
+
             if (pChar->OnTickPeriodic())
             {
                 if (!pChar->IsPeriodicTickPending())

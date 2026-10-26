@@ -354,7 +354,7 @@ CChar::~CChar()
 
     if (m_pParty)
     {
-        m_pParty->RemoveMember( GetUID(), GetUID() );
+        m_pParty->RemoveMember(GetUID(), GetUID(), false);
         m_pParty = nullptr;
     }
     //Guild_Resign(MEMORY_GUILD); Moved to the ClearPlayer method otherwise it will cause a server crash because the deleted player will still be found in the guild list.
@@ -493,13 +493,6 @@ void CChar::ClientDetach()
 	if ( !IsClientActive() )
 		return;
 
-	if ( m_pParty && m_pParty->IsPartyMaster( this ))
-	{
-		// Party must disband if the master is logged out.
-		m_pParty->Disband(GetUID());
-		m_pParty = nullptr;
-	}
-
 	// If this char is on a IT_SHIP then we need to stop the ship !
 	if ( m_pArea && m_pArea->IsFlag( REGION_FLAG_SHIP ))
 	{
@@ -548,16 +541,14 @@ void CChar::SetDisconnected(CSector* pNewSector)
 
     if (m_pParty)
     {
-        m_pParty->RemoveMember( GetUID(), GetUID() );
+        m_pParty->RemoveMember(GetUID(), GetUID(), false);
         m_pParty = nullptr;
     }
 
     if ( IsDisconnected() )
         return;
 
-	// If the char goes offline, we don't want its items to tick anymore when the timer expires.
-	// Unless it's a summoned creature that we are riding.
-	if (!IsStatFlag(STATF_RIDDEN|STATF_CONJURED|STATF_PET))
+    if (!IsTickableEvenIfDisconnected())
 		_GoSleep();
 
     RemoveFromView();	// Remove from views.
@@ -596,9 +587,9 @@ void CChar::ClearPlayer()
 	}
 	else
 	{
-		if (g_Serv.GetServerMode() != SERVMODE_Exiting)
+		if (g_Serv.GetServerMode() != ServMode::Exiting)
 		{
-			g_Log.EventWarn("Character '%s'(UID 0%x) on account '%s' as been deleted.\n", GetName(), (dword)GetUID(), pAccount->GetName());
+			g_Log.EventWarn("Character '%s'(UID 0%x) on account '%s' has been deleted.\n", GetName(), (dword)GetUID(), pAccount->GetName());
 		}
 
 		pAccount->DetachChar(this);	// unlink me from my account.
@@ -954,22 +945,27 @@ int CChar::FixWeirdness()
 	}
 	if ( IsStatFlag( STATF_RIDDEN ))
 	{
-		// Move the ridden creature to the same location as it's rider.
-		if ( m_pPlayer || ! IsDisconnected())
+        // Move the ridden creature to the same location as its rider.
+        if ( m_pPlayer || ! IsDisconnected())
+        {
 			StatFlag_Clear( STATF_RIDDEN );
-		else
+        }
+        else
 		{
-			if ( Skill_GetActive() != NPCACT_RIDDEN )
+            // For some historical reasons, disconnected NPCs should be in "ridden" state...
+            if ( Skill_GetActive() != NPCACT_RIDDEN )
 			{
 				iResultCode = 0x1203;
 				return iResultCode;
 			}
+
 			const CItem * pFigurine = Horse_GetValidMountItem();
 			if ( pFigurine == nullptr )
 			{
 				iResultCode = 0x1204;
 				return iResultCode;
 			}
+
 			const CPointMap& pt = pFigurine->GetTopLevelObj()->GetTopPoint();
 			if ( pt != GetTopPoint())
 			{
@@ -1622,7 +1618,10 @@ void CChar::SetID( CREID_TYPE id )
 
 	ASSERT(pCharDef != nullptr);
 
-	CCharBase* pCharOldDef = Char_GetDef();
+    CCharBase* pCharOldDef = nullptr;
+    if (m_BaseRef.GetRef())
+        pCharOldDef = Char_GetDef();
+
 	if ( pCharDef == pCharOldDef )
 		return;
 
@@ -1630,7 +1629,8 @@ void CChar::SetID( CREID_TYPE id )
 	{
 		pCharOldDef->DelInstance();
 	}
-	pCharDef->AddInstance();	// Increase object instance counter (different from the resource reference counter!)
+
+    pCharDef->AddInstance();	// Increase object instance counter (different from the resource reference counter!)
 	m_BaseRef.SetRef(pCharDef);	// Among the other things, it increases the new resource reference counter and decreases the old, if any
 
 	if ( _iPrev_id == CREID_INVALID )
@@ -3833,7 +3833,7 @@ bool CChar::r_LoadVal( CScript & s )
 			}break;
         case CHC_CREATE:
             {
-                if (g_Serv.IsLoading())
+                if (g_Serv.IsLoadingGeneric())
                     {
                         _iTimeCreate = (CWorldGameTime::GetCurrentTime().GetTimeRaw() - (s.GetArgLLVal() * MSECS_PER_TENTH));
                         break;
@@ -3865,7 +3865,7 @@ bool CChar::r_LoadVal( CScript & s )
 		}
 		case CHC_FLAGS:
 		{
-			if (g_Serv.IsLoading())
+			if (g_Serv.IsLoadingGeneric())
 			{
 				// Don't set STATF_SAVEPARITY at server startup, otherwise the first worldsave will not save these chars
 				_uiStatFlag = s.GetArgLLVal() & ~ (uint64)STATF_SAVEPARITY;
@@ -3879,7 +3879,7 @@ bool CChar::r_LoadVal( CScript & s )
             _uiStatFlag = (_uiStatFlag & uiFlagsNoChange) | (uiNewFlags & ~uiFlagsNoChange);
             if (uiCurFlags != uiNewFlags)
             {
-                const bool fDoFullUpdate = (uiCurFlags & uiFlagsRequireFullUpdate) != (uiNewFlags & uiFlagsRequireFullUpdate);
+                const bool fDoFullUpdate =  HAS_FLAGS_ANY(uiCurFlags, uiFlagsRequireFullUpdate);
                 NotoSave_Update(fDoFullUpdate);
             }
 			break;
@@ -4168,7 +4168,7 @@ void CChar::r_Write( CScript & s )
 	if ( m_defense )
 		s.WriteKeyVal("ARMOR", m_defense);
     if (m_CanMask)
-        s.WriteKeyVal("CANMASK", m_CanMask);
+        s.WriteKeyHex("CANMASK", m_CanMask);
 
     const CREID_TYPE iDispID = GetDispID();
     if (iDispID != GetID())
@@ -4802,7 +4802,7 @@ bool CChar::r_Verb( CScript &s, CTextConsole * pSrc ) // Execute command from sc
 
 			CChar * pChar = CUID::CharFindFromUID(s.GetArgDWVal()); // otherwise we try to run it from the CChar with the given UID.
             if (pChar)
-                return pChar->NPC_PetSetOwner(this);
+                return NPC_PetSetOwner(pChar);
             return false;   // Something went wrong, giving a warning of it.
         }
 

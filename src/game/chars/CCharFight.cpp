@@ -1284,7 +1284,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			    }
 			    // Otherwise get random bonus.
 			    else {
-			        iDmgBonus += CSRand::GetValFast(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
+					iDmgBonus += CSRand::GetValFast(Stat_GetAdjusted(iStatBonus)) * iStatBonusPercent / 100;
 			        iDmgMin += iDmgBonus;
 			        iDmgMax += iDmgBonus;
 			    }
@@ -1312,7 +1312,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 					iStatBonus = STAT_STR;
 				if ( !iStatBonusPercent )
 					iStatBonusPercent = 20;
-			    iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
 			    iDmgMin += iDmgBonus;
 			    iDmgMax += iDmgBonus;
 				break;
@@ -1343,7 +1343,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 				if (Stat_GetAdjusted(iStatBonus) >= 100)
 					iDmgBonus += 5;
 
-			    iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
+				iDmgBonus += Stat_GetAdjusted(iStatBonus) * iStatBonusPercent / 100;
 			    iDmgMin += iDmgBonus;
 			    iDmgMax += iDmgBonus;
 				break;

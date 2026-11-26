@@ -4,10 +4,22 @@
 #include "threads.h"
 
 
-ProfileData& GetCurrentProfileData()
+ProfileData& GetCurrentProfileData() noexcept
 {
     auto cur_thread = static_cast<AbstractSphereThread*>(ThreadHolder::get().current());
-    ASSERT(cur_thread);
+    if (!cur_thread)
+    {
+        // It's called also by the exception handlers (EXC_CATCH...), which can run on a thread that isn't (or isn't anymore)
+        //  registered, for example during the shutdown. Don't abort there: count on a per-thread placeholder, not shown anywhere.
+        static thread_local ProfileData s_unregisteredThreadProfile;
+        static thread_local bool s_fLogged = false;
+        if (!s_fLogged)
+        {
+            s_fLogged = true;
+            reserved_stderr_log("ERROR: [THREADING] Can't get ProfileData for the current thread: it isn't registered.\n");
+        }
+        return s_unregisteredThreadProfile;
+    }
     return cur_thread->m_profile;
 }
 
@@ -24,7 +36,7 @@ ProfileTask::ProfileTask(PROFILE_TYPE id) :
 	AbstractThread* icontext = th.current();
 	if (icontext == nullptr)
 	{
-		// Thread was deleted, manually or by app servClosing signal.
+        // Thread was deleted, manually or by app closing signal.
 		return;
 	}
 

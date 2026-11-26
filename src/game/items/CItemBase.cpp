@@ -422,7 +422,7 @@ bool CItemBase::IsTypeEquippable() const noexcept
 bool CItemBase::IsID_Multi( ITEMID_TYPE id ) noexcept // static
 {
 	// NOTE: Ships are also multi's
-	return ( id >= ITEMID_MULTI && id < ITEMID_MULTI_MAX );
+	return ( id >= ITEMID_MULTI && id <= ITEMID_MULTI_MAX );
 }
 
 bool CItemBase::IsID_House(ITEMID_TYPE id) noexcept
@@ -1660,19 +1660,32 @@ bool CItemBase::r_LoadVal( CScript &s )
 			break;
 		case IBC_ID:
 			{
-            if ( GetID() < ITEMID_MULTI )
+                // Named ITEMDEFs and MULTIDEFs have no artwork of their own: their display ID comes from this ID= line.
+                // Their resource index is allocated beyond ITEMID_MULTI, so it can't tell whether they are multis.
+                const ITEMID_TYPE idMe = GetID();
+                const bool fNamedDef = !IsValidDispID(idMe);
+                if (!fNamedDef && !IsID_Multi(idMe))
                 {
                     g_Log.EventError( "Setting new ID for base type %s not allowed\n", GetResourceName());
                     return false;
                 }
 
-                ITEMID_TYPE id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
-                CItemBase * pItemDef = FindItemBase( id );	// make sure the base is loaded.
+                ITEMID_TYPE uiIDNew = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, s.GetArgStr()));
+                const CItemBase * pItemDef = FindItemBase( uiIDNew );	// make sure the base is loaded.
                 if ( ! pItemDef )
                 {
-                    g_Log.EventError( "Setting unknown base ID=0%x for base type %s\n", id, GetResourceName());
+                    g_Log.EventError( "Setting unknown base ID=0%x for base type %s\n", uiIDNew, GetResourceName());
                     return false;
 				}
+
+                // A numeric MULTIDEF can only take the ID of another multi.
+                // Named ITEMDEFs and MULTIDEFs can't be told apart here (both are RES_ITEMDEF): for them, a multi declared
+                //  with ITEMDEF is caught by CItem::CreateBase and CItem::SetType.
+                if (!fNamedDef && !IsID_Multi(pItemDef->GetDispID()))
+                {
+                    g_Log.EventError( "Base type %s is a multi: it can't be assigned the ID of a non-multi item.\n", GetResourceName());
+                    return false;
+                }
 
                 /*
                  * I add Is Duped Item check to check if item is from DUPELIST of base item, and ID won't change to baseid for unnecessarily.
@@ -1680,12 +1693,12 @@ bool CItemBase::r_LoadVal( CScript &s )
                  * I leave a note here to know developers why I did this changed
                  * xwerswoodx
                  */
-                 if (!pItemDef->IsDupedItem(id))
-                    id = ITEMID_TYPE(pItemDef->m_dwDispIndex);
+                 if (!pItemDef->IsDupedItem(uiIDNew))
+                    uiIDNew = ITEMID_TYPE(pItemDef->m_dwDispIndex);
 
-                if ( ! IsValidDispID(id) )
+                if ( ! IsValidDispID(uiIDNew) )
                 {
-                    if (id >= g_Install.m_tiledata.GetItemMaxIndex())
+                    if (uiIDNew >= g_Install.m_tiledata.GetItemMaxIndex())
                         g_Log.EventError("Setting invalid ID=%s for base type %s (value is greater than the tiledata maximum index).\n", s.GetArgStr(), GetResourceName());
                     else
                         g_Log.EventError( "Setting invalid ID=%s for base type %s\n", s.GetArgStr(), GetResourceName());
@@ -1693,7 +1706,7 @@ bool CItemBase::r_LoadVal( CScript &s )
                 }
 
 				CopyBasic( pItemDef );
-				m_dwDispIndex = id;	// Might not be the default of a DUPEITEM
+                m_dwDispIndex = uiIDNew;	// Might not be the default of a DUPEITEM
 			}
 			break;
 
@@ -2318,13 +2331,21 @@ CItemBase * CItemBase::FindItemBase( ITEMID_TYPE id ) // static
 		pBase->r_LoadVal( s );
 	}
 
+	// Every multi type needs a CItemBaseMulti, which is created only by MULTIREGION (in a MULTIDEF or in an ITEMDEF section).
+	// Report it once here, when the definition is loaded, and not only at each creation of an item from it (see CItem::CreateBase).
+	if (IsTypeMulti(pBase->GetType()) && (nullptr == dynamic_cast<const CItemBaseMulti*>(pBase)))
+	{
+		g_Log.EventError("Item definition '%s' has a multi TYPE but isn't a multi (no MULTIREGION, or MULTIREGION before TYPE): items created from it will be DEFAULTITEM.\n",
+			pBase->GetResourceName());
+	}
+
 	return pBase;
 }
 
 bool CItemBase::IsValidDispID( ITEMID_TYPE id ) noexcept // static
 {
     // Is this id in the base artwork set ? tile or multi.
-    return ( id > ITEMID_NOTHING && id < ITEMID_MULTI_MAX );
+    return ( id > ITEMID_NOTHING && id <= ITEMID_MULTI_MAX );
 }
 
 //**************************************************

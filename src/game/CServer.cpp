@@ -5,6 +5,7 @@
 #else
 	#include "../sphere/UnixTerminal.h"
     #include <sys/resource.h>   // for setpriority
+    #include <csignal>          // SIGHUP
 #endif
 
 #if defined(_WIN32) && !defined(_DEBUG)
@@ -481,10 +482,17 @@ int CServer::GetExitFlag() const noexcept
 
 void CServer::SetExitFlag(int iFlag) noexcept
 {
-    ADDTOCALLSTACK("CServer::SetExitFlag");
-    if ( GetExitFlag() )
-        return;
-    m_iExitFlag.store(iFlag, std::memory_order_release);
+    // Called also by signal handlers: only lock-free atomic operations here (no ADDTOCALLSTACK either).
+    static_assert(std::atomic_int::is_always_lock_free);
+    int iExpected = 0;
+    m_iExitFlag.compare_exchange_strong(iExpected, iFlag, std::memory_order_acq_rel);
+}
+
+void CServer::RequestSaveAndExit() noexcept
+{
+    // Called by a signal handler: only lock-free atomic operations here.
+    static_assert(std::atomic_bool::is_always_lock_free);
+    _fSaveAndExitRequested.store(true, std::memory_order_release);
 }
 
 bool CServer::IsStartupLoadingScripts() const noexcept
@@ -1381,17 +1389,13 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
 	if ( !pSrc )
 		return;
 
-	CSFileText * ftDump = nullptr;
+	// A local object, not allocated with new: deleting it through its virtual destructor makes GCC 16 (with the optimizations)
+	//  inline also the destructor of CScript, the derived class, and warn about it (-Warray-bounds).
+	CSFileText fileDump;
+	CSFileText * ftDump = nullptr;	// &fileDump, if the dump is open.
 
-	if ( bDump )
-	{
-		ftDump = new CSFileText();
-		if ( ! ftDump->Open("profiler_dump.txt", OF_CREATE|OF_TEXT) )
-		{
-			delete ftDump;
-			ftDump = nullptr;
-		}
-	}
+	if ( bDump && fileDump.Open("profiler_dump.txt", OF_CREATE|OF_TEXT) )
+		ftDump = &fileDump;
 
     if (pSrc != this)
     {
@@ -1577,10 +1581,7 @@ void CServer::ProfileDump( CTextConsole * pSrc, bool bDump )
     }
 
 	if ( ftDump != nullptr )
-	{
 		ftDump->Close();
-		delete ftDump;
-	}
 }
 
 // ---------------------------------------------------------------------
@@ -2680,6 +2681,18 @@ void CServer::_OnTick()
 		m_fConsoleTextReadyFlag = false;	// ready to use again
 		OnConsoleCmd( sText, this );
 	}
+
+#ifndef _WIN32
+	EXC_SET_BLOCK("SaveAndExitRequest");
+	if (_fSaveAndExitRequested.exchange(false, std::memory_order_acq_rel))
+	{
+		// Requested by SIGHUP (e.g. the terminal was closed).
+		g_Log.Event(LOGL_FATAL, "SIGHUP received: saving the world and shutting down.\n");
+		if (!m_fResyncPause)
+			g_World.Save(true);
+		SetExitFlag(SIGHUP);
+	}
+#endif
 
 	EXC_SET_BLOCK("ResyncCommand");
 	if ( m_fResyncRequested != nullptr )

@@ -4209,7 +4209,16 @@ bool CServerConfig::LoadResourceSection( CScript * pScript, bool fInsertSorted )
 		}
 		// Now scan it for DEFNAME= or DEFNAME2= stuff ?
 		pNewLink->SetLink(pResScript);
-		pNewLink->ScanSection( restype );
+
+		// ITEMDEF and MULTIDEF are both RES_ITEMDEF: only here we know which section header was used.
+		const bool fItemDefSection = (restype == RES_ITEMDEF) && !fNewStyleDef;
+		bool fMultiRegion = false;
+		pNewLink->ScanSection( restype, fItemDefSection ? &fMultiRegion : nullptr );
+		if (fItemDefSection && fMultiRegion)
+		{
+			g_Log.Event(LOGM_INIT|LOGL_WARN, "Deprecated: multi '%s' is defined in an ITEMDEF section. Multi items should be defined as MULTIDEF.\n",
+				pNewLink->GetResourceName());
+		}
 	}
 	else if ( pNewDef && pVarNum )
 	{
@@ -4414,7 +4423,14 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 				break;
 			case RES_ITEMDEF:		// Define an item type
 				if (fNewStyleDef)	// indicates this is a multi and should have an appropriate offset applied
+				{
+					if ((iIndex < 0) || (iIndex >= MULTI_QTY))
+					{
+						g_Log.EventError("MULTIDEF index 0%x is out of range (max 0%x).\n", iIndex, MULTI_QTY - 1);
+						return ridInvalid;
+					}
 					rid = CResourceID(restype, iIndex + ITEMID_MULTI);
+				}
 				break;
 			default:
 				return rid;
@@ -4542,7 +4558,7 @@ CResourceID CServerConfig::ResourceGetNewID( RES_TYPE restype, lpctstr pszName, 
 		break;
 	case RES_ITEMDEF:		// Define an item type
 		iHashRange = 2000;
-		iIndex = ITEMID_SCRIPT2 + 0x4000;	// add another offset to avoid Sphere ranges.
+		iIndex = ITEMID_SCRIPT_NAMED;	// add another offset to avoid Sphere ranges (multis, see MULTI_QTY).
 		break;
 	case RES_TEMPLATE:		// Define lists of items. (for filling loot etc)
 		iHashRange = 2000;

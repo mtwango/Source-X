@@ -391,6 +391,7 @@ set(game_S
     src/game/CServerDef.cpp
     src/game/CServerTime.cpp
     src/game/CTeleport.cpp
+    src/game/CTickWheel.cpp
     src/game/CTimedFunction.cpp
     src/game/CTimedFunctionHandler.cpp
     src/game/CTimedObject.cpp
@@ -432,6 +433,7 @@ set(game_H
     src/game/CServerTime.h
     src/game/CStartLoc.h
     src/game/CTeleport.h
+    src/game/CTickWheel.h
     src/game/CTimedFunction.h
     src/game/CTimedFunctionHandler.h
     src/game/CTimedObject.h

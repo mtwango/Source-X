@@ -290,21 +290,44 @@ CItem * CItem::CreateBase( ITEMID_TYPE id, IT_TYPE type )	// static
 	//  If not put on ground or in container after this = Memory leak !
 
 	ITEMID_TYPE idErrorMsg = ITEMID_NOTHING;
+    bool fDefaultItem = false;
 	CItemBase * pItemDef = CItemBase::FindItemBase( id );
 	if ( pItemDef == nullptr )
 	{
+    default_item:
 		idErrorMsg = id;
-		id = (ITEMID_TYPE)(g_Cfg.ResourceGetIndexType( RES_ITEMDEF, "DEFAULTITEM" ));
+        fDefaultItem = true;
+        const CResourceIDBase& rid = g_Cfg.ResourceGetIDType( RES_ITEMDEF, "DEFAULTITEM" );
+        id = (ITEMID_TYPE)rid.GetResIndex();
 		if ( id <= 0 )
 			id = ITEMID_GOLD_C1;
 
 		pItemDef = CItemBase::FindItemBase( id );
 		ASSERT(pItemDef);
+        type = pItemDef->GetType();
 	}
 
 	CItem * pItem = nullptr;
     if (type == IT_INVALID)
         type = pItemDef->GetType();
+
+    // Every multi type is a CItemMulti, which needs a CItemBaseMulti: a definition with MULTIREGION.
+    // A definition with a multi TYPE and without MULTIREGION is already reported when loaded (CItemBase::FindItemBase),
+    //  but the type can also be requested by the caller.
+    if (CItemBase::IsTypeMulti(type) && (nullptr == dynamic_cast<const CItemBaseMulti*>(pItemDef)))
+    {
+        if (!fDefaultItem)
+        {
+            g_Log.EventError("Can't create '%s' as a multi: its definition has no MULTIREGION. Creating DEFAULTITEM instead.\n",
+                pItemDef->GetResourceName());
+            goto default_item;
+        }
+
+        // DEFAULTITEM is invalid too: create it as a plain item instead of falling back to it again (endless loop).
+        g_Log.EventError("DEFAULTITEM '%s' has a multi TYPE but no MULTIREGION: creating it as a plain item.\n",
+            pItemDef->GetResourceName());
+        type = IT_NORMAL;
+    }
 	switch (type)
 	{
 		case IT_MAP:
@@ -3356,12 +3379,14 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 		{
 			lpctstr idstr = s.GetArgStr();
 			const CResourceID rid = g_Cfg.ResourceGetID(RES_QTY, idstr);
-			if (rid.GetResType() == RES_TEMPLATE)
+            const RES_TYPE resType = rid.GetResType();
+            const uint uiResID = rid.GetResIndex();
+            if (resType == RES_TEMPLATE)
 			{
 				// here we don't have to check if we are setting the ID in the script's header, because that is handled
 				//	by IBC_ID in CItemBase; here we are under @Create trigger or loading from saves (?)
 
-				CItem * pItemTemp = CItem::CreateTemplate((ITEMID_TYPE)rid.GetResIndex(), nullptr, nullptr);
+                CItem * pItemTemp = CItem::CreateTemplate((ITEMID_TYPE)uiResID, nullptr, nullptr);
 				if (!pItemTemp)
 					return false;
 
@@ -3374,16 +3399,28 @@ bool CItem::r_LoadVal( CScript & s ) // Load an item Script
 					g_Log.EventError("The template should not return a container-type item!\n");
 					return false;	// not the kind of template we want...
 				}
-				else
-					return SetID(id);
+
+                return SetID(id);
 			}
-			else
+
+            if (resType != RES_ITEMDEF && resType != RES_QTY)
+                return false;
+
+            // Compare the kind of object, not the raw IDs: named ITEMDEFs and MULTIDEFs both have IDs beyond ITEMID_MULTI.
+            // The class of this object can't change, so a multi must stay a multi and an item must stay an item.
+            if (const CItemBase* pItemDefNew = CItemBase::FindItemBase((ITEMID_TYPE)uiResID))
             {
-                const RES_TYPE resType = rid.GetResType();
-                if (resType == RES_ITEMDEF || resType == RES_QTY)
-                    return SetID((ITEMID_TYPE)rid.GetResIndex());
+                const bool fMeMulti = (nullptr != dynamic_cast<const CItemMulti*>(this));
+                const bool fTheyMulti = (nullptr != dynamic_cast<const CItemBaseMulti*>(pItemDefNew))
+                    || CItemBase::IsID_Multi(pItemDefNew->GetDispID());
+                if (fMeMulti != fTheyMulti)
+                {
+                    g_Log.EventError("ITEM can't be assigned ID of a MULTI and vice-versa.\n");
+                    return false;
+                }
             }
-            return false;
+
+            return SetID((ITEMID_TYPE)uiResID);
 		}
 		case IC_LAYER:
 			// used only during load (i'm reading the save files and placing again the items in the world in the right place).
@@ -3917,7 +3954,26 @@ bool CItem::SetType(IT_TYPE type, bool fPreCheck)
         // Pre-assignment checks
         if (type == IT_MULTI_CUSTOM)
         {
-            g_Log.EventError("Can't dynamically assign type 't_multi_custom' to an item. This type can only be specified in the TYPEDEF.\n");
+            g_Log.EventError("Can't assign type 't_multi_custom' to an existing item: it can only be set in the item definition.\n");
+            return false;
+        }
+        else if (CItemBase::IsTypeMulti(type) && (nullptr == dynamic_cast<const CItemMulti*>(this)))
+        {
+            lpctstr ptcType = "?";
+            switch (type)
+            {
+                case IT_MULTI:
+                    ptcType = "t_multi";
+                    break;
+                case IT_SHIP:
+                    ptcType = "t_ship";
+                    break;
+                case IT_MULTI_ADDON:
+                    ptcType = "t_multi_addon";
+                    break;
+            }
+            g_Log.EventError("Can't assign type '%s' to item '%s': it isn't a multi. Only items created from a definition with MULTIREGION are multis.\n",
+                ptcType, GetResourceName());
             return false;
         }
     }
@@ -4284,9 +4340,9 @@ bool CItem::IsKeyLockFit( dword dwLockUID ) const
 	return ( m_itKey.m_UIDLock == dwLockUID );
 }
 
-void CItem::ConvertBolttoCloth()
+void CItem::ConvertBoltToCloth()
 {
-	ADDTOCALLSTACK("CItem::ConvertBolttoCloth");
+	ADDTOCALLSTACK("CItem::ConvertBoltToCloth");
 	// Cutting bolts of cloth with scissors will convert it to his RESOURCES (usually cloth)
 
 	// We need to check all cloth_bolt items

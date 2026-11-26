@@ -34,7 +34,14 @@
 
 #ifdef UNIT_TESTING
 #   define DOCTEST_CONFIG_IMPLEMENT
+#   if NON_MSVC_COMPILER
+#       pragma GCC diagnostic push
+#       pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"   // In its MacOS code.
+#   endif
 #   include <doctest/doctest.h>
+#   if NON_MSVC_COMPILER
+#       pragma GCC diagnostic pop
+#   endif
 #endif
 
 /* Start global declarations */
@@ -298,6 +305,7 @@ void Sphere_ExitServer()
 		case 4:		ptcReason = "Service shutdown";					    break;
 		case 5:		ptcReason = "Console window closed";				break;
 		case 6:		ptcReason = "Proccess aborted by SIGABRT signal";	break;
+		case 15:	ptcReason = "Stop requested by SIGTERM signal";	    break;
 		default:	ptcReason = "Server shutdown complete";			    break;
 	}
 
@@ -331,9 +339,11 @@ static void atexit_handler()
 }
 
 #ifdef UNIT_TESTING
-static int DocTestMain()
+static int DocTestMain(int argc, char* argv[])
 {
     doctest::Context context;
+
+    context.applyCommandLine(argc, argv);   // Options like -tc="name*" (see --help).
 
     int res = context.run(); // run
 
@@ -351,7 +361,7 @@ int main( int argc, char * argv[] )
 #endif
 {
 #ifdef UNIT_TESTING
-    return DocTestMain();
+    return DocTestMain(argc, argv);
 #endif
 
     static constexpr lpctstr m_sClassName = "main";

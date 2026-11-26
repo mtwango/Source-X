@@ -2862,6 +2862,11 @@ int CChar::ItemPickup(CItem * pItem, word amount)
 
 			// protect from snoop - disallow picking from not opened containers
 			bool fIsInOpenedContainer = false;
+
+		    if (!client) {
+		      return -1;
+		    }
+
 			CClient::OpenedContainerMap_t::iterator itContainerFound = client->m_openedContainers.find( pItemCont->GetUID().GetPrivateUID() );
 			if ( itContainerFound != client->m_openedContainers.end() )
 			{
@@ -3123,14 +3128,16 @@ bool CChar::ItemBounce( CItem * pItem, bool fDisplayMsg )
 			{
 				fCanAddToPack = false;
 				const CItem* pCont = dynamic_cast<const CItem*>(pItem->GetContainer());
-				if (pPrevCont == pCont) //In the same cont, but unable to go there
-					fDropOnGround = true;
-				else //we changed the cont in the script
-				{
-					tchar* pszMsg = Str_GetTemp();
-					snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_BOUNCE_CONT), pCont->GetName());
-					pszWhere = pszMsg;
-				}
+                if (pCont) {
+				    if (pPrevCont == pCont) //In the same cont, but unable to go there
+					    fDropOnGround = true;
+				    else //we changed the cont in the script
+				    {
+					    tchar* pszMsg = Str_GetTemp();
+					    snprintf(pszMsg, Str_TempLength(), g_Cfg.GetDefaultMsg(DEFMSG_MSG_BOUNCE_CONT), pCont->GetName());
+					    pszWhere = pszMsg;
+				    }
+                }
 			}
 		}
 	}
@@ -4977,6 +4984,12 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
         }
     }
 
+    // Any trigger or effect below can delete this char (eg: dispel of a summon, death of an NPC).
+    // A deleted char must not be processed further, especially it must not be moved: moving it into a sector
+    // would take it out of the world delete queue and it would stay in the world as an orphan.
+    if (IsDeleted())
+        return TRIGRET_RET_TRUE;
+
     bool fStepCancel = false;
     bool fSpellHit = false;
     auto AreaItems = CWorldSearchHolder::GetInstance(GetTopPoint());
@@ -5007,6 +5020,8 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                 pScriptArgs->m_iN1 = fStanding ? 1 : 0;
                 TRIGRET_TYPE iRet = pItem->OnTrigger(ITRIG_STEP, pScriptArgs, this);
                 _uiRecursingItemStep -= 1;
+                if (IsDeleted())
+                    return TRIGRET_RET_TRUE;
                 if (iRet == TRIGRET_RET_TRUE) // block walk
                 {
                     fStepCancel = true;
@@ -5034,6 +5049,8 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
                     iSkillLevel /= 2;
 
                 int iDmg = OnTakeDamage(g_Cfg.GetSpellEffect(SPELL_Fire_Field, iSkillLevel), nullptr, DAMAGE_FIRE | DAMAGE_GENERAL, 0, 100, 0, 0, 0);
+                if (IsDeleted())
+                    return TRIGRET_RET_TRUE;
                 if (iDmg > 0)
                 {
                     Sound(0x15f); // fire noise
@@ -5059,6 +5076,8 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 
                 fSpellHit =
                     OnSpellEffect((SPELL_TYPE)(ResGetIndex(pItem->m_itSpell.m_spell)), pItem->m_uidLink.CharFind(), pItem->m_itSpell.m_spelllevel, pItem);
+                if (IsDeleted())
+                    return TRIGRET_RET_TRUE;
                 if (fSpellHit && m_pNPC && fStanding)
                 {
                     m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
@@ -5070,6 +5089,8 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
             case IT_TRAP_ACTIVE:
             {
                 int iDmg = OnTakeDamage(pItem->Use_Trap(), nullptr, DAMAGE_HIT_BLUNT | DAMAGE_GENERAL);
+                if (IsDeleted())
+                    return TRIGRET_RET_TRUE;
                 if ((iDmg > 0) && m_pNPC && fStanding)
                 {
                     m_Act_p.Move((DIR_TYPE)(g_Rand.GetVal(DIR_QTY)));
@@ -5080,7 +5101,11 @@ TRIGRET_TYPE CChar::CheckLocationEffects(bool fStanding)
 
             case IT_SWITCH:
                 if (pItem->m_itSwitch.m_wStep)
+                {
                     Use_Item(pItem);
+                    if (IsDeleted())
+                        return TRIGRET_RET_TRUE;
+                }
                 continue;
 
             case IT_MOONGATE:
@@ -5344,7 +5369,8 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 
 	ADDTOCALLSTACK("CChar::MoveToChar");
 
-	if ( !pt.IsValidPoint() )
+	// Never move a deleted char: putting it into a sector would take it out of the world delete queue.
+	if ( IsDeleted() || !pt.IsValidPoint() )
 		return false;
 
 	CClient *pClient = GetClientActive();
@@ -5369,6 +5395,10 @@ bool CChar::MoveToChar(const CPointMap& pt, bool fStanding, bool fCheckLocationE
 
 	CRegion * pRoomNew = pt.GetRegion(REGION_TYPE_ROOM);
 	if ( !MoveToRoom(pRoomNew, fAllowReject) )
+		return false;
+
+	// Region/room enter/exit triggers may have deleted the char.
+	if ( IsDeleted() )
 		return false;
 
 	const CPointMap ptOld(GetTopPoint());
@@ -5510,6 +5540,10 @@ bool CChar::SetPrivLevel(CTextConsole * pSrc, lpctstr pszFlags)
 		return false;
 
 	CAccount *pAccount = m_pPlayer->GetAccount();
+    if (!pAccount) {
+		return false;
+    }
+
 	PLEVEL_TYPE PrivLevel = CAccount::GetPrivLevelText(pszFlags);
 
 	// Remove Previous GM Robe
@@ -6172,6 +6206,9 @@ bool CChar::OnTickPeriodic()
     if (IsClientActive())
     {
         CClient* pClient = GetClientActive();
+        if (!pClient) {
+          return true;
+        }
 
         // Players have a silly "always run" flag that gets stuck on.
         if ( (iTimeCur - pClient->m_timeLastEventWalk) > (2 * MSECS_PER_TENTH) )

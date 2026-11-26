@@ -1272,15 +1272,9 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
 			default:
 			case 0:
 			{
-				// Sphere damage bonus (custom)
-				if ( !iStatBonus )
-				{
-				    iStatBonus = STAT_STR;
-				    if (pWeapon != nullptr && pWeapon->Weapon_GetSkill() == SKILL_ARCHERY)
-				    {
-				        iStatBonus = STAT_DEX;
-				    }
-				}
+			    // Sphere damage bonus (custom)
+			    if ( !iStatBonus )
+			        iStatBonus = STAT_STR;
 			    if ( !iStatBonusPercent )
 			        iStatBonusPercent = 10;
 
@@ -1360,7 +1354,7 @@ int CChar::Fight_CalcDamage(const CItem * pWeapon, bool fNoRandom, bool fGetMax 
     if ( fNoRandom )
         return( fGetMax ? iDmgMax : iDmgMin );
 	else
-		return( g_Rand.GetVal2Fast(iDmgMin, iDmgMax) );
+		return( g_Rand.GetVal2(iDmgMin, iDmgMax) );
 }
 
 bool CChar::Fight_IsAttackableState()
@@ -1894,7 +1888,7 @@ WAR_SWING_TYPE CChar::Fight_Hit( CChar * pCharTarg )
 			// Only start the swing this much tenths of second after the char stopped moving.
 			//  (Values changed between expansions. SE:0,25s / AOS:0,5s / pre-AOS:1,0s)
 			if ( m_pClient && ( (CWorldGameTime::GetCurrentTime().GetTimeDiff(m_pClient->m_timeLastEventWalk) / MSECS_PER_TENTH) < g_Cfg.m_iCombatArcheryMovementDelay) && m_atFight.m_iWarSwingState != WAR_SWING_SWINGING)
-			    return WAR_SWING_EQUIPPING;
+				return WAR_SWING_EQUIPPING;
 		}
 
         if ( pWeapon )

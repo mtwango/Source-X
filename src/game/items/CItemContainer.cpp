@@ -803,7 +803,6 @@ void CItemContainer::OnRemoveObj( CSObjContRec *pObjRec )	// Override this = cal
 		if ( pItemVend )
 			pItemVend->SetPlayerVendorPrice(0);
 	}
-
 	CContainer::OnRemoveObj(pObjRec);
     UpdatePropertyFlag();
 

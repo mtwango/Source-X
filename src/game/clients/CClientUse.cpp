@@ -1112,7 +1112,7 @@ bool CClient::Cmd_Skill_Tracking( uint track_sel, bool fExec )
 		item[3].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_HUMANS);
 		item[4].m_id = ITEMID_TRACK_WOMAN;
 		item[4].m_color = 0;
-	    item[4].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_PLAYERS);
+		item[4].m_sText = g_Cfg.GetDefaultMsg(DEFMSG_TRACKING_SKILLMENU_PLAYERS);
 
 		m_tmMenu.m_Item[0] = 0;
 		addItemMenu(CLIMODE_MENU_SKILL_TRACK_SETUP, item, 4);

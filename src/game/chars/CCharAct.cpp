@@ -441,6 +441,7 @@ void CChar::OnRemoveObj( CSObjContRec* pObRec )	// Override this = called when r
 		case LAYER_HELM:		// 6
 		case LAYER_GLOVES:	// 7
 		case LAYER_COLLAR:	// 10 = gorget or necklace.
+	    case LAYER_HALF_APRON:
 		case LAYER_CHEST:	// 13 = armor chest
 		case LAYER_TUNIC:	// 17 = jester suit
 		case LAYER_ARMS:		// 19 = armor
